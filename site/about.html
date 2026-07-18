@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — EgyBI &amp; the House of Life</title>
+<meta name="description" content="The story behind EgyBI: the ancient House of Life, the scribe-apprentice mascot Ibi, a real rank ladder and Egyptian badges, and a strict principle — every fact is real, cited, and honest about what's disputed.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="assets/egybi.css" rel="stylesheet">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a><a href="explore.html">Explore</a><a href="tracks.html">Tracks</a><a href="practice.html">Practice</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a><a class="cta" href="index.html#newsletter">Newsletter</a>
+    </nav>
+  </div>
+</header>
+
+<section class="surface-hero center" style="position:relative;overflow:hidden;padding:72px 6vw;">
+  <div id="hero-particles" class="hero-particles" aria-hidden="true"></div>
+  <div class="wrap" style="position:relative;z-index:1;">
+    <div class="kicker" style="color:var(--gold-bright);">The identity</div>
+    <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">The House of Life.</h1>
+    <p class="lead" style="margin:0 auto;color:#f3ead4;">In ancient Egypt, the <em>Per Ankh</em> — "House of Life" — was the temple institution where scribes trained in writing, record-keeping, medicine, and astronomy. EgyBI is a modern House of Life for a new kind of scribe: the data engineer, the analytics engineer, the BI developer.</p>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="surface-light">
+  <div class="wrap" style="max-width:820px;">
+    <div class="kicker" data-aos="fade-up">Why Egypt</div>
+    <h2 data-aos="fade-up">Not a themed skin — a real teacher.</h2>
+    <p class="lead" data-aos="fade-up">Most practice platforms teach SQL on abstract "customers and orders." EgyBI teaches it on real pharaohs, real monuments, real tourism and economic data. You practice the modern data stack and absorb genuine Egyptian history at the same time — so finishing a track leaves you having actually learned something about the world, not just passed a puzzle.</p>
+    <p style="color:var(--ink-soft);" data-aos="fade-up">The identity is drawn from real research: Pharaonic color (Egyptian blue and gold), the scribal tradition of Thoth and Seshat, and the monumental Cinzel lettering you see across the site. It's an identity the product earns, not one bolted on.</p>
+  </div>
+</section>
+
+<!-- THE KNOWLEDGE BASE (breadth) -->
+<section class="surface-light-2" id="knowledge-base">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">The knowledge base</div>
+    <h2 data-aos="fade-up">One cited database. Five thousand years of Egypt.</h2>
+    <p class="lead" data-aos="fade-up">Behind every challenge is a single normalized knowledge base that spans the pyramids to the New Administrative Capital — economy, tourism, energy, water, industry, science, sport, culture and more. It grows every week, and not one figure is invented.</p>
+
+    <div class="stat-grid" style="margin-top:38px;">
+      <div class="stat" data-aos="fade-up"><div class="num" data-count="58" data-suffix="+">0</div><div class="label">Cited tables</div><div class="cap">A normalized relational schema</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="800" data-suffix="+">0</div><div class="label">Sourced data rows</div><div class="cap">Every one traceable to a source</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="18" data-suffix="+">0</div><div class="label">Sectors of Egypt</div><div class="cap">Ancient history to 2026</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="100" data-suffix="%">0</div><div class="label">Cited & real</div><div class="cap">Disputes flagged, never smoothed</div></div>
+    </div>
+
+    <div class="grid grid-3" style="margin-top:34px;" id="sectorGrid"></div>
+
+    <div style="margin-top:34px;" data-aos="fade-up">
+      <div class="kicker">Sourced from the primary record</div>
+      <p style="color:var(--ink-soft);margin:0 0 14px;max-width:70ch;">Not blog posts — the institutions that actually publish the numbers. Where two of them disagree, both figures live in the data with the disagreement noted.</p>
+      <div id="sourcePills"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR THE CURIOUS ABOUT EGYPT -->
+<section class="surface-light" id="discover">
+  <div class="wrap" style="max-width:900px;">
+    <div class="kicker" data-aos="fade-up">Not a data engineer? Come anyway.</div>
+    <h2 data-aos="fade-up">A way to actually discover Egypt.</h2>
+    <p class="lead" data-aos="fade-up">You don't need to write a line of SQL to get something out of EgyBI. Under the puzzles is a genuine, cited portrait of one country across five thousand years — and you can just explore it.</p>
+    <p style="color:var(--ink-soft);" data-aos="fade-up">Most of what people "know" about Egypt stops at the pyramids. The real story is far bigger, and it's all here in numbers you can trust: the pharaohs and the dynasties that built the monuments, yes — but also the Suez Canal that still carries a slice of world trade, the Nile that hands 97% of the country its water, the record-breaking new cities and the world's widest bridge, a film industry old enough to be called "Hollywood on the Nile," a squash team that quietly dominates the planet, and a health campaign that made Egypt the first nation cleared by the WHO to eliminate hepatitis C.</p>
+    <div class="grid grid-3" style="margin-top:26px;" id="discoverCards"></div>
+    <p style="color:var(--ink-soft);margin-top:26px;" data-aos="fade-up">Start on the <a href="explore.html" style="color:var(--gold-ink);font-weight:600;">Explore</a> page — real charts and an interactive map of all 27 governorates. Curious how a number was found? Open the <a href="practice.html" style="color:var(--gold-ink);font-weight:600;">Practice</a> page and ask the data yourself. Everything is sourced; where the experts disagree, we show you the disagreement instead of a tidy lie. That's the whole idea: <strong style="color:var(--blue-deep);">learn Egypt by looking at the evidence.</strong></p>
+  </div>
+</section>
+
+<!-- IBI + RANKS + BADGES (dark) -->
+<section class="surface-dark">
+  <div class="wrap">
+    <div class="grid grid-2" style="align-items:center;gap:36px;">
+      <div data-aos="fade-up">
+        <div class="kicker">Your guide</div>
+        <h2>Meet Ibi.</h2>
+        <p class="lead">An ibis-headed scribe's apprentice, inspired by Thoth — the god of writing who invented hieroglyphs. Ibi walks you from your first <code>SELECT</code> to advanced warehouse design, and hands you a sourced "Did You Know" every time you get it right.</p>
+      </div>
+      <div class="center" data-aos="zoom-in">
+        <svg viewBox="0 0 200 200" style="width:190px;height:190px;" role="img" aria-label="Ibi, an ibis-headed scribe">
+          <circle cx="100" cy="100" r="92" fill="#1E1810" stroke="#C9A227" stroke-width="2"/>
+          <!-- stylized ibis head + reed pen, flat geometric -->
+          <circle cx="100" cy="74" r="30" fill="none" stroke="#E7C64C" stroke-width="4"/>
+          <path d="M100 74 q40 6 62 40" fill="none" stroke="#E7C64C" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="90" cy="70" r="4" fill="#E7C64C"/>
+          <rect x="70" y="108" width="60" height="52" rx="8" fill="none" stroke="#C9A227" stroke-width="4"/>
+          <line x1="118" y1="150" x2="150" y2="118" stroke="#E7C64C" stroke-width="5" stroke-linecap="round"/>
+          <polygon points="150,118 156,112 158,124" fill="#E7C64C"/>
+        </svg>
+        <p style="font-size:0.8rem;color:var(--on-dark-soft);margin-top:8px;">A placeholder mark — a fully illustrated Ibi is on the roadmap.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:52px;" data-aos="fade-up">
+      <div class="kicker">Progression</div>
+      <h2>Rise through the House of Life.</h2>
+      <div class="rank-ladder">
+        <span class="rank">Reed-Bearer</span><span class="rank-arrow">→</span>
+        <span class="rank">Palette-Keeper</span><span class="rank-arrow">→</span>
+        <span class="rank">Cord-Stretcher</span><span class="rank-arrow">→</span>
+        <span class="rank">Ibis Scribe</span><span class="rank-arrow">→</span>
+        <span class="rank">Keeper of the House of Life</span><span class="rank-arrow">→</span>
+        <span class="rank">Master of Secrets</span>
+      </div>
+    </div>
+
+    <div style="margin-top:44px;" data-aos="fade-up">
+      <div class="kicker">Earn your marks</div>
+      <h2>Egyptian badges, not generic stars.</h2>
+      <div class="grid grid-4" style="margin-top:20px;">
+        <div class="badge-card" tabindex="0"><div class="name">First Cartouche</div><p>Your name, rendered inside a royal cartouche.</p></div>
+        <div class="badge-card" tabindex="0"><div class="name">Stretching the Cord</div><p>Your first join — Seshat's own surveying rite.</p></div>
+        <div class="badge-card" tabindex="0"><div class="name">Ibis Eye</div><p>A stylized Wedjat eye, for debugging skill.</p></div>
+        <div class="badge-card" tabindex="0"><div class="name">Egyptian Blue Seal</div><p>A completed module — a "temple" sealed.</p></div>
+        <div class="badge-card" tabindex="0"><div class="name">Notched Palm</div><p>Seshat's year-rib, one notch per streak day.</p></div>
+        <div class="badge-card" tabindex="0"><div class="name">Weighing of the Query</div><p>Maat's scale, for query-optimization wins.</p></div>
+        <div class="badge-card" tabindex="0"><div class="name">Khayamiya Patch</div><p>An appliqué star, for helping the community.</p></div>
+        <div class="badge-card" tabindex="0"><div class="name">Mashrabiya Master</div><p>A lattice rosette, for advanced window functions.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCURACY PRINCIPLE -->
+<section class="surface-light">
+  <div class="wrap" style="max-width:820px;">
+    <div class="kicker" data-aos="fade-up">The non-negotiable rule</div>
+    <h2 data-aos="fade-up">Accuracy over polish.</h2>
+    <p class="lead" data-aos="fade-up">Every dataset is real and cited. Where historians or economists genuinely disagree, EgyBI shows the disagreement rather than picking a tidy number — because handling uncertain, conflicting data <em>is</em> the job of a real data engineer.</p>
+    <div class="callout" style="margin-top:24px;" data-aos="zoom-in">
+      <div class="label">Did you know?</div>
+      <p>Pepi II is traditionally credited with a 94-year reign — the longest in recorded history — per the Turin King List. Most Egyptologists today believe this figure was mistranscribed, and favor a shorter reign closer to 64 years. Both live in the data, flagged.</p>
+      <span class="src">This is the kind of sourced note revealed after every correct answer.</span>
+    </div>
+    <p style="color:var(--ink-soft);margin-top:22px;" data-aos="fade-up">That discipline runs through every sector, not just history:</p>
+    <ul style="color:var(--ink-soft);line-height:1.8;max-width:70ch;" data-aos="fade-up">
+      <li><strong>Sport:</strong> Feryal Ashraf's Tokyo 2020 gold is recorded as <em>karate</em>, not the widely-repeated "taekwondo".</li>
+      <li><strong>Economy:</strong> the 2024 IMF programme is stored as the <em>augmented</em> $8bn total, not $8bn of new money.</li>
+      <li><strong>Energy:</strong> every green-hydrogen "mega-deal" is flagged as a non-binding MoU — because only one has reached a real offtake agreement.</li>
+      <li><strong>Water:</strong> GERD downstream-loss figures are marked as contested Egyptian-source scenario models, presented neutrally.</li>
+      <li><strong>Infrastructure:</strong> the record bridge is logged under its true Guinness category — "widest cable-stayed", not "suspension".</li>
+    </ul>
+    <p style="color:var(--ink-soft);margin-top:22px;" data-aos="fade-up">Content is original: the reading list points to real books (Kimball, Kleppmann, and more), but every exercise is written from scratch — never copied. And the datasets are public and legally clean, including the Met Museum's CC0-licensed Egyptian collection.</p>
+  </div>
+</section>
+
+<section class="surface-dark center">
+  <div class="wrap">
+    <h2 data-aos="fade-up">Train in the House of Life.</h2>
+    <p class="lead" data-aos="fade-up">Start with a real SQL challenge, or subscribe to The Papyrus for the full track experience.</p>
+    <div class="cta-row center" data-aos="fade-up"><a href="practice.html" class="btn btn-primary">Open the playground →</a><a href="index.html#newsletter" class="btn btn-ghost">Get The Papyrus</a></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.metmuseum.org/" target="_blank" rel="noopener">Met Museum</a></div>
+  </div>
+  <div class="colophon">EgyBI · egybi.com · Phase 0 preview.&nbsp;·&nbsp;<a href="privacy.html" style="color:var(--gold-bright);text-decoration:none;">Privacy &amp; Cookies</a></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
+<script src="assets/egybi.js"></script>
+<script>
+  // ---- knowledge-base sector grid ----
+  var sectors = [
+    ['History & Pharaohs','45 pharaohs, 20 monuments, 7 UNESCO sites, a full era timeline'],
+    ['Economy & Finance','GDP, inflation, the pound, debt, reserves, remittances — as time series'],
+    ['Tourism','Arrivals & revenue 2019–2025, including the ~19M record year'],
+    ['The Suez Canal','Revenue by year, and the 2024 Red Sea collapse'],
+    ['Demographics','All 27 governorates, population 1960–2024, urbanisation'],
+    ['Energy & Environment','Generation, the renewable mix, CO₂, El Dabaa, green-hydrogen deals'],
+    ['Water & Irrigation','The 86% agriculture split, New Delta, desalination, the Aswan Dam'],
+    ['Industry & Companies','Sectors, the largest listed firms, and landmark investment deals'],
+    ['Science & Space','Egypt’s satellites, the space agency, scientists, a health world-first'],
+    ['Art & Cinema','Screen legends, music icons, artists, and the Cairo Film Festival'],
+    ['Sport','AFCON, the CAF record, squash dominance, Olympic medals'],
+    ['Transport','Metro, monorail, the Siemens high-speed rail, ports & airports'],
+  ];
+  var sg=document.getElementById('sectorGrid');
+  if(sg) sg.innerHTML=sectors.map(function(s){ return '<div class="card" data-aos="fade-up"><h3 style="font-size:1rem;">'+s[0]+'</h3><p>'+s[1]+'</p></div>'; }).join('');
+
+  // ---- source pills ----
+  var sources=['World Bank','IMF','Central Bank of Egypt','CAPMAS','FAO AQUASTAT','UNESCO','Ember','IRENA','Our World in Data','Suez Canal Authority','Egypt SIS','Britannica','Met Museum','QS Rankings'];
+  var sp=document.getElementById('sourcePills');
+  if(sp) sp.innerHTML=sources.map(function(s){ return '<span class="pill" style="cursor:default;margin:0 8px 8px 0;display:inline-block;">'+s+'</span>'; }).join('');
+
+  // ---- "discover Egypt" cards ----
+  var discover=[
+    ['The Nile is everything','~97% of Egypt’s fresh water comes from a single river that rises outside its borders — which is why one dam upstream can become a national-security question.'],
+    ['A country on 4% of its land','More than 95% of Egyptians live packed onto the Nile Valley and Delta; the interactive map shows it instantly — a few dark governorates, and vast pale desert.'],
+    ['Older than you think','From Narmer (~3100 BCE) to today is over 5,000 years of continuous recorded history — the pyramids were already 2,000 years old when Cleopatra ruled.'],
+    ['Still a global crossroads','About 12% of world trade passes through the Suez Canal — so a shipping crisis in the Red Sea shows up directly in Egypt’s national accounts.'],
+    ['A cultural superpower','“Hollywood on the Nile” has made 4,000+ films, and Umm Kulthum’s voice defined a century of Arab music — culture is data here too.'],
+    ['Quietly world-beating','Egypt has won the Africa Cup of Nations a record 7 times, dominates world squash, and was the first country cleared by the WHO to eliminate hepatitis C.']
+  ];
+  var dc=document.getElementById('discoverCards');
+  if(dc) dc.innerHTML=discover.map(function(d){ return '<div class="card" data-aos="fade-up"><h3 style="font-size:1rem;">'+d[0]+'</h3><p>'+d[1]+'</p></div>'; }).join('');
+
+  // ---- animated counters (CountUp on scroll) ----
+  (function(){
+    var CU=window.countUp && window.countUp.CountUp, rm=window.EGYBI.reduceMotion;
+    function run(el){
+      var end=parseFloat(el.dataset.count);
+      var opts={ prefix:el.dataset.prefix||'', suffix:el.dataset.suffix||'', decimalPlaces:parseInt(el.dataset.decimals||'0',10), separator:el.dataset.sep?',':'', duration:2.2 };
+      if(!CU||rm){ el.textContent=opts.prefix+end+opts.suffix; return; }
+      new window.countUp.CountUp(el, end, opts).start();
+    }
+    var nums=document.querySelectorAll('.num[data-count]');
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ run(e.target); io.unobserve(e.target); } }); }, {threshold:0.5});
+      nums.forEach(function(n){ io.observe(n); });
+    } else nums.forEach(run);
+  })();
+
+  if(window.AOS) AOS.refresh();
+</script>
+<script>window.EGYBI_ADS = { client: 'ca-pub-XXXXXXXXXXXXXXXX' };</script>
+<script src="assets/ads.js"></script>
+</body>
+</html>

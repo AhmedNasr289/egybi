@@ -1,0 +1,9 @@
+[
+  {"page": 1, "pages": 1, "per_page": 400, "total": 4, "sourceid": "2", "lastupdated": "2025-07-01"},
+  [
+    {"indicator": {"id": "SP.DYN.LE00.IN", "value": "Life expectancy at birth, total (years)"}, "country": {"id": "EG", "value": "Egypt, Arab Rep."}, "countryiso3code": "EGY", "date": "2023", "value": 71.6, "unit": "", "obs_status": "", "decimal": 1},
+    {"indicator": {"id": "SP.DYN.LE00.IN", "value": "Life expectancy at birth, total (years)"}, "country": {"id": "EG", "value": "Egypt, Arab Rep."}, "countryiso3code": "EGY", "date": "2022", "value": 70.6, "unit": "", "obs_status": "", "decimal": 1},
+    {"indicator": {"id": "SP.DYN.LE00.IN", "value": "Life expectancy at birth, total (years)"}, "country": {"id": "EG", "value": "Egypt, Arab Rep."}, "countryiso3code": "EGY", "date": "2021", "value": 70.2, "unit": "", "obs_status": "", "decimal": 1},
+    {"indicator": {"id": "SP.DYN.LE00.IN", "value": "Life expectancy at birth, total (years)"}, "country": {"id": "EG", "value": "Egypt, Arab Rep."}, "countryiso3code": "EGY", "date": "2020", "value": 71.5, "unit": "", "obs_status": "", "decimal": 1}
+  ]
+]

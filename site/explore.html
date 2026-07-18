@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore Egypt Data — EgyBI</title>
+<meta name="description" content="Real, cited Egyptian data charted as live BI dashboards — economy, the Suez Canal, tourism, trade, energy, demographics, and a historical timeline from the Ptolemies to today.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<link href="assets/egybi.css" rel="stylesheet">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="explore.html">Explore</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="practice.html">Practice</a>
+      <a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a>
+      <a class="cta" href="index.html#newsletter">Newsletter</a>
+    </nav>
+  </div>
+</header>
+
+<!-- INTRO -->
+<section class="surface-hero center" style="padding:72px 6vw;">
+  <div class="wrap">
+    <div class="kicker" style="color:var(--gold-bright);">The Egypt data explorer</div>
+    <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">Real Egyptian data, charted.</h1>
+    <p class="lead" style="margin:0 auto;color:#f3ead4;">Every chart below is drawn from EgyBI's knowledge base — the same data that powers the practice challenges. Every figure is cited; where sources genuinely disagree, we say so rather than smoothing it over.</p>
+  </div>
+</section>
+
+<!-- EGYPT MAP (headline feature) -->
+<section class="surface-light" id="map">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Egypt on the map</div>
+    <h2 data-aos="fade-up">All 27 governorates, coloured by the data.</h2>
+    <p class="lead" data-aos="fade-up">A real geographic choropleth — the kind of view Power BI or Tableau would build — filled with cited figures for every one of Egypt's 27 governorates. Switch the metric to see how population concentrates on the Nile while the desert governorates sprawl empty. Hover any governorate for its exact figure.</p>
+    <div class="chart-card" style="margin-top:22px;" data-aos="zoom-in">
+      <div class="map-toolbar" role="group" aria-label="Choose the map metric">
+        <span style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Colour by:</span>
+        <button type="button" class="map-toggle on" data-metric="population">Population</button>
+        <button type="button" class="map-toggle" data-metric="density">Density (per km²)</button>
+        <button type="button" class="map-toggle" data-metric="urban_pct">Urban %</button>
+        <button type="button" class="map-toggle" data-metric="growth">Growth 2017→2023</button>
+        <button type="button" class="map-toggle" data-metric="area_km2">Area (km²)</button>
+      </div>
+      <div class="map-box" id="egyptMap" role="img" aria-label="Choropleth map of Egypt's 27 governorates coloured by the selected metric"></div>
+      <div class="map-legend" id="egyptMapLegend"></div>
+      <p class="chart-cap">Boundaries: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), simplified &amp; bundled offline. Metrics: population, density &amp; area from the EgyBI knowledge base (CAPMAS, Nov 2023); <strong>growth</strong> compares that against the <strong>2017 CAPMAS census</strong> (via citypopulation.de) — see the desert frontier governorates (South Sinai +43%, Matrouh +36%) outpace the crowded Delta; <strong>urban %</strong> is the urban share (Wikipedia governorates table, CAPMAS ~2016 — a proxy, ±1–2 points) and lights up the fully-urban city governorates (Cairo, Port Said, Suez). Colours are <strong>quantile bins</strong> (six equal-count groups) so extreme skew — Cairo's ~10.5M vs South Sinai's ~146k — stays readable. Every figure is queryable on the <a href="practice.html" style="color:var(--gold-ink);">Practice</a> page.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ECONOMY -->
+<section class="surface-light-2">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Economy</div>
+    <h2 data-aos="fade-up">GDP &amp; its composition.</h2>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="chart-card" data-aos="fade-up">
+        <h3>GDP (current US$)</h3>
+        <div class="chart-box"><canvas id="gdpChart"></canvas></div>
+        <p class="chart-cap">Source: World Bank (NY.GDP.MKTP.CD). The 2017 and 2022–24 dips are largely EGP <strong>devaluation</strong> effects on the nominal-USD figure — real GDP kept growing.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>GDP by sector (% of GDP)</h3>
+        <div class="chart-box"><canvas id="gdpCompChart"></canvas></div>
+        <p class="chart-cap">Source: World Bank value-added shares. Shares sum to ~95%; the residual is taxes-less-subsidies (WB methodology). Services dominate, agriculture ~11%.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUEZ (dark, dramatic) -->
+<section class="surface-dark">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">A uniquely Egyptian data point</div>
+    <h2 data-aos="fade-up">The Suez Canal — and its 2024 collapse.</h2>
+    <p class="lead" data-aos="fade-up">One of the world's most important shipping arteries and Egypt's top hard-currency earner — until Red Sea shipping attacks from late 2023 cut traffic roughly in half.</p>
+    <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
+      <div class="chart-box"><canvas id="suezChart"></canvas></div>
+      <p class="chart-cap" style="color:var(--on-dark-soft);">Source: Suez Canal Authority / news reporting. Revenue fell <strong>61%</strong> to ~$3.99bn in 2024 (the red bar) as container traffic dropped ~90%. 2022 is omitted here to keep the calendar-year comparison clean; 2025 was recovering.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TRADE + TOURISM -->
+<section class="surface-light">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Trade &amp; tourism</div>
+    <h2 data-aos="fade-up">What Egypt sells, and who visits.</h2>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="chart-card" data-aos="fade-up">
+        <h3>Top export categories (2023)</h3>
+        <div class="chart-box"><canvas id="exportsChart"></canvas></div>
+        <p class="chart-cap">Source: Lloyds Bank / Coface trade profile. Petroleum &amp; electricity lead at ~33% of exports; garments, fertilizers, plastics, and gas follow.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>Tourism — arrivals &amp; revenue</h3>
+        <div class="chart-box"><canvas id="tourismChart"></canvas></div>
+        <p class="chart-cap">Source: Ministry of Tourism &amp; Antiquities, CBE, UNWTO. 2025's ~19M is officially confirmed (SIS/Minister). 2021 revenue is blank — sources disagree.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENRICHED DATA MOUNT (filled by data enrichment: demographics, prices, energy) -->
+<section class="surface-dark" id="more-data">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">More of Egypt, in data</div>
+    <h2 data-aos="fade-up">Demographics, prices &amp; energy.</h2>
+    <div class="grid grid-2" id="enriched-charts" style="margin-top:26px;">
+      <div class="chart-card" data-aos="fade-up">
+        <h3>Population growth (millions)</h3>
+        <div class="chart-box"><canvas id="popChart"></canvas></div>
+        <p class="chart-cap">Source: World Bank (SP.POP.TOTL). Egypt quadrupled from ~27M (1960) to ~117M (2024). CAPMAS's domestic count (~107M) is lower by methodology.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>Electricity generation mix (2023)</h3>
+        <div class="chart-box"><canvas id="energyChart"></canvas></div>
+        <p class="chart-cap">Source: Ember. The grid is ~88% fossil (mostly natural gas); wind + solar reached ~5% in 2023, up from ~1% in 2015.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" style="grid-column:1/-1;">
+        <h3>Inflation &amp; the Egyptian pound (the FX crisis)</h3>
+        <div class="chart-box"><canvas id="pricesChart"></canvas></div>
+        <p class="chart-cap">Source: World Bank. The 2017 and 2023 inflation spikes track the 2016 float and the 2022–24 devaluations, as the pound fell from ~10 to ~45+ per dollar. A textbook example of handling volatile, event-driven data.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" style="grid-column:1/-1;">
+        <h3>Largest governorates by population</h3>
+        <div class="chart-box"><canvas id="govChart"></canvas></div>
+        <p class="chart-cap">Source: CAPMAS (Nov 2023). Top 8 of 27 governorates. Over 95% of Egyptians live on ~4% of the land — the Nile Valley and Delta.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIGITAL ECONOMY -->
+<section class="surface-light-2">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Digital economy</div>
+    <h2 data-aos="fade-up">Egypt's tech rise.</h2>
+    <p class="lead" data-aos="fade-up">The ICT sector nearly doubled its share of GDP — from <strong style="color:var(--blue);">3.2%</strong> (2018) to <strong style="color:var(--blue);">5.8%</strong> (2024) — and was the country's fastest-growing sector for roughly seven years. A generation of Egyptian tech companies grew with it.</p>
+    <div class="grid grid-3" id="techCompanies" style="margin-top:26px;"></div>
+    <p class="chart-cap" data-aos="fade-up">Sources: Egypt's Ministry of Communications &amp; IT (MCIT); company reporting. Internet penetration ~73% (World Bank, 2023); ~82M users (industry estimate).</p>
+  </div>
+</section>
+
+<!-- BUSINESS & WEALTH (v8) -->
+<section class="surface-light" id="business">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Business &amp; investment</div>
+    <h2 data-aos="fade-up">Who owns corporate Egypt.</h2>
+    <p class="lead" data-aos="fade-up">A handful of family groups anchor Egypt's private sector — the Sawiris family in construction, telecom and fertilizers; the Mansours in automotive and retail distribution. Six Egyptians sit on the Forbes real-time billionaires list, led by <strong style="color:var(--gold-ink);">Nassef Sawiris</strong>, the country's richest person.</p>
+    <div class="chart-card" data-aos="fade-up" style="margin-top:26px;">
+      <h3>Egypt's billionaires by net worth (US$ bn)</h3>
+      <div class="chart-box"><canvas id="businessmenChart"></canvas></div>
+      <p class="chart-cap">Source: Forbes real-time profiles (2026). Net worth is a <strong>point-in-time estimate</strong> and moves with markets and currency. Only Forbes-listed billionaires are shown; stake-value figures for Ahmed Ezz and Safwan Thabet are tracked separately in the data and flagged as not full net worth.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONNECTED EGYPT (v6: telecom, trade, social) -->
+<section class="surface-light-2" id="connected">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Connected Egypt</div>
+    <h2 data-aos="fade-up">Online, trading, and scrolling.</h2>
+    <p class="lead" data-aos="fade-up">In a decade Egypt went from roughly a third online to three-quarters — reshaping how ~106 million people bank, shop, watch and argue. Here's the connectivity climb, who Egypt trades with, and where its attention actually goes.</p>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="chart-card" data-aos="fade-up">
+        <h3>The connectivity climb</h3>
+        <div class="chart-box"><canvas id="internetChart"></canvas></div>
+        <p class="chart-cap">Source: World Bank / ITU. Internet use went from <strong>~38%</strong> (2015) to <strong>~75%</strong> (2024). Read the <strong>2019 jump with care</strong> — it reflects a survey/methodology break, not one year of real doubling. Mobile subscriptions per 100 dipped in 2018 after a SIM re-registration clean-up.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>Where attention goes (2025)</h3>
+        <div class="chart-box"><canvas id="socialChart"></canvas></div>
+        <p class="chart-cap">Source: DataReportal, Digital 2025 Egypt. Ranked by <strong>advertising reach</strong>, not unique people — so totals can exceed the adult population and should be read as reach, not headcount. YouTube, Facebook and TikTok lead by a wide margin.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" style="grid-column:1/-1;">
+        <h3>Who Egypt trades with (2023)</h3>
+        <div class="chart-box"><canvas id="tradeChart"></canvas></div>
+        <p class="chart-cap">Source: OEC / UN Comtrade mirror (2023), US$ billions. <strong>Imports concentrate</strong> — China alone is ~15.5% — while <strong>exports spread out</strong> across Turkiye, Italy, the Gulf and the US. Figures differ modestly from CAPMAS national statistics.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEEDING EGYPT (v7: agriculture) -->
+<section class="surface-light" id="agriculture">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Feeding Egypt</div>
+    <h2 data-aos="fade-up">Growing a lot — and still importing the most.</h2>
+    <p class="lead" data-aos="fade-up">Egypt is a serious farming nation: a top-5 global tomato grower, the world's top orange exporter, and producer of ~9 million tonnes of wheat a year. Yet with ~106 million people to feed, it is also <strong style="color:var(--gold-ink);">the world's largest wheat importer</strong> — the gap between what the Nile valley can grow and what the country eats.</p>
+    <div class="chart-card" data-aos="fade-up" style="margin-top:26px;">
+      <h3>Staple crop production (million tonnes)</h3>
+      <div class="chart-box"><canvas id="cropsChart"></canvas></div>
+      <p class="chart-cap">Source: FAOSTAT (official, 2015–2023). Wheat holds near ~9M tonnes; <strong>rice collapsed in 2018</strong> when the government cut paddy acreage to save Nile water, then rebounded strongly by 2023. Egypt still imports ~13M tonnes of wheat a year on top of this — domestic output can't close the gap.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="surface-light-2">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Through the ages</div>
+    <h2 data-aos="fade-up">Egypt from the Ptolemies to today.</h2>
+    <p class="lead" data-aos="fade-up">A sourced timeline of eras and turning points — the same data behind the platform's history challenges.</p>
+    <div class="timeline" style="margin-top:10px;" id="timeline"></div>
+  </div>
+</section>
+
+<!-- MEGAPROJECTS -->
+<section class="surface-dark">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Modern Egypt</div>
+    <h2 data-aos="fade-up">National megaprojects.</h2>
+    <div class="grid grid-3" id="megaprojects" style="margin-top:26px;"></div>
+    <p class="chart-cap" style="color:var(--on-dark-soft);" data-aos="fade-up">2026 status, honestly flagged: the <strong>Grand Egyptian Museum</strong> was fully inaugurated 1 Nov 2025; the <strong>Cairo Monorail</strong> NAC line became operational May 2026 (Africa's longest); the <strong>New Administrative Capital</strong> is occupied but sparsely (~30,000 residents vs a 6.5–7M long-term target); <strong>High-Speed Rail</strong> and <strong>El Dabaa nuclear</strong> remain under construction with no section live yet. Targets are labelled as targets in the data. Sources: SIS, Wikipedia, World Nuclear News, France 24.</p>
+  </div>
+</section>
+
+<!-- LOGISTICS & TRANSPORT (v8) -->
+<section class="surface-light" id="logistics">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Logistics &amp; transport</div>
+    <h2 data-aos="fade-up">Building a trade hub on two seas.</h2>
+    <p class="lead" data-aos="fade-up">Egypt sits on the Suez Canal and wants to turn that geography into a logistics industry: dry ports, the SCZONE's six ports, the deepest man-made basin in the world at Ain Sokhna, and a rail-freight upgrade. Its World Bank Logistics Performance score has climbed to <strong style="color:var(--blue);">3.1</strong> — but the 2030 capacity ambitions are still targets.</p>
+    <div class="chart-card" data-aos="fade-up" style="margin-top:26px;">
+      <h3>Capacity today vs the 2030 target</h3>
+      <div class="chart-box"><canvas id="logisticsChart"></canvas></div>
+      <p class="chart-cap">Sources: Egypt's State Information Service (SIS) national logistics strategy; World Bank LPI (2023). The 2030 figures are <strong>official targets, not achievements</strong> — seaport cargo ~185→400 Mt/yr and container handling 12→40M TEU/yr. Read the pairs as ambition against a current baseline.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ART & CINEMA -->
+<section class="surface-light-2" id="cinema">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Art &amp; cinema</div>
+    <h2 data-aos="fade-up">Hollywood on the Nile.</h2>
+    <p class="lead" data-aos="fade-up">Egypt runs the oldest, largest and most influential film industry in the Arab world. From Studio Misr (1935) and the Golden Age to a 2025 box-office recovery, it has produced the majority of all Arab cinema — and a century of singers and artists who defined the region's culture.</p>
+    <div class="stat-grid" style="margin-top:36px;">
+      <div class="stat" data-aos="fade-up"><div class="num" data-count="4000" data-suffix="+" data-sep="1">0</div><div class="label">Feature films produced</div><div class="cap">Most of all Arab output (Wikipedia)</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="1976">0</div><div class="label">Cairo Film Festival founded</div><div class="cap">Africa's only FIAPF Category-A festival</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="70" data-suffix="%">0</div><div class="label">Egyptian share of box office</div><div class="cap">2025; 8 of the top 10 (Screen Daily)</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="1.8" data-prefix="EGP " data-suffix="bn" data-decimals="1">0</div><div class="label">Box office (2025, projected)</div><div class="cap">~14.3M admissions, pre-COVID levels</div></div>
+    </div>
+    <div class="grid grid-3" id="cultureFigures" style="margin-top:30px;"></div>
+    <p class="chart-cap" data-aos="fade-up">Sources: Wikipedia (Cinema of Egypt, Studio Misr), Ahram Online, Britannica, Screen Daily, Variety, Guinness World Records. Disputed birth/death dates (Umm Kulthum, Soad Hosny) are flagged in the underlying data.</p>
+  </div>
+</section>
+
+<!-- SPORTS -->
+<section class="surface-dark" id="sports">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Sports</div>
+    <h2 data-aos="fade-up">The Pharaohs — and a squash superpower.</h2>
+    <p class="lead" data-aos="fade-up">Egypt holds a record 7 Africa Cup of Nations titles, Al Ahly a record 12 CAF Champions Leagues, and the country utterly dominates world squash. It was the first African and Arab nation to compete at the Olympics (Stockholm 1912).</p>
+    <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
+      <h3 style="color:#f3ead4;">Title tallies across competitions</h3>
+      <div class="chart-box"><canvas id="sportsChart"></canvas></div>
+      <p class="chart-cap" style="color:var(--on-dark-soft);">Sources: CAF, FIFA, PSA, Egyptian Olympic Committee / SIS. Different competitions — compare within a bar's category, not across. Olympic figure is total medals (38); the rest are titles.</p>
+    </div>
+    <div class="grid grid-3" id="athletesGrid" style="margin-top:30px;"></div>
+
+    <!-- Football depth (v8) -->
+    <div class="grid grid-2" style="margin-top:30px;">
+      <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
+        <h3 style="color:#f3ead4;">Egyptian Premier League titles (top clubs)</h3>
+        <div class="chart-box"><canvas id="leagueChart"></canvas></div>
+        <p class="chart-cap" style="color:var(--on-dark-soft);">Source: Wikipedia (Egyptian Premier League, since 1948). Only seven clubs have ever won it; <strong>Al Ahly</strong> holds ~68% of all titles. Cairo's Ahly–Zamalek duopoly is among the most lopsided in world football.</p>
+      </div>
+      <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up" data-aos-delay="100">
+        <h3 style="color:#f3ead4;">Mohamed Salah, for Egypt</h3>
+        <div class="stat-grid" style="margin-top:8px;">
+          <div class="stat"><div class="num" data-count="121">0</div><div class="label" style="color:#f3ead4;">Caps</div><div class="cap" style="color:var(--on-dark-soft);">All-time appearances</div></div>
+          <div class="stat"><div class="num" data-count="68">0</div><div class="label" style="color:#f3ead4;">Goals</div><div class="cap" style="color:var(--on-dark-soft);">Egypt's all-time top scorer</div></div>
+          <div class="stat"><div class="num" data-count="7">0</div><div class="label" style="color:#f3ead4;">AFCON titles</div><div class="cap" style="color:var(--on-dark-soft);">A record for any nation</div></div>
+          <div class="stat"><div class="num" data-count="2026">0</div><div class="label" style="color:#f3ead4;">World Cup</div><div class="cap" style="color:var(--on-dark-soft);">Qualified undefeated (CAF Group A)</div></div>
+        </div>
+        <p class="chart-cap" style="color:var(--on-dark-soft);">Sources: Wikipedia, FIFA, Premier League. Caps/goals are as of July 2026 and grow with his career. Egypt finished 4th at AFCON 2025 in Morocco.</p>
+      </div>
+    </div>
+
+    <!-- Handball (v8) -->
+    <div class="chart-card" style="margin-top:24px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
+      <h3 style="color:#f3ead4;">Handball — Africa's dominant side</h3>
+      <p style="color:var(--on-dark);margin:6px 0 0;line-height:1.7;">Egypt's men are the strongest handball nation outside Europe: a record-tying <strong style="color:var(--gold-bright);">10 African Championships</strong> (beating Tunisia 37–24 in the 2026 final in Rwanda), a <strong style="color:var(--gold-bright);">4th place</strong> at both the 2001 World Championship and the Tokyo 2020 Olympics — the best-ever finishes by a non-European team — and back-to-back youth world titles (U-21 in 1993, U-19 in 2019, the first non-European winners).</p>
+      <p class="chart-cap" style="color:var(--on-dark-soft);">Source: Wikipedia (Egypt men's national handball team); Egypt Independent. Egypt hosted the first 32-team World Championship in 2021 (finished 7th).</p>
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRY & INVESTMENT -->
+<section class="surface-light" id="industry">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Industry, business &amp; investment</div>
+    <h2 data-aos="fade-up">What Egypt builds — and who's investing.</h2>
+    <p class="lead" data-aos="fade-up">Manufacturing is ~32% of GDP, led by petroleum, steel, textiles and the largest pharmaceutical industry in the MENA region. In 2024 the UAE's <strong style="color:var(--gold-ink);">$35bn Ras El Hekma</strong> deal became the largest single foreign investment in Egypt's history.</p>
+    <div class="chart-card" data-aos="fade-up" style="margin-top:26px;">
+      <h3>Landmark investment &amp; IMF deals (US$ billion)</h3>
+      <div class="chart-box"><canvas id="investChart"></canvas></div>
+      <p class="chart-cap">Sources: Bloomberg, IMF, Arab News, Xinhua. SCZONE cumulative totals vary by window ($8.3–11.6bn); the 2024 IMF $8bn is the augmented total, not new money. Both are flagged in the data.</p>
+    </div>
+    <div class="grid grid-3" id="companiesGrid" style="margin-top:30px;"></div>
+  </div>
+</section>
+
+<!-- SCIENCE & SPACE -->
+<section class="surface-dark" id="science">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Science, space &amp; research</div>
+    <h2 data-aos="fade-up">Satellites, reactors &amp; a world-first in health.</h2>
+    <p class="lead" data-aos="fade-up">Egypt has launched satellites since 2007, hosts the African Space Agency, is building its first nuclear plant (El Dabaa, 4.8 GW), and in 2023 became the <strong style="color:var(--gold-bright);">first country worldwide</strong> awarded WHO "gold tier" on the path to eliminating hepatitis C.</p>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
+        <h3 style="color:#f3ead4;">Egypt's satellites launched (cumulative)</h3>
+        <div class="chart-box"><canvas id="satChart"></canvas></div>
+        <p class="chart-cap" style="color:var(--on-dark-soft);">Source: Space in Africa, SIS, Wikipedia. Earth-observation and communications satellites, 2007–2024, with partners incl. Russia, China, France and Germany.</p>
+      </div>
+      <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up" data-aos-delay="100">
+        <h3 style="color:#f3ead4;">Hepatitis C prevalence collapse</h3>
+        <div class="chart-box"><canvas id="hcvChart"></canvas></div>
+        <p class="chart-cap" style="color:var(--on-dark-soft);">Source: WHO. The "100 Million Seha" campaign cut prevalence from ~10% (2016) to 0.38% (2023) using locally made antivirals — new infections down ~97% in eight years.</p>
+      </div>
+    </div>
+    <div class="grid grid-3" id="scientistsGrid" style="margin-top:30px;"></div>
+  </div>
+</section>
+
+<!-- WATER & IRRIGATION -->
+<section class="surface-light" id="water">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Water &amp; irrigation</div>
+    <h2 data-aos="fade-up">A desert nation's water, engineered.</h2>
+    <p class="lead" data-aos="fade-up">Egypt lives well below the water-scarcity line and depends on the Nile for ~97% of its renewable water — so it re-engineers every drop: record-breaking treatment plants, vast land-reclamation, canal lining and a national desalination push.</p>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="chart-card" data-aos="fade-up">
+        <h3>How Egypt uses its water</h3>
+        <div class="chart-box"><canvas id="waterChart"></canvas></div>
+        <p class="chart-cap">Source: FAO AQUASTAT. Agriculture takes ~86%. The split rests on a 2010 baseline — the proportion is stable and robust, the absolute volume is dated (flagged in the data).</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>Bahr El-Baqar — a Guinness record</h3>
+        <div class="chart-box" style="display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:10px;">
+          <div class="num" data-count="5.6" data-suffix="M" data-decimals="1" style="font-size:clamp(2.4rem,7vw,4rem);color:var(--blue);line-height:1;">0</div>
+          <div style="font-weight:600;margin-top:6px;">m³ of drainage water treated per day</div>
+          <p style="color:var(--ink-soft);font-size:0.9rem;max-width:34ch;margin:12px auto 0;">The world's largest water-treatment plant — one of three Guinness World Records — reclaiming 456,000 feddans of Sinai farmland.</p>
+        </div>
+        <p class="chart-cap">Source: Egypt SIS / ACCIONA. Distinct from the New Delta / El-Hammam plant (7.5M m³/day, agricultural drainage).</p>
+      </div>
+    </div>
+    <div class="grid grid-3" id="waterGrid" style="margin-top:30px;"></div>
+  </div>
+</section>
+
+<!-- TRANSPORT & INFRASTRUCTURE -->
+<section class="surface-dark" id="transport">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Transport &amp; infrastructure</div>
+    <h2 data-aos="fade-up">A country laying 2,000 km of high-speed rail.</h2>
+    <p class="lead" data-aos="fade-up">Egypt is building one of the world's largest new transport networks at once — a three-line Siemens high-speed railway, two monorails, new metro lines and an LRT. Most of it is still under construction, so the data flags what's running today versus what's promised.</p>
+    <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
+      <h3 style="color:#f3ead4;">Major rail projects by length (km)</h3>
+      <div class="chart-box"><canvas id="transportChart"></canvas></div>
+      <p class="chart-cap" style="color:var(--on-dark-soft);">Sources: Siemens Mobility, Alstom, Vinci, National Authority for Tunnels. The 2,000 km high-speed network and 6th-of-October monorail are under construction; costs are approximate.</p>
+    </div>
+    <div class="grid grid-3" id="transportGrid" style="margin-top:30px;"></div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section class="surface-light" id="education">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Education &amp; knowledge</div>
+    <h2 data-aos="fade-up">20 universities on the world stage.</h2>
+    <p class="lead" data-aos="fade-up">Egypt placed <strong style="color:var(--gold-ink);">20 universities</strong> in the QS World University Rankings 2026, up from 15 the year before — led by Cairo University (347th) and the American University in Cairo (381st). Al-Azhar traces its teaching to 970 CE, making it one of the oldest universities on Earth.</p>
+    <div class="grid grid-3" id="universityGrid" style="margin-top:26px;"></div>
+    <p class="chart-cap" data-aos="fade-up">Source: QS World University Rankings 2026. Bands (e.g. 1201–1400) are QS's own grouping for lower ranks. Enrollment figures are approximate.</p>
+  </div>
+</section>
+
+<!-- UNESCO HERITAGE -->
+<section class="surface-dark" id="heritage">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">World heritage</div>
+    <h2 data-aos="fade-up">Seven UNESCO World Heritage Sites.</h2>
+    <p class="lead" data-aos="fade-up">Six cultural, one natural — from the Giza pyramid fields to the Whale Valley fossils that record how whales left the land. Six were inscribed in a single year, 1979.</p>
+    <div class="grid grid-3" id="unescoGrid" style="margin-top:26px;"></div>
+  </div>
+</section>
+
+<!-- DEFENCE (v8 — public figures & rankings only) -->
+<section class="surface-light" id="defence">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Defence, in figures</div>
+    <h2 data-aos="fade-up">A regional heavyweight, by the public numbers.</h2>
+    <p class="lead" data-aos="fade-up">On open, published indices Egypt ranks among the world's stronger militaries — <strong style="color:var(--gold-ink);">1st in Africa</strong> and 19th of 145 globally on Global Firepower's 2026 index — and it is one of the world's largest arms importers. This section is <strong>public rankings and figures only</strong>: no operational detail, and every number is an estimate from a cited open source.</p>
+    <div class="stat-grid" style="margin-top:32px;">
+      <div class="stat" data-aos="fade-up"><div class="num" data-count="19">0</div><div class="label">Global Firepower rank</div><div class="cap">of 145 (2026); #1 in Africa</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="438500" data-sep="1">0</div><div class="label">Active personnel</div><div class="cap">GFP 2026 estimate</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="8">0</div><div class="label">World arms-importer rank</div><div class="cap">SIPRI 2020–24 (3.3% of global)</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="1088" data-sep="1">0</div><div class="label">Total aircraft</div><div class="cap">GFP reported stock</div></div>
+    </div>
+    <div class="chart-card" data-aos="fade-up" style="margin-top:30px;">
+      <h3>Where Egypt's arms imports come from (2020–2024)</h3>
+      <div class="chart-box"><canvas id="armsChart"></canvas></div>
+      <p class="chart-cap">Source: SIPRI Arms Transfers Database (2020–2024 window), shares of Egypt's total arms imports. The supplier mix is now <strong>European-led</strong> — Germany, Italy and France — not US-led. Figures are SIPRI trend-indicator shares, not dollar values, and the volume of imports fell ~44% versus 2015–19.</p>
+    </div>
+  </div>
+</section>
+
+<div class="ad-slot" data-ad-slot="1000000001" hidden><span class="ad-label">Advertisement</span></div>
+
+<!-- SOURCES -->
+<section class="surface-light-2 center">
+  <div class="wrap">
+    <h2 data-aos="fade-up">Every number here is real and cited.</h2>
+    <p class="lead" data-aos="fade-up">Primary sources include the World Bank, the Central Bank of Egypt, CAPMAS, the Suez Canal Authority, Egypt's State Information Service, UNESCO, and the Met Museum. Disputed and approximate figures are flagged in the data itself — accuracy over polish.</p>
+    <div class="cta-row center" data-aos="fade-up"><a href="practice.html" class="btn btn-primary">Query this data yourself →</a></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data for real data-engineering practice.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://tradingeconomics.com/egypt/indicators" target="_blank" rel="noopener">Trading Economics</a></div>
+  </div>
+  <div class="colophon">EgyBI · egybi.com · Phase 0 preview. Every figure is real and cited; disputed figures are flagged.&nbsp;·&nbsp;<a href="privacy.html" style="color:var(--gold-bright);text-decoration:none;">Privacy &amp; Cookies</a></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="assets/egybi.js"></script>
+<script src="assets/egypt-geo.js"></script>
+<script src="assets/egypt-map.js"></script>
+<script>
+  var rm = window.EGYBI.reduceMotion;
+  var anim = rm ? false : { duration: 1000 };
+  Chart.defaults.font.family = "'Inter', sans-serif";
+
+  // GDP
+  new Chart(document.getElementById('gdpChart'), {
+    type:'line',
+    data:{ labels:[2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+      datasets:[{ label:'GDP (US$ bn)', data:[305.60,329.37,332.44,248.36,262.59,318.68,383.82,424.67,476.75,395.93,389.06], borderColor:'#17408B', backgroundColor:'rgba(23,64,139,0.12)', fill:true, tension:0.3, pointRadius:3, pointBackgroundColor:'#17408B' }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ ticks:{ callback:function(v){return '$'+v+'B';} } } } }
+  });
+
+  // GDP composition (stacked area, 2018/2020/2023)
+  new Chart(document.getElementById('gdpCompChart'), {
+    type:'line',
+    data:{ labels:[2018,2020,2023], datasets:[
+      { label:'Agriculture', data:[10.83,11.17,10.60], borderColor:'#1F7A5C', backgroundColor:'rgba(31,122,92,0.5)', fill:true, tension:0.3 },
+      { label:'Industry', data:[35.33,32.37,32.73], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.5)', fill:true, tension:0.3 },
+      { label:'Services', data:[51.64,52.03,51.65], borderColor:'#17408B', backgroundColor:'rgba(23,64,139,0.5)', fill:true, tension:0.3 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{position:'top'}}, scales:{ y:{ stacked:true, ticks:{ callback:function(v){return v+'%';} } } } }
+  });
+
+  // Suez (2024 collapse highlighted red)
+  new Chart(document.getElementById('suezChart'), {
+    type:'bar',
+    data:{ labels:['2019','2020','2021','2023','2024'],
+      datasets:[{ label:'Revenue (US$ bn)', data:[5.80,5.61,6.30,10.25,3.99], backgroundColor:['#C9A227','#C9A227','#C9A227','#C9A227','#B7410E'], borderRadius:5 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{ color:'#b7ac8e', callback:function(v){return '$'+v+'B';} }, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#b7ac8e'}, grid:{display:false} } } }
+  });
+
+  // Exports doughnut
+  new Chart(document.getElementById('exportsChart'), {
+    type:'doughnut',
+    data:{ labels:['Petroleum & electricity','Ready-made garments','Urea fertilizers','Plastics','Natural gas'],
+      datasets:[{ data:[32.9,5.4,4.9,4.7,4.6], backgroundColor:['#17408B','#C9A227','#1F7A5C','#B7410E','#26619C'] }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{position:'right'}, tooltip:{callbacks:{label:function(c){return c.label+': '+c.parsed+'% of exports';}}}} }
+  });
+
+  // Tourism combo
+  new Chart(document.getElementById('tourismChart'), {
+    data:{ labels:[2019,2020,2021,2022,2023,2024,2025], datasets:[
+      { type:'bar', label:'Arrivals (M)', data:[null,null,null,null,14.9,15.7,19.0], backgroundColor:'rgba(23,64,139,0.75)', yAxisID:'yA', borderRadius:4 },
+      { type:'line', label:'Revenue ($B)', data:[13.03,4.40,null,10.70,13.6,15.3,16.7], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.15)', yAxisID:'yR', tension:0.3, spanGaps:false, pointRadius:4, pointBackgroundColor:'#C9A227', fill:true }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, interaction:{intersect:false,mode:'index'}, plugins:{legend:{position:'top'}}, scales:{ yA:{position:'left',beginAtZero:true,grid:{display:false}}, yR:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false}} } }
+  });
+
+  // Timeline (real eras + selected events)
+  var eras = [
+    ['305 BCE','Ptolemaic Period','Greek Macedonian dynasty founded by Ptolemy I; ended with Cleopatra VII and Roman annexation.'],
+    ['30 BCE','Roman & Byzantine Egypt','A Roman then Byzantine province; the rise of Coptic Christianity and the Chalcedon schism (451).'],
+    ['639 CE','Early Islamic Egypt','The Arab conquest; Umayyad, Abbasid, and Tulunid rule from Fustat.'],
+    ['969 CE','Fatimid, Ayyubid & Mamluk','Founding of Cairo (969), Saladin’s Ayyubids, and the Mamluk Sultanate.'],
+    ['1517','Ottoman Egypt','An Ottoman province after Selim I; Muhammad Ali’s modernizing dynasty from 1805.'],
+    ['1882','Khedivate & British Occupation','British occupation, the 1914 protectorate, and 1922 nominal independence.'],
+    ['1952','Nasser Era','The Free Officers revolution, the Suez Crisis (1956), and the Aswan High Dam.'],
+    ['1970','Sadat Era','The 1973 October War, the Camp David Accords, and Egypt–Israel peace (1979).'],
+    ['1981','Mubarak Era','A 29-year presidency, ended by the January 25, 2011 revolution.'],
+    ['2011','Post-2011 / El-Sisi Era','The 2011 revolution, the 2013 transition, and megaprojects like the New Suez Canal and the Grand Egyptian Museum (2025).']
+  ];
+  document.getElementById('timeline').innerHTML = eras.map(function(e){
+    return '<div class="tl-item" data-aos="fade-up"><div class="tl-year">'+e[0]+'</div><h4>'+e[1]+'</h4><p>'+e[2]+'</p></div>';
+  }).join('');
+
+  // Megaprojects
+  var mega = [
+    ['New Administrative Capital','Urban','~$45–60bn (estimates vary)','~700 km², planned for 6.5–7M residents; seat of government since 2024.'],
+    ['Grand Egyptian Museum','Culture','~$1bn','Opened Nov 2025; ~57,000 artifacts incl. the complete Tutankhamun collection. World’s largest single-civilization museum.'],
+    ['New Suez Canal','Infrastructure','~$8bn','A 72 km channel added in a one-year build (2015), enabling two-way transit.'],
+    ['Benban Solar Park','Energy','n/a','~1.8 GW; one of the world’s largest solar parks (2025 coverage: 3rd-largest).'],
+    ['Aswan High Dam','Infrastructure','Soviet-financed','Built 1960–1970; created Lake Nasser; a symbol of the Nasser era.']
+  ];
+  document.getElementById('megaprojects').innerHTML = mega.map(function(m){
+    return '<div class="card" data-aos="fade-up"><span class="tag">'+m[1]+'</span><h3>'+m[0]+'</h3><p style="margin-bottom:8px;"><strong style="color:var(--gold-bright);">'+m[2]+'</strong></p><p>'+m[3]+'</p></div>';
+  }).join('');
+
+  // Population (line)
+  new Chart(document.getElementById('popChart'), {
+    type:'line',
+    data:{ labels:[1960,1970,1980,1990,2000,2010,2020,2024],
+      datasets:[{ label:'Population (millions)', data:[26.9,34.6,44.0,58.4,73.1,89.2,109.3,116.5], borderColor:'#17408B', backgroundColor:'rgba(23,64,139,0.12)', fill:true, tension:0.3, pointRadius:3, pointBackgroundColor:'#17408B' }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{ callback:function(v){return v+'M';} } } } }
+  });
+
+  // Energy mix (doughnut)
+  new Chart(document.getElementById('energyChart'), {
+    type:'doughnut',
+    data:{ labels:['Natural gas','Hydropower','Wind & solar','Oil & other fossil'],
+      datasets:[{ data:[84,7,5,4], backgroundColor:['#17408B','#26619C','#1F7A5C','#B7410E'] }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{position:'right'}, tooltip:{callbacks:{label:function(c){return c.label+': '+c.parsed+'%';}}}} }
+  });
+
+  // Governorates (horizontal bar)
+  new Chart(document.getElementById('govChart'), {
+    type:'bar',
+    data:{ labels:['Cairo','Giza','Sharqia','Dakahlia','Beheira','Minya','Qalyubia','Sohag'],
+      datasets:[{ label:'Population (millions)', data:[10.46,9.53,8.03,7.06,6.94,6.33,6.14,5.71], backgroundColor:'#C9A227', borderRadius:4 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ x:{ beginAtZero:true, ticks:{ callback:function(v){return v+'M';} } } } }
+  });
+
+  // Prices: inflation (bars, %) + EGP/USD (line, right axis)
+  new Chart(document.getElementById('pricesChart'), {
+    data:{ labels:[2010,2013,2016,2017,2019,2021,2022,2023,2024], datasets:[
+      { type:'bar', label:'Inflation (%)', data:[11.27,9.47,13.81,29.51,9.15,5.21,13.90,33.88,28.27], backgroundColor:'rgba(183,65,14,0.75)', yAxisID:'yI', borderRadius:4 },
+      { type:'line', label:'EGP per USD', data:[5.62,6.87,10.03,17.78,16.77,15.64,19.16,30.63,45.30], borderColor:'#17408B', backgroundColor:'rgba(23,64,139,0.12)', yAxisID:'yX', tension:0.3, pointRadius:4, pointBackgroundColor:'#17408B', fill:true }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, interaction:{intersect:false,mode:'index'}, plugins:{legend:{position:'top'}}, scales:{ yI:{position:'left',beginAtZero:true,title:{display:true,text:'Inflation %'},grid:{display:false}}, yX:{position:'right',beginAtZero:true,title:{display:true,text:'EGP/USD'},grid:{drawOnChartArea:false}} } }
+  });
+
+  // Tech companies
+  var tech = [
+    ['Fawry','Payments','2008','Egypt’s first tech unicorn (2020).'],
+    ['InstaPay','Payments','2022','The CBE instant-payment network; ~$53bn/yr by 2024.'],
+    ['MNT-Halan','Fintech','2018','Egypt’s first fintech unicorn (2023); ~$1.4bn later.'],
+    ['Swvl','Mobility','2017','Bus-booking app; NASDAQ-listed via SPAC (2022).'],
+    ['Vezeeta','Healthtech','2012','Doctor-appointment booking platform.']
+  ];
+  var tc=document.getElementById('techCompanies');
+  if (tc) tc.innerHTML = tech.map(function(t){ return '<div class="card" data-aos="fade-up"><span class="tag">'+t[1]+'</span><h3>'+t[0]+' <span class="card-meta">· '+t[2]+'</span></h3><p>'+t[3]+'</p></div>'; }).join('');
+
+  // ---- v4 sectors: shared card renderer ----
+  function fillCards(id, items){
+    var el=document.getElementById(id); if(!el) return;
+    el.innerHTML = items.map(function(it){
+      var meta = it[2] ? ' <span class="card-meta">· '+it[2]+'</span>' : '';
+      return '<div class="card" data-aos="fade-up"><span class="tag">'+it[1]+'</span><h3>'+it[0]+meta+'</h3><p>'+it[3]+'</p></div>';
+    }).join('');
+  }
+
+  // Art & cinema — screen legends, music icons, artists
+  fillCards('cultureFigures', [
+    ['Youssef Chahine','Cinema · director','1926–2008','Alexandria… Why? (1979) — Berlin Silver Bear and a Cannes 50th-anniversary award.'],
+    ['Faten Hamama','Cinema · actress','1931–2015','Leading lady of the Golden Age; The Nightingale’s Prayer (1959).'],
+    ['Omar Sharif','Cinema · actor','1932–2015','Egypt’s global star — Lawrence of Arabia (1962), Doctor Zhivago (1965).'],
+    ['Umm Kulthum','Music · singer','c.1898–1975','“Star of the East” — the defining voice of 20th-century Arab music.'],
+    ['Amr Diab','Music · singer','b.1961','Best-selling Arab artist; a Guinness record for World Music Awards.'],
+    ['Mahmoud Mokhtar','Art · sculptor','1891–1934','“Father” of modern Egyptian sculpture; Nahdet Misr (1928).']
+  ]);
+
+  // Sports — athletes
+  fillCards('athletesGrid', [
+    ['Mohamed Salah','Football','b.1992','All-time top scorer in African World Cup qualifying (20 goals); led Egypt to the 2026 World Cup.'],
+    ['Nour El Sherbini','Squash','b.1995','World No. 1 with 8 World Championship titles — equalling Nicol David’s record.'],
+    ['Mostafa Asal','Squash','b.2001','2024-25 World Champion — first man since Jahangir Khan (1988) to win it without dropping a game.'],
+    ['Feryal Ashraf','Karate','b.1998','Tokyo 2020 gold (kumite +61 kg) — Egypt’s first-ever women’s Olympic gold.'],
+    ['Ahmed Elgendy','Pentathlon','b.1999','Modern-pentathlon gold at Paris 2024 — Egypt’s most recent Olympic gold.'],
+    ['Karam Gaber','Wrestling','b.1979','Greco-Roman gold, Athens 2004; silver, London 2012.']
+  ]);
+
+  // Industry — largest companies
+  fillCards('companiesGrid', [
+    ['Commercial International Bank','Banking','est. 1975','Egypt’s most valuable listed company (~$7.86bn market cap, 2024).'],
+    ['National Bank of Egypt','Banking','est. 1898','Largest bank by assets (>$170bn); ~19M customers.'],
+    ['Elsewedy Electric','Cables & energy','est. 1938','Revenue ~$4.8bn (2023); 18,000+ employees across the region.'],
+    ['Ezz Steel','Steel','est. 1994','6.4M tonnes of crude steel in 2024 — the largest in the Arab world/Africa.'],
+    ['Orascom Construction','Construction','est. 1976','Egypt’s first multinational; dual-listed in Egypt and the UAE.'],
+    ['Fawry','Fintech','est. 2008','Egypt’s first fintech IPO (2019) and first tech unicorn (2020).']
+  ]);
+
+  // Science — scientists
+  fillCards('scientistsGrid', [
+    ['Ahmed Zewail','Nobel laureate','1946–2016','Nobel Prize in Chemistry 1999 for femtochemistry; namesake of Zewail City.'],
+    ['Farouk El-Baz','Space geology','b.1938','NASA geologist who helped select the Apollo lunar-landing sites.'],
+    ['Mostafa El-Sayed','Nanoscience','b.1933','U.S. National Medal of Science (2007); the “El-Sayed rule”; gold-nanoparticle cancer therapy.'],
+    ['El Dabaa NPP','Nuclear · energy','2022–~2030','Egypt’s first nuclear plant — 4 × VVER-1200 reactors, 4,800 MW (Rosatom build).'],
+    ['Egyptian Space Agency','Space · est. 2018','New Capital','Hosts the African Space Agency; runs Egypt’s Earth-observation program.'],
+    ['National Research Centre','Research · est. 1956','Giza','Egypt’s largest multidisciplinary R&D body — 4,700+ researchers.']
+  ]);
+
+  // Water — projects
+  fillCards('waterGrid', [
+    ['New Delta / Mostakbal Misr','Land reclamation','since 2021','~800,000 feddans reclaimed by 2024; targeting 4.5M by 2027 (a projection).'],
+    ['Toshka / New Valley','Land reclamation','revived','Sheikh Zayed Canal + Mubarak Pumping Station (1.2M m³/hr); first harvests 2022.'],
+    ['New Delta / El-Hammam plant','Water treatment','operational','7.5M m³/day of agricultural drainage treated — a Guinness record for its type.'],
+    ['National desalination program','Desalination','to 2050','Targets 8.8M m³/day by 2050 (~$8bn); Phase 1 ~3.3M m³/day, renewable-powered.'],
+    ['Canal lining project','Irrigation','since 2020','Lining 20,000 km of canals; ~5 bn m³/yr saved; 1.35M feddans on drip irrigation.'],
+    ['Aswan High Dam / Lake Nasser','Storage','since 1970','169 bn m³ reservoir — the over-year buffer behind Egypt’s irrigation security.']
+  ]);
+
+  // Sports title tallies (bar)
+  new Chart(document.getElementById('sportsChart'), {
+    type:'bar',
+    data:{ labels:['Al Ahly · CAF CL','Egypt squash · Worlds','Egypt · AFCON','Zamalek · CAF CL','Egypt · Olympic medals'],
+      datasets:[{ label:'Titles / medals', data:[12,14,7,5,38], backgroundColor:['#C9A227','#1F7A5C','#C9A227','#26619C','#B7410E'], borderRadius:5 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ x:{ beginAtZero:true, ticks:{color:'#b7ac8e'}, grid:{color:'rgba(201,162,39,0.1)'} }, y:{ ticks:{color:'#d8cba6'}, grid:{display:false} } } }
+  });
+
+  // Investment deals (horizontal bar, US$ bn)
+  new Chart(document.getElementById('investChart'), {
+    type:'bar',
+    data:{ labels:['Ras El Hekma (2024)','IMF EFF total (2024)','IMF EFF (2016)','SCZONE cumulative','Privatization (2025)'],
+      datasets:[{ label:'US$ billion', data:[35,8,12,10.4,6], backgroundColor:['#17408B','#26619C','#26619C','#1F7A5C','#C9A227'], borderRadius:5 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return '$'+c.parsed.x+'bn';}}}}, scales:{ x:{ beginAtZero:true, ticks:{ callback:function(v){return '$'+v+'B';} } } } }
+  });
+
+  // Businessmen net worth (horizontal bar, US$ bn) — v8
+  new Chart(document.getElementById('businessmenChart'), {
+    type:'bar',
+    data:{ labels:['Nassef Sawiris','Naguib Sawiris','Mohamed Mansour','Youssef Mansour','Samih Sawiris','Yasseen Mansour'],
+      datasets:[{ label:'Net worth (US$ bn)', data:[9.9,5.6,4.0,1.8,1.4,1.4], backgroundColor:['#17408B','#26619C','#C9A227','#C9A227','#1F7A5C','#1F7A5C'], borderRadius:5 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return '$'+c.parsed.x+'bn (point-in-time)';}}}}, scales:{ x:{ beginAtZero:true, ticks:{ callback:function(v){return '$'+v+'B';} } } } }
+  });
+
+  // Logistics — capacity now vs 2030 target (grouped bar) — v8
+  new Chart(document.getElementById('logisticsChart'), {
+    type:'bar',
+    data:{ labels:['Seaport cargo (Mt/yr)','Container handling (M TEU/yr)'], datasets:[
+      { label:'Now (2025)', data:[185,12], backgroundColor:'#26619C', borderRadius:5 },
+      { label:'2030 target', data:[400,40], backgroundColor:'#C9A227', borderRadius:5 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{position:'top'}}, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  // Egyptian Premier League titles (bar, dark surface) — v8
+  new Chart(document.getElementById('leagueChart'), {
+    type:'bar',
+    data:{ labels:['Al Ahly','Zamalek','Ismaily'],
+      datasets:[{ label:'League titles (since 1948)', data:[45,15,3], backgroundColor:['#C9A227','#26619C','#1F7A5C'], borderRadius:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#b7ac8e'}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#d8cba6'}, grid:{display:false} } } }
+  });
+
+  // Arms import suppliers, share (doughnut, light surface) — v8
+  new Chart(document.getElementById('armsChart'), {
+    type:'doughnut',
+    data:{ labels:['Germany','Italy','France','Other suppliers'],
+      datasets:[{ data:[32,27,19,22], backgroundColor:['#17408B','#C9A227','#1F7A5C','#b7ac8e'] }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{position:'right'}, tooltip:{callbacks:{label:function(c){return c.label+': '+c.parsed+'% of arms imports';}}}} }
+  });
+
+  // Satellites cumulative (line)
+  new Chart(document.getElementById('satChart'), {
+    type:'line',
+    data:{ labels:[2007,2014,2019,2022,2023,2024], datasets:[{ label:'Satellites launched (cumulative)', data:[1,2,4,5,6,7], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.15)', fill:true, stepped:true, pointRadius:4, pointBackgroundColor:'#C9A227' }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#b7ac8e'}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#b7ac8e'}, grid:{display:false} } } }
+  });
+
+  // Hepatitis C prevalence (bars, dramatic drop)
+  new Chart(document.getElementById('hcvChart'), {
+    type:'bar',
+    data:{ labels:['2016','2023'], datasets:[{ label:'Prevalence (% of population)', data:[10.0,0.38], backgroundColor:['#B7410E','#1F7A5C'], borderRadius:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.parsed.y+'% of population';}}}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#b7ac8e', callback:function(v){return v+'%';}}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#d8cba6'}, grid:{display:false} } } }
+  });
+
+  // Water usage split (doughnut)
+  new Chart(document.getElementById('waterChart'), {
+    type:'doughnut',
+    data:{ labels:['Agriculture','Municipal','Industrial'],
+      datasets:[{ data:[86,11.5,2.5], backgroundColor:['#1F7A5C','#17408B','#B7410E'] }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{position:'right'}, tooltip:{callbacks:{label:function(c){return c.label+': '+c.parsed+'% of water use';}}}} }
+  });
+
+  // Transport — projects by length (horizontal bar)
+  new Chart(document.getElementById('transportChart'), {
+    type:'bar',
+    data:{ labels:['High-speed rail network','HSR Green Line (Line 1)','Cairo Monorail (New Capital)','Cairo Metro Line 1','Cairo Metro Line 3','6th of October Monorail','Cairo LRT'],
+      datasets:[{ label:'km', data:[2000,660,54,44.3,41.2,42,70], backgroundColor:['#C9A227','#26619C','#1F7A5C','#17408B','#17408B','#1F7A5C','#26619C'], borderRadius:5 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.parsed.x+' km';}}}}, scales:{ x:{ beginAtZero:true, ticks:{color:'#b7ac8e', callback:function(v){return v+' km';}}, grid:{color:'rgba(201,162,39,0.1)'} }, y:{ ticks:{color:'#d8cba6'}, grid:{display:false} } } }
+  });
+
+  // Transport project cards
+  fillCards('transportGrid', [
+    ['Siemens high-speed rail','Under construction','~$23bn','A 2,000 km, 3-line network (60 stations) — the Green Line targets 2027. Nothing is operational yet.'],
+    ['Cairo Monorail','Now running','since 2026','The New-Capital line opened to passengers in 2026; the 6th-of-October line follows. Driverless, by Alstom.'],
+    ['Cairo Metro','Operational','3 lines','~107 km and ~84 stations across Lines 1–3; Line 3 finished in 2024, with Line 4 under construction.'],
+    ['East Port Said (SCCT)','Busiest port','3.94M TEU','Egypt\'s top container terminal by throughput (2024) — a Mediterranean transshipment hub.'],
+    ['Cairo International Airport','Air gateway','28.8M pax','Passengers in 2024, up from 26.5M in 2023; EgyptAir carried another 10.3M.'],
+    ['Tahya Misr Axis Bridge','Guinness record','67.3 m wide','The world\'s widest cable-stayed bridge (2019) — often mislabelled a suspension bridge locally.']
+  ]);
+
+  // University cards (QS 2026)
+  fillCards('universityGrid', [
+    ['Cairo University','Public · 1908','QS 347','~208,000 students in Giza — Egypt\'s highest-ranked and one of its largest universities.'],
+    ['American University in Cairo','Private · 1919','QS 381','A small, US-accredited liberal-arts university in New Cairo — Egypt\'s 2nd-highest QS rank.'],
+    ['Ain Shams University','Public · 1950','QS 543','A vast Cairo public university with ~190,000 students.'],
+    ['Alexandria University','Public · 1938','QS 784','The flagship of Alexandria, with roots in a 1938 Cairo University branch.'],
+    ['Al-Azhar University','Public · 970 CE','QS 1001-1200','Teaching since the Fatimid era — among the oldest continuously operating universities on Earth.'],
+    ['German University in Cairo','Private · 2002','QS 1201–1400','A German-partnership university — part of a wave of international campuses since the 2000s.']
+  ]);
+
+  // UNESCO World Heritage cards
+  fillCards('unescoGrid', [
+    ['Memphis & its Pyramid Fields','Cultural · 1979','Giza–Dahshur','The Old Kingdom capital and its pyramids, including the Great Pyramid and the Step Pyramid.'],
+    ['Ancient Thebes','Cultural · 1979','Luxor','Karnak and Luxor temples with the Valley of the Kings — the New Kingdom capital.'],
+    ['Nubian Monuments','Cultural · 1979','Abu Simbel–Philae','Ramesses II\'s rock temples, famously relocated in the UNESCO salvage of the 1960s.'],
+    ['Historic (Islamic) Cairo','Cultural · 1979','Cairo','One of the world\'s greatest concentrations of medieval Islamic architecture.'],
+    ['Saint Catherine Area','Cultural · 2002','South Sinai','The world\'s oldest continuously working Christian monastery, sacred to three faiths.'],
+    ['Wadi Al-Hitan','Natural · 2005','Al Fayyum','"Whale Valley" — fossils tracing whales\' evolution from land mammals to the ocean.']
+  ]);
+
+  // ---- animated counters (CountUp on scroll) ----
+  (function () {
+    var CU = window.countUp && window.countUp.CountUp;
+    function run(el){
+      var end = parseFloat(el.dataset.count);
+      var opts = { prefix: el.dataset.prefix||'', suffix: el.dataset.suffix||'', decimalPlaces: parseInt(el.dataset.decimals||'0',10), separator: el.dataset.sep?',':'', duration: 2.2 };
+      if (!CU || rm) { el.textContent = opts.prefix + (el.dataset.sep?end.toLocaleString():end) + opts.suffix; return; }
+      new window.countUp.CountUp(el, end, opts).start();
+    }
+    var nums = document.querySelectorAll('.num[data-count]');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ run(e.target); io.unobserve(e.target); } }); }, { threshold: 0.5 });
+      nums.forEach(function(n){ io.observe(n); });
+    } else { nums.forEach(run); }
+  })();
+
+  // Connected Egypt — internet growth (line)
+  new Chart(document.getElementById('internetChart'), {
+    type:'line',
+    data:{ labels:[2015,2018,2019,2020,2023,2024],
+      datasets:[{ label:'Internet users (% of population)', data:[37.82,46.92,57.28,71.91,74.01,74.65], borderColor:'#17408B', backgroundColor:'rgba(23,64,139,0.12)', fill:true, tension:0.3, pointRadius:4, pointBackgroundColor:'#17408B' }] },
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.parsed.y+'% online';}}}}, scales:{ y:{ beginAtZero:true, max:100, ticks:{callback:function(v){return v+'%';}} } } }
+  });
+
+  // Social platforms (horizontal bar)
+  new Chart(document.getElementById('socialChart'), {
+    type:'bar',
+    data:{ labels:['YouTube','Facebook','TikTok','Messenger','Instagram','Snapchat','LinkedIn','X (Twitter)'],
+      datasets:[{ label:'Users (millions, ad reach)', data:[50.7,48.7,41.3,35.4,20.1,19.7,13.0,5.22], backgroundColor:'#17408B', borderRadius:4 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.parsed.x+'M reach';}}}}, scales:{ x:{ beginAtZero:true, ticks:{callback:function(v){return v+'M';}} } } }
+  });
+
+  // Trade partners (grouped horizontal bar: imports vs exports)
+  new Chart(document.getElementById('tradeChart'), {
+    type:'bar',
+    data:{ labels:['China','United States','Saudi Arabia','Russia','Germany','Turkiye','Italy','UAE'],
+      datasets:[
+        { label:'Imports from ($bn)', data:[12.9,5.39,5.21,4.95,4.09,0,0,0], backgroundColor:'#17408B', borderRadius:4 },
+        { label:'Exports to ($bn)', data:[0,1.95,2.67,0,0,3.76,3.14,2.21], backgroundColor:'#C9A227', borderRadius:4 }
+      ] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, interaction:{intersect:false,mode:'index'}, plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:function(c){return c.dataset.label+': $'+c.parsed.x+'bn';}}}}, scales:{ x:{ beginAtZero:true, ticks:{callback:function(v){return '$'+v+'B';}} } } }
+  });
+
+  // Feeding Egypt — staple crop production (multi-line, FAOSTAT)
+  new Chart(document.getElementById('cropsChart'), {
+    type:'line',
+    data:{ labels:[2015,2018,2021,2023], datasets:[
+      { label:'Wheat', data:[9.61,8.35,9.84,9.07], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.10)', tension:0.3, pointRadius:4, pointBackgroundColor:'#C9A227' },
+      { label:'Maize', data:[7.80,5.11,8.04,7.45], borderColor:'#1F7A5C', backgroundColor:'rgba(31,122,92,0.08)', tension:0.3, pointRadius:4, pointBackgroundColor:'#1F7A5C' },
+      { label:'Rice (paddy)', data:[4.82,3.12,4.24,6.23], borderColor:'#17408B', backgroundColor:'rgba(23,64,139,0.08)', tension:0.3, pointRadius:4, pointBackgroundColor:'#17408B' }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, interaction:{intersect:false,mode:'index'}, plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y+'M tonnes';}}}}, scales:{ y:{ beginAtZero:true, ticks:{callback:function(v){return v+'M t';}} } } }
+  });
+
+  // Egypt choropleth map (headline feature)
+  if (window.initEgyptMap) { try { initEgyptMap('egyptMap','egyptMapLegend','.map-toggle'); } catch(e){ console.error('map init failed', e); } }
+
+  if (window.AOS) AOS.refresh();
+</script>
+<script>window.EGYBI_ADS = { client: 'ca-pub-XXXXXXXXXXXXXXXX' };</script>
+<script src="assets/ads.js"></script>
+</body>
+</html>

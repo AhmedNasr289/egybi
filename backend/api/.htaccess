@@ -1,0 +1,21 @@
+# EgyBI Knowledge-Base API — Apache rewrite for Hostinger shared hosting.
+# Routes every request that isn't a real file/dir through index.php, so the
+# router in index.php can dispatch clean URLs like /datasets/pharaohs.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If deployed in a subfolder (e.g. egybi.com/api/), Hostinger sets the base
+    # automatically; the router also strips a leading /api segment defensively.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Never serve the raw SQL, cache, or config files.
+<FilesMatch "\.(sql|sqlite)$">
+    Require all denied
+</FilesMatch>
+<Files "config.php">
+    Require all denied
+</Files>

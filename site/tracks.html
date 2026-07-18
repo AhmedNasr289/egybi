@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracks — EgyBI Curriculum</title>
+<meta name="description" content="Nine skill tracks from SQL to Spark, dbt, orchestration, cloud warehouses, BI tooling, and data quality — each grounded in real data-engineering books and real Egyptian-history datasets.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="assets/egybi.css" rel="stylesheet">
+<style>
+  .track { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 26px 28px; }
+  .track h3 { margin: 0 0 4px; color: var(--blue-deep); font-size: 1.25rem; }
+  .track .lvl { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--gold-ink); }
+  .track .books { font-size: 0.86rem; color: var(--ink-soft); margin: 12px 0; }
+  .track .books strong { color: var(--ink); }
+  .track ul { margin: 8px 0 0; padding-left: 18px; }
+  .track li { font-size: 0.9rem; margin-bottom: 5px; }
+  .track li b { color: var(--blue); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a><a href="explore.html">Explore</a><a href="tracks.html">Tracks</a><a href="practice.html">Practice</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a><a class="cta" href="index.html#newsletter">Newsletter</a>
+    </nav>
+  </div>
+</header>
+
+<section class="surface-hero center" style="padding:68px 6vw;">
+  <div class="wrap">
+    <div class="kicker" style="color:var(--gold-bright);">The curriculum</div>
+    <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">Nine tracks, beginner to advanced.</h1>
+    <p class="lead" style="margin:0 auto;color:#f3ead4;">Each track is grounded in a real, respected book — and every exercise is built on real Egyptian data, from pharaoh chronology to the Met Museum's open collection. You learn the modern data stack and absorb real history at the same time.</p>
+  </div>
+</section>
+
+<!-- SPECIALIZATIONS / CAREER PATHS -->
+<section class="surface-dark">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Career paths</div>
+    <h2 data-aos="fade-up">Which specialization are you building toward?</h2>
+    <p class="lead" data-aos="fade-up">The 9 tracks below combine into three real data-career specializations. Follow one end-to-end, or mix them — every path starts with SQL.</p>
+    <div class="grid grid-3" style="margin-top:32px;">
+      <div class="card" data-aos="fade-up">
+        <span class="tag">Data Engineering</span>
+        <h3>Build &amp; run the pipelines.</h3>
+        <p>Ingest, orchestrate, and scale data in production.</p>
+        <p style="font-size:0.84rem;margin-top:10px;"><strong style="color:var(--gold-bright);">Path:</strong> SQL → Python → Airflow → Spark → Cloud Warehouses → Data Quality</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <span class="tag">Analytics Engineering</span>
+        <h3>Model &amp; transform the data.</h3>
+        <p>Turn raw tables into trusted, tested, well-modeled datasets.</p>
+        <p style="font-size:0.84rem;margin-top:10px;"><strong style="color:var(--gold-bright);">Path:</strong> SQL → Dimensional Modeling → dbt → Data Quality</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="200">
+        <span class="tag">BI Development</span>
+        <h3>Turn data into decisions.</h3>
+        <p>Design the models, measures, and dashboards a business runs on.</p>
+        <p style="font-size:0.84rem;margin-top:10px;"><strong style="color:var(--gold-bright);">Path:</strong> SQL → Dimensional Modeling → BI Tooling → Cloud Warehouses</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="surface-light">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up" style="margin-bottom:26px;">All nine tracks in detail</div>
+  </div>
+  <div class="wrap grid grid-2">
+
+    <div class="track" data-aos="fade-up">
+      <span class="lvl">Beginner → Advanced</span>
+      <h3>1 · SQL Fundamentals &amp; Advanced</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>SQL Antipatterns</em> (Karwin), <em>SQL Performance Explained</em> (Winand).</p>
+      <ul>
+        <li><b>Longest Reigns</b> — rank pharaohs by reign length; window-function variant partitions by dynasty.</li>
+        <li><b>The Family Line</b> — self-join the pharaohs table to reconstruct father→son succession chains.</li>
+        <li><b>Missing Monuments</b> — anti-join UNESCO sites against monuments to find the gaps.</li>
+        <li><b>Co-Regency Overlap</b> — detect illogical reign-date overlaps, allowing for real co-regencies.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up" data-aos-delay="80">
+      <span class="lvl">Intermediate → Advanced</span>
+      <h3>2 · Dimensional Modeling &amp; Data Warehousing</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>The Data Warehouse Toolkit</em> (Kimball), <em>Building the Data Warehouse</em> (Inmon), <em>Star Schema</em> (Adamson).</p>
+      <ul>
+        <li><b>Monument Star Schema</b> — build <code>fact_monument_construction</code> against pharaoh, dynasty &amp; location dimensions.</li>
+        <li><b>SCD Type 2</b> — model the Great Sphinx's disputed attribution as slowly-changing history.</li>
+        <li><b>Conformed Dimensions</b> — share <code>dim_dynasty</code> across monument and reign fact tables.</li>
+        <li><b>Star vs Snowflake</b> — normalize <code>dim_location</code> into site → region → UNESCO hierarchy.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up">
+      <span class="lvl">Intermediate</span>
+      <h3>3 · Orchestration (Airflow)</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>Data Pipelines with Apache Airflow</em> (Harenslak et al.).</p>
+      <ul>
+        <li><b>Live Ingestion DAG</b> — pull the Met Museum's real nightly Egyptian-art CSV, land it, trigger transforms.</li>
+        <li><b>Backfill</b> — recompute dynasty-level aggregates after a schema change.</li>
+        <li><b>Sensor Trigger</b> — wait for the Met's nightly file update before running.</li>
+        <li><b>SLA Alerting</b> — fire an alert if the ingestion DAG misses its window.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up" data-aos-delay="80">
+      <span class="lvl">Intermediate</span>
+      <h3>4 · dbt &amp; Analytics Engineering</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>Analytics Engineering with SQL and dbt</em> (Machado &amp; Russa).</p>
+      <ul>
+        <li><b>Model Layers</b> — build staging → intermediate → mart on the real Met dataset.</li>
+        <li><b>Test Suite</b> — pass <code>not_null</code> / <code>unique</code> / <code>relationships</code> tests.</li>
+        <li><b>Incremental Model</b> — process only Met objects updated since the last run.</li>
+        <li><b>Disputed-Date Macro</b> — consistently handle "circa"/disputed dates across models.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up">
+      <span class="lvl">Advanced</span>
+      <h3>5 · Spark / PySpark</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>Learning Spark</em> (Damji et al.), <em>Designing Data-Intensive Applications</em> (Kleppmann).</p>
+      <ul>
+        <li><b>Partition Skew</b> — partition the ~30k-row Met dataset by era; detect and fix skew.</li>
+        <li><b>Broadcast Join</b> — broadcast the tiny <code>dim_dynasty</code> against a large fact table.</li>
+        <li><b>Rolling Window</b> — moving-average the real Nile flood-level series.</li>
+        <li><b>Idempotent Ingestion</b> — exactly-once load of the Deir el-Medina records.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up" data-aos-delay="80">
+      <span class="lvl">Advanced</span>
+      <h3>6 · Cloud Data Warehouses</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>Snowflake: The Definitive Guide</em> (Avila). Snowflake + BigQuery to start.</p>
+      <ul>
+        <li><b>Clustering Key</b> — choose and justify a clustering key for the Met CSV.</li>
+        <li><b>Semi-structured JSON</b> — query the Met API's nested artist/constituent fields.</li>
+        <li><b>Time Travel</b> — recover from a bad UPDATE to a monument-attribution field.</li>
+        <li><b>Cost Tuning</b> — full-scan vs pruned query on the Nilometer time series.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up">
+      <span class="lvl">Beginner → Intermediate</span>
+      <h3>7 · BI Tooling</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>Storytelling with Data</em> (Knaflic). Power BI &amp; Tableau mechanics.</p>
+      <ul>
+        <li><b>Construction Gantt</b> — a timeline of monument-construction eras across dynasties.</li>
+        <li><b>Reign Measures</b> — a DAX/calculated measure for average reign length by era.</li>
+        <li><b>Flood Anomalies</b> — visualize the Nile flood record, highlighting outlier years.</li>
+        <li><b>Fix the Chart</b> — redesign a misleading dual-axis "monuments vs reign length" chart.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up" data-aos-delay="80">
+      <span class="lvl">Intermediate</span>
+      <h3>8 · Data Quality &amp; Testing</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>Data Quality Fundamentals</em> (Moses, Gavish, Vorwerck).</p>
+      <ul>
+        <li><b>Overlap Validation</b> — no two same-dynasty pharaohs illogically overlap (co-regency allowlist).</li>
+        <li><b>Freshness Check</b> — alert if the Met's nightly CSV hasn't updated in 48h.</li>
+        <li><b>Anomaly Detection</b> — flag statistical outliers in the Nile flood series.</li>
+        <li><b>Lineage</b> — when a disputed date shifts, trace which marts need reprocessing.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up">
+      <span class="lvl">Beginner → Advanced</span>
+      <h3>9 · Python for Data Engineers</h3>
+      <p class="books"><strong>Grounded in:</strong> <em>Data Engineering with Python</em> (Crickard), <em>Fundamentals of Data Engineering</em> (Reis &amp; Housley).</p>
+      <ul>
+        <li><b>Resilient Ingestion</b> — a retry/backoff script against the real Met Museum API.</li>
+        <li><b>Clean the Papyrus</b> — clean a Wilbour-Papyrus-style ~2,800-row land/tax dataset.</li>
+        <li><b>Pharaoh CLI</b> — a small tool that looks up dynasty/era/reign by name.</li>
+        <li><b>End-to-End Pipeline</b> — ingest → land → dbt transform → Airflow orchestrate → BI-ready mart.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<section class="surface-dark center">
+  <div class="wrap">
+    <h2 data-aos="fade-up">Original content, real sources — never copied.</h2>
+    <p class="lead" data-aos="fade-up">The books are a reading pointer; every exercise is written from scratch around the technique, never lifted from a source. Every dataset is real, public, and cited.</p>
+    <div class="cta-row center" data-aos="fade-up"><a href="practice.html" class="btn btn-primary">Try the SQL playground →</a><a href="index.html#newsletter" class="btn btn-ghost">Get The Papyrus</a></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.metmuseum.org/" target="_blank" rel="noopener">Met Museum</a></div>
+  </div>
+  <div class="colophon">EgyBI · egybi.com · Phase 0 preview.&nbsp;·&nbsp;<a href="privacy.html" style="color:var(--gold-bright);text-decoration:none;">Privacy &amp; Cookies</a></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+<script src="assets/egybi.js"></script>
+<script>window.EGYBI_ADS = { client: 'ca-pub-XXXXXXXXXXXXXXXX' };</script>
+<script src="assets/ads.js"></script>
+</body>
+</html>

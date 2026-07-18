@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community — EgyBI</title>
+<meta name="description" content="How to contribute cited datasets and SQL challenges to EgyBI, the content and accuracy rules, the public roadmap, and the automations that keep the data fresh and honest.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="assets/egybi.css" rel="stylesheet">
+<style>
+  .step { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 20px; }
+  .step::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-family: 'Cinzel', serif; display: flex; align-items: center; justify-content: center; }
+  .steps { counter-reset: step; }
+  .rule-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+  .rule-item .mk { color: var(--success); font-weight: 800; flex: 0 0 auto; }
+  .road-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+  .road-item .badge { flex: 0 0 auto; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; margin-top: 2px; }
+  .badge.done { color: #0f5c43; background: rgba(31,122,92,0.16); }
+  .badge.now { color: var(--gold-ink); background: var(--gold-soft); }
+  .badge.next { color: var(--blue); background: var(--blue-soft); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a><a href="explore.html">Explore</a><a href="tracks.html">Tracks</a><a href="practice.html">Practice</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a><a class="cta" href="index.html#newsletter">Newsletter</a>
+    </nav>
+  </div>
+</header>
+
+<section class="surface-hero center" style="padding:64px 6vw;">
+  <div class="wrap">
+    <div class="kicker">The community</div>
+    <h1 style="font-size:clamp(1.9rem,4.4vw,2.9rem);margin:0 0 12px;">Help build the House of Life.</h1>
+    <p class="lead" style="margin:0 auto;color:#f3ead4;">EgyBI grows through cited data and good problems. If you can bring a real dataset about Egypt, a sharp SQL challenge, or a fix — there is a place for you here.</p>
+  </div>
+</section>
+
+<!-- CONTRIBUTE -->
+<section class="surface-light">
+  <div class="wrap" style="max-width:860px;">
+    <div class="kicker" data-aos="fade-up">Contribute</div>
+    <h2 data-aos="fade-up">Two ways to add to the knowledge base.</h2>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="card" data-aos="fade-up">
+        <span class="tag">A dataset</span>
+        <h3>Bring a cited dataset</h3>
+        <div class="steps" style="margin-top:14px;">
+          <div class="step"><strong>Find real, open data</strong> about Egypt from a reputable source (World Bank, FAO, CAPMAS, UNESCO, SIPRI, official ministries).</div>
+          <div class="step"><strong>Shape it</strong> as a small table — one row per fact, a <code>source_url</code> on every row, and a <code>note</code> that flags anything disputed, approximate or projected.</div>
+          <div class="step"><strong>Propose it</strong> as a new <code>seed_vN.sql</code> section plus its schema, and we review it against the accuracy rules before it lands.</div>
+        </div>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <span class="tag">A challenge</span>
+        <h3>Write a SQL challenge</h3>
+        <div class="steps" style="margin-top:14px;">
+          <div class="step"><strong>Pick a table</strong> already in the sandbox and a genuinely useful question (a ranking, a growth rate, a join, a window function).</div>
+          <div class="step"><strong>Write it</strong> with a plain-English statement, the givens, a starter query, and a reference solution — the expected output is computed live from the solution.</div>
+          <div class="step"><strong>Add a sourced &ldquo;Did You Know&rdquo;</strong> so a correct answer teaches something true about Egypt. Then it slots straight into the <a href="practice.html">Practice</a> catalog.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE RULES -->
+<section class="surface-light-2">
+  <div class="wrap" style="max-width:860px;">
+    <div class="kicker" data-aos="fade-up">The accuracy rules</div>
+    <h2 data-aos="fade-up">Non-negotiable, for everyone.</h2>
+    <p class="lead" data-aos="fade-up">These are what make EgyBI trustworthy. A contribution that breaks any of them will not be merged.</p>
+    <div style="margin-top:24px;" data-aos="fade-up">
+      <div class="rule-item"><span class="mk">✓</span><span><strong>Every fact is real and cited.</strong> A source URL on every row — no exceptions, no &ldquo;roughly&rdquo; without a source.</span></div>
+      <div class="rule-item"><span class="mk">✓</span><span><strong>Disagreement is data.</strong> Where reputable sources differ (a rank, a net worth, a religion split), store both and flag it in the note — never smooth it into one tidy number.</span></div>
+      <div class="rule-item"><span class="mk">✓</span><span><strong>Original content only.</strong> Datasets are public and legally clean; challenges and prose are written from scratch, never copied.</span></div>
+      <div class="rule-item"><span class="mk">✓</span><span><strong>Projections are labelled.</strong> Targets, forecasts and &ldquo;by 2030&rdquo; figures are marked as such, not presented as achieved.</span></div>
+      <div class="rule-item"><span class="mk">✓</span><span><strong>Sensitive sectors stay factual.</strong> Defence and arms data is limited to published rankings, counts and import statistics from public sources (SIPRI, Global Firepower) — figures only.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="surface-light">
+  <div class="wrap" style="max-width:860px;">
+    <div class="kicker" data-aos="fade-up">Developments &amp; roadmap</div>
+    <h2 data-aos="fade-up">Where EgyBI is going.</h2>
+    <p class="lead" data-aos="fade-up">Public and honest about status. &ldquo;Done&rdquo; means shipped and verified; &ldquo;next&rdquo; means planned.</p>
+    <div style="margin-top:24px;" data-aos="fade-up">
+      <div class="road-item"><span class="badge done">Done</span><span>A 58-table cited knowledge base, an offline interactive Egypt map (5 metrics), and 50 auto-graded SQL challenges.</span></div>
+      <div class="road-item"><span class="badge done">Done</span><span>An automated World Bank data-refresh pipeline with a human review gate, and a map-build script.</span></div>
+      <div class="road-item"><span class="badge done">Done</span><span><strong>The Papyrus</strong> newsletter with a real, spam-guarded signup.</span></div>
+      <div class="road-item"><span class="badge now">Now</span><span>Deepening every sector to 2026 — business, defence, logistics, sport, culture economics — and surfacing it as charts.</span></div>
+      <div class="road-item"><span class="badge next">Next</span><span>A Python/pandas sandbox alongside the SQL one, so you can solve the same challenges either way.</span></div>
+      <div class="road-item"><span class="badge next">Next</span><span>Accounts, streaks and a daily challenge — then an AI tutor that explains your query errors.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTOMATIONS -->
+<section class="surface-dark">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Under the hood</div>
+    <h2 data-aos="fade-up">The automations that keep it honest.</h2>
+    <div class="grid grid-3" style="margin-top:26px;">
+      <div class="card" data-aos="fade-up"><span class="tag">Pipeline</span><h3>World Bank refresh</h3><p>Pulls a curated indicator allowlist, transforms it into cited seed-SQL, and diffs it against the live data so a human approves every change.</p></div>
+      <div class="card" data-aos="fade-up" data-aos-delay="80"><span class="tag">Build</span><h3>Map generator</h3><p>Rebuilds the offline Egypt-map asset from the boundaries + the latest governorate data whenever a figure changes.</p></div>
+      <div class="card" data-aos="fade-up" data-aos-delay="160"><span class="tag">Review</span><h3>Human-in-the-loop</h3><p>Automation proposes; a person reviews the diff against the accuracy rules before anything merges. No silent overwrites.</p></div>
+      <div class="card" data-aos="fade-up"><span class="tag">Reach</span><h3>The Papyrus</h3><p>A spam-guarded newsletter endpoint appends confirmed subscribers to an append-only store — the one place the site writes.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHERE WE TALK -->
+<section class="surface-light-2 center">
+  <div class="wrap">
+    <h2 data-aos="fade-up">Come say hello.</h2>
+    <p class="lead" data-aos="fade-up">Ideas, corrections and datasets are all welcome. Follow along and get the occasional letter, and reach out when you have something to add.</p>
+    <div class="cta-row center" data-aos="fade-up"><a href="index.html#newsletter" class="btn btn-primary">Get The Papyrus →</a><a href="blog.html" class="btn btn-ghost">Read the blog</a></div>
+    <p style="font-size:0.82rem;color:var(--ink-soft);margin-top:16px;" data-aos="fade-up">A public issue tracker and discussion space open alongside the first accounts release.</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.sipri.org/databases/armstransfers" target="_blank" rel="noopener">SIPRI</a></div>
+  </div>
+  <div class="colophon">EgyBI · egybi.com · Phase 0 preview. Every figure is real and cited; disputed figures are flagged.&nbsp;·&nbsp;<a href="privacy.html" style="color:var(--gold-bright);text-decoration:none;">Privacy &amp; Cookies</a></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="assets/egybi.js"></script>
+<script>window.EGYBI_ADS = { client: 'ca-pub-XXXXXXXXXXXXXXXX' };</script>
+<script src="assets/ads.js"></script>
+</body>
+</html>

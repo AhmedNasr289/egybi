@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice — EgyBI SQL Challenges</title>
+<meta name="description" content="A HackerRank-style SQL problem set on real, cited Egyptian data. Each challenge has a problem statement, the givens, an expected output, and instant auto-grading — running entirely in your browser via WebAssembly. No signup.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="assets/egybi.css" rel="stylesheet">
+<style>
+  .workbench { display:grid; grid-template-columns: 1.55fr 1fr; gap: 28px; align-items:start; }
+  /* difficulty badges — reuse the functional palette as a universally-read scale */
+  .diff-badge { display:inline-block; font-size:0.7rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; padding:3px 10px; border-radius:999px; }
+  .diff-Easy { color:#0f5c43; background:rgba(31,122,92,0.16); }
+  .diff-Medium { color:var(--gold-ink); background:var(--gold-soft); }
+  .diff-Hard { color:#7c2c09; background:rgba(183,65,14,0.14); }
+  .sector-tag { display:inline-block; font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--blue); background:var(--blue-soft); padding:3px 10px; border-radius:999px; margin-left:6px; }
+  .ch-statement { font-size:1rem; color:var(--ink); line-height:1.6; margin:14px 0 12px; }
+  .givens { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:3px solid var(--gold); border-radius:10px; padding:12px 16px; font-size:0.86rem; color:var(--ink-soft); margin-bottom:18px; }
+  .givens b { color:var(--blue-deep); }
+  .givens-lead { margin-bottom:12px; }
+  .givens-tables { display:grid; gap:10px; }
+  .tdoc { background:#fff; border:1px solid var(--line-light); border-radius:9px; padding:11px 13px; }
+  .tdoc-h code { font-family:"SF Mono",Menlo,monospace; font-weight:700; color:var(--blue-deep); font-size:0.9rem; }
+  .tdoc-h span { color:var(--ink-soft); font-size:0.82rem; }
+  .tdoc-desc { margin:6px 0 8px; color:var(--ink); font-size:0.83rem; line-height:1.5; }
+  .tdoc-cols { list-style:none; margin:0 0 8px; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:3px 14px; }
+  .tdoc-cols li { font-size:0.8rem; color:var(--ink-soft); }
+  .tdoc-cols code { font-family:"SF Mono",Menlo,monospace; color:var(--gold-ink); font-weight:600; font-size:0.78rem; }
+  .tdoc-sample { font-size:0.78rem; color:var(--ink-soft); }
+  .tdoc-sample span { text-transform:uppercase; letter-spacing:0.05em; font-weight:700; font-size:0.68rem; color:var(--blue); margin-right:6px; }
+  .tdoc-sample code { font-family:"SF Mono",Menlo,monospace; color:var(--ink); }
+  @media (max-width:520px){ .tdoc-cols { grid-template-columns:1fr; } }
+  .verdict { border-radius:10px; padding:12px 16px; font-size:0.9rem; font-weight:600; margin-top:16px; }
+  .verdict.pass { color:#0f5c43; background:rgba(31,122,92,0.14); border:1px solid rgba(31,122,92,0.4); }
+  .verdict.fail { color:#7c2c09; background:rgba(183,65,14,0.10); border:1px solid rgba(183,65,14,0.35); }
+  .expected { margin-top:16px; color:var(--on-dark-soft); font-size:0.85rem; }
+  .expected summary { cursor:pointer; color:var(--gold-bright); font-weight:600; }
+  .expected .result-wrap { margin-top:10px; }
+  .dyk { margin-top:16px; background:rgba(201,162,39,0.10); border:1px solid var(--line-dark); border-radius:10px; padding:14px 16px; font-size:0.88rem; color:var(--on-dark); }
+  .dyk b { color:var(--gold-bright); }
+  .catalog { position:sticky; top:78px; }
+  .catalog h3 { color:var(--blue-deep); font-size:1.05rem; margin:0 0 12px; }
+  .catalog h3 span { color:var(--ink-soft); font-weight:500; font-size:0.85rem; }
+  .filter-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .fchip { font-size:0.74rem; font-weight:600; padding:5px 11px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .fchip:hover { border-color:var(--gold); }
+  .fchip.on { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .challenge-list { max-height:60vh; overflow-y:auto; margin-top:10px; border-radius:12px; }
+  .ch-item { display:flex; align-items:center; gap:10px; padding:11px 13px; border:1px solid var(--line-light); border-radius:10px; margin-bottom:8px; cursor:pointer; background:var(--papyrus-2); transition:transform .15s, border-color .15s; }
+  .ch-item:hover, .ch-item:focus-visible { transform:translateX(3px); border-color:var(--gold); outline:none; }
+  .ch-item.active { border-color:var(--blue); box-shadow:0 0 0 2px var(--blue-soft); }
+  .ch-item .dot { width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+  .dot-Easy{background:#1F7A5C;} .dot-Medium{background:var(--gold);} .dot-Hard{background:var(--danger);}
+  .ch-item .ct { font-weight:600; color:var(--blue-deep); font-size:0.9rem; }
+  .ch-item .cs { font-size:0.74rem; color:var(--ink-soft); }
+  .ch-item .solved { margin-left:auto; color:var(--success); font-weight:800; }
+  .schema-chip { display:inline-block; background: var(--kemet-2); border:1px solid var(--line-dark); color: var(--gold-bright); border-radius: 8px; padding: 6px 12px; font-size: 0.78rem; margin: 0 8px 8px 0; font-family:"SF Mono",Menlo,monospace; }
+  @media (max-width: 900px){ .workbench{ grid-template-columns:1fr; } .catalog{ position:static; } .challenge-list{ max-height:none; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a><a href="explore.html">Explore</a><a href="tracks.html">Tracks</a><a href="practice.html">Practice</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a><a class="cta" href="index.html#newsletter">Newsletter</a>
+    </nav>
+  </div>
+</header>
+
+<section class="surface-hero center" style="padding:60px 6vw;">
+  <div class="wrap">
+    <div class="kicker">The practice problem set</div>
+    <h1 style="font-size:clamp(1.9rem,4.4vw,2.9rem);margin:0 0 12px;">Solve real SQL challenges. Get graded instantly.</h1>
+    <p class="lead" style="margin:0 auto;color:#f3ead4;">Each challenge has a problem statement, the givens, and an expected output — just like HackerRank or LeetCode, but every table is real, cited Egyptian data. Write your query, run it, and it's auto-graded against the answer, entirely in your browser. No server, no signup.</p>
+  </div>
+</section>
+
+<section class="surface-light">
+  <div class="wrap">
+    <div class="workbench">
+
+      <!-- LEFT: the problem + solve area -->
+      <div>
+        <div data-aos="fade-up">
+          <span class="diff-badge diff-Easy" id="diffBadge">Easy</span>
+          <span class="sector-tag" id="sectorTag">History</span>
+          <h2 id="chTitle" style="margin-top:12px;">Loading challenges…</h2>
+        </div>
+        <p class="ch-statement" id="chStatement" data-aos="fade-up"></p>
+        <div class="givens" id="chGivens" data-aos="fade-up"></div>
+
+        <div class="sandbox" data-aos="fade-up">
+          <label for="sqlInput">Your SQL query</label>
+          <textarea id="sqlInput" class="mono" spellcheck="false"></textarea>
+          <div class="row">
+            <button type="button" class="btn btn-primary" id="runBtn" disabled>Run &amp; check</button>
+            <button type="button" class="btn btn-ghost" id="resetBtn">Reset</button>
+            <span id="status" class="sql-status" role="status" aria-live="polite">Loading the SQL engine…</span>
+          </div>
+          <div id="verdict" class="verdict" role="status" aria-live="polite" hidden></div>
+          <div id="out" class="result-wrap" aria-live="polite"></div>
+          <details class="expected" id="expectedWrap">
+            <summary>Show expected output</summary>
+            <div id="expectedOut" class="result-wrap"></div>
+          </details>
+          <div id="dyk" class="dyk" hidden></div>
+        </div>
+
+        <div style="margin-top:20px;" data-aos="fade-up">
+          <h3 style="color:var(--blue-deep);font-size:1rem;margin:0 0 10px;">Loaded tables <span style="color:var(--ink-soft);font-weight:400;font-size:0.82rem;">— query any of these</span></h3>
+          <div id="schemaChips"></div>
+          <p style="font-size:0.82rem;color:var(--ink-soft);">Years are signed integers — BCE is negative (e.g. Khufu's reign starts at -2589). This is the same cited data the API serves at <code>/datasets/{name}</code>.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT: the filterable catalog -->
+      <aside class="catalog" data-aos="fade-up">
+        <h3>Problem set <span id="solvedCount"></span></h3>
+        <div class="filters">
+          <div class="filter-row" id="sectorFilters"></div>
+          <div class="filter-row" id="diffFilters"></div>
+        </div>
+        <div class="challenge-list" id="challengeList"></div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.metmuseum.org/" target="_blank" rel="noopener">Met Museum</a></div>
+  </div>
+  <div class="colophon">EgyBI · egybi.com · Phase 0 preview. Every figure is real and cited; disputed figures are flagged.&nbsp;·&nbsp;<a href="privacy.html" style="color:var(--gold-bright);text-decoration:none;">Privacy &amp; Cookies</a></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
+<script src="assets/egybi.js"></script>
+<script src="assets/challenges.js"></script>
+<script>
+(function(){
+  var db=null, current=null;
+  var runBtn=document.getElementById('runBtn'), resetBtn=document.getElementById('resetBtn'),
+      statusEl=document.getElementById('status'), out=document.getElementById('out'),
+      input=document.getElementById('sqlInput'), verdict=document.getElementById('verdict'),
+      dyk=document.getElementById('dyk'), expectedOut=document.getElementById('expectedOut');
+  var filterSector='All', filterDiff='All';
+  var SOLVED_KEY='egybi_solved';
+
+  // In-memory set is the session source of truth (works even where localStorage is
+  // sandboxed, e.g. inside a preview iframe); persist to localStorage when allowed.
+  var solvedMem;
+  (function(){ try{ solvedMem=new Set(JSON.parse(localStorage.getItem(SOLVED_KEY)||'[]')); }catch(e){ solvedMem=new Set(); } })();
+  function solvedSet(){ return solvedMem; }
+  function markSolved(id){ solvedMem.add(id); try{ localStorage.setItem(SOLVED_KEY, JSON.stringify([].slice.call(solvedMem))); }catch(e){} }
+
+  // ---- render a sql.js result object as an HTML table ----
+  function renderTable(res){
+    if(!res || !res.length) return '<p class="sql-empty">No rows.</p>';
+    var c=res[0].columns, v=res[0].values;
+    var h='<table class="result-table"><thead><tr>'+c.map(function(x){return '<th>'+EGYBI.escapeHtml(x)+'</th>';}).join('')+'</tr></thead><tbody>';
+    v.forEach(function(r){ h+='<tr>'+r.map(function(x){return '<td>'+EGYBI.escapeHtml(x===null?'∅':x)+'</td>';}).join('')+'</tr>'; });
+    return h+'</tbody></table>';
+  }
+
+  // ---- grading: compare result sets by value (column names ignored) ----
+  function normCell(v){
+    if(v===null||v===undefined) return '∅';
+    if(typeof v==='number') return String(Math.round(v*1e6)/1e6);
+    var s=String(v).trim();
+    if(/^-?\d+(\.\d+)?$/.test(s)) return String(Math.round(parseFloat(s)*1e6)/1e6);
+    return s;
+  }
+  function normResult(res, orderMatters){
+    if(!res || !res.length) return {cols:0, rows:[]};
+    var rows=res[0].values.map(function(r){ return r.map(normCell); });
+    if(!orderMatters) rows=rows.slice().sort(function(a,b){ var x=JSON.stringify(a),y=JSON.stringify(b); return x<y?-1:(x>y?1:0); });
+    return {cols:res[0].columns.length, rows:rows};
+  }
+  function grade(learner, expected, orderMatters){
+    var L=normResult(learner,orderMatters), E=normResult(expected,orderMatters);
+    if(L.rows.length===0 && E.rows.length>0) return {ok:false,msg:'Your query returned no rows; expected '+E.rows.length+'.'};
+    if(L.cols!==E.cols) return {ok:false,msg:'Wrong number of columns: you returned '+L.cols+', expected '+E.cols+'.'};
+    if(L.rows.length!==E.rows.length) return {ok:false,msg:'Wrong number of rows: you returned '+L.rows.length+', expected '+E.rows.length+'.'};
+    for(var i=0;i<E.rows.length;i++){
+      if(JSON.stringify(L.rows[i])!==JSON.stringify(E.rows[i]))
+        return {ok:false,msg:'Row '+(i+1)+' does not match'+(orderMatters?' — check your sort order (ORDER BY).':'.')};
+    }
+    return {ok:true,msg:'Correct — your result matches the expected output exactly.'};
+  }
+
+  // ---- build the instructive "Givens" block: the sentence + auto-documented
+  //      tables the challenge actually queries (description, columns, a sample row) ----
+  function tablesInSolution(sql){
+    var docs=window.EGYBI_TABLE_DOCS||{}, found=[];
+    Object.keys(docs).forEach(function(t){
+      if(new RegExp('\\b'+t+'\\b','i').test(sql)) found.push(t);
+    });
+    return found;
+  }
+  function givensHtml(ch){
+    var html='<div class="givens-lead"><b>Givens.</b> '+EGYBI.escapeHtml(ch.givens)+'</div>';
+    var docs=window.EGYBI_TABLE_DOCS||{};
+    var tabs=tablesInSolution(ch.solution+' '+ch.starter);
+    if(tabs.length){
+      html+='<div class="givens-tables">';
+      tabs.forEach(function(t){
+        var d=docs[t]; if(!d) return;
+        html+='<div class="tdoc"><div class="tdoc-h"><code>'+t+'</code> <span>— '+EGYBI.escapeHtml(d.row)+' per row</span></div>';
+        html+='<p class="tdoc-desc">'+EGYBI.escapeHtml(d.desc)+'</p>';
+        html+='<ul class="tdoc-cols">'+d.columns.map(function(c){return '<li><code>'+c[0]+'</code> '+EGYBI.escapeHtml(c[1])+'</li>';}).join('')+'</ul>';
+        html+='<div class="tdoc-sample"><span>sample row</span> <code>'+EGYBI.escapeHtml(d.sample)+'</code></div></div>';
+      });
+      html+='</div>';
+    }
+    return html;
+  }
+
+  // ---- select a challenge ----
+  function select(ch){
+    current=ch;
+    document.getElementById('chTitle').textContent=ch.title;
+    document.getElementById('chStatement').textContent=ch.statement;
+    document.getElementById('chGivens').innerHTML=givensHtml(ch);
+    var db2=document.getElementById('diffBadge'); db2.textContent=ch.difficulty; db2.className='diff-badge diff-'+ch.difficulty;
+    document.getElementById('sectorTag').textContent=ch.sector;
+    input.value=ch.starter;
+    verdict.hidden=true; dyk.hidden=true; out.innerHTML='';
+    document.getElementById('expectedWrap').open=false;
+    // compute expected output live from the reference solution
+    try{ expectedOut.innerHTML=renderTable(db.exec(ch.solution)); }
+    catch(e){ expectedOut.innerHTML='<p class="sql-error">Could not compute expected output.</p>'; }
+    document.querySelectorAll('.ch-item').forEach(function(el){ el.classList.toggle('active', el.dataset.id===ch.id); });
+  }
+
+  // ---- run + grade ----
+  function run(){
+    if(!db||!current) return;
+    var res;
+    try{ res=db.exec(input.value); }
+    catch(err){ out.innerHTML='<p class="sql-error">SQL error: '+EGYBI.escapeHtml(err.message)+'</p>'; verdict.hidden=true; return; }
+    out.innerHTML=renderTable(res);
+    var expected=db.exec(current.solution);
+    var g=grade(res, expected, current.orderMatters);
+    verdict.hidden=false; verdict.className='verdict '+(g.ok?'pass':'fail');
+    verdict.textContent=(g.ok?'✓ ':'✗ ')+g.msg;
+    if(g.ok){
+      dyk.hidden=false; dyk.innerHTML='<b>Did you know?</b> '+EGYBI.escapeHtml(current.didYouKnow);
+      markSolved(current.id); renderList(); updateSolvedCount();
+    } else { dyk.hidden=true; }
+  }
+
+  // ---- catalog filters + list ----
+  function updateSolvedCount(){
+    var s=solvedSet(); document.getElementById('solvedCount').textContent='· '+s.size+' / '+EGYBI_CHALLENGES.length+' solved';
+  }
+  function renderFilters(){
+    var sectors=['All'].concat(EGYBI_CHALLENGES.map(function(c){return c.sector;}).filter(function(v,i,a){return a.indexOf(v)===i;}));
+    document.getElementById('sectorFilters').innerHTML=sectors.map(function(s){
+      return '<button class="fchip'+(s===filterSector?' on':'')+'" data-sector="'+s+'">'+EGYBI.escapeHtml(s)+'</button>';
+    }).join('');
+    var diffs=['All','Easy','Medium','Hard'];
+    document.getElementById('diffFilters').innerHTML=diffs.map(function(d){
+      return '<button class="fchip'+(d===filterDiff?' on':'')+'" data-diff="'+d+'">'+d+'</button>';
+    }).join('');
+    document.querySelectorAll('#sectorFilters .fchip').forEach(function(b){ b.onclick=function(){ filterSector=b.dataset.sector; renderFilters(); renderList(); }; });
+    document.querySelectorAll('#diffFilters .fchip').forEach(function(b){ b.onclick=function(){ filterDiff=b.dataset.diff; renderFilters(); renderList(); }; });
+  }
+  function renderList(){
+    var s=solvedSet();
+    var items=EGYBI_CHALLENGES.filter(function(c){
+      return (filterSector==='All'||c.sector===filterSector) && (filterDiff==='All'||c.difficulty===filterDiff);
+    });
+    var el=document.getElementById('challengeList');
+    if(!items.length){ el.innerHTML='<p style="color:var(--ink-soft);font-size:0.85rem;">No challenges match that filter.</p>'; return; }
+    el.innerHTML=items.map(function(c){
+      return '<div class="ch-item'+(current&&current.id===c.id?' active':'')+'" tabindex="0" data-id="'+c.id+'">'+
+        '<span class="dot dot-'+c.difficulty+'" title="'+c.difficulty+'"></span>'+
+        '<span><span class="ct">'+EGYBI.escapeHtml(c.title)+'</span><br><span class="cs">'+c.difficulty+' · '+EGYBI.escapeHtml(c.sector)+'</span></span>'+
+        (s.has(c.id)?'<span class="solved" title="Solved">✓</span>':'')+'</div>';
+    }).join('');
+    el.querySelectorAll('.ch-item').forEach(function(it){
+      var ch=EGYBI_CHALLENGES.filter(function(c){return c.id===it.dataset.id;})[0];
+      function go(){ select(ch); document.getElementById('chTitle').scrollIntoView({behavior:EGYBI.reduceMotion?'auto':'smooth', block:'start'}); }
+      it.addEventListener('click', go);
+      it.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+    });
+  }
+
+  function renderSchemaChips(){
+    var chips='';
+    var tables=db.exec("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
+    if(tables.length) tables[0].values.forEach(function(t){
+      var cols=db.exec("PRAGMA table_info("+t[0]+")");
+      var names=cols.length?cols[0].values.map(function(r){return r[1];}).join(', '):'';
+      chips+='<span class="schema-chip">'+EGYBI.escapeHtml(t[0])+'('+EGYBI.escapeHtml(names)+')</span>';
+    });
+    document.getElementById('schemaChips').innerHTML=chips;
+  }
+
+  runBtn.addEventListener('click', run);
+  resetBtn.addEventListener('click', function(){ if(current){ input.value=current.starter; verdict.hidden=true; dyk.hidden=true; out.innerHTML=''; } });
+
+  initSqlJs({ locateFile:function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/'+f; } }).then(function(SQL){
+    db=new SQL.Database();
+    db.run(EGYBI_SANDBOX_SQL);
+    statusEl.textContent='Ready — '+EGYBI_CHALLENGES.length+' challenges loaded.'; statusEl.className='sql-status ready';
+    runBtn.disabled=false;
+    renderSchemaChips(); renderFilters(); renderList(); updateSolvedCount();
+    select(EGYBI_CHALLENGES[0]);
+  }).catch(function(err){
+    statusEl.textContent='Could not load the SQL engine ('+err.message+'). Reload to retry.'; statusEl.className='sql-status error';
+  });
+})();
+</script>
+<script>window.EGYBI_ADS = { client: 'ca-pub-XXXXXXXXXXXXXXXX' };</script>
+<script src="assets/ads.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Competitive Landscape
+
+Sourced research on 8 existing platforms. Full source list: [[Sources]].
+
+| Platform | Format | Gamification | Pricing | DE/BI coverage |
+|---|---|---|---|---|
+| HackerRank | Real code/query execution, auto-graded | Genuine — bronze/silver/gold badges, per-domain leaderboards, rated contests | Free for individuals; $165–375+/mo is B2B recruiting-side only | Thin — ~300 SQL problems is one domain among many general-algorithm ones; no dbt/Airflow/Spark/warehousing/BI content |
+| LeetCode | Real execution, incl. SQL against an actual DB | Strong — streak badges, contest-rating tiers (Knight/Guardian), submission milestones | Free core; Premium $35/mo or ~$159/yr | ~100+ DB problems, framed as interview trivia (joins/subqueries/window functions) — zero modern-data-stack content |
+| SQLZoo | In-browser SQL execution against real sample data, 15-Q multiple-choice quizzes | None — no badges/streaks/leaderboards, just a progress bar | Fully free | Basic-to-intermediate SQL only; nothing on warehousing or the modern stack |
+| Exercism | Track-based exercises, automated grading + optional human mentoring | Light — milestone/reputation badges | Core free forever; "Insiders" badge for $10+/mo donors (not a paywall) | Only SQLite track (81 exercises) — general SQL fundamentals via small katas |
+| DataCamp | In-browser coding + BI-tool exercises, Duolingo-style guided | Real — XP per exercise, daily streaks, "Learn Leaderboard" | Free tier (first chapter only); Premium $14/mo billed annually ($168/yr) or $35/mo; Teams ~$27/user/mo | **Strongest of the eight** — real DE career track (SQL, Python, Airflow, Spark, dbt, AWS/Azure) + dedicated Snowflake/Databricks + Power BI/Tableau tracks with cert prep. But content is guided-tutorial, not open-ended graded problems, and DE is one vertical inside a much larger DS/ML catalog |
+| StrataScratch | Cloud browser notebooks, real SQL/Python/R against real company datasets | Modest — streaks, bookmarking; no confirmed leaderboard/badges | Tiered subscriptions; exact current prices unverified (~$139/yr cited by third parties) | Data-science/analytics interview prep with realistic schemas — closer to real BI work than LeetCode, but no dbt/Airflow/Spark/warehousing modules |
+| DataLemur | Browser SQL editor, real execution, auto-graded; free "SQL Squid Game" gamified extra | No confirmed streaks/badges/leaderboard on the core paid bank | $15/mo, $60/yr, or a $300 one-time coaching package | ~100 SQL + ~70 DS interview questions, company-tagged — interview-prep, not data-engineering/pipeline content |
+| Mode Analytics SQL tutorial | Free expository tutorial with embedded runnable queries | None — it's documentation, not a practice platform | Free (funds Mode's own BI-product funnel) | Zero DE/BI-tool-mechanics practice |
+
+## Synthesis — the open gap
+
+**None of the eight occupies the niche of "gamified, hands-on modern-data-stack practice."** DataCamp comes closest on content breadth (real dbt/Airflow/Spark/Snowflake/Databricks/Power BI/Tableau material) and has authentic gamification (XP, streaks, leaderboard), but its format is guided-tutorial rather than competitive, bite-sized, auto-graded challenges, and DE is a minority slice of a broad data-science catalog. HackerRank, LeetCode, DataLemur, and StrataScratch have the competitive/gamified DNA (badges, streaks, contests, real code execution) but their SQL content tops out at joins/window-functions/interview trivia — none touch dbt models/tests, Airflow DAG debugging, Spark tuning, warehouse schema design (star/snowflake/SCDs), or cloud-warehouse-specific SQL. SQLZoo, Exercism, and Mode are free educational tools with little-to-no gamification and SQL-fundamentals-only content.
+
+**The genuinely open gap:** a LeetCode/HackerRank-style competitive platform — badges, streaks, leaderboards, real auto-graded execution — built specifically around short modern-data-stack challenges (dbt, Airflow, Spark, Snowflake/BigQuery, and BI-tool mechanics). That space appears unclaimed. This is exactly what [[Curriculum & Skill Tracks|EgyBI's curriculum]] targets.

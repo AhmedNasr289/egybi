@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EgyBI — The House of Life for Data Engineers &amp; BI Developers</title>
+<meta name="description" content="EgyBI is a gamified, HackerRank/LeetCode-style skills-practice platform for BI, data engineering, data warehousing, and the modern data stack — every challenge built on real, cited Egyptian data.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta property="og:title" content="EgyBI — The House of Life for Data Engineers & BI Developers">
+<meta property="og:description" content="Practice BI & data engineering on real, cited Egyptian history and economics.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://egybi.com">
+<meta property="og:image" content="https://egybi.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="assets/egybi.css" rel="stylesheet">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg>
+      EgyBI
+    </a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="explore.html">Explore</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="practice.html">Practice</a>
+      <a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a>
+      <a class="cta" href="#newsletter">Newsletter</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="surface-hero" style="position:relative;overflow:hidden;text-align:center;padding-top:92px;padding-bottom:84px;">
+  <div id="hero-particles" class="hero-particles" aria-hidden="true"></div>
+  <div class="hero-inner wrap">
+    <svg style="width:62px;height:62px;margin-bottom:20px;filter:drop-shadow(0 4px 14px rgba(201,162,39,0.5));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Ankh"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg>
+    <h1 style="font-size:clamp(2.1rem,5.2vw,3.6rem);margin:0 0 14px;">Train in the House of Life.</h1>
+    <p class="lead" style="margin:0 auto 8px;color:#f3ead4;min-height:2.2em;"><span id="typed"></span></p>
+    <div class="cta-row center">
+      <a href="practice.html" class="btn btn-primary">Run a real challenge →</a>
+      <a href="#newsletter" class="btn btn-ghost">Get The Papyrus</a>
+    </div>
+    <p style="margin-top:34px;font-size:0.85rem;opacity:0.72;">No signup required to try it — start with a real SQL puzzle.</p>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="surface-dark center">
+  <div class="wrap">
+    <h2 data-aos="fade-up">Egypt by the numbers.</h2>
+    <p class="lead" data-aos="fade-up">Every figure below is real and cited — and every one is queryable inside EgyBI. This is the data your challenges are built on, not a themed skin.</p>
+    <div class="stat-grid" style="margin-top:40px;">
+      <div class="stat" data-aos="fade-up"><div class="num" data-count="19" data-suffix="M">0</div><div class="label">Tourists in 2025</div><div class="cap">Record year, +21% (SIS / Ministry)</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="16.7" data-prefix="$" data-suffix="B" data-decimals="1">0</div><div class="label">Tourism revenue 2025</div><div class="cap">CBE via Trading Economics</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="94" data-suffix="yr">0</div><div class="label">Longest recorded reign</div><div class="cap">Pepi II (traditional, disputed)</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="5000" data-suffix="+" data-sep="1">0</div><div class="label">Years of history</div><div class="cap">Narmer (c. 3100 BCE) to today</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GAP -->
+<section class="surface-light">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">The gap</div>
+    <h2 data-aos="fade-up">Real competitive practice, meet the real modern data stack.</h2>
+    <p class="lead" data-aos="fade-up">No existing platform combines genuine gamification with real modern-data-stack content. EgyBI does — and grounds every challenge in real Egyptian data.</p>
+    <div class="grid grid-3" style="margin-top:32px;">
+      <div class="card" data-aos="fade-up"><h3>HackerRank &amp; LeetCode</h3><p>Gamified — badges, streaks, contests — but SQL content tops out at joins and window functions. No dbt, Airflow, Spark, or warehouse modeling.</p></div>
+      <div class="card" data-aos="fade-up" data-aos-delay="100"><h3>DataCamp</h3><p>Real modern-stack breadth, but guided tutorial — not competitive, auto-graded practice. A different use occasion entirely.</p></div>
+      <div class="card" data-aos="fade-up" data-aos-delay="200"><h3>SQLZoo &amp; Exercism</h3><p>Free and useful, but SQL-fundamentals only, with little gamification. Nothing touches the modern data stack.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIALIZATIONS -->
+<section class="surface-dark" id="specializations">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Specialize</div>
+    <h2 data-aos="fade-up">Three specializations. One House of Life.</h2>
+    <p class="lead" data-aos="fade-up">EgyBI isn't a generic coding site — it's built for the data profession. Pick the path that matches the career you want, and master the exact stack it demands.</p>
+    <div class="grid grid-3" style="margin-top:32px;">
+      <div class="card" data-aos="fade-up">
+        <span class="tag">Data Engineering</span>
+        <h3>Build &amp; run the pipelines.</h3>
+        <p style="margin-bottom:12px;">Ingest, orchestrate, and scale data at production quality.</p>
+        <p style="font-size:0.84rem;"><strong style="color:var(--gold-bright);">Tracks:</strong> SQL · Python · Airflow · Spark/PySpark · Cloud Warehouses · Data Quality</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <span class="tag">Analytics Engineering</span>
+        <h3>Model &amp; transform the data.</h3>
+        <p style="margin-bottom:12px;">Turn raw tables into trusted, tested, well-modeled datasets.</p>
+        <p style="font-size:0.84rem;"><strong style="color:var(--gold-bright);">Tracks:</strong> SQL · dbt · Dimensional Modeling · Data Quality</p>
+      </div>
+      <div class="card" data-aos="fade-up" data-aos-delay="200">
+        <span class="tag">BI Development</span>
+        <h3>Turn data into decisions.</h3>
+        <p style="margin-bottom:12px;">Design the models, measures, and dashboards a business runs on.</p>
+        <p style="font-size:0.84rem;"><strong style="color:var(--gold-bright);">Tracks:</strong> SQL · BI Tooling · Dimensional Modeling · Cloud Warehouses</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:36px;" data-aos="fade-up">All powered by <strong style="color:#fff;">9 skill tracks</strong>, beginner to advanced, each grounded in a real, respected book:</p>
+    <div class="pills" style="margin-top:18px;" data-aos="fade-up">
+      <span class="pill">SQL Fundamentals &amp; Advanced</span>
+      <span class="pill">Dimensional Modeling &amp; DW</span>
+      <span class="pill">Orchestration (Airflow)</span>
+      <span class="pill">dbt &amp; Analytics Engineering</span>
+      <span class="pill">Spark / PySpark</span>
+      <span class="pill">Cloud Data Warehouses</span>
+      <span class="pill">BI Tooling</span>
+      <span class="pill">Data Quality &amp; Testing</span>
+      <span class="pill">Python for Data Engineers</span>
+    </div>
+    <div class="cta-row" data-aos="fade-up"><a href="tracks.html" class="btn btn-primary">Explore all tracks →</a></div>
+  </div>
+</section>
+
+<!-- FEATURED DATA -->
+<section class="surface-light">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Explore Egypt data</div>
+    <h2 data-aos="fade-up">This is a BI platform. So here's real Egyptian data, charted.</h2>
+    <p class="lead" data-aos="fade-up">The knowledge base spans ancient chronology to modern economics — pharaohs, monuments, GDP, the Suez Canal, tourism, energy, demographics, and megaprojects.</p>
+    <div class="chart-card" style="margin-top:26px;" data-aos="zoom-in">
+      <h3>Egypt tourism — arrivals &amp; revenue</h3>
+      <div class="chart-box"><canvas id="tourismChart"></canvas></div>
+      <p class="chart-cap">Source: Ministry of Tourism &amp; Antiquities, Central Bank of Egypt, UNWTO/World Bank. 2021 revenue is left blank because sources genuinely disagree. <a href="explore.html">See the full data explorer →</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- TRY IT (SQL sandbox) -->
+<section class="surface-dark" id="demo">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">Try it yourself</div>
+    <h2 data-aos="fade-up">A real SQL engine. In your browser. Right now.</h2>
+    <p class="lead" data-aos="fade-up">A genuine SQLite database over WebAssembly, seeded with real pharaohs and their reign dates. Edit the query and press Run.</p>
+    <div class="sandbox" style="margin-top:26px;" data-aos="zoom-in">
+      <label for="sqlInput">Table: <code>pharaohs(name, dynasty, reign_start, reign_end)</code> — years are signed, so BCE is negative:</label>
+      <textarea id="sqlInput" class="mono" spellcheck="false">SELECT name, dynasty, (reign_end - reign_start) AS years_reigned
+FROM pharaohs
+ORDER BY years_reigned DESC
+LIMIT 5;</textarea>
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="runQueryBtn" disabled>Run query</button>
+        <span id="sqlStatus" class="sql-status" role="status" aria-live="polite">Loading the SQL engine…</span>
+      </div>
+      <div id="sqlOutput" class="result-wrap" aria-live="polite"></div>
+      <p class="hint">Want datasets on GDP, the Suez Canal, tourism &amp; more? <a href="practice.html">Open the full practice playground →</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- IDENTITY TEASER -->
+<section class="surface-light">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">The identity</div>
+    <h2 data-aos="fade-up">Every challenge is built on real Egyptian history — not a themed skin.</h2>
+    <p class="lead" data-aos="fade-up">Guided by <strong>Ibi</strong>, an ibis-headed scribe's apprentice inspired by Thoth. Rise through a real rank ladder, earn Egyptian badges, and unlock a sourced "Did You Know" after every correct answer.</p>
+    <div class="callout" style="margin-top:26px;" data-aos="zoom-in">
+      <div class="label">Did you know?</div>
+      <p>Pepi II is traditionally credited with a 94-year reign — the longest in recorded history — per the Turin King List. Most Egyptologists today believe this figure was mistranscribed, and favor a shorter reign closer to 64 years.</p>
+      <span class="src">This is the exact kind of note that appears after solving the "Longest Reigns" challenge above.</span>
+    </div>
+    <div class="cta-row" data-aos="fade-up"><a href="about.html" class="btn btn-blue">Meet Ibi &amp; the House of Life →</a></div>
+  </div>
+</section>
+
+<!-- NEWSLETTER: THE PAPYRUS -->
+<section class="surface-light-2 center" id="newsletter">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up">The Papyrus · our newsletter</div>
+    <h2 data-aos="fade-up">One good letter about Egypt, in data.</h2>
+    <p class="lead" data-aos="fade-up">Every so often we send <strong style="color:var(--blue);">The Papyrus</strong> — the new cited datasets and SQL challenges we have added, plus one short data story about Egypt (a mega-project, a record, a surprising number). No noise, unsubscribe anytime.</p>
+    <form class="form-inline newsletter-form" id="newsletterForm" data-aos="fade-up" novalidate>
+      <label for="newsletterEmail" class="sr-only">Email address</label>
+      <input type="email" id="newsletterEmail" name="email" placeholder="you@example.com" autocomplete="email" required aria-required="true">
+      <!-- honeypot: hidden from humans, catches bots -->
+      <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" class="btn btn-primary">Subscribe</button>
+    </form>
+    <p style="font-size:0.82rem;color:var(--ink-soft);margin-top:11px;" data-aos="fade-up">A short letter, every few weeks. Your email stays private.</p>
+    <p class="form-note" id="newsletterNote" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div>
+      <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
+      <p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life. A gamified home for BI, data engineering, and the modern data stack — built on real, cited Egyptian data.</p>
+    </div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="explore.html">Full source list</a></div>
+  </div>
+  <div class="colophon">EgyBI · egybi.com · Phase 0 preview — not a live product yet. Every figure is real and cited; disputed figures are flagged.&nbsp;·&nbsp;<a href="privacy.html" style="color:var(--gold-bright);text-decoration:none;">Privacy &amp; Cookies</a></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.1.0/dist/typed.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
+<script src="assets/egybi.js"></script>
+<script>window.EGYBI_NEWSLETTER = { endpoint: 'api/newsletter.php' };</script>
+<script src="assets/newsletter.js"></script>
+<script>
+  var reduceMotion = window.EGYBI.reduceMotion;
+
+  // Typed hero
+  if (window.Typed) {
+    new Typed('#typed', { strings: [
+      'A gamified home for BI, data engineering &amp; the modern data stack.',
+      'Query 5,000 years of real Egyptian history.',
+      'Master SQL on real pharaoh data — then dbt, Airflow &amp; Spark.',
+      'Every challenge is real, auto-graded, and genuinely Egyptian.'
+    ], typeSpeed: 34, backSpeed: 14, backDelay: 2200, startDelay: 400, loop: true, smartBackspace: true });
+  } else { document.getElementById('typed').textContent = 'A gamified home for BI and the modern data stack.'; }
+
+  // CountUp stats
+  (function () {
+    var CU = window.countUp && window.countUp.CountUp;
+    function run(el) {
+      var end = parseFloat(el.dataset.count);
+      var opts = { prefix: el.dataset.prefix||'', suffix: el.dataset.suffix||'', decimalPlaces: parseInt(el.dataset.decimals||'0',10), separator: el.dataset.sep?',':'', duration: 2.2 };
+      if (!CU || reduceMotion) { el.textContent = opts.prefix + (el.dataset.sep?end.toLocaleString():end) + opts.suffix; return; }
+      new window.countUp.CountUp(el, end, opts).start();
+    }
+    var nums = document.querySelectorAll('.num[data-count]');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } }); }, { threshold: 0.5 });
+      nums.forEach(function (n) { io.observe(n); });
+    } else { nums.forEach(run); }
+  })();
+
+  // Tourism chart
+  (function () {
+    if (!window.Chart) return;
+    new Chart(document.getElementById('tourismChart'), {
+      data: { labels: [2019,2020,2021,2022,2023,2024,2025], datasets: [
+        { type:'bar', label:'Arrivals (millions)', data:[null,null,null,null,14.9,15.7,19.0], backgroundColor:'rgba(23,64,139,0.75)', yAxisID:'yA', borderRadius:4 },
+        { type:'line', label:'Revenue (USD billion)', data:[13.03,4.40,null,10.70,13.6,15.3,16.7], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.15)', yAxisID:'yR', tension:0.3, spanGaps:false, pointRadius:4, pointBackgroundColor:'#C9A227', fill:true }
+      ]},
+      options: { responsive:true, maintainAspectRatio:false, animation: reduceMotion?false:{duration:1200}, interaction:{intersect:false,mode:'index'}, plugins:{legend:{position:'top'}}, scales:{ yA:{position:'left',beginAtZero:true,title:{display:true,text:'Arrivals (M)'},grid:{display:false}}, yR:{position:'right',beginAtZero:true,title:{display:true,text:'Revenue ($B)'},grid:{drawOnChartArea:false}} } }
+    });
+  })();
+
+  // Newsletter ("The Papyrus") is wired by assets/newsletter.js
+
+  // sql.js demo
+  var sqlDb=null, runBtn=document.getElementById('runQueryBtn'), statusEl=document.getElementById('sqlStatus'), outputEl=document.getElementById('sqlOutput'), inputEl=document.getElementById('sqlInput');
+  function runQuery(){ if(!sqlDb)return; try{ var res=sqlDb.exec(inputEl.value); if(!res.length){outputEl.innerHTML='<p class="sql-empty">Query ran fine but returned no rows.</p>';return;} var c=res[0].columns,v=res[0].values,h='<table class="result-table"><thead><tr>'+c.map(function(x){return '<th>'+EGYBI.escapeHtml(x)+'</th>';}).join('')+'</tr></thead><tbody>'; v.forEach(function(r){h+='<tr>'+r.map(function(x){return '<td>'+EGYBI.escapeHtml(x)+'</td>';}).join('')+'</tr>';}); outputEl.innerHTML=h+'</tbody></table>'; }catch(err){ outputEl.innerHTML='<p class="sql-error">SQL error: '+EGYBI.escapeHtml(err.message)+'</p>'; } }
+  initSqlJs({ locateFile: function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/'+f; } }).then(function(SQL){
+    sqlDb=new SQL.Database();
+    sqlDb.run('CREATE TABLE pharaohs (name TEXT, dynasty TEXT, reign_start INTEGER, reign_end INTEGER);');
+    sqlDb.run("INSERT INTO pharaohs VALUES ('Khufu','IV',-2589,-2566),('Khafre','IV',-2558,-2532),('Menkaure','IV',-2532,-2503),('Pepi II','VI',-2278,-2184),('Hatshepsut','XVIII',-1479,-1458),('Thutmose III','XVIII',-1479,-1425),('Akhenaten','XVIII',-1353,-1336),('Tutankhamun','XVIII',-1332,-1323),('Ramesses II','XIX',-1279,-1213),('Cleopatra VII','Ptolemaic',-51,-30);");
+    statusEl.textContent='Ready — this is a real SQL engine running in your browser.'; statusEl.className='sql-status ready'; runBtn.disabled=false; runQuery();
+  }).catch(function(err){ statusEl.textContent='Could not load the SQL engine ('+err.message+'). Reload to retry.'; statusEl.className='sql-status error'; });
+  runBtn.addEventListener('click', runQuery);
+</script>
+<script>window.EGYBI_ADS = { client: 'ca-pub-XXXXXXXXXXXXXXXX' };</script>
+<script src="assets/ads.js"></script>
+</body>
+</html>

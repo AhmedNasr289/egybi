@@ -1,0 +1,34 @@
+pharaoh,dynasty,reign_start_bce,reign_end_bce,era,date_certainty_note
+Narmer (Menes),I,3100,,Early Dynastic,accession only inferred; no reliable end date
+Khasekhemwy,II,2690,2686,Early Dynastic,approximate
+Djoser,III,2670,2650,Old Kingdom,approximate
+Sneferu,IV,2613,2589,Old Kingdom,approximate
+Khufu,IV,2589,2566,Old Kingdom,approximate
+Khafre,IV,2558,2532,Old Kingdom,approximate
+Menkaure,IV,2532,2503,Old Kingdom,approximate
+Userkaf,V,2494,2487,Old Kingdom,approximate
+Unas,V,2375,2345,Old Kingdom,approximate
+Pepi II,VI,2278,2184,Old Kingdom,disputed reign length; Turin King List says 94 years; most Egyptologists now favor ~64
+Mentuhotep II,XI,2055,2004,Middle Kingdom,approximate
+Amenemhat I,XII,1991,1962,Middle Kingdom,approximate; likely commoner-vizier founder of dynasty
+Senusret I,XII,1962,1926,Middle Kingdom,co-regent with Amenemhat I for ~10 years
+Amenemhat II,XII,1926,1895,Middle Kingdom,approximate
+Senusret II,XII,1895,1878,Middle Kingdom,approximate
+Senusret III,XII,1878,1839,Middle Kingdom,possible co-regency with Amenemhat III disputed
+Amenemhat III,XII,1860,1814,Middle Kingdom,start date disputed depending on co-regency assumption (sources give 1860 or 1839)
+Sobekneferu,XII,1806,1802,Middle Kingdom,approximate
+Ahmose I,XVIII,1550,1525,New Kingdom,approximate
+Hatshepsut,XVIII,1479,1458,New Kingdom,assumed senior kingship over stepson Thutmose III; later erased from monuments
+Thutmose III,XVIII,1479,1425,New Kingdom,nominal co-ruler with Hatshepsut until her death
+Amenhotep III,XVIII,1388,1351,New Kingdom,approximate
+Akhenaten,XVIII,1353,1336,New Kingdom,approximate
+Tutankhamun,XVIII,1332,1323,New Kingdom,parentage disputed (Akhenaten vs secondary wife); 2010 DNA analysis debated
+Horemheb,XVIII,1319,1292,New Kingdom,general with no heir; installed Ramesses I as successor
+Seti I,XIX,1290,1279,New Kingdom,approximate
+Ramesses II,XIX,1279,1213,New Kingdom,approximate
+Merneptah,XIX,1213,1203,New Kingdom,approximate
+Ramesses III,XX,1186,1155,New Kingdom,approximate
+Ptolemy I Soter,Ptolemaic,305,282,Ptolemaic,exact per Greek administrative records
+Ptolemy II Philadelphus,Ptolemaic,285,246,Ptolemaic,co-regent with Ptolemy I from 285
+Ptolemy XII Auletes,Ptolemaic,80,51,Ptolemaic,reign interrupted 58-55 BCE by exile
+Cleopatra VII,Ptolemaic,51,30,Ptolemaic,exact per Greek/Roman records

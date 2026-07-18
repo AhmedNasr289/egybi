@@ -1,0 +1,43 @@
+# === Secrets & private data (NEVER commit) ===
+# The Papyrus newsletter subscriber list (real emails)
+backend/api/_private/
+**/_private/
+*.jsonl
+
+# Real DB credentials, if you ever put them in a local override
+backend/api/config.local.php
+.env
+.env.*
+
+# === Generated / regenerable artifacts ===
+# Pipeline-generated seed (rebuilt by fetch_worldbank.py)
+backend/sql/seed_auto.sql
+# Local SQLite test DB (rebuilt by backend/test/build_test_db.py)
+*.sqlite
+*.sqlite3
+backend/test/*.sqlite
+# API file cache
+backend/cache/
+**/cache/
+
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# === Node ===
+node_modules/
+
+# === OS / editor cruft ===
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
+.idea/
+
+# === Temp/preview scratch ===
+site/_*.svg
+*.log
