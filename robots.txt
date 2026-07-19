@@ -1,0 +1,9 @@
+# EgyBI — https://egybi.com
+User-agent: *
+Allow: /
+
+# Endpoints and private data are not content — don't spend crawl budget here.
+Disallow: /api/
+Disallow: /auth/
+
+Sitemap: https://egybi.com/sitemap.xml

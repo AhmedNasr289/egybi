@@ -13,7 +13,12 @@
     #    (Business/pricing vault + build tooling — 403, never served.)
     RewriteRule ^(egybi|backend)(/|$) - [F]
 
-    # 2) Serve everything else from the site/ web root. Requests already inside
+    # 2) Serve robots.txt from THIS (document-root) copy, not the site/ one.
+    #    The host special-cases /robots.txt before rewrites, so keeping a real
+    #    file here is what actually gets served to crawlers.
+    RewriteRule ^robots\.txt$ - [L]
+
+    # 3) Serve everything else from the site/ web root. Requests already inside
     #    /site/ are left alone so there is no rewrite loop. Anything that isn't
     #    under site/ (README.md, GO-LIVE.md, egy_raw.geojson, etc.) maps to a
     #    non-existent site/<name> and 404s — i.e. only site/ content is public.
