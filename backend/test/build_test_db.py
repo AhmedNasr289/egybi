@@ -22,6 +22,7 @@ FILES = [
     "seed_v6.sql",
     "seed_v7.sql",
     "seed_v8.sql",
+    "seed_v9.sql",
     "seed_auto.sql",  # optional: written by the fetch pipeline; skipped if absent
 ]
 

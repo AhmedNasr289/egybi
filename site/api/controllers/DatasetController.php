@@ -18,6 +18,10 @@ class DatasetController
     private static array $registry = [
         'pharaohs'               => 'Pharaohs and dynasties (signed years: negative = BCE).',
         'monuments'              => 'Major ancient monuments and their construction windows.',
+        'obelisks'               => 'Surviving ancient Egyptian obelisks and where they stand today.',
+        'archaeological_discoveries' => 'Landmark archaeological discoveries, their finders and years.',
+        'temples'                => 'Major ancient temples by site and principal deity.',
+        'royal_women'            => 'Royal women who held real power, from Hatshepsut to Cleopatra VII.',
         'historical_eras'        => 'Historical eras from the Ptolemaic period to the present.',
         'historical_events'      => 'Key dated events across Egyptian history.',
         'modern_leaders'         => 'Modern rulers from Muhammad Ali to the present.',

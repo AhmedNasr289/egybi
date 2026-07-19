@@ -408,3 +408,28 @@ CREATE TABLE megaproject_status (
   id INTEGER PRIMARY KEY AUTOINCREMENT, project TEXT NOT NULL, status_2026 TEXT,
   key_figure TEXT, cost_or_scope TEXT, source_url TEXT, note TEXT
 );
+
+-- === seed_v9: history & heritage depth ======================================
+DROP TABLE IF EXISTS obelisks;
+CREATE TABLE obelisks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, pharaoh TEXT,
+  original_site TEXT, current_city TEXT, current_country TEXT,
+  height_m REAL, year_moved INTEGER, source_url TEXT, certainty_note TEXT
+);
+DROP TABLE IF EXISTS archaeological_discoveries;
+CREATE TABLE archaeological_discoveries (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, discovery_year INTEGER,
+  discoverer TEXT, site TEXT, significance TEXT, source_url TEXT, certainty_note TEXT
+);
+DROP TABLE IF EXISTS temples;
+CREATE TABLE temples (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, site TEXT,
+  principal_deity TEXT, built_by TEXT, period TEXT,
+  build_start INTEGER, build_end INTEGER, source_url TEXT, certainty_note TEXT
+);
+DROP TABLE IF EXISTS royal_women;
+CREATE TABLE royal_women (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, dynasty TEXT,
+  period_start INTEGER, period_end INTEGER, role TEXT, known_for TEXT,
+  source_url TEXT, certainty_note TEXT
+);

@@ -806,4 +806,66 @@ CREATE TABLE megaproject_status (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
+-- === seed_v9: history & heritage depth ======================================
+DROP TABLE IF EXISTS obelisks;
+CREATE TABLE obelisks (
+  id              INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name            VARCHAR(140) NOT NULL,
+  pharaoh         VARCHAR(120) NULL,
+  original_site   VARCHAR(120) NULL,
+  current_city    VARCHAR(120) NULL,
+  current_country VARCHAR(80) NULL,
+  height_m        DECIMAL(6,2) NULL,
+  year_moved      SMALLINT NULL,
+  source_url      VARCHAR(400) NULL,
+  certainty_note  VARCHAR(400) NULL,
+  PRIMARY KEY (id),
+  KEY idx_obelisk_country (current_country)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS archaeological_discoveries;
+CREATE TABLE archaeological_discoveries (
+  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name           VARCHAR(160) NOT NULL,
+  discovery_year SMALLINT NULL,
+  discoverer     VARCHAR(160) NULL,
+  site           VARCHAR(120) NULL,
+  significance   VARCHAR(400) NULL,
+  source_url     VARCHAR(400) NULL,
+  certainty_note VARCHAR(400) NULL,
+  PRIMARY KEY (id),
+  KEY idx_disc_year (discovery_year)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS temples;
+CREATE TABLE temples (
+  id              INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name            VARCHAR(140) NOT NULL,
+  site            VARCHAR(120) NULL,
+  principal_deity VARCHAR(120) NULL,
+  built_by        VARCHAR(160) NULL,
+  period          VARCHAR(80) NULL,
+  build_start     SMALLINT NULL,
+  build_end       SMALLINT NULL,
+  source_url      VARCHAR(400) NULL,
+  certainty_note  VARCHAR(400) NULL,
+  PRIMARY KEY (id),
+  KEY idx_temple_deity (principal_deity)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS royal_women;
+CREATE TABLE royal_women (
+  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name           VARCHAR(120) NOT NULL,
+  dynasty        VARCHAR(40) NULL,
+  period_start   SMALLINT NULL,
+  period_end     SMALLINT NULL,
+  role           VARCHAR(140) NULL,
+  known_for      VARCHAR(400) NULL,
+  source_url     VARCHAR(400) NULL,
+  certainty_note VARCHAR(400) NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
