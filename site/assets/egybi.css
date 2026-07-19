@@ -94,11 +94,11 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
   color: #fff; position: sticky; top: 0; z-index: 100;
   border-bottom: 1px solid var(--line-dark);
 }
-.site-header .bar { max-width: var(--maxw); margin: 0 auto; padding: 15px 6vw; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.3rem; color: #fff; text-decoration: none; }
+.site-header .bar { max-width: var(--maxw); margin: 0 auto; padding: 13px 6vw; display: flex; align-items: center; gap: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.25rem; color: #fff; text-decoration: none; flex: 0 0 auto; line-height: 1; }
 .brand svg { width: 26px; height: 26px; }
-.nav-links { display: flex; align-items: center; flex-wrap: wrap; gap: 22px; }
-.nav-links a { color: var(--on-dark); text-decoration: none; font-size: 0.92rem; opacity: 0.85; transition: color .2s, opacity .2s; font-weight: 500; }
+.nav-links { display: flex; align-items: center; flex-wrap: nowrap; gap: 20px; flex: 1 1 auto; justify-content: flex-end; }
+.nav-links a { color: var(--on-dark); text-decoration: none; font-size: 0.9rem; opacity: 0.85; transition: color .2s, opacity .2s; font-weight: 500; white-space: nowrap; }
 .nav-links a:hover, .nav-links a:focus-visible, .nav-links a.active { color: var(--gold-bright); opacity: 1; }
 .nav-links a.cta { background: var(--gold); color: var(--kemet); padding: 8px 16px; border-radius: 8px; font-weight: 700; }
 .nav-links a.cta:hover { background: var(--gold-bright); color: var(--kemet); }
@@ -358,4 +358,36 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
   .hero-sandbox textarea { min-height: 86px; font-size: 12.5px; padding: 10px 11px; }
   .hero-sandbox .row { margin-top: 11px; }
   .hero-sandbox .result-wrap { margin-top: 13px; max-height: 260px; }
+}
+
+/* ---------- header: three zones (brand | links | actions) ------------------
+   The bar used to be brand + one wrapping nav that also held the CTA and the
+   account button auth.js injects. Once signed-out visitors got a "Sign in"
+   button the row wrapped, and the brand centred against a two-line block. */
+.nav-actions { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
+.nav-actions .cta { background: var(--gold); color: var(--kemet); padding: 8px 15px; border-radius: 8px; font-weight: 700; font-size: 0.88rem; text-decoration: none; white-space: nowrap; transition: background .2s; }
+.nav-actions .cta:hover, .nav-actions .cta:focus-visible { background: var(--gold-bright); }
+.nav-only-mobile { display: none; }
+.nav-links a.active { color: var(--gold-bright); opacity: 1; }
+.acct-slot { display: inline-flex; align-items: center; }
+
+/* Collapse to the menu at 1024px — before the links can run out of room. */
+@media (max-width: 1024px) {
+  .nav-toggle { display: inline-block; order: 3; }
+  .nav-actions { order: 2; margin-left: auto; }
+  .nav-links {
+    order: 4; position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; align-items: flex-start; gap: 2px;
+    background: var(--kemet); padding: 10px 6vw 16px;
+    border-bottom: 1px solid var(--line-dark); display: none;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 10px 0; width: 100%; font-size: 0.95rem; }
+  .nav-only-mobile { display: block; color: var(--gold-bright) !important; }
+  .site-header .bar { position: relative; flex-wrap: nowrap; }
+}
+@media (max-width: 430px) {
+  .nav-actions .cta { display: none; }      /* the menu carries Newsletter here */
+  .brand { font-size: 1.12rem; }
+  .site-header .bar { gap: 10px; padding: 11px 5vw; }
 }

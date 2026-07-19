@@ -53,7 +53,9 @@
 
   // ---- nav account control -------------------------------------------------
   function renderNav() {
-    var nav = document.querySelector('.nav-links'); if (!nav) return;
+    // Prefer the dedicated actions zone so the account control never widens
+    // the link row (which used to make the whole header wrap).
+    var nav = document.querySelector('.nav-actions') || document.querySelector('.nav-links'); if (!nav) return;
     var slot = document.getElementById('acct-slot');
     if (!slot) { slot = document.createElement('span'); slot.id = 'acct-slot'; slot.className = 'acct-slot'; nav.appendChild(slot); }
     if (user) {

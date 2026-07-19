@@ -31,10 +31,21 @@
 <header class="site-header">
   <div class="bar">
     <a class="brand" href="../index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
-    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
-    <nav class="nav-links">
-      <a href="../index.html">Home</a><a href="../explore.html">Explore</a><a href="../prices.html">Prices</a><a href="../tracks.html">Tracks</a><a href="../practice.html">Practice</a><a href="../blog.html">Blog</a><a href="../community.html">Community</a><a href="../about.html">About</a><a class="cta" href="../index.html#newsletter">Newsletter</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="../index.html">Home</a>
+      <a href="../explore.html">Explore</a>
+      <a href="../prices.html">Prices</a>
+      <a href="../tracks.html">Tracks</a>
+      <a href="../practice.html">Practice</a>
+      <a href="../blog.html" class="active">Blog</a>
+      <a href="../community.html">Community</a>
+      <a href="../about.html">About</a>
+      <a class="nav-only-mobile" href="#newsletter">Newsletter</a>
     </nav>
+    <div class="nav-actions">
+      <a class="cta" href="#newsletter">Newsletter</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
   </div>
 </header>
 
@@ -74,7 +85,7 @@ ORDER BY population_millions DESC;</code></pre>
     <div><h5>Platform</h5><a href="../blog.html">Blog</a><a href="../community.html">Community</a><a href="../about.html">The Identity</a><a href="../index.html#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a></div>
   </div>
-  <div class="colophon">EgyBI · egybi.com · Phase 0 preview. Every figure is real and cited; disputed figures are flagged.&nbsp;·&nbsp;<a href="../privacy.html" style="color:var(--gold-bright);text-decoration:none;">Privacy &amp; Cookies</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<a href="../privacy.html">Privacy &amp; cookies</a></div>
 </footer>
 <script src="../assets/egybi.js"></script>
 <script src="../assets/ads.js"></script>
