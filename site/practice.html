@@ -60,6 +60,30 @@
   .ch-item .cs { font-size:0.74rem; color:var(--ink-soft); }
   .ch-item .solved { margin-left:auto; color:var(--success); font-weight:800; }
   .schema-chip { display:inline-block; background: var(--kemet-2); border:1px solid var(--line-dark); color: var(--gold-bright); border-radius: 8px; padding: 6px 12px; font-size: 0.78rem; margin: 0 8px 8px 0; font-family:"SF Mono",Menlo,monospace; }
+  /* ---- guided onboarding path ---- */
+  .path-strip { background:linear-gradient(160deg,#1b160e,var(--kemet)); border:1px solid var(--line-dark); border-left:4px solid var(--gold); border-radius:14px; padding:16px 18px; margin-bottom:20px; }
+  .path-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .path-title { font-family:'Cinzel',serif; font-weight:700; color:var(--gold-bright); font-size:1rem; }
+  .path-dismiss { background:none; border:none; color:var(--on-dark-soft); font:inherit; font-size:0.78rem; cursor:pointer; text-decoration:underline; }
+  .path-dismiss:hover { color:var(--gold-bright); }
+  .path-steps { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+  .path-step button { width:100%; display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); border:1px solid var(--line-dark); border-radius:9px; padding:9px 11px; cursor:pointer; text-align:left; color:var(--on-dark); font:inherit; transition:border-color .15s, transform .15s; }
+  .path-step button:hover { border-color:var(--gold); transform:translateX(3px); }
+  .path-step .ps-n { flex:0 0 22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; background:var(--line-dark); color:var(--on-dark); }
+  .path-step.done .ps-n { background:var(--success); color:#08130e; }
+  .path-step.now button { border-color:var(--gold); box-shadow:0 0 0 2px rgba(201,162,39,0.18); }
+  .path-step .ps-t { font-weight:700; font-size:0.84rem; color:var(--gold-bright); flex:0 0 auto; }
+  .path-step .ps-c { font-size:0.8rem; color:var(--on-dark-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .path-note { margin:11px 0 0; font-size:0.79rem; color:var(--on-dark-soft); }
+  .path-next, .guest-nudge { display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:space-between; margin-top:14px; border-radius:10px; padding:13px 16px; font-size:0.88rem; }
+  .path-next { background:var(--blue-soft); border:1px solid var(--blue); color:var(--blue-deep); }
+  .guest-nudge { background:var(--gold-soft); border:1px solid var(--gold); color:var(--gold-ink); }
+  .path-next .btn, .guest-nudge .btn { padding:9px 16px; font-size:0.85rem; }
+  @media (max-width:560px){
+    .path-step button { flex-wrap:wrap; }
+    .path-step .ps-c { flex-basis:100%; white-space:normal; }
+    .path-next .btn, .guest-nudge .btn { width:100%; }
+  }
   @media (max-width: 900px){ .workbench{ grid-template-columns:1fr; } .catalog{ position:static; } .challenge-list{ max-height:none; } }
 </style>
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
@@ -105,6 +129,14 @@
 
       <!-- LEFT: the problem + solve area -->
       <div>
+        <div id="pathStrip" class="path-strip" hidden>
+          <div class="path-head">
+            <span class="path-title">Start here &mdash; a five-step path</span>
+            <button type="button" class="path-dismiss" id="pathDismiss" aria-label="Hide the guided path">Hide</button>
+          </div>
+          <ol class="path-steps" id="pathSteps"></ol>
+          <p class="path-note" id="pathNote"></p>
+        </div>
         <div data-aos="fade-up">
           <span class="diff-badge diff-Easy" id="diffBadge">Easy</span>
           <span class="sector-tag" id="sectorTag">History</span>
@@ -122,6 +154,8 @@
             <span id="status" class="sql-status" role="status" aria-live="polite">Loading the SQL engine…</span>
           </div>
           <div id="verdict" class="verdict" role="status" aria-live="polite" hidden></div>
+          <div id="pathNext" class="path-next" hidden></div>
+          <div id="guestNudge" class="guest-nudge" hidden></div>
           <div id="out" class="result-wrap" aria-live="polite"></div>
           <details class="expected" id="expectedWrap">
             <summary>Show expected output</summary>
@@ -198,6 +232,86 @@
   // array-like with .length, and a Set only has .size). That silently wrote an
   // empty array on every solve, so progress never survived a reload and never
   // reached the account sync.
+
+  // ---- Guided path -------------------------------------------------------
+  // One idea per step: filter -> sort -> aggregate -> join -> window.
+  var PATH = ['his-1','his-2','his-3','his-4','her-20'];
+  var PATH_LABELS = ['Filter rows','Sort & limit','Group & count','Join tables','Window functions'];
+  var PATH_HIDDEN = 'egybi_path_hidden', PATH_DONE = 'egybi_path_done';
+  function pathHidden(){ try{ return localStorage.getItem(PATH_HIDDEN)==='1'; }catch(e){ return false; } }
+  function chById(id){ return EGYBI_CHALLENGES.filter(function(c){ return c.id===id; })[0]; }
+  function nextPathId(){
+    var solved=solvedSet();
+    for(var i=0;i<PATH.length;i++){ if(!solved.has(PATH[i])) return PATH[i]; }
+    return null;
+  }
+  function renderPath(){
+    var el=document.getElementById('pathStrip'); if(!el) return;
+    if(pathHidden()){ el.hidden=true; return; }
+    var solved=solvedSet(), done=PATH.filter(function(id){return solved.has(id);}).length;
+    el.hidden=false;
+    document.getElementById('pathSteps').innerHTML = PATH.map(function(id,i){
+      var c=chById(id); if(!c) return '';
+      var isDone=solved.has(id), isNow=(current&&current.id===id);
+      return '<li class="path-step'+(isDone?' done':'')+(isNow?' now':'')+'">'+
+             '<button type="button" data-path-id="'+id+'">'+
+             '<span class="ps-n">'+(isDone?'\u2713':(i+1))+'</span>'+
+             '<span class="ps-t">'+EGYBI.escapeHtml(PATH_LABELS[i])+'</span>'+
+             '<span class="ps-c">'+EGYBI.escapeHtml(c.title)+'</span></button></li>';
+    }).join('');
+    document.getElementById('pathNote').textContent = done>=PATH.length
+      ? 'Path complete — you have used filtering, aggregation, joins and window functions. The other ' + (EGYBI_CHALLENGES.length - PATH.length) + ' challenges are yours.'
+      : done + ' of ' + PATH.length + ' done. Each step teaches one new idea.';
+    document.getElementById('pathSteps').querySelectorAll('button[data-path-id]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var c=chById(b.getAttribute('data-path-id'));
+        if(c){ select(c); document.getElementById('chTitle').scrollIntoView({behavior:EGYBI.reduceMotion?'auto':'smooth',block:'start'}); }
+      });
+    });
+  }
+  function showPathNext(justSolvedId){
+    var box=document.getElementById('pathNext'); if(!box) return;
+    box.hidden=true;
+    if(PATH.indexOf(justSolvedId)===-1) return;      // only inside the path
+    var nid=nextPathId();
+    if(!nid){
+      box.innerHTML='<strong>Path complete.</strong> You have just used filtering, sorting, grouping, a join and a window function on real Egyptian data.';
+      box.hidden=false; return;
+    }
+    var c=chById(nid); if(!c) return;
+    var i=PATH.indexOf(nid);
+    box.innerHTML='<span>Next &mdash; step '+(i+1)+' of '+PATH.length+': <strong>'+EGYBI.escapeHtml(PATH_LABELS[i])+'</strong></span>'+
+                  '<button type="button" class="btn btn-primary" id="pathNextBtn">'+EGYBI.escapeHtml(c.title)+' &rarr;</button>';
+    box.hidden=false;
+    document.getElementById('pathNextBtn').addEventListener('click', function(){
+      select(c); document.getElementById('chTitle').scrollIntoView({behavior:EGYBI.reduceMotion?'auto':'smooth',block:'start'});
+    });
+  }
+  // Ask for the account only once solving has clearly paid off.
+  function maybeNudge(){
+    var box=document.getElementById('guestNudge'); if(!box) return;
+    var signedIn = !!(window.EGYBI_ACCOUNT && window.EGYBI_ACCOUNT.user);
+    var n = solvedSet().size;
+    if(signedIn || n < 3 || box.dataset.shown==='1'){ return; }
+    var xp = 0, solved = solvedSet();
+    EGYBI_CHALLENGES.forEach(function(c){ if(solved.has(c.id)) xp += ({Easy:10,Medium:20,Hard:40})[c.difficulty]||10; });
+    box.innerHTML='<span>You have earned <strong>'+xp+' XP</strong> as a guest across '+n+' challenges. Create a free account to keep it, hold a streak and climb the scribe ranks.</span>'+
+                  '<button type="button" class="btn btn-primary" id="nudgeBtn">Save my progress</button>';
+    box.hidden=false; box.dataset.shown='1';
+    if(window.EGYBI_TRACK) EGYBI_TRACK('guest_nudge_shown');
+    document.getElementById('nudgeBtn').addEventListener('click', function(){
+      if(window.EGYBI_TRACK) EGYBI_TRACK('guest_nudge_clicked');
+      var b=document.getElementById('signinBtn'); if(b) b.click();
+    });
+  }
+  (function(){
+    var d=document.getElementById('pathDismiss');
+    if(d) d.addEventListener('click', function(){
+      try{ localStorage.setItem(PATH_HIDDEN,'1'); }catch(e){}
+      document.getElementById('pathStrip').hidden=true;
+    });
+  })();
+
   function markSolved(id){ solvedMem.add(id); try{ localStorage.setItem(SOLVED_KEY, JSON.stringify(Array.from(solvedMem))); }catch(e){} }
 
   // ---- render a sql.js result object as an HTML table ----
@@ -265,6 +379,9 @@
   // ---- select a challenge ----
   function select(ch){
     current=ch;
+    var pn=document.getElementById('pathNext'); if(pn) pn.hidden=true;
+    // keep the guided-path highlight on whatever is actually open
+    if(typeof renderPath==='function') renderPath();
     document.getElementById('chTitle').textContent=ch.title;
     document.getElementById('chStatement').textContent=ch.statement;
     document.getElementById('chGivens').innerHTML=givensHtml(ch);
@@ -292,7 +409,7 @@
     verdict.textContent=(g.ok?'✓ ':'✗ ')+g.msg;
     if(g.ok){
       dyk.hidden=false; dyk.innerHTML='<b>Did you know?</b> '+EGYBI.escapeHtml(current.didYouKnow);
-      markSolved(current.id); if(window.EGYBI_TRACK) EGYBI_TRACK('challenge_solved'); renderList(); updateSolvedCount();
+      markSolved(current.id); if(window.EGYBI_TRACK) EGYBI_TRACK('challenge_solved'); renderList(); updateSolvedCount(); renderPath(); showPathNext(current.id); maybeNudge();
     } else { dyk.hidden=true; }
   }
 
@@ -359,6 +476,7 @@
     statusEl.textContent='Ready — '+EGYBI_CHALLENGES.length+' challenges loaded.'; statusEl.className='sql-status ready';
     runBtn.disabled=false;
     renderSchemaChips(); renderFilters(); renderList(); updateSolvedCount();
+    renderPath();
     // Deep link: /practice.html#his-2 opens that challenge directly, so the
     // generated per-challenge pages can hand a visitor straight to the problem.
     function fromHash(){
@@ -367,6 +485,9 @@
       return EGYBI_CHALLENGES.filter(function(c){return c.id===id;})[0]||null;
     }
     var target=fromHash();
+    // A newcomer with no solves begins at step 1 rather than whatever
+    // challenge happens to sit first in the catalogue.
+    if(!target && solvedSet().size===0 && !pathHidden()){ target=chById(PATH[0])||null; }
     select(target||EGYBI_CHALLENGES[0]);
     if(target){ try{ document.getElementById('chTitle').scrollIntoView({behavior:EGYBI.reduceMotion?'auto':'smooth',block:'start'}); }catch(e){} }
     window.addEventListener('hashchange', function(){ var t=fromHash(); if(t) select(t); });
