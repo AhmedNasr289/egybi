@@ -1,0 +1,68 @@
+name: Refresh Egypt data
+
+# Automatically pulls the latest World Bank indicators for Egypt, rebuilds the
+# bundled knowledge-base SQLite database, and commits it back. That push then
+# triggers the Hostinger auto-deploy, so the live site's data refreshes with no
+# manual steps. Runs monthly (World Bank data changes slowly) and on demand.
+
+on:
+  schedule:
+    - cron: '0 3 1 * *'      # 03:00 UTC on the 1st of each month
+  workflow_dispatch: {}       # manual "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write             # needed to push the refreshed data back
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch latest World Bank indicators (stdlib only, no pip)
+        run: python backend/pipeline/fetch_worldbank.py
+
+      - name: Detect whether anything actually changed
+        id: check
+        run: |
+          if [ -n "$(git status --porcelain -- backend/sql/seed_auto.sql)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No indicator changes from the World Bank — nothing to publish."
+          fi
+
+      - name: Guard against an empty or broken fetch
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          inserts=$(grep -c "INSERT" backend/sql/seed_auto.sql || true)
+          echo "seed_auto.sql INSERT rows: $inserts"
+          if [ "${inserts:-0}" -lt 20 ]; then
+            echo "::error::Refusing to publish — only $inserts inserts (likely a failed/empty fetch)."
+            exit 1
+          fi
+
+      - name: Rebuild + verify the bundled KB database
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          python backend/test/build_test_db.py     # exits non-zero on any SQL/FK error
+          cp backend/test/egybi_test.sqlite backend/data/egybi_kb.sqlite
+
+      - name: Commit & push the refreshed data
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name  "egybi-data-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add backend/sql/seed_auto.sql backend/data/egybi_kb.sqlite
+          git commit -m "Automated data refresh — World Bank indicators [skip ci]"
+          git push

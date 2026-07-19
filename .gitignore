@@ -10,8 +10,9 @@ backend/api/config.local.php
 .env.*
 
 # === Generated / regenerable artifacts ===
-# Pipeline-generated seed (rebuilt by fetch_worldbank.py)
-backend/sql/seed_auto.sql
+# Pipeline-generated seed (rebuilt by fetch_worldbank.py) — TRACKED so the
+# scheduled "Refresh Egypt data" GitHub Action can commit refreshed values and
+# they carry a readable, cited audit trail. (Was ignored; now versioned.)
 # Local SQLite test DB (rebuilt by backend/test/build_test_db.py)
 *.sqlite
 *.sqlite3
