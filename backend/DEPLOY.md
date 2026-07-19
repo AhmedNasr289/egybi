@@ -282,6 +282,56 @@ paste its `<script>` into the page's `#communityList` area and drop `community.j
 **Disqus**. `assets/community.js` already degrades gracefully (the form explains itself and
 points to `hello@egybi.com`) if no endpoint is connected.
 
+## Step 11 — Accounts / SaaS layer (Phase 2)
+
+Optional but ready. `backend/auth/` is an **isolated** module (never touches the
+read-only KB API) that adds real accounts, per-account progress sync, and
+paywall-ready gating — **every plan free at launch**. Full design in
+`egybi/Phase 2 — SaaS & Accounts.md`.
+
+1. **Upload** the whole `backend/auth/` folder to `public_html/auth/`
+   (`auth.php`, `progress.php`, `stats.php`, `payments.php`, `lib.php`,
+   `mailer.php`, `schema_auth_mysql.sql`, `config.sample.php`). The frontend
+   already calls `auth/…` relatively.
+2. **Create a MySQL DB** (or reuse the KB one) and **import
+   `schema_auth_mysql.sql`** via phpMyAdmin — *not* the SQLite `schema_auth.sql`.
+   (users, sessions, auth_tokens, user_progress, user_stats, entitlements,
+   auth_attempts.) The MySQL file uses `VARCHAR` keys + `ENGINE=InnoDB
+   CHARSET=utf8mb4`, because **MySQL cannot index a `TEXT` column** the way SQLite
+   can — importing the SQLite schema on MySQL will fail. `schema_auth.sql` is for
+   local SQLite testing only.
+3. **Configure secrets — the easy way, no hPanel env vars.** In File Manager,
+   inside `public_html/auth/`, create a folder `_private/`, then copy
+   `config.sample.php` into it as `config.php` and fill in your values:
+   the Step‑1 MySQL `host`/`name`/`user`/`pass`, a long random `app_secret`,
+   `app_url` = `https://egybi.com`, and `secure_cookie => '1'`. `lib.php` reads
+   this file first (falling back to env vars, then SQLite for local dev). The
+   whole `_private/` folder is git‑ignored **and** should be denied over the web
+   (same `.htaccess` deny used for the newsletter list) — it holds `config.php`,
+   the mail log, and any local sqlite.
+4. **Email — built and ready; just add your mailbox password.** `mailer.php` is a
+   dependency‑free SMTP client (no Composer). It sends the branded verify /
+   password‑reset emails through Hostinger. In `_private/config.php` set
+   `smtp_host => 'smtp.hostinger.com'`, `smtp_port => 465`, `smtp_user =>
+   'hello@egybi.com'`, `smtp_pass =>` your mailbox password, and `mail_from =>
+   'no-reply@egybi.com'` (create `no-reply@` as a **free alias** on the
+   `hello@egybi.com` mailbox in hPanel → Emails). Leave the `smtp_*` values blank
+   to keep links **logged** to `_private/mail.log` instead of sent (fine before
+   launch — signup/reset still succeed). Use port `587` if `465` is blocked.
+5. **Payments stay OFF.** `payments.php` is inert unless `PAY_ENABLED=1` **and**
+   `PAY_WEBHOOK_SECRET` are set — no payment code runs and no plan can change
+   until you deliberately enable a Paddle/LemonSqueezy integration. To turn a
+   **paid tier** on later: insert `pro` rows into `entitlements` for the gated
+   features, add the provider webhook (set `users.plan='pro'` on subscribe), and
+   flip `PAY_ENABLED`. Nothing else needs rebuilding.
+
+**What it verifies as safe:** Argon2id password hashing (auto‑fallback to bcrypt
+on hosts without Argon2), PDO prepared statements
+everywhere, HttpOnly+Secure+SameSite session cookies, a CSRF token required on
+every state-changing write, per-user data scoping, rate limiting on
+signup/login/reset, honeypot, and generic replies that never reveal whether an
+email exists. Anonymous visitors keep solving with `localStorage` untouched.
+
 ---
 
 ## Security notes (already handled)

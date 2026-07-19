@@ -53,6 +53,7 @@ perankh/
 │   │   ├── config.php        DB config (edit for Hostinger)
 │   │   ├── newsletter.php    Write-side endpoint (The Papyrus signups)
 │   │   ├── community.php     Write-side endpoint (moderated ideas/comments)
+│   │   └── (auth/ is a separate module — see below)
 │   │   ├── lib/              Database, Response, Cache
 │   │   └── controllers/      DatasetController, ChartController
 │   └── test/                 Local SQLite test DB (build_test_db.py)
@@ -64,7 +65,7 @@ perankh/
 ## 🚀 Current status (Phase 0 — pre-launch)
 
 - **Frontend:** 9-page site, live and verified (now including a **Daily Prices** page — real Egyptian wholesale produce prices, refreshed daily from a static JSON feed, with per-item trend charts and every figure source-dated). Disciplined color identity, real BI dashboards, a **BI-grade interactive Egypt choropleth map** (27 governorates, 5 metrics — population, density, urban %, growth, area — Leaflet, offline), and a **HackerRank-style SQL challenge workbench** (97 auto-graded challenges on a 25-table cited sandbox, organized by 8 SQL topics as a beginner→advanced study path, running in-browser via sql.js). Adds a data-driven **Blog**, a **Community** page (contribute/accuracy rules, public roadmap, automations), *The Papyrus* **newsletter** signup (validated, honeypot-guarded, injection-safe write endpoint + no-server fallback), a **Privacy** policy, and **Google AdSense** plumbing (config-gated, inert until a real publisher ID is set). Static — ready to upload to Hostinger.
-- **Backend:** a **58-table (837-row)** cited Egypt knowledge base spanning 18+ sectors + a read-only PHP/MySQL API, plus one isolated write-side endpoint for newsletter signups. Built and tested end-to-end locally (`backend/test/build_test_db.py`, zero FK violations).
+- **Backend:** a **58-table (837-row)** cited Egypt knowledge base spanning 18+ sectors + a read-only PHP/MySQL API; isolated write-side endpoints for the newsletter and moderated community board; and a **Phase-2 accounts/SaaS layer** (`backend/auth/`) — Argon2id auth, sessions, CSRF, per-account progress sync, and paywall-ready gating, all **free at launch** (see `egybi/Phase 2 — SaaS & Accounts.md`). Built and tested end-to-end locally (`backend/test/build_test_db.py`, zero FK violations).
 - **Data pipeline:** an automated World Bank refresh (`backend/pipeline/`) with dry-run/diff and offline modes — keeps the numeric time series current without hand-editing.
 - **Blocking next action:** none technical — the site can deploy now. Complete the Hostinger plan **Setup**, connect egybi.com, and follow `backend/DEPLOY.md`.
 
