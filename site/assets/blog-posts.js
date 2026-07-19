@@ -6,6 +6,45 @@
    real and cited in the prose; where sources disagree, we say so. */
 window.EGYBI_POSTS = [
   {
+    id: 'nineteen-million',
+    title: 'Nineteen million: how Egypt won its visitors back',
+    date: '2026-07-20',
+    tag: 'Tourism',
+    excerpt: 'In 2020 Egyptian tourism earned 4.4 billion dollars, down from 13 billion the year before. By 2025 the country was counting roughly 19 million visitors. The recovery is real, and the numbers along the way are messier than the headlines suggest.',
+    body:
+      '<p>Tourism is one of the three great foreign-currency engines of the Egyptian economy, alongside the Suez Canal and remittances. So the year it stopped is easy to date. In 2019 tourism earned about <strong>$13.03 billion</strong>. In 2020, with the pandemic closing borders, it earned <strong>$4.4 billion</strong> &mdash; a fall of roughly two thirds in a single year.</p>' +
+      '<p>What happened next is a genuinely impressive recovery. By 2023 Egypt recorded <strong>14.9 million</strong> visitors and around <strong>$13.6 billion</strong> in receipts, back at pre-pandemic level. In 2024 it counted <strong>15.7 million</strong> visitors and about <strong>$15.3 billion</strong>. And in 2025 the figure crossed into new territory: roughly <strong>19 million</strong> visitors and about <strong>$16.7 billion</strong>, confirmed by the State Information Service and the tourism minister.</p>' +
+      '<p>Now the honest part. The middle years of that recovery are not agreed on. For 2021 the Tourism Ministry stated revenues above $13 billion while independent trackers put the figure materially lower. For 2022, published numbers range from <strong>$10.7 billion to $14.1 billion</strong> depending on whether you read central-bank receipts or ministry statements. Our database records the lower, more conservative figures and flags the disagreement rather than quietly picking the flattering one.</p>' +
+      '<p>Two forces sit behind the rebound, and they pull in opposite directions for Egyptians. The pound&rsquo;s long slide made the country dramatically cheaper for foreign visitors, which helps fill hotels. That same weakness is what makes imported goods expensive at home. The tourism boom and the cost-of-living squeeze are, to a large degree, the same fact seen from two sides.</p>' +
+      '<p>The vulnerability has not gone away either. The Suez Canal&rsquo;s collapse in 2024 showed how fast a regional security crisis can empty an Egyptian revenue stream that has nothing to do with Egypt&rsquo;s own decisions. Tourism is at least as sensitive to a nervous world. Nineteen million is a genuine achievement; it is not a guarantee.</p>'
+  },
+  {
+    id: 'a-country-that-runs-on-gas',
+    title: 'A country that runs on gas, building for the sun',
+    date: '2026-07-20',
+    tag: 'Energy',
+    excerpt: 'Eighty-four percent of Egyptian electricity came from natural gas in 2023. Wind and solar together made five percent. Yet the country is building some of the largest renewable projects in Africa. Both things are true, and the gap between them is the story.',
+    body:
+      '<p>Start with the number that decides everything. In 2023, <strong>84%</strong> of Egypt&rsquo;s electricity came from <strong>natural gas</strong> (Ember). Another 4% came from oil and other fossil fuels. Hydropower, overwhelmingly the Aswan High Dam, supplied about 7%. Wind and solar together accounted for roughly <strong>5%</strong>.</p>' +
+      '<p>That last figure surprises people, because Egypt is often described as a solar giant in the making. The description is not wrong; it is just early. At Benban in Aswan sits one of the largest solar parks in Africa, usually cited at around <strong>1,800 MW</strong>. Even there the record is contested &mdash; some 2025 reporting puts the working capacity closer to 1,465 MW, and our database notes the discrepancy instead of choosing between them.</p>' +
+      '<p>The pipeline is where the ambition shows. Abydos 1 near Kom Ombo, at <strong>500 MW</strong>, has been operational since December 2024. Kom Ombo Solar, a smaller 200 MW plant, is notable less for its size than for achieving a record-low tariff &mdash; the price, not the panel, is the breakthrough. On the wind side the Gulf of Suez has become a corridor: Zafarana at 545 MW, Gabal El Zeit at 580 MW, and the <strong>1,100 MW</strong> Suez Wind project, which reached financial close in January 2025 with operations targeted for 2027.</p>' +
+      '<p>Note that word targeted. Several of these are projections rather than achievements, and we label them that way. A wind farm announced is not a wind farm generating, and the distance between the two is measured in years and financing rounds.</p>' +
+      '<p>So the honest summary is a country with abundant sun and a reliable wind corridor, still running overwhelmingly on gas, and building hard to change that. The 5% figure is not a failure &mdash; it is a starting line that is being redrawn while the gas keeps the lights on.</p>'
+  },
+  {
+    id: 'the-stones-that-left',
+    title: 'The stones that left: where the obelisks actually stand',
+    date: '2026-07-20',
+    tag: 'History',
+    excerpt: 'Thirty-three ancient Egyptian obelisks survive. Only fifteen of them are in Egypt. The tallest one still standing anywhere is not in Luxor or Cairo but in Rome, and the reason why says a great deal about the last two thousand years.',
+    body:
+      '<p>Of the ancient Egyptian obelisks still in existence, our database counts <strong>33</strong>. Just <strong>15</strong> of them remain in Egypt. The other <strong>18</strong> stand somewhere else &mdash; nine in Italy, plus one more in Vatican City, four in the United Kingdom, and one each in France, the United States, Turkey and Poland.</p>' +
+      '<p>The single tallest ancient Egyptian obelisk still standing anywhere in the world is the Lateran Obelisk, at <strong>32.18 metres</strong>. It was cut for Karnak and raised under Thutmose III and Thutmose IV, and it now stands in Rome. Rome collected them deliberately: after Octavian annexed Egypt in 31 BCE, obelisks became imperial trophies, shipped north to decorate a capital that wanted to look like the heir of the pharaohs.</p>' +
+      '<p>The nineteenth century took a politer approach and called them gifts. The pair known as Cleopatra&rsquo;s Needles &mdash; both raised by Thutmose III at Heliopolis, and both misleadingly named, since they predate Cleopatra VII by some 1,400 years &mdash; were re-erected in London in 1878 and in New York in 1881. One of the two Luxor obelisks of Ramesses II left for Paris in the 1830s; its twin still stands at the temple entrance where the pair began. Whole buildings travelled too: the Temple of Debod now stands in Madrid, moved during the UNESCO campaign to rescue Nubian monuments from the water rising behind the Aswan High Dam.</p>' +
+      '<p>Two obelisks in Egypt are worth knowing for opposite reasons. At Heliopolis, now the Cairo suburb of Matariya, the <strong>20.40 metre</strong> obelisk of Senusret I is the oldest still standing in the place where it was raised, nearly four thousand years on. And at Aswan lies the largest of them all, the Unfinished Obelisk, at almost <strong>42 metres</strong> &mdash; which nobody ever saw upright, because it cracked while still attached to the bedrock and was simply abandoned in the quarry.</p>' +
+      '<p>Egypt has not stopped moving them. In 2020 a Ramesses II obelisk from Tanis was re-erected in Tahrir Square in central Cairo. It is a small reversal of a very long pattern: for two millennia these stones travelled outward, and this one came back into the middle of the city.</p>'
+  },
+  {
     id: 'ninety-four-years',
     title: 'The ninety-four-year reign that probably never happened',
     date: '2026-07-19',
@@ -69,10 +108,10 @@ window.EGYBI_POSTS = [
   },
   {
     id: 'a-capital-in-the-desert',
-    title: 'A capital in the desert: Egypt&rsquo;s megaproject decade',
+    title: 'A capital in the desert: Egypt’s megaproject decade',
     date: '2026-07-15',
     tag: 'Megaprojects',
-    excerpt: 'A brand-new capital city. The largest archaeological museum on Earth. Africa&rsquo;s longest monorail. Two thousand kilometres of high-speed rail. Here is what is actually finished — and what is still a construction site.',
+    excerpt: 'A brand-new capital city. The largest archaeological museum on Earth. Africa’s longest monorail. Two thousand kilometres of high-speed rail. Here is what is actually finished — and what is still a construction site.',
     body:
       '<p>For a decade Egypt has been building at a scale that is hard to picture. The honest scorecard, as of 2026, mixes genuinely finished landmarks with things that are still very much under construction &mdash; and it is worth keeping the two apart.</p>' +
       '<p><strong>Finished and open:</strong> the <strong>Grand Egyptian Museum</strong> beside the pyramids &mdash; the largest archaeological museum in the world, home to the complete Tutankhamun collection &mdash; was fully inaugurated in November 2025. The <strong>Iconic Tower</strong> in the New Administrative Capital, at 394 metres, is the tallest building in Africa. The first line of the <strong>Cairo Monorail</strong>, Africa&rsquo;s longest, opened to passengers in 2026.</p>' +
@@ -108,7 +147,7 @@ window.EGYBI_POSTS = [
     title: 'Six sites in a single year: how Egypt filled the heritage list',
     date: '2026-07-12',
     tag: 'History',
-    excerpt: 'Egypt has seven UNESCO World Heritage Sites — and six of them were added in the same year, 1979. The seventh is not a temple at all. A short tour of the country&rsquo;s official wonders.',
+    excerpt: 'Egypt has seven UNESCO World Heritage Sites — and six of them were added in the same year, 1979. The seventh is not a temple at all. A short tour of the country’s official wonders.',
     body:
       '<p>When UNESCO&rsquo;s World Heritage list was young, Egypt made an enormous early entry: in <strong>1979</strong>, six Egyptian sites were inscribed at once &mdash; the pyramid fields of Memphis (Giza to Dahshur), Ancient Thebes with the Valley of the Kings, the Nubian Monuments from Abu Simbel to Philae, Islamic Cairo, and more. It remains one of the great concentrations of human heritage anywhere.</p>' +
       '<p>Two later additions round out the list to <strong>seven</strong>. The Saint Catherine area in South Sinai, added in 2002, holds the world&rsquo;s oldest continuously operating Christian monastery, sacred to three faiths at once. And the seventh site is the surprise: <strong>Wadi Al-Hitan</strong>, the &ldquo;Valley of the Whales&rdquo; in Fayoum, added in 2005 &mdash; not a monument at all, but a desert full of fossil skeletons that record how whales evolved from land animals into ocean giants.</p>' +
