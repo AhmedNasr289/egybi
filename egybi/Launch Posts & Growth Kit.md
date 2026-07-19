@@ -1,8 +1,8 @@
 # EgyBI — Launch Posts & Growth Kit
 
 Ready-to-post copy for launch day. **Every number here is verified** against the
-live build (97 challenges = 35 Easy / 42 Medium / 20 Hard, 15 sectors, 58 tables
-/ 837 rows). Keep it that way — the whole product promise is "every fact real
+live build (123 challenges = 41 Easy / 53 Medium / 29 Hard, 15 sectors, 61 tables
+/ 838 rows). Keep it that way — the whole product promise is "every fact real
 and cited," so the marketing has to hold the same standard.
 
 **The core hook:** *a SQL practice platform where every dataset is real, cited
@@ -21,7 +21,7 @@ Egyptian history and economics — not `employees` and `orders` toy tables.*
 > series, tourism arrivals, governorate demographics, even daily retail food
 > prices from the Cabinet's own price portal.
 >
-> 97 auto-graded challenges (35 easy → 20 hard) across 15 sectors. It runs
+> 123 auto-graded challenges across 15 sectors — 41 easy, 53 medium, 29 hard. It runs
 > entirely in your browser — your SQL never touches a server — so you can start
 > solving in about 4 seconds with no signup.
 >
@@ -56,7 +56,7 @@ smells like marketing. Be a person, disclose it's yours, lead with the artifact.
 > series, tourism arrivals, governorate census figures, and daily retail food
 > prices pulled from the Egyptian Cabinet's price portal.
 >
-> - 97 auto-graded challenges: 35 easy, 42 medium, 20 hard, across 15 sectors
+> - 123 auto-graded challenges: 41 easy, 53 medium, 29 hard, across 15 sectors
 > - Runs fully in-browser (sql.js) — your query never hits a server, and there's
 >   no signup to start solving
 > - Every answer ends with a sourced "did you know" note tied to the data
@@ -88,7 +88,7 @@ Same body, but lead with the pipeline angle — that crowd cares about the plumb
 > tourism, governorate demographics, daily retail prices — rather than synthetic
 > `employees`/`orders` tables.
 >
-> 97 auto-graded challenges across 15 sectors, 58 tables / 837 rows.
+> 123 auto-graded challenges across 15 sectors, 61 tables / 838 rows.
 >
 > Technical bits that may interest HN:
 > - No framework and no build step — vanilla HTML/CSS/JS on shared PHP hosting.
@@ -111,7 +111,7 @@ Same body, but lead with the pipeline angle — that crowd cares about the plumb
 1/ Every SQL course makes you query a fake `employees` table.
 I built one where the data is real: pharaoh dynasties, Suez Canal traffic, GDP,
 tourism, daily Egyptian food prices. 🇪🇬
-97 auto-graded challenges, free, no signup → egybi.com
+123 auto-graded challenges, free, no signup → egybi.com
 
 2/ It runs entirely in your browser. sql.js (SQLite via WASM) executes your
 query client-side — nothing hits a server. You're solving ~4 seconds after
@@ -129,6 +129,26 @@ on the difficulty curve. egybi.com
 
 ---
 
+## 4b · The obelisk hook (strongest single-fact opener)
+
+Added since the kit was written, and the most shareable fact in the database.
+Works as a standalone post on any channel, and needs no product pitch:
+
+> Thirty-three ancient Egyptian obelisks survive.
+> Only fifteen are still in Egypt.
+>
+> Nine stand in Italy. Four in the UK. One each in France, the US, Turkey,
+> Poland and Vatican City.
+>
+> The tallest still standing anywhere is in Rome, not Luxor.
+> The largest ever cut never rose at all — it cracked in the Aswan quarry
+> and lies there still, at nearly 42 metres.
+>
+> I put the whole table online so you can query it yourself: egybi.com
+
+Pair it with the full write-up at egybi.com/papyrus/the-stones-that-left.html
+— that page is a real URL now, so it can be shared on its own.
+
 ## 5 · Where else (from the GTM plan)
 
 - **Egyptian / MENA data + BPO LinkedIn groups** — the local angle is genuinely
@@ -144,7 +164,7 @@ on the difficulty curve. egybi.com
 
 ## 6 · Rules of engagement
 
-1. **Never inflate a number.** 97 challenges, 15 sectors, 58 tables, 837 rows.
+1. **Never inflate a number.** 123 challenges, 15 sectors, 61 tables, 838 rows.
    If it changes, update this file.
 2. **Disclose you built it**, every time. It converts better than pretending.
 3. **Ask a real question** in each post — it earns comments, and comments earn
@@ -152,5 +172,8 @@ on the difficulty curve. egybi.com
 4. **Answer every reply for the first 2 hours.** This matters more than the copy.
 5. **Don't post everywhere on the same day.** LinkedIn first, then one subreddit,
    then Show HN a few days later — so you can fix issues between waves.
-6. **Watch the analytics** (`/api/insights.php?key=…`) to see which channel
+6. **Every challenge and post now has its own URL** — share a specific one
+   (egybi.com/practice/the-five-tallest-obelisks.html) rather than only the
+   homepage when a particular problem or story fits the audience.
+7. **Watch the analytics** (`/api/insights.php?key=…`) to see which channel
    actually sends people, then double down on that one.
