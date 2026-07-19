@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=5" rel="stylesheet">
+<link href="assets/egybi.css?v=6" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -30,8 +30,8 @@
   <meta name="twitter:image" content="https://egybi.com/og-image.png">
   <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
        Android and macOS, so these signs would be empty boxes for most
-       visitors. This loads ONLY the ten signs we use (~12 KB). -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8A%BD%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+       visitors. This loads ONLY the nine signs we use (~12 KB). -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -59,7 +59,7 @@
 <!-- INTRO -->
 <section class="surface-hero center" style="padding:72px 6vw;">
   <div class="wrap">
-    <div class="kicker" style="color:var(--gold-bright);">The Egypt data explorer</div>
+    <div class="kicker" style="color:var(--gold-bright);"><span data-glyph="ra"></span>The Egypt data explorer</div>
     <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">Real Egyptian data, charted.</h1>
     <p class="lead" style="margin:0 auto;color:#f3ead4;">Every chart below is drawn from EgyBI's knowledge base — the same data that powers the practice challenges. Every figure is cited; where sources genuinely disagree, we say so rather than smoothing it over.</p>
   </div>
@@ -68,7 +68,7 @@
 <!-- EGYPT MAP (headline feature) -->
 <section class="surface-light" id="map">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Egypt on the map</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Egypt on the map</div>
     <h2 data-aos="fade-up">All 27 governorates, coloured by the data.</h2>
     <p class="lead" data-aos="fade-up">A real geographic choropleth — the kind of view Power BI or Tableau would build — filled with cited figures for every one of Egypt's 27 governorates. Switch the metric to see how population concentrates on the Nile while the desert governorates sprawl empty. Hover any governorate for its exact figure.</p>
     <div class="chart-card" style="margin-top:22px;" data-aos="zoom-in">
@@ -90,7 +90,7 @@
 <!-- ECONOMY -->
 <section class="surface-light-2">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Economy</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Economy</div>
     <h2 data-aos="fade-up">GDP &amp; its composition.</h2>
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="chart-card" data-aos="fade-up">
@@ -110,7 +110,7 @@
 <!-- SUEZ (dark, dramatic) -->
 <section class="surface-dark">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">A uniquely Egyptian data point</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>A uniquely Egyptian data point</div>
     <h2 data-aos="fade-up">The Suez Canal — and its ongoing collapse.</h2>
     <p class="lead" data-aos="fade-up">One of the world's most important shipping arteries and Egypt's top hard-currency earner — until Red Sea shipping attacks from late 2023 diverted much of the world's fleet around Africa. The hit deepened through fiscal-year 2024/25.</p>
     <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
@@ -123,7 +123,7 @@
 <!-- TRADE + TOURISM -->
 <section class="surface-light">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Trade &amp; tourism</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Trade &amp; tourism</div>
     <h2 data-aos="fade-up">What Egypt sells, and who visits.</h2>
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="chart-card" data-aos="fade-up">
@@ -143,7 +143,7 @@
 <!-- ENRICHED DATA MOUNT (filled by data enrichment: demographics, prices, energy) -->
 <section class="surface-dark" id="more-data">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">More of Egypt, in data</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>More of Egypt, in data</div>
     <h2 data-aos="fade-up">Demographics, prices &amp; energy.</h2>
     <div class="grid grid-2" id="enriched-charts" style="margin-top:26px;">
       <div class="chart-card" data-aos="fade-up">
@@ -173,7 +173,7 @@
 <!-- DIGITAL ECONOMY -->
 <section class="surface-light-2">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Digital economy</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Digital economy</div>
     <h2 data-aos="fade-up">Egypt's tech rise.</h2>
     <p class="lead" data-aos="fade-up">The ICT sector nearly doubled its share of GDP — from <strong style="color:var(--blue);">3.2%</strong> (2018) to <strong style="color:var(--blue);">5.8%</strong> (2024) — and was the country's fastest-growing sector for roughly seven years. A generation of Egyptian tech companies grew with it.</p>
     <div class="grid grid-3" id="techCompanies" style="margin-top:26px;"></div>
@@ -182,9 +182,10 @@
 </section>
 
 <!-- BUSINESS & WEALTH (v8) -->
+<div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
 <section class="surface-light" id="business">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Business &amp; investment</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Business &amp; investment</div>
     <h2 data-aos="fade-up">Who owns corporate Egypt.</h2>
     <p class="lead" data-aos="fade-up">A handful of family groups anchor Egypt's private sector — the Sawiris family in construction, telecom and fertilizers; the Mansours in automotive and retail distribution. Six Egyptians sit on the Forbes real-time billionaires list, led by <strong style="color:var(--gold-ink);">Nassef Sawiris</strong>, the country's richest person.</p>
     <div class="chart-card" data-aos="fade-up" style="margin-top:26px;">
@@ -198,7 +199,7 @@
 <!-- CONNECTED EGYPT (v6: telecom, trade, social) -->
 <section class="surface-light-2" id="connected">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Connected Egypt</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Connected Egypt</div>
     <h2 data-aos="fade-up">Online, trading, and scrolling.</h2>
     <p class="lead" data-aos="fade-up">In a decade Egypt went from roughly a third online to three-quarters — reshaping how ~106 million people bank, shop, watch and argue. Here's the connectivity climb, who Egypt trades with, and where its attention actually goes.</p>
     <div class="grid grid-2" style="margin-top:26px;">
@@ -224,7 +225,7 @@
 <!-- FEEDING EGYPT (v7: agriculture) -->
 <section class="surface-light" id="agriculture">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Feeding Egypt</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Feeding Egypt</div>
     <h2 data-aos="fade-up">Growing a lot — and still importing the most.</h2>
     <p class="lead" data-aos="fade-up">Egypt is a serious farming nation: a top-5 global tomato grower, the world's top orange exporter, and producer of ~9 million tonnes of wheat a year. Yet with ~106 million people to feed, it is also <strong style="color:var(--gold-ink);">the world's largest wheat importer</strong> — the gap between what the Nile valley can grow and what the country eats.</p>
     <div class="chart-card" data-aos="fade-up" style="margin-top:26px;">
@@ -238,7 +239,7 @@
 <!-- TIMELINE -->
 <section class="surface-light-2">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Through the ages</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Through the ages</div>
     <h2 data-aos="fade-up">Egypt from the Ptolemies to today.</h2>
     <p class="lead" data-aos="fade-up">A sourced timeline of eras and turning points — the same data behind the platform's history challenges.</p>
     <div class="timeline" style="margin-top:10px;" id="timeline"></div>
@@ -248,7 +249,7 @@
 <!-- MEGAPROJECTS -->
 <section class="surface-dark">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Modern Egypt</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Modern Egypt</div>
     <h2 data-aos="fade-up">National megaprojects.</h2>
     <div class="grid grid-3" id="megaprojects" style="margin-top:26px;"></div>
     <p class="chart-cap" style="color:var(--on-dark-soft);" data-aos="fade-up">2026 status, honestly flagged: the <strong>Grand Egyptian Museum</strong> was fully inaugurated 1 Nov 2025; the <strong>Cairo Monorail</strong> NAC line became operational May 2026 (Africa's longest); the <strong>New Administrative Capital</strong> is occupied but sparsely (~30,000 residents vs a 6.5–7M long-term target); <strong>High-Speed Rail</strong> and <strong>El Dabaa nuclear</strong> remain under construction with no section live yet. Targets are labelled as targets in the data. Sources: SIS, Wikipedia, World Nuclear News, France 24.</p>
@@ -258,7 +259,7 @@
 <!-- LOGISTICS & TRANSPORT (v8) -->
 <section class="surface-light" id="logistics">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Logistics &amp; transport</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Logistics &amp; transport</div>
     <h2 data-aos="fade-up">Building a trade hub on two seas.</h2>
     <p class="lead" data-aos="fade-up">Egypt sits on the Suez Canal and wants to turn that geography into a logistics industry: dry ports, the SCZONE's six ports, the deepest man-made basin in the world at Ain Sokhna, and a rail-freight upgrade. Its World Bank Logistics Performance score has climbed to <strong style="color:var(--blue);">3.1</strong> — but the 2030 capacity ambitions are still targets.</p>
     <div class="chart-card" data-aos="fade-up" style="margin-top:26px;">
@@ -272,7 +273,7 @@
 <!-- ART & CINEMA -->
 <section class="surface-light-2" id="cinema">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Art &amp; cinema</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Art &amp; cinema</div>
     <h2 data-aos="fade-up">Hollywood on the Nile.</h2>
     <p class="lead" data-aos="fade-up">Egypt runs the oldest, largest and most influential film industry in the Arab world. From Studio Misr (1935) and the Golden Age to a 2025 box-office recovery, it has produced the majority of all Arab cinema — and a century of singers and artists who defined the region's culture.</p>
     <div class="stat-grid" style="margin-top:36px;">
@@ -289,7 +290,7 @@
 <!-- SPORTS -->
 <section class="surface-dark" id="sports">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Sports</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Sports</div>
     <h2 data-aos="fade-up">The Pharaohs — and a squash superpower.</h2>
     <p class="lead" data-aos="fade-up">Egypt holds a record 7 Africa Cup of Nations titles, Al Ahly a record 12 CAF Champions Leagues, and the country utterly dominates world squash. It was the first African and Arab nation to compete at the Olympics (Stockholm 1912).</p>
     <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
@@ -328,9 +329,10 @@
 </section>
 
 <!-- INDUSTRY & INVESTMENT -->
+<div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
 <section class="surface-light" id="industry">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Industry, business &amp; investment</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Industry, business &amp; investment</div>
     <h2 data-aos="fade-up">What Egypt builds — and who's investing.</h2>
     <p class="lead" data-aos="fade-up">Manufacturing is ~32% of GDP, led by petroleum, steel, textiles and the largest pharmaceutical industry in the MENA region. In 2024 the UAE's <strong style="color:var(--gold-ink);">$35bn Ras El Hekma</strong> deal became the largest single foreign investment in Egypt's history.</p>
     <div class="chart-card" data-aos="fade-up" style="margin-top:26px;">
@@ -345,7 +347,7 @@
 <!-- SCIENCE & SPACE -->
 <section class="surface-dark" id="science">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Science, space &amp; research</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Science, space &amp; research</div>
     <h2 data-aos="fade-up">Satellites, reactors &amp; a world-first in health.</h2>
     <p class="lead" data-aos="fade-up">Egypt has launched satellites since 2007, hosts the African Space Agency, is building its first nuclear plant (El Dabaa, 4.8 GW), and in 2023 became the <strong style="color:var(--gold-bright);">first country worldwide</strong> awarded WHO "gold tier" on the path to eliminating hepatitis C.</p>
     <div class="grid grid-2" style="margin-top:26px;">
@@ -367,7 +369,7 @@
 <!-- WATER & IRRIGATION -->
 <section class="surface-light" id="water">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Water &amp; irrigation</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Water &amp; irrigation</div>
     <h2 data-aos="fade-up">A desert nation's water, engineered.</h2>
     <p class="lead" data-aos="fade-up">Egypt lives well below the water-scarcity line and depends on the Nile for ~97% of its renewable water — so it re-engineers every drop: record-breaking treatment plants, vast land-reclamation, canal lining and a national desalination push.</p>
     <div class="grid grid-2" style="margin-top:26px;">
@@ -393,7 +395,7 @@
 <!-- TRANSPORT & INFRASTRUCTURE -->
 <section class="surface-dark" id="transport">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Transport &amp; infrastructure</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Transport &amp; infrastructure</div>
     <h2 data-aos="fade-up">A country laying 2,000 km of high-speed rail.</h2>
     <p class="lead" data-aos="fade-up">Egypt is building one of the world's largest new transport networks at once — a three-line Siemens high-speed railway, two monorails, new metro lines and an LRT. Most of it is still under construction, so the data flags what's running today versus what's promised.</p>
     <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
@@ -408,7 +410,7 @@
 <!-- EDUCATION -->
 <section class="surface-light" id="education">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Education &amp; knowledge</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Education &amp; knowledge</div>
     <h2 data-aos="fade-up">20 universities on the world stage.</h2>
     <p class="lead" data-aos="fade-up">Egypt placed <strong style="color:var(--gold-ink);">20 universities</strong> in the QS World University Rankings 2026, up from 15 the year before — led by Cairo University (347th) and the American University in Cairo (381st). Al-Azhar traces its teaching to 970 CE, making it one of the oldest universities on Earth.</p>
     <div class="grid grid-3" id="universityGrid" style="margin-top:26px;"></div>
@@ -419,7 +421,7 @@
 <!-- UNESCO HERITAGE -->
 <section class="surface-dark" id="heritage">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">World heritage</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>World heritage</div>
     <h2 data-aos="fade-up">Seven UNESCO World Heritage Sites.</h2>
     <p class="lead" data-aos="fade-up">Six cultural, one natural — from the Giza pyramid fields to the Whale Valley fossils that record how whales left the land. Six were inscribed in a single year, 1979.</p>
     <div class="grid grid-3" id="unescoGrid" style="margin-top:26px;"></div>
@@ -427,9 +429,10 @@
 </section>
 
 <!-- DEFENCE (v8 — public figures & rankings only) -->
+<div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
 <section class="surface-light" id="defence">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Defence, in figures</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="eye"></span>Defence, in figures</div>
     <h2 data-aos="fade-up">A regional heavyweight, by the public numbers.</h2>
     <p class="lead" data-aos="fade-up">On open, published indices Egypt ranks among the world's stronger militaries — <strong style="color:var(--gold-ink);">1st in Africa</strong> and 19th of 145 globally on Global Firepower's 2026 index — and it is one of the world's largest arms importers. This section is <strong>public rankings and figures only</strong>: no operational detail, and every number is an estimate from a cited open source.</p>
     <div class="stat-grid" style="margin-top:32px;">

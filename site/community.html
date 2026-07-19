@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=5" rel="stylesheet">
+<link href="assets/egybi.css?v=6" rel="stylesheet">
 <style>
   .step { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 20px; }
   .step::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-family: 'Cinzel', serif; display: flex; align-items: center; justify-content: center; }
@@ -46,8 +46,8 @@
   <meta name="twitter:image" content="https://egybi.com/og-image.png">
   <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
        Android and macOS, so these signs would be empty boxes for most
-       visitors. This loads ONLY the ten signs we use (~12 KB). -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8A%BD%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+       visitors. This loads ONLY the nine signs we use (~12 KB). -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -74,7 +74,7 @@
 
 <section class="surface-hero center" style="padding:64px 6vw;">
   <div class="wrap">
-    <div class="kicker">The community</div>
+    <div class="kicker"><span data-glyph="scribe"></span>The community</div>
     <h1 style="font-size:clamp(1.9rem,4.4vw,2.9rem);margin:0 0 12px;">Help build the House of Life.</h1>
     <p class="lead" style="margin:0 auto;color:#f3ead4;">EgyBI grows through cited data and good problems. If you can bring a real dataset about Egypt, a sharp SQL challenge, or a fix — there is a place for you here.</p>
   </div>
@@ -83,7 +83,7 @@
 <!-- CONTRIBUTE -->
 <section class="surface-light">
   <div class="wrap" style="max-width:860px;">
-    <div class="kicker" data-aos="fade-up">Contribute</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Contribute</div>
     <h2 data-aos="fade-up">Two ways to add to the knowledge base.</h2>
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="card" data-aos="fade-up">
@@ -111,7 +111,7 @@
 <!-- THE RULES -->
 <section class="surface-light-2">
   <div class="wrap" style="max-width:860px;">
-    <div class="kicker" data-aos="fade-up">The accuracy rules</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>The accuracy rules</div>
     <h2 data-aos="fade-up">Non-negotiable, for everyone.</h2>
     <p class="lead" data-aos="fade-up">These are what make EgyBI trustworthy. A contribution that breaks any of them will not be merged.</p>
     <div style="margin-top:24px;" data-aos="fade-up">
@@ -125,9 +125,10 @@
 </section>
 
 <!-- ROADMAP -->
+<div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
 <section class="surface-light">
   <div class="wrap" style="max-width:860px;">
-    <div class="kicker" data-aos="fade-up">Developments &amp; roadmap</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Developments &amp; roadmap</div>
     <h2 data-aos="fade-up">Where EgyBI is going.</h2>
     <p class="lead" data-aos="fade-up">Public and honest about status. &ldquo;Done&rdquo; means shipped and verified; &ldquo;next&rdquo; means planned.</p>
     <div style="margin-top:24px;" data-aos="fade-up">
@@ -144,7 +145,7 @@
 <!-- AUTOMATIONS -->
 <section class="surface-dark">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Under the hood</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Under the hood</div>
     <h2 data-aos="fade-up">The automations that keep it honest.</h2>
     <div class="grid grid-3" style="margin-top:26px;">
       <div class="card" data-aos="fade-up"><span class="tag">Pipeline</span><h3>World Bank refresh</h3><p>Pulls a curated indicator allowlist, transforms it into cited seed-SQL, and diffs it against the live data so a human approves every change.</p></div>
@@ -158,7 +159,7 @@
 <!-- IDEAS & DISCUSSION (interactive, moderated) -->
 <section class="surface-light-2" id="discuss">
   <div class="wrap" style="max-width:820px;">
-    <div class="kicker" data-aos="fade-up">Ideas &amp; discussion</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Ideas &amp; discussion</div>
     <h2 data-aos="fade-up">Share an idea, leave a comment.</h2>
     <p class="lead" data-aos="fade-up">Got a dataset we should add, a challenge idea, a correction, or just a thought? Post it here. Every note is <strong>reviewed by a human before it appears</strong>, so the board stays useful and spam-free.</p>
 

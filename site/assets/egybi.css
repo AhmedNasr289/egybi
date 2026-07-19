@@ -392,10 +392,17 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
    meaning is reachable by keyboard and screen reader, not hover alone. */
 .glyph {
   font-family: 'Noto Sans Egyptian Hieroglyphs', 'Segoe UI Historic', 'Segoe UI Symbol', serif;
-  font-size: 1.05em; line-height: 1; color: var(--gold); position: relative;
-  cursor: help; display: inline-block; vertical-align: -0.06em;
+  font-size: 1.36em; line-height: 1; color: var(--gold); position: relative;
+  cursor: help; display: inline-block; vertical-align: -0.12em;
   transition: color .25s ease, transform .25s ease;
 }
+
+/* Kickers and the hero eyebrow are set at ~0.75rem, so a purely relative size
+   would render the signs too small to read as anything but specks. These sit
+   them at roughly 1.2rem — legible as drawings, still inside the line box. */
+.kicker .glyph, .hero-eyebrow .glyph { font-size: 1.62em; vertical-align: -0.16em; }
+.kicker .glyph { margin-right: .32em; }
+.kicker .glyph:last-child { margin-right: 0; margin-left: .32em; }
 .glyph:hover, .glyph:focus-visible { color: var(--gold-bright); outline: none; transform: translateY(-1px); }
 .glyph:focus-visible { box-shadow: 0 0 0 2px var(--gold); border-radius: 4px; }
 .surface-light .glyph, .surface-light-2 .glyph { color: var(--gold-ink); }
@@ -423,13 +430,13 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .surface-hero .glyph-rule::before, .surface-hero .glyph-rule::after {
   background: linear-gradient(90deg, transparent, rgba(201,162,39,.5), transparent);
 }
-.glyph-rule .glyph { font-size: 1.3rem; }
+.glyph-rule .glyph { font-size: 1.72rem; }
 
 /* the legend on About */
 .glyph-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 14px; margin-top: 26px; }
 .glyph-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 3px solid var(--gold); border-radius: 11px; padding: 14px 16px; }
 .glyph-card .gl-top { display: flex; align-items: baseline; gap: 10px; }
-.glyph-card .gl-sign { font-family: 'Noto Sans Egyptian Hieroglyphs','Segoe UI Historic','Segoe UI Symbol',serif; font-size: 1.9rem; color: var(--gold-ink); line-height: 1; }
+.glyph-card .gl-sign { font-family: 'Noto Sans Egyptian Hieroglyphs','Segoe UI Historic','Segoe UI Symbol',serif; font-size: 2.5rem; color: var(--gold-ink); line-height: 1; }
 .glyph-card .gl-name { font-family: 'Cinzel', serif; font-weight: 700; color: var(--blue-deep); font-size: 1rem; }
 .glyph-card .gl-tr { font-style: italic; color: var(--ink-soft); font-size: 0.84rem; }
 .glyph-card .gl-mean { margin: 8px 0 0; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.5; }

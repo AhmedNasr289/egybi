@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=5" rel="stylesheet">
+<link href="assets/egybi.css?v=6" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -46,8 +46,8 @@
   <link rel="preload" as="fetch" type="application/wasm" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.wasm" crossorigin>
   <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
        Android and macOS, so these signs would be empty boxes for most
-       visitors. This loads ONLY the ten signs we use (~12 KB). -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8A%BD%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+       visitors. This loads ONLY the nine signs we use (~12 KB). -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -118,7 +118,7 @@ LIMIT 5;</textarea>
 <!-- GAP -->
 <section class="surface-light">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">The gap</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>The gap</div>
     <h2 data-aos="fade-up">Real competitive practice, meet the real modern data stack.</h2>
     <p class="lead" data-aos="fade-up">No existing platform combines genuine gamification with real modern-data-stack content. EgyBI does — and grounds every challenge in real Egyptian data.</p>
     <div class="grid grid-3" style="margin-top:32px;">
@@ -132,7 +132,7 @@ LIMIT 5;</textarea>
 <!-- SPECIALIZATIONS -->
 <section class="surface-dark" id="specializations">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Specialize</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Specialize</div>
     <h2 data-aos="fade-up">Three specializations. One House of Life.</h2>
     <p class="lead" data-aos="fade-up">EgyBI isn't a generic coding site — it's built for the data profession. Pick the path that matches the career you want, and master the exact stack it demands.</p>
     <div class="grid grid-3" style="margin-top:32px;">
@@ -174,7 +174,7 @@ LIMIT 5;</textarea>
 <!-- FEATURED DATA -->
 <section class="surface-light">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Explore Egypt data</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Explore Egypt data</div>
     <h2 data-aos="fade-up">This is a BI platform. So here's real Egyptian data, charted.</h2>
     <p class="lead" data-aos="fade-up">The knowledge base spans ancient chronology to modern economics — pharaohs, monuments, GDP, the Suez Canal, tourism, energy, demographics, and megaprojects.</p>
     <div class="chart-card" style="margin-top:26px;" data-aos="zoom-in">
@@ -186,10 +186,43 @@ LIMIT 5;</textarea>
 </section>
 
 <div class="wrap"><div class="glyph-rule" aria-hidden="false"><span data-glyph="ra"></span></div></div>
+<!-- HERE FOR EGYPT — catches the visitor who came for the country, not the query.
+     A SQL editor above the fold is the right pitch for a practice platform and the
+     wrong one for someone who arrived curious about Egypt. This gives them a door
+     that needs no query. Both figures below are from the shipped database. -->
+<section class="surface-light-2" id="for-egypt">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>No SQL required</div>
+    <h2 data-aos="fade-up">Here for Egypt, not for SQL?</h2>
+    <p class="lead" data-aos="fade-up">Plenty of people arrive curious about the country rather than about databases. You do not have to write a single query. The same cited knowledge base is also a shelf of short data stories and a room full of charts &mdash; every figure sourced, every disagreement flagged.</p>
+
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="card" data-aos="fade-up">
+        <div class="kicker"><span data-glyph="was"></span>The obelisks</div>
+        <h3>Thirty-three survive. Fifteen are still in Egypt.</h3>
+        <p>Eighteen stand abroad, across seven countries &mdash; nine of them in Italy alone. The tallest ancient Egyptian obelisk standing anywhere is not in Luxor but in Rome. The largest ever cut never rose at all: it cracked in the Aswan quarry and lies there still, nearly 42 metres of unfinished granite.</p>
+        <p class="card-meta"><a href="papyrus/the-stones-that-left.html" data-ev="egypt_story_obelisks">Read the whole story &rarr;</a></p>
+      </div>
+
+      <div class="card" data-aos="fade-up">
+        <div class="kicker"><span data-glyph="maat"></span>A number two sources disagree on</div>
+        <h3>Egypt's population is 116 million. Or 107 million.</h3>
+        <p>The World Bank put it at 116.5 million in 2024. Egypt's own CAPMAS counted about 107 million that November. Neither is wrong &mdash; they measure different things, one counting citizens abroad and the other residents at home. We keep both and say so, rather than picking the tidier figure.</p>
+        <p class="card-meta"><a href="papyrus/one-hundred-sixteen-million.html" data-ev="egypt_story_population">Read the whole story &rarr;</a></p>
+      </div>
+    </div>
+
+    <div class="cta-row" data-aos="fade-up" style="margin-top:26px;">
+      <a href="blog.html" class="btn btn-primary" data-ev="egypt_read_papyrus">Read The Papyrus &rarr;</a>
+      <a href="explore.html" class="btn btn-ghost" data-ev="egypt_browse_charts">Browse the charts &rarr;</a>
+    </div>
+  </div>
+</section>
+
 <!-- IDENTITY TEASER -->
 <section class="surface-light">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">The identity</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>The identity</div>
     <h2 data-aos="fade-up">Every challenge is built on real Egyptian history — not a themed skin.</h2>
     <p class="lead" data-aos="fade-up">Guided by <strong>Ibi</strong>, an ibis-headed scribe's apprentice inspired by Thoth. Rise through a real rank ladder, earn Egyptian badges, and unlock a sourced "Did You Know" after every correct answer.</p>
     <div class="callout" style="margin-top:26px;" data-aos="zoom-in">

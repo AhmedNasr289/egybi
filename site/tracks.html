@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=5" rel="stylesheet">
+<link href="assets/egybi.css?v=6" rel="stylesheet">
 <style>
   .jump-nav { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:26px; }
   .jump-nav a { font-size:0.8rem; font-weight:600; padding:7px 14px; border-radius:999px; border:1px solid rgba(243,234,212,0.28); color:#f3ead4; text-decoration:none; transition:all .15s; }
@@ -101,8 +101,8 @@
   <meta name="twitter:image" content="https://egybi.com/og-image.png">
   <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
        Android and macOS, so these signs would be empty boxes for most
-       visitors. This loads ONLY the ten signs we use (~12 KB). -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8A%BD%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+       visitors. This loads ONLY the nine signs we use (~12 KB). -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -129,7 +129,7 @@
 
 <section class="surface-hero center" style="padding:68px 6vw;">
   <div class="wrap">
-    <div class="kicker" style="color:var(--gold-bright);">The data-engineering roadmap</div>
+    <div class="kicker" style="color:var(--gold-bright);"><span data-glyph="scarab"></span>The data-engineering roadmap</div>
     <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">From zero to data engineer — the whole map.</h1>
     <p class="lead" style="margin:0 auto;color:#f3ead4;">A free, honest reference for anyone building a data career: what the roles really are, a phase-by-phase roadmap, the 2026 modern data stack mapped out, the concepts and tools to master in each of nine tracks, and a curated reading list. Newbie or guru — start where you are.</p>
     <nav class="jump-nav" aria-label="On this page">
@@ -148,7 +148,7 @@
 <!-- HOW TO USE -->
 <section class="surface-light">
   <div class="wrap lead-in">
-    <div class="kicker" data-aos="fade-up">Start here</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Start here</div>
     <h2 data-aos="fade-up">However you got here, there's a path.</h2>
     <p data-aos="fade-up"><strong>Completely new?</strong> Don't buy a course yet. Start at <a href="#foundations" style="color:var(--gold-ink);font-weight:600;">Foundations</a> — three months of SQL and Python is worth more than any tool. Then walk the <a href="#roadmap" style="color:var(--gold-ink);font-weight:600;">roadmap</a> phase by phase and build the milestone project at the end of each.</p>
     <p data-aos="fade-up"><strong>Already working with data?</strong> Skim the <a href="#stack" style="color:var(--gold-ink);font-weight:600;">stack map</a> to see what's changed in 2026 (Iceberg, Dagster, dlt, DuckDB), then use the <a href="#tracks" style="color:var(--gold-ink);font-weight:600;">nine tracks</a> as a checklist to find and close your gaps.</p>
@@ -159,7 +159,7 @@
 <!-- THE ROLES -->
 <section class="surface-dark" id="roles">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">The roles, decoded</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>The roles, decoded</div>
     <h2 data-aos="fade-up">Data engineer, analytics engineer, analyst — who owns what.</h2>
     <p class="lead" data-aos="fade-up">Three roles sit along one assembly line: raw data flows from the engineer, through the analytics engineer's models, to the analyst's answers. Know which one you're aiming for — the roadmap below serves all three, and they share the same foundations.</p>
     <div class="role-flow">
@@ -192,7 +192,7 @@
 <!-- THE ROADMAP -->
 <section class="surface-light" id="roadmap">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">The roadmap</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>The roadmap</div>
     <h2 data-aos="fade-up">Four phases from zero to job-ready.</h2>
     <p class="lead" data-aos="fade-up">A realistic order to learn things in — not a list of everything at once. Most career-changers reach job-ready in <strong>6–9 months part-time</strong> (10–15 hrs/week), or 3–4 months full-time. Finish each phase with its project before moving on.</p>
     <div class="grid grid-2" style="margin-top:28px;">
@@ -233,9 +233,10 @@
 </section>
 
 <!-- FOUNDATIONS -->
+<div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
 <section class="surface-light-2" id="foundations">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Foundations (Phase 1)</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Foundations (Phase 1)</div>
     <h2 data-aos="fade-up">The five things to nail before any tool.</h2>
     <p class="lead" data-aos="fade-up">Tools change every year; these don't. Get comfortable here and every framework afterwards is just syntax.</p>
     <div class="grid grid-3" style="margin-top:26px;">
@@ -252,7 +253,7 @@
 <!-- MODERN DATA STACK -->
 <section class="surface-light" id="stack">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">The modern data stack, 2026</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>The modern data stack, 2026</div>
     <h2 data-aos="fade-up">Seven layers, and the tools that own them.</h2>
     <p class="lead" data-aos="fade-up">Every data platform is some arrangement of these layers. You don't need every tool — you need to understand what each layer <em>does</em> and one solid tool per layer. Named tools are today's common picks, not the only ones.</p>
     <div class="grid grid-2" style="margin-top:26px;">
@@ -271,7 +272,7 @@
 <!-- THE NINE TRACKS -->
 <section class="surface-light-2" id="tracks">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">The nine tracks in detail</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>The nine tracks in detail</div>
     <h2 data-aos="fade-up">Every skill, the concepts to master, and reps to prove it.</h2>
     <p class="lead" data-aos="fade-up">Each track lists what it is, why it matters, the concepts to master (your checklist), the tools, a book pointer, and the hands-on EgyBI exercises — all on real, cited Egyptian data.</p>
   </div>
@@ -472,7 +473,7 @@
 <!-- CORE CONCEPTS -->
 <section class="surface-dark" id="concepts">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Core architecture concepts</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Core architecture concepts</div>
     <h2 data-aos="fade-up">The ideas behind the tools.</h2>
     <p class="lead" data-aos="fade-up">Tools come and go; these concepts are what interviews probe and production demands. Understand the <em>why</em> and any new tool is easy.</p>
     <div class="grid grid-3" style="margin-top:26px;">
@@ -487,9 +488,10 @@
 </section>
 
 <!-- READING LIST -->
+<div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
 <section class="surface-light" id="reading">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up">The reading list</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>The reading list</div>
     <h2 data-aos="fade-up">The shelf worth building.</h2>
     <p class="lead" data-aos="fade-up">A short, respected library that covers the whole field. Read the first two cover to cover; use the rest as track references. (Titles &amp; authors only — EgyBI's exercises are written from scratch, never copied.)</p>
     <div class="booklist" style="margin-top:8px;">
@@ -511,7 +513,7 @@
 <!-- FAQ -->
 <section class="surface-light-2" id="faq">
   <div class="wrap faq">
-    <div class="kicker" data-aos="fade-up">Straight answers</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>Straight answers</div>
     <h2 data-aos="fade-up">Questions every beginner asks.</h2>
     <div data-aos="fade-up" style="margin-top:18px;">
       <details><summary>Do I need a computer-science degree?</summary><p>No. A degree helps but isn't required — a strong portfolio of real pipelines and solid SQL/Python get interviews. Most hiring is skills-first now.</p></details>

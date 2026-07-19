@@ -88,7 +88,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="../assets/egybi.css?v=5" rel="stylesheet">
+<link href="../assets/egybi.css?v=6" rel="stylesheet">
 <script src="../assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
@@ -139,7 +139,7 @@ def build_challenges(chs, docs):
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:820px;">
-    <p class="hero-eyebrow"><a href="../practice.html" style="color:var(--gold-bright);">Practice</a> &middot; {esc(c['sector'])} &middot; {esc(c['difficulty'])}</p>
+    <p class="hero-eyebrow"><span data-glyph="reed"></span> <a href="../practice.html" style="color:var(--gold-bright);">Practice</a> &middot; {esc(c['sector'])} &middot; {esc(c['difficulty'])}</p>
     <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{esc(c['title'])}</h1>
     <p class="lead" style="margin:0;color:#e9dfc8;">{esc(c['statement'])}</p>
     <div class="cta-row" style="margin-top:26px;">
@@ -151,12 +151,12 @@ def build_challenges(chs, docs):
 
 <section class="surface-light">
   <div class="wrap" style="max-width:820px;">
-    <h2 style="font-size:1.25rem;">What you are given</h2>
+    <h2 style="font-size:1.25rem;"><span data-glyph="scroll"></span> What you are given</h2>
     <p>{esc(c['givens'])}</p>
     <h2 style="font-size:1.25rem;margin-top:28px;">Starting point</h2>
     <pre class="mono" style="background:var(--kemet);color:var(--on-dark);padding:16px 18px;border-radius:10px;overflow-x:auto;"><code>{esc(c['starter'])}</code></pre>
     <p style="font-size:0.9rem;color:var(--ink-soft);">The reference solution is checked automatically when you run your query on the practice page &mdash; results are compared row by row{', and order matters for this one' if c.get('orderMatters') else ''}.</p>
-    <h2 style="font-size:1.25rem;margin-top:28px;">Did you know</h2>
+    <h2 style="font-size:1.25rem;margin-top:28px;"><span data-glyph="maat"></span> Did you know</h2>
     <p>{esc(c['didYouKnow'])}</p>
     {f'<h2 style="font-size:1.25rem;margin-top:28px;">More {esc(c["sector"])} challenges</h2><ul class="plain-list">{rel_html}</ul>' if rel_html else ''}
     <p style="margin-top:30px;"><a class="btn btn-primary" href="../practice.html#{esc(c['id'])}">Open it in the playground &rarr;</a></p>
@@ -193,7 +193,7 @@ def build_posts(posts):
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:40px;">
   <div class="wrap" style="max-width:760px;">
-    <p class="hero-eyebrow"><a href="../blog.html" style="color:var(--gold-bright);">The Papyrus</a> &middot; {esc(p.get('tag',''))} &middot; {esc(p['date'])}</p>
+    <p class="hero-eyebrow"><span data-glyph="scroll"></span> <a href="../blog.html" style="color:var(--gold-bright);">The Papyrus</a> &middot; {esc(p.get('tag',''))} &middot; {esc(p['date'])}</p>
     <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{p['title']}</h1>
     <p class="lead" style="margin:0;color:#e9dfc8;">{p['excerpt']}</p>
   </div>
