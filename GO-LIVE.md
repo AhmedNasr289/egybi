@@ -22,20 +22,15 @@ hPanel → **Advanced → GIT**:
 After deploy, your files live at `public_html/site/…`, `public_html/backend/…`,
 `public_html/egybi/…`. That's expected — Step 2 fixes what the browser sees.
 
-## Step 2 — Set the website's document root to the `site/` folder  ← the key step
-By default Hostinger serves `public_html`. You must point the domain at
-`public_html/site` so (a) the site loads at the root and (b) your `backend/`
-tooling and private `egybi/` vault are **not** reachable on the web.
+## Step 2 — Serving the `site/` folder (handled automatically)
+No document-root change needed. A committed **`.htaccess` at the repo root**
+(deployed to `public_html/.htaccess`) makes Apache serve the `site/` subfolder as
+the web root and **hard-blocks** the `egybi/` vault and `backend/` tooling. So a
+plain Git deploy to `public_html` "just works."
 
-hPanel → **Websites → egybi.com → Dashboard**, then either:
-- **Website settings → Change website's root directory** (some plans call it
-  "Document root"), set it to **`public_html/site`**, save; **or**
-- if you don't see that option, tell Hostinger support "set my document root to
-  `public_html/site`" — it's a one-line change they do instantly.
-
-**Verify:** visit `https://egybi.com/` → the homepage loads. Visit
-`https://egybi.com/egybi/` and `https://egybi.com/backend/` → both should **404**
-(proof your vault and source are not exposed).
+**Verify after deploy:** visit `https://egybi.com/` → the homepage loads. Visit
+`https://egybi.com/egybi/` and `https://egybi.com/backend/` → both should be
+**403/404** (proof your vault and source are not exposed).
 
 ## Step 3 — Create the databases (phpMyAdmin)
 hPanel → **Databases → MySQL Databases**. Create one DB + user (or two — one for

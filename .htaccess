@@ -1,0 +1,27 @@
+# EgyBI — repo root = Hostinger public_html (Git deploy target).
+#
+# Hostinger's Git integration deploys the WHOLE repository into public_html.
+# The actual website lives in the site/ subfolder, and the repo also contains
+# non-web folders (the egybi/ docs vault and backend/ tooling) that must never
+# be served. This file makes Apache treat site/ as the web root and blocks the
+# rest — so no document-root change is needed on the hosting side.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1) Hard-block the private folders that Git also deploys here.
+    #    (Business/pricing vault + build tooling — 403, never served.)
+    RewriteRule ^(egybi|backend)(/|$) - [F]
+
+    # 2) Serve everything else from the site/ web root. Requests already inside
+    #    /site/ are left alone so there is no rewrite loop. Anything that isn't
+    #    under site/ (README.md, GO-LIVE.md, egy_raw.geojson, etc.) maps to a
+    #    non-existent site/<name> and 404s — i.e. only site/ content is public.
+    RewriteCond %{REQUEST_URI} !^/site/
+    RewriteRule ^(.*)$ site/$1 [L]
+</IfModule>
+
+# Fallback if mod_rewrite is off on this host: at least deny sensitive types.
+<FilesMatch "\.(md|sql|sqlite|sqlite3|geojson|log)$">
+    Require all denied
+</FilesMatch>
