@@ -16,6 +16,9 @@ backend/sql/seed_auto.sql
 *.sqlite
 *.sqlite3
 backend/test/*.sqlite
+# ...except the bundled read-only knowledge base, which we DO ship (it's the
+# zero-setup production data source for the KB API on SQLite).
+!backend/data/egybi_kb.sqlite
 # API file cache
 backend/cache/
 **/cache/

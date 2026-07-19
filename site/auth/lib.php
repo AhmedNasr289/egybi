@@ -80,6 +80,15 @@ function auth_db(): PDO
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ]);
         $pdo->exec('PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;');
+        // Self-initialise on first run (SQLite launch mode): if the accounts
+        // tables don't exist yet, apply the schema. Idempotent (CREATE TABLE IF
+        // NOT EXISTS), so it runs once on a fresh DB and is a no-op thereafter —
+        // no manual phpMyAdmin import needed to go live on SQLite.
+        $has = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")->fetchColumn();
+        if (!$has) {
+            $schema = @file_get_contents(__DIR__ . '/schema_auth.sql');
+            if (is_string($schema) && $schema !== '') $pdo->exec($schema);
+        }
     }
     return $pdo;
 }
