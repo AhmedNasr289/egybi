@@ -6,6 +6,20 @@
    real and cited in the prose; where sources disagree, we say so. */
 window.EGYBI_POSTS = [
   {
+    id: 'ninety-four-years',
+    title: 'The ninety-four-year reign that probably never happened',
+    date: '2026-07-19',
+    tag: 'History',
+    excerpt: 'Pepi II is credited with the longest reign in recorded history. The number rests on one damaged papyrus, and many Egyptologists now think it is wrong. Here is why almost every ancient Egyptian date is really an argument.',
+    body:
+      '<p>Ask who ruled longest in all of recorded history and the usual answer is <strong>Pepi II</strong>, a Sixth Dynasty king of the Old Kingdom, credited with about <strong>94 years</strong> on the throne. It is a wonderful fact. It may also not be true.</p>' +
+      '<p>The figure comes largely from the <em>Turin King List</em>, a damaged papyrus copied more than a thousand years after Pepi II died. Many Egyptologists now suspect a scribal slip, and argue the real figure is closer to <strong>64 years</strong> &mdash; still an extraordinary reign, just not a world record. Both numbers are defensible; neither is provable. So the honest thing is to record the 94 and say plainly that it is disputed, which is exactly what our dataset does.</p>' +
+      '<p>Pepi II is not the awkward exception. He is the rule. Take <strong>Thutmose III</strong>, whose 54 years look clean until you remember that for the first two decades his stepmother <strong>Hatshepsut</strong> was the one actually ruling. Or <strong>Senusret I</strong>, co-regent with his father for roughly a decade of his 36 years. Or <strong>Amenemhat III</strong>, whose start date moves depending on which co-regency theory you accept. Once kings share thrones, &ldquo;length of reign&rsquo; stops being one number and becomes a position in a debate.</p>' +
+      '<p>It is not uncertainty all the way down. <strong>Psamtik I</strong> of the Twenty-Sixth Dynasty also reigned about 54 years, but that late period left far better records, and his dates are comparatively well fixed. That is the pattern: the further back you go, the softer the numbers get. <strong>Ramesses II</strong> sits in between &mdash; his celebrated 66 years are widely accepted, and still labelled approximate.</p>' +
+      '<p>Which is why, of the <strong>45 pharaohs</strong> in our database spanning eight eras from the Early Dynastic period to the Ptolemies, <strong>every single one</strong> carries an explicit note about how certain its dates are. Not a few. All 45.</p>' +
+      '<p>That felt worth doing. A table of ancient dates with no caveats looks authoritative and is quietly dishonest &mdash; it turns a century of scholarly argument into a tidy integer. Ancient chronology is not a list of facts; it is a set of well-reasoned claims with error bars. You can query the reign lengths yourself on the practice page, sort them however you like, and read the caveat attached to each one. The caveat is not a footnote to the data. It <em>is</em> the data.</p>'
+  },
+  {
     id: 'the-pound-and-a-cup-of-tea',
     title: 'The long fall of the pound, told through a cup of tea',
     date: '2026-07-19',
