@@ -27,6 +27,10 @@
   <meta name="twitter:title" content="About — EgyBI &amp; the House of Life">
   <meta name="twitter:description" content="The story behind EgyBI: the ancient House of Life, the scribe-apprentice mascot Ibi, a real rank ladder and Egyptian badges, and a strict principle — every fact is real, cited, and honest about what's disputed.">
   <meta name="twitter:image" content="https://egybi.com/og-image.png">
+  <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
+       Android and macOS, so these signs would be empty boxes for most
+       visitors. This loads ONLY the ten signs we use (~12 KB). -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8A%BD%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -191,6 +195,16 @@
   </div>
 </section>
 
+
+<section class="surface-light" id="glyphs">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span> Medu netjer &mdash; the words of the gods</div>
+    <h2 data-aos="fade-up">The signs we use, and what they actually mean.</h2>
+    <p class="lead" data-aos="fade-up">These are real Egyptian signs, not ornament. Each one appears somewhere on the site for a reason, and each is listed here with its name, its sound where it has one, and its Gardiner code &mdash; the standard catalogue Egyptologists use. The ancient Egyptians called their own script <em>medu netjer</em>, the words of the gods, and their country <em>Kemet</em>, the black land, after the dark silt the Nile left behind.</p>
+    <div class="glyph-legend" id="glyphLegend" data-aos="fade-up"></div>
+    <p style="font-size:0.86rem;color:var(--ink-soft);margin-top:18px;">Signs are drawn from the Unicode Egyptian Hieroglyphs block (U+13000&ndash;U+1342F). Because most phones and Macs ship no font covering that block, we load a small subset of Noto Sans Egyptian Hieroglyphs so they render for everyone rather than appearing as empty boxes.</p>
+  </div>
+</section>
 <footer class="site-footer">
   <div class="cols">
     <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life.</p></div>
@@ -198,13 +212,14 @@
     <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.metmuseum.org/" target="_blank" rel="noopener">Met Museum</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<a href="privacy.html">Privacy &amp; cookies</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
 <script src="assets/egybi.js"></script>
+<script src="assets/glyphs.js"></script>
 <script>
   // ---- knowledge-base sector grid ----
   var sectors = [
@@ -266,5 +281,19 @@
 <script>window.EGYBI_AUTH = { base: 'auth/' };</script>
 <script src="assets/auth.js?v=3"></script>
   <script src="assets/analytics.js" defer></script>
+<script>
+(function(){
+  var box=document.getElementById('glyphLegend'); if(!box||!window.EGYBI_GLYPHS) return;
+  var G=window.EGYBI_GLYPHS;
+  box.innerHTML=Object.keys(G).map(function(k){
+    var g=G[k];
+    return '<div class="glyph-card">'+
+      '<div class="gl-top"><span class="gl-sign">'+g.c+'</span>'+
+      '<span><span class="gl-name">'+g.name+'</span> <span class="gl-tr">'+g.tr+'</span></span></div>'+
+      '<p class="gl-mean">'+g.meaning+'</p>'+
+      '<div class="gl-code">Gardiner '+g.gardiner+'</div></div>';
+  }).join('');
+})();
+</script>
 </body>
 </html>

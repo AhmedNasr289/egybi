@@ -391,3 +391,108 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
   .brand { font-size: 1.12rem; }
   .site-header .bar { gap: 10px; padding: 11px 5vw; }
 }
+
+/* ---------- hieroglyph layer ------------------------------------------------
+   Real Egyptian signs, used with intent. The font stack puts the subset webfont
+   first so these render on phones and Macs, where no system font covers the
+   U+13000 block. Every .glyph is focusable and carries an aria-label, so the
+   meaning is reachable by keyboard and screen reader, not hover alone. */
+.glyph {
+  font-family: 'Noto Sans Egyptian Hieroglyphs', 'Segoe UI Historic', 'Segoe UI Symbol', serif;
+  font-size: 1.05em; line-height: 1; color: var(--gold); position: relative;
+  cursor: help; display: inline-block; vertical-align: -0.06em;
+  transition: color .25s ease, transform .25s ease;
+}
+.glyph:hover, .glyph:focus-visible { color: var(--gold-bright); outline: none; transform: translateY(-1px); }
+.glyph:focus-visible { box-shadow: 0 0 0 2px var(--gold); border-radius: 4px; }
+.surface-light .glyph, .surface-light-2 .glyph { color: var(--gold-ink); }
+.surface-light .glyph:hover, .surface-light .glyph:focus-visible { color: var(--blue); }
+
+/* tooltip — explanation is always reachable, never hover-only */
+.glyph[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute; left: 50%; bottom: calc(100% + 9px); transform: translateX(-50%) translateY(4px);
+  background: var(--kemet-2); color: var(--on-dark); border: 1px solid var(--gold);
+  border-radius: 9px; padding: 9px 12px; width: max-content; max-width: 260px;
+  font-family: 'Inter', sans-serif; font-size: 0.76rem; line-height: 1.45; font-weight: 400;
+  opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+  z-index: 60; text-align: left; box-shadow: 0 12px 30px rgba(0,0,0,.45);
+}
+.glyph[data-tip]:hover::after, .glyph[data-tip]:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* a divider that reads like a carved band */
+.glyph-rule { display: flex; align-items: center; gap: 14px; margin: 44px 0; color: var(--gold); }
+.glyph-rule::before, .glyph-rule::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
+}
+.surface-dark .glyph-rule::before, .surface-dark .glyph-rule::after,
+.surface-hero .glyph-rule::before, .surface-hero .glyph-rule::after {
+  background: linear-gradient(90deg, transparent, rgba(201,162,39,.5), transparent);
+}
+.glyph-rule .glyph { font-size: 1.3rem; }
+
+/* the legend on About */
+.glyph-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 14px; margin-top: 26px; }
+.glyph-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 3px solid var(--gold); border-radius: 11px; padding: 14px 16px; }
+.glyph-card .gl-top { display: flex; align-items: baseline; gap: 10px; }
+.glyph-card .gl-sign { font-family: 'Noto Sans Egyptian Hieroglyphs','Segoe UI Historic','Segoe UI Symbol',serif; font-size: 1.9rem; color: var(--gold-ink); line-height: 1; }
+.glyph-card .gl-name { font-family: 'Cinzel', serif; font-weight: 700; color: var(--blue-deep); font-size: 1rem; }
+.glyph-card .gl-tr { font-style: italic; color: var(--ink-soft); font-size: 0.84rem; }
+.glyph-card .gl-mean { margin: 8px 0 0; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.5; }
+.glyph-card .gl-code { font-size: 0.72rem; color: var(--gold-ink); letter-spacing: .04em; margin-top: 6px; }
+
+/* signs fade in as though being carved, once, when scrolled to */
+.glyph-carve { opacity: 0; transform: scale(.86); filter: blur(1.5px); }
+.glyph-carve.carved { opacity: 1; transform: none; filter: none; transition: opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1), filter .7s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .glyph-carve, .glyph-carve.carved { opacity: 1; transform: none; filter: none; transition: none; }
+  .glyph:hover, .glyph:focus-visible { transform: none; }
+}
+
+/* ---------- The Papyrus: a letter, not a form ------------------------------ */
+.papyrus-letter {
+  position: relative; background: linear-gradient(178deg, #fdf9ee 0%, var(--papyrus) 100%);
+  border: 1px solid var(--line-light); border-radius: 4px 4px 14px 14px;
+  padding: 40px 34px 32px; box-shadow: 0 18px 44px rgba(20,17,12,.12);
+}
+/* torn top edge, like a sheet cut from the roll */
+.papyrus-letter::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 8px;
+  background: repeating-linear-gradient(90deg, var(--gold-soft) 0 7px, transparent 7px 15px);
+  border-radius: 4px 4px 0 0; opacity: .85;
+}
+.pl-seal {
+  position: absolute; top: -19px; right: 26px; width: 46px; height: 46px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, var(--gold-bright), var(--gold) 58%, #8a6d14 100%);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 5px 14px rgba(122,94,16,.45); border: 1px solid rgba(255,255,255,.28);
+}
+.pl-seal-glyph { color: #3c2f08; font-size: 1.32rem; line-height: 1; }
+.pl-specimen {
+  margin: 0 0 18px; padding: 16px 18px; border-left: 3px solid var(--gold);
+  background: rgba(201,162,39,.09); border-radius: 0 10px 10px 0;
+  font-size: 0.95rem; line-height: 1.62; color: var(--ink);
+}
+.pl-specimen-label {
+  display: block; font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--gold-ink); margin-bottom: 7px;
+}
+.nl-form { display: flex; gap: 10px; flex-wrap: wrap; }
+.nl-form input[type="email"] {
+  flex: 1 1 220px; padding: 13px 15px; border: 1.5px solid var(--line-light);
+  border-radius: 10px; background: #fff; color: var(--ink); font-family: inherit; font-size: 0.98rem;
+}
+.nl-form input[type="email"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; border-color: var(--gold); }
+.nl-form .btn { flex: 0 0 auto; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@media (max-width: 560px) {
+  .papyrus-letter { padding: 34px 20px 24px; }
+  .pl-seal { right: 16px; width: 40px; height: 40px; }
+  .nl-form .btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .papyrus-letter { transition: none; } }
+/* the ankh is drawn, since no hieroglyph font covers U+2625 */
+.glyph-svg { width: 1em; height: 1em; display: block; }
+.pl-seal .glyph, .pl-seal .glyph:hover { color: #3c2f08; transform: none; cursor: default; }
+.pl-seal .glyph-svg { width: 1.3rem; height: 1.3rem; }

@@ -87,6 +87,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 <link href="../assets/egybi.css?v=4" rel="stylesheet">
 <script src="../assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
@@ -97,6 +98,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 {body}
 {FOOT}
 <script src="../assets/egybi.js"></script>
+<script src="../assets/glyphs.js"></script>
 <script src="../assets/ads.js"></script>
 <script src="../assets/auth.js?v=3"></script>
 <script src="../assets/analytics.js"></script>
@@ -173,7 +175,7 @@ def build_posts(posts):
     for i, p in enumerate(posts):
         sl = p['id']
         url = f"{SITE_URL}/papyrus/{sl}.html"
-        title = f"{p['title']} | The Papyrus &middot; EgyBI"
+        title = f"{p['title']} | The Papyrus · EgyBI"
         desc = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', p['excerpt']))[:180]
         nxt = posts[i + 1] if i + 1 < len(posts) else None
         prv = posts[i - 1] if i > 0 else None

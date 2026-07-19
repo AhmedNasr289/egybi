@@ -98,6 +98,10 @@
   <meta name="twitter:title" content="Daily Prices — EgyBI · أسعار المنتجات">
   <meta name="twitter:description" content="Daily Egyptian retail and wholesale product prices — groceries, vegetables, fruit, fish, dairy, meat and more — from the government's official price portal, grouped by category with the source and date on every figure. أسعار المنتجات في مصر، تجزئة وجملة، تتحدّث يوميًا.">
   <meta name="twitter:image" content="https://egybi.com/og-image.png">
+  <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
+       Android and macOS, so these signs would be empty boxes for most
+       visitors. This loads ONLY the ten signs we use (~12 KB). -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8A%BD%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -163,12 +167,13 @@
     <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h5>Price source</h5><a href="http://www.agriprice.gov.eg/" target="_blank" rel="noopener">بوابة الأسعار</a><a href="https://www.idsc.gov.eg/" target="_blank" rel="noopener">مركز معلومات الوزراء</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<a href="privacy.html">Privacy &amp; cookies</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="assets/egybi.js"></script>
+<script src="assets/glyphs.js"></script>
 <script>
 (function(){
   var esc = (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml : function(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; };

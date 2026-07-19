@@ -44,6 +44,10 @@
        priority in parallel, without changing execution order. -->
   <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js" crossorigin>
   <link rel="preload" as="fetch" type="application/wasm" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.wasm" crossorigin>
+  <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
+       Android and macOS, so these signs would be empty boxes for most
+       visitors. This loads ONLY the ten signs we use (~12 KB). -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%E2%98%A5%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8A%BD%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -72,7 +76,7 @@
 <section class="surface-hero hero-v2" style="position:relative;overflow:hidden;padding-top:74px;padding-bottom:62px;">
   <div id="hero-particles" class="hero-particles" aria-hidden="true" data-parallax="0.12"></div>
   <div class="hero-inner wrap" data-mo-hero>
-    <p class="hero-eyebrow">Real SQL &middot; Real Egyptian data &middot; No signup</p>
+    <p class="hero-eyebrow"><span data-glyph="reed"></span> Real SQL &middot; Real Egyptian data &middot; No signup <span data-glyph="scroll"></span></p>
     <h1 class="hero-h1">Write SQL against 4,000 years of Egypt.</h1>
     <p class="lead hero-lead">123 auto-graded challenges on 61 tables of cited Egyptian data &mdash; pharaohs, obelisks, the Suez Canal, today&rsquo;s food prices. Runs in your browser; nothing to install or join.</p>
 
@@ -181,6 +185,7 @@ LIMIT 5;</textarea>
   </div>
 </section>
 
+<div class="wrap"><div class="glyph-rule" aria-hidden="false"><span data-glyph="ra"></span></div></div>
 <!-- IDENTITY TEASER -->
 <section class="surface-light">
   <div class="wrap">
@@ -197,20 +202,29 @@ LIMIT 5;</textarea>
 </section>
 
 <!-- NEWSLETTER: THE PAPYRUS -->
-<section class="surface-light-2 center" id="newsletter">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up">The Papyrus · our newsletter</div>
-    <h2 data-aos="fade-up">One good letter about Egypt, in data.</h2>
-    <p class="lead" data-aos="fade-up">Every so often we send <strong style="color:var(--blue);">The Papyrus</strong> — the new cited datasets and SQL challenges we have added, plus one short data story about Egypt (a mega-project, a record, a surprising number). No noise, unsubscribe anytime.</p>
-    <form class="form-inline newsletter-form" id="newsletterForm" data-aos="fade-up" novalidate>
-      <label for="newsletterEmail" class="sr-only">Email address</label>
-      <input type="email" id="newsletterEmail" name="email" placeholder="you@example.com" autocomplete="email" required aria-required="true">
-      <!-- honeypot: hidden from humans, catches bots -->
-      <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button type="submit" class="btn btn-primary">Subscribe</button>
-    </form>
-    <p style="font-size:0.82rem;color:var(--ink-soft);margin-top:11px;" data-aos="fade-up">A short letter, every few weeks. Your email stays private.</p>
-    <p class="form-note" id="newsletterNote" role="status" aria-live="polite"></p>
+<section class="surface-light-2" id="newsletter">
+  <div class="wrap" style="max-width:720px;">
+    <div class="papyrus-letter" data-mo>
+      <div class="pl-seal" aria-hidden="true"><span class="pl-seal-glyph" data-glyph="ankh"></span></div>
+      <p class="kicker" style="margin-bottom:6px;"><span data-glyph="scroll"></span> The Papyrus &middot; medu netjer, in data</p>
+      <h2 style="font-size:clamp(1.5rem,4vw,2.1rem);margin:0 0 12px;">One letter a month. Always a number you did not know.</h2>
+      <p class="lead" style="margin:0 0 18px;">Each issue carries the datasets and challenges added that month, and one short story pulled straight from the database &mdash; the kind of fact that changes how a place looks to you.</p>
+
+      <blockquote class="pl-specimen">
+        <span class="pl-specimen-label"><span data-glyph="scarab"></span> From the last issue</span>
+        Thirty-three ancient Egyptian obelisks survive. Only fifteen are still in Egypt. The tallest one standing anywhere is in Rome, and the largest ever cut never rose at all &mdash; it cracked in the Aswan quarry and lies there still, at nearly 42 metres.
+      </blockquote>
+
+      <p style="font-size:0.92rem;color:var(--ink-soft);margin:0 0 20px;">Monthly, never more. Every figure cited, disputes flagged. Unsubscribe in one click.</p>
+
+      <form id="newsletterForm" class="newsletter-form nl-form" novalidate>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="sr-only" for="nlEmail">Email address</label>
+        <input id="nlEmail" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+        <button type="submit" class="btn btn-primary" data-ev="newsletter_submit">Send me The Papyrus</button>
+      </form>
+      <p id="newsletterNote" class="form-note" role="status" aria-live="polite"></p>
+    </div>
   </div>
 </section>
 
@@ -224,7 +238,7 @@ LIMIT 5;</textarea>
     <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="explore.html">Full source list</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<a href="privacy.html">Privacy &amp; cookies</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
@@ -233,6 +247,7 @@ LIMIT 5;</textarea>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
 <script src="assets/egybi.js"></script>
+<script src="assets/glyphs.js"></script>
 <script>window.EGYBI_NEWSLETTER = { endpoint: 'api/newsletter.php' };</script>
 <script src="assets/newsletter.js"></script>
 <script>
