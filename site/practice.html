@@ -355,7 +355,17 @@
     statusEl.textContent='Ready — '+EGYBI_CHALLENGES.length+' challenges loaded.'; statusEl.className='sql-status ready';
     runBtn.disabled=false;
     renderSchemaChips(); renderFilters(); renderList(); updateSolvedCount();
-    select(EGYBI_CHALLENGES[0]);
+    // Deep link: /practice.html#his-2 opens that challenge directly, so the
+    // generated per-challenge pages can hand a visitor straight to the problem.
+    function fromHash(){
+      var id=(location.hash||'').replace(/^#/,'');
+      if(!id) return null;
+      return EGYBI_CHALLENGES.filter(function(c){return c.id===id;})[0]||null;
+    }
+    var target=fromHash();
+    select(target||EGYBI_CHALLENGES[0]);
+    if(target){ try{ document.getElementById('chTitle').scrollIntoView({behavior:EGYBI.reduceMotion?'auto':'smooth',block:'start'}); }catch(e){} }
+    window.addEventListener('hashchange', function(){ var t=fromHash(); if(t) select(t); });
   }).catch(function(err){
     statusEl.textContent='Could not load the SQL engine ('+err.message+'). Reload to retry.'; statusEl.className='sql-status error';
   });

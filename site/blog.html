@@ -111,18 +111,9 @@
         '<div class="post-meta"><span class="post-tag">'+EGYBI.escapeHtml(p.tag)+'</span><span class="post-date">'+fmtDate(p.date)+'</span></div>'+
         '<h3>'+EGYBI.escapeHtml(p.title)+'</h3>'+
         '<p class="post-excerpt">'+p.excerpt+'</p>'+
-        '<button class="read-btn" aria-expanded="false" data-id="'+p.id+'">Read the post →</button>'+
-        '<div class="post-body" id="body-'+p.id+'" hidden>'+p.body+'</div>'+
+        '<a class="read-btn" href="papyrus/'+p.id+'.html">Read the post →</a>'+
       '</article>';
     }).join('');
-    el.querySelectorAll('.read-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var body = document.getElementById('body-'+btn.dataset.id);
-        var open = body.hasAttribute('hidden');
-        if(open){ body.removeAttribute('hidden'); btn.setAttribute('aria-expanded','true'); btn.textContent='Close ↑'; }
-        else { body.setAttribute('hidden',''); btn.setAttribute('aria-expanded','false'); btn.textContent='Read the post →'; }
-      });
-    });
     if(window.AOS) AOS.refresh();
   }
   renderFilters(); renderList();
