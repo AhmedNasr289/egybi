@@ -65,7 +65,7 @@ perankh/
 ## 🚀 Current status (Phase 0 — pre-launch)
 
 - **Frontend:** 9-page site, live and verified (now including a **Daily Prices** page — real Egyptian wholesale produce prices, refreshed daily from a static JSON feed, with per-item trend charts and every figure source-dated). Disciplined color identity, real BI dashboards, a **BI-grade interactive Egypt choropleth map** (27 governorates, 5 metrics — population, density, urban %, growth, area — Leaflet, offline), and a **HackerRank-style SQL challenge workbench** (97 auto-graded challenges on a 25-table cited sandbox, organized by 8 SQL topics as a beginner→advanced study path, running in-browser via sql.js). Adds a data-driven **Blog**, a **Community** page (contribute/accuracy rules, public roadmap, automations), *The Papyrus* **newsletter** signup (validated, honeypot-guarded, injection-safe write endpoint + no-server fallback), a **Privacy** policy, and **Google AdSense** plumbing (config-gated, inert until a real publisher ID is set). Static — ready to upload to Hostinger.
-- **Backend:** a **58-table (837-row)** cited Egypt knowledge base spanning 18+ sectors + a read-only PHP/MySQL API; isolated write-side endpoints for the newsletter and moderated community board; and a **Phase-2 accounts/SaaS layer** (`backend/auth/`) — Argon2id auth, sessions, CSRF, per-account progress sync, and paywall-ready gating, all **free at launch** (see `egybi/Phase 2 — SaaS & Accounts.md`). Built and tested end-to-end locally (`backend/test/build_test_db.py`, zero FK violations).
+- **Backend:** a **58-table (837-row)** cited Egypt knowledge base spanning 18+ sectors + a read-only PHP/MySQL API; isolated write-side endpoints for the newsletter and moderated community board; and a **Phase-2 accounts/SaaS layer** (`site/auth/`) — Argon2id auth, sessions, CSRF, per-account progress sync, and paywall-ready gating, all **free at launch** (see `egybi/Phase 2 — SaaS & Accounts.md`). Built and tested end-to-end locally (`backend/test/build_test_db.py`, zero FK violations).
 - **Data pipeline:** an automated World Bank refresh (`backend/pipeline/`) with dry-run/diff and offline modes — keeps the numeric time series current without hand-editing.
 - **Blocking next action:** none technical — the site can deploy now. Complete the Hostinger plan **Setup**, connect egybi.com, and follow `backend/DEPLOY.md`.
 
@@ -80,7 +80,7 @@ python -m http.server 8745 --directory site
 **Run the API locally (SQLite, no MySQL needed):**
 ```bash
 python -c "import sqlite3;c=sqlite3.connect('backend/test/egybi_test.sqlite');[c.executescript(open(f,encoding='utf-8').read()) for f in ['backend/sql/schema_sqlite.sql','backend/sql/seed.sql','backend/sql/seed_v2.sql']]"
-php -d extension=pdo_sqlite -S 127.0.0.1:8189 -t backend/api backend/api/index.php
+php -d extension=pdo_sqlite -S 127.0.0.1:8189 -t site/api site/api/index.php
 # open http://localhost:8189/health
 ```
 

@@ -5,6 +5,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Hard-block the private folder (newsletter + community email lists) and the
+    # response cache — these must never be reachable over the web, whatever the
+    # host's default MIME handling is.
+    RewriteRule ^_private(/|$) - [F]
+    RewriteRule ^cache(/|$)    - [F]
+
     # If deployed in a subfolder (e.g. egybi.com/api/), Hostinger sets the base
     # automatically; the router also strips a leading /api segment defensively.
     RewriteCond %{REQUEST_FILENAME} !-f
@@ -12,8 +18,8 @@
     RewriteRule ^ index.php [QSA,L]
 </IfModule>
 
-# Never serve the raw SQL, cache, or config files.
-<FilesMatch "\.(sql|sqlite)$">
+# Never serve the raw SQL, cache, config, private lists, or logs.
+<FilesMatch "\.(sql|sqlite|jsonl|log)$">
     Require all denied
 </FilesMatch>
 <Files "config.php">

@@ -69,13 +69,28 @@
           (r.next ? '<span class="acct-next"> · ' + (r.next_at - stats.xp) + ' XP to ' + esc(r.next) + '</span>' : '') + '</div>';
       }
       slot.innerHTML = '<button class="acct-btn" id="acctBtn" aria-haspopup="true" aria-expanded="false"><span class="acct-av">' + esc(initial) + '</span></button>' +
-        '<div class="acct-menu" id="acctMenu" hidden><div class="acct-email">' + esc(user.email) + '</div>' +
+        '<div class="acct-menu" id="acctMenu" hidden>' +
+        '<div class="acct-handle"><span id="acctName">' + esc(user.name || 'Scribe') + '</span>' +
+        '<button id="acctRename" class="acct-edit" title="Change your leaderboard handle" aria-label="Change handle">✎</button></div>' +
+        '<div class="acct-email">' + esc(user.email) + '</div>' +
         '<div class="acct-plan">Plan: ' + esc(user.plan || 'free') + (user.verified ? '' : ' · unverified') + '</div>' +
         sHtml +
         '<a href="practice.html">Your progress</a><button id="acctOut">Sign out</button></div>';
       document.getElementById('acctBtn').addEventListener('click', function (e) {
         var m = document.getElementById('acctMenu'); var open = m.hasAttribute('hidden');
         if (open) { m.removeAttribute('hidden'); this.setAttribute('aria-expanded', 'true'); } else { m.setAttribute('hidden', ''); this.setAttribute('aria-expanded', 'false'); }
+      });
+      document.getElementById('acctRename').addEventListener('click', function () {
+        var cur = (user && user.name) || '';
+        var next = window.prompt('Your leaderboard handle (3–32 letters, numbers, spaces, - or _):', cur);
+        if (next == null) return;
+        next = next.trim();
+        if (next === '' || next === cur) return;
+        api('rename', 'POST', { name: next }).then(function (res) {
+          var d = res.data || {};
+          if (d.ok) { user.name = d.name; var el = document.getElementById('acctName'); if (el) el.textContent = d.name; }
+          else window.alert(d.message || 'Could not update your handle.');
+        }).catch(function () { window.alert('Could not reach the server.'); });
       });
       document.getElementById('acctOut').addEventListener('click', function () {
         api('logout', 'POST').then(function () { user = null; csrf = null; renderNav(); });
@@ -179,7 +194,11 @@
     '.acct-btn:not(.signin){background:none;border:none;cursor:pointer;padding:0}' +
     '.acct-av{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--kemet);font-weight:800;font-family:Inter,sans-serif}' +
     '.acct-menu{position:absolute;right:0;top:44px;background:var(--kemet-2);border:1px solid var(--line-dark);border-radius:12px;padding:12px 14px;min-width:190px;box-shadow:0 18px 40px rgba(0,0,0,.45);z-index:200}' +
-    '.acct-menu .acct-email{color:#f3ead4;font-weight:700;font-size:.9rem;font-family:Inter,sans-serif;word-break:break-all}' +
+    '.acct-menu .acct-handle{display:flex;align-items:center;gap:6px;margin-bottom:2px}' +
+    '.acct-menu .acct-handle #acctName{color:var(--gold-bright);font-weight:800;font-size:.98rem;font-family:Cinzel,serif}' +
+    '.acct-edit{background:none;border:none;color:var(--on-dark-soft);cursor:pointer;font-size:.85rem;padding:0 2px;line-height:1;width:auto!important}' +
+    '.acct-edit:hover{color:var(--gold-bright)}' +
+    '.acct-menu .acct-email{color:#cdbf9e;font-weight:500;font-size:.78rem;font-family:Inter,sans-serif;word-break:break-all}' +
     '.acct-menu .acct-plan{color:var(--on-dark-soft);font-size:.76rem;margin:2px 0 10px}' +
     '.acct-menu a,.acct-menu button{display:block;width:100%;text-align:left;background:none;border:none;color:var(--on-dark);font:inherit;font-size:.88rem;padding:7px 0;cursor:pointer;text-decoration:none}' +
     '.acct-menu a:hover,.acct-menu button:hover{color:var(--gold-bright)}' +

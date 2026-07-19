@@ -82,8 +82,12 @@ case 'login': {
     $hash = $u['pass_hash'] ?? '$2y$12$U20Hyu2lJ.VTfmLWQAFk1eyBZYN1r/XVoupII2lojHCLajPCjQXdK';
     $okpw = password_verify($pw, $hash);
     if (!$u || !$okpw) json_out(false, ['message' => 'Wrong email or password.'], 401);
+    // Optional hard gate: block unverified logins only if enabled in config.
+    if (auth_cfg()['require_verified'] && (int)$u['email_verified'] !== 1) {
+        json_out(false, ['message' => 'Please verify your email first — check your inbox for the link.'], 403);
+    }
     $s = create_session($u['id']);
-    json_out(true, ['csrf' => $s['csrf'], 'user' => ['email' => $u['email'], 'plan' => $u['plan'], 'verified' => (int)$u['email_verified'] === 1]]);
+    json_out(true, ['csrf' => $s['csrf'], 'user' => ['email' => $u['email'], 'plan' => $u['plan'], 'name' => $u['display_name'], 'verified' => (int)$u['email_verified'] === 1]]);
 }
 
 case 'logout': {
@@ -138,10 +142,23 @@ case 'me': {
     if (!$u) json_out(true, ['user' => null]);
     $s = current_session();
     json_out(true, [
-        'user' => ['email' => $u['email'], 'plan' => $u['plan'], 'verified' => (int)$u['email_verified'] === 1],
+        'user' => ['email' => $u['email'], 'plan' => $u['plan'], 'name' => $u['display_name'], 'verified' => (int)$u['email_verified'] === 1],
         'stats' => get_stats($u['id']),
         'csrf' => $s['csrf'] ?? null,
     ]);
+}
+
+case 'rename': {
+    if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
+    $s = current_session();
+    if (!$s) json_out(false, ['message' => 'Sign in first.'], 401);
+    require_csrf($s);
+    $name = trim((string)(body()['name'] ?? ''));
+    if (!valid_display_name($name)) {
+        json_out(false, ['message' => 'Use 3–32 letters, numbers, spaces, - or _.'], 422);
+    }
+    $db->prepare('UPDATE users SET display_name=?, updated_at=? WHERE id=?')->execute([$name, now(), $s['user_id']]);
+    json_out(true, ['name' => $name, 'message' => 'Handle updated.']);
 }
 
 default:

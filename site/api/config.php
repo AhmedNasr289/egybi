@@ -24,10 +24,13 @@ return [
     'db_charset' => 'utf8mb4',
 
     // --- SQLite (local testing) ---
-    'sqlite_path' => getenv('SQLITE_PATH') ?: __DIR__ . '/../test/egybi_test.sqlite',
+    // The web root is this `site/` folder; the test DB lives in the non-web
+    // `backend/test/` tooling folder (a sibling of `site/` in the repo).
+    'sqlite_path' => getenv('SQLITE_PATH') ?: __DIR__ . '/../../backend/test/egybi_test.sqlite',
 
     // Response caching (data is static reference data — cache hard).
-    'cache_dir' => __DIR__ . '/../cache',
+    // Kept inside api/ and blocked from the web by .htaccess.
+    'cache_dir' => __DIR__ . '/cache',
     'cache_ttl' => (int)(getenv('CACHE_TTL') ?: 3600), // seconds
 
     // CORS: the client-side SQL sandbox on the site fetches dataset snapshots.

@@ -1,5 +1,15 @@
 # Deploying EgyBI to Hostinger
 
+> **👉 Using Git auto-deploy? Follow [`GO-LIVE.md`](../GO-LIVE.md) instead — it's
+> the canonical launch checklist for the GitHub-connected workflow you set up.**
+> This file remains the detailed *manual-upload* reference and the per-feature
+> notes (newsletter, AdSense, prices, community, accounts). Both are consistent.
+
+> **Repo layout note:** the web root is the **`site/`** folder, which now contains
+> the pages **and** the `api/` and `auth/` backends. In this guide, "upload
+> `site/api` → `public_html/api`" and "`site/auth` → `public_html/auth`" — or, with
+> Git deploy, set the document root to `public_html/site` and it's all in place.
+
 A plain-language, step-by-step guide to get the whole thing live on your Hostinger
 **Unlimited Web Hosting** plan at **egybi.com**. No command line required — everything
 here can be done through Hostinger's hPanel and phpMyAdmin.
@@ -105,7 +115,7 @@ an object to publish a post). No server code is needed for any of this — it's 
 
 1. In hPanel, open **File Manager** (or use FTP).
 2. Inside `public_html/`, create a folder named **`api`**.
-3. Upload the entire contents of your local **`backend/api/`** folder into
+3. Upload the entire contents of your local **`site/api/`** folder into
    `public_html/api/` — that's `index.php`, `config.php`, `.htaccess`, and the `lib/`
    and `controllers/` folders. Keep the structure identical.
 4. Open **`public_html/api/config.php`** in the File Manager editor and set it to MySQL
@@ -168,10 +178,10 @@ Look for the `EGYBI_API_BASE` constant near the top of the `<script>` in `index.
 ## Step 7 — The Papyrus newsletter signup
 
 The signup form (on the home page's *Newsletter* section) posts to a **single, isolated
-write-side PHP file**: `backend/api/newsletter.php`. It's the only place the whole site
+write-side PHP file**: `site/api/newsletter.php`. It's the only place the whole site
 writes anything.
 
-1. Upload `backend/api/newsletter.php` into `public_html/api/` alongside the read-only API.
+1. Upload `site/api/newsletter.php` into `public_html/api/` alongside the read-only API.
 2. It writes subscribers to `public_html/api/_private/newsletter.jsonl` (one JSON object per
    line: `{email, ts, iph}`). Create the `_private/` folder if the script can't (it tries
    to `mkdir` it on first run). **Block web access to it** — the API `.htaccess` already
@@ -257,10 +267,10 @@ retail) — to surface those later, read the other keys from `GetGeneralIndicato
 ## Step 10 — Community ideas & comments (moderated)
 
 The **Community** page lets visitors post ideas/comments through a second isolated
-write endpoint, **`backend/api/community.php`** — the same discipline as the newsletter,
+write endpoint, **`site/api/community.php`** — the same discipline as the newsletter,
 plus **moderation**: nothing a stranger posts appears publicly until a human approves it.
 
-1. Upload `backend/api/community.php` into `public_html/api/`.
+1. Upload `site/api/community.php` into `public_html/api/`.
 2. It stores submissions in `public_html/api/_private/community.jsonl` (append-only, one
    JSON object per line: `{id, name, message, ts, iph, approved}`). Block web access to
    `_private/` exactly as for the newsletter list.
@@ -284,12 +294,12 @@ points to `hello@egybi.com`) if no endpoint is connected.
 
 ## Step 11 — Accounts / SaaS layer (Phase 2)
 
-Optional but ready. `backend/auth/` is an **isolated** module (never touches the
+Optional but ready. `site/auth/` is an **isolated** module (never touches the
 read-only KB API) that adds real accounts, per-account progress sync, and
 paywall-ready gating — **every plan free at launch**. Full design in
 `egybi/Phase 2 — SaaS & Accounts.md`.
 
-1. **Upload** the whole `backend/auth/` folder to `public_html/auth/`
+1. **Upload** the whole `site/auth/` folder to `public_html/auth/`
    (`auth.php`, `progress.php`, `stats.php`, `payments.php`, `lib.php`,
    `mailer.php`, `schema_auth_mysql.sql`, `config.sample.php`). The frontend
    already calls `auth/…` relatively.
@@ -364,7 +374,7 @@ same schema + seed, so you can run the exact same API code locally without MySQL
 python backend/test/build_test_db.py
 
 # run the API locally (PHP built-in server, SQLite driver):
-php -d extension=pdo_sqlite -d extension=sqlite3 -S 127.0.0.1:8189 backend/api/index.php
+php -d extension=pdo_sqlite -d extension=sqlite3 -S 127.0.0.1:8189 site/api/index.php
 # then open http://127.0.0.1:8189/health   (60+ datasets; try /charts/businessmen)
 ```
 

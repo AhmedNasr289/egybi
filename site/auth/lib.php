@@ -36,6 +36,10 @@ function auth_cfg(): array
         'secure_cookie' => ((string)$get('secure_cookie', 'AUTH_SECURE_COOKIE', '1')) === '1',
         'session_days'  => (int)$get('session_days', 'AUTH_SESSION_DAYS', 30),
         'app_url'     => rtrim((string)$get('app_url', 'APP_URL', 'https://egybi.com'), '/'),
+        // Require a verified email before login? Off by default (soft gate at
+        // launch — users can sign in immediately; the UI shows "unverified").
+        // Flip to '1' in config once email deliverability is proven.
+        'require_verified' => ((string)$get('require_verified', 'AUTH_REQUIRE_VERIFIED', '0')) === '1',
         // SMTP (Hostinger): fill these to actually send verify/reset emails.
         'smtp_host'   => $get('smtp_host', 'SMTP_HOST', ''),
         'smtp_port'   => (int)$get('smtp_port', 'SMTP_PORT', 465),
@@ -138,6 +142,7 @@ function clear_session_cookie(): void
 function create_session(string $userId): array
 {
     $db = auth_db();
+    prune_expired(); // opportunistic housekeeping (login is infrequent)
     $id = rid(32); $csrf = rid(32);
     $db->prepare('INSERT INTO sessions (id,user_id,csrf,ua_hash,expires_at,created_at) VALUES (?,?,?,?,?,?)')
        ->execute([$id, $userId, $csrf, substr(hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 16), plus_days(auth_cfg()['session_days']), now()]);
@@ -161,9 +166,33 @@ function current_user(): ?array
 {
     $s = current_session();
     if (!$s) return null;
-    $st = auth_db()->prepare('SELECT id,email,email_verified,plan,created_at FROM users WHERE id=?');
+    $st = auth_db()->prepare('SELECT id,email,email_verified,plan,display_name,created_at FROM users WHERE id=?');
     $st->execute([$s['user_id']]);
     return $st->fetch() ?: null;
+}
+
+/** A public leaderboard handle: 3–32 chars of letters/digits/space/_/- (trimmed).
+ *  Length is counted in Unicode code points WITHOUT mbstring (not guaranteed on
+ *  every shared host) — preg_match_all('/./us') counts code points portably. */
+function valid_display_name(string $name): bool
+{
+    $name = trim($name);
+    if ($name === '' || !preg_match('/^[\p{L}\p{N} _-]+$/u', $name)) return false;
+    $len = preg_match_all('/./us', $name);
+    return $len >= 3 && $len <= 32;
+}
+
+/** Housekeeping: drop expired sessions and stale rate-limit rows so those
+ *  tables don't grow without bound. Called opportunistically on login (a
+ *  low-frequency event), so no cron is required — though DEPLOY.md notes one. */
+function prune_expired(): void
+{
+    $db = auth_db();
+    try {
+        $db->prepare('DELETE FROM sessions WHERE expires_at < ?')->execute([now()]);
+        // Rate-limit rows older than a day are useless (widest window is 60 min).
+        $db->prepare('DELETE FROM auth_attempts WHERE created_at < ?')->execute([gmdate('c', time() - 86400)]);
+    } catch (Throwable $e) { /* housekeeping must never break a request */ }
 }
 
 function destroy_session(string $id): void

@@ -1,0 +1,22 @@
+# EgyBI auth module — web protection (Hostinger shared hosting).
+# The endpoints (auth.php, progress.php, stats.php, payments.php) are served
+# directly. Everything else here must never be downloadable over the web:
+#   _private/  -> config.php (DB + SMTP secrets), auth.sqlite, mail.log
+#   *.sql      -> schema files
+#   *.sample.php etc.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Block the entire secrets/state folder, whatever its file types.
+    RewriteRule ^_private(/|$) - [F]
+</IfModule>
+
+# Belt-and-braces: deny by extension too, in case mod_rewrite is unavailable.
+<FilesMatch "\.(sql|sqlite|sqlite3|log)$">
+    Require all denied
+</FilesMatch>
+
+# lib.php / mailer.php are includes, not endpoints — no reason to serve them raw.
+<FilesMatch "^(lib|mailer)\.php$">
+    Require all denied
+</FilesMatch>
