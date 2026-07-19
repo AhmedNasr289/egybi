@@ -145,15 +145,17 @@ in `config.php` — double-check them against Step 1.
 ## Step 5 — Upload the frontend
 
 1. Upload **everything in `site/`** into `public_html/` (the root), keeping the structure:
-   - the eight pages — `index.html`, `explore.html`, `tracks.html`, `practice.html`,
-     `blog.html`, `community.html`, `about.html`, `privacy.html`
+   - the nine pages — `index.html`, `explore.html`, `prices.html`, `tracks.html`,
+     `practice.html`, `blog.html`, `community.html`, `about.html`, `privacy.html`
    - `favicon.svg`
    - the whole **`assets/`** folder (`egybi.css`, `egybi.js`, `challenges.js`,
      `egypt-geo.js`, `egypt-map.js`, `blog-posts.js`, `newsletter.js`, `ads.js`)
+   - the **`data/`** folder (`prices-today.json`, `prices-history.json` — the daily
+     prices feed the Prices page reads; see Step 9)
    - `ads.txt` (for AdSense — see Step 8)
 2. Visit **https://egybi.com** — the landing page should load, the live SQL demo
    should run (sql.js from a CDN, no backend), and the top nav should link Home / Explore /
-   Tracks / Practice / Blog / Community / About plus the **Newsletter** CTA.
+   Prices / Tracks / Practice / Blog / Community / About plus the **Newsletter** CTA.
 
 ## Step 6 — Wire the frontend to the live API (optional, later)
 
@@ -214,15 +216,82 @@ empty boxes, nothing to slow the site down before you're approved.
    and that `privacy.html` is reachable. Keep ad density light (the built-in single Explore
    slot is deliberately unobtrusive) — AdSense penalises ad-heavy layouts.
 
+## Step 9 — Daily product prices (the Prices page)
+
+The **Prices page** (`prices.html`) shows real Egyptian **retail (consumer) prices** and reads
+two static JSON files in `site/data/`. Those files are produced by
+**`backend/pipeline/fetch_prices.py`**, which reads the **official IDSC / Cabinet price API**
+(`http://app.prices.idsc.gov.eg/api` — the JSON backend of the government portal
+`agriprice.gov.eg`): ~131 retail items across 9 categories (groceries, vegetables, fruit,
+fish, dairy, meat, grains, fertilisers, building materials), each with min/max/avg in EGP and
+a daily change %. Clean JSON, not HTML scraping. No server code runs for this — it's static
+JSON the page `fetch()`es, so it works on plain Hostinger.
+
+Run it locally / on any machine with Python:
+
+```bash
+python backend/pipeline/fetch_prices.py --dry-run   # fetch + parse + summary, write nothing
+python backend/pipeline/fetch_prices.py             # write site/data/prices-today.json + prices-history.json
+python backend/pipeline/fetch_prices.py --offline   # parse the bundled fixture (no network) — for testing
+```
+
+It is **cert-tolerant on purpose** (the Egyptian gov/market price sites are HTTP-only and
+some, like `agriprice.gov.eg`, have expired SSL certs), idempotent (re-running the same day
+adds no duplicate history), and has a guardrail that **aborts and keeps the last-good files**
+if the source is unreachable or its markup changed (so the page never shows garbage).
+
+**To refresh daily, pick one:**
+- **GitHub Action (recommended):** a daily `cron` workflow runs `fetch_prices.py` and commits
+  the updated `site/data/*.json`. The gov-site SSL quirks run on GitHub's network, not your
+  host, and it's free + observable. (If the repo auto-deploys to Hostinger, the page updates
+  itself; otherwise re-upload `site/data/` after each run.)
+- **Hostinger cron:** possible via a PHP/`curl` wrapper, but the shared IP can be throttled by
+  the source and the expired-cert handling is fiddly in PHP — the GitHub Action is cleaner.
+
+The history file grows one point per item per day, so the per-item trend charts fill in over
+time. See the full source research + data model in `egybi/Daily Prices Page & Pipeline.md`.
+The IDSC API also exposes **wholesale**, **port** and **international** price views (not just
+retail) — to surface those later, read the other keys from `GetGeneralIndicatorAllData` in
+`fetch_prices.py`; the JSON shape already supports labelling multiple sources/views.
+
+## Step 10 — Community ideas & comments (moderated)
+
+The **Community** page lets visitors post ideas/comments through a second isolated
+write endpoint, **`backend/api/community.php`** — the same discipline as the newsletter,
+plus **moderation**: nothing a stranger posts appears publicly until a human approves it.
+
+1. Upload `backend/api/community.php` into `public_html/api/`.
+2. It stores submissions in `public_html/api/_private/community.jsonl` (append-only, one
+   JSON object per line: `{id, name, message, ts, iph, approved}`). Block web access to
+   `_private/` exactly as for the newsletter list.
+3. **How posting works:** the form on the page POSTs `message` (+ optional `name`, + a
+   hidden `website` honeypot). Valid notes are stored with `"approved": false` and a
+   friendly "will appear once approved" message; the honeypot silently drops bots; the
+   `GET` on the same URL returns **only approved** entries, which the page renders.
+4. **To approve a note:** open `_private/community.jsonl` and change that line's
+   `"approved": false` to `true` (or wire any small admin step you like). Moderation-first
+   is the default, so an unreviewed board can never show spam or abuse.
+
+**What makes it safe:** every field is JSON-encoded (injection-safe), length-capped,
+control-characters stripped, appended under `LOCK_EX`; only `name/message/ts` are ever
+served back. It reuses `.htaccess`'s `.jsonl` deny.
+
+**No-server fallback (zero PHP):** to run community on a pure-static host, embed a hosted
+discussion instead — **[Giscus](https://giscus.app)** (free, backed by GitHub Discussions;
+paste its `<script>` into the page's `#communityList` area and drop `community.js`), or
+**Disqus**. `assets/community.js` already degrades gracefully (the form explains itself and
+points to `hello@egybi.com`) if no endpoint is connected.
+
 ---
 
 ## Security notes (already handled)
 
 - The API is **read-only** — it only ever runs `SELECT`s, and dataset names are validated
   against a fixed whitelist, so no user input can reach the SQL as an identifier.
-- The **newsletter endpoint** is the only writer: it validates the email, stores it
-  JSON-encoded (injection-safe) under a file lock, and keeps the list in a web-inaccessible
-  `_private/` folder (see Step 7).
+- The only two writers are the **newsletter** and **community** endpoints: both validate
+  input, store it JSON-encoded (injection-safe) under a file lock in a web-inaccessible
+  `_private/` folder, and are honeypot-guarded (see Steps 7 &amp; 10). Community is
+  moderation-first — it serves back only approved entries.
 - The `.htaccess` blocks direct web access to `.sql`, `.sqlite`, `.jsonl`, and `config.php`.
 - Lock down CORS for production if you want: set the `CORS_ORIGIN` env var (or edit
   config.php) to `https://egybi.com` instead of `*`. For public reference data, `*` is

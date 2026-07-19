@@ -29,7 +29,7 @@
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
     <nav class="nav-links">
       <a href="index.html">Home</a>
-      <a href="explore.html">Explore</a>
+      <a href="explore.html">Explore</a><a href="prices.html">Prices</a>
       <a href="tracks.html">Tracks</a>
       <a href="practice.html">Practice</a>
       <a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a>
@@ -40,8 +40,8 @@
 
 <!-- HERO -->
 <section class="surface-hero" style="position:relative;overflow:hidden;text-align:center;padding-top:92px;padding-bottom:84px;">
-  <div id="hero-particles" class="hero-particles" aria-hidden="true"></div>
-  <div class="hero-inner wrap">
+  <div id="hero-particles" class="hero-particles" aria-hidden="true" data-parallax="0.12"></div>
+  <div class="hero-inner wrap" data-mo-hero>
     <svg style="width:62px;height:62px;margin-bottom:20px;filter:drop-shadow(0 4px 14px rgba(201,162,39,0.5));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Ankh"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg>
     <h1 style="font-size:clamp(2.1rem,5.2vw,3.6rem);margin:0 0 14px;">Train in the House of Life.</h1>
     <p class="lead" style="margin:0 auto 8px;color:#f3ead4;min-height:2.2em;"><span id="typed"></span></p>
@@ -198,7 +198,7 @@ LIMIT 5;</textarea>
       <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
       <p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life. A gamified home for BI, data engineering, and the modern data stack — built on real, cited Egyptian data.</p>
     </div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
     <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="explore.html">Full source list</a></div>
   </div>
@@ -270,5 +270,7 @@ LIMIT 5;</textarea>
 </script>
 <script>window.EGYBI_ADS = { client: 'ca-pub-XXXXXXXXXXXXXXXX' };</script>
 <script src="assets/ads.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
+<script src="assets/motion.js?v=2"></script>
 </body>
 </html>

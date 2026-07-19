@@ -70,7 +70,7 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a>
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>
     <nav class="nav-links">
-      <a href="index.html">Home</a><a href="explore.html">Explore</a><a href="tracks.html">Tracks</a><a href="practice.html">Practice</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a><a class="cta" href="index.html#newsletter">Newsletter</a>
+      <a href="index.html">Home</a><a href="explore.html">Explore</a><a href="prices.html">Prices</a><a href="tracks.html">Tracks</a><a href="practice.html">Practice</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">About</a><a class="cta" href="index.html#newsletter">Newsletter</a>
     </nav>
   </div>
 </header>
@@ -125,8 +125,9 @@
       <aside class="catalog" data-aos="fade-up">
         <h3>Problem set <span id="solvedCount"></span></h3>
         <div class="filters">
-          <div class="filter-row" id="sectorFilters"></div>
-          <div class="filter-row" id="diffFilters"></div>
+          <div class="filter-row" id="topicFilters" aria-label="Filter by SQL topic"></div>
+          <div class="filter-row" id="sectorFilters" aria-label="Filter by sector"></div>
+          <div class="filter-row" id="diffFilters" aria-label="Filter by difficulty"></div>
         </div>
         <div class="challenge-list" id="challengeList"></div>
       </aside>
@@ -138,7 +139,7 @@
 <footer class="site-footer">
   <div class="cols">
     <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life.</p></div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
     <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.metmuseum.org/" target="_blank" rel="noopener">Met Museum</a></div>
   </div>
@@ -156,8 +157,21 @@
       statusEl=document.getElementById('status'), out=document.getElementById('out'),
       input=document.getElementById('sqlInput'), verdict=document.getElementById('verdict'),
       dyk=document.getElementById('dyk'), expectedOut=document.getElementById('expectedOut');
-  var filterSector='All', filterDiff='All';
+  var filterSector='All', filterDiff='All', filterTopic='All';
   var SOLVED_KEY='egybi_solved';
+  // Every challenge gets a topic: use its explicit `topic`, else infer from the SQL.
+  var TOPIC_ORDER=['Basics','Aggregation','Joins','Subqueries & CTEs','Window functions','Dates & time','Text & CASE','Set operations'];
+  function topicOf(c){
+    if(c.topic) return c.topic;
+    var s=(c.solution||'').toUpperCase();
+    if(/OVER\s*\(/.test(s)) return 'Window functions';
+    if(/\bWITH\b|\(SELECT/.test(s)) return 'Subqueries & CTEs';
+    if(/\bUNION\b|\bEXCEPT\b|\bINTERSECT\b/.test(s)) return 'Set operations';
+    if(/\bJOIN\b/.test(s)) return 'Joins';
+    if(/GROUP BY/.test(s)) return 'Aggregation';
+    if(/CASE\s+WHEN|COALESCE|\bLIKE\b|LENGTH\(/.test(s)) return 'Text & CASE';
+    return 'Basics';
+  }
 
   // In-memory set is the session source of truth (works even where localStorage is
   // sandboxed, e.g. inside a preview iframe); persist to localStorage when allowed.
@@ -267,28 +281,34 @@
     var s=solvedSet(); document.getElementById('solvedCount').textContent='· '+s.size+' / '+EGYBI_CHALLENGES.length+' solved';
   }
   function renderFilters(){
-    var sectors=['All'].concat(EGYBI_CHALLENGES.map(function(c){return c.sector;}).filter(function(v,i,a){return a.indexOf(v)===i;}));
+    var present={}; EGYBI_CHALLENGES.forEach(function(c){ present[topicOf(c)]=true; });
+    var topics=['All'].concat(TOPIC_ORDER.filter(function(t){return present[t];}));
+    document.getElementById('topicFilters').innerHTML=topics.map(function(t){
+      return '<button class="fchip'+(t===filterTopic?' on':'')+'" data-topic="'+EGYBI.escapeHtml(t)+'">'+EGYBI.escapeHtml(t)+'</button>';
+    }).join('');
+    var sectors=['All'].concat(EGYBI_CHALLENGES.map(function(c){return c.sector;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort());
     document.getElementById('sectorFilters').innerHTML=sectors.map(function(s){
-      return '<button class="fchip'+(s===filterSector?' on':'')+'" data-sector="'+s+'">'+EGYBI.escapeHtml(s)+'</button>';
+      return '<button class="fchip'+(s===filterSector?' on':'')+'" data-sector="'+EGYBI.escapeHtml(s)+'">'+EGYBI.escapeHtml(s)+'</button>';
     }).join('');
     var diffs=['All','Easy','Medium','Hard'];
     document.getElementById('diffFilters').innerHTML=diffs.map(function(d){
       return '<button class="fchip'+(d===filterDiff?' on':'')+'" data-diff="'+d+'">'+d+'</button>';
     }).join('');
+    document.querySelectorAll('#topicFilters .fchip').forEach(function(b){ b.onclick=function(){ filterTopic=b.dataset.topic; renderFilters(); renderList(); }; });
     document.querySelectorAll('#sectorFilters .fchip').forEach(function(b){ b.onclick=function(){ filterSector=b.dataset.sector; renderFilters(); renderList(); }; });
     document.querySelectorAll('#diffFilters .fchip').forEach(function(b){ b.onclick=function(){ filterDiff=b.dataset.diff; renderFilters(); renderList(); }; });
   }
   function renderList(){
     var s=solvedSet();
     var items=EGYBI_CHALLENGES.filter(function(c){
-      return (filterSector==='All'||c.sector===filterSector) && (filterDiff==='All'||c.difficulty===filterDiff);
+      return (filterSector==='All'||c.sector===filterSector) && (filterDiff==='All'||c.difficulty===filterDiff) && (filterTopic==='All'||topicOf(c)===filterTopic);
     });
     var el=document.getElementById('challengeList');
     if(!items.length){ el.innerHTML='<p style="color:var(--ink-soft);font-size:0.85rem;">No challenges match that filter.</p>'; return; }
     el.innerHTML=items.map(function(c){
       return '<div class="ch-item'+(current&&current.id===c.id?' active':'')+'" tabindex="0" data-id="'+c.id+'">'+
         '<span class="dot dot-'+c.difficulty+'" title="'+c.difficulty+'"></span>'+
-        '<span><span class="ct">'+EGYBI.escapeHtml(c.title)+'</span><br><span class="cs">'+c.difficulty+' · '+EGYBI.escapeHtml(c.sector)+'</span></span>'+
+        '<span><span class="ct">'+EGYBI.escapeHtml(c.title)+'</span><br><span class="cs">'+c.difficulty+' · '+EGYBI.escapeHtml(topicOf(c))+' · '+EGYBI.escapeHtml(c.sector)+'</span></span>'+
         (s.has(c.id)?'<span class="solved" title="Solved">✓</span>':'')+'</div>';
     }).join('');
     el.querySelectorAll('.ch-item').forEach(function(it){
@@ -327,5 +347,7 @@
 </script>
 <script>window.EGYBI_ADS = { client: 'ca-pub-XXXXXXXXXXXXXXXX' };</script>
 <script src="assets/ads.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
+<script src="assets/motion.js?v=2"></script>
 </body>
 </html>

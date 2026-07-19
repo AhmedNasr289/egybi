@@ -269,3 +269,30 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
   html { scroll-behavior: auto; }
   * { animation: none !important; transition: none !important; }
 }
+
+/* ---------- motion micro-interactions (disabled under reduced-motion above) ---------- */
+.card, .track, .chart-card, .concept, .layer, .role, .phase, .post-card {
+  transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, border-color .2s ease;
+}
+.card:hover, .track:hover, .chart-card:hover, .concept:hover, .layer:hover, .role:hover, .phase:hover, .post-card:hover {
+  transform: translateY(-4px);
+}
+.btn-primary { position: relative; overflow: hidden; }
+.btn-primary::after {
+  content: ''; position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-18deg); transition: left .6s ease; pointer-events: none;
+}
+.btn-primary:hover::after { left: 140%; }
+.nav-links a:not(.cta) { position: relative; }
+.nav-links a:not(.cta)::after {
+  content: ''; position: absolute; left: 0; bottom: -2px; height: 2px; width: 0;
+  background: var(--gold-bright); transition: width .25s ease;
+}
+.nav-links a:not(.cta):hover::after { width: 100%; }
+.brand svg { transition: transform .4s cubic-bezier(.22,1,.36,1); }
+.brand:hover svg { transform: rotate(-8deg) scale(1.08); }
+@media (prefers-reduced-motion: reduce) {
+  .card:hover, .track:hover, .chart-card:hover, .concept:hover, .layer:hover,
+  .role:hover, .phase:hover, .post-card:hover, .brand:hover svg { transform: none !important; }
+}
