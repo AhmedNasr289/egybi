@@ -51,6 +51,28 @@ $topRefs     = q($db, "SELECT ref, COUNT(*) v FROM hits WHERE day>=? AND ref<>''
 $directShare = (int)(q($db, "SELECT COUNT(*) c FROM hits WHERE day>=? AND (ref IS NULL OR ref='')", [$since30])[0]['c'] ?? 0);
 
 $maxDay = 1; foreach ($perDay as $r) { $maxDay = max($maxDay, (int)$r['v']); }
+
+// --- funnel (only present once the event column exists) ---------------------
+$funnel = []; $hasEvents = false;
+try {
+    $cols = [];
+    foreach ($db->query('PRAGMA table_info(hits)') as $c) { $cols[] = $c['name']; }
+    if (in_array('event', $cols, true)) {
+        $hasEvents = true;
+        $steps = [
+            'hero_run_clicked'      => 'Ran the hero query',
+            'hero_browse_challenges'=> 'Clicked through to Practice',
+            'challenge_attempted'   => 'Attempted a challenge',
+            'challenge_solved'      => 'Solved a challenge',
+            'signup_completed'      => 'Created an account',
+        ];
+        $views30 = max(1, $views30);
+        foreach ($steps as $key => $label) {
+            $n = (int)(q($db, 'SELECT COUNT(*) c FROM hits WHERE event=? AND day>=?', [$key, $since30])[0]['c'] ?? 0);
+            $funnel[] = ['label' => $label, 'n' => $n, 'pct' => round(100 * $n / $views30, 1)];
+        }
+    }
+} catch (Throwable $ex) { /* funnel is optional */ }
 ?><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EgyBI — Insights</title><style>
 :root{--ink:#14110c;--soft:#6b6153;--gold:#c9a227;--blue:#0e2a5e;--line:#e7e0d0;--bg:#faf7f0}
@@ -84,6 +106,16 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr:last-child td{bo
   <div class="b" style="height:<?=max(2,$hpx)?>px" data-t="<?=$e($r['day'])?>: <?=$e($r['v'])?> views / <?=$e($r['u'])?> visitors"></div>
 <?php endforeach; if (!$perDay): ?><span class="muted">No views yet — share the site and refresh.</span><?php endif; ?>
 </div>
+
+<?php if ($hasEvents): ?>
+<h2>Funnel · 30d</h2>
+<table><tr><th>Step</th><th class="n">People</th><th class="n">% of views</th></tr>
+<?php foreach ($funnel as $f): ?>
+  <tr><td><?=$e($f['label'])?></td><td class="n"><?=number_format($f['n'])?></td><td class="n"><?=$e($f['pct'])?>%</td></tr>
+<?php endforeach; ?>
+</table>
+<p class="muted">Each step counts once per page visit, so these read as people-who-reached-the-step. The two numbers to watch first: what share of visitors run the hero query, and what share of attempters actually solve one.</p>
+<?php endif; ?>
 
 <h2>Top pages · 30d</h2>
 <table><tr><th>Path</th><th class="n">Views</th></tr>

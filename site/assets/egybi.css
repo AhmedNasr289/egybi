@@ -296,3 +296,50 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
   .card:hover, .track:hover, .chart-card:hover, .concept:hover, .layer:hover,
   .role:hover, .phase:hover, .post-card:hover, .brand:hover svg { transform: none !important; }
 }
+
+/* ---------- hero v2: playable cartouche ---------------------------------- */
+/* The fold now contains a working SQL engine, so the background moves from a
+   blue gradient to near-black kemet with a blue glow: code needs contrast, and
+   near-black + gold reads as EgyBI rather than as generic SaaS. */
+.surface-hero.hero-v2 {
+  background:
+    radial-gradient(ellipse 120% 90% at 30% -10%, #1d4694 0%, rgba(14,42,94,0.55) 32%, var(--kemet) 72%),
+    var(--kemet);
+  text-align: left;
+}
+.hero-v2 .hero-inner { max-width: 760px; }
+.hero-eyebrow {
+  font-family: 'Inter', sans-serif; font-size: 0.74rem; font-weight: 700;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--gold-bright); margin: 0 0 14px;
+}
+.hero-v2 .hero-h1 {
+  font-size: clamp(1.85rem, 7vw, 3.4rem); line-height: 1.12;
+  margin: 0 0 14px; color: #fff;
+}
+.hero-v2 .hero-lead {
+  margin: 0 0 26px; color: #e9dfc8; font-size: clamp(0.98rem, 2.4vw, 1.12rem);
+}
+.hero-sandbox { margin: 0; }
+.hero-sandbox textarea { min-height: 104px; font-size: 0.9rem; }
+.hero-sandbox .result-wrap { max-height: 320px; overflow: auto; }
+.hero-hint { border-top: 1px solid var(--line-dark); padding-top: 13px; }
+.hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+
+/* The result table unrolls like papyrus rather than popping in. */
+.hero-sandbox .result-wrap:not(:empty) { animation: unroll 420ms cubic-bezier(.22,.9,.3,1); transform-origin: top center; }
+@keyframes unroll { from { opacity: 0; transform: scaleY(0.82) translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-sandbox .result-wrap:not(:empty) { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .surface-hero.hero-v2 { padding-top: 60px !important; padding-bottom: 48px !important; }
+  .hero-sandbox { padding: 18px 16px; border-radius: 14px; }
+  .hero-sandbox textarea { font-size: 13px; min-height: 96px; padding: 12px; }
+  .hero-sandbox label { font-size: 0.78rem; }
+  .hero-sandbox label code { font-size: 0.72rem; word-break: break-word; }
+  .hero-cta .btn { width: 100%; text-align: center; }
+  .hero-sandbox .row .btn { width: 100%; }
+  .hero-sandbox .row { gap: 10px; }
+}

@@ -60,30 +60,44 @@
 </header>
 
 <!-- HERO -->
-<section class="surface-hero" style="position:relative;overflow:hidden;text-align:center;padding-top:92px;padding-bottom:84px;">
+<section class="surface-hero hero-v2" style="position:relative;overflow:hidden;padding-top:74px;padding-bottom:62px;">
   <div id="hero-particles" class="hero-particles" aria-hidden="true" data-parallax="0.12"></div>
   <div class="hero-inner wrap" data-mo-hero>
-    <svg style="width:62px;height:62px;margin-bottom:20px;filter:drop-shadow(0 4px 14px rgba(201,162,39,0.5));" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Ankh"><path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="#C9A227" stroke-width="11" stroke-linejoin="round"/><rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="#C9A227"/><rect x="16" y="59" width="68" height="11" rx="5.5" fill="#C9A227"/></svg>
-    <h1 style="font-size:clamp(2.1rem,5.2vw,3.6rem);margin:0 0 14px;">Train in the House of Life.</h1>
-    <p class="lead" style="margin:0 auto 8px;color:#f3ead4;min-height:2.2em;"><span id="typed"></span></p>
-    <div class="cta-row center">
-      <a href="practice.html" class="btn btn-primary">Run a real challenge →</a>
+    <p class="hero-eyebrow">Real SQL &middot; Real Egyptian data &middot; No signup</p>
+    <h1 class="hero-h1">Write SQL against 4,000 years of Egypt.</h1>
+    <p class="lead hero-lead">123 auto-graded challenges on 62 tables of cited Egyptian data &mdash; pharaohs, obelisks, the Suez Canal, today&rsquo;s food prices. It runs in your browser. Nothing to install, nothing to join.</p>
+
+    <div class="sandbox hero-sandbox">
+      <label for="sqlInput">Table: <code>pharaohs(name, dynasty, reign_start, reign_end)</code> &mdash; years are signed, so BCE is negative</label>
+      <textarea id="sqlInput" class="mono" spellcheck="false">SELECT name, reign_end - reign_start AS years
+FROM pharaohs
+ORDER BY years DESC
+LIMIT 5;</textarea>
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="runQueryBtn" disabled>Run it &rarr;</button>
+        <span id="sqlStatus" class="sql-status" role="status" aria-live="polite">Warming up the SQL engine&hellip;</span>
+      </div>
+      <div id="sqlOutput" class="result-wrap" aria-live="polite"></div>
+      <p class="hint hero-hint">Pepi II&rsquo;s 94 years is the traditional figure &mdash; and disputed. Many Egyptologists read about 64. We record the dispute rather than pick a side.</p>
+    </div>
+
+    <div class="cta-row hero-cta">
+      <a href="practice.html" class="btn btn-primary" data-ev="hero_browse_challenges">Browse all 123 challenges &rarr;</a>
       <a href="#newsletter" class="btn btn-ghost">Get The Papyrus</a>
     </div>
-    <p style="margin-top:34px;font-size:0.85rem;opacity:0.72;">No signup required to try it — start with a real SQL puzzle.</p>
   </div>
 </section>
 
 <!-- STATS -->
 <section class="surface-dark center">
   <div class="wrap">
-    <h2 data-aos="fade-up">Egypt by the numbers.</h2>
-    <p class="lead" data-aos="fade-up">Every figure below is real and cited — and every one is queryable inside EgyBI. This is the data your challenges are built on, not a themed skin.</p>
+    <h2 data-aos="fade-up">What you actually get.</h2>
+    <p class="lead" data-aos="fade-up">Every challenge is graded against a real SQLite database, and every row in it carries a source. This is the product, not a themed skin.</p>
     <div class="stat-grid" style="margin-top:40px;">
-      <div class="stat" data-aos="fade-up"><div class="num" data-count="19" data-suffix="M">0</div><div class="label">Tourists in 2025</div><div class="cap">Record year, +21% (SIS / Ministry)</div></div>
-      <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="16.7" data-prefix="$" data-suffix="B" data-decimals="1">0</div><div class="label">Tourism revenue 2025</div><div class="cap">CBE via Trading Economics</div></div>
-      <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="94" data-suffix="yr">0</div><div class="label">Longest recorded reign</div><div class="cap">Pepi II (traditional, disputed)</div></div>
-      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="5000" data-suffix="+" data-sep="1">0</div><div class="label">Years of history</div><div class="cap">Narmer (c. 3100 BCE) to today</div></div>
+      <div class="stat" data-aos="fade-up"><div class="num" data-count="123">123</div><div class="label">Auto-graded challenges</div><div class="cap">41 easy &middot; 53 medium &middot; 29 hard</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="62">62</div><div class="label">Tables of cited data</div><div class="cap">Every row carries its source</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="33">33</div><div class="label">Surviving obelisks</div><div class="cap">Only 15 are still in Egypt</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="0" data-raw="0">0</div><div class="label">Signups required</div><div class="cap">Start solving in your browser</div></div>
     </div>
   </div>
 </section>
@@ -158,28 +172,6 @@
   </div>
 </section>
 
-<!-- TRY IT (SQL sandbox) -->
-<section class="surface-dark" id="demo">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up">Try it yourself</div>
-    <h2 data-aos="fade-up">A real SQL engine. In your browser. Right now.</h2>
-    <p class="lead" data-aos="fade-up">A genuine SQLite database over WebAssembly, seeded with real pharaohs and their reign dates. Edit the query and press Run.</p>
-    <div class="sandbox" style="margin-top:26px;" data-aos="zoom-in">
-      <label for="sqlInput">Table: <code>pharaohs(name, dynasty, reign_start, reign_end)</code> — years are signed, so BCE is negative:</label>
-      <textarea id="sqlInput" class="mono" spellcheck="false">SELECT name, dynasty, (reign_end - reign_start) AS years_reigned
-FROM pharaohs
-ORDER BY years_reigned DESC
-LIMIT 5;</textarea>
-      <div class="row">
-        <button type="button" class="btn btn-primary" id="runQueryBtn" disabled>Run query</button>
-        <span id="sqlStatus" class="sql-status" role="status" aria-live="polite">Loading the SQL engine…</span>
-      </div>
-      <div id="sqlOutput" class="result-wrap" aria-live="polite"></div>
-      <p class="hint">Want datasets on GDP, the Suez Canal, tourism &amp; more? <a href="practice.html">Open the full practice playground →</a></p>
-    </div>
-  </div>
-</section>
-
 <!-- IDENTITY TEASER -->
 <section class="surface-light">
   <div class="wrap">
@@ -228,7 +220,6 @@ LIMIT 5;</textarea>
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/typed.js@2.1.0/dist/typed.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
@@ -238,15 +229,7 @@ LIMIT 5;</textarea>
 <script>
   var reduceMotion = window.EGYBI.reduceMotion;
 
-  // Typed hero
-  if (window.Typed) {
-    new Typed('#typed', { strings: [
-      'A gamified home for BI, data engineering &amp; the modern data stack.',
-      'Query 5,000 years of real Egyptian history.',
-      'Master SQL on real pharaoh data — then dbt, Airflow &amp; Spark.',
-      'Every challenge is real, auto-graded, and genuinely Egyptian.'
-    ], typeSpeed: 34, backSpeed: 14, backDelay: 2200, startDelay: 400, loop: true, smartBackspace: true });
-  } else { document.getElementById('typed').textContent = 'A gamified home for BI and the modern data stack.'; }
+  // (hero tagline is static now — a rotating headline delays comprehension)
 
   // CountUp stats
   (function () {
@@ -284,10 +267,10 @@ LIMIT 5;</textarea>
   initSqlJs({ locateFile: function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/'+f; } }).then(function(SQL){
     sqlDb=new SQL.Database();
     sqlDb.run('CREATE TABLE pharaohs (name TEXT, dynasty TEXT, reign_start INTEGER, reign_end INTEGER);');
-    sqlDb.run("INSERT INTO pharaohs VALUES ('Khufu','IV',-2589,-2566),('Khafre','IV',-2558,-2532),('Menkaure','IV',-2532,-2503),('Pepi II','VI',-2278,-2184),('Hatshepsut','XVIII',-1479,-1458),('Thutmose III','XVIII',-1479,-1425),('Akhenaten','XVIII',-1353,-1336),('Tutankhamun','XVIII',-1332,-1323),('Ramesses II','XIX',-1279,-1213),('Cleopatra VII','Ptolemaic',-51,-30);");
+    sqlDb.run("INSERT INTO pharaohs VALUES ('Narmer','I',-3100,-3080),('Djoser','III',-2670,-2650),('Sneferu','IV',-2613,-2589),('Khufu','IV',-2589,-2566),('Khafre','IV',-2558,-2532),('Menkaure','IV',-2532,-2503),('Unas','V',-2375,-2345),('Pepi II','VI',-2278,-2184),('Mentuhotep II','XI',-2061,-2010),('Senusret III','XII',-1878,-1839),('Sobekneferu','XII',-1806,-1802),('Ahmose I','XVIII',-1550,-1525),('Hatshepsut','XVIII',-1479,-1458),('Thutmose III','XVIII',-1479,-1425),('Amenhotep III','XVIII',-1388,-1351),('Akhenaten','XVIII',-1353,-1336),('Tutankhamun','XVIII',-1332,-1323),('Seti I','XIX',-1290,-1279),('Ramesses II','XIX',-1279,-1213),('Merneptah','XIX',-1213,-1203),('Ramesses III','XX',-1184,-1153),('Taharqa','XXV',-690,-664),('Psamtik I','XXVI',-664,-610),('Nectanebo II','XXX',-360,-343),('Ptolemy I Soter','Ptolemaic',-305,-282),('Cleopatra VII','Ptolemaic',-51,-30);");
     statusEl.textContent='Ready — this is a real SQL engine running in your browser.'; statusEl.className='sql-status ready'; runBtn.disabled=false; runQuery();
   }).catch(function(err){ statusEl.textContent='Could not load the SQL engine ('+err.message+'). Reload to retry.'; statusEl.className='sql-status error'; });
-  runBtn.addEventListener('click', runQuery);
+  runBtn.addEventListener('click', function(){ if(window.EGYBI_TRACK) EGYBI_TRACK('hero_run_clicked'); runQuery(); });
 </script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>

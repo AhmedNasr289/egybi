@@ -24,6 +24,10 @@ if ($ua === '' || preg_match('~bot|crawl|spider|slurp|bing|preview|monitor|curl|
 $raw = json_decode(file_get_contents('php://input') ?: '', true);
 $path = (string)($raw['path'] ?? ($_POST['path'] ?? ''));
 $ref  = (string)($raw['ref']  ?? ($_POST['ref']  ?? ''));
+// Optional funnel event. Empty = a plain page view. Kept to a short slug so the
+// column can never become a free-text sink.
+$event = (string)($raw['event'] ?? ($_POST['event'] ?? ''));
+$event = substr(preg_replace('~[^a-z0-9_]~', '', strtolower($event)), 0, 40);
 
 // Sanitise path: keep it a short, query-less same-site path.
 $path = parse_url($path, PHP_URL_PATH) ?: '/';
@@ -63,8 +67,15 @@ try {
         ref TEXT, visitor TEXT NOT NULL
     )');
     $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_day ON hits(day)');
-    $st = $db->prepare('INSERT INTO hits (ts,day,path,ref,visitor) VALUES (?,?,?,?,?)');
-    $st->execute([gmdate('c'), $day, $path, $refHost, $visitor]);
+    // Additive migration: existing installs get the column without losing data.
+    $cols = [];
+    foreach ($db->query('PRAGMA table_info(hits)') as $c) { $cols[] = $c['name']; }
+    if (!in_array('event', $cols, true)) {
+        $db->exec("ALTER TABLE hits ADD COLUMN event TEXT NOT NULL DEFAULT ''");
+        $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_event ON hits(event)');
+    }
+    $st = $db->prepare('INSERT INTO hits (ts,day,path,ref,visitor,event) VALUES (?,?,?,?,?,?)');
+    $st->execute([gmdate('c'), $day, $path, $refHost, $visitor, $event]);
 } catch (Throwable $e) {
     // Analytics must never affect the visitor — swallow all errors.
 }

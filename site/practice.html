@@ -288,7 +288,7 @@
     verdict.textContent=(g.ok?'✓ ':'✗ ')+g.msg;
     if(g.ok){
       dyk.hidden=false; dyk.innerHTML='<b>Did you know?</b> '+EGYBI.escapeHtml(current.didYouKnow);
-      markSolved(current.id); renderList(); updateSolvedCount();
+      markSolved(current.id); if(window.EGYBI_TRACK) EGYBI_TRACK('challenge_solved'); renderList(); updateSolvedCount();
     } else { dyk.hidden=true; }
   }
 
@@ -346,7 +346,7 @@
     document.getElementById('schemaChips').innerHTML=chips;
   }
 
-  runBtn.addEventListener('click', run);
+  runBtn.addEventListener('click', function(){ if(window.EGYBI_TRACK) EGYBI_TRACK('challenge_attempted'); run(); });
   resetBtn.addEventListener('click', function(){ if(current){ input.value=current.starter; verdict.hidden=true; dyk.hidden=true; out.innerHTML=''; } });
 
   initSqlJs({ locateFile:function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/'+f; } }).then(function(SQL){

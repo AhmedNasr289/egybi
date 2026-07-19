@@ -170,6 +170,7 @@
       api(mode === 'in' ? 'login' : 'signup', 'POST', { email: email, password: pw }).then(function (res) {
         var d = res.data || {};
         if (mode === 'up') {
+          if (d.ok && window.EGYBI_TRACK) EGYBI_TRACK('signup_completed');
           note.textContent = d.message || 'Check your email to verify.'; note.className = 'auth-note ' + (d.ok ? 'ok' : 'error');
         } else if (d.ok) {
           csrf = d.csrf; user = d.user; renderNav(); syncProgress(); close();
