@@ -251,14 +251,7 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .hero-inner { position: relative; z-index: 1; }
 
 /* ---------- responsive ---------- */
-@media (max-width: 820px) {
-  .nav-links { position: absolute; top: 100%; right: 0; left: 0; flex-direction: column; align-items: flex-start; gap: 4px; background: var(--kemet); padding: 12px 6vw 18px; border-bottom: 1px solid var(--line-dark); display: none; }
-  .nav-links.open { display: flex; }
-  .nav-links a { padding: 8px 0; width: 100%; }
-  .nav-toggle { display: inline-block; }
-  .site-header .bar { position: relative; }
-  .site-footer .cols { grid-template-columns: 1fr 1fr; }
-}
+
 @media (max-width: 560px) {
   section { padding: 52px 6vw; }
   .rank-ladder { flex-direction: column; align-items: flex-start; }
