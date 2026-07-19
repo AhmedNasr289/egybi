@@ -38,6 +38,12 @@
  "isAccessibleForFree":true,"provider":{"@id":"https://egybi.com/#org"}}
 ]}
 </script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <!-- The hero cannot run until the SQL engine arrives, and it was queued
+       behind decorative libraries. Preload starts the 314 KB wasm at high
+       priority in parallel, without changing execution order. -->
+  <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js" crossorigin>
+  <link rel="preload" as="fetch" type="application/wasm" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.wasm" crossorigin>
 </head>
 <body>
 

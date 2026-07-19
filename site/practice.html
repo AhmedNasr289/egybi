@@ -102,6 +102,12 @@
   <meta name="twitter:title" content="Practice — EgyBI SQL Challenges">
   <meta name="twitter:description" content="A HackerRank-style SQL problem set on real, cited Egyptian data. Each challenge has a problem statement, the givens, an expected output, and instant auto-grading — running entirely in your browser via WebAssembly. No signup.">
   <meta name="twitter:image" content="https://egybi.com/og-image.png">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <!-- The hero cannot run until the SQL engine arrives, and it was queued
+       behind decorative libraries. Preload starts the 314 KB wasm at high
+       priority in parallel, without changing execution order. -->
+  <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js" crossorigin>
+  <link rel="preload" as="fetch" type="application/wasm" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.wasm" crossorigin>
 </head>
 <body>
 
