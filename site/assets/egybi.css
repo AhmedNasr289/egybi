@@ -343,3 +343,19 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
   .hero-sandbox .row .btn { width: 100%; }
   .hero-sandbox .row { gap: 10px; }
 }
+
+/* Phone tuning: on a 390px screen the hero result table fell ~12px below the
+   fold, so the proof — the whole point of the hero — was invisible without
+   scrolling. Reclaim the vertical space so at least the first result rows land
+   on screen. Desktop is unaffected. */
+@media (max-width: 430px) {
+  .surface-hero.hero-v2 { padding-top: 44px !important; padding-bottom: 40px !important; }
+  .hero-v2 .hero-h1 { font-size: 1.72rem; line-height: 1.1; margin-bottom: 10px; }
+  .hero-v2 .hero-lead { font-size: 0.95rem; line-height: 1.45; margin-bottom: 16px; }
+  .hero-eyebrow { font-size: 0.68rem; margin-bottom: 10px; }
+  .hero-sandbox { padding: 14px 14px 16px; }
+  .hero-sandbox label { font-size: 0.74rem; margin-bottom: 7px; line-height: 1.35; }
+  .hero-sandbox textarea { min-height: 86px; font-size: 12.5px; padding: 10px 11px; }
+  .hero-sandbox .row { margin-top: 11px; }
+  .hero-sandbox .result-wrap { margin-top: 13px; max-height: 260px; }
+}
