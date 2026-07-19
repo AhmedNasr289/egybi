@@ -16,6 +16,15 @@
     return; // not configured yet — stay inert
   }
 
+  // Ownership-verification tag — Google's AdSense site review looks for this
+  // (works even before any ad units exist, so it smooths approval).
+  if (!document.querySelector('meta[name="google-adsense-account"]')) {
+    var meta = document.createElement('meta');
+    meta.name = 'google-adsense-account';
+    meta.content = client;
+    document.head.appendChild(meta);
+  }
+
   // Load the AdSense library once.
   var lib = document.createElement('script');
   lib.async = true;
