@@ -54,6 +54,28 @@
       el.setAttribute('data-tip', g.name + ' · ' + g.tr + ' — ' + g.meaning);
     });
   }
+
+  // Signs reveal as though being carved — once, when scrolled to. Skipped
+  // entirely under prefers-reduced-motion (not merely shortened).
+  (function carve() {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) return;
+    function watch() {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          en.target.classList.add('carved');
+          io.unobserve(en.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px' });
+      document.querySelectorAll('.glyph-rule .glyph, .glyph-card .gl-sign').forEach(function (el) {
+        el.classList.add('glyph-carve'); io.observe(el);
+      });
+    }
+    if (document.readyState !== 'loading') watch();
+    else document.addEventListener('DOMContentLoaded', watch);
+  })();
+
   window.EGYBI_PAINT_GLYPHS = paint;
 
   if (document.readyState !== 'loading') paint();

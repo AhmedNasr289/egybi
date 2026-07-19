@@ -496,3 +496,13 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .glyph-svg { width: 1em; height: 1em; display: block; }
 .pl-seal .glyph, .pl-seal .glyph:hover { color: #3c2f08; transform: none; cursor: default; }
 .pl-seal .glyph-svg { width: 1.3rem; height: 1.3rem; }
+/* the seal presses down when a subscription is confirmed */
+@keyframes seal-stamp {
+  0%   { transform: scale(1.5) rotate(-14deg); opacity: 0; }
+  55%  { transform: scale(.92) rotate(3deg);  opacity: 1; }
+  100% { transform: scale(1) rotate(0);       opacity: 1; }
+}
+.papyrus-letter.sealed .pl-seal { animation: seal-stamp .55s cubic-bezier(.3,1.4,.5,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .papyrus-letter.sealed .pl-seal { animation: none; }
+}

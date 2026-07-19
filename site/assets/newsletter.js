@@ -15,6 +15,7 @@
     if (!el) return;
     el.textContent = msg;
     el.className = 'form-note' + (kind ? ' ' + kind : '');
+    if (kind === 'ok') { var L = el.closest && el.closest('.papyrus-letter'); if (L) L.classList.add('sealed'); }
   }
 
   function wire(form) {
