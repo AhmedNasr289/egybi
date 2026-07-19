@@ -194,7 +194,11 @@
   var solvedMem;
   (function(){ try{ solvedMem=new Set(JSON.parse(localStorage.getItem(SOLVED_KEY)||'[]')); }catch(e){ solvedMem=new Set(); } })();
   function solvedSet(){ return solvedMem; }
-  function markSolved(id){ solvedMem.add(id); try{ localStorage.setItem(SOLVED_KEY, JSON.stringify([].slice.call(solvedMem))); }catch(e){} }
+  // Array.from — NOT [].slice.call, which returns [] for a Set (slice needs an
+  // array-like with .length, and a Set only has .size). That silently wrote an
+  // empty array on every solve, so progress never survived a reload and never
+  // reached the account sync.
+  function markSolved(id){ solvedMem.add(id); try{ localStorage.setItem(SOLVED_KEY, JSON.stringify(Array.from(solvedMem))); }catch(e){} }
 
   // ---- render a sql.js result object as an HTML table ----
   function renderTable(res){
