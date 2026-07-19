@@ -7,4 +7,4 @@
  *
  * Leaving it blank keeps advertising completely OFF: no external requests, no
  * empty ad boxes, no cookies. */
-window.EGYBI_ADS = { client: '' };  // e.g. 'ca-pub-1234567890123456'
+window.EGYBI_ADS = { client: 'ca-pub-1432845423481814' };  // e.g. 'ca-pub-1234567890123456'

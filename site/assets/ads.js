@@ -25,12 +25,15 @@
     document.head.appendChild(meta);
   }
 
-  // Load the AdSense library once.
-  var lib = document.createElement('script');
-  lib.async = true;
-  lib.crossOrigin = 'anonymous';
-  lib.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(client);
-  document.head.appendChild(lib);
+  // Load the AdSense library once — skipped when the static verification
+  // snippet is already in the page <head> (avoids loading adsbygoogle twice).
+  if (!document.querySelector('script[src*="adsbygoogle.js"]')) {
+    var lib = document.createElement('script');
+    lib.async = true;
+    lib.crossOrigin = 'anonymous';
+    lib.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(client);
+    document.head.appendChild(lib);
+  }
 
   // Fill every declared ad slot with a responsive unit.
   document.querySelectorAll('.ad-slot[data-ad-slot]').forEach(function (box) {

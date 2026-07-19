@@ -3,4 +3,4 @@
 # publisher ID (from AdSense > Account > Settings, format pub-################),
 # then upload this file to the site root (egybi.com/ads.txt). Google checks it
 # within a day or two. Until it holds a real ID, ads will not serve.
-google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+google.com, pub-1432845423481814, DIRECT, f08c47fec0942fa0
