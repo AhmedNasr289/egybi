@@ -39,3 +39,51 @@ Research-grounded, not generic pyramid-and-camel clichés. Full source list: [[S
 **Palette in the UI:** Egyptian blue as the primary interactive color (buttons, links, progress bars), gold for level-ups/achievements, carnelian/terracotta for warnings or streak-at-risk states, malachite green for success states, black/kemet and sand-ochre neutrals for backgrounds and text.
 
 **Caveat from the research:** all facts above trace to real web sources, but are worth a spot-check against primary/academic sources (e.g. Wilkinson's *Complete Gods and Goddesses of Ancient Egypt*) before locking any trademark-sensitive claim.
+
+---
+
+## Shipped: the hieroglyph layer & the mark (2026-07-20)
+
+Everything above is design intent. This section is what actually runs on egybi.com.
+
+### The nine signs
+
+A fixed vocabulary in `site/assets/glyphs.js`, each with a name, Gardiner code, transliteration and meaning. Any `<span data-glyph="eye">` is filled by `paint()`, which adds the sign plus `aria-label`, a `data-tip` explanation and `tabindex="0"` — so the meaning is reachable by keyboard and screen reader, never hover alone.
+
+| key | codepoint | Gardiner | meaning as used |
+|---|---|---|---|
+| `ankh` | U+132F9 | S34 | life, identity |
+| `scribe` | U+13000 | A1 | the person — community, guides, learners |
+| `eye` | U+13080 | D10 | protection — privacy, cookies, defence |
+| `maat` | U+13184 | H6 | truth — citations, disputes, honesty claims |
+| `scarab` | U+131A3 | L1 | becoming — progress, roadmaps, growth |
+| `reed` | U+131CB | M17 | writing — learning, research, foundations |
+| `ra` | U+131F3 | N5 | the sun, and simply "day" — Egypt, eras, dividers |
+| `was` | U+13300 | S40 | power — rank, industry, the data stack |
+| `scroll` | U+133DB | Y1 | records — the knowledge base |
+
+**Placement rule: a sign goes where it carries meaning, never as decoration.** The section `.kicker` is the hook that exists on every page, so signs distribute through it. Spread is kept even (roughly was 10 / ra 9 / scroll 8 / scarab 8 / scribe 7 / reed 6 / maat 5 / ankh 2 / eye 2) — repeating one sign eight times down a page reads as wallpaper, which is the thing this system exists not to be. Deliberately **not** applied to prices.html's nine grocery categories: there is no honest mapping from this vocabulary to "fish" or "dairy".
+
+### Three things that are easy to get wrong
+
+1. **Font coverage.** U+13000 is absent from system fonts on iOS, Android and macOS, so these render as empty boxes unless the subset webfont loads. Each page carries a static `<link>` to a Noto Sans Egyptian Hieroglyphs subset (~12 KB) holding exactly these nine codepoints. A **dynamically injected** stylesheet does not reliably register the `@font-face` — the link must be static. Verify coverage by drawing a sign to canvas and comparing against a codepoint known to be absent; equal pixels means tofu.
+
+2. **The ankh was the one invented thing.** It used U+2625, which lives in *Miscellaneous Symbols* and is the generic modern ankh, not a hieroglyph — which is exactly why it needed a hand-drawn SVG fallback. The true hieroglyphic ankh is **U+132F9 (S34)**, in the same block as the other eight, and Noto carries it. Fixed 2026-07-20; the bespoke SVG branch is gone.
+
+3. **Dynamic content needs repainting.** `paint()` runs once on DOMContentLoaded. Any sign inside a client-rendered template (blog cards, price tables, the challenge list) would stay an empty span forever. `glyphs.js` now watches for new `[data-glyph]` nodes with a rAF-debounced MutationObserver, so this is solved for every renderer rather than one at a time.
+
+### Sizing
+
+Base `.glyph` is `1.36em`. Kickers and the hero eyebrow are set at ~0.75rem, so a purely relative size renders specks there — those get `1.62em` (≈1.2rem). Dividers `1.72rem`, About-page legend `2.5rem`.
+
+### The mark (logo & favicon)
+
+The logo and favicon stay SVG, because a favicon cannot depend on a webfont — but they are **drawn from the S34 form**, not invented: a pointed teardrop loop, a slim crossbar with flared ends, and a stem with a splayed foot. The previous mark was a thick circle on a stick, which read as a modern peace-sign ankh and shared no shape language with the signs beside it.
+
+**Stroke weight 8** (in a `0 0 100 100` viewBox) was chosen by rendering a ladder at the real sizes: 6.5 fades out at 16px favicon size, 9.5 closes the loop up and goes chunky, 8 holds at 16px, 26px and 64px. The mark appears **twice per page** — header and footer — which is easy to miss when replacing it.
+
+### A trap worth remembering
+
+The tooltip is `position:absolute; width:max-content; max-width:260px`, centred on its sign. A sign near a container edge on a narrow screen pushes it past the viewport, and it still occupies layout at `opacity:0` — this inflated page `scrollWidth` by ~77px. Fixed with `body { overflow-x: clip }`. **Clip, not hidden:** the site header is `position:sticky`, and `overflow-x:hidden` turns body into a scroll container and silently breaks sticky. Also note `scrollWidth` still reports content extent on a *clipped* element, so it is a poor overflow test — the honest check is whether `scrollLeft` can actually move.
+
+Related: [[Frontend & Design System]] · [[Changelog]]
