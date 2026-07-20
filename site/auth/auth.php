@@ -211,6 +211,11 @@ case 'health': {
         'counts'   => $counts,
         'google'   => google_enabled(),
         'mail'     => auth_cfg()['smtp_host'] !== '',
+        // Whether the analytics secret comes from durable config. False means it
+        // is still falling back to a generated file that each deploy erases,
+        // which silently changes the insights ?key= and resets visitor
+        // de-duplication. Reports only that it is SET — never the value.
+        'analytics_key_set' => analytics_key() !== '',
         'server_time' => now(),
     ]);
 }
