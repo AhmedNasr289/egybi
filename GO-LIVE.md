@@ -60,6 +60,12 @@ Then hPanel → **phpMyAdmin** → select the DB → **Import**:
 
 **Steps (about two minutes):**
 
+0. **Ask the server where to put it.** Open
+   `https://egybi.com/auth/auth.php?action=health` and read **`put_config_here`**
+   — it prints the exact absolute path, and `deployed_folder` shows the folder
+   that gets wiped. The single most common mistake is creating the file *inside*
+   `public_html`; it must sit in the folder that **contains** `public_html`.
+
 1. hPanel → **Files → File Manager**.
 2. Navigate so you can *see* the `public_html` folder — you want the folder that
    contains it, e.g. `/domains/egybi.com/`. **Do not go inside `public_html`.**
