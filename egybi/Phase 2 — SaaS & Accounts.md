@@ -218,3 +218,21 @@ Health now prints `put_config_here` and `deployed_folder` with absolute paths wh
 **Full flow verified live:** signup (verification mail triggered) → login → solve + sync (30 XP, 2 solved) → password-reset request. Security spot-checks held: wrong password gives the generic reply, a reset for an unknown address gives an identical reply (no enumeration), progress without CSRF returns 403, an invalid verify token is rejected. Test account removed afterwards.
 
 **Remaining optional:** `google_client_id` (Google button stays hidden until set) and DKIM.
+
+
+### Google Sign-In live — 2026-07-20
+
+`google_client_id` set in `egybi-config.php`; health reports `google: true`, the nonce endpoint issues nonces, and the button renders as a genuine `accounts.google.com` iframe with the official mark. Junk credentials are rejected (`"Could not verify that Google sign-in."`).
+
+**The crypto was security-tested before enabling**, because it had never run and it guards account takeover. Tested offline against a locally generated RSA key planted as the JWKS cache:
+
+- `jwk_to_pem()` produces a **byte-identical** PEM to the real public key — the hand-rolled DER encoding is correct, which was the highest-risk part.
+- A genuinely signed token is accepted, email lower-cased, `sub` extracted.
+- Rejected: `alg=none`, `alg=HS256` (algorithm confusion), forged signature, payload swapped onto an old signature, stripped signature, wrong `aud`, wrong `iss`, expired, nonce mismatch, missing nonce, garbage, empty, and an empty client id.
+- `email_verified: false` is **accepted and reported as false** across all encodings (`false`, `"false"`, absent) — this matters, because the linking policy needs to receive it and then refuse rather than have the token rejected outright.
+
+**Button locale.** GIS picks a locale from the connection when none is given, which rendered an **Arabic** button inside an entirely English dialog. Now takes `locale` from `<html lang>`, so it matches today and follows automatically if the site is ever made bilingual.
+
+**Note on the Google Cloud project:** the consent screen must be **published**, not left in *Testing* — while testing, only manually-added test users can sign in. Scopes are the non-sensitive defaults (`email`, `profile`, `openid`), so publishing needs no Google review. No client secret exists in the ID-token flow.
+
+Verified after enabling: all 9 pages 200, 123/123 challenges pass, no console errors, no real horizontal overflow (the two off-canvas honeypots inflate `scrollWidth` but nothing is visible past the edge and `scrollLeft` cannot move), no client id in the repo.
