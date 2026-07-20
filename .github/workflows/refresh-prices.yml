@@ -10,7 +10,10 @@ name: Refresh daily prices
 
 on:
   schedule:
-    - cron: '0 7 * * *'       # 07:00 UTC daily (~09:00 Cairo, after the morning update)
+    # Deliberately NOT on the hour. GitHub's shared scheduler is most
+    # contended at :00 and runs there are the most likely to be delayed or
+    # dropped — this workflow never once fired while sitting at 07:00.
+    - cron: '17 7 * * *'      # 07:17 UTC daily (~09:17 Cairo, after the morning update)
   workflow_dispatch: {}        # manual "Run workflow" button
 
 permissions:

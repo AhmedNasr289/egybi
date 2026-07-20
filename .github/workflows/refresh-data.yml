@@ -7,7 +7,9 @@ name: Refresh Egypt data
 
 on:
   schedule:
-    - cron: '0 3 1 * *'      # 03:00 UTC on the 1st of each month
+    # Off the hour for the same reason as refresh-prices: :00 is the most
+    # contended minute on GitHub's shared scheduler.
+    - cron: '41 3 1 * *'     # 03:41 UTC on the 1st of each month
   workflow_dispatch: {}       # manual "Run workflow" button in the Actions tab
 
 permissions:
