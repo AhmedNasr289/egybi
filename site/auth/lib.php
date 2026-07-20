@@ -347,27 +347,252 @@ function newsletter_add(string $email, string $ipHash = ''): string
 {
     try {
         $db = auth_db();
-        $isMy = auth_cfg()['driver'] === 'mysql';
-        $db->exec($isMy
-            ? "CREATE TABLE IF NOT EXISTS newsletter_subscribers (
-                 email VARCHAR(254) NOT NULL, created_at VARCHAR(32) NOT NULL,
-                 ip_hash VARCHAR(32) NULL, unsubscribed TINYINT NOT NULL DEFAULT 0,
-                 PRIMARY KEY (email(191))) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-            : "CREATE TABLE IF NOT EXISTS newsletter_subscribers (
-                 email TEXT PRIMARY KEY, created_at TEXT NOT NULL,
-                 ip_hash TEXT, unsubscribed INTEGER NOT NULL DEFAULT 0)");
+        newsletter_ensure_schema($db);
 
         $st = $db->prepare('SELECT email FROM newsletter_subscribers WHERE email = ?');
         $st->execute([$email]);
         if ($st->fetch()) return 'duplicate';
 
-        $db->prepare('INSERT INTO newsletter_subscribers (email, created_at, ip_hash, unsubscribed) VALUES (?,?,?,0)')
-           ->execute([$email, now(), $ipHash]);
+        // Double opt-in: the row is stored UNCONFIRMED and inert until the person
+        // clicks the link we email them. `token` is a per-address capability
+        // secret used for both the confirm and the unsubscribe links.
+        $db->prepare('INSERT INTO newsletter_subscribers (email, created_at, ip_hash, unsubscribed, confirmed, token) VALUES (?,?,?,0,0,?)')
+           ->execute([$email, now(), $ipHash, rid(16)]);
         return 'added';
     } catch (Throwable $e) {
         error_log('[EgyBI] newsletter_add failed: ' . $e->getMessage());
         return 'error';
     }
+}
+
+// ---- The Papyrus: double opt-in, unsubscribe, and idempotent issue sending ---
+// Three tables, all self-initialising like the accounts schema so going live
+// needs no phpMyAdmin import:
+//   newsletter_subscribers  — email + confirm/unsub state + a capability token
+//   newsletter_issues       — one row per letter (draft → sending → sent)
+//   newsletter_sends        — PK(issue_id,email); its existence IS the guard that
+//                             a resend can never mail the same person twice.
+
+/** Create/upgrade the newsletter tables. Idempotent; safe on old databases. */
+function newsletter_ensure_schema(PDO $db): void
+{
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    $my = auth_cfg()['driver'] === 'mysql';
+
+    $db->exec($my
+        ? "CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+             email VARCHAR(254) NOT NULL, created_at VARCHAR(32) NOT NULL,
+             ip_hash VARCHAR(32) NULL, unsubscribed TINYINT NOT NULL DEFAULT 0,
+             confirmed TINYINT NOT NULL DEFAULT 0, token VARCHAR(48) NULL,
+             confirmed_at VARCHAR(32) NULL, unsubscribed_at VARCHAR(32) NULL,
+             PRIMARY KEY (email(191))) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        : "CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+             email TEXT PRIMARY KEY, created_at TEXT NOT NULL, ip_hash TEXT,
+             unsubscribed INTEGER NOT NULL DEFAULT 0, confirmed INTEGER NOT NULL DEFAULT 0,
+             token TEXT, confirmed_at TEXT, unsubscribed_at TEXT)");
+
+    // Additive migration for a subscribers table created before double opt-in.
+    try {
+        $cols = [];
+        if ($my) { foreach ($db->query('SHOW COLUMNS FROM newsletter_subscribers') as $c) $cols[] = $c['Field']; }
+        else     { foreach ($db->query('PRAGMA table_info(newsletter_subscribers)') as $c) $cols[] = $c['name']; }
+        $add = [
+            'confirmed'       => $my ? 'TINYINT NOT NULL DEFAULT 0' : 'INTEGER NOT NULL DEFAULT 0',
+            'token'           => $my ? 'VARCHAR(48) NULL'           : 'TEXT',
+            'confirmed_at'    => $my ? 'VARCHAR(32) NULL'           : 'TEXT',
+            'unsubscribed_at' => $my ? 'VARCHAR(32) NULL'           : 'TEXT',
+        ];
+        foreach ($add as $col => $type) {
+            if (!in_array($col, $cols, true)) {
+                try { $db->exec("ALTER TABLE newsletter_subscribers ADD COLUMN $col $type"); } catch (Throwable $e) {}
+            }
+        }
+        // Grandfather anyone who signed up under the old single opt-in: they DID
+        // opt in via the form, so mark them confirmed and give them an unsub token
+        // rather than stranding them unable to receive or leave.
+        $rows = $db->query("SELECT email FROM newsletter_subscribers WHERE token IS NULL OR token = ''")->fetchAll();
+        if ($rows) {
+            $upd = $db->prepare('UPDATE newsletter_subscribers SET token = ?, confirmed = 1, confirmed_at = COALESCE(confirmed_at, ?) WHERE email = ?');
+            foreach ($rows as $r) $upd->execute([rid(16), now(), $r['email']]);
+        }
+    } catch (Throwable $e) { /* housekeeping never breaks a request */ }
+
+    $db->exec($my
+        ? "CREATE TABLE IF NOT EXISTS newsletter_issues (
+             id VARCHAR(16) NOT NULL, slug VARCHAR(120) NOT NULL, subject VARCHAR(255) NOT NULL,
+             html MEDIUMTEXT NOT NULL, status VARCHAR(16) NOT NULL DEFAULT 'draft',
+             created_at VARCHAR(32) NOT NULL, sent_at VARCHAR(32) NULL,
+             PRIMARY KEY (id), UNIQUE KEY uq_nl_slug (slug)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        : "CREATE TABLE IF NOT EXISTS newsletter_issues (
+             id TEXT PRIMARY KEY, slug TEXT UNIQUE NOT NULL, subject TEXT NOT NULL,
+             html TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'draft',
+             created_at TEXT NOT NULL, sent_at TEXT)");
+
+    $db->exec($my
+        ? "CREATE TABLE IF NOT EXISTS newsletter_sends (
+             issue_id VARCHAR(16) NOT NULL, email VARCHAR(254) NOT NULL,
+             status VARCHAR(16) NOT NULL DEFAULT 'sent', sent_at VARCHAR(32) NULL, error VARCHAR(255) NULL,
+             PRIMARY KEY (issue_id, email(180))) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        : "CREATE TABLE IF NOT EXISTS newsletter_sends (
+             issue_id TEXT NOT NULL, email TEXT NOT NULL,
+             status TEXT NOT NULL DEFAULT 'sent', sent_at TEXT, error TEXT,
+             PRIMARY KEY (issue_id, email))");
+}
+
+function newsletter_confirm_url(string $email, string $token): string
+{ return auth_cfg()['app_url'] . '/api/newsletter.php?action=confirm&e=' . rawurlencode($email) . '&t=' . rawurlencode($token); }
+
+function newsletter_unsub_url(string $email, string $token): string
+{ return auth_cfg()['app_url'] . '/api/unsubscribe.php?e=' . rawurlencode($email) . '&t=' . rawurlencode($token); }
+
+/** The per-address capability token, or null if the email is unknown. */
+function newsletter_token(string $email): ?string
+{
+    try {
+        $db = auth_db(); newsletter_ensure_schema($db);
+        $st = $db->prepare('SELECT token FROM newsletter_subscribers WHERE email = ?');
+        $st->execute([strtolower($email)]);
+        $t = $st->fetchColumn();
+        return $t === false ? null : (string)$t;
+    } catch (Throwable $e) { return null; }
+}
+
+/** Confirm a double-opt-in subscription. Returns 'confirmed' | 'already' | 'invalid'. */
+function newsletter_confirm(string $email, string $token): string
+{
+    try {
+        $db = auth_db(); newsletter_ensure_schema($db);
+        $st = $db->prepare('SELECT confirmed, token FROM newsletter_subscribers WHERE email = ?');
+        $st->execute([strtolower($email)]);
+        $row = $st->fetch();
+        if (!$row || $token === '' || !hash_equals((string)$row['token'], $token)) return 'invalid';
+        if ((int)$row['confirmed'] === 1) return 'already';
+        $db->prepare('UPDATE newsletter_subscribers SET confirmed = 1, confirmed_at = ?, unsubscribed = 0, unsubscribed_at = NULL WHERE email = ?')
+           ->execute([now(), strtolower($email)]);
+        return 'confirmed';
+    } catch (Throwable $e) { error_log('[EgyBI] newsletter_confirm: ' . $e->getMessage()); return 'invalid'; }
+}
+
+/** One-click unsubscribe by capability token. Returns 'unsubscribed' | 'already' | 'invalid'. */
+function newsletter_unsub(string $email, string $token): string
+{
+    try {
+        $db = auth_db(); newsletter_ensure_schema($db);
+        $st = $db->prepare('SELECT unsubscribed, token FROM newsletter_subscribers WHERE email = ?');
+        $st->execute([strtolower($email)]);
+        $row = $st->fetch();
+        if (!$row || $token === '' || !hash_equals((string)$row['token'], $token)) return 'invalid';
+        if ((int)$row['unsubscribed'] === 1) return 'already';
+        $db->prepare('UPDATE newsletter_subscribers SET unsubscribed = 1, unsubscribed_at = ? WHERE email = ?')
+           ->execute([now(), strtolower($email)]);
+        return 'unsubscribed';
+    } catch (Throwable $e) { error_log('[EgyBI] newsletter_unsub: ' . $e->getMessage()); return 'invalid'; }
+}
+
+/** Insert or refresh (while draft) a newsletter issue by slug. Returns the row or null. */
+function newsletter_upsert_issue(string $slug, string $subject, string $html): ?array
+{
+    try {
+        $db = auth_db(); newsletter_ensure_schema($db);
+        $st = $db->prepare('SELECT * FROM newsletter_issues WHERE slug = ?');
+        $st->execute([$slug]);
+        $row = $st->fetch();
+        if ($row) {
+            if ($row['status'] === 'draft') {
+                $db->prepare('UPDATE newsletter_issues SET subject = ?, html = ? WHERE id = ?')
+                   ->execute([$subject, $html, $row['id']]);
+                $row['subject'] = $subject; $row['html'] = $html;
+            }
+            return $row;
+        }
+        $id = rid(8);
+        $db->prepare('INSERT INTO newsletter_issues (id, slug, subject, html, status, created_at) VALUES (?,?,?,?,\'draft\',?)')
+           ->execute([$id, $slug, $subject, $html, now()]);
+        return ['id'=>$id,'slug'=>$slug,'subject'=>$subject,'html'=>$html,'status'=>'draft','created_at'=>now(),'sent_at'=>null];
+    } catch (Throwable $e) { error_log('[EgyBI] newsletter_upsert_issue: ' . $e->getMessage()); return null; }
+}
+
+/** Confirmed, not-unsubscribed subscribers NOT yet sent this issue (up to $limit). */
+function newsletter_recipients_pending(string $issueId, int $limit): array
+{
+    $db = auth_db(); newsletter_ensure_schema($db);
+    $limit = max(1, min(500, $limit));
+    $sql = "SELECT s.email, s.token FROM newsletter_subscribers s
+            WHERE s.confirmed = 1 AND s.unsubscribed = 0
+              AND NOT EXISTS (SELECT 1 FROM newsletter_sends x WHERE x.issue_id = ? AND x.email = s.email)
+            ORDER BY s.created_at LIMIT $limit";
+    $st = $db->prepare($sql); $st->execute([$issueId]);
+    return $st->fetchAll();
+}
+
+/** Record the outcome of a send. The PK(issue_id,email) makes a re-run idempotent. */
+function newsletter_record_send(string $issueId, string $email, string $status, string $error = ''): void
+{
+    try {
+        $db = auth_db();
+        try {
+            $db->prepare('INSERT INTO newsletter_sends (issue_id, email, status, sent_at, error) VALUES (?,?,?,?,?)')
+               ->execute([$issueId, $email, $status, now(), substr($error, 0, 240)]);
+        } catch (Throwable $dup) {
+            $db->prepare('UPDATE newsletter_sends SET status = ?, sent_at = ?, error = ? WHERE issue_id = ? AND email = ?')
+               ->execute([$status, now(), substr($error, 0, 240), $issueId, $email]);
+        }
+    } catch (Throwable $e) { error_log('[EgyBI] newsletter_record_send: ' . $e->getMessage()); }
+}
+
+/** Progress counts for an issue: confirmed audience, sent, failed, remaining. */
+function newsletter_issue_stats(string $issueId): array
+{
+    $db = auth_db(); newsletter_ensure_schema($db);
+    $confirmed = (int)$db->query('SELECT COUNT(*) FROM newsletter_subscribers WHERE confirmed = 1 AND unsubscribed = 0')->fetchColumn();
+    $by = ['sent' => 0, 'failed' => 0];
+    $st = $db->prepare('SELECT status, COUNT(*) c FROM newsletter_sends WHERE issue_id = ? GROUP BY status');
+    $st->execute([$issueId]);
+    foreach ($st as $r) $by[$r['status']] = (int)$r['c'];
+    $done = array_sum($by);
+    return ['confirmed' => $confirmed, 'sent' => $by['sent'], 'failed' => $by['failed'], 'remaining' => max(0, $confirmed - $done)];
+}
+
+function newsletter_mark_issue(string $issueId, string $status): void
+{
+    try {
+        $db = auth_db();
+        $db->prepare('UPDATE newsletter_issues SET status = ?, sent_at = CASE WHEN ? = \'sent\' THEN ? ELSE sent_at END WHERE id = ?')
+           ->execute([$status, $status, now(), $issueId]);
+    } catch (Throwable $e) { /* status is advisory */ }
+}
+
+/** Wrap an issue's body HTML in the branded shell + the required unsubscribe footer. */
+function newsletter_wrap_issue(string $bodyHtml, string $unsubUrl): string
+{
+    $u = htmlspecialchars($unsubUrl, ENT_QUOTES);
+    return '<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;color:#292420">'
+        . '<div style="background:#14110C;padding:20px 24px"><span style="color:#C9A227;font-weight:bold;font-size:20px">EgyBI</span>'
+        . '<span style="color:#e9dfc8;font-size:13px"> &middot; The Papyrus</span></div>'
+        . '<div style="border:1px solid #eee;border-top:none;padding:26px 24px;line-height:1.65;font-size:15px">' . $bodyHtml . '</div>'
+        . '<div style="padding:16px 24px;color:#999;font-size:12px;text-align:center">'
+        . 'You are receiving this because you confirmed a subscription to The Papyrus at egybi.com.<br>'
+        . '<a href="' . $u . '" style="color:#7A5E10">Unsubscribe instantly</a></div></div>';
+}
+
+/** A tiny branded standalone HTML page for confirm/unsubscribe landings. */
+function newsletter_notice_page(string $title, string $message): string
+{
+    $t = htmlspecialchars($title, ENT_QUOTES);
+    $m = htmlspecialchars($message, ENT_QUOTES);
+    $home = htmlspecialchars(auth_cfg()['app_url'], ENT_QUOTES);
+    return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
+        . "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+        . "<meta name=\"robots\" content=\"noindex\"><title>$t &middot; EgyBI</title>"
+        . "<style>body{margin:0;font-family:Inter,-apple-system,Segoe UI,Roboto,sans-serif;background:#14110C;color:#f3ead4;"
+        . "display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}"
+        . ".card{max-width:460px;background:#1b160e;border:1px solid #2c2416;border-radius:16px;padding:36px 34px;text-align:center}"
+        . "h1{font-family:Cinzel,Georgia,serif;color:#E7C64C;font-size:1.5rem;margin:0 0 12px}"
+        . "p{line-height:1.6;color:#e9dfc8;margin:0 0 22px}a{display:inline-block;background:#C9A227;color:#14110C;"
+        . "text-decoration:none;font-weight:700;padding:11px 22px;border-radius:9px}</style></head>"
+        . "<body><div class=\"card\"><h1>$t</h1><p>$m</p><a href=\"$home\">Back to EgyBI</a></div></body></html>";
 }
 
 /**

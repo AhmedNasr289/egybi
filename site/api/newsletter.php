@@ -38,6 +38,28 @@ function out(bool $ok, string $msg, int $code = 200): void
     exit;
 }
 
+// GET ?action=confirm&e=&t= — the double-opt-in landing. Returns a small HTML
+// page (not JSON), because a human clicked this link from their inbox.
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && ($_GET['action'] ?? '') === 'confirm') {
+    $lib = __DIR__ . '/../auth/lib.php';
+    if (is_file($lib)) {
+        require_once $lib;
+        $email = strtolower(trim((string)($_GET['e'] ?? '')));
+        $token = trim((string)($_GET['t'] ?? ''));
+        $res   = newsletter_confirm($email, $token);
+        header('Content-Type: text/html; charset=utf-8');
+        echo newsletter_notice_page(
+            $res === 'invalid' ? 'Link expired' : 'You are subscribed',
+            $res === 'confirmed'
+                ? 'Your subscription to The Papyrus is confirmed. Welcome aboard — one letter a month, always a number you did not know.'
+                : ($res === 'already'
+                    ? 'You are already confirmed — thank you.'
+                    : 'This confirmation link is invalid or has expired. Please subscribe again from the site.'));
+        exit;
+    }
+    out(false, 'Confirmation is unavailable right now.', 503);
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     out(false, 'Send a POST request with an email.', 405);
 }
@@ -86,7 +108,25 @@ $lib = __DIR__ . '/../auth/lib.php';
 if (is_file($lib)) {
     require_once $lib;
     $res = newsletter_add($email, $ipHash);
-    if ($res === 'added')     out(true, 'You are subscribed to The Papyrus. Welcome aboard.');
+    if ($res === 'added') {
+        // Double opt-in: the address is inert until confirmed. Email the link.
+        $tok = newsletter_token($email);
+        if ($tok) {
+            $mailer = __DIR__ . '/../auth/mailer.php';
+            if (is_file($mailer)) {
+                require_once $mailer;
+                @send_mail(
+                    $email,
+                    'Confirm your subscription to The Papyrus',
+                    mail_template(
+                        'One more step',
+                        'Confirm your email to start receiving The Papyrus — EgyBI\'s monthly letter about Egypt, told through its data. If you did not request this, ignore this message and nothing will be sent.',
+                        'Confirm my subscription',
+                        newsletter_confirm_url($email, $tok)));
+            }
+        }
+        out(true, 'Almost there — check your inbox to confirm your subscription.');
+    }
     if ($res === 'duplicate') out(true, 'You are already on the list — thank you.');
     // 'error' falls through to the file, so a database hiccup never loses a signup.
     error_log('[EgyBI] newsletter: database write failed, falling back to file storage.');

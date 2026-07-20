@@ -265,55 +265,21 @@
 </section>
 
 <!-- THE NINE TRACKS -->
-<section class="surface-light-2 cluster-head" id="tracks" data-nav="9 tracks">
+<section class="surface-light-2 cluster-head" id="tracks">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>The nine tracks in detail</div>
-    <h2 data-aos="fade-up">Every skill, the concepts to master, and reps to prove it.</h2>
-    <p class="lead" data-aos="fade-up">Each track lists what it is, why it matters, the concepts to master (your checklist), the tools, a book pointer, and the hands-on EgyBI exercises — all on real, cited Egyptian data.</p>
+    <h2 data-aos="fade-up">Nine skills, grouped into three specializations.</h2>
+    <p class="lead" data-aos="fade-up">Each track lists what it is, why it matters, the concepts to master (your checklist), the tools, a book pointer, and the hands-on EgyBI exercises — all on real, cited Egyptian data. They map to the three roles from the top of the page, so you can follow one path or borrow across all three. SQL underpins every path — start there whatever your goal.</p>
+  </div>
+</section>
+
+<section class="surface-light" id="track-de" data-nav="Data engineering">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Specialization &middot; Data engineering</div>
+    <h2 data-aos="fade-up">Build and run the pipelines.</h2>
+    <p class="lead" data-aos="fade-up">For the engineer who moves and processes data at scale &mdash; ingestion, orchestration, distributed compute, and the cloud platforms it all runs on. Maps to the <strong>Data Engineer</strong> role.</p>
   </div>
   <div class="wrap grid grid-2" style="margin-top:8px;">
-
-    <div class="track" data-aos="fade-up">
-      <span class="lvl">Beginner → Advanced · Phase 1</span>
-      <h3>1 · SQL — Fundamentals to Advanced</h3>
-      <p class="ww">The single most-used skill in data. Every role queries; the good ones query <em>well</em>. Master this before anything else.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>All join types &amp; anti-joins</li><li>GROUP BY, HAVING, aggregates</li>
-        <li>Subqueries &amp; CTEs</li><li>Window functions</li>
-        <li>Indexes &amp; the query plan</li><li>Normalization &amp; keys</li>
-        <li>NULL logic &amp; set operations</li><li>Date/time &amp; string handling</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> PostgreSQL, any warehouse SQL, SQLite (in-browser here).</p>
-      <p class="books"><strong>Read:</strong> <em>SQL Antipatterns</em> (Karwin) · <em>SQL Performance Explained</em> (Winand).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Longest Reigns</b> — rank pharaohs by reign length; a window-function variant partitions by dynasty.</li>
-        <li><b>The Family Line</b> — self-join to reconstruct father→son succession chains.</li>
-        <li><b>Missing Monuments</b> — anti-join UNESCO sites against monuments to find the gaps.</li>
-      </ul>
-    </div>
-
-    <div class="track" data-aos="fade-up" data-aos-delay="80">
-      <span class="lvl">Intermediate → Advanced · Phase 2</span>
-      <h3>2 · Dimensional Modeling &amp; Warehousing</h3>
-      <p class="ww">How you shape data so a business can actually use it. The design skill behind every fast, trustworthy warehouse.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>Star vs snowflake schemas</li><li>Facts &amp; dimensions</li>
-        <li>Grain of a fact table</li><li>SCD types 0–6</li>
-        <li>Surrogate keys</li><li>Conformed dimensions</li>
-        <li>Kimball vs Inmon vs Data Vault</li><li>Wide tables / OBT trade-offs</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> any warehouse, dbt, an ERD tool.</p>
-      <p class="books"><strong>Read:</strong> <em>The Data Warehouse Toolkit</em> (Kimball) · <em>Building the Data Warehouse</em> (Inmon) · <em>Star Schema</em> (Adamson).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Monument Star Schema</b> — build <code>fact_monument_construction</code> against pharaoh, dynasty &amp; location dimensions.</li>
-        <li><b>SCD Type 2</b> — model the Great Sphinx's disputed attribution as slowly-changing history.</li>
-        <li><b>Conformed Dimensions</b> — share <code>dim_dynasty</code> across monument and reign facts.</li>
-      </ul>
-    </div>
 
     <div class="track" data-aos="fade-up">
       <span class="lvl">Intermediate → Advanced · Phase 2</span>
@@ -333,27 +299,6 @@
         <li><b>Live Ingestion DAG</b> — pull the Met Museum's real nightly Egyptian-art CSV, land it, trigger transforms.</li>
         <li><b>Backfill</b> — recompute dynasty-level aggregates after a schema change.</li>
         <li><b>SLA Alerting</b> — fire an alert if the ingestion DAG misses its window.</li>
-      </ul>
-    </div>
-
-    <div class="track" data-aos="fade-up" data-aos-delay="80">
-      <span class="lvl">Intermediate · Phase 2</span>
-      <h3>4 · dbt &amp; Analytics Engineering</h3>
-      <p class="ww">The modern transformation layer — SQL, but version-controlled, tested, documented and modular. The heart of the analytics-engineer role.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>staging → intermediate → mart</li><li>Materializations (view/table/incremental)</li>
-        <li>Generic &amp; singular tests</li><li>Sources &amp; freshness</li>
-        <li>refs, the DAG &amp; lineage</li><li>Macros &amp; Jinja</li>
-        <li>Snapshots (SCD)</li><li>Docs, exposures &amp; the semantic layer</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> dbt (Core/Cloud), a warehouse, Git.</p>
-      <p class="books"><strong>Read:</strong> <em>Analytics Engineering with SQL and dbt</em> (Machado &amp; Russa).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Model Layers</b> — build staging → intermediate → mart on the real Met dataset.</li>
-        <li><b>Test Suite</b> — pass <code>not_null</code> / <code>unique</code> / <code>relationships</code> tests.</li>
-        <li><b>Incremental Model</b> — process only Met objects updated since the last run.</li>
       </ul>
     </div>
 
@@ -400,23 +345,76 @@
     </div>
 
     <div class="track" data-aos="fade-up">
-      <span class="lvl">Beginner → Intermediate · any phase</span>
-      <h3>7 · BI &amp; Data Visualization</h3>
-      <p class="ww">Data only matters when someone acts on it. BI turns models into dashboards, measures and stories a business runs on.</p>
+      <span class="lvl">Beginner → Advanced · Phase 1–3</span>
+      <h3>9 · Python for Data Engineers</h3>
+      <p class="ww">The language that ties the whole stack together — ingestion, glue, automation, and the pipelines the orchestrator runs.</p>
       <div class="sub">Concepts to master</div>
       <ul class="check">
-        <li>Semantic models &amp; measures (DAX)</li><li>Star schemas for BI</li>
-        <li>Choosing the right chart</li><li>Dashboards vs reports</li>
-        <li>Pre-attentive attributes</li><li>Row-level security</li>
-        <li>Self-service &amp; governance</li><li>KPI &amp; metric design</li>
+        <li>Data structures &amp; comprehensions</li><li>pandas / Polars</li>
+        <li>requests &amp; working with APIs</li><li>Error handling, retries, backoff</li>
+        <li>Logging &amp; typing</li><li>venv / packaging</li>
+        <li>Testing with pytest</li><li>CSV / JSON / Parquet; dlt for EL</li>
       </ul>
-      <p class="tools"><b>Tools:</b> Power BI, Tableau, Looker, Metabase.</p>
-      <p class="books"><strong>Read:</strong> <em>Storytelling with Data</em> (Knaflic).</p>
+      <p class="tools"><b>Tools:</b> Python 3, pandas/Polars, requests, dlt, pytest, SQLAlchemy.</p>
+      <p class="books"><strong>Read:</strong> <em>Data Engineering with Python</em> (Crickard) · <em>Fundamentals of Data Engineering</em> (Reis &amp; Housley).</p>
       <div class="sub">Practice on EgyBI</div>
       <ul class="ex">
-        <li><b>Construction Gantt</b> — a timeline of monument-construction eras across dynasties.</li>
-        <li><b>Flood Anomalies</b> — visualize the Nile flood record, highlighting outlier years.</li>
-        <li><b>Fix the Chart</b> — redesign a misleading dual-axis "monuments vs reign length" chart.</li>
+        <li><b>Resilient Ingestion</b> — a retry/backoff script against the real Met Museum API.</li>
+        <li><b>Clean the Papyrus</b> — clean a Wilbour-Papyrus-style ~2,800-row land/tax dataset.</li>
+        <li><b>End-to-End Pipeline</b> — ingest → land → dbt transform → orchestrate → BI-ready mart.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<section class="surface-light-2" id="track-ae" data-nav="Analytics engineering">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Specialization &middot; Analytics engineering</div>
+    <h2 data-aos="fade-up">Turn raw data into trusted models.</h2>
+    <p class="lead" data-aos="fade-up">For the builder in the middle &mdash; dimensional modeling, dbt transformations, and the tests and observability that make the numbers trustworthy. Maps to the <strong>Analytics Engineer</strong> role.</p>
+  </div>
+  <div class="wrap grid grid-2" style="margin-top:8px;">
+
+    <div class="track" data-aos="fade-up" data-aos-delay="80">
+      <span class="lvl">Intermediate → Advanced · Phase 2</span>
+      <h3>2 · Dimensional Modeling &amp; Warehousing</h3>
+      <p class="ww">How you shape data so a business can actually use it. The design skill behind every fast, trustworthy warehouse.</p>
+      <div class="sub">Concepts to master</div>
+      <ul class="check">
+        <li>Star vs snowflake schemas</li><li>Facts &amp; dimensions</li>
+        <li>Grain of a fact table</li><li>SCD types 0–6</li>
+        <li>Surrogate keys</li><li>Conformed dimensions</li>
+        <li>Kimball vs Inmon vs Data Vault</li><li>Wide tables / OBT trade-offs</li>
+      </ul>
+      <p class="tools"><b>Tools:</b> any warehouse, dbt, an ERD tool.</p>
+      <p class="books"><strong>Read:</strong> <em>The Data Warehouse Toolkit</em> (Kimball) · <em>Building the Data Warehouse</em> (Inmon) · <em>Star Schema</em> (Adamson).</p>
+      <div class="sub">Practice on EgyBI</div>
+      <ul class="ex">
+        <li><b>Monument Star Schema</b> — build <code>fact_monument_construction</code> against pharaoh, dynasty &amp; location dimensions.</li>
+        <li><b>SCD Type 2</b> — model the Great Sphinx's disputed attribution as slowly-changing history.</li>
+        <li><b>Conformed Dimensions</b> — share <code>dim_dynasty</code> across monument and reign facts.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up" data-aos-delay="80">
+      <span class="lvl">Intermediate · Phase 2</span>
+      <h3>4 · dbt &amp; Analytics Engineering</h3>
+      <p class="ww">The modern transformation layer — SQL, but version-controlled, tested, documented and modular. The heart of the analytics-engineer role.</p>
+      <div class="sub">Concepts to master</div>
+      <ul class="check">
+        <li>staging → intermediate → mart</li><li>Materializations (view/table/incremental)</li>
+        <li>Generic &amp; singular tests</li><li>Sources &amp; freshness</li>
+        <li>refs, the DAG &amp; lineage</li><li>Macros &amp; Jinja</li>
+        <li>Snapshots (SCD)</li><li>Docs, exposures &amp; the semantic layer</li>
+      </ul>
+      <p class="tools"><b>Tools:</b> dbt (Core/Cloud), a warehouse, Git.</p>
+      <p class="books"><strong>Read:</strong> <em>Analytics Engineering with SQL and dbt</em> (Machado &amp; Russa).</p>
+      <div class="sub">Practice on EgyBI</div>
+      <ul class="ex">
+        <li><b>Model Layers</b> — build staging → intermediate → mart on the real Met dataset.</li>
+        <li><b>Test Suite</b> — pass <code>not_null</code> / <code>unique</code> / <code>relationships</code> tests.</li>
+        <li><b>Incremental Model</b> — process only Met objects updated since the last run.</li>
       </ul>
     </div>
 
@@ -441,24 +439,56 @@
       </ul>
     </div>
 
+  </div>
+</section>
+
+<section class="surface-light" id="track-bi" data-nav="BI development">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Specialization &middot; BI development</div>
+    <h2 data-aos="fade-up">Query the data, turn it into decisions.</h2>
+    <p class="lead" data-aos="fade-up">For the analyst and BI developer &mdash; SQL is the foundation every path starts with, and here it is most of the job, paired with the visualization skills that turn a model into something a business acts on. Maps to the <strong>Data / BI Analyst</strong> and <strong>BI Developer</strong> roles.</p>
+  </div>
+  <div class="wrap grid grid-2" style="margin-top:8px;">
+
     <div class="track" data-aos="fade-up">
-      <span class="lvl">Beginner → Advanced · Phase 1–3</span>
-      <h3>9 · Python for Data Engineers</h3>
-      <p class="ww">The language that ties the whole stack together — ingestion, glue, automation, and the pipelines the orchestrator runs.</p>
+      <span class="lvl">Beginner → Advanced · Phase 1</span>
+      <h3>1 · SQL — Fundamentals to Advanced</h3>
+      <p class="ww">The single most-used skill in data. Every role queries; the good ones query <em>well</em>. Master this before anything else.</p>
       <div class="sub">Concepts to master</div>
       <ul class="check">
-        <li>Data structures &amp; comprehensions</li><li>pandas / Polars</li>
-        <li>requests &amp; working with APIs</li><li>Error handling, retries, backoff</li>
-        <li>Logging &amp; typing</li><li>venv / packaging</li>
-        <li>Testing with pytest</li><li>CSV / JSON / Parquet; dlt for EL</li>
+        <li>All join types &amp; anti-joins</li><li>GROUP BY, HAVING, aggregates</li>
+        <li>Subqueries &amp; CTEs</li><li>Window functions</li>
+        <li>Indexes &amp; the query plan</li><li>Normalization &amp; keys</li>
+        <li>NULL logic &amp; set operations</li><li>Date/time &amp; string handling</li>
       </ul>
-      <p class="tools"><b>Tools:</b> Python 3, pandas/Polars, requests, dlt, pytest, SQLAlchemy.</p>
-      <p class="books"><strong>Read:</strong> <em>Data Engineering with Python</em> (Crickard) · <em>Fundamentals of Data Engineering</em> (Reis &amp; Housley).</p>
+      <p class="tools"><b>Tools:</b> PostgreSQL, any warehouse SQL, SQLite (in-browser here).</p>
+      <p class="books"><strong>Read:</strong> <em>SQL Antipatterns</em> (Karwin) · <em>SQL Performance Explained</em> (Winand).</p>
       <div class="sub">Practice on EgyBI</div>
       <ul class="ex">
-        <li><b>Resilient Ingestion</b> — a retry/backoff script against the real Met Museum API.</li>
-        <li><b>Clean the Papyrus</b> — clean a Wilbour-Papyrus-style ~2,800-row land/tax dataset.</li>
-        <li><b>End-to-End Pipeline</b> — ingest → land → dbt transform → orchestrate → BI-ready mart.</li>
+        <li><b>Longest Reigns</b> — rank pharaohs by reign length; a window-function variant partitions by dynasty.</li>
+        <li><b>The Family Line</b> — self-join to reconstruct father→son succession chains.</li>
+        <li><b>Missing Monuments</b> — anti-join UNESCO sites against monuments to find the gaps.</li>
+      </ul>
+    </div>
+
+    <div class="track" data-aos="fade-up">
+      <span class="lvl">Beginner → Intermediate · any phase</span>
+      <h3>7 · BI &amp; Data Visualization</h3>
+      <p class="ww">Data only matters when someone acts on it. BI turns models into dashboards, measures and stories a business runs on.</p>
+      <div class="sub">Concepts to master</div>
+      <ul class="check">
+        <li>Semantic models &amp; measures (DAX)</li><li>Star schemas for BI</li>
+        <li>Choosing the right chart</li><li>Dashboards vs reports</li>
+        <li>Pre-attentive attributes</li><li>Row-level security</li>
+        <li>Self-service &amp; governance</li><li>KPI &amp; metric design</li>
+      </ul>
+      <p class="tools"><b>Tools:</b> Power BI, Tableau, Looker, Metabase.</p>
+      <p class="books"><strong>Read:</strong> <em>Storytelling with Data</em> (Knaflic).</p>
+      <div class="sub">Practice on EgyBI</div>
+      <ul class="ex">
+        <li><b>Construction Gantt</b> — a timeline of monument-construction eras across dynasties.</li>
+        <li><b>Flood Anomalies</b> — visualize the Nile flood record, highlighting outlier years.</li>
+        <li><b>Fix the Chart</b> — redesign a misleading dual-axis "monuments vs reign length" chart.</li>
       </ul>
     </div>
 

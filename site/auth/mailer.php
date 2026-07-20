@@ -19,8 +19,12 @@ function mail_last_error(?string $set = null): string
     return $e;
 }
 
-/** Send one HTML email. Returns true if handed to the SMTP server, else false. */
-function send_mail(string $to, string $subject, string $html): bool
+/**
+ * Send one HTML email. Returns true if handed to the SMTP server, else false.
+ * $extraHeaders lets callers add safe headers (e.g. List-Unsubscribe for the
+ * newsletter); names and values are stripped of CR/LF so they can never inject.
+ */
+function send_mail(string $to, string $subject, string $html, array $extraHeaders = []): bool
 {
     mail_last_error('');
     $c = auth_cfg();
@@ -86,6 +90,15 @@ function send_mail(string $to, string $subject, string $html): bool
         $boundary = 'egybi-' . bin2hex(random_bytes(8));
         $replyTo = $c['smtp_user'] !== '' ? $c['smtp_user'] : $from;
 
+        // Caller-supplied headers, hardened against header injection: the name is
+        // restricted to header-safe characters and CR/LF is stripped from both.
+        $extra = '';
+        foreach ($extraHeaders as $hn => $hv) {
+            $hn = preg_replace('/[^A-Za-z0-9\-]/', '', (string)$hn);
+            $hv = str_replace(["\r", "\n"], '', (string)$hv);
+            if ($hn !== '' && $hv !== '') $extra .= "$hn: $hv" . $eol;
+        }
+
         $headers = 'From: ' . mime_name($fromName) . " <$from>" . $eol
                  . "To: <$to>" . $eol
                  . 'Subject: ' . mime_encode($subject) . $eol
@@ -93,7 +106,8 @@ function send_mail(string $to, string $subject, string $html): bool
                  . 'Message-ID: ' . $msgId . $eol
                  . 'MIME-Version: 1.0' . $eol
                  . 'Content-Type: multipart/alternative; boundary="' . $boundary . '"' . $eol
-                 . 'Reply-To: ' . $replyTo . $eol . $eol;
+                 . 'Reply-To: ' . $replyTo . $eol
+                 . $extra . $eol;
 
         // A plain-text alternative alongside the HTML. HTML-only mail scores
         // worse with spam filters, and some clients show nothing without it.

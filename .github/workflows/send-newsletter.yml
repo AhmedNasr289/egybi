@@ -1,0 +1,73 @@
+name: Send The Papyrus
+
+# Manual trigger only. Choose an issue slug (a file in
+# site/newsletter/issues/<slug>.json) and a mode:
+#   dry  — preview: prints the confirmed-recipient count, sends NOTHING (default)
+#   live — sends, looping one throttled batch at a time until every confirmed,
+#          not-unsubscribed subscriber has had exactly one copy (idempotent).
+#
+# Requires one repository secret: ANALYTICS_KEY (the same key as /api/insights.php).
+# The endpoint refuses to run without it, and only ever mails CONFIRMED addresses.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Issue slug (filename in site/newsletter/issues, without .json)"
+        required: true
+        type: string
+      mode:
+        description: "dry = preview only · live = actually send"
+        required: true
+        type: choice
+        default: dry
+        options: [dry, live]
+
+concurrency:
+  group: papyrus-send
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preview or send the issue
+        env:
+          KEY: ${{ secrets.ANALYTICS_KEY }}
+          SLUG: ${{ inputs.slug }}
+          MODE: ${{ inputs.mode }}
+          BASE: "https://egybi.com/api/send_issue.php"
+        run: |
+          set -euo pipefail
+          if [ -z "${KEY}" ]; then
+            echo "::error::ANALYTICS_KEY secret is not set — cannot send."
+            exit 1
+          fi
+
+          if [ "${MODE}" = "dry" ]; then
+            echo "Dry run (no mail sent) for issue: ${SLUG}"
+            resp=$(curl -sS --get "${BASE}" \
+              --data-urlencode "key=${KEY}" \
+              --data-urlencode "slug=${SLUG}" \
+              --data-urlencode "dry=1")
+            echo "${resp}"
+            echo "${resp}" | grep -q '"ok":true' || { echo "::error::preview failed"; exit 1; }
+            exit 0
+          fi
+
+          echo "LIVE send for issue: ${SLUG}"
+          for i in $(seq 1 200); do
+            resp=$(curl -sS --get "${BASE}" \
+              --data-urlencode "key=${KEY}" \
+              --data-urlencode "slug=${SLUG}" \
+              --data-urlencode "dry=0" \
+              --data-urlencode "batch=40")
+            echo "batch ${i}: ${resp}"
+            echo "${resp}" | grep -q '"ok":true' || { echo "::error::send batch failed"; exit 1; }
+            remaining=$(echo "${resp}" | sed -n 's/.*"remaining":\([0-9]*\).*/\1/p')
+            if [ "${remaining:-0}" = "0" ]; then
+              echo "Done — every confirmed subscriber has been sent this issue."
+              break
+            fi
+            sleep 20   # be gentle on the shared-host hourly send cap
+          done
