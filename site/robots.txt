@@ -7,5 +7,3 @@ Disallow: /api/
 Disallow: /auth/
 
 Sitemap: https://egybi.com/sitemap.xml
-
-<!-- deploy-persistence probe: 2026-07-20T01:15:47Z -->
