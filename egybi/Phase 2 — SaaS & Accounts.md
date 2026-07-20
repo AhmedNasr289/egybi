@@ -201,3 +201,20 @@ Docs corrected: `GO-LIVE.md` Step 4 (which previously stated a redeploy would "n
 Health now prints `put_config_here` and `deployed_folder` with absolute paths whenever something is misconfigured — "above public_html" is ambiguous prose, an absolute path is not.
 
 **Remaining, optional:** SMTP (`mail: false`) and Google (`google: false`) are still unset in `egybi-config.php`. Both are inert and safe until filled in.
+
+
+### SMTP live — 2026-07-20
+
+`egybi-config.php` now carries the Hostinger SMTP settings; health reports `mail: true` and `auth.php?action=mail-test` returns `ok: true` with no error. Verification and password-reset mail is really sent rather than logged.
+
+**Deliverability, checked rather than assumed.** DNS was already correct — SPF (`v=spf1 include:_spf.mail.hostinger.com ~all`), DMARC (`p=none`) and MX to `mx1/mx2.hostinger.com` are all present. **DKIM was NOT found on eight common selectors** (`hostingermail1/2`, `default`, `mail`, `dkim`, `hostinger`, `x`, `smtp`) — worth enabling in hPanel → Emails → DNS/Configuration, because Gmail and Outlook increasingly require it and its absence pushes mail toward spam.
+
+**Mailer changes that decide inbox vs spam** (setting credentials only makes mail *send*): added `Date:` and `Message-ID:` headers — both were missing, and their absence is a strong spam signal some providers act on outright; switched to `multipart/alternative` with a generated `text/plain` part, since HTML-only scores worse and shows nothing in clients that refuse HTML; `Reply-To` now follows `smtp_user` instead of being hardcoded.
+
+**Failures are now diagnosable.** Previously a failed send logged the single word `auth` — a wrong mailbox password looked identical to a blocked port. Each SMTP step now records the server's own reply via `mail_last_error()`, and failures go to `error_log` as well as `_private/mail.log` (that file is inside `public_html`, so a deploy erases it — it must never be the only copy).
+
+**`auth.php?action=mail-test`** proves SMTP without waiting for a user to report a missing link. Gated two ways so it cannot become an open relay: it requires the analytics key, and **the recipient is not read from the request** — it always sends to the configured `smtp_user`. Verified 403 with no key and with a wrong key.
+
+**Full flow verified live:** signup (verification mail triggered) → login → solve + sync (30 XP, 2 solved) → password-reset request. Security spot-checks held: wrong password gives the generic reply, a reset for an unknown address gives an identical reply (no enumeration), progress without CSRF returns 403, an invalid verify token is rejected. Test account removed afterwards.
+
+**Remaining optional:** `google_client_id` (Google button stays hidden until set) and DKIM.
