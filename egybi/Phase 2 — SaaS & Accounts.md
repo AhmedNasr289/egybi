@@ -119,3 +119,40 @@ Because the styling and the markup now live in different files, **cache-bust bot
 After #2, note that "the page cannot scroll sideways" no longer proves "nothing overflows" — `overflow-x: clip` hides the symptom.
 
 Related: [[Frontend & Design System]] - [[Brand & Creative Identity]] - [[Changelog]]
+
+
+---
+
+## ⚠ CRITICAL: every deploy destroys `_private/` (found 2026-07-20)
+
+**Hostinger's git deployment replaces `public_html` with the repository contents. `_private/` is gitignored, so it is not in the repository, so every single `git push` deletes it.** `lib.php` then self-initialises a fresh empty database on the next request, which is exactly why this went unnoticed — nothing ever errors, the accounts simply cease to exist.
+
+**Proven, not inferred.** A one-line change to `robots.txt` was deployed with nothing else touched. The SQLite file's creation time moved from `01:14:12` to `01:16:06`, and the rebuilt file contained zero users. Two calls five seconds apart with no deploy in between returned an identical creation time, so the file survives requests fine — it is specifically the deploy that destroys it.
+
+### What is inside the blast radius
+
+| Path | What is lost on every push |
+|---|---|
+| `site/auth/_private/auth.sqlite` | every account, XP total, streak and solved-challenge row |
+| `site/api/_private/newsletter.jsonl` | every Papyrus subscriber's email address |
+| `site/auth/_private/config.php` | MySQL credentials, SMTP password, Google client id |
+
+The third row is the one that bites hardest, because `DEPLOY.md` and the Google Sign-In setup both instruct you to create `config.php` in exactly that folder. It would be deleted by the next push, and the site would silently fall back to SQLite with email sending and Google sign-in switched off — no error, just quietly degraded.
+
+This also explains a detail that looked innocent at the time: the live diagnostics reported `driver: sqlite` even though `config.sample.php` defaults to `mysql`. There was no `config.php` on the server, because there cannot be one.
+
+### The fix (needs a decision, not applied yet)
+
+**Recommended: move the state off the filesystem entirely.**
+
+1. **Auth data to MySQL.** `schema_auth_mysql.sql` already exists and the code is portable across both engines. MySQL data lives outside `public_html`, so a deploy cannot touch it. Hostinger's plan includes 150 databases.
+2. **Credentials to hPanel environment variables, not `config.php`.** `auth_cfg()` already reads env vars as a fallback — `AUTH_DB_DRIVER`, `AUTH_DB_NAME`, `AUTH_DB_USER`, `AUTH_DB_PASS`, `APP_SECRET`, `SMTP_*`, `GOOGLE_CLIENT_ID`. Environment variables survive deploys and never enter the repository, which solves the chicken-and-egg problem of a config file that holds the credentials but is itself deleted.
+3. **Newsletter subscribers** need the same treatment — either a MySQL table or a path outside `public_html`. `newsletter.php` currently hardcodes `__DIR__ . '/_private'`, so this one needs a code change rather than configuration.
+
+**Alternative if staying on SQLite:** point `AUTH_SQLITE_PATH` at a directory *above* `public_html` (e.g. `/home/uXXXXXXXX/private/auth.sqlite`). The deploy only replaces `public_html`, so anything above it survives. Cheaper to do, but leaves the newsletter file needing the same treatment.
+
+**Do not** commit `config.php` to make it survive. That puts the database password, the SMTP password and `APP_SECRET` into git history permanently.
+
+### How much real data has been lost
+
+Probably little, because the site has had almost no traffic yet and no `config.php` was ever created — but any Papyrus subscriber who signed up before 2026-07-20 is gone, and so is any account created before then. Worth knowing before launch traffic arrives, which is precisely when it would have started mattering.
