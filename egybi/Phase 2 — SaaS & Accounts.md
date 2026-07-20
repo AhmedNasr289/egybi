@@ -70,3 +70,43 @@ Payments run through **Paddle or LemonSqueezy** (merchant-of-record; pays out to
 - Session store in MySQL (chosen) vs PHP native sessions — chose a DB session table for cross-instance clarity and easy invalidation-on-reset.
 - OAuth (Google/GitHub) sign-in — deferred; email+password first.
 - When to introduce the first paid tier — after an audience exists (see [[Business Model & Pricing]]); the plumbing is ready now.
+
+
+---
+
+## The auth dialog & Google Sign-In (2026-07-20)
+
+### The dialog — "The Threshold"
+Rebuilt from a plain centred card into two zones: a `--kemet` rail carrying the ankh, the promise and one proof number, and a `--papyrus-2` form panel. Gold and the hieroglyphs sit on the dark surface they were drawn for; typed input stays on the light surface where it is most legible. At 720px the rail becomes a header strip and `.auth-rail-sub` is dropped. Two other directions were considered and rejected: a papyrus "sealed letter" (reads as marketing, wrong for a password form) and a dark console (input contrast fights the gold).
+
+One shell now serves **four** views — sign in, create account, forgot, set-new-password — with a crossfade and an animated height change, so switching never feels like separate screens. `openResetModal()` is just the shell opened on the fourth view.
+
+Built in: focus trap with restore to the triggering element, Escape + backdrop close, `role="dialog"` + `aria-modal` + `aria-labelledby`, a `role="alert"` region for errors and a separate `role="status"` for successes, per-field `aria-invalid`/`aria-describedby`, blur-time validation that clears as soon as the input becomes valid, password show/hide with `aria-pressed`, a busy state that hard-blocks double submission, and every animation gated on `prefers-reduced-motion`.
+
+**The strength meter is deliberately honest.** Length is weighted far above character variety, because that is what actually buys entropy; obvious patterns are forced to Weak however long they are; and it only appears on the two views where a NEW password is being chosen — judging a password on the sign-in view, where it cannot be changed, is noise. `password1` gives Weak, `P@ss1!xy` gives Fair, a three-word passphrase gives Strong.
+
+### Google Sign-In
+`site/auth/google.php` + `google_verify.php`, using Google Identity Services. **Config-gated:** with no `google_client_id` the button never renders and both endpoints return 501. There is no client *secret* in this flow, so there is none to leak.
+
+Verification, all fail-closed:
+- **RS256 only** — accepting `none` or the HS* family is the classic algorithm-confusion bypass.
+- Signature checked against Google's JWKS matched by `kid`, cached 6h in `_private/google_jwks.json`, with one forced refresh on a kid miss so key rotation self-heals.
+- `iss`, `aud` (must be our client id, otherwise a token minted for a different Google app would be accepted), `exp`, `iat` with 60s skew.
+- A single-use **nonce** issued by `?action=nonce`, consumed before verification, blocking replay inside the token lifetime.
+- If the local RSA path cannot run at all, it falls back to Google's `tokeninfo` endpoint — authoritative, not a downgrade — and every claim is re-checked against that response.
+
+**Account-linking policy (the decision worth remembering):** a Google sign-in for an email that already has a password account is linked **only when Google asserts `email_verified: true`**. Refusing outright would strand someone who legitimately owns both. Linking on an *unverified* claim would let anyone who registered a Google account carrying someone else's address walk straight into that account — a full takeover. A verified claim is exactly the proof our own emailed link provides, so accepting it is consistent rather than a shortcut. Unverified gives 409 and "sign in with your password".
+
+`google_sub` (not email) is the link key, since `sub` is immutable and emails change. Added by an additive migration that runs on MySQL and SQLite alike. Google-only accounts store a **non-hash sentinel** in `pass_hash` (`PASS_NONE`), so they can never be reached by password; login rejects it explicitly but still returns the generic "wrong email or password", because naming the reason would leak that the address is registered. Those users can adopt a password through the ordinary reset flow.
+
+Sessions are created with the same shape as password login, so XP, streaks, rank and the solved set carry through a Google signup unchanged — verified end-to-end: a signup with 2 locally-solved challenges arrived as 20 XP / streak 1 / Apprentice Scribe at 20%.
+
+### Four bugs found while verifying — worth not repeating
+1. **`addEventListener('click', openModal)` passes the click Event as the first argument.** It matched no known view, fell through the if/else chain, and a button labelled *Sign in* opened *"Choose a new password"*. The previous modal had a quieter version of the same bug (`mode` became an Event, so a sign-in submitted as a signup). `openModal` now validates its argument against the known view set.
+2. **`overflow: hidden` is not an axis-safe scroll lock.** The dialog measured 403px inside a 360px phone with both edges clipped. The cause was not the dialog — it was the overlay, sized 435px despite `position:fixed`, because the scroll lock's `body.style.overflow='hidden'` clobbered the `overflow-x: clip` that egybi.css sets. Body became a horizontal scroll container sized to its content, and a fixed child took its size from that. Lock only `overflow-y`.
+3. **`[hidden]` loses to an author `display`.** With Google off, the slot and its "OR" divider still rendered — an empty gap and a divider dividing nothing — because both declare `display:flex`, which beats the UA `[hidden]{display:none}`. DOM assertions passed (`element.hidden === true`) and only the screenshot caught it. Every toggled element now carries an explicit `[hidden]` guard.
+4. **`min-width:auto` on flex/grid items** refuses to shrink below content min-content — fixed with `min-width:0` and `minmax(0,1fr)`.
+
+After #2, note that "the page cannot scroll sideways" no longer proves "nothing overflows" — `overflow-x: clip` hides the symptom.
+
+Related: [[Frontend & Design System]] - [[Brand & Creative Identity]] - [[Changelog]]
