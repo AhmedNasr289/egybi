@@ -28,6 +28,7 @@ The knowledge base and plan for **EgyBI** — a gamified skills-practice platfor
 - [[Backend & Knowledge Base]] — the 40-table KB + PHP/MySQL API (`../backend/`); deploy guide at `../backend/DEPLOY.md`
 - [[Challenge Engine & Data Pipeline]] — the auto-graded SQL problem set + the World Bank refresh pipeline
 - [[Product Format & Architecture]] — in-browser sandbox strategy, execution security, gamification mechanics
+- [[Security Posture & Audit Log]] — the 2026-07-20 review: what was fixed, what was already right, and which reported findings were wrong
 
 ## ⚖️ Rules & sources
 - [[IP & Content Rules]] — the employer-data boundary + the book-copyright boundary
