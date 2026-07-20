@@ -99,7 +99,7 @@
       });
     } else {
       slot.innerHTML = '<button class="acct-btn signin" id="signinBtn">Sign in</button>';
-      document.getElementById('signinBtn').addEventListener('click', openModal);
+      document.getElementById('signinBtn').addEventListener('click', function () { openModal('in'); });
     }
   }
 
@@ -180,9 +180,15 @@
 
   var lastTrigger = null;   // restore focus here when the dialog closes
 
+  var VIEWS = { in: 1, up: 1, forgot: 1, newpw: 1 };
   function openModal(view, presetNote) {
+    // openModal is wired straight to click handlers in places, which would pass
+    // the click Event in as `view` and fall through to the last branch — landing
+    // the user on "choose a new password" from a Sign in button. Anything that
+    // is not a known view name is treated as "no view given".
+    if (typeof view !== 'string' || !VIEWS[view]) view = 'in';
     var existing = document.getElementById('authModal');
-    if (existing) { existing.__setView(view || 'in'); return; }
+    if (existing) { existing.__setView(view); return; }
     lastTrigger = document.activeElement;
 
     var wrap = document.createElement('div');
