@@ -10,35 +10,67 @@ Egyptian history and economics — not `employees` and `orders` toy tables.*
 
 ---
 
-## 1 · LinkedIn (primary channel — post this first)
+## 1 · LinkedIn — THE POST TO PUBLISH (rewritten 2026-07-20)
 
-> Every SQL tutorial I ever did made me query the same fake `employees` table.
+Every figure below was re-verified against the live database on 2026-07-20 before
+this was written. If any of it changes, change this too — the product's whole
+claim is that the numbers are real, so the marketing cannot be the one place that
+slips.
+
+---
+
+> Thirty-three ancient Egyptian obelisks survive.
 >
-> So I built the opposite.
+> Only fifteen are still in Egypt. Nine are in Italy.
 >
-> EgyBI is a SQL practice platform where every dataset is **real, cited Egyptian
-> data** — pharaoh reigns and dynasties, Suez Canal traffic, GDP and inflation
-> series, tourism arrivals, governorate demographics, even daily retail food
-> prices from the Cabinet's own price portal.
+> The tallest one standing anywhere is in Rome, not Luxor. And the largest ever
+> cut never rose at all — it cracked in the Aswan quarry and has been lying
+> there ever since, nearly 42 metres of granite.
 >
-> 123 auto-graded challenges across 15 sectors — 41 easy, 53 medium, 29 hard. It runs
-> entirely in your browser — your SQL never touches a server — so you can start
-> solving in about 4 seconds with no signup.
+> I learned that by running a SQL query, not by reading an article. That is the
+> entire idea behind the thing I've been building.
 >
-> There's XP, daily streaks, and a rank ladder borrowed from the scribes who did
-> Egypt's original data work: Apprentice Scribe → Cord-Stretcher → Master Scribe
-> → Keeper of the House of Life → Vizier of Data.
+> Every SQL course I ever took handed me the same invented `employees` table. So
+> I built the opposite: a practice platform where every dataset is real, cited
+> Egyptian data. Pharaoh reigns and dynasties. Suez Canal traffic. GDP and
+> inflation series. Tourism arrivals. Governorate demographics. Today's retail
+> food prices, pulled daily from the Egyptian Cabinet's own price portal.
+>
+> 123 auto-graded challenges across 15 sectors. 61 tables, 838 rows, every row
+> carrying its source. And where the sources genuinely disagree — Egypt's
+> population is 116 million or 107 million depending on who did the counting —
+> both are kept and the disagreement is flagged, rather than quietly picking the
+> tidier number.
+>
+> It runs entirely in your browser. Your query never touches a server, so you're
+> solving roughly four seconds after landing. No signup.
 >
 > It's free. I built it solo, nights and weekends.
 >
-> If you're learning SQL, teaching it, or hiring for data roles — I'd genuinely
-> value your feedback on the challenge quality.
+> If you teach SQL, are learning it, or hire for data roles — I'd genuinely
+> value your read on the difficulty curve. I suspect my window-function set is
+> too easy.
 >
-> 👉 egybi.com
+> egybi.com
 
-*Notes: post Tue–Thu, ~9–11am Cairo. Put the link in the FIRST comment if you
-want more reach (LinkedIn suppresses external links), then edit it into the post
-after an hour. Reply to every comment in the first 2 hours.*
+---
+
+**Why it opens on the obelisks.** A launch post that opens by describing a
+product is asking for attention. One that opens with a fact you did not know is
+giving something first — and this particular fact *demonstrates* the premise
+instead of asserting it. The product claim is "real data you can query yourself";
+the hook is a real answer that came out of exactly that query. Nothing else in
+the post has to work as hard after that.
+
+**Posting notes**
+- Tue–Thu, roughly 9–11am Cairo.
+- LinkedIn suppresses posts with external links. Put `egybi.com` in the FIRST
+  comment, then edit it into the post about an hour later once reach is set.
+- Answer every reply for the first two hours. This matters more than the copy.
+- The closing question is not decoration — it is what earns comments, and
+  comments earn reach. Ask it sincerely and reply to the answers properly.
+- No emojis, no hashtags. The audience is senior data people; both read as
+  padding to them.
 
 ---
 
