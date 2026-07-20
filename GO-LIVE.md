@@ -36,8 +36,9 @@ plain Git deploy to `public_html` "just works."
 hPanel → **Databases → MySQL Databases**. Create one DB + user (or two — one for
 the knowledge base, one for auth; reusing a single DB is fine).
 Then hPanel → **phpMyAdmin** → select the DB → **Import**:
-1. **`backend/sql/schema_mysql.sql`** — the 58 KB tables. Then the seeds in order:
-   `seed.sql`, `seed_v2.sql` … through `seed_v8.sql`.
+1. **`backend/sql/schema_mysql.sql`** — the 61 KB tables. Then the seeds in order:
+   `seed.sql`, `seed_v2.sql` … through `seed_v9.sql` (don't stop at v8 — `seed_v9`
+   fills the obelisks/temples/discoveries/royal-women tables the homepage reads).
 2. **`site/auth/schema_auth_mysql.sql`** — the accounts tables. ⚠️ Import the
    **`_mysql`** one, *not* `schema_auth.sql` (that one is SQLite-only and will
    fail on MySQL).

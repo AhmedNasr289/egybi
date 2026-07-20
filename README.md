@@ -28,7 +28,7 @@ perankh/
 │   └── assets/
 │       ├── egybi.css         THE design system (one file, all pages)
 │       ├── egybi.js          Shared behavior (nav, animations)
-│       ├── challenges.js     97 auto-graded SQL challenges (8 topics) + 25-table practice sandbox
+│       ├── challenges.js     123 auto-graded SQL challenges (8 topics) + 25-table practice sandbox
 │       ├── blog-posts.js     "The Papyrus" — non-technical Egypt data-stories
 │       ├── newsletter.js     The Papyrus signup handler (validation, honeypot, graceful)
 │       ├── community.js      Community ideas/comments handler (moderated, honeypot)
@@ -37,7 +37,7 @@ perankh/
 ├── backend/               ← the BACKEND (PHP + MySQL, deploys to egybi.com/api)
 │   ├── DEPLOY.md             Step-by-step Hostinger deployment guide
 │   ├── sql/
-│   │   ├── schema_mysql.sql  Table definitions for Hostinger MySQL (58 tables)
+│   │   ├── schema_mysql.sql  Table definitions for Hostinger MySQL (61 tables)
 │   │   ├── schema_sqlite.sql Mirror for local testing
 │   │   ├── seed.sql          Core cited data
 │   │   ├── seed_v2.sql       Enrichment: demographics, energy, culture (after seed.sql)
@@ -46,7 +46,8 @@ perankh/
 │   │   ├── seed_v5.sql       Enrichment: transport, education, energy/heritage depth (after v4)
 │   │   ├── seed_v6.sql       Enrichment: telecom, trade partners, social media (after v5)
 │   │   ├── seed_v7.sql       Enrichment: agriculture/health/economy/climate/demography + map layers
-│   │   └── seed_v8.sql       Enrichment (2026): businessmen, cinema economics, military/arms, football/handball, logistics, mega-project status
+│   │   ├── seed_v8.sql       Enrichment (2026): businessmen, cinema economics, military/arms, football/handball, logistics, mega-project status
+│   │   └── seed_v9.sql       Enrichment: history & heritage depth (surviving obelisks, archaeological discoveries, temples by deity, royal women)
 │   ├── pipeline/             Data pipelines: fetch_worldbank.py + build_egypt_map.py + fetch_prices.py (daily prices)
 │   ├── api/                  Framework-free PHP read-only API
 │   │   ├── index.php         Front controller / router
@@ -64,8 +65,8 @@ perankh/
 
 ## 🚀 Current status (Phase 0 — pre-launch)
 
-- **Frontend:** 9-page site, live and verified (now including a **Daily Prices** page — real Egyptian wholesale produce prices, refreshed daily from a static JSON feed, with per-item trend charts and every figure source-dated). Disciplined color identity, real BI dashboards, a **BI-grade interactive Egypt choropleth map** (27 governorates, 5 metrics — population, density, urban %, growth, area — Leaflet, offline), and a **HackerRank-style SQL challenge workbench** (97 auto-graded challenges on a 25-table cited sandbox, organized by 8 SQL topics as a beginner→advanced study path, running in-browser via sql.js). Adds a data-driven **Blog**, a **Community** page (contribute/accuracy rules, public roadmap, automations), *The Papyrus* **newsletter** signup (validated, honeypot-guarded, injection-safe write endpoint + no-server fallback), a **Privacy** policy, and **Google AdSense** plumbing (config-gated, inert until a real publisher ID is set). Static — ready to upload to Hostinger.
-- **Backend:** a **58-table (837-row)** cited Egypt knowledge base spanning 18+ sectors + a read-only PHP/MySQL API; isolated write-side endpoints for the newsletter and moderated community board; and a **Phase-2 accounts/SaaS layer** (`site/auth/`) — Argon2id auth, sessions, CSRF, per-account progress sync, and paywall-ready gating, all **free at launch** (see `egybi/Phase 2 — SaaS & Accounts.md`). Built and tested end-to-end locally (`backend/test/build_test_db.py`, zero FK violations).
+- **Frontend:** 9-page site, live and verified (now including a **Daily Prices** page — real Egyptian wholesale produce prices, refreshed daily from a static JSON feed, with per-item trend charts and every figure source-dated). Disciplined color identity, real BI dashboards, a **BI-grade interactive Egypt choropleth map** (27 governorates, 5 metrics — population, density, urban %, growth, area — Leaflet, offline), and a **HackerRank-style SQL challenge workbench** (123 auto-graded challenges on a 25-table cited sandbox, organized by 8 SQL topics as a beginner→advanced study path, running in-browser via sql.js). Adds a data-driven **Blog**, a **Community** page (contribute/accuracy rules, public roadmap, automations), *The Papyrus* **newsletter** signup (validated, honeypot-guarded, injection-safe write endpoint + no-server fallback), a **Privacy** policy, and **Google AdSense** plumbing (config-gated, inert until a real publisher ID is set). Static — ready to upload to Hostinger.
+- **Backend:** a **61-table (838-row)** cited Egypt knowledge base spanning 18+ sectors + a read-only PHP/MySQL API; isolated write-side endpoints for the newsletter and moderated community board; and a **Phase-2 accounts/SaaS layer** (`site/auth/`) — Argon2id auth, sessions, CSRF, per-account progress sync, and paywall-ready gating, all **free at launch** (see `egybi/Phase 2 — SaaS & Accounts.md`). Built and tested end-to-end locally (`backend/test/build_test_db.py`, zero FK violations).
 - **Data pipeline:** an automated World Bank refresh (`backend/pipeline/`) with dry-run/diff and offline modes — keeps the numeric time series current without hand-editing.
 - **Blocking next action:** none technical — the site can deploy now. Complete the Hostinger plan **Setup**, connect egybi.com, and follow `backend/DEPLOY.md`.
 
