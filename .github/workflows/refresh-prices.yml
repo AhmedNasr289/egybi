@@ -42,7 +42,16 @@ jobs:
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add site/data/prices-today.json site/data/prices-history.json
             git commit -m "Automated daily price refresh — IDSC [skip ci]"
-            git push
+            # main can move while this job runs (a manual push, or a sibling
+            # workflow). Without a rebase the push is rejected as non-fast-forward
+            # and the refresh silently stops happening. Retry a few times.
+            for attempt in 1 2 3; do
+              if git pull --rebase --autostash origin main && git push; then
+                echo "pushed on attempt $attempt"; exit 0
+              fi
+              echo "push attempt $attempt failed; retrying in 5s"; sleep 5
+            done
+            echo "::error::could not push after 3 attempts"; exit 1
           else
             echo "No price changes today (or the API guardrail kept last-good data)."
           fi
