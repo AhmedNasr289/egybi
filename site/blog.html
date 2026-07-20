@@ -101,7 +101,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="assets/egybi.js"></script>
-<script src="assets/glyphs.js"></script>
+<script src="assets/glyphs.js?v=2"></script>
 <script src="assets/blog-posts.js"></script>
 <script>
 (function(){
@@ -122,10 +122,12 @@
     var list = posts.filter(function(p){ return filter==='All' || p.tag===filter; });
     var el = document.getElementById('postList');
     if(!list.length){ el.innerHTML = '<p style="color:var(--ink-soft);">No posts under that topic yet.</p>'; return; }
+    // sign per topic, so the cards stay varied rather than repeating one glyph
+    var TAG_SIGN = {"Culture": "reed", "Economy": "scarab", "Energy": "ra", "Everyday": "scribe", "History": "scroll", "Megaprojects": "was", "People": "scribe", "Sport": "was", "Tourism": "ra"};
     el.innerHTML = list.map(function(p){
       return '<article class="post-card" data-aos="fade-up">'+
         '<div class="post-meta"><span class="post-tag">'+EGYBI.escapeHtml(p.tag)+'</span><span class="post-date">'+fmtDate(p.date)+'</span></div>'+
-        '<h3>'+EGYBI.escapeHtml(p.title)+'</h3>'+
+        '<h3><span data-glyph="'+(TAG_SIGN[p.tag]||'scroll')+'"></span> '+EGYBI.escapeHtml(p.title)+'</h3>'+
         '<p class="post-excerpt">'+p.excerpt+'</p>'+
         '<a class="read-btn" href="papyrus/'+p.id+'.html">Read the post →</a>'+
       '</article>';

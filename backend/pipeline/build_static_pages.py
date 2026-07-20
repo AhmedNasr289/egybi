@@ -98,7 +98,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 {body}
 {FOOT}
 <script src="../assets/egybi.js"></script>
-<script src="../assets/glyphs.js"></script>
+<script src="../assets/glyphs.js?v=2"></script>
 <script src="../assets/ads.js"></script>
 <script src="../assets/auth.js?v=3"></script>
 <script src="../assets/analytics.js"></script>

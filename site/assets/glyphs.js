@@ -78,6 +78,31 @@
 
   window.EGYBI_PAINT_GLYPHS = paint;
 
-  if (document.readyState !== 'loading') paint();
-  else document.addEventListener('DOMContentLoaded', function () { paint(); });
+  // Several pages build their content after load — the challenge list, the blog
+  // cards, the price tables. A sign inside one of those templates would stay an
+  // empty span forever, because nothing called paint() a second time. Watching
+  // for new [data-glyph] nodes fixes that once for every renderer, present and
+  // future, instead of asking each one to remember. paint() skips anything
+  // already carrying data-painted, so repeating it is cheap and idempotent.
+  function watchForNewGlyphs() {
+    if (!('MutationObserver' in window)) return;
+    var queued = false;
+    new MutationObserver(function (records) {
+      if (queued) return;
+      var worth = records.some(function (r) {
+        return [].some.call(r.addedNodes, function (n) {
+          return n.nodeType === 1 &&
+                 (n.hasAttribute('data-glyph') || n.querySelector('[data-glyph]'));
+        });
+      });
+      if (!worth) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; paint(); });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+
+  function start() { paint(); watchForNewGlyphs(); }
+
+  if (document.readyState !== 'loading') start();
+  else document.addEventListener('DOMContentLoaded', start);
 })();
