@@ -220,6 +220,46 @@ case 'health': {
     ]);
 }
 
+case 'mail-test': {
+    // Prove the SMTP settings actually work, rather than discovering it from a
+    // user who never got their verification link.
+    //
+    // Two hard limits keep this from becoming an open relay:
+    //   1. It requires the analytics key — a secret only the owner has.
+    //   2. The recipient is NOT taken from the request. It always sends to the
+    //      configured mailbox (smtp_user), so this endpoint can only ever mail
+    //      the site's own operator, whatever anyone puts in the URL.
+    $key = analytics_key();
+    if ($key === '' || !hash_equals($key, (string)($_GET['key'] ?? ''))) {
+        json_out(false, ['message' => 'Forbidden.'], 403);
+    }
+    if (!rate_ok('mailtest', 6, 60)) json_out(false, ['message' => 'Too many attempts — try again later.'], 429);
+
+    $c = auth_cfg();
+    if ($c['smtp_host'] === '' || $c['smtp_user'] === '' || $c['smtp_pass'] === '') {
+        json_out(false, [
+            'configured' => false,
+            'message' => 'SMTP is not configured. Set smtp_host, smtp_user and smtp_pass in egybi-config.php.',
+        ], 400);
+    }
+
+    $to = (string)$c['smtp_user'];          // fixed recipient, never from input
+    $sent = send_mail($to, 'EgyBI SMTP test — it works',
+        mail_template('Mail is working',
+            'If you are reading this, EgyBI can send verification and password-reset email through Hostinger SMTP. Nothing else to do.',
+            'Open EgyBI', $c['app_url'] . '/'));
+
+    json_out($sent, [
+        'configured' => true,
+        'sent_to'    => $to,
+        'smtp'       => ['host' => $c['smtp_host'], 'port' => $c['smtp_port'], 'user' => $c['smtp_user'], 'from' => $c['mail_from']],
+        'error'      => $sent ? null : mail_last_error(),
+        'message'    => $sent
+            ? 'Handed to the SMTP server. Check that inbox — and check the spam folder.'
+            : 'Send failed. The `error` field has the server\'s own reply.',
+    ], $sent ? 200 : 502);
+}
+
 default:
     json_out(false, ['message' => 'Unknown action.'], 404);
 }

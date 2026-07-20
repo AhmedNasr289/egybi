@@ -11,14 +11,24 @@
 declare(strict_types=1);
 require_once __DIR__ . '/lib.php';
 
+/** The reason the last send failed, for diagnostics. Never contains the password. */
+function mail_last_error(?string $set = null): string
+{
+    static $e = '';
+    if ($set !== null) $e = $set;
+    return $e;
+}
+
 /** Send one HTML email. Returns true if handed to the SMTP server, else false. */
 function send_mail(string $to, string $subject, string $html): bool
 {
+    mail_last_error('');
     $c = auth_cfg();
     $from = $c['mail_from']; $fromName = $c['mail_from_name'];
 
     if ($c['smtp_host'] === '' || $c['smtp_user'] === '' || $c['smtp_pass'] === '') {
         // Not configured yet — log instead of sending (dev / pre-mailer).
+        mail_last_error('SMTP not configured (smtp_host / smtp_user / smtp_pass empty)');
         @file_put_contents(__DIR__ . '/_private/mail.log',
             now() . " (unsent — SMTP not configured) TO=$to SUBJ=$subject\n", FILE_APPEND | LOCK_EX);
         return false;
@@ -48,35 +58,87 @@ function send_mail(string $to, string $subject, string $html): bool
         if (!$expect($r, '220') || !@stream_socket_enable_crypto($fp, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) { fclose($fp); mail_log_fail($to, 'starttls'); return false; }
         $cmd("EHLO egybi.com"); $read();
     }
-    $cmd("AUTH LOGIN"); if (!$expect($read(), '334')) $ok = false;
-    $cmd(base64_encode($c['smtp_user'])); if (!$expect($read(), '334')) $ok = false;
-    $cmd(base64_encode($c['smtp_pass'])); if (!$expect($read(), '235')) $ok = false; // 235 = auth success
+    // Each step records the server's actual reply. Previously a failure logged
+    // only the word "auth" or "send", which tells you nothing about WHY — and a
+    // wrong mailbox password looks identical to a blocked port.
+    $step = function (string $command, string $want, string $label) use ($cmd, $read, $expect, &$ok) {
+        if (!$ok) return;
+        $cmd($command);
+        $r = $read();
+        if (!$expect($r, $want)) {
+            $ok = false;
+            mail_last_error($label . ': ' . trim(substr($r, 0, 180)));
+        }
+    };
+
+    $step('AUTH LOGIN', '334', 'AUTH LOGIN');
+    $step(base64_encode($c['smtp_user']), '334', 'username rejected');
+    $step(base64_encode($c['smtp_pass']), '235', 'password rejected');   // 235 = auth success
     if (!$ok) { $cmd('QUIT'); fclose($fp); mail_log_fail($to, 'auth'); return false; }
 
-    $cmd("MAIL FROM:<$from>"); if (!$expect($read(), '250')) $ok = false;
-    $cmd("RCPT TO:<$to>"); if (!$expect($read(), '250')) $ok = false;
-    $cmd("DATA"); if (!$expect($read(), '354')) $ok = false;
+    $step("MAIL FROM:<$from>", '250', 'MAIL FROM rejected');
+    $step("RCPT TO:<$to>", '250', 'RCPT TO rejected');
+    $step('DATA', '354', 'DATA rejected');
     if ($ok) {
+        // Date and Message-ID are not optional in practice: their absence is a
+        // strong spam signal, and several providers will junk mail without them.
+        $msgId = '<' . bin2hex(random_bytes(12)) . '@' . (parse_url($c['app_url'], PHP_URL_HOST) ?: 'egybi.com') . '>';
+        $boundary = 'egybi-' . bin2hex(random_bytes(8));
+        $replyTo = $c['smtp_user'] !== '' ? $c['smtp_user'] : $from;
+
         $headers = 'From: ' . mime_name($fromName) . " <$from>" . $eol
                  . "To: <$to>" . $eol
                  . 'Subject: ' . mime_encode($subject) . $eol
+                 . 'Date: ' . gmdate('D, d M Y H:i:s') . ' +0000' . $eol
+                 . 'Message-ID: ' . $msgId . $eol
                  . 'MIME-Version: 1.0' . $eol
-                 . 'Content-Type: text/html; charset=utf-8' . $eol
-                 . 'Reply-To: hello@egybi.com' . $eol . $eol;
-        // dot-stuff any line starting with a period
-        $body = preg_replace('/^\./m', '..', $html);
-        $cmd($headers . $body . $eol . '.'); if (!$expect($read(), '250')) $ok = false;
+                 . 'Content-Type: multipart/alternative; boundary="' . $boundary . '"' . $eol
+                 . 'Reply-To: ' . $replyTo . $eol . $eol;
+
+        // A plain-text alternative alongside the HTML. HTML-only mail scores
+        // worse with spam filters, and some clients show nothing without it.
+        $text = html_to_text($html);
+        $body = '--' . $boundary . $eol
+              . 'Content-Type: text/plain; charset=utf-8' . $eol . $eol
+              . $text . $eol . $eol
+              . '--' . $boundary . $eol
+              . 'Content-Type: text/html; charset=utf-8' . $eol . $eol
+              . $html . $eol . $eol
+              . '--' . $boundary . '--';
+
+        // dot-stuff any line starting with a period (SMTP transparency)
+        $body = preg_replace('/^\./m', '..', $body);
+        $cmd($headers . $body . $eol . '.');
+        $r = $read();
+        if (!$expect($r, '250')) { $ok = false; mail_last_error('message rejected: ' . trim(substr($r, 0, 180))); }
     }
     $cmd('QUIT'); fclose($fp);
     if (!$ok) mail_log_fail($to, 'send');
     return $ok;
 }
 
+/** A readable plain-text version of the HTML body, links kept inline. */
+function html_to_text(string $html): string
+{
+    $s = preg_replace('~<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>~is', '$2: $1', $html);
+    $s = preg_replace('~<(br|/p|/div|/h[1-6])[^>]*>~i', "\n", $s);
+    $s = html_entity_decode(strip_tags($s), ENT_QUOTES, 'UTF-8');
+    $s = preg_replace('/[ \t]+/', ' ', $s);
+    $s = preg_replace('/\n\s*\n\s*\n+/', "\n\n", $s);
+    return trim($s);
+}
+
 function mime_encode(string $s): string { return '=?UTF-8?B?' . base64_encode($s) . '?='; }
 function mime_name(string $s): string { return preg_match('/[^\x20-\x7E]/', $s) ? mime_encode($s) : $s; }
 function mail_log_fail(string $to, string $stage): void
 {
-    @file_put_contents(__DIR__ . '/_private/mail.log', now() . " SEND-FAIL[$stage] TO=$to\n", FILE_APPEND | LOCK_EX);
+    $why = mail_last_error();
+    // error_log as well as the file: _private/mail.log lives inside public_html
+    // and is therefore erased by every deploy, so it is the one place a failure
+    // record must NOT be the only copy.
+    error_log("[EgyBI] mail send failed [$stage] to=$to — $why");
+    @file_put_contents(__DIR__ . '/_private/mail.log',
+        now() . " SEND-FAIL[$stage] TO=$to WHY=$why\n", FILE_APPEND | LOCK_EX);
 }
 
 /** Build a branded HTML email body around a call-to-action link. */
