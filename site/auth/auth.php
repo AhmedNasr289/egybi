@@ -248,7 +248,10 @@ case 'health': {
         $cfState = 'durable — config is above the deployed folder and survives deploys';
     }
     $counts = [];
-    foreach (['users', 'user_progress', 'sessions', 'newsletter_subscribers'] as $t) {
+    // community_notes and hits included so every durable store is observable
+    // from one place. Their absence is why a disappearance in community_notes
+    // could only be noticed by accident.
+    foreach (['users', 'user_progress', 'sessions', 'newsletter_subscribers', 'community_notes', 'hits'] as $t) {
         try { $counts[$t] = (int)$db->query("SELECT COUNT(*) AS n FROM $t")->fetch()['n']; }
         catch (Throwable $e) { $counts[$t] = null; }   // table not created yet
     }
