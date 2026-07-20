@@ -181,13 +181,19 @@ case 'health': {
     // writing a throwaway script. Now there is.
     $d = storage_durability();
     // Which config was picked up, without disclosing a filesystem path.
+    // Report honestly. An earlier version called ANY config outside _private/
+    // "durable", including one sitting inside public_html — which a deploy
+    // deletes. The real test is whether it is inside the deployed tree.
     $cf = auth_config_file();
+    $hint = null;
     if ($cf === null) {
-        $cfState = 'none — using built-in defaults';
-    } elseif (strpos(str_replace('\\', '/', $cf), '/_private/') !== false) {
-        $cfState = 'ephemeral — _private/config.php, which the next deploy deletes';
+        $cfState = 'none — no egybi-config.php found; using built-in defaults';
+        $hint = dirname(deploy_root()) . '/egybi-config.php';
+    } elseif (is_inside_deploy($cf)) {
+        $cfState = 'EPHEMERAL — the config is inside the deployed folder, so the next push deletes it';
+        $hint = dirname(deploy_root()) . '/egybi-config.php';
     } else {
-        $cfState = 'durable — egybi-config.php above the deployed folder';
+        $cfState = 'durable — config is above the deployed folder and survives deploys';
     }
     $counts = [];
     foreach (['users', 'user_progress', 'sessions', 'newsletter_subscribers'] as $t) {
@@ -197,6 +203,10 @@ case 'health': {
     json_out(true, [
         'storage'  => ['driver' => $d['driver'], 'durable' => $d['durable'], 'detail' => $d['why']],
         'config'   => $cfState,
+        // Shown only while something needs fixing: the exact absolute path to
+        // create, so nobody has to guess which folder "above public_html" means.
+        'put_config_here' => $hint,
+        'deployed_folder' => $hint ? deploy_root() : null,
         'schema_errors' => schema_errors() ?: 'none',
         'counts'   => $counts,
         'google'   => google_enabled(),

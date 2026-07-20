@@ -28,6 +28,31 @@ declare(strict_types=1);
  *                                                  this is erased on each push
  *   4. environment variables, then safe SQLite defaults
  */
+/**
+ * The root of the DEPLOYED tree — the folder Hostinger replaces on every push.
+ *
+ * This file lives at <deploy-root>/site/auth/lib.php, so two levels up is the
+ * repository root as deployed (normally `public_html`). Anything at or below
+ * that path is destroyed by a deploy; anything above it survives.
+ *
+ * DOCUMENT_ROOT is deliberately not used here: the root .htaccess rewrites into
+ * `site/`, so the document root is often <deploy-root>/site — one level too deep.
+ * A config sitting in <deploy-root> would then look "outside the web root" and be
+ * called durable, when a deploy deletes it. That mistake happened.
+ */
+function deploy_root(): string
+{
+    return str_replace('\\', '/', dirname(dirname(__DIR__)));
+}
+
+/** True when $path sits inside the tree a deployment overwrites. */
+function is_inside_deploy(string $path): bool
+{
+    $p = str_replace('\\', '/', (@realpath($path) ?: $path));
+    $r = deploy_root();
+    return $p === $r || strncmp($p, $r . '/', strlen($r) + 1) === 0;
+}
+
 function auth_config_file(): ?string
 {
     static $found = false;
@@ -36,16 +61,20 @@ function auth_config_file(): ?string
     $env = getenv('AUTH_CONFIG_PATH');
     if (is_string($env) && $env !== '' && @is_file($env)) return $found = $env;
 
-    // Walk up out of the deployed tree. Six levels comfortably clears
-    // public_html/site/auth on every Hostinger layout.
+    // Walk up collecting every candidate, then PREFER one that is outside the
+    // deployed tree. Taking the first match would pick a config sitting in
+    // public_html itself — which a deploy deletes — over the durable one above.
+    $candidates = [];
     $dir = __DIR__;
     for ($i = 0; $i < 6; $i++) {
         $parent = dirname($dir);
         if ($parent === $dir) break;              // reached the filesystem root
         $dir = $parent;
         $p = $dir . '/egybi-config.php';
-        if (@is_file($p)) return $found = $p;     // @ — open_basedir may block the probe
+        if (@is_file($p)) $candidates[] = $p;     // @ — open_basedir may block the probe
     }
+    foreach ($candidates as $p) if (!is_inside_deploy($p)) return $found = $p;   // durable
+    if ($candidates) return $found = $candidates[0];                             // doomed, but usable
 
     $p = __DIR__ . '/_private/config.php';
     return $found = (@is_file($p) ? $p : null);
@@ -171,17 +200,14 @@ function storage_durability(): array
                 'why' => 'MySQL data lives outside public_html, so deployments cannot touch it.'];
     }
     $path = (string)$c['sqlite_path'];
-    $dir  = @realpath(dirname($path)) ?: dirname($path);
-    $root = @realpath($_SERVER['DOCUMENT_ROOT'] ?? '') ?: '';
-    $inWebRoot = $root !== '' && strncmp(str_replace('\\', '/', $dir) . '/', str_replace('\\', '/', $root) . '/', strlen($root) + 1) === 0;
-    if ($inWebRoot) {
+    if (is_inside_deploy(dirname($path))) {
         return ['durable' => false, 'driver' => 'sqlite',
-                'why' => 'SQLite file is inside the document root, which the deployment replaces. '
-                       . 'Every push destroys it. Set the AUTH_DB_* env vars to use MySQL, or point '
-                       . 'AUTH_SQLITE_PATH at a directory above public_html.'];
+                'why' => 'SQLite file is inside the deployed folder (' . deploy_root() . '), '
+                       . 'which every push replaces — so the database is destroyed each deploy. '
+                       . 'Use MySQL, or move sqlite_path ABOVE that folder.'];
     }
     return ['durable' => true, 'driver' => 'sqlite',
-            'why' => 'SQLite file is above the document root, so deployments leave it alone.'];
+            'why' => 'SQLite file is above the deployed folder, so deployments leave it alone.'];
 }
 
 /** Run a .sql file statement-by-statement. PDO::exec with a multi-statement
