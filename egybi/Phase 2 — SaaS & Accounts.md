@@ -176,3 +176,28 @@ Code changes: `storage_durability()` reports whether the store survives a deploy
 **Still needs Ahmed (I cannot reach hPanel):** set `AUTH_DB_DRIVER=mysql` + `AUTH_DB_NAME/USER/PASS`, `APP_SECRET`, `APP_URL`, `AUTH_SECURE_COOKIE=1`, `ANALYTICS_KEY`, and the `SMTP_*` set, in hPanel → Advanced → PHP Configuration → Environment Variables. Then reload the health URL and confirm `"durable": true`. Until that is done the data is still ephemeral — the code cannot fix that on its own, it can only stop hiding it.
 
 Docs corrected: `GO-LIVE.md` Step 4 (which previously stated a redeploy would "not touch" `_private/` — the false claim that caused this), `backend/DEPLOY.md` Step 11.3, and `config.sample.php`, which now opens with a box saying not to use it on Hostinger.
+
+
+### CONFIRMED FIXED — 2026-07-20, proven end to end
+
+`egybi-config.php` now sits at `/home/u765296196/domains/egybi.com/egybi-config.php`, beside `public_html` rather than inside it, pointing at MySQL. Health reports `driver: mysql`, `durable: true`, `schema_errors: none`.
+
+**The proof, not an assertion.** Created a real account, solved three challenges (10+20+40 = 70 XP, streak 1, Apprentice Scribe) and subscribed an address. Deployed a change and *waited for it to actually land* — then re-checked: counts identical, login still worked, XP and rank intact. Test rows removed afterwards; the database is back to empty.
+
+**Three more bugs surfaced during that hour, all of them mine:**
+
+1. **The "durable" label lied.** It only checked the path was not `_private/`, so a config sitting *inside* `public_html` was reported as durable — and was then deleted by the next push. The real test is whether the path is inside the deployed tree. `deploy_root()` is `dirname(dirname(__DIR__))`, deliberately **not** `DOCUMENT_ROOT`: the root `.htaccess` rewrites into `site/`, so the document root is one level too deep and a file in `public_html` itself would look "outside the web root". The SQLite durability check had the same flaw.
+
+2. **`auth_config_file()` took the first candidate while walking up**, which would pick the doomed `public_html` copy over a correct one above it. It now collects all candidates and prefers one outside the deployed tree.
+
+3. **A semicolon inside an inline SQL comment broke the schema.** `run_schema()` split on `;` and stripped only full-line comments, so this line —
+   `google_sub VARCHAR(64) NULL,  -- Google's immutable user id; NULL for password-only`
+   — cut the `CREATE TABLE users` in half and both halves were invalid (MariaDB error 1064). Replaced with `split_sql_statements()`, which tracks quote state, `--`/`#` line comments and `/* */` blocks. **The offending comment is deliberately left in place as a live regression test.**
+
+   Worth noting: my first guess was an InnoDB key-length problem, and I was wrong. What actually found it was making `run_schema()` *record* errors instead of swallowing them — the same lesson as the original bug. Silence was the defect both times. The prefix indexes added on that wrong guess were kept anyway, because a `VARCHAR(254)` utf8mb4 unique index genuinely does exceed the 767-byte limit on hosts using COMPACT/REDUNDANT row formats.
+
+**Also learned:** `robots.txt` is served from a standalone file at the document root, not from the repo, so it is useless as a deploy marker. Use a repo-served asset (e.g. a comment in `assets/glyphs.js`) when you need to confirm a deploy has landed.
+
+Health now prints `put_config_here` and `deployed_folder` with absolute paths whenever something is misconfigured — "above public_html" is ambiguous prose, an absolute path is not.
+
+**Remaining, optional:** SMTP (`mail: false`) and Google (`google: false`) are still unset in `egybi-config.php`. Both are inert and safe until filled in.
