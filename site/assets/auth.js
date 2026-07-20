@@ -617,6 +617,10 @@
     '.auth-sub{color:var(--ink-soft);font-size:.86rem;line-height:1.5;margin:0 0 18px}' +
     '.auth-google{margin-bottom:14px;min-height:44px;display:flex;justify-content:center}' +
     '.auth-or{display:flex;align-items:center;gap:12px;margin:0 0 16px;color:var(--ink-soft);font-size:.74rem;text-transform:uppercase;letter-spacing:.1em}' +
+    // An explicit `display` beats the UA stylesheet's [hidden]{display:none}, so
+    // without these two the Google slot and its OR divider stayed on screen —
+    // an empty gap and a divider dividing nothing — whenever Google is off.
+    '.auth-google[hidden],.auth-or[hidden]{display:none}' +
     '.auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--line-light)}' +
     '.fld{margin-bottom:14px}' +
     '.fld[hidden]{display:none}' +
