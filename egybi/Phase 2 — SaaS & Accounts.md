@@ -101,6 +101,15 @@ Verification, all fail-closed:
 
 Sessions are created with the same shape as password login, so XP, streaks, rank and the solved set carry through a Google signup unchanged — verified end-to-end: a signup with 2 locally-solved challenges arrived as 20 XP / streak 1 / Apprentice Scribe at 20%.
 
+### Where the auth styling lives (2026-07-20, corrected)
+Initially the dialog shipped with its CSS as a 126-line JS string injected at runtime from `auth.js`. That kept the component self-contained but put a whole design surface outside the design system. It now lives in **`site/assets/egybi.css`**, in a section called "accounts & the auth dialog" at the very END of the file.
+
+**Keep it last.** The injected `<style>` used to load after the `egybi.css` link and so won every equal-specificity tie; `.auth-rail-glyph` and `.glyph` are both (0,1,0), and moving the block earlier would silently shrink the rail glyph from 2.1rem to the base 1.36em.
+
+The move also removed two duplications where the injected copy was the weaker one: `.hp-field` (egybi.css already had it *with* `pointer-events:none`) and `.acct-slot` (egybi.css lacked the `position:relative` the account dropdown anchors to, so that rule was extended in place rather than duplicated).
+
+Because the styling and the markup now live in different files, **cache-bust both together** — a visitor holding new `auth.js` with a cached old `egybi.css` gets a completely unstyled dialog. Both are at `v=9`.
+
 ### Four bugs found while verifying — worth not repeating
 1. **`addEventListener('click', openModal)` passes the click Event as the first argument.** It matched no known view, fell through the if/else chain, and a button labelled *Sign in* opened *"Choose a new password"*. The previous modal had a quieter version of the same bug (`mode` became an Event, so a sign-in submitted as a signup). `openModal` now validates its argument against the known view set.
 2. **`overflow: hidden` is not an axis-safe scroll lock.** The dialog measured 403px inside a 360px phone with both edges clipped. The cause was not the dialog — it was the overlay, sized 435px despite `position:fixed`, because the scroll lock's `body.style.overflow='hidden'` clobbered the `overflow-x: clip` that egybi.css sets. Body became a horizontal scroll container sized to its content, and a fixed child took its size from that. Lock only `overflow-y`.
