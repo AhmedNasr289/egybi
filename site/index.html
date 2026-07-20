@@ -24,12 +24,26 @@
   <meta name="twitter:title" content="EgyBI — The House of Life for Data Engineers &amp; BI Developers">
   <meta name="twitter:description" content="EgyBI is a gamified, HackerRank/LeetCode-style skills-practice platform for BI, data engineering, data warehousing, and the modern data stack — every challenge built on real, cited Egyptian data.">
   <meta name="twitter:image" content="https://egybi.com/og-image.png">
+  <!-- ENTITY NOTE. Google resolves a brand name to an entity largely through
+       sameAs — the set of external profiles that assert the same identity.
+       EgyBI has none yet, which is why a search for "egybi" currently returns
+       an unrelated Cairo company called egabi rather than this site: Google has
+       no entity for the string and substitutes the nearest known one.
+       When the GitHub / LinkedIn / X / Crunchbase profiles exist, add them here
+       inside the Organization node, exactly as:
+         "sameAs":["https://github.com/...","https://www.linkedin.com/company/..."],
+       Pointing sameAs at nothing is worse than omitting it, so it is absent
+       deliberately rather than by oversight. foundingDate is included because
+       egabi was founded in 1999 — a different founding year is a small but real
+       disambiguation signal. -->
   <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"Organization","@id":"https://egybi.com/#org","name":"EgyBI",
+ "alternateName":["egybi","EgyBI.com","Egy BI"],
  "url":"https://egybi.com/","logo":"https://egybi.com/og-image.png",
- "email":"hello@egybi.com",
- "description":"A gamified platform to practice SQL, BI and data engineering on real, cited Egyptian data."},
+ "email":"hello@egybi.com","foundingDate":"2026",
+ "knowsAbout":["SQL","Business Intelligence","Data Engineering","Data Warehousing","Egyptian open data"],
+ "description":"EgyBI is a free SQL practice platform where every dataset is real, cited Egyptian data."},
 {"@type":"WebSite","@id":"https://egybi.com/#site","url":"https://egybi.com/","name":"EgyBI",
  "publisher":{"@id":"https://egybi.com/#org"},"inLanguage":"en"},
 {"@type":"LearningResource","name":"EgyBI SQL Challenges",
@@ -105,7 +119,7 @@ LIMIT 5;</textarea>
 <section class="surface-dark center">
   <div class="wrap">
     <h2 data-aos="fade-up">What you actually get.</h2>
-    <p class="lead" data-aos="fade-up">Every challenge is graded against a real SQLite database, and every row in it carries a source. This is the product, not a themed skin.</p>
+    <p class="lead" data-aos="fade-up"><strong>EgyBI</strong> is a free SQL practice platform where every dataset is real, cited Egyptian data. Every challenge is graded against a real SQLite database, and every row in it carries a source &mdash; this is the product, not a themed skin.</p>
     <div class="stat-grid" style="margin-top:40px;">
       <div class="stat" data-aos="fade-up"><div class="num" data-count="123">123</div><div class="label">Auto-graded challenges</div><div class="cap">41 easy &middot; 53 medium &middot; 29 hard</div></div>
       <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="61">61</div><div class="label">Tables of cited data</div><div class="cap">Every row carries its source</div></div>
