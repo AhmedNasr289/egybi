@@ -9,6 +9,23 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # 0) Canonical host: send www -> non-www, permanently.
+    #    Both hostnames served 200 independently, which splits search signals
+    #    and lets the same page be indexed under two URLs. rel=canonical already
+    #    hints at the right one, but a 301 settles it rather than suggesting it.
+    #
+    #    MUST be first. If it ran after rule 3 the request would already have
+    #    been rewritten into site/, and the redirect would leak that internal
+    #    path into the public URL.
+    #
+    #    %1 is the captured non-www host rather than a literal, so this keeps
+    #    working if the domain ever changes. Redirecting straight to https://
+    #    also collapses http://www -> https://non-www into ONE hop instead of a
+    #    two-step chain. The query string carries over automatically, since the
+    #    substitution contains no '?'.
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
+
     # 1) Hard-block the private folders that Git also deploys here.
     #    (Business/pricing vault + build tooling — 403, never served.)
     RewriteRule ^(egybi|backend)(/|$) - [F]
