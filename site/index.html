@@ -32,6 +32,9 @@
        When the GitHub / LinkedIn / X / Crunchbase profiles exist, add them here
        inside the Organization node, exactly as:
          "sameAs":["https://github.com/...","https://www.linkedin.com/company/..."],
+       Add one to the #founder Person node too — a personal LinkedIn profile is
+       an already-trusted entity, so linking it is one of the cheapest ways to
+       lend that trust to a brand Google has never seen before.
        Pointing sameAs at nothing is worse than omitting it, so it is absent
        deliberately rather than by oversight. foundingDate is included because
        egabi was founded in 1999 — a different founding year is a small but real
@@ -43,7 +46,11 @@
  "url":"https://egybi.com/","logo":"https://egybi.com/og-image.png",
  "email":"hello@egybi.com","foundingDate":"2026",
  "knowsAbout":["SQL","Business Intelligence","Data Engineering","Data Warehousing","Egyptian open data"],
+ "founder":{"@id":"https://egybi.com/#founder"},
  "description":"EgyBI is a free SQL practice platform where every dataset is real, cited Egyptian data."},
+{"@type":"Person","@id":"https://egybi.com/#founder","name":"Ahmed Nasr",
+ "description":"Data engineer and BI developer; sole author of EgyBI.",
+ "knowsAbout":["SQL","Business Intelligence","Data Engineering"]},
 {"@type":"WebSite","@id":"https://egybi.com/#site","url":"https://egybi.com/","name":"EgyBI",
  "publisher":{"@id":"https://egybi.com/#org"},"inLanguage":"en"},
 {"@type":"LearningResource","name":"EgyBI SQL Challenges",
