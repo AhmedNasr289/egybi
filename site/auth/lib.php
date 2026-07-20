@@ -47,7 +47,46 @@ function auth_cfg(): array
         'smtp_pass'   => $get('smtp_pass', 'SMTP_PASS', ''),
         'mail_from'   => $get('mail_from', 'MAIL_FROM', 'no-reply@egybi.com'),
         'mail_from_name' => $get('mail_from_name', 'MAIL_FROM_NAME', 'EgyBI'),
+        // Google Sign-In. Empty client id = the whole Google path stays inert:
+        // the button never renders and google.php refuses every request. Nothing
+        // to disable, nothing half-wired — same config-gate pattern as payments.
+        'google_client_id' => $get('google_client_id', 'GOOGLE_CLIENT_ID', ''),
     ];
+}
+
+/** Google Sign-In is available only when a client id is configured. */
+function google_enabled(): bool { return trim((string)auth_cfg()['google_client_id']) !== ''; }
+
+/** Stored in users.pass_hash for accounts that have never set a password.
+ *  It is deliberately NOT a valid hash, so password_verify() can only ever
+ *  return false against it — a Google-only account cannot be password-guessed.
+ *  Using a sentinel rather than making the column nullable keeps the schema
+ *  identical on MySQL and SQLite (SQLite cannot drop a NOT NULL in place). */
+const PASS_NONE = 'google-only-no-password';
+
+/** Additive migration: `google_sub` links a user to a Google account (the `sub`
+ *  claim — Google's stable, immutable user id; the email can change, sub cannot).
+ *  Runs at most once per process and is a no-op once the column exists, so it is
+ *  safe on every request and needs no manual import step. */
+function ensure_google_schema(PDO $db): void
+{
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    try {
+        $cols = [];
+        if (auth_cfg()['driver'] === 'mysql') {
+            foreach ($db->query('SHOW COLUMNS FROM users') as $c) $cols[] = $c['Field'];
+        } else {
+            foreach ($db->query('PRAGMA table_info(users)') as $c) $cols[] = $c['name'];
+        }
+        if (!in_array('google_sub', $cols, true)) {
+            $db->exec('ALTER TABLE users ADD COLUMN google_sub TEXT');
+            // Not UNIQUE at the column level (MySQL needs a length on TEXT keys);
+            // a partial-style unique index works on both engines for non-null values.
+            try { $db->exec('CREATE UNIQUE INDEX idx_users_google ON users (google_sub)'); } catch (Throwable $e) {}
+        }
+    } catch (Throwable $e) { /* never break a request on housekeeping */ }
 }
 
 /** Argon2id where available (best), else bcrypt — so it works on every host. */

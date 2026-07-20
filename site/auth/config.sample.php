@@ -33,4 +33,20 @@ return [
     'smtp_pass'      => 'YOUR_MAILBOX_PASSWORD',  // the hello@egybi.com password
     'mail_from'      => 'no-reply@egybi.com',     // an ALIAS on hello@ (recommended)
     'mail_from_name' => 'EgyBI',
+
+    // --- Google Sign-In ("Continue with Google") ---
+    // Leave EMPTY to keep the whole Google path switched off: no button renders
+    // and google.php refuses every request. Fill it in to turn the feature on.
+    //
+    // Get this from Google Cloud Console > APIs & Services > Credentials >
+    // Create credentials > OAuth client ID > Web application:
+    //   Authorised JavaScript origins:  https://egybi.com
+    //                                   https://www.egybi.com
+    //   Authorised redirect URIs:       (none needed — the GIS ID-token flow
+    //                                    posts the credential to our own page,
+    //                                    it does not redirect through Google)
+    // The client ID is PUBLIC (it ships in the page). There is deliberately no
+    // client SECRET here: the ID-token flow does not use one, so there is no
+    // secret to leak.
+    'google_client_id' => '',   // e.g. '1234567890-abc123.apps.googleusercontent.com'
 ];

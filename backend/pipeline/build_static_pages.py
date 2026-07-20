@@ -100,7 +100,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <script src="../assets/egybi.js"></script>
 <script src="../assets/glyphs.js?v=3"></script>
 <script src="../assets/ads.js"></script>
-<script src="../assets/auth.js?v=3"></script>
+<script src="../assets/auth.js?v=4"></script>
 <script src="../assets/analytics.js"></script>
 </body>
 </html>

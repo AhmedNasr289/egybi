@@ -80,7 +80,15 @@ case 'login': {
     // A valid bcrypt hash of a random string, so password_verify does real work
     // regardless of whether Argon2 is compiled in on this host.
     $hash = $u['pass_hash'] ?? '$2y$12$U20Hyu2lJ.VTfmLWQAFk1eyBZYN1r/XVoupII2lojHCLajPCjQXdK';
-    $okpw = password_verify($pw, $hash);
+    // A Google-only account stores a sentinel, not a hash. password_verify()
+    // already returns false for it, but rejecting explicitly documents the case
+    // and guarantees it can never be reached by password. The reply stays the
+    // generic one on purpose — saying "use Google instead" here would reveal
+    // that the address is registered, which is the enumeration leak this
+    // endpoint is built to avoid. Such users can still adopt a password through
+    // the ordinary "Forgot password" flow.
+    if ($hash === PASS_NONE) $okpw = false;
+    else $okpw = password_verify($pw, $hash);
     if (!$u || !$okpw) json_out(false, ['message' => 'Wrong email or password.'], 401);
     // Optional hard gate: block unverified logins only if enabled in config.
     if (auth_cfg()['require_verified'] && (int)$u['email_verified'] !== 1) {
@@ -138,8 +146,12 @@ case 'reset': {
 }
 
 case 'me': {
+    // The Google client id is a PUBLIC value (it ships in the page on every site
+    // that uses GIS), so returning it here is safe and saves a round-trip. When
+    // it is empty the client renders no Google button at all.
+    $g = ['enabled' => google_enabled(), 'client_id' => google_enabled() ? (string)auth_cfg()['google_client_id'] : ''];
     $u = current_user();
-    if (!$u) json_out(true, ['user' => null]);
+    if (!$u) json_out(true, ['user' => null, 'google' => $g]);
     $s = current_session();
     json_out(true, [
         'user' => ['email' => $u['email'], 'plan' => $u['plan'], 'name' => $u['display_name'], 'verified' => (int)$u['email_verified'] === 1],
