@@ -400,6 +400,9 @@ function json_out(bool $ok, array $extra = [], int $code = 200): void
     http_response_code($code);
     header('Content-Type: application/json; charset=utf-8');
     header('X-Content-Type-Options: nosniff');
+    // These replies carry the signed-in user's email and their live CSRF token.
+    // Without no-store an intermediary or the browser's bfcache may retain them.
+    header('Cache-Control: no-store, private');
     echo json_encode(array_merge(['ok' => $ok], $extra));
     exit;
 }
@@ -494,29 +497,83 @@ function set_session_cookie(string $id): void
 
 function clear_session_cookie(): void
 {
-    setcookie(session_cookie_name(), '', ['expires' => time() - 3600, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+    // 'secure' must match set_session_cookie(). A clearing cookie that omits it
+    // is sent over plaintext and may not overwrite the secure original.
+    setcookie(session_cookie_name(), '', [
+        'expires'  => time() - 3600,
+        'path'     => '/',
+        'httponly' => true,
+        'secure'   => auth_cfg()['secure_cookie'],
+        'samesite' => 'Lax',
+    ]);
 }
+
+/**
+ * Session ids are stored HASHED, like passwords.
+ *
+ * The cookie carries the raw value; the row is keyed on sha256 of it. Storing
+ * raw ids meant any read of the sessions table -- a backup, a dump, an SQLi
+ * elsewhere in the app -- was instant, silent impersonation of every logged-in
+ * user, with nothing to crack. Keyed on a digest, a leaked table is inert.
+ *
+ * sha256 hex is 64 chars, exactly the existing VARCHAR(64), so no schema
+ * migration is required.
+ */
+function session_key(string $rawId): string { return hash('sha256', $rawId); }
+
+/** Idle window; the absolute lifetime stays session_days, measured from created_at. */
+function session_idle_days(): int { return max(1, min((int)auth_cfg()['session_days'], 7)); }
 
 function create_session(string $userId): array
 {
     $db = auth_db();
     prune_expired(); // opportunistic housekeeping (login is infrequent)
     $id = rid(32); $csrf = rid(32);
+    // expires_at tracks the IDLE window now, not the absolute one, so a session
+    // that is never used again dies in a week rather than lingering a month.
     $db->prepare('INSERT INTO sessions (id,user_id,csrf,ua_hash,expires_at,created_at) VALUES (?,?,?,?,?,?)')
-       ->execute([$id, $userId, $csrf, substr(hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 16), plus_days(auth_cfg()['session_days']), now()]);
+       ->execute([session_key($id), $userId, $csrf, substr(hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 16), plus_days(session_idle_days()), now()]);
     set_session_cookie($id);
     return ['id' => $id, 'csrf' => $csrf];
 }
 
 function current_session(): ?array
 {
-    $id = $_COOKIE[session_cookie_name()] ?? '';
-    if ($id === '' || !ctype_xdigit($id)) return null;
+    $raw = $_COOKIE[session_cookie_name()] ?? '';
+    if ($raw === '' || !ctype_xdigit($raw)) return null;
+    $key = session_key($raw);
     $st = auth_db()->prepare('SELECT * FROM sessions WHERE id=?');
-    $st->execute([$id]);
+    $st->execute([$key]);
     $s = $st->fetch();
     if (!$s) return null;
-    if (strtotime($s['expires_at']) < time()) { destroy_session($id); return null; }
+
+    if (strtotime($s['expires_at']) < time()) { destroy_session($raw); return null; }
+
+    // Absolute cap from creation, so sliding the idle window cannot extend a
+    // session indefinitely.
+    $absolute = strtotime($s['created_at']) + (int)auth_cfg()['session_days'] * 86400;
+    if (time() > $absolute) { destroy_session($raw); return null; }
+
+    // Bind the session to the client that created it. ua_hash was written at
+    // login and never compared, leaving the column decorative -- a stolen cookie
+    // worked from any client. Trade-off worth stating: a browser that changes
+    // its User-Agent mid-session (a version bump) gets logged out.
+    $ua = substr(hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 16);
+    if (!empty($s['ua_hash']) && !hash_equals((string)$s['ua_hash'], $ua)) {
+        destroy_session($raw);
+        return null;
+    }
+
+    // Slide the idle window, capped at the absolute lifetime. Written only when
+    // it moves by more than an hour, so an active session does not cost a write
+    // on every request.
+    $target = min(time() + session_idle_days() * 86400, $absolute);
+    if ($target - strtotime($s['expires_at']) > 3600) {
+        try {
+            auth_db()->prepare('UPDATE sessions SET expires_at=? WHERE id=?')
+                     ->execute([gmdate('c', $target), $key]);
+        } catch (Throwable $e) { /* refreshing is best-effort */ }
+    }
     return $s;
 }
 
@@ -550,12 +607,32 @@ function prune_expired(): void
         $db->prepare('DELETE FROM sessions WHERE expires_at < ?')->execute([now()]);
         // Rate-limit rows older than a day are useless (widest window is 60 min).
         $db->prepare('DELETE FROM auth_attempts WHERE created_at < ?')->execute([gmdate('c', time() - 86400)]);
+        // auth_tokens was never pruned, so spent verify/reset/gnonce rows
+        // accumulated forever. google.php?action=nonce alone mints up to 30 rows
+        // per 15 min per IP from an unauthenticated GET -- unbounded growth on a
+        // shared-hosting quota, and indefinite retention of used reset tokens.
+        $db->prepare('DELETE FROM auth_tokens WHERE expires_at < ? OR used=1')
+           ->execute([gmdate('c', time() - 86400)]);
     } catch (Throwable $e) { /* housekeeping must never break a request */ }
 }
 
-function destroy_session(string $id): void
+/**
+ * Delete a session given the RAW cookie value (it is hashed here).
+ *
+ * Two names on purpose: rows now store sha256(id), so callers holding a cookie
+ * and callers holding a fetched row are handling different values. A single
+ * function taking "the id" would silently no-op for whichever caller passed the
+ * wrong one, leaving a session alive that the code believed it had killed.
+ */
+function destroy_session(string $rawId): void
 {
-    auth_db()->prepare('DELETE FROM sessions WHERE id=?')->execute([$id]);
+    destroy_session_key(session_key($rawId));
+}
+
+/** Delete a session given the STORED key, i.e. the `id` column of a fetched row. */
+function destroy_session_key(string $key): void
+{
+    auth_db()->prepare('DELETE FROM sessions WHERE id=?')->execute([$key]);
 }
 
 function destroy_all_sessions(string $userId): void
@@ -564,6 +641,35 @@ function destroy_all_sessions(string $userId): void
 }
 
 /** Require a valid session AND a matching CSRF header for state-changing writes. */
+/**
+ * Reject cross-site POSTs to endpoints that have no CSRF token yet.
+ *
+ * login and signup run before a session exists, so require_csrf() has nothing
+ * to compare and they were reachable by a plain cross-origin form -- no
+ * preflight, and SameSite=Lax does not block a top-level form POST. That let an
+ * attacker silently log a victim into the ATTACKER's account, after which the
+ * victim's solves and XP synced into it.
+ *
+ * Sec-Fetch-Site is the precise signal where available; Origin is the fallback.
+ * When neither header is present the request is allowed: non-browser clients
+ * (curl, health checks) send no Origin, and there is no CSRF risk without a
+ * browser implicitly attaching credentials.
+ */
+function require_same_origin(): void
+{
+    $site = $_SERVER['HTTP_SEC_FETCH_SITE'] ?? '';
+    if ($site !== '') {
+        if ($site === 'same-origin' || $site === 'same-site' || $site === 'none') return;
+        json_out(false, ['message' => 'Cross-site request blocked.'], 403);
+    }
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if ($origin === '') return;
+    $want = rtrim((string)auth_cfg()['app_url'], '/');
+    if ($want !== '' && rtrim($origin, '/') !== $want) {
+        json_out(false, ['message' => 'Cross-site request blocked.'], 403);
+    }
+}
+
 function require_csrf(array $session): void
 {
     $hdr = $_SERVER['HTTP_X_CSRF'] ?? ($_POST['csrf'] ?? '');

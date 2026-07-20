@@ -121,6 +121,19 @@ if ($method !== 'POST') {
     out(false, 'Send a POST request to submit, or GET to read approved posts.', 405);
 }
 
+// Throttle. Moderation means nothing a stranger posts appears publicly, but an
+// unthrottled write still lets an attacker flood the table and the moderation
+// queue -- and this table now shares a database with auth, so filling the quota
+// takes signup and login down with it.
+$ipRate = substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
+$libRate = __DIR__ . '/../auth/lib.php';
+if (is_file($libRate)) {
+    require_once $libRate;
+    if (function_exists('rate_ok_key') && !rate_ok_key('cm:' . $ipRate, 'community', 5, 60)) {
+        out(false, 'Too many submissions — please try again later.', 429);
+    }
+}
+
 // Accept form-encoded or JSON bodies.
 $message = trim((string)($_POST['message'] ?? ''));
 $name    = trim((string)($_POST['name'] ?? ''));

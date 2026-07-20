@@ -56,7 +56,13 @@ try {
     Response::emit(['ok' => false, 'error' => $e->getMessage()], $e->statusCode, 'MISS');
     exit;
 } catch (Throwable $e) {
-    Response::emit(['ok' => false, 'error' => 'Server error: ' . $e->getMessage()], 500, 'MISS');
+    // Log the real message; return a static one. Echoing getMessage() handed
+    // callers the PDO driver text -- SQLSTATE codes, the failing SQL, the
+    // database and user name, or the absolute sqlite_path, which discloses the
+    // hosting account id and directory layout. ApiException above is ours and
+    // carries deliberately safe text, so it is unaffected.
+    error_log('[EgyBI api] ' . $e);
+    Response::emit(['ok' => false, 'error' => 'Server error'], 500, 'MISS');
     exit;
 }
 

@@ -68,6 +68,19 @@ if (strlen($email) > 254 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 $ipHash = substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
 
+// Throttle before writing anything. The honeypot stops naive bots, and CORS
+// only governs whether an attacker can READ the reply -- the write still lands.
+// Unthrottled, a hidden auto-submitting form on any page subscribes arbitrary
+// addresses, which mail-bombs a victim from our domain and burns the sending
+// reputation this project spent real effort establishing.
+$libRate = __DIR__ . '/../auth/lib.php';
+if (is_file($libRate)) {
+    require_once $libRate;
+    if (function_exists('rate_ok_key') && !rate_ok_key('nl:' . $ipHash, 'newsletter', 5, 60)) {
+        out(false, 'Too many requests — please try again later.', 429);
+    }
+}
+
 // Primary path: the database, which survives deployments.
 $lib = __DIR__ . '/../auth/lib.php';
 if (is_file($lib)) {

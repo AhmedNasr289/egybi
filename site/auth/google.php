@@ -132,6 +132,13 @@ if (!$u) {
     }
 }
 
+// Honour the same hard gate password login applies. Without this, flipping
+// require_verified on left an unverified bypass open through Google -- the flag
+// would appear to be enforced while one of the two entry doors ignored it.
+if (auth_cfg()['require_verified'] && (int)$u['email_verified'] !== 1) {
+    json_out(false, ['message' => 'Please verify your email first — check your inbox for the link.'], 403);
+}
+
 // Same session shape as password login, so the client's existing progress-sync
 // and nav-render paths carry XP, streaks and rank through unchanged.
 $s = create_session($u['id']);

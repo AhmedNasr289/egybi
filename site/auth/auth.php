@@ -26,6 +26,7 @@ switch ($action) {
 
 case 'signup': {
     if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
+    require_same_origin();
     $b = body();
     if (trim((string)($b['website'] ?? '')) !== '') json_out(true, ['message' => 'Check your email to verify your account.']); // honeypot
     if (!rate_ok('signup', 8, 60)) json_out(false, ['message' => 'Too many attempts — please try again later.'], 429);
@@ -33,6 +34,9 @@ case 'signup': {
     $pw    = (string)($b['password'] ?? '');
     if (!valid_email($email)) json_out(false, ['message' => 'Please enter a valid email address.'], 422);
     if (strlen($pw) < 8) json_out(false, ['message' => 'Password must be at least 8 characters.'], 422);
+    // Upper bound: the bcrypt fallback silently truncates at 72 bytes, so a
+    // longer passphrase would not be the password the user thinks it is.
+    if (strlen($pw) > 128) json_out(false, ['message' => 'Password must be 128 characters or fewer.'], 422);
 
     // Don't leak whether the email exists: reply the same either way.
     $st = $db->prepare('SELECT id FROM users WHERE email=?'); $st->execute([$email]);
@@ -48,7 +52,13 @@ case 'signup': {
         // Send the verification email (real send when SMTP is configured in
         // _private/config.php; otherwise the mailer logs it for dev/manual use).
         $link = auth_cfg()['app_url'] . '/?verify=' . $token;
-        @file_put_contents(__DIR__ . '/_private/mail.log', now() . " VERIFY " . $email . " token=" . $token . "\n", FILE_APPEND | LOCK_EX);
+        // Prefix only, and only when SMTP is unconfigured — same reasoning as the
+        // reset path: no live token should sit in a file when it is also emailed.
+        if (auth_cfg()['smtp_host'] === '') {
+            @file_put_contents(__DIR__ . '/_private/mail.log',
+                now() . " VERIFY " . $email . " token=" . substr($token, 0, 8) . "...\n",
+                FILE_APPEND | LOCK_EX);
+        }
         send_mail($email, 'Verify your EgyBI account',
             mail_template('Welcome to the House of Life',
                 'Confirm your email to start solving real, auto-graded SQL challenges on cited Egyptian data. This link expires in 24 hours.',
@@ -70,6 +80,7 @@ case 'verify': {
 
 case 'login': {
     if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
+    require_same_origin();
     if (!rate_ok('login', 10, 15)) json_out(false, ['message' => 'Too many attempts — please try again later.'], 429);
     $b = body();
     $email = strtolower(trim((string)($b['email'] ?? '')));
@@ -111,7 +122,9 @@ case 'login': {
 
 case 'logout': {
     $s = current_session();
-    if ($s) { require_csrf($s); destroy_session($s['id']); }
+    // $s['id'] is the STORED key (sessions are keyed on a hash of the cookie),
+    // so this must use the _key variant, not destroy_session().
+    if ($s) { require_csrf($s); destroy_session_key($s['id']); }
     clear_session_cookie();
     json_out(true, ['message' => 'Signed out.']);
 }
@@ -155,6 +168,9 @@ case 'reset': {
     $token = (string)($b['token'] ?? '');
     $pw = (string)($b['password'] ?? '');
     if (strlen($pw) < 8) json_out(false, ['message' => 'Password must be at least 8 characters.'], 422);
+    // Upper bound: the bcrypt fallback silently truncates at 72 bytes, so a
+    // longer passphrase would not be the password the user thinks it is.
+    if (strlen($pw) > 128) json_out(false, ['message' => 'Password must be 128 characters or fewer.'], 422);
     if (!ctype_xdigit($token)) json_out(false, ['message' => 'Invalid reset link.'], 400);
     $st = $db->prepare("SELECT * FROM auth_tokens WHERE token=? AND kind='reset' AND used=0"); $st->execute([$token]);
     $t = $st->fetch();
