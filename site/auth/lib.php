@@ -216,20 +216,61 @@ function storage_durability(): array
  *  Errors are RECORDED, not just swallowed. Swallowing them is how a failed
  *  CREATE TABLE for `users` went unnoticed while every other table succeeded —
  *  the endpoint just reported a null count and said nothing about why. */
+/**
+ * Split a .sql file into statements, honouring quotes and comments.
+ *
+ * A plain explode(';') is not good enough, and this is not hypothetical: the
+ * `users` table failed to create on MariaDB with a syntax error because an
+ * INLINE comment contained a semicolon —
+ *
+ *     google_sub VARCHAR(64) NULL,  -- Google's immutable user id; NULL for ...
+ *
+ * — so the CREATE was cut in half and both halves were invalid. Stripping only
+ * full-line comments missed it. This walks the text tracking quote and comment
+ * state, so a `;` inside a string, a `--` comment or a block comment never ends
+ * a statement.
+ */
+function split_sql_statements(string $sql): array
+{
+    $out = []; $buf = '';
+    $len = strlen($sql);
+    $q = '';                 // current quote char: ' " or `
+    $line = false; $block = false;
+    for ($i = 0; $i < $len; $i++) {
+        $c = $sql[$i]; $n = $i + 1 < $len ? $sql[$i + 1] : '';
+        if ($line) { if ($c === "\n") { $line = false; $buf .= $c; } continue; }
+        if ($block) { if ($c === '*' && $n === '/') { $block = false; $i++; } continue; }
+        if ($q !== '') {
+            $buf .= $c;
+            if ($c === '\\' && $q !== '`') { $buf .= $n; $i++; continue; }   // escaped char
+            if ($c === $q) $q = '';
+            continue;
+        }
+        // MySQL needs whitespace after `--` for it to be a comment.
+        if ($c === '-' && $n === '-' && ($i + 2 >= $len || ctype_space($sql[$i + 2]))) { $line = true; $i++; continue; }
+        if ($c === '#') { $line = true; continue; }
+        if ($c === '/' && $n === '*') { $block = true; $i++; continue; }
+        if ($c === "'" || $c === '"' || $c === '`') { $q = $c; $buf .= $c; continue; }
+        if ($c === ';') { $out[] = $buf; $buf = ''; continue; }
+        $buf .= $c;
+    }
+    $out[] = $buf;
+    return array_values(array_filter(array_map('trim', $out), fn($s) => $s !== ''));
+}
+
 function run_schema(PDO $pdo, string $file): array
 {
     $errors = [];
     $sql = @file_get_contents($file);
     if (!is_string($sql) || $sql === '') return ['could not read ' . basename($file)];
-    $sql = preg_replace('/^\s*--.*$/m', '', $sql);          // strip line comments
-    foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
+    foreach (split_sql_statements($sql) as $stmt) {
         try {
             $pdo->exec($stmt);
         } catch (Throwable $e) {
             // "already exists" is expected and harmless; anything else is real.
             if (stripos($e->getMessage(), 'already exists') === false) {
                 preg_match('/(?:CREATE TABLE IF NOT EXISTS|CREATE TABLE|ALTER TABLE)\s+`?(\w+)`?/i', $stmt, $m);
-                $errors[] = ($m[1] ?? 'statement') . ': ' . substr($e->getMessage(), 0, 160);
+                $errors[] = ($m[1] ?? 'statement') . ': ' . substr($e->getMessage(), 0, 400);
                 error_log('[EgyBI] schema error — ' . end($errors));
             }
         }
