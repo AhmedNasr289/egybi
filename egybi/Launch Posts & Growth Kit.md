@@ -59,16 +59,20 @@ tends to lift as the snippet. The hook is built to land inside that window.
 > from the Egyptian Cabinet's own portal. Antiquity to this morning, every row
 > carrying its source.
 >
-> 123 auto-graded SQL challenges across 15 sectors, from a first SELECT through
-> joins, CTEs and window functions. 61 tables, 838 rows. And where sources
-> genuinely disagree — Egypt's population is 116 million or 107 million,
-> depending on who counted — both are kept and the gap flagged, not quietly
-> resolved into the tidier number.
+> 123 auto-graded SQL challenges across 15 sectors — 41 Easy, 53 Medium, 29
+> Hard — from a first SELECT through joins, CTEs and window functions. Each one
+> shows you the schema and sample rows before you start, so you are never
+> guessing at column names. 61 tables, 838 rows.
 >
-> It runs entirely in your browser. No signup, free, and you are solving roughly
+> And where sources genuinely disagree — Egypt's population is 116 million or
+> 107 million, depending on who counted — both are kept and the gap flagged, not
+> quietly resolved into the tidier number.
+>
+> It runs entirely in your browser — SQLite compiled to WebAssembly, so your
+> query never reaches a server. No signup, free, and you are solving roughly
 > four seconds after landing.
 >
-> You do not have to write a query, though. There are charts to browse and data
+> You do not have to write a query, though. There are 23 charts and 12 data
 > stories to read. It is not a history site, but if you came for Egypt rather
 > than SQL — the history, or where the country is actually heading — there is
 > something here worth your time.
