@@ -20,7 +20,14 @@ CREATE TABLE IF NOT EXISTS users (
   created_at     VARCHAR(32) NOT NULL,       -- ISO 8601 string (gmdate('c'))
   updated_at     VARCHAR(32) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_users_email (email),
+  -- PREFIX INDEX, deliberately. utf8mb4 stores 4 bytes per character, so a
+  -- VARCHAR(254) index is 1016 bytes — over InnoDB's 767-byte key limit on the
+  -- COMPACT/REDUNDANT row formats many shared hosts still default to, and the
+  -- CREATE fails outright with "Specified key was too long". 191*4 = 764 bytes
+  -- fits under it. Storage stays VARCHAR(254) so no address is truncated; only
+  -- the index is shortened, and two emails sharing their first 191 characters
+  -- do not occur in practice.
+  UNIQUE KEY uq_users_email (email(191)),
   UNIQUE KEY uq_users_google (google_sub)    -- NULLs are exempt from UNIQUE in MySQL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -99,5 +106,5 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
   created_at   VARCHAR(32) NOT NULL,
   ip_hash      VARCHAR(32) NULL,             -- coarse abuse signal, never a raw IP
   unsubscribed TINYINT NOT NULL DEFAULT 0,
-  PRIMARY KEY (email)
+  PRIMARY KEY (email(191))                   -- same 767-byte limit as users.email
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

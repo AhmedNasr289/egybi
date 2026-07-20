@@ -197,6 +197,7 @@ case 'health': {
     json_out(true, [
         'storage'  => ['driver' => $d['driver'], 'durable' => $d['durable'], 'detail' => $d['why']],
         'config'   => $cfState,
+        'schema_errors' => schema_errors() ?: 'none',
         'counts'   => $counts,
         'google'   => google_enabled(),
         'mail'     => auth_cfg()['smtp_host'] !== '',

@@ -185,15 +185,38 @@ function storage_durability(): array
 }
 
 /** Run a .sql file statement-by-statement. PDO::exec with a multi-statement
- *  string is unreliable across drivers, so split on statement boundaries. */
-function run_schema(PDO $pdo, string $file): void
+ *  string is unreliable across drivers, so split on statement boundaries.
+ *
+ *  Errors are RECORDED, not just swallowed. Swallowing them is how a failed
+ *  CREATE TABLE for `users` went unnoticed while every other table succeeded —
+ *  the endpoint just reported a null count and said nothing about why. */
+function run_schema(PDO $pdo, string $file): array
 {
+    $errors = [];
     $sql = @file_get_contents($file);
-    if (!is_string($sql) || $sql === '') return;
+    if (!is_string($sql) || $sql === '') return ['could not read ' . basename($file)];
     $sql = preg_replace('/^\s*--.*$/m', '', $sql);          // strip line comments
     foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
-        try { $pdo->exec($stmt); } catch (Throwable $e) { /* IF NOT EXISTS races */ }
+        try {
+            $pdo->exec($stmt);
+        } catch (Throwable $e) {
+            // "already exists" is expected and harmless; anything else is real.
+            if (stripos($e->getMessage(), 'already exists') === false) {
+                preg_match('/(?:CREATE TABLE IF NOT EXISTS|CREATE TABLE|ALTER TABLE)\s+`?(\w+)`?/i', $stmt, $m);
+                $errors[] = ($m[1] ?? 'statement') . ': ' . substr($e->getMessage(), 0, 160);
+                error_log('[EgyBI] schema error — ' . end($errors));
+            }
+        }
     }
+    return $errors;
+}
+
+/** Last schema errors, for the health endpoint to surface. */
+function schema_errors(?array $set = null): array
+{
+    static $errs = [];
+    if ($set !== null) $errs = $set;
+    return $errs;
 }
 
 function auth_db(): PDO
@@ -221,7 +244,7 @@ function auth_db(): PDO
         // tables appear. Every statement is CREATE TABLE IF NOT EXISTS, so this
         // is a no-op on every subsequent request.
         $has = $pdo->query("SHOW TABLES LIKE 'users'")->fetchColumn();
-        if (!$has) run_schema($pdo, __DIR__ . '/schema_auth_mysql.sql');
+        if (!$has) schema_errors(run_schema($pdo, __DIR__ . '/schema_auth_mysql.sql'));
     } else {
         $path = $c['sqlite_path'];
         if (!is_dir(dirname($path))) @mkdir(dirname($path), 0700, true);
@@ -262,7 +285,7 @@ function newsletter_add(string $email, string $ipHash = ''): string
             ? "CREATE TABLE IF NOT EXISTS newsletter_subscribers (
                  email VARCHAR(254) NOT NULL, created_at VARCHAR(32) NOT NULL,
                  ip_hash VARCHAR(32) NULL, unsubscribed TINYINT NOT NULL DEFAULT 0,
-                 PRIMARY KEY (email)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+                 PRIMARY KEY (email(191))) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
             : "CREATE TABLE IF NOT EXISTS newsletter_subscribers (
                  email TEXT PRIMARY KEY, created_at TEXT NOT NULL,
                  ip_hash TEXT, unsubscribed INTEGER NOT NULL DEFAULT 0)");
