@@ -117,7 +117,17 @@ case 'request-reset': {
             $db->prepare('INSERT INTO auth_tokens (token,user_id,kind,expires_at,used,created_at) VALUES (?,?,?,?,?,?)')
                ->execute([$token, $u['id'], 'reset', plus_mins(60), 0, now()]);
             $link = auth_cfg()['app_url'] . '/?reset=' . $token;
-            @file_put_contents(__DIR__ . '/_private/mail.log', now() . " RESET " . $email . " token=" . $token . "\n", FILE_APPEND | LOCK_EX);
+            // Log a PREFIX only, and only when SMTP is unconfigured (the local-dev
+            // case this log exists for). Writing the whole live token on every
+            // request meant a single read of this file yielded working reset
+            // tokens for every account that had asked in the last 60 minutes.
+            // Web access is blocked, but there is no reason to keep the material
+            // sitting there when the token is also being emailed.
+            if (auth_cfg()['smtp_host'] === '') {
+                @file_put_contents(__DIR__ . '/_private/mail.log',
+                    now() . " RESET " . $email . " token=" . substr($token, 0, 8) . "...\n",
+                    FILE_APPEND | LOCK_EX);
+            }
             send_mail($email, 'Reset your EgyBI password',
                 mail_template('Reset your password',
                     'Tap the button to choose a new password. This link expires in 60 minutes. If you did not ask for this, just ignore this email.',
@@ -138,7 +148,12 @@ case 'reset': {
     $st = $db->prepare("SELECT * FROM auth_tokens WHERE token=? AND kind='reset' AND used=0"); $st->execute([$token]);
     $t = $st->fetch();
     if (!$t || strtotime($t['expires_at']) < time()) json_out(false, ['message' => 'This reset link has expired or was already used.'], 400);
-    $db->prepare('UPDATE users SET pass_hash=?, email_verified=1, updated_at=? WHERE id=?')
+    // google_sub is cleared deliberately. Proving control of the mailbox is what
+    // a reset establishes, so it must also sever any Google link -- otherwise a
+    // squatter who created the account keeps permanent co-ownership alongside
+    // the real owner, who has no way to see or remove them. Re-linking Google is
+    // one click; silent shared access is not recoverable.
+    $db->prepare('UPDATE users SET pass_hash=?, email_verified=1, google_sub=NULL, updated_at=? WHERE id=?')
        ->execute([hash_password($pw), now(), $t['user_id']]);
     $db->prepare('UPDATE auth_tokens SET used=1 WHERE token=?')->execute([$token]);
     destroy_all_sessions($t['user_id']); // force re-login everywhere after a reset

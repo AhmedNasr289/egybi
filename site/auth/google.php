@@ -62,18 +62,24 @@ if ($jwt === '') json_out(false, ['message' => 'Missing Google credential.'], 40
 
 // Consume the nonce before verifying, so a replay cannot reuse it even if the
 // verification below fails partway.
-$expected = '';
-if ($nonce !== '' && ctype_xdigit($nonce)) {
-    $st = $db->prepare("SELECT * FROM auth_tokens WHERE token=? AND kind='gnonce' AND used=0");
-    $st->execute([$nonce]);
-    $t = $st->fetch();
-    if ($t && strtotime($t['expires_at']) >= time()) {
-        $db->prepare('UPDATE auth_tokens SET used=1 WHERE token=?')->execute([$nonce]);
-        $expected = $nonce;
-    } else {
-        json_out(false, ['message' => 'That sign-in attempt expired. Please try again.'], 400);
-    }
+//
+// The nonce is MANDATORY. It used to be checked only `if ($nonce !== '' &&
+// ctype_xdigit($nonce))`, which handed the attacker the choice: omit the field
+// (or send a non-hex value) and the branch was skipped, $expected stayed empty,
+// and verify_google_id_token() skipped the nonce comparison entirely. A stolen
+// ID token was then replayable for its full ~1h lifetime -- exactly what the
+// comment above claims to prevent. Opt-in replay protection is no protection.
+if ($nonce === '' || !ctype_xdigit($nonce)) {
+    json_out(false, ['message' => 'That sign-in attempt expired. Please try again.'], 400);
 }
+$st = $db->prepare("SELECT * FROM auth_tokens WHERE token=? AND kind='gnonce' AND used=0");
+$st->execute([$nonce]);
+$t = $st->fetch();
+if (!$t || strtotime($t['expires_at']) < time()) {
+    json_out(false, ['message' => 'That sign-in attempt expired. Please try again.'], 400);
+}
+$db->prepare('UPDATE auth_tokens SET used=1 WHERE token=?')->execute([$nonce]);
+$expected = $nonce;
 
 $claims = verify_google_id_token($jwt, trim((string)$cfg['google_client_id']), $expected);
 if ($claims === null) json_out(false, ['message' => 'Could not verify that Google sign-in.'], 401);
@@ -106,10 +112,20 @@ if (!$u) {
         // 3) Brand-new account. pass_hash is the sentinel, never a real hash, so
         //    this account cannot be reached by password until the owner sets one
         //    through the ordinary reset flow.
+        //
+        //    email_verified is required to CREATE too, not just to link. It used
+        //    to gate only the linking branch above, which left account squatting
+        //    open: sign in with an unverified claim for someone else's address
+        //    and we would mint the account keyed to the squatter's google_sub.
+        //    The real owner's later signup silently no-ops on the duplicate
+        //    email, so they never learn why they cannot register.
+        if (!$claims['email_verified']) {
+            json_out(false, ['message' => 'Google has not verified that email address. Please verify it with Google first.'], 409);
+        }
         $id      = rid();
         $display = 'Scribe-' . strtoupper(substr($id, 0, 4));
         $db->prepare('INSERT INTO users (id,email,pass_hash,email_verified,plan,display_name,created_at,updated_at,google_sub) VALUES (?,?,?,?,?,?,?,?,?)')
-           ->execute([$id, $email, PASS_NONE, $claims['email_verified'] ? 1 : 0, 'free', $display, $ts, $ts, $sub]);
+           ->execute([$id, $email, PASS_NONE, 1, 'free', $display, $ts, $ts, $sub]);
         $st = $db->prepare('SELECT * FROM users WHERE id=?');
         $st->execute([$id]);
         $u = $st->fetch();
