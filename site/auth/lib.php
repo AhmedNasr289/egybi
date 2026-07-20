@@ -7,16 +7,56 @@
 declare(strict_types=1);
 
 // ---- config -----------------------------------------------------------------
-// Reads, in priority order: (1) backend/auth/_private/config.php (a gitignored
-// file you fill in on Hostinger — the easy path, no hPanel env vars needed),
-// (2) environment variables, (3) safe local-testing defaults (SQLite). Copy
-// config.sample.php to _private/config.php and edit it to go live.
+/**
+ * Find the config file, preferring one that SURVIVES A DEPLOYMENT.
+ *
+ * Hostinger's git deploy replaces public_html with the repository contents, so
+ * anything inside it that is not in the repo — like a gitignored
+ * `_private/config.php` — is deleted on every push. Shared hosting also has no
+ * hPanel environment-variable section (only PHP version / extensions / options),
+ * so env vars are not an option there either.
+ *
+ * What does survive is the area ABOVE public_html, which the deploy never
+ * touches. So we walk upward from this file looking for `egybi-config.php`, and
+ * use the first one found. Create it once in File Manager, one level above
+ * public_html, and it outlives every future deploy.
+ *
+ * Search order:
+ *   1. AUTH_CONFIG_PATH env var  — explicit override, if the host supports env
+ *   2. egybi-config.php in any parent directory  — the durable path (recommended)
+ *   3. _private/config.php beside this file      — local dev only; on Hostinger
+ *                                                  this is erased on each push
+ *   4. environment variables, then safe SQLite defaults
+ */
+function auth_config_file(): ?string
+{
+    static $found = false;
+    if ($found !== false) return $found;
+
+    $env = getenv('AUTH_CONFIG_PATH');
+    if (is_string($env) && $env !== '' && @is_file($env)) return $found = $env;
+
+    // Walk up out of the deployed tree. Six levels comfortably clears
+    // public_html/site/auth on every Hostinger layout.
+    $dir = __DIR__;
+    for ($i = 0; $i < 6; $i++) {
+        $parent = dirname($dir);
+        if ($parent === $dir) break;              // reached the filesystem root
+        $dir = $parent;
+        $p = $dir . '/egybi-config.php';
+        if (@is_file($p)) return $found = $p;     // @ — open_basedir may block the probe
+    }
+
+    $p = __DIR__ . '/_private/config.php';
+    return $found = (@is_file($p) ? $p : null);
+}
+
 function auth_cfg(): array
 {
     static $file = null;
     if ($file === null) {
-        $p = __DIR__ . '/_private/config.php';
-        $file = is_file($p) ? (require $p) : [];
+        $p = auth_config_file();
+        $file = $p ? (require $p) : [];
         if (!is_array($file)) $file = [];
     }
     $get = function (string $key, string $env, $default) use ($file) {
@@ -51,8 +91,17 @@ function auth_cfg(): array
         // the button never renders and google.php refuses every request. Nothing
         // to disable, nothing half-wired — same config-gate pattern as payments.
         'google_client_id' => $get('google_client_id', 'GOOGLE_CLIENT_ID', ''),
+        // The permanent ?key= for /api/insights.php. It used to live only in
+        // api/_private/analytics.key, which every deploy deleted — so it was
+        // regenerated on each push, silently invalidating the bookmarked URL and
+        // resetting visitor de-duplication.
+        'analytics_key' => $get('analytics_key', 'ANALYTICS_KEY', ''),
     ];
 }
+
+/** The analytics secret, from durable config first. Empty means "fall back to
+ *  the generated file", which is ephemeral — see the note above. */
+function analytics_key(): string { return trim((string)auth_cfg()['analytics_key']); }
 
 /** Google Sign-In is available only when a client id is configured. */
 function google_enabled(): bool { return trim((string)auth_cfg()['google_client_id']) !== ''; }

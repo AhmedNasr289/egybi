@@ -42,63 +42,67 @@ Then hPanel → **phpMyAdmin** → select the DB → **Import**:
    **`_mysql`** one, *not* `schema_auth.sql` (that one is SQLite-only and will
    fail on MySQL).
 
-## Step 4 — Configuration (hPanel environment variables — NOT a config file)
+## Step 4 — Configuration (one file ABOVE `public_html`)
 
-> ### ⚠ Corrected 2026-07-20 — this step used to be wrong
-> An earlier version of this guide said to create `_private/config.php` and that
-> a redeploy would **not** touch it. **That was false, and it cost data.**
-> Hostinger's git deploy replaces `public_html` with the repository contents, and
-> `_private/` is gitignored — so it is not in the repo, and **every `git push`
-> deleted it**: the accounts database, the Papyrus subscriber list, the community
-> notes, and the analytics database along with its access key. Nothing ever
-> errored; the app quietly rebuilt an empty database each time.
+> ### ⚠ Corrected twice. Read this once and you are done.
+> **First mistake:** this guide used to say to create `_private/config.php` and
+> that a redeploy would "not touch it". False — `_private/` is gitignored, so it
+> is absent from the repo, and Hostinger's deploy replaces `public_html` from the
+> repo. **Every push deleted it**, taking the accounts DB, the Papyrus subscriber
+> list, the community notes and the analytics data with it. Silently.
 >
-> Proven by deploying a one-line change to `robots.txt` and watching the SQLite
-> file's creation time jump, with zero users in the new one.
+> **Second mistake:** the fix said to use hPanel environment variables. Hostinger
+> **shared hosting has no environment-variable section** — *Advanced → PHP
+> Configuration* offers only *PHP version / PHP extensions / PHP options*.
 >
-> **Environment variables survive deploys. Use them.**
+> **What actually works:** a config file in the folder *above* `public_html`.
+> Deploys only replace `public_html`, so anything above it survives untouched.
 
-**A) Knowledge-base API** — `public_html/site/api/config.php` is a tracked file
-(it ships in the repo, so a deploy restores it rather than deleting it). Editing
-it in File Manager works, but the edit is overwritten on the next deploy — so set
-the KB DB via env vars too, or commit the change.
+**Steps (about two minutes):**
 
-**B) Accounts, newsletter, community, analytics** — all four now share one
-database. In hPanel → **Advanced → PHP Configuration → Environment Variables**:
+1. hPanel → **Files → File Manager**.
+2. Navigate so you can *see* the `public_html` folder — you want the folder that
+   contains it, e.g. `/domains/egybi.com/`. **Do not go inside `public_html`.**
+3. **New File** → name it exactly **`egybi-config.php`**.
+4. Open it and paste the contents of **`egybi-config.sample.php`** (in the repo
+   root), then fill in your values:
+   - **MySQL** (recommended): create a DB in *Databases → MySQL Databases* and
+     paste the name / user / password. The tables build themselves on the first
+     request — no phpMyAdmin import needed.
+   - **or SQLite** (simpler, no DB to create): comment out the five MySQL lines
+     and set `sqlite_path` to a folder above `public_html`.
+   - Paste a long random string into `app_secret`, and another into
+     `analytics_key` (that one becomes your permanent `/api/insights.php?key=`).
+5. Save.
 
-| Variable | Value |
-|---|---|
-| `AUTH_DB_DRIVER` | `mysql` |
-| `AUTH_DB_HOST` | `localhost` |
-| `AUTH_DB_NAME` | your Step-3 auth database |
-| `AUTH_DB_USER` / `AUTH_DB_PASS` | its user and password |
-| `APP_SECRET` | a long random string |
-| `APP_URL` | `https://egybi.com` |
-| `AUTH_SECURE_COOKIE` | `1` |
-| `ANALYTICS_KEY` | a long random string — this becomes the permanent `?key=` for the insights dashboard |
-| `GOOGLE_CLIENT_ID` | your OAuth client ID (omit to keep Google sign-in off) |
+**Confirm it worked** — open:
+`https://egybi.com/auth/auth.php?action=health`
 
-**The tables build themselves** on the first request — the phpMyAdmin import in
-Step 3 is now optional.
+You want:
+```
+"durable": true
+"config":  "durable — egybi-config.php above the deployed folder"
+```
+If `durable` is still `false`, the file is in the wrong place — it is almost
+always one level too deep, i.e. inside `public_html`.
 
-**Confirm it took effect:** open
-`https://egybi.com/auth/auth.php?action=health` and check for
-`"durable": true`. If it says `false`, the env vars are not being read and your
-data is still being destroyed on every push.
+*(If you ever move to a VPS or another host that does expose environment
+variables, `lib.php` still reads `AUTH_DB_*`, `APP_SECRET`, `ANALYTICS_KEY`,
+`SMTP_*` and `GOOGLE_CLIENT_ID` from the environment as well.)*
 
 ## Step 5 — Email (verify + password-reset mail)
-You built the `hello@egybi.com` mailbox already. Add these environment variables
-alongside the ones above:
-```
-SMTP_HOST  = smtp.hostinger.com
-SMTP_PORT  = 465                    # or 587 if 465 is blocked
-SMTP_USER  = hello@egybi.com
-SMTP_PASS  = YOUR MAILBOX PASSWORD
-MAIL_FROM  = no-reply@egybi.com
+You built the `hello@egybi.com` mailbox already. In the same
+`egybi-config.php` from Step 4:
+```php
+'smtp_host'  => 'smtp.hostinger.com',
+'smtp_port'  => 465,                 // or 587 if 465 is blocked
+'smtp_user'  => 'hello@egybi.com',
+'smtp_pass'  => 'YOUR MAILBOX PASSWORD',
+'mail_from'  => 'no-reply@egybi.com',
 ```
 Then hPanel → **Emails → egybi.com → … → Aliases**: add **`no-reply@egybi.com`**
 as a **free alias** on the `hello@` mailbox (the plan allows 5 aliases).
-Leave the `SMTP_*` values unset and links are logged instead of sent — fine
+Leave the `smtp_*` values blank and links are logged instead of sent — fine
 before launch; signup/reset still succeed.
 
 ## Step 6 — Email deliverability (so verify mail doesn't hit spam)
@@ -129,8 +133,8 @@ On `https://egybi.com`:
 If every box is checked, you're live. 🎉
 
 ## Step 8 — (optional) once deliverability is proven
-- Set the env var `AUTH_REQUIRE_VERIFIED=1` to require a verified email before
-  login (off by default so launch is frictionless).
+- Add `'require_verified' => '1'` to `egybi-config.php` to require a verified
+  email before login (off by default so launch is frictionless).
 - Set up a Hostinger **cron** for light housekeeping if you like — the app
   already prunes expired sessions and old rate-limit rows on each login, so this
   is optional, not required.
@@ -139,10 +143,9 @@ If every box is checked, you're live. 🎉
 
 ## Everyday workflow after go-live
 Edit code locally → `git push` → Hostinger auto-pulls (if you enabled the
-webhook in Step 1) or click **Deploy**. **MySQL data and hPanel environment
-variables survive deploys; anything written into a `_private/` folder inside
-`public_html` does NOT — it is deleted on every push.** That is why config and
-all four data stores now live outside that folder (Step 4). Payments stay **off** until you deliberately
+webhook in Step 1) or click **Deploy**. **Anything above `public_html`
+survives a deploy; anything inside it that is not in the repo does NOT.** That is
+why `egybi-config.php` and all four data stores now live outside it (Step 4). Payments stay **off** until you deliberately
 enable them (see `backend/DEPLOY.md` Step 11).
 
 ## If something's wrong

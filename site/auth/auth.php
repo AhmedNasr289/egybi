@@ -180,6 +180,15 @@ case 'health': {
     // — there was no way to ask "is my data actually persisting?" without
     // writing a throwaway script. Now there is.
     $d = storage_durability();
+    // Which config was picked up, without disclosing a filesystem path.
+    $cf = auth_config_file();
+    if ($cf === null) {
+        $cfState = 'none — using built-in defaults';
+    } elseif (strpos(str_replace('\\', '/', $cf), '/_private/') !== false) {
+        $cfState = 'ephemeral — _private/config.php, which the next deploy deletes';
+    } else {
+        $cfState = 'durable — egybi-config.php above the deployed folder';
+    }
     $counts = [];
     foreach (['users', 'user_progress', 'sessions', 'newsletter_subscribers'] as $t) {
         try { $counts[$t] = (int)$db->query("SELECT COUNT(*) AS n FROM $t")->fetch()['n']; }
@@ -187,6 +196,7 @@ case 'health': {
     }
     json_out(true, [
         'storage'  => ['driver' => $d['driver'], 'durable' => $d['durable'], 'detail' => $d['why']],
+        'config'   => $cfState,
         'counts'   => $counts,
         'google'   => google_enabled(),
         'mail'     => auth_cfg()['smtp_host'] !== '',

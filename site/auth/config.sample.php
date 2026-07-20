@@ -10,9 +10,10 @@
  * │ every single `git push` deletes it — config, database, subscriber list    │
  * │ and all. Nothing errors; the data just silently ceases to exist.          │
  * │                                                                          │
- * │ USE hPANEL ENVIRONMENT VARIABLES INSTEAD. They survive deployments and    │
- * │ never enter the repository. Names are in the right-hand column below and  │
- * │ the full walkthrough is in backend/DEPLOY.md.                             │
+ * │ USE egybi-config.php ONE LEVEL ABOVE public_html INSTEAD. Deploys never   │
+ * │ touch that folder. Copy egybi-config.sample.php (repo root) there.        │
+ * │ (Shared hosting has no hPanel env-var section, so env vars are not an     │
+ * │ option on this plan — though the code still reads them if present.)      │
  * └──────────────────────────────────────────────────────────────────────────┘
  *
  * This file still works for LOCAL development, where nothing is deploying over

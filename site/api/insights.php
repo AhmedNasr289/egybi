@@ -14,10 +14,11 @@ $dir = __DIR__ . '/_private';
 // _private/analytics.key, which every deploy deleted — so it was regenerated on
 // each push and whatever ?key= you had bookmarked stopped working. Setting
 // ANALYTICS_KEY in hPanel makes it permanent.
-$secret = (string)(getenv('ANALYTICS_KEY') ?: '');
-if (strlen($secret) < 16) {
-    $secret = (string)@file_get_contents($dir . '/analytics.key');
-}
+$secret = '';
+$libEarly = __DIR__ . '/../auth/lib.php';
+if (is_file($libEarly)) { require_once $libEarly; $secret = analytics_key(); }
+if (strlen($secret) < 16) $secret = (string)(getenv('ANALYTICS_KEY') ?: '');
+if (strlen($secret) < 16) $secret = (string)@file_get_contents($dir . '/analytics.key');
 $provided = (string)($_GET['key'] ?? '');
 
 header('Content-Type: text/html; charset=utf-8');

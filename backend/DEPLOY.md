@@ -310,48 +310,38 @@ paywall-ready gating — **every plan free at launch**. Full design in
    CHARSET=utf8mb4`, because **MySQL cannot index a `TEXT` column** the way SQLite
    can — importing the SQLite schema on MySQL will fail. `schema_auth.sql` is for
    local SQLite testing only.
-3. **Configure secrets — hPanel ENVIRONMENT VARIABLES. Not a config file.**
+3. **Configure secrets — ONE FILE ABOVE `public_html`.**
 
-   > ⚠ **Do not create `_private/config.php` on Hostinger.** Git deployment
-   > replaces `public_html` with the repository contents, and `_private/` is
-   > gitignored — so it is not in the repo, and **every `git push` deletes it.**
-   > This was found the hard way on 2026‑07‑20: a one‑line change to `robots.txt`
-   > was enough to destroy the accounts database. Nothing errors when it happens,
-   > which is exactly why it went unnoticed. Environment variables survive
-   > deployments and never enter the repository.
+   > ⚠ **Not `_private/config.php`, and not hPanel environment variables.**
+   > `_private/` is gitignored, so it is absent from the repo, and Hostinger's
+   > deploy replaces `public_html` from the repo — every push deleted it.
+   > Hostinger *shared* hosting also has no environment-variable section (PHP
+   > Configuration offers only version / extensions / options).
+   >
+   > Deploys never touch the folder **above** `public_html`. Put the config there.
 
-   In hPanel go to **Advanced → PHP Configuration → Environment Variables** (or
-   *Website → Environment*, depending on your panel version) and add:
+   In File Manager, go to the folder that *contains* `public_html` (e.g.
+   `/domains/egybi.com/`), create **`egybi-config.php`**, and paste the contents
+   of `egybi-config.sample.php` from the repo root. Fill in either the MySQL
+   credentials (recommended — tables self-create, no phpMyAdmin import) or a
+   `sqlite_path` above `public_html`, plus `app_secret` and `analytics_key`.
 
-   | Variable | Value |
-   |---|---|
-   | `AUTH_DB_DRIVER` | `mysql` |
-   | `AUTH_DB_HOST` | `localhost` |
-   | `AUTH_DB_NAME` | the database from Step 1 |
-   | `AUTH_DB_USER` | its username |
-   | `AUTH_DB_PASS` | its password |
-   | `APP_SECRET` | a long random string (used to hash IPs — any 40+ chars) |
-   | `APP_URL` | `https://egybi.com` |
-   | `AUTH_SECURE_COOKIE` | `1` |
-   | `ANALYTICS_KEY` | a long random string — this is the `?key=` for the insights dashboard, and setting it here makes the URL permanent |
-   | `SMTP_HOST` | `smtp.hostinger.com` |
-   | `SMTP_PORT` | `465` (use `587` if blocked) |
-   | `SMTP_USER` | `hello@egybi.com` |
-   | `SMTP_PASS` | that mailbox's password |
-   | `MAIL_FROM` | `no-reply@egybi.com` (create it as a free **alias** on `hello@` in hPanel → Emails) |
-   | `GOOGLE_CLIENT_ID` | your OAuth client ID, once you have one (leave unset to keep Google sign‑in off) |
+   `lib.php` walks upward from itself looking for that filename, so no path
+   configuration is needed. Environment variables (`AUTH_DB_*`, `APP_SECRET`,
+   `ANALYTICS_KEY`, `SMTP_*`, `GOOGLE_CLIENT_ID`) still work as an override on
+   hosts that support them.
 
-   **The tables create themselves.** With `AUTH_DB_*` set, the first request
-   applies `schema_auth_mysql.sql` automatically — no phpMyAdmin import needed.
-   Step 2 above is now optional.
+   **Verify:** `https://egybi.com/auth/auth.php?action=health` should report
+   `"durable": true`. If it says `false`, the file is one level too deep.
 
-   **Check it worked:** open `https://egybi.com/auth/auth.php?action=health`.
-   It reports the driver, whether storage is durable, and row counts. You want
-   `"durable": true`. If it says `false`, the env vars have not taken effect and
-   your data is still being destroyed on every deploy.
+4. **Email.** Set `smtp_host` / `smtp_port` / `smtp_user` / `smtp_pass` /
+   `mail_from` in that same `egybi-config.php`. `mailer.php` is a
+   dependency-free SMTP client (no Composer) that sends the branded verify and
+   password-reset mail through Hostinger. Create `no-reply@egybi.com` as a free
+   **alias** on the `hello@egybi.com` mailbox (hPanel → Emails). Leave the
+   `smtp_*` values blank to keep links **logged** rather than sent (fine before
+   launch — signup and reset still succeed). Use port `587` if `465` is blocked.
 
-   Leave the `SMTP_*` values unset to keep verify/reset links **logged** rather
-   than sent (fine before launch — signup and reset still succeed).
 5. **Payments stay OFF.** `payments.php` is inert unless `PAY_ENABLED=1` **and**
    `PAY_WEBHOOK_SECRET` are set — no payment code runs and no plan can change
    until you deliberately enable a Paddle/LemonSqueezy integration. To turn a

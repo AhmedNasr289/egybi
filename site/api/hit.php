@@ -49,7 +49,10 @@ if (!is_dir($dir)) @mkdir($dir, 0700, true);
 // regenerated on each push. That silently broke visitor de-duplication (the same
 // person counted as new after every deploy) AND changed the ?key= needed to read
 // the dashboard, so the bookmarked insights URL stopped working.
-$secret = (string)(getenv('ANALYTICS_KEY') ?: '');
+$secret = '';
+$libEarly = __DIR__ . '/../auth/lib.php';
+if (is_file($libEarly)) { require_once $libEarly; $secret = analytics_key(); }
+if (strlen($secret) < 16) $secret = (string)(getenv('ANALYTICS_KEY') ?: '');
 if (strlen($secret) < 16) {
     $keyFile = $dir . '/analytics.key';
     $secret = @file_get_contents($keyFile);
