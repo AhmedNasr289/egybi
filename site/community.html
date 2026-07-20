@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=10" rel="stylesheet">
+<link href="assets/egybi.css?v=12" rel="stylesheet">
 <style>
   .step { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 20px; }
   .step::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-family: 'Cinzel', serif; display: flex; align-items: center; justify-content: center; }
@@ -85,8 +85,11 @@
   </div>
 </section>
 
+<!-- On-this-page sticky sub-nav (built by wayfinding.js from section[data-nav]) -->
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
+
 <!-- CONTRIBUTE -->
-<section class="surface-light">
+<section class="surface-light" id="contribute" data-nav="Contribute">
   <div class="wrap" style="max-width:860px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Contribute</div>
     <h2 data-aos="fade-up">Two ways to add to the knowledge base.</h2>
@@ -114,7 +117,7 @@
 </section>
 
 <!-- THE RULES -->
-<section class="surface-light-2">
+<section class="surface-light-2" id="rules" data-nav="Rules">
   <div class="wrap" style="max-width:860px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>The accuracy rules</div>
     <h2 data-aos="fade-up">Non-negotiable, for everyone.</h2>
@@ -131,7 +134,7 @@
 
 <!-- ROADMAP -->
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-light">
+<section class="surface-light" id="roadmap" data-nav="Roadmap">
   <div class="wrap" style="max-width:860px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Developments &amp; roadmap</div>
     <h2 data-aos="fade-up">Where EgyBI is going.</h2>
@@ -148,7 +151,7 @@
 </section>
 
 <!-- AUTOMATIONS -->
-<section class="surface-dark">
+<section class="surface-dark" id="automations" data-nav="Automations">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Under the hood</div>
     <h2 data-aos="fade-up">The automations that keep it honest.</h2>
@@ -162,7 +165,7 @@
 </section>
 
 <!-- IDEAS & DISCUSSION (interactive, moderated) -->
-<section class="surface-light-2" id="discuss">
+<section class="surface-light-2" id="discuss" data-nav="Discuss">
   <div class="wrap" style="max-width:820px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Ideas &amp; discussion</div>
     <h2 data-aos="fade-up">Share an idea, leave a comment.</h2>
@@ -207,6 +210,7 @@
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
 <script>window.EGYBI_COMMUNITY = { endpoint: 'api/community.php' };</script>
 <script src="assets/community.js"></script>
 <script src="assets/ads-config.js"></script>

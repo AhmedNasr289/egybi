@@ -12,11 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=10" rel="stylesheet">
+<link href="assets/egybi.css?v=12" rel="stylesheet">
 <style>
-  .jump-nav { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:26px; }
-  .jump-nav a { font-size:0.8rem; font-weight:600; padding:7px 14px; border-radius:999px; border:1px solid rgba(243,234,212,0.28); color:#f3ead4; text-decoration:none; transition:all .15s; }
-  .jump-nav a:hover, .jump-nav a:focus-visible { border-color:var(--gold-bright); color:#fff; outline:none; }
 
   .lead-in { max-width:760px; }
   .lead-in p { color:var(--ink); line-height:1.75; margin:0 0 12px; }
@@ -137,18 +134,11 @@
     <div class="kicker" style="color:var(--gold-bright);"><span data-glyph="scarab"></span>The data-engineering roadmap</div>
     <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">From zero to data engineer — the whole map.</h1>
     <p class="lead" style="margin:0 auto;color:#f3ead4;">A free, honest reference for anyone building a data career: what the roles really are, a phase-by-phase roadmap, the 2026 modern data stack mapped out, the concepts and tools to master in each of nine tracks, and a curated reading list. Newbie or guru — start where you are.</p>
-    <nav class="jump-nav" aria-label="On this page">
-      <a href="#roles">The roles</a>
-      <a href="#roadmap">The roadmap</a>
-      <a href="#foundations">Foundations</a>
-      <a href="#stack">The data stack</a>
-      <a href="#tracks">The 9 tracks</a>
-      <a href="#concepts">Core concepts</a>
-      <a href="#reading">Reading list</a>
-      <a href="#faq">FAQ</a>
-    </nav>
   </div>
 </section>
+
+<!-- On-this-page sticky sub-nav (built by wayfinding.js from section[data-nav]) -->
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
 
 <!-- HOW TO USE -->
 <section class="surface-light">
@@ -162,7 +152,7 @@
 </section>
 
 <!-- THE ROLES -->
-<section class="surface-dark" id="roles">
+<section class="surface-dark" id="roles" data-nav="Roles">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>The roles, decoded</div>
     <h2 data-aos="fade-up">Data engineer, analytics engineer, analyst — who owns what.</h2>
@@ -195,7 +185,7 @@
 </section>
 
 <!-- THE ROADMAP -->
-<section class="surface-light" id="roadmap">
+<section class="surface-light" id="roadmap" data-nav="Roadmap">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>The roadmap</div>
     <h2 data-aos="fade-up">Four phases from zero to job-ready.</h2>
@@ -239,7 +229,7 @@
 
 <!-- FOUNDATIONS -->
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-light-2" id="foundations">
+<section class="surface-light-2" id="foundations" data-nav="Foundations">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Foundations (Phase 1)</div>
     <h2 data-aos="fade-up">The five things to nail before any tool.</h2>
@@ -256,7 +246,7 @@
 </section>
 
 <!-- MODERN DATA STACK -->
-<section class="surface-light" id="stack">
+<section class="surface-light" id="stack" data-nav="Data stack">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>The modern data stack, 2026</div>
     <h2 data-aos="fade-up">Seven layers, and the tools that own them.</h2>
@@ -275,7 +265,7 @@
 </section>
 
 <!-- THE NINE TRACKS -->
-<section class="surface-light-2" id="tracks">
+<section class="surface-light-2 cluster-head" id="tracks" data-nav="9 tracks">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>The nine tracks in detail</div>
     <h2 data-aos="fade-up">Every skill, the concepts to master, and reps to prove it.</h2>
@@ -476,7 +466,7 @@
 </section>
 
 <!-- CORE CONCEPTS -->
-<section class="surface-dark" id="concepts">
+<section class="surface-dark" id="concepts" data-nav="Concepts">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Core architecture concepts</div>
     <h2 data-aos="fade-up">The ideas behind the tools.</h2>
@@ -494,7 +484,7 @@
 
 <!-- READING LIST -->
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-light" id="reading">
+<section class="surface-light" id="reading" data-nav="Reading">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>The reading list</div>
     <h2 data-aos="fade-up">The shelf worth building.</h2>
@@ -516,7 +506,7 @@
 </section>
 
 <!-- FAQ -->
-<section class="surface-light-2" id="faq">
+<section class="surface-light-2" id="faq" data-nav="FAQ">
   <div class="wrap faq">
     <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>Straight answers</div>
     <h2 data-aos="fade-up">Questions every beginner asks.</h2>
@@ -553,6 +543,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>

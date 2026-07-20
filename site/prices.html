@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="assets/egybi.css?v=10" rel="stylesheet">
+<link href="assets/egybi.css?v=12" rel="stylesheet">
 <style>
   .src-strip { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:4px solid var(--gold); border-radius:var(--radius); padding:16px 20px; margin:0 0 22px; }
   .src-strip .live { display:inline-flex; align-items:center; gap:7px; font-weight:700; color:var(--blue-deep); }
@@ -166,6 +166,19 @@
   </div>
 </section>
 
+<!-- WHERE TO NEXT -->
+<section class="surface-light-2 next-steps center">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
+    <h2>More cited Egyptian data.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;">
+      <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt, charted &rarr;</h3><p>~23 BI dashboards and an interactive map of all 27 governorates.</p></a>
+      <a class="ns-card" href="practice.html"><span class="ns-k">Practice</span><h3>Query the data yourself &rarr;</h3><p>123 auto-graded SQL challenges on real cited tables — no signup.</p></a>
+      <a class="ns-card" href="blog.html"><span class="ns-k">The Papyrus</span><h3>Egypt, told through its data &rarr;</h3><p>Short, cited stories about the country and its numbers.</p></a>
+    </div>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="cols">
     <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
@@ -180,6 +193,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
 <script>
 (function(){
   var esc = (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml : function(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; };

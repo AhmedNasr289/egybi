@@ -2,7 +2,7 @@
 
 The knowledge base and plan for **EgyBI** — a gamified skills-practice platform for **Business Intelligence, Data Engineering, Data Warehousing, and the modern data stack**, where every challenge is built on real, cited Egyptian data. Deploys to **egybi.com** (Hostinger). Project files map: `../README.md`.
 
-**One-line status:** Phase 0 (pre-launch). A 5-page site (with a working **auto-graded SQL challenge engine**) + a **40-table** cited knowledge base (14+ sectors) + a PHP/MySQL API + an **automated World Bank data-refresh pipeline** are all built and verified locally; next is deploying to Hostinger. Full history in [[Changelog]].
+**One-line status:** Phase 0, at launch. A **9-page site** (with a **123-challenge auto-graded SQL engine**) + a **61-table (838-row)** cited knowledge base (18+ sectors) + a read-only PHP/MySQL API + a **Phase-2 accounts layer** (Argon2id + Google Sign-In, XP/streaks/rank, free at launch) + automated data-refresh pipelines are all built, deployed to Hostinger, and verified live on egybi.com (durable MySQL storage, SMTP + Google sign-in live, security-reviewed). Full history in [[Changelog]].
 
 ---
 
@@ -24,8 +24,8 @@ The knowledge base and plan for **EgyBI** — a gamified skills-practice platfor
 - [[Brand & Creative Identity]] — the Egyptian mythology/art research behind the mascot, ranks, badges, palette
 
 ## 🛠️ Build & tech
-- [[Frontend & Design System]] — the color identity + the 5-page site (`../site/`)
-- [[Backend & Knowledge Base]] — the 40-table KB + PHP/MySQL API (`../backend/`); deploy guide at `../backend/DEPLOY.md`
+- [[Frontend & Design System]] — the color identity + the 9-page site (`../site/`)
+- [[Backend & Knowledge Base]] — the 61-table KB + PHP/MySQL API (`../backend/`); deploy guide at `../backend/DEPLOY.md`
 - [[Challenge Engine & Data Pipeline]] — the auto-graded SQL problem set + the World Bank refresh pipeline
 - [[Product Format & Architecture]] — in-browser sandbox strategy, execution security, gamification mechanics
 - [[Security Posture & Audit Log]] — the 2026-07-20 review: what was fixed, what was already right, and which reported findings were wrong

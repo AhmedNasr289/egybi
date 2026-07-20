@@ -110,7 +110,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="../assets/egybi.css?v=10" rel="stylesheet">
+<link href="../assets/egybi.css?v=12" rel="stylesheet">
 <script src="../assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
@@ -121,6 +121,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 {FOOT}
 <script src="../assets/egybi.js"></script>
 <script src="../assets/glyphs.js?v=3"></script>
+<script src="../assets/wayfinding.js?v=1"></script>
 <script src="../assets/ads.js"></script>
 <script src="../assets/auth.js?v=10"></script>
 <script src="../assets/analytics.js"></script>
@@ -302,14 +303,19 @@ def build_link_indexes(chs, posts):
     for c in chs:
         by_sector.setdefault(c['sector'], []).append(c)
 
-    parts = ['<section class="surface-light" id="all-challenges">',
+    _diff_rank = {'Easy': 0, 'Medium': 1, 'Hard': 2}
+    parts = ['<section class="surface-light-2" id="all-challenges" data-nav="All 123">',
              '  <div class="wrap">',
              '    <h2 style="font-size:1.35rem;"><span data-glyph="reed"></span> All 123 SQL challenges</h2>',
              '    <p style="color:var(--ink-soft);max-width:70ch;">Every challenge has its own page, so you can link '
-             'straight to a technique or find one from search. Grouped by sector.</p>']
+             'straight to a technique or find one from search. Grouped by sector, then ordered easy&rarr;hard.</p>']
     for sector in sorted(by_sector):
-        items = sorted(by_sector[sector], key=lambda x: x['title'])
-        parts.append(f'    <h3 style="font-size:1.02rem;margin-top:22px;">{esc(sector)}</h3>')
+        # order Easy -> Medium -> Hard within a sector, then by title, so a long
+        # sector (History) reads as a gentle difficulty ramp, not a flat wall.
+        items = sorted(by_sector[sector], key=lambda x: (_diff_rank.get(x['difficulty'], 9), x['title']))
+        parts.append(f'    <h3 style="font-size:1.02rem;margin-top:22px;">{esc(sector)} '
+                     f'<span style="color:var(--ink-soft);font-weight:400;font-size:0.82rem;">'
+                     f'&middot; {len(items)}</span></h3>')
         parts.append('    <ul class="plain-list link-grid">')
         for c in items:
             parts.append(f'      <li><a href="practice/{slug(c["title"])}.html">{esc(c["title"])}</a> '

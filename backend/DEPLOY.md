@@ -19,7 +19,7 @@ There are four pieces:
 | Piece | What it is | Where it goes |
 |---|---|---|
 | **Frontend** | All pages (`site/*.html` — index, explore, tracks, practice, blog, community, about, privacy) + `favicon.svg` + `assets/` | `public_html/` (the site root) |
-| **Database** | The Egypt knowledge base (58 tables) | A MySQL database you create in hPanel |
+| **Database** | The Egypt knowledge base (61 tables) | A MySQL database you create in hPanel |
 | **Backend API** | The read-only PHP that serves the knowledge base | `public_html/api/` |
 | **Newsletter endpoint** | The one write-side PHP file — stores *The Papyrus* subscribers in the database (was a private file; that file was deleted by every deploy) | `public_html/api/newsletter.php` |
 
@@ -54,7 +54,7 @@ provisioning before continuing.
 
 1. In hPanel, open **phpMyAdmin** for the database you just created.
 2. Select the database on the left, then the **Import** tab.
-3. Import **`backend/sql/schema_mysql.sql`** first (creates all 58 tables). Click Go.
+3. Import **`backend/sql/schema_mysql.sql`** first (creates all 61 tables). Click Go.
 4. Then import **`backend/sql/seed.sql`** (the core cited data). Click Go.
 5. Then import **`backend/sql/seed_v2.sql`** (enrichment — demographics, governorates,
    energy, agriculture, water, notable people, universities, artifacts, more pharaohs).
@@ -75,17 +75,23 @@ provisioning before continuing.
    businessmen, cinema economics, military standing & arms-trade *public figures only*,
    football & handball depth, logistics projects, and national mega-project 2026 status).
    Click Go.
-12. *(Optional, only if you ran the data pipeline)* import **`backend/sql/seed_auto.sql`**
+12. Then import **`backend/sql/seed_v9.sql`** (history & heritage depth — the 33 surviving
+   ancient obelisks and where they stand today, landmark archaeological discoveries, major
+   temples by principal deity, and royal women who held real power). **Do not skip this** —
+   the schema creates its four tables (`obelisks`, `archaeological_discoveries`, `temples`,
+   `royal_women`) but only `seed_v9` fills them, and the live homepage's obelisk section
+   reads them. Click Go.
+13. *(Optional, only if you ran the data pipeline)* import **`backend/sql/seed_auto.sql`**
    LAST — it is pipeline-generated and idempotently refreshes the World Bank indicator
    rows it owns. Skip it if the file doesn't exist.
-13. Verify: click the database — you should see **58 tables**. Click `pharaohs` → Browse
+14. Verify: click the database — you should see **61 tables**. Click `pharaohs` → Browse
    (45 rows); click `governorates` (all 27, now with `census_2017` + `urban_pct`); click
-   `businessmen` (9), `football` (14), `arms_trade` (8), `logistics_projects` (12) and
-   `megaproject_status` (12).
+   `businessmen` (9), `football` (14), `arms_trade` (8), `logistics_projects` (12),
+   `megaproject_status` (12) and `obelisks` (33).
 
-> **Import order matters** (v4–v8 add/UPDATE rows on existing tables): schema → seed →
-> seed_v2 → seed_v3 → seed_v4 → seed_v5 → seed_v6 → seed_v7 → seed_v8 → (seed_auto).
-> `build_test_db.py` runs exactly this order locally (**58 tables, 837 rows, zero FK
+> **Import order matters** (v4–v9 add/UPDATE rows on existing tables): schema → seed →
+> seed_v2 → seed_v3 → seed_v4 → seed_v5 → seed_v6 → seed_v7 → seed_v8 → seed_v9 → (seed_auto).
+> `build_test_db.py` runs exactly this order locally (**61 tables, 838 rows, zero FK
 > violations**).
 
 ## Frontend note — the Egypt map & challenge assets
@@ -393,8 +399,8 @@ php -d extension=pdo_sqlite -d extension=sqlite3 -S 127.0.0.1:8189 site/api/inde
 ```
 
 > `build_test_db.py` runs `schema_sqlite.sql` → `seed.sql` → `seed_v2.sql` → … →
-> `seed_v8.sql` in order, then a `PRAGMA foreign_key_check`. Latest build: **58 tables,
-> 837 rows, zero FK violations.**
+> `seed_v9.sql` in order, then a `PRAGMA foreign_key_check`. Latest build: **61 tables,
+> 838 rows, zero FK violations.**
 
 > To test the newsletter endpoint locally, run the PHP server from `backend/` and POST to
 > `/api/newsletter.php` (e.g. `curl -d "email=you@example.com" http://127.0.0.1:8189/api/newsletter.php`).

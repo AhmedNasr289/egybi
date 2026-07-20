@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=10" rel="stylesheet">
+<link href="assets/egybi.css?v=12" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -66,12 +66,15 @@
     <div class="kicker" style="color:var(--gold-bright);"><span data-glyph="ankh"></span>The identity</div>
     <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">The House of Life.</h1>
     <p class="lead" style="margin:0 auto;color:#f3ead4;">In ancient Egypt, the <em>Per Ankh</em> — "House of Life" — was the temple institution where scribes trained in writing, record-keeping, medicine, and astronomy. EgyBI is a modern House of Life for a new kind of scribe: the data engineer, the analytics engineer, the BI developer.</p>
-    <p style="margin:14px auto 0;max-width:640px;color:var(--on-dark-soft);font-size:0.95rem;">In plain terms: <strong>EgyBI</strong> is a free SQL practice platform where every dataset is real, cited Egyptian data. Built solo by <strong>Ahmed Nasr</strong>, a data engineer and BI developer.</p>
+    <p class="page-intro" style="margin:14px auto 0;max-width:640px;color:var(--on-dark-soft);font-size:0.95rem;">In plain terms: <strong>EgyBI</strong> is a free SQL practice platform where every dataset is real, cited Egyptian data. Built solo by <strong>Ahmed Nasr</strong>, a data engineer and BI developer.</p>
   </div>
 </section>
 
+<!-- On-this-page sticky sub-nav (built by wayfinding.js from section[data-nav]) -->
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
+
 <!-- STORY -->
-<section class="surface-light">
+<section class="surface-light" id="story" data-nav="Why Egypt">
   <div class="wrap" style="max-width:820px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Why Egypt</div>
     <h2 data-aos="fade-up">Not a themed skin — a real teacher.</h2>
@@ -81,7 +84,7 @@
 </section>
 
 <!-- THE KNOWLEDGE BASE (breadth) -->
-<section class="surface-light-2" id="knowledge-base">
+<section class="surface-light-2" id="knowledge-base" data-nav="Knowledge base">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>The knowledge base</div>
     <h2 data-aos="fade-up">One cited database. Five thousand years of Egypt.</h2>
@@ -105,7 +108,7 @@
 </section>
 
 <!-- FOR THE CURIOUS ABOUT EGYPT -->
-<section class="surface-light" id="discover">
+<section class="surface-light" id="discover" data-nav="For the curious">
   <div class="wrap" style="max-width:900px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Not a data engineer? Come anyway.</div>
     <h2 data-aos="fade-up">A way to actually discover Egypt.</h2>
@@ -118,7 +121,7 @@
 
 <!-- IBI + RANKS + BADGES (dark) -->
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-dark">
+<section class="surface-dark" id="ibi" data-nav="Ibi">
   <div class="wrap">
     <div class="grid grid-2" style="align-items:center;gap:36px;">
       <div data-aos="fade-up">
@@ -141,7 +144,11 @@
       </div>
     </div>
 
-    <div style="margin-top:52px;" data-aos="fade-up">
+  </div>
+</section>
+<section class="surface-dark" id="ranks" data-nav="Ranks">
+  <div class="wrap">
+    <div data-aos="fade-up">
       <div class="kicker"><span data-glyph="scarab"></span>Progression</div>
       <h2>Rise through the House of Life.</h2>
       <div class="rank-ladder">
@@ -154,7 +161,11 @@
       </div>
     </div>
 
-    <div style="margin-top:44px;" data-aos="fade-up">
+  </div>
+</section>
+<section class="surface-dark" id="badges" data-nav="Badges">
+  <div class="wrap">
+    <div data-aos="fade-up">
       <div class="kicker"><span data-glyph="was"></span>Earn your marks</div>
       <h2>Egyptian badges, not generic stars.</h2>
       <div class="grid grid-4" style="margin-top:20px;">
@@ -172,7 +183,7 @@
 </section>
 
 <!-- ACCURACY PRINCIPLE -->
-<section class="surface-light">
+<section class="surface-light" id="accuracy" data-nav="Accuracy">
   <div class="wrap" style="max-width:820px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>The non-negotiable rule</div>
     <h2 data-aos="fade-up">Accuracy over polish.</h2>
@@ -204,7 +215,7 @@
 
 
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-light" id="glyphs">
+<section class="surface-light" id="glyphs" data-nav="Signs">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span> Medu netjer &mdash; the words of the gods</div>
     <h2 data-aos="fade-up">The signs we use, and what they actually mean.</h2>
@@ -228,6 +239,7 @@
 <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
 <script>
   // ---- knowledge-base sector grid ----
   var sectors = [
