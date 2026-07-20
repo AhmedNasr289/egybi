@@ -268,6 +268,40 @@ def build_sitemap(extra):
     return len(rows)
 
 
+def build_feed(posts):
+    """An RSS 2.0 feed for The Papyrus — discovery + a real subscribe option."""
+    from email.utils import format_datetime
+    from datetime import datetime, timezone
+    items = []
+    for p in posts:
+        url = f"{SITE_URL}/papyrus/{p['id']}.html"
+        desc = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', p['excerpt'])).strip()
+        try:  # strptime on a fixed ISO string is deterministic (no "now")
+            dt = datetime.strptime(p['date'], '%Y-%m-%d').replace(tzinfo=timezone.utc)
+            pub = f"    <pubDate>{format_datetime(dt)}</pubDate>\n"
+        except Exception:
+            pub = ''
+        cat = f"    <category>{esc(p.get('tag', ''))}</category>\n" if p.get('tag') else ''
+        items.append(
+            "  <item>\n"
+            f"    <title>{esc(p['title'])}</title>\n"
+            f"    <link>{url}</link>\n"
+            f'    <guid isPermaLink="true">{url}</guid>\n'
+            f"{pub}{cat}"
+            f"    <description>{esc(desc)}</description>\n"
+            "  </item>")
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n<channel>\n'
+           '  <title>The Papyrus — EgyBI</title>\n'
+           f'  <link>{SITE_URL}/blog.html</link>\n'
+           f'  <atom:link href="{SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />\n'
+           '  <description>Egypt, told through its data — a monthly letter of real, cited stories from EgyBI.</description>\n'
+           '  <language>en</language>\n'
+           + "\n".join(items) + "\n</channel>\n</rss>\n")
+    io.open(os.path.join(SITE, 'feed.xml'), 'w', encoding='utf-8').write(xml)
+    return len(items)
+
+
 def write_index_block(path, marker, html):
     """Replace a generator-owned region between HTML comment markers.
 
@@ -342,9 +376,11 @@ def main():
     pu = build_posts(posts)
     build_link_indexes(ch, posts)
     total = build_sitemap(cu + pu)
+    nfeed = build_feed(posts)
     print(f"challenge pages : {len(cu)}")
     print(f"post pages      : {len(pu)}")
     print(f"sitemap URLs    : {total}")
+    print(f"RSS feed items  : {nfeed}")
 
 if __name__ == '__main__':
     main()

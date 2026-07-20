@@ -106,5 +106,33 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
   created_at   VARCHAR(32) NOT NULL,
   ip_hash      VARCHAR(32) NULL,             -- coarse abuse signal, never a raw IP
   unsubscribed TINYINT NOT NULL DEFAULT 0,
+  confirmed    TINYINT NOT NULL DEFAULT 0,   -- double opt-in: inert until confirmed
+  token        VARCHAR(48) NULL,             -- per-address secret for confirm + unsub links
+  confirmed_at    VARCHAR(32) NULL,
+  unsubscribed_at VARCHAR(32) NULL,
   PRIMARY KEY (email(191))                   -- same 767-byte limit as users.email
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- The Papyrus: one row per monthly letter (draft -> sending -> sent).
+CREATE TABLE IF NOT EXISTS newsletter_issues (
+  id         VARCHAR(16) NOT NULL,
+  slug       VARCHAR(120) NOT NULL,
+  subject    VARCHAR(255) NOT NULL,
+  html       MEDIUMTEXT NOT NULL,
+  status     VARCHAR(16) NOT NULL DEFAULT 'draft',
+  created_at VARCHAR(32) NOT NULL,
+  sent_at    VARCHAR(32) NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_nl_slug (slug)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Per-recipient send log. The (issue_id, email) key IS the idempotency guard:
+-- a resend can never mail the same subscriber twice.
+CREATE TABLE IF NOT EXISTS newsletter_sends (
+  issue_id VARCHAR(16) NOT NULL,
+  email    VARCHAR(254) NOT NULL,
+  status   VARCHAR(16) NOT NULL DEFAULT 'sent',
+  sent_at  VARCHAR(32) NULL,
+  error    VARCHAR(255) NULL,
+  PRIMARY KEY (issue_id, email(180))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

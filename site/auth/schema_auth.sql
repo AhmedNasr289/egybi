@@ -98,5 +98,30 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
   email        TEXT PRIMARY KEY,             -- stored lower-cased
   created_at   TEXT NOT NULL,
   ip_hash      TEXT,
-  unsubscribed INTEGER NOT NULL DEFAULT 0
+  unsubscribed INTEGER NOT NULL DEFAULT 0,
+  confirmed    INTEGER NOT NULL DEFAULT 0,   -- double opt-in: inert until confirmed
+  token        TEXT,                         -- per-address secret for confirm + unsub links
+  confirmed_at    TEXT,
+  unsubscribed_at TEXT
+);
+
+-- The Papyrus: one row per monthly letter (draft -> sending -> sent).
+CREATE TABLE IF NOT EXISTS newsletter_issues (
+  id         TEXT PRIMARY KEY,
+  slug       TEXT UNIQUE NOT NULL,
+  subject    TEXT NOT NULL,
+  html       TEXT NOT NULL,
+  status     TEXT NOT NULL DEFAULT 'draft',
+  created_at TEXT NOT NULL,
+  sent_at    TEXT
+);
+
+-- Per-recipient send log; (issue_id, email) is the idempotency guard.
+CREATE TABLE IF NOT EXISTS newsletter_sends (
+  issue_id TEXT NOT NULL,
+  email    TEXT NOT NULL,
+  status   TEXT NOT NULL DEFAULT 'sent',
+  sent_at  TEXT,
+  error    TEXT,
+  PRIMARY KEY (issue_id, email)
 );
