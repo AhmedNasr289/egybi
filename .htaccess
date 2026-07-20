@@ -43,6 +43,45 @@
     RewriteRule ^(.*)$ site/$1 [L]
 </IfModule>
 
+# ---------------------------------------------------------------------------
+# Security headers.
+#
+# "always" matters: without it these are skipped on error responses (403/404),
+# which is exactly where an attacker spends their time.
+#
+# Note the host already injects its own "Content-Security-Policy:
+# upgrade-insecure-requests". Two CSP headers both apply and intersect, so the
+# frame-ancestors policy below composes with it rather than replacing it.
+# ---------------------------------------------------------------------------
+<IfModule mod_headers.c>
+    # Clickjacking. The sign-in modal and the Google button are the real target:
+    # framed invisibly over an attacker's page, a click lands on our login UI.
+    # X-Frame-Options is the legacy control, frame-ancestors the modern one -
+    # both are set because older browsers ignore the latter. This does NOT
+    # affect the Google Identity iframe we embed; that is frame-src, and
+    # frame-ancestors only governs who may embed US.
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Content-Security-Policy "frame-ancestors 'self'"
+
+    # Stop browsers guessing a MIME type. Without this, a file served as
+    # text/plain that happens to contain markup can be sniffed as HTML and run.
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Send the full URL only to ourselves; cross-origin gets the bare origin.
+    # Keeps challenge/solution paths out of third-party referer logs.
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Drop access to device APIs the site never uses, so injected script cannot
+    # reach for them either. Topics/interest-cohort is deliberately NOT listed:
+    # restricting it would interfere with AdSense.
+    Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()"
+
+    # HSTS. Browsers ignore this over plain HTTP, so it is safe to set here.
+    # No "preload" directive on purpose - preloading is submitted to a browser
+    # list and is genuinely hard to undo.
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
 # Fallback if mod_rewrite is off on this host: at least deny sensitive types.
 <FilesMatch "\.(md|sql|sqlite|sqlite3|geojson|log)$">
     Require all denied
