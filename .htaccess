@@ -49,9 +49,11 @@
 # "always" matters: without it these are skipped on error responses (403/404),
 # which is exactly where an attacker spends their time.
 #
-# Note the host already injects its own "Content-Security-Policy:
-# upgrade-insecure-requests". Two CSP headers both apply and intersect, so the
-# frame-ancestors policy below composes with it rather than replacing it.
+# The host injects its own "Content-Security-Policy: upgrade-insecure-requests".
+# "Header always set" REPLACES that header rather than adding a second one --
+# confirmed against the live response, which came back with exactly one CSP.
+# So upgrade-insecure-requests is restated in our own policy below; without it
+# adding these headers would have silently dropped a control that was there.
 # ---------------------------------------------------------------------------
 <IfModule mod_headers.c>
     # Clickjacking. The sign-in modal and the Google button are the real target:
@@ -61,7 +63,7 @@
     # affect the Google Identity iframe we embed; that is frame-src, and
     # frame-ancestors only governs who may embed US.
     Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set Content-Security-Policy "frame-ancestors 'self'"
+    Header always set Content-Security-Policy "frame-ancestors 'self'; upgrade-insecure-requests"
 
     # Stop browsers guessing a MIME type. Without this, a file served as
     # text/plain that happens to contain markup can be sniffed as HTML and run.
