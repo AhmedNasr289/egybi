@@ -408,6 +408,17 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .surface-light .glyph, .surface-light-2 .glyph { color: var(--gold-ink); }
 .surface-light .glyph:hover, .surface-light .glyph:focus-visible { color: var(--blue); }
 
+/* An invisible tooltip must never widen the page. The signs sit close to the
+   container edge on phones, and this tooltip is width:max-content centred on the
+   sign, so it reached past the viewport and inflated scrollWidth by ~77px even
+   at opacity 0. Clipping the body fixes it for every sign at once.
+
+   overflow-x: CLIP, not hidden — the site header is position:sticky, and
+   overflow-x:hidden would turn body into a scroll container and silently kill
+   the sticky. clip has no such side effect and leaves overflow-y visible, so
+   tooltips still rise above their sign. */
+body { overflow-x: clip; }
+
 /* tooltip — explanation is always reachable, never hover-only */
 .glyph[data-tip]::after {
   content: attr(data-tip);
@@ -419,6 +430,8 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
   z-index: 60; text-align: left; box-shadow: 0 12px 30px rgba(0,0,0,.45);
 }
 .glyph[data-tip]:hover::after, .glyph[data-tip]:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* On a phone the tooltip would otherwise be wider than the screen it sits on. */
+@media (max-width: 560px) { .glyph[data-tip]::after { max-width: min(240px, 78vw); } }
 
 /* a divider that reads like a carved band */
 .glyph-rule { display: flex; align-items: center; gap: 14px; margin: 44px 0; color: var(--gold); }
