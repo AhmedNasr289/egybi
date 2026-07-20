@@ -29,6 +29,7 @@ The knowledge base and plan for **EgyBI** — a gamified skills-practice platfor
 - [[Challenge Engine & Data Pipeline]] — the auto-graded SQL problem set + the World Bank refresh pipeline
 - [[Product Format & Architecture]] — in-browser sandbox strategy, execution security, gamification mechanics
 - [[Security Posture & Audit Log]] — the 2026-07-20 review: what was fixed, what was already right, and which reported findings were wrong
+- [[Traffic Baseline & Analytics]] — the pre-launch traffic baseline, how to read the dashboards, and which figures are honest
 
 ## ⚖️ Rules & sources
 - [[IP & Content Rules]] — the employer-data boundary + the book-copyright boundary
