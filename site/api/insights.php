@@ -62,7 +62,15 @@ $views30     = (int)(q($db, 'SELECT COUNT(*) c FROM hits WHERE day>=?', [$since3
 $viewsToday  = (int)(q($db, 'SELECT COUNT(*) c FROM hits WHERE day=?', [$today])[0]['c'] ?? 0);
 $uniq7       = (int)(q($db, 'SELECT COUNT(DISTINCT visitor) c FROM hits WHERE day>=?', [$since7])[0]['c'] ?? 0);
 $perDay      = q($db, 'SELECT day, COUNT(*) v, COUNT(DISTINCT visitor) u FROM hits WHERE day>=? GROUP BY day ORDER BY day', [$since30]);
-$topPaths    = q($db, 'SELECT path, COUNT(*) v FROM hits WHERE day>=? GROUP BY path ORDER BY v DESC LIMIT 15', [$since30]);
+// Fold '/index.html' into '/' at read time as well as at write time. hit.php
+// normalises new rows, but rows written before that existed still carry the
+// long form, and leaving them split makes the homepage look like two separate
+// pages. CASE/IN is portable across MySQL and SQLite, so this works on either
+// backing store.
+$topPaths    = q($db, "SELECT CASE WHEN path IN ('/index.html','/index.htm') THEN '/' ELSE path END p,
+                              COUNT(*) v
+                       FROM hits WHERE day>=?
+                       GROUP BY p ORDER BY v DESC LIMIT 15", [$since30]);
 $topRefs     = q($db, "SELECT ref, COUNT(*) v FROM hits WHERE day>=? AND ref<>'' GROUP BY ref ORDER BY v DESC LIMIT 12", [$since30]);
 $directShare = (int)(q($db, "SELECT COUNT(*) c FROM hits WHERE day>=? AND (ref IS NULL OR ref='')", [$since30])[0]['c'] ?? 0);
 
@@ -135,7 +143,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr:last-child td{bo
 
 <h2>Top pages · 30d</h2>
 <table><tr><th>Path</th><th class="n">Views</th></tr>
-<?php foreach ($topPaths as $r): ?><tr><td><?=$e($r['path'])?></td><td class="n"><?=number_format((int)$r['v'])?></td></tr><?php endforeach; ?>
+<?php foreach ($topPaths as $r): ?><tr><td><?=$e($r['p'])?></td><td class="n"><?=number_format((int)$r['v'])?></td></tr><?php endforeach; ?>
 <?php if (!$topPaths): ?><tr><td colspan="2" class="muted">No data yet.</td></tr><?php endif; ?>
 </table>
 

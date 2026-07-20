@@ -34,6 +34,15 @@ $path = parse_url($path, PHP_URL_PATH) ?: '/';
 $path = substr(preg_replace('~[^a-zA-Z0-9/_.-]~', '', $path), 0, 120);
 if ($path === '') $path = '/';
 
+// Normalise the home page. The same page is reachable as '/' and as
+// '/index.html', and counting them separately split the homepage figure across
+// two rows -- it read as the two most popular pages on the site rather than as
+// one. Directory index files elsewhere collapse to their folder for the same
+// reason. insights.php folds the same pairs at read time, so rows written
+// before this existed still display merged.
+$path = preg_replace('~/index\.html?$~', '/', $path);
+if ($path === '') $path = '/';
+
 // Keep only the referrer HOST (never full URLs / query strings).
 $refHost = $ref !== '' ? (parse_url($ref, PHP_URL_HOST) ?: '') : '';
 $refHost = substr(preg_replace('~[^a-zA-Z0-9.-]~', '', $refHost), 0, 80);
