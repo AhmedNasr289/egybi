@@ -9,9 +9,13 @@
  *
  * Storage: ../_private/community.jsonl  (append-only, outside any served path;
  * also Deny *.jsonl in .htaccess as defence in depth). Each line is a JSON
- * object: { id, name, message, ts, iph, approved }.  To approve a submission,
- * open the file and set "approved": true on its line (or use any small admin
- * step you prefer). Approved-only is the default so moderation is opt-in-safe.
+ * object: { id, name, message, ts, iph, approved }.  Approved-only is the
+ * default so moderation is opt-in-safe.
+ *
+ * TO MODERATE: open `api/moderate.php?key=<ANALYTICS_KEY>`. Rows live in MySQL
+ * now, so the old instruction here -- "open the file and set approved: true" --
+ * pointed at a store that no longer holds the data, and for a while there was
+ * no way to publish or delete a submission at all.
  *
  * POST fields: message (required) | name (optional) | website (honeypot, empty)
  * GET:         returns { ok, items: [ { name, message, ts } ] }  (approved only)
