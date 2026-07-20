@@ -79,8 +79,16 @@ $maxDay = 1; foreach ($perDay as $r) { $maxDay = max($maxDay, (int)$r['v']); }
 // --- funnel (only present once the event column exists) ---------------------
 $funnel = []; $hasEvents = false;
 try {
+    // PRAGMA table_info is SQLite-only. Storage moved to MySQL, where that
+    // statement is a syntax error -- which the catch below swallowed, leaving
+    // $hasEvents false and the funnel section silently absent from the page.
+    // Not "no events recorded": the check itself could never succeed.
     $cols = [];
-    foreach ($db->query('PRAGMA table_info(hits)') as $c) { $cols[] = $c['name']; }
+    if (function_exists('db_is_mysql') && db_is_mysql()) {
+        foreach ($db->query('SHOW COLUMNS FROM hits') as $c) { $cols[] = $c['Field']; }
+    } else {
+        foreach ($db->query('PRAGMA table_info(hits)') as $c) { $cols[] = $c['name']; }
+    }
     if (in_array('event', $cols, true)) {
         $hasEvents = true;
         $steps = [
