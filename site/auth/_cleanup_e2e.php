@@ -33,10 +33,29 @@ $targets = $st->fetchAll();
 
 $token = (string)($_GET['token'] ?? '');
 if (!hash_equals(CLEANUP_TOKEN, $token)) {
+    // Diagnostics: the dry run came back with zero matches even though the test
+    // account was verified to exist. Either it is already gone, or the whole
+    // auth store is being reset — which would also take the newsletter list and
+    // any real accounts with it, so it needs answering before anything else.
+    $cfg = auth_cfg();
+    $diag = ['driver' => $cfg['driver']];
+    if ($cfg['driver'] === 'sqlite') {
+        $p = $cfg['sqlite_path'];
+        $diag['sqlite_exists']   = is_file($p);
+        $diag['sqlite_bytes']    = is_file($p) ? filesize($p) : 0;
+        $diag['sqlite_modified'] = is_file($p) ? gmdate('c', (int)filemtime($p)) : null;
+        $diag['sqlite_created']  = is_file($p) ? gmdate('c', (int)filectime($p)) : null;
+    }
+    $diag['total_users']  = (int)$db->query('SELECT COUNT(*) AS n FROM users')->fetch()['n'];
+    $diag['all_emails']   = array_column($db->query('SELECT email FROM users ORDER BY created_at')->fetchAll(), 'email');
+    $diag['sessions']     = (int)$db->query('SELECT COUNT(*) AS n FROM sessions')->fetch()['n'];
+    $diag['progress_rows']= (int)$db->query('SELECT COUNT(*) AS n FROM user_progress')->fetch()['n'];
+    $diag['server_time']  = now();
     json_out(true, [
         'mode'    => 'dry-run',
         'pattern' => TEST_PATTERN,
         'matched' => array_map(fn($u) => ['email' => $u['email'], 'created_at' => $u['created_at']], $targets),
+        'diagnostics' => $diag,
         'note'    => 'Supply the one-time token to delete.',
     ]);
 }
