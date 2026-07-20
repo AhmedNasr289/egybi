@@ -24,6 +24,26 @@ Run:  python backend/pipeline/build_static_pages.py
 """
 import io, json, os, re, subprocess, sys, html
 
+def _force_utf8_output() -> None:
+    """Make stdout/stderr safe for non-ASCII on every platform.
+
+    A Windows console defaults to a legacy code page that cannot encode many
+    characters this pipeline handles, so a plain print() can kill an otherwise
+    successful run with UnicodeEncodeError. UTF-8 writes correct bytes wherever
+    the terminal supports it; errors="replace" degrades to '?' on a genuinely
+    legacy console instead of taking the job down. File output is unaffected —
+    writers specify their own encoding.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError, OSError):
+            pass          # Python < 3.7, or a stream that cannot be reconfigured
+
+
+_force_utf8_output()
+
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = os.path.join(ROOT, 'site')
 SITE_URL = 'https://egybi.com'

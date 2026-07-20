@@ -43,6 +43,31 @@ import ssl
 import sys
 import urllib.request
 
+
+def _force_utf8_output() -> None:
+    """Make stdout/stderr safe for non-ASCII, on every platform.
+
+    This script prints Arabic product names. A Windows console defaults to a
+    legacy code page (cp1252 here) which cannot encode them, so `print` raised
+    UnicodeEncodeError and killed the process — *after* a successful fetch and
+    transform. A working run reported itself as a crash, purely because of the
+    terminal it happened to be printing to.
+
+    Reconfiguring to UTF-8 writes correct bytes wherever the terminal supports
+    it (Windows Terminal, any modern shell, CI). `errors="replace"` is the
+    backstop for a genuinely legacy console: characters degrade to '?' instead
+    of taking the whole job down. Data written to disk is unaffected either way
+    — the JSON writer already specifies its own encoding.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError, OSError):
+            pass          # Python < 3.7, or a stream that cannot be reconfigured
+
+
+_force_utf8_output()
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(HERE, "..", "..", "site", "data")
 FIXTURE = os.path.join(HERE, "fixtures", "idsc_sample.json")
