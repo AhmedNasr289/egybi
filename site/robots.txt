@@ -7,3 +7,5 @@ Disallow: /api/
 Disallow: /auth/
 
 Sitemap: https://egybi.com/sitemap.xml
+
+<!-- durability proof: 2026-07-20T02:03:48Z -->
