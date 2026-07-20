@@ -16,10 +16,12 @@ CREATE TABLE IF NOT EXISTS users (
   email_verified TINYINT NOT NULL DEFAULT 0,
   plan           VARCHAR(20) NOT NULL DEFAULT 'free',
   display_name   VARCHAR(64) NULL,           -- public leaderboard handle (never the email)
+  google_sub     VARCHAR(64) NULL,           -- Google's immutable user id; NULL for password-only
   created_at     VARCHAR(32) NOT NULL,       -- ISO 8601 string (gmdate('c'))
   updated_at     VARCHAR(32) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_users_email (email)
+  UNIQUE KEY uq_users_email (email),
+  UNIQUE KEY uq_users_google (google_sub)    -- NULLs are exempt from UNIQUE in MySQL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS auth_tokens (
@@ -85,4 +87,17 @@ CREATE TABLE IF NOT EXISTS auth_attempts (
   created_at VARCHAR(32) NOT NULL,
   PRIMARY KEY (id),
   KEY idx_attempts_ip (ip_hash, action, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- The Papyrus subscriber list. It used to be an append-only JSONL file under
+-- api/_private/, which Hostinger's deployment deleted on EVERY push (the folder
+-- is gitignored, so it is not in the repo, so a deploy removes it). Real
+-- subscriber emails were being destroyed silently. Rows in a database are
+-- outside the deploy path, so they survive.
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+  email        VARCHAR(254) NOT NULL,        -- stored lower-cased
+  created_at   VARCHAR(32) NOT NULL,
+  ip_hash      VARCHAR(32) NULL,             -- coarse abuse signal, never a raw IP
+  unsubscribed TINYINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

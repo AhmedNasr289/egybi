@@ -44,12 +44,20 @@ $dir = __DIR__ . '/_private';
 if (!is_dir($dir)) @mkdir($dir, 0700, true);
 
 // A stable per-install secret so visitor hashes can't be recomputed externally.
-$keyFile = $dir . '/analytics.key';
-$secret = @file_get_contents($keyFile);
-if (!is_string($secret) || strlen($secret) < 16) {
-    $secret = bin2hex(random_bytes(24));
-    @file_put_contents($keyFile, $secret, LOCK_EX);
-    @chmod($keyFile, 0600);
+// It MUST come from the environment first: it used to live only in
+// _private/analytics.key, which every deploy deleted — so the secret was
+// regenerated on each push. That silently broke visitor de-duplication (the same
+// person counted as new after every deploy) AND changed the ?key= needed to read
+// the dashboard, so the bookmarked insights URL stopped working.
+$secret = (string)(getenv('ANALYTICS_KEY') ?: '');
+if (strlen($secret) < 16) {
+    $keyFile = $dir . '/analytics.key';
+    $secret = @file_get_contents($keyFile);
+    if (!is_string($secret) || strlen($secret) < 16) {
+        $secret = bin2hex(random_bytes(24));
+        @file_put_contents($keyFile, $secret, LOCK_EX);
+        @chmod($keyFile, 0600);
+    }
 }
 
 $day = gmdate('Y-m-d');
@@ -57,22 +65,46 @@ $ip  = $_SERVER['REMOTE_ADDR'] ?? '';
 $visitor = substr(hash('sha256', $ip . '|' . $ua . '|' . $day . '|' . $secret), 0, 16);
 
 try {
-    $db = new PDO('sqlite:' . $dir . '/analytics.sqlite', null, null, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    ]);
-    $db->exec('PRAGMA journal_mode=WAL;');
-    $db->exec('CREATE TABLE IF NOT EXISTS hits (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        ts TEXT NOT NULL, day TEXT NOT NULL, path TEXT NOT NULL,
-        ref TEXT, visitor TEXT NOT NULL
-    )');
-    $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_day ON hits(day)');
-    // Additive migration: existing installs get the column without losing data.
-    $cols = [];
-    foreach ($db->query('PRAGMA table_info(hits)') as $c) { $cols[] = $c['name']; }
-    if (!in_array('event', $cols, true)) {
-        $db->exec("ALTER TABLE hits ADD COLUMN event TEXT NOT NULL DEFAULT ''");
-        $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_event ON hits(event)');
+    // Prefer the shared durable database. The old SQLite file sat in _private/
+    // and was destroyed on every deploy, which is why the funnel never showed
+    // any data — it was not that nobody visited, it was that the table kept
+    // being thrown away.
+    $db = null; $mysql = false;
+    $lib = __DIR__ . '/../auth/lib.php';
+    if (is_file($lib)) {
+        require_once $lib;
+        $db = durable_db();
+        $mysql = $db ? db_is_mysql() : false;
+    }
+    if (!$db) {
+        $db = new PDO('sqlite:' . $dir . '/analytics.sqlite', null, null, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ]);
+        $db->exec('PRAGMA journal_mode=WAL;');
+    }
+
+    $db->exec($mysql
+        ? "CREATE TABLE IF NOT EXISTS hits (
+             id BIGINT NOT NULL AUTO_INCREMENT,
+             ts VARCHAR(32) NOT NULL, day VARCHAR(10) NOT NULL, path VARCHAR(255) NOT NULL,
+             ref VARCHAR(80) NULL, visitor VARCHAR(32) NOT NULL,
+             event VARCHAR(40) NOT NULL DEFAULT '',
+             PRIMARY KEY (id), KEY idx_hits_day (day), KEY idx_hits_event (event)
+           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        : "CREATE TABLE IF NOT EXISTS hits (
+             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             ts TEXT NOT NULL, day TEXT NOT NULL, path TEXT NOT NULL,
+             ref TEXT, visitor TEXT NOT NULL, event TEXT NOT NULL DEFAULT ''
+           )");
+    if (!$mysql) {
+        $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_day ON hits(day)');
+        // Additive migration for installs created before `event` existed.
+        $cols = [];
+        foreach ($db->query('PRAGMA table_info(hits)') as $c) { $cols[] = $c['name']; }
+        if (!in_array('event', $cols, true)) {
+            $db->exec("ALTER TABLE hits ADD COLUMN event TEXT NOT NULL DEFAULT ''");
+            $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_event ON hits(event)');
+        }
     }
     $st = $db->prepare('INSERT INTO hits (ts,day,path,ref,visitor,event) VALUES (?,?,?,?,?,?)');
     $st->execute([gmdate('c'), $day, $path, $refHost, $visitor, $event]);

@@ -7,8 +7,15 @@
  * append-only JSONL file (no database write needed, so it runs on any shared
  * PHP host), de-duplicates, and is hardened against spam and injection.
  *
- * Storage: ../_private/newsletter.jsonl  (outside the API folder that gets
- * served; also add a Deny rule for *.jsonl in .htaccess as defence in depth).
+ * Storage: the `newsletter_subscribers` table, via ../auth/lib.php.
+ *
+ * It used to be an append-only JSONL file at ../_private/newsletter.jsonl. That
+ * folder is gitignored, and Hostinger's deployment replaces public_html with the
+ * repository contents — so it was not in the repo, and EVERY push deleted it.
+ * Real subscriber emails were being destroyed silently, with nothing in the logs
+ * and no error on the page. Database rows are outside the deploy path and
+ * survive. The file path is kept only as a last-resort fallback for hosts with
+ * no database configured, and it now says so in the logs when it is used.
  *
  * POST fields:  email (required)  |  website (honeypot — must be empty)
  * Response: JSON { ok: bool, message: string }
@@ -59,6 +66,24 @@ if (strlen($email) > 254 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     out(false, 'Please enter a valid email address.', 422);
 }
 
+$ipHash = substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
+
+// Primary path: the database, which survives deployments.
+$lib = __DIR__ . '/../auth/lib.php';
+if (is_file($lib)) {
+    require_once $lib;
+    $res = newsletter_add($email, $ipHash);
+    if ($res === 'added')     out(true, 'You are subscribed to The Papyrus. Welcome aboard.');
+    if ($res === 'duplicate') out(true, 'You are already on the list — thank you.');
+    // 'error' falls through to the file, so a database hiccup never loses a signup.
+    error_log('[EgyBI] newsletter: database write failed, falling back to file storage.');
+}
+
+// Fallback only. Anything written here is lost on the next deploy, so say so
+// loudly rather than letting it look like it worked.
+error_log('[EgyBI] newsletter: storing to a file under _private/, which the next '
+        . 'deploy will DELETE. Configure the AUTH_DB_* env vars so signups persist.');
+
 $dir  = __DIR__ . '/_private';
 $file = $dir . '/newsletter.jsonl';
 if (!is_dir($dir)) {
@@ -82,11 +107,7 @@ if (is_file($file)) {
 
 // Append atomically. Only whitelisted, JSON-encoded fields are written, so the
 // stored email can never be interpreted as code by anything downstream.
-$record = json_encode([
-    'email' => $email,
-    'ts'    => gmdate('c'),
-    'iph'   => substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16),
-]);
+$record = json_encode(['email' => $email, 'ts' => gmdate('c'), 'iph' => $ipHash]);
 $ok = @file_put_contents($file, $record . "\n", FILE_APPEND | LOCK_EX);
 if ($ok === false) {
     out(false, 'We could not save your signup right now. Please try again later.', 500);

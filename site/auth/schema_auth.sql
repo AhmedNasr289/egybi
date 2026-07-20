@@ -91,3 +91,12 @@ CREATE TABLE IF NOT EXISTS auth_attempts (
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_attempts_ip ON auth_attempts(ip_hash, action, created_at);
+
+-- The Papyrus subscriber list — see the MySQL schema for why this moved out of
+-- api/_private/newsletter.jsonl (that folder is deleted by every deploy).
+CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+  email        TEXT PRIMARY KEY,             -- stored lower-cased
+  created_at   TEXT NOT NULL,
+  ip_hash      TEXT,
+  unsubscribed INTEGER NOT NULL DEFAULT 0
+);

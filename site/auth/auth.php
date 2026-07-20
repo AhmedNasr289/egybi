@@ -173,6 +173,27 @@ case 'rename': {
     json_out(true, ['name' => $name, 'message' => 'Handle updated.']);
 }
 
+case 'health': {
+    // Deliberately public and deliberately boring: driver, whether the store
+    // survives a deploy, and row counts. No credentials, no emails, nothing an
+    // attacker gains from. It exists because the wipe-on-deploy bug was invisible
+    // — there was no way to ask "is my data actually persisting?" without
+    // writing a throwaway script. Now there is.
+    $d = storage_durability();
+    $counts = [];
+    foreach (['users', 'user_progress', 'sessions', 'newsletter_subscribers'] as $t) {
+        try { $counts[$t] = (int)$db->query("SELECT COUNT(*) AS n FROM $t")->fetch()['n']; }
+        catch (Throwable $e) { $counts[$t] = null; }   // table not created yet
+    }
+    json_out(true, [
+        'storage'  => ['driver' => $d['driver'], 'durable' => $d['durable'], 'detail' => $d['why']],
+        'counts'   => $counts,
+        'google'   => google_enabled(),
+        'mail'     => auth_cfg()['smtp_host'] !== '',
+        'server_time' => now(),
+    ]);
+}
+
 default:
     json_out(false, ['message' => 'Unknown action.'], 404);
 }

@@ -99,11 +99,67 @@ function hash_password(string $pw): string
     return password_hash($pw, PASSWORD_DEFAULT); // bcrypt — universally available
 }
 
+/**
+ * Is the store durable — i.e. does it survive a deployment?
+ *
+ * This exists because of a real incident. Hostinger's git deploy replaces
+ * public_html with the repository contents, and `_private/` is gitignored, so
+ * it is not in the repository and every push DELETED it. auth_db() then quietly
+ * rebuilt an empty SQLite file on the next request, so nothing ever errored —
+ * accounts, XP, streaks and the newsletter list simply ceased to exist, over and
+ * over, without a single log line. Silence was the bug.
+ *
+ * MySQL lives outside the deploy path, so it is durable by definition. SQLite is
+ * durable only if its file sits OUTSIDE the document root.
+ *
+ * Returns ['durable' => bool, 'why' => string, 'driver' => string].
+ */
+function storage_durability(): array
+{
+    $c = auth_cfg();
+    if ($c['driver'] === 'mysql') {
+        return ['durable' => true, 'driver' => 'mysql',
+                'why' => 'MySQL data lives outside public_html, so deployments cannot touch it.'];
+    }
+    $path = (string)$c['sqlite_path'];
+    $dir  = @realpath(dirname($path)) ?: dirname($path);
+    $root = @realpath($_SERVER['DOCUMENT_ROOT'] ?? '') ?: '';
+    $inWebRoot = $root !== '' && strncmp(str_replace('\\', '/', $dir) . '/', str_replace('\\', '/', $root) . '/', strlen($root) + 1) === 0;
+    if ($inWebRoot) {
+        return ['durable' => false, 'driver' => 'sqlite',
+                'why' => 'SQLite file is inside the document root, which the deployment replaces. '
+                       . 'Every push destroys it. Set the AUTH_DB_* env vars to use MySQL, or point '
+                       . 'AUTH_SQLITE_PATH at a directory above public_html.'];
+    }
+    return ['durable' => true, 'driver' => 'sqlite',
+            'why' => 'SQLite file is above the document root, so deployments leave it alone.'];
+}
+
+/** Run a .sql file statement-by-statement. PDO::exec with a multi-statement
+ *  string is unreliable across drivers, so split on statement boundaries. */
+function run_schema(PDO $pdo, string $file): void
+{
+    $sql = @file_get_contents($file);
+    if (!is_string($sql) || $sql === '') return;
+    $sql = preg_replace('/^\s*--.*$/m', '', $sql);          // strip line comments
+    foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
+        try { $pdo->exec($stmt); } catch (Throwable $e) { /* IF NOT EXISTS races */ }
+    }
+}
+
 function auth_db(): PDO
 {
     static $pdo = null;
     if ($pdo) return $pdo;
     $c = auth_cfg();
+
+    // Shout once per request if the store is ephemeral. This is the log line
+    // whose absence let the wipe-on-deploy bug hide for days.
+    $d = storage_durability();
+    if (!$d['durable']) {
+        error_log('[EgyBI] EPHEMERAL AUTH STORAGE — data is destroyed on every deploy. ' . $d['why']);
+    }
+
     if ($c['driver'] === 'mysql') {
         $dsn = "mysql:host={$c['host']};port={$c['port']};dbname={$c['name']};charset=utf8mb4";
         $pdo = new PDO($dsn, $c['user'], $c['pass'], [
@@ -111,6 +167,12 @@ function auth_db(): PDO
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ]);
+        // Self-initialise on first run, exactly like the SQLite path already did,
+        // so going live needs no phpMyAdmin import — set the env vars and the
+        // tables appear. Every statement is CREATE TABLE IF NOT EXISTS, so this
+        // is a no-op on every subsequent request.
+        $has = $pdo->query("SHOW TABLES LIKE 'users'")->fetchColumn();
+        if (!$has) run_schema($pdo, __DIR__ . '/schema_auth_mysql.sql');
     } else {
         $path = $c['sqlite_path'];
         if (!is_dir(dirname($path))) @mkdir(dirname($path), 0700, true);
@@ -131,6 +193,67 @@ function auth_db(): PDO
     }
     return $pdo;
 }
+
+// ---- newsletter subscribers ------------------------------------------------
+/**
+ * Store a Papyrus subscriber. This used to be an append-only JSONL file under
+ * api/_private/, which every deploy deleted along with the rest of that folder —
+ * real subscriber emails, gone silently on each push. Rows live outside the
+ * deploy path, so they survive.
+ *
+ * Creates the table on demand so an already-initialised database picks it up
+ * without a migration step. Returns 'added' | 'duplicate' | 'error'.
+ */
+function newsletter_add(string $email, string $ipHash = ''): string
+{
+    try {
+        $db = auth_db();
+        $isMy = auth_cfg()['driver'] === 'mysql';
+        $db->exec($isMy
+            ? "CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+                 email VARCHAR(254) NOT NULL, created_at VARCHAR(32) NOT NULL,
+                 ip_hash VARCHAR(32) NULL, unsubscribed TINYINT NOT NULL DEFAULT 0,
+                 PRIMARY KEY (email)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+            : "CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+                 email TEXT PRIMARY KEY, created_at TEXT NOT NULL,
+                 ip_hash TEXT, unsubscribed INTEGER NOT NULL DEFAULT 0)");
+
+        $st = $db->prepare('SELECT email FROM newsletter_subscribers WHERE email = ?');
+        $st->execute([$email]);
+        if ($st->fetch()) return 'duplicate';
+
+        $db->prepare('INSERT INTO newsletter_subscribers (email, created_at, ip_hash, unsubscribed) VALUES (?,?,?,0)')
+           ->execute([$email, now(), $ipHash]);
+        return 'added';
+    } catch (Throwable $e) {
+        error_log('[EgyBI] newsletter_add failed: ' . $e->getMessage());
+        return 'error';
+    }
+}
+
+/**
+ * The shared durable store, for the write-side endpoints outside this module
+ * (newsletter, community board, analytics). Returns null when no durable store
+ * is configured, so each caller can fall back to its old file and say so.
+ *
+ * Everything that used to write into a `_private/` folder inside public_html was
+ * losing its data on every deploy — subscribers, community submissions, and the
+ * analytics database along with the key that unlocks it. One database fixes all
+ * of them at once.
+ */
+function durable_db(): ?PDO
+{
+    try {
+        if (!storage_durability()['durable']) return null;
+        return auth_db();
+    } catch (Throwable $e) {
+        error_log('[EgyBI] durable_db unavailable: ' . $e->getMessage());
+        return null;
+    }
+}
+
+/** True when running on MySQL — the two engines differ on column types. */
+function db_is_mysql(): bool { return auth_cfg()['driver'] === 'mysql'; }
 
 // ---- small helpers ---------------------------------------------------------
 function json_out(bool $ok, array $extra = [], int $code = 200): void

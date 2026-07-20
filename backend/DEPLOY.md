@@ -21,7 +21,7 @@ There are four pieces:
 | **Frontend** | All pages (`site/*.html` — index, explore, tracks, practice, blog, community, about, privacy) + `favicon.svg` + `assets/` | `public_html/` (the site root) |
 | **Database** | The Egypt knowledge base (58 tables) | A MySQL database you create in hPanel |
 | **Backend API** | The read-only PHP that serves the knowledge base | `public_html/api/` |
-| **Newsletter endpoint** | The one write-side PHP file — appends *The Papyrus* subscribers to a private file | `public_html/api/newsletter.php` (+ a private `_private/` folder) |
+| **Newsletter endpoint** | The one write-side PHP file — stores *The Papyrus* subscribers in the database (was a private file; that file was deleted by every deploy) | `public_html/api/newsletter.php` |
 
 The practice SQL sandbox runs **in the visitor's browser** (sql.js), so there is no
 server-side code execution to configure or secure — that was a deliberate design choice.
@@ -310,24 +310,48 @@ paywall-ready gating — **every plan free at launch**. Full design in
    CHARSET=utf8mb4`, because **MySQL cannot index a `TEXT` column** the way SQLite
    can — importing the SQLite schema on MySQL will fail. `schema_auth.sql` is for
    local SQLite testing only.
-3. **Configure secrets — the easy way, no hPanel env vars.** In File Manager,
-   inside `public_html/auth/`, create a folder `_private/`, then copy
-   `config.sample.php` into it as `config.php` and fill in your values:
-   the Step‑1 MySQL `host`/`name`/`user`/`pass`, a long random `app_secret`,
-   `app_url` = `https://egybi.com`, and `secure_cookie => '1'`. `lib.php` reads
-   this file first (falling back to env vars, then SQLite for local dev). The
-   whole `_private/` folder is git‑ignored **and** should be denied over the web
-   (same `.htaccess` deny used for the newsletter list) — it holds `config.php`,
-   the mail log, and any local sqlite.
-4. **Email — built and ready; just add your mailbox password.** `mailer.php` is a
-   dependency‑free SMTP client (no Composer). It sends the branded verify /
-   password‑reset emails through Hostinger. In `_private/config.php` set
-   `smtp_host => 'smtp.hostinger.com'`, `smtp_port => 465`, `smtp_user =>
-   'hello@egybi.com'`, `smtp_pass =>` your mailbox password, and `mail_from =>
-   'no-reply@egybi.com'` (create `no-reply@` as a **free alias** on the
-   `hello@egybi.com` mailbox in hPanel → Emails). Leave the `smtp_*` values blank
-   to keep links **logged** to `_private/mail.log` instead of sent (fine before
-   launch — signup/reset still succeed). Use port `587` if `465` is blocked.
+3. **Configure secrets — hPanel ENVIRONMENT VARIABLES. Not a config file.**
+
+   > ⚠ **Do not create `_private/config.php` on Hostinger.** Git deployment
+   > replaces `public_html` with the repository contents, and `_private/` is
+   > gitignored — so it is not in the repo, and **every `git push` deletes it.**
+   > This was found the hard way on 2026‑07‑20: a one‑line change to `robots.txt`
+   > was enough to destroy the accounts database. Nothing errors when it happens,
+   > which is exactly why it went unnoticed. Environment variables survive
+   > deployments and never enter the repository.
+
+   In hPanel go to **Advanced → PHP Configuration → Environment Variables** (or
+   *Website → Environment*, depending on your panel version) and add:
+
+   | Variable | Value |
+   |---|---|
+   | `AUTH_DB_DRIVER` | `mysql` |
+   | `AUTH_DB_HOST` | `localhost` |
+   | `AUTH_DB_NAME` | the database from Step 1 |
+   | `AUTH_DB_USER` | its username |
+   | `AUTH_DB_PASS` | its password |
+   | `APP_SECRET` | a long random string (used to hash IPs — any 40+ chars) |
+   | `APP_URL` | `https://egybi.com` |
+   | `AUTH_SECURE_COOKIE` | `1` |
+   | `ANALYTICS_KEY` | a long random string — this is the `?key=` for the insights dashboard, and setting it here makes the URL permanent |
+   | `SMTP_HOST` | `smtp.hostinger.com` |
+   | `SMTP_PORT` | `465` (use `587` if blocked) |
+   | `SMTP_USER` | `hello@egybi.com` |
+   | `SMTP_PASS` | that mailbox's password |
+   | `MAIL_FROM` | `no-reply@egybi.com` (create it as a free **alias** on `hello@` in hPanel → Emails) |
+   | `GOOGLE_CLIENT_ID` | your OAuth client ID, once you have one (leave unset to keep Google sign‑in off) |
+
+   **The tables create themselves.** With `AUTH_DB_*` set, the first request
+   applies `schema_auth_mysql.sql` automatically — no phpMyAdmin import needed.
+   Step 2 above is now optional.
+
+   **Check it worked:** open `https://egybi.com/auth/auth.php?action=health`.
+   It reports the driver, whether storage is durable, and row counts. You want
+   `"durable": true`. If it says `false`, the env vars have not taken effect and
+   your data is still being destroyed on every deploy.
+
+   Leave the `SMTP_*` values unset to keep verify/reset links **logged** rather
+   than sent (fine before launch — signup and reset still succeed).
 5. **Payments stay OFF.** `payments.php` is inert unless `PAY_ENABLED=1` **and**
    `PAY_WEBHOOK_SECRET` are set — no payment code runs and no plan can change
    until you deliberately enable a Paddle/LemonSqueezy integration. To turn a

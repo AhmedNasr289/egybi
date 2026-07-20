@@ -10,8 +10,14 @@
 declare(strict_types=1);
 
 $dir = __DIR__ . '/_private';
-$keyFile = $dir . '/analytics.key';
-$secret = @file_get_contents($keyFile);
+// Environment first, exactly as hit.php does. The key used to live only in
+// _private/analytics.key, which every deploy deleted — so it was regenerated on
+// each push and whatever ?key= you had bookmarked stopped working. Setting
+// ANALYTICS_KEY in hPanel makes it permanent.
+$secret = (string)(getenv('ANALYTICS_KEY') ?: '');
+if (strlen($secret) < 16) {
+    $secret = (string)@file_get_contents($dir . '/analytics.key');
+}
 $provided = (string)($_GET['key'] ?? '');
 
 header('Content-Type: text/html; charset=utf-8');
@@ -24,18 +30,27 @@ if (!is_string($secret) || strlen($secret) < 16) {
 }
 if ($provided === '' || !hash_equals($secret, $provided)) {
     http_response_code(403);
-    echo 'Forbidden. Append ?key=YOUR_KEY (found in api/_private/analytics.key).';
+    echo 'Forbidden. Append ?key=YOUR_KEY (the ANALYTICS_KEY env var, or api/_private/analytics.key).';
     exit;
 }
 
 function q(PDO $db, string $sql, array $p = []): array { $s = $db->prepare($sql); $s->execute($p); return $s->fetchAll(PDO::FETCH_ASSOC); }
 $e = function ($s) { return htmlspecialchars((string)$s, ENT_QUOTES); };
 
-try {
-    $db = new PDO('sqlite:' . $dir . '/analytics.sqlite', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-} catch (Throwable $ex) {
-    echo 'No data yet.'; exit;
+// Read from the shared durable database when one is configured — that is where
+// hit.php now writes. The old SQLite file is only consulted as a fallback.
+$db = null;
+$lib = __DIR__ . '/../auth/lib.php';
+if (is_file($lib)) { require_once $lib; $db = durable_db(); }
+if (!$db) {
+    try {
+        $db = new PDO('sqlite:' . $dir . '/analytics.sqlite', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    } catch (Throwable $ex) {
+        echo 'No data yet.'; exit;
+    }
 }
+try { $db->query('SELECT 1 FROM hits LIMIT 1'); }
+catch (Throwable $ex) { echo 'No page-views recorded yet.'; exit; }
 
 $since30 = gmdate('Y-m-d', time() - 29 * 86400);
 $since7  = gmdate('Y-m-d', time() - 6 * 86400);

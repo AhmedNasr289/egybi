@@ -2,15 +2,34 @@
 /**
  * EgyBI — auth config SAMPLE.  ***THIS FILE IS SAFE (no secrets).***
  *
- * TO GO LIVE ON HOSTINGER:
- *   1. Copy this file to  backend/auth/_private/config.php
- *      (in Hostinger File Manager: create the _private folder inside auth/,
- *       then upload/paste this as config.php and fill in your real values).
- *   2. The _private folder is never web-accessible and is git-ignored, so your
- *      passwords never get committed or served.
- *   3. That's it — no hPanel "environment variables" needed.
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │ ⚠  DO NOT USE _private/config.php ON HOSTINGER. IT WILL BE DELETED.       │
+ * │                                                                          │
+ * │ Hostinger's git deployment replaces public_html with the repository       │
+ * │ contents. `_private/` is gitignored, so it is NOT in the repository, so   │
+ * │ every single `git push` deletes it — config, database, subscriber list    │
+ * │ and all. Nothing errors; the data just silently ceases to exist.          │
+ * │                                                                          │
+ * │ USE hPANEL ENVIRONMENT VARIABLES INSTEAD. They survive deployments and    │
+ * │ never enter the repository. Names are in the right-hand column below and  │
+ * │ the full walkthrough is in backend/DEPLOY.md.                             │
+ * └──────────────────────────────────────────────────────────────────────────┘
  *
- * Every value has a safe default in code, so you only need to set what you use.
+ * This file still works for LOCAL development, where nothing is deploying over
+ * the top of it. Every value has a safe default in code, so set only what you use.
+ *
+ *   config key          env var (use these in production)
+ *   ------------------  ---------------------------------
+ *   driver              AUTH_DB_DRIVER      ('mysql')
+ *   host                AUTH_DB_HOST
+ *   name                AUTH_DB_NAME
+ *   user                AUTH_DB_USER
+ *   pass                AUTH_DB_PASS
+ *   app_secret          APP_SECRET
+ *   app_url             APP_URL
+ *   smtp_host/user/pass SMTP_HOST / SMTP_USER / SMTP_PASS
+ *   google_client_id    GOOGLE_CLIENT_ID
+ *   (analytics key)     ANALYTICS_KEY
  */
 return [
     // --- Database (use your Hostinger MySQL details from hPanel > Databases) ---
