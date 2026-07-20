@@ -42,38 +42,64 @@ Then hPanel → **phpMyAdmin** → select the DB → **Import**:
    **`_mysql`** one, *not* `schema_auth.sql` (that one is SQLite-only and will
    fail on MySQL).
 
-## Step 4 — Configuration files (secrets never go in Git)
-Two config files. Both read env-vars/defaults, but the easy path is a file.
+## Step 4 — Configuration (hPanel environment variables — NOT a config file)
 
-**A) Knowledge-base API** — `public_html/site/api/config.php` is already deployed
-as a safe template. In File Manager, edit it and set `db_driver => 'mysql'` and
-the Step-3 KB DB `db_host` / `db_name` / `db_user` / `db_pass`.
+> ### ⚠ Corrected 2026-07-20 — this step used to be wrong
+> An earlier version of this guide said to create `_private/config.php` and that
+> a redeploy would **not** touch it. **That was false, and it cost data.**
+> Hostinger's git deploy replaces `public_html` with the repository contents, and
+> `_private/` is gitignored — so it is not in the repo, and **every `git push`
+> deleted it**: the accounts database, the Papyrus subscriber list, the community
+> notes, and the analytics database along with its access key. Nothing ever
+> errored; the app quietly rebuilt an empty database each time.
+>
+> Proven by deploying a one-line change to `robots.txt` and watching the SQLite
+> file's creation time jump, with zero users in the new one.
+>
+> **Environment variables survive deploys. Use them.**
 
-**B) Accounts/auth** — in File Manager, inside `public_html/site/auth/`:
-1. Create a folder **`_private`**.
-2. Copy **`config.sample.php`** into it as **`config.php`**.
-3. Edit `_private/config.php` and fill in:
-   - the Step-3 auth DB `host` / `name` / `user` / `pass`
-   - `app_secret` → a long random string
-   - `app_url` → `https://egybi.com`, `secure_cookie => '1'`
-   - SMTP (Step 5)
+**A) Knowledge-base API** — `public_html/site/api/config.php` is a tracked file
+(it ships in the repo, so a deploy restores it rather than deleting it). Editing
+it in File Manager works, but the edit is overwritten on the next deploy — so set
+the KB DB via env vars too, or commit the change.
 
-`_private/` is git-ignored, so it's never committed, and Step 2 + the folder's
-`.htaccess` keep it off the web. A `git push`/redeploy will **not** touch it.
+**B) Accounts, newsletter, community, analytics** — all four now share one
+database. In hPanel → **Advanced → PHP Configuration → Environment Variables**:
+
+| Variable | Value |
+|---|---|
+| `AUTH_DB_DRIVER` | `mysql` |
+| `AUTH_DB_HOST` | `localhost` |
+| `AUTH_DB_NAME` | your Step-3 auth database |
+| `AUTH_DB_USER` / `AUTH_DB_PASS` | its user and password |
+| `APP_SECRET` | a long random string |
+| `APP_URL` | `https://egybi.com` |
+| `AUTH_SECURE_COOKIE` | `1` |
+| `ANALYTICS_KEY` | a long random string — this becomes the permanent `?key=` for the insights dashboard |
+| `GOOGLE_CLIENT_ID` | your OAuth client ID (omit to keep Google sign-in off) |
+
+**The tables build themselves** on the first request — the phpMyAdmin import in
+Step 3 is now optional.
+
+**Confirm it took effect:** open
+`https://egybi.com/auth/auth.php?action=health` and check for
+`"durable": true`. If it says `false`, the env vars are not being read and your
+data is still being destroyed on every push.
 
 ## Step 5 — Email (verify + password-reset mail)
-You built the `hello@egybi.com` mailbox already. In `_private/config.php`:
+You built the `hello@egybi.com` mailbox already. Add these environment variables
+alongside the ones above:
 ```
-'smtp_host'  => 'smtp.hostinger.com',
-'smtp_port'  => 465,                 // or 587 if 465 is blocked
-'smtp_user'  => 'hello@egybi.com',
-'smtp_pass'  => 'YOUR MAILBOX PASSWORD',
-'mail_from'  => 'no-reply@egybi.com',
+SMTP_HOST  = smtp.hostinger.com
+SMTP_PORT  = 465                    # or 587 if 465 is blocked
+SMTP_USER  = hello@egybi.com
+SMTP_PASS  = YOUR MAILBOX PASSWORD
+MAIL_FROM  = no-reply@egybi.com
 ```
 Then hPanel → **Emails → egybi.com → … → Aliases**: add **`no-reply@egybi.com`**
 as a **free alias** on the `hello@` mailbox (the plan allows 5 aliases).
-Leave the `smtp_*` values blank and links are logged to `_private/mail.log`
-instead of sent — fine before launch; signup/reset still succeed.
+Leave the `SMTP_*` values unset and links are logged instead of sent — fine
+before launch; signup/reset still succeed.
 
 ## Step 6 — Email deliverability (so verify mail doesn't hit spam)
 A brand-new domain's mail often lands in Junk. hPanel → **Emails → egybi.com →
@@ -103,8 +129,8 @@ On `https://egybi.com`:
 If every box is checked, you're live. 🎉
 
 ## Step 8 — (optional) once deliverability is proven
-- In `_private/config.php` add `'require_verified' => '1'` to require a verified
-  email before login (off by default so launch is frictionless).
+- Set the env var `AUTH_REQUIRE_VERIFIED=1` to require a verified email before
+  login (off by default so launch is frictionless).
 - Set up a Hostinger **cron** for light housekeeping if you like — the app
   already prunes expired sessions and old rate-limit rows on each login, so this
   is optional, not required.
@@ -113,8 +139,10 @@ If every box is checked, you're live. 🎉
 
 ## Everyday workflow after go-live
 Edit code locally → `git push` → Hostinger auto-pulls (if you enabled the
-webhook in Step 1) or click **Deploy**. Your `_private/config.php` and the live
-databases are untouched by deploys. Payments stay **off** until you deliberately
+webhook in Step 1) or click **Deploy**. **MySQL data and hPanel environment
+variables survive deploys; anything written into a `_private/` folder inside
+`public_html` does NOT — it is deleted on every push.** That is why config and
+all four data stores now live outside that folder (Step 4). Payments stay **off** until you deliberately
 enable them (see `backend/DEPLOY.md` Step 11).
 
 ## If something's wrong
@@ -123,4 +151,5 @@ enable them (see `backend/DEPLOY.md` Step 11).
 - **500 on `/api/…` or `/auth/…`** → check the DB creds in the two config files;
   confirm you imported `schema_auth_mysql.sql` (not the SQLite one).
 - **No verify email** → `smtp_*` not filled, or deliverability (Step 6); check
-  `site/auth/_private/mail.log` for a logged link as a fallback.
+  `site/auth/_private/mail.log` for a logged link as a fallback (note that this
+  log is itself erased by the next deploy).
