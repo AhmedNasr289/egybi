@@ -96,13 +96,13 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{canonical}">
-<meta property="og:image" content="{SITE_URL}/og-image.png">
+<meta property="og:image" content="{SITE_URL}/og-image.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(desc)}">
-<meta name="twitter:image" content="{SITE_URL}/og-image.png">
+<meta name="twitter:image" content="{SITE_URL}/og-image.png?v=2">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,11 +205,11 @@ def build_posts(posts):
         ld = {"@context": "https://schema.org", "@type": "BlogPosting",
               "headline": p['title'], "url": url, "datePublished": p['date'],
               "dateModified": p['date'], "description": desc,
-              "image": SITE_URL + "/og-image.png",
+              "image": SITE_URL + "/og-image.png?v=2",
               "articleSection": p.get('tag', ''),
               "author": {"@type": "Organization", "name": "EgyBI"},
               "publisher": {"@type": "Organization", "name": "EgyBI",
-                            "logo": {"@type": "ImageObject", "url": SITE_URL + "/og-image.png"}}}
+                            "logo": {"@type": "ImageObject", "url": SITE_URL + "/og-image.png?v=2"}}}
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:40px;">
   <div class="wrap" style="max-width:760px;">

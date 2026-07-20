@@ -1,0 +1,114 @@
+<!doctype html>
+<meta charset="utf-8">
+<!--
+  SOURCE OF TRUTH for site/og-image.png (1200x630).
+
+  The previous og-image.png was hand-made with no source file, and drifted:
+  it carried a stale dataset count, off-brand typography, and an "ankh" that
+  was geometrically the Venus symbol. Rendering from this file keeps the
+  thumbnail in step with the site.
+
+  Rebuild:  python backend/pipeline/build_og_image.py
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: #14110C;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    /* Faint papyrus warmth so the card is not a flat black slab in feeds. */
+    background-image: radial-gradient(1100px 620px at 78% 46%, rgba(201,162,39,.09), transparent 68%);
+  }
+  .rule { position: absolute; inset: 0 0 auto 0; height: 7px; background: #C9A227; }
+
+  .col { position: absolute; left: 84px; top: 96px; width: 760px; }
+
+  /* Inter 800 mixed-case, matching .brand in the site header. Cinzel is a
+     caps-only inscriptional face, so it renders the name as "EGYBI" and loses
+     the Egy + BI reading the brand is built on. */
+  .wordmark {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 86px;
+    line-height: 1;
+    color: #E7C64C;
+    letter-spacing: -.03em;
+  }
+  .tagline {
+    margin-top: 26px;
+    font-weight: 700;
+    font-size: 41px;
+    line-height: 1.25;
+    color: #F6EEDC;
+    letter-spacing: -.015em;
+  }
+  .sub {
+    margin-top: 22px;
+    font-weight: 400;
+    font-size: 25px;
+    line-height: 1.45;
+    color: #C4B79A;
+  }
+
+  .pills { margin-top: 30px; display: flex; gap: 13px; }
+  .pill {
+    border: 2px solid #C9A227;
+    border-radius: 999px;
+    padding: 9px 20px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #E7C64C;
+    white-space: nowrap;
+  }
+
+  .domain {
+    position: absolute;
+    left: 84px;
+    bottom: 46px;
+    font-size: 26px;
+    font-weight: 600;
+    color: #C9A227;
+    letter-spacing: .01em;
+  }
+
+  .ankh { position: absolute; right: 96px; top: 50%; transform: translateY(-50%); }
+</style>
+
+<div class="rule"></div>
+
+<div class="col">
+  <div class="wordmark">EgyBI</div>
+  <div class="tagline">Practice SQL &amp; BI on real,<br>cited Egyptian data.</div>
+  <div class="sub">
+    Auto-graded challenges &middot; XP, streaks &amp; scribe ranks<br>
+    Runs in your browser &mdash; no signup needed to start.
+  </div>
+  <div class="pills">
+    <span class="pill">123 challenges</span>
+    <span class="pill">61 tables</span>
+    <span class="pill">Pharaohs &rarr; GDP</span>
+    <span class="pill">Free</span>
+  </div>
+</div>
+
+<div class="domain">egybi.com</div>
+
+<!--
+  Ankh (Gardiner S34). Paths are lifted verbatim from site/favicon.svg so the
+  thumbnail, the tab icon and the site all carry the same mark. A real ankh is
+  a narrow teardrop loop resting directly on the crossbar - not a circle
+  floating above a low bar, which is the Venus symbol.
+-->
+<svg class="ankh" width="330" height="330" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(50 51) scale(0.84) translate(-50 -50)">
+    <path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/>
+    <path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/>
+    <path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/>
+    <path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/>
+  </g>
+</svg>
