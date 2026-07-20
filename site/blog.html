@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=10" rel="stylesheet">
+<link href="assets/egybi.css?v=11" rel="stylesheet">
 <style>
   .post-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 24px 26px; margin-bottom: 18px; transition: box-shadow .2s, border-color .2s; }
   .post-card:hover { border-color: var(--gold); box-shadow: var(--shadow-light); }
@@ -89,6 +89,8 @@
 
 <section class="surface-light">
   <div class="wrap" style="max-width:820px;">
+    <div class="kicker"><span data-glyph="scroll"></span>The stories</div>
+    <h2 style="margin-bottom:16px;">Read the latest, or filter by topic.</h2>
     <div class="filter-row" id="tagFilters" role="group" aria-label="Filter posts by topic"></div>
     <div id="postList" aria-live="polite"></div>
   </div>
@@ -118,6 +120,19 @@
 </section>
 <!-- STORY-INDEX:END -->
 
+<!-- WHERE TO NEXT -->
+<section class="surface-light-2 next-steps center">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
+    <h2>Go beyond the stories.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;">
+      <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>See it charted &rarr;</h3><p>Every story's figures as ~23 BI dashboards and an interactive map.</p></a>
+      <a class="ns-card" href="prices.html"><span class="ns-k">Prices</span><h3>Today's market prices &rarr;</h3><p>Egypt's retail &amp; wholesale product prices, refreshed daily.</p></a>
+      <a class="ns-card" href="practice.html"><span class="ns-k">Practice</span><h3>Query the data yourself &rarr;</h3><p>123 auto-graded SQL challenges — learn the data by asking it.</p></a>
+    </div>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="cols">
     <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
@@ -131,6 +146,7 @@
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/blog-posts.js"></script>
 <script>
 (function(){

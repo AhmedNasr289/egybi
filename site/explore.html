@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=10" rel="stylesheet">
+<link href="assets/egybi.css?v=11" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -70,8 +70,11 @@
   </div>
 </section>
 
+<!-- On-this-page sticky sub-nav (built by wayfinding.js from section[data-nav]) -->
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
+
 <!-- EGYPT MAP (headline feature) -->
-<section class="surface-light" id="map">
+<section class="surface-light cluster-head" id="map" data-nav="Map">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Egypt on the map</div>
     <h2 data-aos="fade-up">All 27 governorates, coloured by the data.</h2>
@@ -93,7 +96,7 @@
 </section>
 
 <!-- ECONOMY -->
-<section class="surface-light-2">
+<section class="surface-light-2 cluster-head" id="economy" data-nav="Economy">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Economy</div>
     <h2 data-aos="fade-up">GDP &amp; its composition.</h2>
@@ -146,7 +149,7 @@
 </section>
 
 <!-- ENRICHED DATA MOUNT (filled by data enrichment: demographics, prices, energy) -->
-<section class="surface-dark" id="more-data">
+<section class="surface-dark cluster-head" id="more-data" data-nav="Society">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>More of Egypt, in data</div>
     <h2 data-aos="fade-up">Demographics, prices &amp; energy.</h2>
@@ -202,7 +205,7 @@
 </section>
 
 <!-- CONNECTED EGYPT (v6: telecom, trade, social) -->
-<section class="surface-light-2" id="connected">
+<section class="surface-light-2 cluster-head" id="connected" data-nav="Digital">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Connected Egypt</div>
     <h2 data-aos="fade-up">Online, trading, and scrolling.</h2>
@@ -228,7 +231,7 @@
 </section>
 
 <!-- FEEDING EGYPT (v7: agriculture) -->
-<section class="surface-light" id="agriculture">
+<section class="surface-light cluster-head" id="agriculture" data-nav="Land &amp; water">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Feeding Egypt</div>
     <h2 data-aos="fade-up">Growing a lot — and still importing the most.</h2>
@@ -276,7 +279,7 @@
 </section>
 
 <!-- ART & CINEMA -->
-<section class="surface-light-2" id="cinema">
+<section class="surface-light-2 cluster-head" id="cinema" data-nav="Culture &amp; sport">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Art &amp; cinema</div>
     <h2 data-aos="fade-up">Hollywood on the Nile.</h2>
@@ -306,7 +309,8 @@
     <div class="grid grid-3" id="athletesGrid" style="margin-top:30px;"></div>
 
     <!-- Football depth (v8) -->
-    <div class="grid grid-2" style="margin-top:30px;">
+    <div class="kicker" style="margin-top:36px;" data-aos="fade-up"><span data-glyph="was"></span>Football</div>
+    <div class="grid grid-2" style="margin-top:14px;">
       <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
         <h3 style="color:#f3ead4;">Egyptian Premier League titles (top clubs)</h3>
         <div class="chart-box"><canvas id="leagueChart"></canvas></div>
@@ -325,7 +329,8 @@
     </div>
 
     <!-- Handball (v8) -->
-    <div class="chart-card" style="margin-top:24px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
+    <div class="kicker" style="margin-top:36px;" data-aos="fade-up"><span data-glyph="was"></span>Handball</div>
+    <div class="chart-card" style="margin-top:14px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
       <h3 style="color:#f3ead4;">Handball — Africa's dominant side</h3>
       <p style="color:var(--on-dark);margin:6px 0 0;line-height:1.7;">Egypt's men are the strongest handball nation outside Europe: a record-tying <strong style="color:var(--gold-bright);">10 African Championships</strong> (beating Tunisia 37–24 in the 2026 final in Rwanda), a <strong style="color:var(--gold-bright);">4th place</strong> at both the 2001 World Championship and the Tokyo 2020 Olympics — the best-ever finishes by a non-European team — and back-to-back youth world titles (U-21 in 1993, U-19 in 2019, the first non-European winners).</p>
       <p class="chart-cap" style="color:var(--on-dark-soft);">Source: Wikipedia (Egypt men's national handball team); Egypt Independent. Egypt hosted the first 32-team World Championship in 2021 (finished 7th).</p>
@@ -350,7 +355,7 @@
 </section>
 
 <!-- SCIENCE & SPACE -->
-<section class="surface-dark" id="science">
+<section class="surface-dark cluster-head" id="science" data-nav="Science">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Science, space &amp; research</div>
     <h2 data-aos="fade-up">Satellites, reactors &amp; a world-first in health.</h2>
@@ -424,7 +429,7 @@
 </section>
 
 <!-- UNESCO HERITAGE -->
-<section class="surface-dark" id="heritage">
+<section class="surface-dark cluster-head" id="heritage" data-nav="Heritage">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>World heritage</div>
     <h2 data-aos="fade-up">Seven UNESCO World Heritage Sites.</h2>
@@ -435,7 +440,7 @@
 
 <!-- DEFENCE (v8 — public figures & rankings only) -->
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-light" id="defence">
+<section class="surface-light cluster-head" id="defence" data-nav="Defence">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="eye"></span>Defence, in figures</div>
     <h2 data-aos="fade-up">A regional heavyweight, by the public numbers.</h2>
@@ -457,11 +462,24 @@
 <div class="ad-slot" data-ad-slot="1000000001" hidden><span class="ad-label">Advertisement</span></div>
 
 <!-- SOURCES -->
-<section class="surface-light-2 center">
+<section class="surface-light-2 center" id="sources" data-nav="Sources">
   <div class="wrap">
     <h2 data-aos="fade-up">Every number here is real and cited.</h2>
     <p class="lead" data-aos="fade-up">Primary sources include the World Bank, the Central Bank of Egypt, CAPMAS, the Suez Canal Authority, Egypt's State Information Service, UNESCO, and the Met Museum. Disputed and approximate figures are flagged in the data itself — accuracy over polish.</p>
     <div class="cta-row center" data-aos="fade-up"><a href="practice.html" class="btn btn-primary">Query this data yourself →</a></div>
+  </div>
+</section>
+
+<!-- WHERE TO NEXT -->
+<section class="surface-light next-steps center">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Where to next</div>
+    <h2 data-aos="fade-up">Carry on through Egypt.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;" data-aos="fade-up">
+      <a class="ns-card" href="practice.html"><span class="ns-k">Practice</span><h3>Query this data yourself →</h3><p>123 auto-graded SQL challenges on the same cited tables — no signup.</p></a>
+      <a class="ns-card" href="prices.html"><span class="ns-k">Prices</span><h3>Today's market prices →</h3><p>Egypt's retail &amp; wholesale product prices, refreshed daily.</p></a>
+      <a class="ns-card" href="blog.html"><span class="ns-k">The Papyrus</span><h3>Egypt, told through its data →</h3><p>Short, cited data-stories for readers who came for the country.</p></a>
+    </div>
   </div>
 </section>
 
@@ -482,6 +500,7 @@
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/egypt-geo.js"></script>
 <script src="assets/egypt-map.js"></script>
 <script>

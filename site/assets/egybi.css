@@ -524,6 +524,78 @@ body { overflow-x: clip; }
 }
 
 
+/* ---------- wayfinding: purpose line, on-this-page sub-nav, next-steps -------
+   The site-wide fix for "I feel lost". Three reusable pieces + one global
+   anchor fix, so every page gains the same orientation aids rather than one
+   page at a time. Driven by assets/wayfinding.js. See [[Frontend & Design
+   System]] in the vault. */
+
+/* JS overwrites --header-h with the measured sticky-header height, and
+   --subnav-h with the on-this-page bar's height (0 when there is no bar). */
+:root { --header-h: 56px; --subnav-h: 0px; }
+
+/* Every section anchor must clear BOTH sticky bars, or a jumped-to heading
+   hides behind the header (the bug that made even tracks.html's old jump-nav
+   land under the bar). This one rule fixes it for every #-anchor on the site. */
+section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px); }
+
+/* one-line "what this page is for", sits in or just under the hero */
+.page-intro { max-width: 62ch; font-size: clamp(1rem, 1.6vw, 1.12rem); color: var(--ink-soft); margin: 0 0 6px; }
+.surface-hero .page-intro, .surface-dark .page-intro { color: var(--on-dark-soft); }
+.center .page-intro { margin-left: auto; margin-right: auto; }
+
+/* the sticky "On this page" sub-nav — reads as an extension of the header, so
+   it is dark on every surface. Full-bleed bar, inner row constrained to maxw
+   and horizontally scrollable so it survives any number of chips on mobile. */
+.on-this-page {
+  position: sticky; top: var(--header-h); z-index: 90;
+  background: rgba(20, 17, 12, 0.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line-dark);
+}
+.on-this-page .otp-inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 9px 6vw;
+  display: flex; align-items: center; gap: 8px;
+  overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity;
+}
+.on-this-page .otp-inner::-webkit-scrollbar { display: none; }
+.on-this-page .otp-label {
+  flex: 0 0 auto; margin-right: 4px; font-size: 0.7rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold-bright);
+}
+.on-this-page a {
+  flex: 0 0 auto; scroll-snap-align: start;
+  font-size: 0.82rem; font-weight: 600; padding: 6px 13px; border-radius: 999px;
+  border: 1px solid rgba(243, 234, 212, 0.24); color: var(--on-dark);
+  text-decoration: none; white-space: nowrap;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.on-this-page a:hover, .on-this-page a:focus-visible { border-color: var(--gold-bright); color: #fff; outline: none; }
+.on-this-page a.current { color: var(--kemet); background: var(--gold-bright); border-color: var(--gold-bright); }
+@media (max-width: 560px) { .on-this-page .otp-label { display: none; } }
+
+/* end-of-page forward path — every page tells you where to go next */
+.next-steps .ns-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 8px; }
+.next-steps .ns-card {
+  display: block; background: var(--papyrus-2); border: 1px solid var(--line-light);
+  border-radius: var(--radius); padding: 20px 22px; text-decoration: none;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.next-steps .ns-card:hover, .next-steps .ns-card:focus-visible { transform: translateY(-4px); box-shadow: var(--shadow-light); border-color: var(--gold); outline: none; }
+.next-steps .ns-card .ns-k { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-ink); }
+.next-steps .ns-card h3 { margin: 6px 0; color: var(--blue-deep); font-size: 1.08rem; }
+.next-steps .ns-card p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
+.surface-dark.next-steps .ns-card { background: var(--kemet-2); border-color: var(--line-dark); }
+.surface-dark.next-steps .ns-card .ns-k { color: var(--gold-bright); }
+.surface-dark.next-steps .ns-card h3 { color: var(--gold-bright); }
+.surface-dark.next-steps .ns-card p { color: var(--on-dark-soft); }
+
+/* a cluster lead-in: the first section of a group of related sections gets a
+   slightly larger heading so a long page (Explore) reads as a few groups, not
+   ~23 identical bands. */
+.cluster-head h2 { font-size: clamp(1.9rem, 3.6vw, 2.6rem); }
+.cluster-head .lead { max-width: 760px; }
+
+
 /* ---------- accounts & the auth dialog --------------------------------------
    Moved here from an injected <style> in auth.js so the whole design system
    lives in one readable place. This block sits at the END of the file on
