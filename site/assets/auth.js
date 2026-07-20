@@ -170,7 +170,7 @@
     if (predictable) score = 1;
     var label = ['Weak', 'Weak', 'Fair', 'Strong'][score];
     var hint = predictable ? 'That pattern is one of the first things guessed.'
-             : score >= 3 ? 'Good — length is what makes this strong.'
+             : score >= 3 ? 'Length is what makes this one hard to crack.'
              : score === 2 ? 'Longer beats more symbols. Try a few words you will remember.'
              : 'Short passwords fall fast. Aim for 12+ characters.';
     return { score: score, label: label, hint: hint };
@@ -583,7 +583,13 @@
 
     /* ---- the dialog ---- */
     '.auth-modal{position:fixed;inset:0;background:rgba(15,12,8,.68);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;overflow-y:auto}' +
-    '.auth-dialog{display:grid;grid-template-columns:248px 1fr;width:100%;max-width:720px;background:var(--papyrus-2);border-radius:18px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.5);border:1px solid var(--line-light);margin:auto}' +
+    // min-width:0 matters: as a flex item the dialog defaults to min-width:auto,
+    // which refuses to shrink below its content's min-content width and pushed
+    // it to 403px inside a 360px phone, clipping BOTH edges. The grid columns
+    // use minmax(0,…) for the same reason one level down.
+    '.auth-dialog{display:grid;grid-template-columns:248px minmax(0,1fr);width:100%;max-width:720px;min-width:0;background:var(--papyrus-2);border-radius:18px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.5);border:1px solid var(--line-light);margin:auto}' +
+    '.auth-panel,.auth-rail{min-width:0}' +
+    '.fld input,.auth-submit{max-width:100%;box-sizing:border-box}' +
     /* rail: gold + glyphs on the dark surface they were drawn for */
     '.auth-rail{background:linear-gradient(165deg,var(--kemet-2),var(--kemet));padding:30px 26px;display:flex;flex-direction:column;gap:12px;border-right:1px solid var(--line-dark)}' +
     '.auth-rail-glyph{font-size:2.1rem;color:var(--gold-bright);line-height:1}' +
@@ -649,7 +655,7 @@
     '.auth-ok{color:var(--success);background:rgba(31,122,92,.08);border:1px solid rgba(31,122,92,.22)}' +
     /* the rail becomes a header strip before the columns get cramped */
     '@media (max-width:720px){' +
-      '.auth-dialog{grid-template-columns:1fr;max-width:420px}' +
+      '.auth-dialog{grid-template-columns:minmax(0,1fr);max-width:420px}' +
       '.auth-rail{padding:20px 22px 18px;border-right:none;border-bottom:1px solid var(--line-dark);gap:8px}' +
       '.auth-rail-glyph{font-size:1.7rem}' +
       '.auth-rail-h{font-size:1.02rem}' +
