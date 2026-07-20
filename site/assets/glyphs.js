@@ -8,15 +8,21 @@
    Font note: the Egyptian Hieroglyphs block (U+13000) is absent from the system
    fonts on iOS, Android and macOS, so these would render as empty boxes for most
    visitors. We load a SUBSET of Noto Sans Egyptian Hieroglyphs containing only
-   the signs below — about 12 KB — which makes them render everywhere. The ankh
-   (U+2625) sits in Miscellaneous Symbols and is widely supported, but we include
-   it in the subset too so the whole set shares one shape language.
+   the signs below — about 12 KB — which makes them render everywhere.
+
+   The ankh used to be U+2625, which lives in Miscellaneous Symbols and is the
+   generic modern ankh rather than a hieroglyph; because no font reliably carries
+   it, it had to be hand-drawn as SVG. The true hieroglyphic ankh is U+132F9
+   (Gardiner S34), in the same block as every other sign here, and Noto does
+   carry it — so it is now a real sign like the rest, and the bespoke SVG branch
+   is gone. The logo and favicon stay SVG, since a favicon cannot rely on a
+   webfont, but they are drawn from the S34 form rather than invented.
 
    Sources for names/meanings: Gardiner's sign list categories and the Unicode
    Egyptian Hieroglyphs chart. Where a sign's meaning is debated we say so. */
 (function () {
   var GLYPHS = {
-    ankh:   { c: '☥', svg: true, name: 'Ankh',      gardiner: 'S34', tr: 'ʿnḫ',   meaning: 'Life. Held to the nose of a king to grant the breath of life.' },
+    ankh:   { c: '\u{132F9}',   name: 'Ankh',            gardiner: 'S34', tr: 'ʿnḫ',   meaning: 'Life. Held to the nose of a king to grant the breath of life.' },
     scribe: { c: '\u{13000}',   name: 'Seated man',      gardiner: 'A1',  tr: 'j',     meaning: 'A seated person — the sign used for a scribe, a man, or the pronoun “I”.' },
     eye:    { c: '\u{13080}',   name: 'Eye of Horus',    gardiner: 'D10', tr: 'wḏꜣt',  meaning: 'The wedjat — protection and restored wholeness. Horus’s eye, healed after being torn out.' },
     maat:   { c: '\u{13184}',   name: 'Feather of Maat', gardiner: 'H6',  tr: 'mꜣʿt',  meaning: 'Truth, order and balance. The heart was weighed against this feather.' },
@@ -38,15 +44,7 @@
       if (!g || el.dataset.painted) return;
       el.dataset.painted = '1';
       el.classList.add('glyph');
-      if (g.svg) {
-        // Drawn, not typed — no font on earth is guaranteed to carry this one.
-        el.innerHTML = '<svg viewBox="0 0 100 100" class="glyph-svg" aria-hidden="true">' +
-          '<path d="M50 55 C40 55 30 45 28 32 C26 15 38 6 50 6 C62 6 74 15 72 32 C70 45 60 55 50 55 Z" fill="none" stroke="currentColor" stroke-width="11" stroke-linejoin="round"/>' +
-          '<rect x="44.5" y="53" width="11" height="41" rx="5.5" fill="currentColor"/>' +
-          '<rect x="16" y="59" width="68" height="11" rx="5.5" fill="currentColor"/></svg>';
-      } else {
-        el.textContent = g.c;
-      }
+      el.textContent = g.c;
       var label = g.name + ' (' + g.tr + ') — ' + g.meaning;
       el.setAttribute('role', 'img');
       el.setAttribute('aria-label', label);

@@ -493,9 +493,9 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 }
 @media (prefers-reduced-motion: reduce) { .papyrus-letter { transition: none; } }
 /* the ankh is drawn, since no hieroglyph font covers U+2625 */
-.glyph-svg { width: 1em; height: 1em; display: block; }
-.pl-seal .glyph, .pl-seal .glyph:hover { color: #3c2f08; transform: none; cursor: default; }
-.pl-seal .glyph-svg { width: 1.3rem; height: 1.3rem; }
+/* The ankh is now the real hieroglyph U+132F9 rather than a hand-drawn SVG, so
+   the seal is sized by font-size like every other sign. */
+.pl-seal .glyph, .pl-seal .glyph:hover { color: #3c2f08; transform: none; cursor: default; font-size: 1.5rem; }
 /* the seal presses down when a subscription is confirmed */
 @keyframes seal-stamp {
   0%   { transform: scale(1.5) rotate(-14deg); opacity: 0; }
