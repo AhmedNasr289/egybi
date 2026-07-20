@@ -156,3 +156,23 @@ This also explains a detail that looked innocent at the time: the live diagnosti
 ### How much real data has been lost
 
 Probably little, because the site has had almost no traffic yet and no `config.php` was ever created — but any Papyrus subscriber who signed up before 2026-07-20 is gone, and so is any account created before then. Worth knowing before launch traffic arrives, which is precisely when it would have started mattering.
+
+
+### Fixed in code, 2026-07-20 — pending the hPanel step
+
+All four stores now share one durable database instead of the deploy-wiped folder:
+
+| Store | Was | Now |
+|---|---|---|
+| accounts / XP / streaks | `auth/_private/auth.sqlite` | `users` etc. in the shared DB |
+| Papyrus subscribers | `api/_private/newsletter.jsonl` | `newsletter_subscribers` |
+| community notes | `api/_private/community.jsonl` | `community_notes` (still `approved=0` gated) |
+| analytics + its key | `api/_private/analytics.sqlite` + `.key` | `hits` table + `ANALYTICS_KEY` env var |
+
+Code changes: `storage_durability()` reports whether the store survives a deploy and `error_log`s loudly when it does not — silence is what let this hide, so silence is what got fixed. `durable_db()` exposes the shared store to the write-side API endpoints, each of which falls back to its old file **only** when no durable store is configured, and logs that the data will not survive. MySQL now self-initialises from `schema_auth_mysql.sql` on first request, so going live needs no phpMyAdmin import. A new `GET auth.php?action=health` reports driver, durability and row counts, with no secrets — previously there was no way to ask "is my data actually persisting?" without writing a throwaway script.
+
+**Verified live:** health reports `durable: false` with the reason, which is correct until the env vars are set; a newsletter signup moved the subscriber count 0 → 1 through the new database path and the duplicate was recognised; all pages 200, private paths 403, 123/123 challenges pass.
+
+**Still needs Ahmed (I cannot reach hPanel):** set `AUTH_DB_DRIVER=mysql` + `AUTH_DB_NAME/USER/PASS`, `APP_SECRET`, `APP_URL`, `AUTH_SECURE_COOKIE=1`, `ANALYTICS_KEY`, and the `SMTP_*` set, in hPanel → Advanced → PHP Configuration → Environment Variables. Then reload the health URL and confirm `"durable": true`. Until that is done the data is still ephemeral — the code cannot fix that on its own, it can only stop hiding it.
+
+Docs corrected: `GO-LIVE.md` Step 4 (which previously stated a redeploy would "not touch" `_private/` — the false claim that caused this), `backend/DEPLOY.md` Step 11.3, and `config.sample.php`, which now opens with a box saying not to use it on Hostinger.
