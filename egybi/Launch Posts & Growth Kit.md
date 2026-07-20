@@ -10,67 +10,101 @@ Egyptian history and economics — not `employees` and `orders` toy tables.*
 
 ---
 
-## 1 · LinkedIn — THE POST TO PUBLISH (rewritten 2026-07-20)
+## 1 · LinkedIn — THE POST TO PUBLISH (search-aware version, 2026-07-20)
 
-Every figure below was re-verified against the live database on 2026-07-20 before
-this was written. If any of it changes, change this too — the product's whole
-claim is that the numbers are real, so the marketing cannot be the one place that
-slips.
+Every figure re-verified against the live database on 2026-07-20. If any changes,
+change this too — the product's whole claim is that its numbers are real, so the
+marketing cannot be the one place that slips.
+
+### Read this before optimising further
+
+A LinkedIn post is a **weak SEO asset** and it is worth being honest about that.
+It can rank for your brand name and it does get indexed from a public profile,
+but it will not outrank a dedicated page for "sql practice" — nothing on
+LinkedIn will. The pages that actually earn search traffic are already built:
+**123 challenge pages** at `/practice/<slug>.html`, each targeting a distinct
+query intent ("rank the longest reigns", "year-over-year GDP change (window
+function)"), plus 12 story pages and the sitemap's 144 URLs.
+
+So this post is optimised in the order that actually pays:
+1. **Engagement first** — on LinkedIn, reach comes from comments and dwell time,
+   not keywords. A keyword-stuffed opener would be seen by fewer people, which
+   costs more traffic than any term it could win.
+2. **Keywords woven in second** — the terms people really search (practice SQL,
+   learn SQL, window functions, joins, CTEs, data engineering, business
+   intelligence) appear naturally in the body, where they help LinkedIn's own
+   search and Google's snippet without deadening the copy.
+3. **Hashtags last** — LinkedIn's native topic discovery. Four, not fifteen.
+
+The first ~155 characters are what shows before "…see more", and what Google
+tends to lift as the snippet. The hook is built to land inside that window.
 
 ---
 
-> Thirty-three ancient Egyptian obelisks survive.
+> Thirty-three ancient Egyptian obelisks survive. Only fifteen are still in
+> Egypt. Nine are in Italy. The tallest one standing anywhere is in Rome, not
+> Luxor.
 >
-> Only fifteen are still in Egypt. Nine are in Italy.
->
-> The tallest one standing anywhere is in Rome, not Luxor. And the largest ever
-> cut never rose at all — it cracked in the Aswan quarry and has been lying
-> there ever since, nearly 42 metres of granite.
+> And the largest ever cut never rose at all — it cracked in the Aswan quarry
+> and has been lying there ever since, nearly 42 metres of granite.
 >
 > I learned that by running a SQL query, not by reading an article. That is the
-> entire idea behind the thing I've been building.
+> entire idea behind the thing I have been building.
 >
-> Every SQL course I ever took handed me the same invented `employees` table. So
-> I built the opposite: a practice platform where every dataset is real, cited
-> Egyptian data. Pharaoh reigns and dynasties. Suez Canal traffic. GDP and
-> inflation series. Tourism arrivals. Governorate demographics. Today's retail
-> food prices, pulled daily from the Egyptian Cabinet's own price portal.
+> Every course I ever took to learn SQL handed me the same invented `employees`
+> table. So I built the opposite: a free SQL practice platform where every
+> dataset is real, cited Egyptian data. Pharaoh reigns and dynasties. Suez Canal
+> traffic. GDP and inflation series. Tourism arrivals. Governorate demographics.
+> Today's retail food prices, pulled daily from the Egyptian Cabinet's own price
+> portal.
 >
-> 123 auto-graded challenges across 15 sectors. 61 tables, 838 rows, every row
-> carrying its source. And where the sources genuinely disagree — Egypt's
-> population is 116 million or 107 million depending on who did the counting —
-> both are kept and the disagreement is flagged, rather than quietly picking the
-> tidier number.
+> 123 auto-graded SQL challenges across 15 sectors, from a first SELECT through
+> joins, CTEs and window functions. 61 tables, 838 rows, every row carrying its
+> source. And where sources genuinely disagree — Egypt's population is 116
+> million or 107 million depending on who did the counting — both are kept and
+> the disagreement is flagged, rather than quietly picking the tidier number.
 >
-> It runs entirely in your browser. Your query never touches a server, so you're
-> solving roughly four seconds after landing. No signup.
+> It runs entirely in your browser. Your query never touches a server, so you
+> are solving roughly four seconds after landing. No signup.
 >
-> It's free. I built it solo, nights and weekends.
+> It is free. I built it solo, nights and weekends, for anyone learning SQL,
+> data engineering or business intelligence who is tired of practising on
+> invented data.
 >
-> If you teach SQL, are learning it, or hire for data roles — I'd genuinely
+> If you teach SQL, are learning it, or hire for data roles — I would genuinely
 > value your read on the difficulty curve. I suspect my window-function set is
 > too easy.
 >
-> egybi.com
+> #SQL #DataEngineering #BusinessIntelligence #Analytics
 
 ---
 
-**Why it opens on the obelisks.** A launch post that opens by describing a
-product is asking for attention. One that opens with a fact you did not know is
-giving something first — and this particular fact *demonstrates* the premise
-instead of asserting it. The product claim is "real data you can query yourself";
-the hook is a real answer that came out of exactly that query. Nothing else in
-the post has to work as hard after that.
+### First comment (post this immediately after)
 
-**Posting notes**
-- Tue–Thu, roughly 9–11am Cairo.
-- LinkedIn suppresses posts with external links. Put `egybi.com` in the FIRST
-  comment, then edit it into the post about an hour later once reach is set.
-- Answer every reply for the first two hours. This matters more than the copy.
+LinkedIn suppresses posts carrying an external link, so the link goes here, then
+gets edited into the post about an hour later once reach has settled. This
+comment is also indexable, so it carries the terms the post itself keeps light:
+
+> Here it is if you want to try it: egybi.com
+>
+> Every challenge has its own page too, so you can jump straight to a technique
+> — window functions, CTEs, anti-joins, running totals — and each one explains
+> the schema before you start. Free, no signup, runs in the browser.
+
+---
+
+### Posting notes
+
+- **Tue–Thu, ~9–11am Cairo.**
+- **Answer every reply for the first two hours.** This matters more than the
+  copy, the keywords and the hashtags combined.
 - The closing question is not decoration — it is what earns comments, and
-  comments earn reach. Ask it sincerely and reply to the answers properly.
-- No emojis, no hashtags. The audience is senior data people; both read as
-  padding to them.
+  comments are what earn reach. Ask it sincerely and reply properly.
+- No emojis. The audience is senior data people.
+- **The higher-leverage SEO action is not this post.** Submit
+  `https://egybi.com/sitemap.xml` in Google Search Console. 144 URLs that
+  currently rank for nothing will start being crawled, and those pages — unlike
+  a LinkedIn post — compound.
 
 ---
 
