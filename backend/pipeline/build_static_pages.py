@@ -103,7 +103,9 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(desc)}">
 <meta name="twitter:image" content="{SITE_URL}/og-image.png?v=2">
-<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -127,7 +129,12 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 """
 
 def breadcrumb(name, url, parent_name, parent_url):
-    return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+    """A BreadcrumbList node, for embedding in an @graph (hence no @context).
+
+    Defined but never called until now, which is why generated pages showed a
+    bare URL slug in search results rather than a Home > Practice > Name path.
+    """
+    return {"@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "EgyBI", "item": SITE_URL + "/"},
         {"@type": "ListItem", "position": 2, "name": parent_name, "item": parent_url},
         {"@type": "ListItem", "position": 3, "name": name, "item": url}]}
@@ -142,8 +149,15 @@ def build_challenges(chs, docs):
     for c in chs:
         sl = slug(c['title'])
         url = f"{SITE_URL}/practice/{sl}.html"
-        title = f"{c['title']} — {c['difficulty']} SQL challenge on real Egyptian data | EgyBI"
-        desc = re.sub(r'\s+', ' ', c['statement'])[:180]
+        # Title stays under ~60 chars so Google does not truncate it; the old
+        # form ran to 73. Description leads with the task, then the distinctive
+        # claim, and is trimmed on a word boundary so it never ends mid-word.
+        title = f"{c['title']} — {c['difficulty']} SQL challenge | EgyBI"
+        stmt = re.sub(r'\s+', ' ', c['statement']).strip()
+        tail = " Free, auto-graded, on real cited Egyptian data."
+        if len(stmt) + len(tail) > 155:
+            stmt = stmt[:155 - len(tail)].rsplit(' ', 1)[0] + '...'
+        desc = stmt + tail
         related = [x for x in by_sector.get(c['sector'], []) if x['id'] != c['id']][:5]
         rel_html = ''.join(
             f'<li><a href="{slug(x["title"])}.html">{esc(x["title"])}</a> <span class="pill">{esc(x["difficulty"])}</span></li>'
@@ -156,6 +170,8 @@ def build_challenges(chs, docs):
               "isAccessibleForFree": True,
               "description": desc,
               "provider": {"@type": "Organization", "name": "EgyBI", "url": SITE_URL + "/"}}
+        ld = {"@context": "https://schema.org", "@graph": [
+            ld, breadcrumb(c['title'], url, "Practice", SITE_URL + "/practice.html")]}
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:820px;">
@@ -196,7 +212,10 @@ def build_posts(posts):
         sl = p['id']
         url = f"{SITE_URL}/papyrus/{sl}.html"
         title = f"{p['title']} | The Papyrus · EgyBI"
-        desc = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', p['excerpt']))[:180]
+        ex = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', p['excerpt'])).strip()
+        # Trim on a word boundary rather than mid-word at 180, which is past
+        # Google's snippet cut anyway.
+        desc = ex if len(ex) <= 155 else ex[:152].rsplit(' ', 1)[0] + '...' 
         nxt = posts[i + 1] if i + 1 < len(posts) else None
         prv = posts[i - 1] if i > 0 else None
         more = ''.join(
@@ -210,6 +229,8 @@ def build_posts(posts):
               "author": {"@type": "Organization", "name": "EgyBI"},
               "publisher": {"@type": "Organization", "name": "EgyBI",
                             "logo": {"@type": "ImageObject", "url": SITE_URL + "/og-image.png?v=2"}}}
+        ld = {"@context": "https://schema.org", "@graph": [
+            ld, breadcrumb(p['title'], url, "The Papyrus", SITE_URL + "/blog.html")]}
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:40px;">
   <div class="wrap" style="max-width:760px;">
@@ -245,11 +266,75 @@ def build_sitemap(extra):
     io.open(os.path.join(SITE, 'sitemap.xml'), 'w', encoding='utf-8').write(xml)
     return len(rows)
 
+
+def write_index_block(path, marker, html):
+    """Replace a generator-owned region between HTML comment markers.
+
+    The 123 challenge pages and 12 story pages were orphans: listed in
+    sitemap.xml but linked from nowhere, because practice.html renders its
+    list with JavaScript and blog.html linked only one post. Google treats
+    sitemap-only URLs as low priority and passes them no internal authority,
+    which is why a site with 144 URLs surfaced two of them.
+
+    Writing between markers keeps this idempotent - the block is regenerated
+    in place on every build rather than appended to.
+    """
+    full = os.path.join(SITE, path)
+    if not os.path.isfile(full):
+        return 0
+    s = io.open(full, encoding='utf-8').read()
+    start, end = f'<!-- {marker}:START', f'<!-- {marker}:END -->'
+    i, j = s.find(start), s.find(end)
+    if i == -1 or j == -1:
+        return 0
+    head = s[:i]
+    tail = s[j + len(end):]
+    block = (f'<!-- {marker}:START - generated by backend/pipeline/build_static_pages.py.\n'
+             f'     Crawlable links to every generated page; edit the generator, not this. -->\n'
+             f'{html}\n{end}')
+    io.open(full, 'w', encoding='utf-8', newline='\n').write(head + block + tail)
+    return 1
+
+
+def build_link_indexes(chs, posts):
+    """Static, crawlable indexes of every generated page."""
+    by_sector = {}
+    for c in chs:
+        by_sector.setdefault(c['sector'], []).append(c)
+
+    parts = ['<section class="surface-light" id="all-challenges">',
+             '  <div class="wrap">',
+             '    <h2 style="font-size:1.35rem;"><span data-glyph="reed"></span> All 123 SQL challenges</h2>',
+             '    <p style="color:var(--ink-soft);max-width:70ch;">Every challenge has its own page, so you can link '
+             'straight to a technique or find one from search. Grouped by sector.</p>']
+    for sector in sorted(by_sector):
+        items = sorted(by_sector[sector], key=lambda x: x['title'])
+        parts.append(f'    <h3 style="font-size:1.02rem;margin-top:22px;">{esc(sector)}</h3>')
+        parts.append('    <ul class="plain-list link-grid">')
+        for c in items:
+            parts.append(f'      <li><a href="practice/{slug(c["title"])}.html">{esc(c["title"])}</a> '
+                         f'<span class="pill">{esc(c["difficulty"])}</span></li>')
+        parts.append('    </ul>')
+    parts += ['  </div>', '</section>']
+    n1 = write_index_block('practice.html', 'CHALLENGE-INDEX', chr(10).join(parts))
+
+    sp = ['<section class="surface-light" id="all-stories">',
+          '  <div class="wrap">',
+          '    <h2 style="font-size:1.35rem;"><span data-glyph="scroll"></span> Every story in The Papyrus</h2>',
+          '    <ul class="plain-list">']
+    for x in posts:
+        sp.append(f'      <li><a href="papyrus/{x["id"]}.html">{esc(x["title"])}</a></li>')
+    sp += ['    </ul>', '  </div>', '</section>']
+    n2 = write_index_block('blog.html', 'STORY-INDEX', chr(10).join(sp))
+    return n1, n2
+
+
 def main():
     data = load_js()
     ch, posts, docs = data['c'], data['p'], data.get('docs', {})
     cu = build_challenges(ch, docs)
     pu = build_posts(posts)
+    build_link_indexes(ch, posts)
     total = build_sitemap(cu + pu)
     print(f"challenge pages : {len(cu)}")
     print(f"post pages      : {len(pu)}")
