@@ -58,7 +58,10 @@ body {
   background: var(--papyrus);
   color: var(--ink);
   line-height: 1.65;
-  overflow-x: hidden;
+  /* NOTE: horizontal overflow is handled by `body { overflow-x: clip }` further
+     down (see the hieroglyph-layer section). `hidden` used to live here, and it
+     is deliberately NOT repeated: hidden makes body a scroll container, which
+     silently kills the position:sticky header. Do not add it back. */
 }
 h1, h2, h3, h4, .display, .brand { font-family: 'Cinzel', Georgia, serif; letter-spacing: 0.01em; line-height: 1.15; }
 a { color: var(--blue); }
