@@ -362,7 +362,7 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .nav-actions .cta:hover, .nav-actions .cta:focus-visible { background: var(--gold-bright); }
 .nav-only-mobile { display: none; }
 .nav-links a.active { color: var(--gold-bright); opacity: 1; }
-.acct-slot { display: inline-flex; align-items: center; }
+.acct-slot { display: inline-flex; align-items: center; position: relative; } /* position anchors .acct-menu */
 
 /* Collapse to the menu at 1024px — before the links can run out of room. */
 @media (max-width: 1024px) {
@@ -518,4 +518,162 @@ body { overflow-x: clip; }
 .papyrus-letter.sealed .pl-seal { animation: seal-stamp .55s cubic-bezier(.3,1.4,.5,1) both; }
 @media (prefers-reduced-motion: reduce) {
   .papyrus-letter.sealed .pl-seal { animation: none; }
+}
+
+
+/* ---------- accounts & the auth dialog --------------------------------------
+   Moved here from an injected <style> in auth.js so the whole design system
+   lives in one readable place. This block sits at the END of the file on
+   purpose: the injected version used to load after this stylesheet and so won
+   equal-specificity ties, and .auth-rail-glyph (0,1,0) must keep beating
+   .glyph (0,1,0) for font-size. Keep it last.
+   --------------------------------------------------------------------------- */
+
+/* the nav account control */
+.acct-btn.signin { background: none; border: 1px solid rgba(255,255,255,.4); color: var(--on-dark); font: inherit; font-size: .9rem; font-weight: 600; padding: 6px 14px; border-radius: 8px; cursor: pointer; transition: all .15s; }
+.acct-btn.signin:hover { border-color: var(--gold-bright); color: var(--gold-bright); }
+.acct-btn.signin:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+.acct-btn:not(.signin) { background: none; border: none; cursor: pointer; padding: 0; }
+.acct-av { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--gold); color: var(--kemet); font-weight: 800; font-family: 'Inter', sans-serif; }
+
+.acct-menu { position: absolute; right: 0; top: 44px; background: var(--kemet-2); border: 1px solid var(--line-dark); border-radius: 12px; padding: 12px 14px; min-width: 190px; box-shadow: 0 18px 40px rgba(0,0,0,.45); z-index: 200; }
+.acct-menu .acct-handle { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.acct-menu .acct-handle #acctName { color: var(--gold-bright); font-weight: 800; font-size: .98rem; font-family: 'Cinzel', serif; }
+.acct-edit { background: none; border: none; color: var(--on-dark-soft); cursor: pointer; font-size: .85rem; padding: 0 2px; line-height: 1; width: auto !important; }
+.acct-edit:hover { color: var(--gold-bright); }
+.acct-menu .acct-email { color: #cdbf9e; font-weight: 500; font-size: .78rem; font-family: 'Inter', sans-serif; word-break: break-all; }
+.acct-menu .acct-plan { color: var(--on-dark-soft); font-size: .76rem; margin: 2px 0 10px; }
+.acct-menu a, .acct-menu button { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--on-dark); font: inherit; font-size: .88rem; padding: 7px 0; cursor: pointer; text-decoration: none; }
+.acct-menu a:hover, .acct-menu button:hover { color: var(--gold-bright); }
+
+.acct-stats { display: flex; gap: 14px; margin: 2px 0 8px; }
+.acct-stats div { display: flex; flex-direction: column; line-height: 1.1; }
+.acct-stats b { color: var(--gold-bright); font-size: 1.05rem; font-family: 'Cinzel', serif; }
+.acct-stats span { color: var(--on-dark-soft); font-size: .66rem; text-transform: uppercase; letter-spacing: .04em; }
+.acct-rank { color: #f3ead4; font-size: .82rem; font-weight: 700; margin-bottom: 10px; }
+.acct-rank .acct-next { color: var(--on-dark-soft); font-weight: 400; }
+
+/* the Practice-page profile strip */
+.acct-profile { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
+.acct-profile .ap-rank { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.acct-profile .ap-tier { font-family: 'Cinzel', serif; font-weight: 700; color: var(--blue-deep); font-size: .98rem; }
+.acct-profile .ap-xp { font-weight: 800; color: var(--gold-ink); }
+.acct-profile .ap-bar { height: 7px; background: var(--gold-soft); border-radius: 999px; overflow: hidden; margin: 8px 0 6px; }
+.acct-profile .ap-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); }
+.acct-profile .ap-next { font-size: .76rem; color: var(--ink-soft); }
+.acct-profile .ap-stats { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; font-size: .78rem; color: var(--ink-soft); }
+
+/* ---- the dialog: "The Threshold" ----
+   width:100vw is belt-and-braces — it pins the overlay to the visual viewport
+   even if some ancestor ever becomes a containing block again, so the dialog
+   can never be sized by the page's content width. (It was, once: a scroll lock
+   that set overflow on BOTH axes clobbered body's overflow-x:clip, body became
+   a content-sized scroll container, and this fixed overlay took ITS size from
+   that — 435px inside a 360px phone.) */
+.auth-modal { position: fixed; inset: 0; width: 100vw; max-width: 100vw; box-sizing: border-box; background: rgba(15,12,8,.68); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; overflow-y: auto; overflow-x: hidden; }
+
+/* min-width:0 matters: as a flex item the dialog defaults to min-width:auto,
+   which refuses to shrink below its content's min-content width. The grid
+   columns use minmax(0,…) for the same reason one level down. */
+.auth-dialog { display: grid; grid-template-columns: 248px minmax(0, 1fr); width: 100%; max-width: 720px; min-width: 0; background: var(--papyrus-2); border-radius: 18px; overflow: hidden; box-shadow: 0 40px 90px rgba(0,0,0,.5); border: 1px solid var(--line-light); margin: auto; }
+.auth-panel, .auth-rail { min-width: 0; }
+.fld input, .auth-submit { max-width: 100%; box-sizing: border-box; }
+
+/* rail — gold and the hieroglyphs on the dark surface they were drawn for */
+.auth-rail { background: linear-gradient(165deg, var(--kemet-2), var(--kemet)); padding: 30px 26px; display: flex; flex-direction: column; gap: 12px; border-right: 1px solid var(--line-dark); }
+.auth-rail-glyph { font-size: 2.1rem; color: var(--gold-bright); line-height: 1; }
+.auth-rail-kicker { color: var(--gold-bright); font-size: .68rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; margin: 2px 0 0; }
+.auth-rail-h { font-family: 'Cinzel', serif; color: var(--on-dark); font-size: 1.16rem; line-height: 1.32; margin: 0; font-weight: 600; }
+.auth-rail-sub { color: var(--on-dark-soft); font-size: .84rem; line-height: 1.55; margin: 0; }
+.auth-rail-safe { margin: auto 0 0; color: var(--on-dark-soft); font-size: .74rem; line-height: 1.5; display: flex; gap: 8px; align-items: flex-start; }
+.auth-rail-safe .glyph { color: var(--gold-bright); flex: 0 0 auto; }
+
+/* panel — typed input stays on the light surface, where it reads best */
+.auth-panel { position: relative; padding: 30px 30px 26px; }
+.auth-x { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--ink-soft); cursor: pointer; padding: 6px; border-radius: 8px; display: flex; line-height: 0; }
+.auth-x:hover { color: var(--ink); background: var(--blue-soft); }
+.auth-x:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.auth-h { font-family: 'Cinzel', serif; color: var(--blue-deep); font-size: 1.36rem; margin: 0 0 5px; line-height: 1.2; }
+.auth-sub { color: var(--ink-soft); font-size: .86rem; line-height: 1.5; margin: 0 0 18px; }
+
+.auth-google { margin-bottom: 14px; min-height: 44px; display: flex; justify-content: center; }
+.auth-or { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; color: var(--ink-soft); font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; }
+.auth-or::before, .auth-or::after { content: ""; flex: 1; height: 1px; background: var(--line-light); }
+/* An explicit `display` beats the UA stylesheet's [hidden]{display:none}, so
+   without this the Google slot and its OR divider stayed on screen — an empty
+   gap and a divider dividing nothing — whenever Google is unconfigured. Every
+   toggled element below carries the same guard for the same reason. */
+.auth-google[hidden], .auth-or[hidden] { display: none; }
+
+/* fields */
+.fld { margin-bottom: 14px; }
+.fld[hidden] { display: none; }
+.fld label { display: block; font-size: .78rem; font-weight: 700; color: var(--blue-deep); margin-bottom: 6px; letter-spacing: .01em; }
+.fld-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.fld input { display: block; width: 100%; padding: 11px 13px; border: 1px solid var(--line-light); border-radius: 10px; background: #fff; color: var(--ink); font-family: inherit; font-size: .95rem; transition: border-color .15s, box-shadow .15s; }
+.fld input:hover { border-color: rgba(23,64,139,.28); }
+.fld input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.fld input:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.fld input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(183,65,14,.12); }
+.fld-err { color: var(--danger); font-size: .78rem; margin: 6px 0 0; min-height: 0; }
+.fld-err:empty { display: none; }
+
+/* password: show/hide + an honest strength meter */
+.pw-wrap { position: relative; display: flex; align-items: center; }
+.pw-wrap input { padding-right: 64px; }
+.pw-toggle { position: absolute; right: 6px; background: none; border: none; color: var(--gold-ink); font: inherit; font-size: .76rem; font-weight: 700; cursor: pointer; padding: 6px 8px; border-radius: 7px; }
+.pw-toggle:hover { background: var(--gold-soft); }
+.pw-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.auth-forgot { background: none; border: none; color: var(--gold-ink); font: inherit; font-size: .76rem; font-weight: 700; cursor: pointer; padding: 0; }
+.auth-forgot:hover { text-decoration: underline; }
+.auth-forgot:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+.auth-forgot[hidden] { display: none; }
+.pw-meter { display: flex; gap: 5px; margin-top: 9px; }
+.pw-meter[hidden] { display: none; }
+.pw-meter i { flex: 1; height: 4px; border-radius: 999px; background: var(--line-light); transition: background .2s; }
+.pw-meter[data-score="1"] i:nth-child(1) { background: var(--danger); }
+.pw-meter[data-score="2"] i:nth-child(-n+2) { background: var(--gold); }
+.pw-meter[data-score="3"] i { background: var(--success); }
+.pw-note { font-size: .75rem; color: var(--ink-soft); margin: 7px 0 0; line-height: 1.45; }
+.pw-note:empty { display: none; }
+
+/* submit, with a busy state that blocks double submission */
+.auth-submit { width: 100%; margin-top: 4px; position: relative; background: var(--blue); color: #fff; border: 1px solid var(--blue); font: inherit; font-weight: 700; font-size: .95rem; padding: 12px 16px; border-radius: 10px; cursor: pointer; transition: background .15s, transform .1s; }
+.auth-submit:hover:not(:disabled) { background: var(--blue-deep); }
+.auth-submit:active:not(:disabled) { transform: translateY(1px); }
+.auth-submit:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.auth-submit:disabled { opacity: .72; cursor: not-allowed; }
+.auth-submit .spin { display: none; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; margin-left: 9px; vertical-align: -2px; animation: auth-spin .6s linear infinite; }
+.auth-submit.is-busy .spin { display: inline-block; }
+@keyframes auth-spin { to { transform: rotate(360deg); } }
+
+.auth-alt { font-size: .84rem; color: var(--ink-soft); margin: 14px 0 0; text-align: center; }
+.auth-alt button { background: none; border: none; color: var(--blue); font: inherit; font-weight: 700; cursor: pointer; padding: 0; }
+.auth-alt button:hover { text-decoration: underline; }
+.auth-alt button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+/* one region for errors (role=alert), one for successes (role=status) */
+.auth-err, .auth-ok { font-size: .84rem; margin: 12px 0 0; line-height: 1.5; padding: 9px 12px; border-radius: 9px; }
+.auth-err:empty, .auth-ok:empty { display: none; }
+.auth-err { color: var(--danger); background: rgba(183,65,14,.08); border: 1px solid rgba(183,65,14,.22); }
+.auth-ok { color: var(--success); background: rgba(31,122,92,.08); border: 1px solid rgba(31,122,92,.22); }
+
+/* the rail becomes a header strip before the two columns get cramped */
+@media (max-width: 720px) {
+  .auth-dialog { grid-template-columns: minmax(0, 1fr); max-width: 420px; }
+  .auth-rail { padding: 20px 22px 18px; border-right: none; border-bottom: 1px solid var(--line-dark); gap: 8px; }
+  .auth-rail-glyph { font-size: 1.7rem; }
+  .auth-rail-h { font-size: 1.02rem; }
+  .auth-rail-sub { display: none; }
+  .auth-rail-safe { margin-top: 4px; }
+  .auth-panel { padding: 22px 20px 20px; }
+}
+@media (max-width: 380px) {
+  .auth-panel { padding: 18px 15px 16px; }
+  .auth-rail { padding: 16px 15px 14px; }
+  .auth-h { font-size: 1.18rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-submit .spin { animation-duration: 1.4s; }
+  .auth-submit:active { transform: none; }
 }
