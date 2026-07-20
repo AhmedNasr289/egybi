@@ -258,3 +258,87 @@ Pair it with the full write-up at egybi.com/papyrus/the-stones-that-left.html
    homepage when a particular problem or story fits the audience.
 7. **Watch the analytics** (`/api/insights.php?key=…`) to see which channel
    actually sends people, then double down on that one.
+
+---
+
+## Distribution launch posts — the flywheel (2026-07-20)
+
+The single biggest growth (and SEO) lever is distribution, not tags. These are
+copy-paste-ready. **Rules first:** lead with the *try-it* demo link (not the
+homepage), be a builder sharing a thing (not a marketer), read each subreddit's
+self-promo rules before posting, and reply to every comment. Post to ONE place
+at a time, a few days apart — not all at once.
+
+### Show HN (news.ycombinator.com/submit)
+**Title:** `Show HN: SQL practice where every challenge is real, cited Egyptian data`
+**URL:** `https://egybi.com/practice.html`
+**First comment (post immediately after submitting):**
+> I got tired of practising SQL on toy "customers and orders" tables, so I built
+> a playground where every dataset is real, cited Egyptian data — pharaoh reign
+> lengths, Suez Canal revenue, today's wholesale food prices, census figures.
+>
+> It's 123 auto-graded challenges, easy → hard, running entirely in your browser
+> (SQLite compiled to WebAssembly via sql.js) — no server, no install, no signup.
+> You write a query, it grades your result set against the expected answer, and
+> on a correct answer it shows the sourced story behind the data.
+>
+> It's free. I'm a data engineer and built it solo. Every figure is cited and,
+> where historians or economists disagree, it shows the disagreement instead of
+> picking a tidy number — handling messy, conflicting data is kind of the point.
+>
+> Would love feedback on the challenge difficulty curve and the grader. Direct
+> link to the challenges is above; the data explorer is at /explore.html.
+
+### r/dataengineering
+**Title:** `I built a free, in-browser SQL playground on real cited data (no signup) — feedback welcome`
+**Body:**
+> Practising SQL on fake "customers/orders" data always felt hollow, so I built
+> something on data that's actually true: 123 auto-graded challenges over real,
+> cited Egyptian data — the Suez Canal, census, energy mix, food prices, pharaoh
+> chronology. Runs 100% in the browser (sql.js), no server or signup, and it
+> shows the sourced story behind each dataset when you solve it.
+>
+> Free, built solo. I'd genuinely value feedback from this sub on the difficulty
+> ramp and whether the topics map to what you'd want juniors drilling. Try it:
+> https://egybi.com/practice.html — the tracks roadmap (DE/AE/BI) is at /tracks.html.
+
+### r/SQL and r/learnSQL
+**Title:** `Free SQL practice on real data — pharaohs, the Suez Canal, food prices (no signup)`
+**Body:**
+> A free place to practise SQL where the tables are real, cited facts instead of
+> toy data. 123 auto-graded challenges from basic SELECTs to window functions,
+> grouped into 8 topics easy → hard, all in your browser — nothing to install and
+> no account. Correct answers reveal the real story behind the numbers.
+>
+> https://egybi.com/practice.html — hope it's useful, happy to take requests for
+> challenge types.
+
+### LinkedIn (founder voice)
+> Most "learn SQL" sites make you query fake customers and orders. I wanted to
+> practise on data that's actually true — so I built EgyBI: 123 free, auto-graded
+> SQL challenges where every table is real, cited Egyptian data. The Suez Canal's
+> revenue collapse, 116M people on 4% of the land, pharaoh reign lengths, today's
+> food prices.
+>
+> It runs entirely in your browser — no signup, no install — and every figure is
+> sourced, with disputes flagged rather than smoothed over, because messy real
+> data is the actual job.
+>
+> If you're learning SQL or training a team, try a challenge: https://egybi.com/practice.html
+> Feedback very welcome.
+
+### X / Twitter (thread opener)
+> I was tired of practising SQL on fake "customers and orders" tables.
+>
+> So I built a free SQL playground where every challenge is real, cited Egyptian
+> data — the Suez Canal, census figures, pharaoh reigns, today's food prices.
+>
+> 123 auto-graded challenges, runs in your browser, no signup 👇
+> https://egybi.com/practice.html
+
+### After posting
+- Reply to every comment; ship a quick fix if someone hits a bug (great signal).
+- Ask happy commenters to add EgyBI to any "SQL practice sites" list/awesome-repo.
+- Each post that earns a link also feeds search ranking — distribution and SEO
+  are one loop. Repeat monthly with each new Papyrus issue as fresh, shareable,
+  link-worthy content.
