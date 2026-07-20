@@ -518,12 +518,19 @@
     wrap.addEventListener('mousedown', function (e) { if (e.target === wrap) close(); });
     wrap.querySelector('.auth-x').addEventListener('click', close);
 
-    var prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';    // no scrolling the page behind
+    // Lock the page behind — but only the VERTICAL axis. Setting `overflow`
+    // wholesale also overwrote the `overflow-x: clip` that egybi.css puts on
+    // body, which turned body back into a horizontal scroll container sized to
+    // its content (435px at a 360px viewport, thanks to the glyph tooltips).
+    // A position:fixed child then sized itself to that container instead of the
+    // viewport, so the dialog rendered 403px wide on a phone with both edges
+    // clipped. Touching only overflow-y leaves the clip intact.
+    var prevOverflowY = document.body.style.overflowY;
+    document.body.style.overflowY = 'hidden';
 
     function close() {
       document.removeEventListener('keydown', onKey, true);
-      document.body.style.overflow = prevOverflow;
+      document.body.style.overflowY = prevOverflowY;
       wrap.remove();
       if (lastTrigger && document.contains(lastTrigger)) { try { lastTrigger.focus(); } catch (e) {} }
       lastTrigger = null;
@@ -582,7 +589,10 @@
     '.hp-field{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}' +
 
     /* ---- the dialog ---- */
-    '.auth-modal{position:fixed;inset:0;background:rgba(15,12,8,.68);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;overflow-y:auto}' +
+    // width:100vw is belt-and-braces: it pins the overlay to the visual viewport
+    // even if some ancestor ever becomes a containing block again, so the dialog
+    // can never be sized by the page's content width.
+    '.auth-modal{position:fixed;inset:0;width:100vw;max-width:100vw;box-sizing:border-box;background:rgba(15,12,8,.68);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;overflow-y:auto;overflow-x:hidden}' +
     // min-width:0 matters: as a flex item the dialog defaults to min-width:auto,
     // which refuses to shrink below its content's min-content width and pushed
     // it to 403px inside a 360px phone, clipping BOTH edges. The grid columns
