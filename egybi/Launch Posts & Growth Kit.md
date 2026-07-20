@@ -49,33 +49,35 @@ tends to lift as the snippet. The hook is built to land inside that window.
 > and has been lying there ever since, nearly 42 metres of granite.
 >
 > I learned that by running a SQL query, not by reading an article. That is the
-> entire idea behind the thing I have been building.
+> whole idea.
 >
-> Every course I ever took to learn SQL handed me the same invented `employees`
-> table. So I built the opposite: a free SQL practice platform where every
-> dataset is real, cited Egyptian data. Pharaoh reigns and dynasties. Suez Canal
-> traffic. GDP and inflation series. Tourism arrivals. Governorate demographics.
-> Today's retail food prices, pulled daily from the Egyptian Cabinet's own price
-> portal.
+> Every SQL course I took handed me the same invented `employees` table. So I
+> built the opposite, solo, nights and weekends: a free SQL practice platform
+> where every dataset is real, cited Egyptian data. Pharaoh reigns and dynasties.
+> Suez Canal traffic. GDP, inflation, tourism arrivals. The New Administrative
+> Capital, Benban solar, the startup scene. Today's food prices, pulled daily
+> from the Egyptian Cabinet's own portal. Antiquity to this morning, every row
+> carrying its source.
 >
 > 123 auto-graded SQL challenges across 15 sectors, from a first SELECT through
-> joins, CTEs and window functions. 61 tables, 838 rows, every row carrying its
-> source. And where sources genuinely disagree — Egypt's population is 116
-> million or 107 million depending on who did the counting — both are kept and
-> the disagreement is flagged, rather than quietly picking the tidier number.
+> joins, CTEs and window functions. 61 tables, 838 rows. And where sources
+> genuinely disagree — Egypt's population is 116 million or 107 million,
+> depending on who counted — both are kept and the gap flagged, not quietly
+> resolved into the tidier number.
 >
-> It runs entirely in your browser. Your query never touches a server, so you
-> are solving roughly four seconds after landing. No signup.
+> It runs entirely in your browser. No signup, free, and you are solving roughly
+> four seconds after landing.
 >
-> It is free. I built it solo, nights and weekends, for anyone learning SQL,
-> data engineering or business intelligence who is tired of practising on
-> invented data.
+> You do not have to write a query, though. There are charts to browse and data
+> stories to read. It is not a history site, but if you came for Egypt rather
+> than SQL — the history, or where the country is actually heading — there is
+> something here worth your time.
 >
 > If you teach SQL, are learning it, or hire for data roles — I would genuinely
 > value your read on the difficulty curve. I suspect my window-function set is
 > too easy.
 >
-> #SQL #DataEngineering #BusinessIntelligence #Analytics
+> #SQL #DataEngineering #BusinessIntelligence #Egypt
 
 ---
 
@@ -85,11 +87,20 @@ LinkedIn suppresses posts carrying an external link, so the link goes here, then
 gets edited into the post about an hour later once reach has settled. This
 comment is also indexable, so it carries the terms the post itself keeps light:
 
-> Here it is if you want to try it: egybi.com
+> The obelisk numbers in the post are not trivia I looked up — they are the
+> answer to one of the challenges, so you can run the query yourself:
+> https://egybi.com/practice/obelisks-still-in-egypt.html
 >
-> Every challenge has its own page too, so you can jump straight to a technique
-> — window functions, CTEs, anti-joins, running totals — and each one explains
-> the schema before you start. Free, no signup, runs in the browser.
+> And if you would rather not write SQL, the same stones are a five-minute read:
+> https://egybi.com/papyrus/the-stones-that-left.html
+>
+> All 123 challenges have their own page, so you can jump straight to a
+> technique — window functions, CTEs, anti-joins, running totals — and each one
+> explains the schema before you start. Free, no signup, runs in the browser.
+
+Note the challenge pages live at `/practice/<slug>.html`, **not** `/challenge/` —
+an earlier draft of this section named a path that does not exist. Both URLs
+above were checked live (200).
 
 ---
 
