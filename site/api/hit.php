@@ -92,25 +92,75 @@ try {
              ts VARCHAR(32) NOT NULL, day VARCHAR(10) NOT NULL, path VARCHAR(255) NOT NULL,
              ref VARCHAR(80) NULL, visitor VARCHAR(32) NOT NULL,
              event VARCHAR(40) NOT NULL DEFAULT '',
-             PRIMARY KEY (id), KEY idx_hits_day (day), KEY idx_hits_event (event)
+             ipday VARCHAR(32) NOT NULL DEFAULT '',
+             PRIMARY KEY (id), KEY idx_hits_day (day), KEY idx_hits_event (event),
+             KEY idx_hits_ipday (ipday, day)
            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
         : "CREATE TABLE IF NOT EXISTS hits (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
              ts TEXT NOT NULL, day TEXT NOT NULL, path TEXT NOT NULL,
-             ref TEXT, visitor TEXT NOT NULL, event TEXT NOT NULL DEFAULT ''
+             ref TEXT, visitor TEXT NOT NULL, event TEXT NOT NULL DEFAULT '',
+             ipday TEXT NOT NULL DEFAULT ''
            )");
+    // Additive migrations. CREATE TABLE IF NOT EXISTS is a no-op on an existing
+    // table, so a column added later must be ALTERed in explicitly -- the
+    // production `hits` table predates `ipday` and would otherwise never get it,
+    // silently disabling the flood cap.
     if (!$mysql) {
         $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_day ON hits(day)');
-        // Additive migration for installs created before `event` existed.
         $cols = [];
         foreach ($db->query('PRAGMA table_info(hits)') as $c) { $cols[] = $c['name']; }
         if (!in_array('event', $cols, true)) {
             $db->exec("ALTER TABLE hits ADD COLUMN event TEXT NOT NULL DEFAULT ''");
             $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_event ON hits(event)');
         }
+        if (!in_array('ipday', $cols, true)) {
+            $db->exec("ALTER TABLE hits ADD COLUMN ipday TEXT NOT NULL DEFAULT ''");
+            $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_ipday ON hits(ipday, day)');
+        }
+    } else {
+        $have = [];
+        foreach ($db->query('SHOW COLUMNS FROM hits') as $c) { $have[] = $c['Field']; }
+        if (!in_array('ipday', $have, true)) {
+            $db->exec("ALTER TABLE hits ADD COLUMN ipday VARCHAR(32) NOT NULL DEFAULT ''");
+            try { $db->exec('CREATE INDEX idx_hits_ipday ON hits (ipday, day)'); } catch (Throwable $e) {}
+        }
     }
-    $st = $db->prepare('INSERT INTO hits (ts,day,path,ref,visitor,event) VALUES (?,?,?,?,?,?)');
-    $st->execute([gmdate('c'), $day, $path, $refHost, $visitor, $event]);
+    // ---- flood cap ---------------------------------------------------------
+    // This endpoint takes unauthenticated writes and now shares a database with
+    // auth. Unbounded, a trivial loop both makes the funnel meaningless AND
+    // fills the shared MySQL quota -- which takes signup and login down with it.
+    //
+    // The cap is keyed on IP+day, NOT on `visitor`: visitor includes the User-
+    // Agent, so an attacker rotating the UA string mints a fresh bucket on every
+    // request and walks straight past a visitor-keyed limit. IP+day cannot be
+    // changed by the client.
+    //
+    // 600/day is far above a real session (a heavy user runs maybe 100 events)
+    // and still generous for a NAT'd office sharing one address. Exceeding it
+    // silently drops the row: analytics undercounting is a benign failure, and
+    // this file's contract is that it never affects the visitor.
+    $ipday = substr(hash('sha256', $ip . '|' . $day . '|cap|' . $secret), 0, 16);
+    $capped = false;
+    try {
+        $c = $db->prepare('SELECT COUNT(*) AS n FROM hits WHERE ipday=? AND day=?');
+        $c->execute([$ipday, $day]);
+        $capped = ((int)($c->fetch()['n'] ?? 0)) >= 600;
+    } catch (Throwable $e) {
+        // Column not migrated yet on this install — fail open rather than lose
+        // every hit; the migration above adds it on the next request.
+    }
+    if (!$capped) {
+        $st = $db->prepare('INSERT INTO hits (ts,day,path,ref,visitor,event,ipday) VALUES (?,?,?,?,?,?,?)');
+        $st->execute([gmdate('c'), $day, $path, $refHost, $visitor, $event, $ipday]);
+    }
+
+    // Retention. Without this the table only ever grows, and old rows are pure
+    // liability on a shared-hosting quota. Sampled rather than run every hit so
+    // the delete cost is amortised.
+    if (random_int(1, 500) === 1) {
+        $db->prepare('DELETE FROM hits WHERE day < ?')->execute([gmdate('Y-m-d', time() - 180 * 86400)]);
+    }
 } catch (Throwable $e) {
     // Analytics must never affect the visitor — swallow all errors.
 }

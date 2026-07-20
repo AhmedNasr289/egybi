@@ -417,16 +417,64 @@ function body(): array
     return is_array($raw) ? $raw : [];
 }
 
+// ---- login timing ----------------------------------------------------------
+/**
+ * A hash that never matches, using the SAME algorithm hash_password() produces
+ * on this host, so a failed login costs the same whether or not the account
+ * exists.
+ *
+ * Measured on PHP 8.4: a bcrypt cost-12 verify is ~191ms and an argon2id verify
+ * (m=65536,t=4,p=1) is ~259ms. The old code used a single hardcoded bcrypt
+ * cost-12 dummy, so on any host where argon2id is available -- which
+ * hash_password() prefers -- real accounts were ~68ms SLOWER than unknown ones.
+ * That is a clean enumeration oracle, produced by the very constant written to
+ * prevent one. Branching here keeps both paths on the same algorithm.
+ *
+ * These are precomputed rather than generated per request: password_verify()
+ * reads the cost parameters out of the hash string, so a constant costs the
+ * same as a freshly generated one and avoids paying for an extra hash.
+ */
+function dummy_hash(): string
+{
+    if (defined('PASSWORD_ARGON2ID')) {
+        return '$argon2id$v=19$m=65536,t=4,p=1$cW5UUERtcmRHVXZlNHlSUQ$wABZPYOp8VlCYS7TFOWANqcJ0KMp2Og9A86ic2L5n48';
+    }
+    return '$2y$12$LFmjXcpX.S1YwQgQSwpcauoHRQVXpPVe6.mt2ob4X24cquB8L5OIe';
+}
+
 // ---- rate limiting (count recent attempts per ip+action) -------------------
 function rate_ok(string $action, int $max, int $windowMin): bool
 {
+    return rate_ok_key(ip_hash(), $action, $max, $windowMin);
+}
+
+/**
+ * Same limiter, but keyed on an arbitrary bucket instead of the caller's IP.
+ *
+ * Keying only on IP means a botnet, a rotating proxy pool, or simply an IPv6
+ * /64 gets the full per-IP allowance against ONE account from each of billions
+ * of addresses -- which is not a throttle at all. Callers pair the IP bucket
+ * with a per-account bucket so credential stuffing is bounded by the target,
+ * not by the source.
+ */
+function rate_ok_key(string $bucket, string $action, int $max, int $windowMin): bool
+{
     $db = auth_db();
     $db->prepare('INSERT INTO auth_attempts (id, ip_hash, action, created_at) VALUES (?,?,?,?)')
-       ->execute([rid(), ip_hash(), $action, now()]);
+       ->execute([rid(), $bucket, $action, now()]);
     $cut = gmdate('c', time() - $windowMin * 60);
     $st = $db->prepare('SELECT COUNT(*) AS n FROM auth_attempts WHERE ip_hash=? AND action=? AND created_at>=?');
-    $st->execute([ip_hash(), $action, $cut]);
+    $st->execute([$bucket, $action, $cut]);
+    // '<=' is correct despite the insert above happening first: the count
+    // includes THIS attempt, so $max=10 allows ten and blocks the eleventh.
+    // Verified by simulation and against the live endpoint.
     return ((int)($st->fetch()['n'] ?? 0)) <= $max;
+}
+
+/** Bucket key for per-account throttling. Hashed so raw emails never land in the table. */
+function account_bucket(string $email): string
+{
+    return 'a:' . substr(hash('sha256', strtolower($email) . '|' . auth_cfg()['app_secret']), 0, 20);
 }
 
 // ---- sessions --------------------------------------------------------------

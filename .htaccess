@@ -84,7 +84,21 @@
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 </IfModule>
 
-# Fallback if mod_rewrite is off on this host: at least deny sensitive types.
-<FilesMatch "\.(md|sql|sqlite|sqlite3|geojson|log)$">
+# Fallback if mod_rewrite is off on this host.
+#
+# Everything above depends on mod_rewrite. If the module is unavailable, or a
+# plan change sets AllowOverride None, rules 1 and 3 vanish and the whole repo
+# becomes fetchable at its literal path. The old list here covered five
+# extensions and missed .py, .yml, .csv, .json and - most consequentially -
+# .key, which is where the analytics secret lives. These two directives do not
+# depend on mod_rewrite.
+<FilesMatch "\.(md|sql|sqlite|sqlite3|geojson|log|py|yml|yaml|csv|jsonl|key|ini|bak)$">
     Require all denied
 </FilesMatch>
+
+# Directory-level deny that survives mod_rewrite being off. RedirectMatch is
+# mod_alias, a different module, so this is genuine defence in depth rather
+# than a second copy of the same assumption.
+<IfModule mod_alias.c>
+    RedirectMatch 404 ^/(egybi|backend|\.git|\.github)(/|$)
+</IfModule>

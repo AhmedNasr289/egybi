@@ -74,12 +74,19 @@ case 'login': {
     $b = body();
     $email = strtolower(trim((string)($b['email'] ?? '')));
     $pw    = (string)($b['password'] ?? '');
+    // Second, per-account throttle. The IP limit above is bypassed entirely by a
+    // botnet or an IPv6 /64; this one bounds attempts against a single target
+    // regardless of how many source addresses the attacker controls.
+    if ($email !== '' && !rate_ok_key(account_bucket($email), 'login', 8, 60)) {
+        json_out(false, ['message' => 'Too many attempts — please try again later.'], 429);
+    }
     $st = $db->prepare('SELECT * FROM users WHERE email=?'); $st->execute([$email]);
     $u = $st->fetch();
     // Constant-ish work whether or not the user exists (mitigate timing/enumeration).
-    // A valid bcrypt hash of a random string, so password_verify does real work
-    // regardless of whether Argon2 is compiled in on this host.
-    $hash = $u['pass_hash'] ?? '$2y$12$U20Hyu2lJ.VTfmLWQAFk1eyBZYN1r/XVoupII2lojHCLajPCjQXdK';
+    // dummy_hash() deliberately matches the algorithm hash_password() produces on
+    // this host -- see the note there. The previous hardcoded bcrypt constant did
+    // not, which made real accounts measurably slower than unknown ones.
+    $hash = $u['pass_hash'] ?? dummy_hash();
     // A Google-only account stores a sentinel, not a hash. password_verify()
     // already returns false for it, but rejecting explicitly documents the case
     // and guarantees it can never be reached by password. The reply stays the
@@ -87,7 +94,11 @@ case 'login': {
     // that the address is registered, which is the enumeration leak this
     // endpoint is built to avoid. Such users can still adopt a password through
     // the ordinary "Forgot password" flow.
-    if ($hash === PASS_NONE) $okpw = false;
+    // The sentinel is not a hash, so password_verify() would bail immediately and
+    // return in ~0ms -- making Google-only accounts the fastest response of all
+    // and trivially distinguishable from both real and unknown accounts. Burn an
+    // equivalent verify against the dummy so this branch costs what the others do.
+    if ($hash === PASS_NONE) { password_verify($pw, dummy_hash()); $okpw = false; }
     else $okpw = password_verify($pw, $hash);
     if (!$u || !$okpw) json_out(false, ['message' => 'Wrong email or password.'], 401);
     // Optional hard gate: block unverified logins only if enabled in config.
@@ -189,11 +200,21 @@ case 'rename': {
 }
 
 case 'health': {
-    // Deliberately public and deliberately boring: driver, whether the store
-    // survives a deploy, and row counts. No credentials, no emails, nothing an
-    // attacker gains from. It exists because the wipe-on-deploy bug was invisible
-    // — there was no way to ask "is my data actually persisting?" without
-    // writing a throwaway script. Now there is.
+    // Key-gated, same as mail-test. It was public, on the reasoning that driver
+    // and row counts give an attacker nothing -- but that was wrong on two
+    // counts: put_config_here/deployed_folder return ABSOLUTE server paths
+    // (disclosing the hosting account id and the directory layout, which is
+    // exactly the material that turns a future file-handling bug into something
+    // worse), and schema_errors can carry raw database error text. The row
+    // counts are also a free, continuously-pollable business metric.
+    //
+    // An ungated liveness probe stays available below, so "is the site up?" is
+    // still answerable without the key.
+    $key = (string)($_GET['key'] ?? '');
+    $ak  = analytics_key();
+    if (strlen($ak) < 16 || !hash_equals($ak, $key)) {
+        json_out(true, ['ok' => true]);   // liveness only, no detail
+    }
     $d = storage_durability();
     // Which config was picked up, without disclosing a filesystem path.
     // Report honestly. An earlier version called ANY config outside _private/
