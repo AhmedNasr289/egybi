@@ -365,6 +365,12 @@
           google.accounts.id.renderButton(gBox, {
             theme: 'outline', size: 'large', text: 'continue_with',
             shape: 'rectangular', logo_alignment: 'center',
+            // Follow the document's language. Left to itself GIS picks a locale
+            // from the connection, which rendered an Arabic button inside an
+            // otherwise entirely English dialog — the mixed script reads as a
+            // glitch rather than a courtesy. Reading lang off <html> means this
+            // stays right by itself if the site is ever made bilingual.
+            locale: (document.documentElement.getAttribute('lang') || 'en').split('-')[0],
             width: Math.min(400, Math.max(200, Math.round(gBox.getBoundingClientRect().width || 320)))
           });
         });
