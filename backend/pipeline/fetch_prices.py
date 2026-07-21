@@ -135,7 +135,16 @@ def transform(bundle, view):
     """Flatten one IDSC price view ('retail' or 'wholesale') into a clean item list + date."""
     data = bundle.get(view) or {}
     names = {_cid(k): v for k, v in bundle.get("names", {}).items()}
-    items, as_ofs, seen = [], [], set()
+    items, as_ofs = [], []
+    # The API lists some products in more than one *packaging/measure* under the
+    # same indicatorId — e.g. مكرونة sold by كيلو and by 400 جرام, or خس sold
+    # واحدة and by ربطة. Those are genuinely different things a shopper buys at
+    # different prices, so we keep each distinct UNIT as its own item instead of
+    # silently dropping it. A true repeat (same indicator *and* same unit) is
+    # still collapsed. Per indicator, the first unit keeps the stable slug
+    # `idsc-<id>` (so its history is unbroken); extra units get `idsc-<id>-2`,
+    # `-3`, … — ASCII-safe slugs (they become HTML ids and history keys).
+    units_seen = {}   # ind_id -> [units emitted, in order]
     for cid_raw, rows in data.items():
         cid = _cid(cid_raw)
         cat = CAT_KEY.get(cid, "other")
@@ -145,9 +154,13 @@ def transform(bundle, view):
             if avg is None:
                 continue
             ind_id = it.get("indicatorId")
-            if ind_id in seen:   # the API lists some items as multiple sub-varieties — keep one card per item
+            unit = (it.get("unit") or "").strip() or None
+            emitted = units_seen.setdefault(ind_id, [])
+            if unit in emitted:      # same product, same measure already kept — a true duplicate
                 continue
-            seen.add(ind_id)
+            variant_ix = len(emitted)
+            emitted.append(unit)
+            slug = "idsc-%s" % ind_id if variant_ix == 0 else "idsc-%s-%d" % (ind_id, variant_ix + 1)
             # signed daily change %: magnitude from percent field, direction from the abs change
             chg_abs = it.get("changeRateDaialy") or 0
             chg_pct = it.get("changeRatePercentDaialy") or 0
@@ -156,11 +169,11 @@ def transform(bundle, view):
             if as_of:
                 as_ofs.append(as_of)
             items.append({
-                "slug": "idsc-%s" % ind_id,
+                "slug": slug,
                 "name_ar": (it.get("indictorName") or "").strip(),
                 "name_en": nmap.get(ind_id),
                 "category": cat,
-                "unit": (it.get("unit") or "").strip() or None,
+                "unit": unit,
                 "min": it.get("minPrice"),
                 "max": it.get("maxPrice"),
                 "avg": round(avg, 2),
