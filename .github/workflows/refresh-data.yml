@@ -9,7 +9,11 @@ on:
   schedule:
     # Off the hour for the same reason as refresh-prices: :00 is the most
     # contended minute on GitHub's shared scheduler.
-    - cron: '41 3 1 * *'     # 03:41 UTC on the 1st of each month
+    # Weekly (Mondays), not daily: World Bank indicators update only a few times
+    # a year, so a daily run would re-fetch 7x/week to find no change (the
+    # dry-run diff-guard below still means nothing is committed on a no-change
+    # run — this just avoids burning Actions minutes for nothing).
+    - cron: '41 3 * * 1'     # 03:41 UTC every Monday
   workflow_dispatch: {}       # manual "Run workflow" button in the Actions tab
 
 permissions:
