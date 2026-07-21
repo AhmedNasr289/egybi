@@ -1,0 +1,21 @@
+{
+  "result": "success",
+  "provider": "https://www.exchangerate-api.com",
+  "documentation": "https://www.exchangerate-api.com/docs/free",
+  "terms_of_use": "https://www.exchangerate-api.com/terms",
+  "time_last_update_utc": "Mon, 20 Jul 2026 00:00:01 +0000",
+  "base_code": "EGP",
+  "rates": {
+    "EGP": 1,
+    "USD": 0.020243,
+    "EUR": 0.018612,
+    "GBP": 0.015901,
+    "SAR": 0.075911,
+    "AED": 0.074353,
+    "KWD": 0.006201,
+    "QAR": 0.073712,
+    "CAD": 0.027744,
+    "CNY": 0.145203,
+    "TRY": 0.681400
+  }
+}
