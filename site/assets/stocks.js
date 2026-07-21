@@ -9,11 +9,11 @@
 (function () {
   'use strict';
 
-  // Curated EGX names (ticker · English · Arabic · sector). Only real,
-  // well-known EGX ticker codes are listed — any other valid EGX ticker can
-  // still be typed free-hand, and these codes are worth a live spot-check on
-  // TradingView. Order is roughly by how actively traded / familiar.
-  var EGX = [
+  // The EGX company list is the shared one in egx-symbols.js (loaded first),
+  // so the picker, ticker tape and mini-charts across the whole site draw from
+  // a single source. This inline copy is only a fallback if that file is
+  // missing. Any other valid EGX ticker still works via the free-text field.
+  var EGX_FALLBACK = [
     // Banks & financial services
     { t: 'COMI', en: 'Commercial International Bank (CIB)', ar: 'البنك التجاري الدولي', s: 'Banks' },
     { t: 'HRHO', en: 'EFG Holding (Hermes)', ar: 'المجموعة المالية هيرميس القابضة', s: 'Financials' },
@@ -79,6 +79,7 @@
     { t: 'KABO', en: 'El Nasr Clothing & Textiles (Kabo)', ar: 'النصر للملابس والمنسوجات كابو', s: 'Textiles' },
     { t: 'ETRS', en: 'Egyptian Transport (EGYTRANS)', ar: 'المصرية للنقل والتجارة إيجيترانز', s: 'Logistics' }
   ];
+  var EGX = (window.EGYBI_EGX && window.EGYBI_EGX.list) || EGX_FALLBACK;
 
   var byTicker = {};
   EGX.forEach(function (r) { byTicker[r.t] = r; });
@@ -322,7 +323,8 @@
   // both built here from the one EGX company list, so the whole page has a
   // single source of companies. FEATURED curates which names to spotlight
   // (a spread across sectors); every symbol/name still comes from EGX. -----
-  var FEATURED = ['COMI', 'HRHO', 'QNBE', 'SWDY', 'ETEL', 'FWRY', 'TMGH', 'MNHD',
+  var FEATURED = (window.EGYBI_EGX && window.EGYBI_EGX.featured) ||
+                 ['COMI', 'HRHO', 'QNBE', 'SWDY', 'ETEL', 'FWRY', 'TMGH', 'MNHD',
                   'JUFO', 'EFID', 'ISPH', 'ABUK', 'SKPC', 'EAST', 'AMOC', 'ORWE'];
 
   function buildTicker() {
