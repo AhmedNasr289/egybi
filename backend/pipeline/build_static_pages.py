@@ -257,7 +257,7 @@ def build_posts(posts):
 
 def build_sitemap(extra):
     core = [('', '1.0', 'weekly'), ('practice.html', '0.9', 'weekly'), ('explore.html', '0.9', 'weekly'),
-            ('tracks.html', '0.8', 'monthly'), ('blog.html', '0.8', 'weekly'), ('prices.html', '0.7', 'daily'),
+            ('tracks.html', '0.8', 'monthly'), ('blog.html', '0.8', 'weekly'), ('prices.html', '0.7', 'daily'), ('stocks.html', '0.7', 'daily'),
             ('about.html', '0.6', 'monthly'), ('community.html', '0.6', 'monthly'), ('privacy.html', '0.3', 'yearly')]
     rows = [f"  <url>\n    <loc>{SITE_URL}/{n}</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>{f}</changefreq>\n    <priority>{p}</priority>\n  </url>"
             for n, p, f in core]
