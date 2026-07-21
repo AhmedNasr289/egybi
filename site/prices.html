@@ -112,6 +112,26 @@
   .skel-line.w70 { width:70%; } .skel-line.w40 { width:40%; } .skel-line.w90 { width:90%; }
   @keyframes skel { 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
   @media (prefers-reduced-motion: reduce){ .skel-line { animation:none; } }
+
+  /* currency band (fx.js) */
+  .fx-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:12px; margin-top:8px; }
+  .fx-card { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:14px 16px; transition:border-color .2s,box-shadow .2s; }
+  .fx-card:hover { border-color:var(--gold); box-shadow:var(--shadow-light); }
+  .fx-top { display:flex; align-items:center; gap:9px; margin-bottom:8px; }
+  .fx-code { font-weight:800; font-size:0.74rem; letter-spacing:.05em; color:var(--gold-ink); background:var(--gold-soft); padding:3px 9px; border-radius:999px; }
+  .fx-name { font-size:0.8rem; color:var(--ink); line-height:1.25; }
+  .fx-name .en { display:block; font-size:0.66rem; color:var(--ink-soft); }
+  .fx-val { font-size:1.35rem; font-weight:800; color:var(--blue-deep); font-variant-numeric:tabular-nums; }
+  .fx-val .cur { font-size:0.72rem; color:var(--ink-soft); font-weight:600; }
+  .fx-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px; }
+  .fx-chg { font-size:0.75rem; font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .fx-chg.up { color:var(--danger); }    /* pound buys less of it = pound weaker */
+  .fx-chg.down { color:var(--success); } /* pound buys more = pound stronger */
+  .fx-chg.flat { color:var(--ink-soft); }
+  .fx-spark { width:74px; height:26px; }
+  .fx-spark polyline, .fx-spark circle { vector-effect:non-scaling-stroke; }
+  .fx-note { font-size:0.84rem; color:var(--ink-soft); margin-top:14px; line-height:1.6; }
+  .fx-note a { color:var(--gold-ink); font-weight:600; }
 </style>
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
@@ -170,6 +190,18 @@
 </section>
 
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
+
+<!-- CURRENCY BAND (fx.js) -->
+<section class="surface-light-2" id="fx-section">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>أسعار العملات · Currencies</div>
+    <h2 data-aos="fade-up">الجنيه المصري أمام العملات.</h2>
+    <p class="lead" data-aos="fade-up">كام جنيه بيساوي الدولار واليورو والريال — أسعار السوق الاسترشادية، بتتحدّث يومياً. <strong>دي مش الأسعار الرسمية للبنك المركزي، للاسترشاد بس.</strong></p>
+    <div id="fxGrid" class="fx-grid" aria-live="polite"></div>
+    <p id="fxNote" class="fx-note"></p>
+  </div>
+</section>
+
 <section class="surface-light">
   <div class="wrap">
     <div class="src-strip" data-aos="fade-up">
@@ -224,6 +256,7 @@
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
+<script src="assets/fx.js?v=1"></script>
 <script>
 (function(){
   var esc = (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml : function(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; };

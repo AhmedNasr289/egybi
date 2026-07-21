@@ -1,0 +1,54 @@
+name: Refresh daily FX rates
+
+# Fetches the latest Egyptian-pound exchange rates (market reference rates via
+# ExchangeRate-API's free open endpoint) and commits the two JSON files the
+# Prices page's currency band reads. That push triggers the Hostinger
+# auto-deploy, so rates update daily with no manual steps. fetch_fx.py has its
+# own guardrail: if the API is unreachable or returns too few currencies, it
+# keeps the last-good files (a bad day never overwrites good data) and this job
+# simply finds nothing to commit.
+
+on:
+  schedule:
+    - cron: '23 7 * * *'      # 07:23 UTC daily (~09:23 Cairo); off the hour on purpose
+  workflow_dispatch: {}        # manual "Run workflow" button — use once to populate immediately
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-fx
+  cancel-in-progress: false
+
+jobs:
+  fx:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch latest EGP exchange rates (stdlib only, no pip)
+        run: python backend/pipeline/fetch_fx.py
+
+      - name: Commit & push if rates changed
+        run: |
+          if [ -n "$(git status --porcelain -- site/data/fx-today.json site/data/fx-history.json)" ]; then
+            git config user.name  "egybi-data-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add site/data/fx-today.json site/data/fx-history.json
+            git commit -m "Automated daily FX refresh — ExchangeRate-API [skip ci]"
+            for attempt in 1 2 3; do
+              if git pull --rebase --autostash origin main && git push; then
+                echo "pushed on attempt $attempt"; exit 0
+              fi
+              echo "push attempt $attempt failed; retrying in 5s"; sleep 5
+            done
+            echo "::error::could not push after 3 attempts"; exit 1
+          else
+            echo "No FX changes today (or the API guardrail kept last-good data)."
+          fi
