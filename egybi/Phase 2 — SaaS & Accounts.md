@@ -236,3 +236,26 @@ Health now prints `put_config_here` and `deployed_folder` with absolute paths wh
 **Note on the Google Cloud project:** the consent screen must be **published**, not left in *Testing* — while testing, only manually-added test users can sign in. Scopes are the non-sensitive defaults (`email`, `profile`, `openid`), so publishing needs no Google review. No client secret exists in the ID-token flow.
 
 Verified after enabling: all 9 pages 200, 123/123 challenges pass, no console errors, no real horizontal overflow (the two off-canvas honeypots inflate `scrollWidth` but nothing is visible past the edge and `scrollLeft` cannot move), no client id in the repo.
+
+
+---
+
+## The Papyrus — automated newsletter sending (2026-07-20)
+
+The site collected subscribers from launch but could not *send*. This adds an
+automated, compliant, idempotent sending path on the same Hostinger PHP/MySQL
+stack, reusing `auth/mailer.php` (Hostinger SMTP). Full build in [[Changelog]].
+
+**Data model (self-initialising via `newsletter_ensure_schema()` in `lib.php`, and in both schema files):**
+- `newsletter_subscribers` gained `confirmed`, `token`, `confirmed_at`, `unsubscribed_at` (double opt-in). Legacy single-opt-in rows are grandfathered confirmed + given a token.
+- `newsletter_issues` — one row per letter (`draft → sending → sent`).
+- `newsletter_sends` — **PK `(issue_id, email)`; its existence IS the guarantee a resend can never mail the same person twice.**
+
+**Endpoints:**
+- `api/newsletter.php` — signup now stores UNCONFIRMED and emails a confirmation link; `?action=confirm` is the double-opt-in landing.
+- `api/unsubscribe.php` — per-recipient link + RFC 8058 one-click (`List-Unsubscribe` / `List-Unsubscribe-Post`). CAN-SPAM / GDPR.
+- `api/send_issue.php` — **dry-run by default**, **`ANALYTICS_KEY`-gated** (`hash_equals`), throttled batches, records each send. Reads a versioned issue file `newsletter/issues/<slug>.json`.
+
+**Trigger:** the **"Send The Papyrus" GitHub Action** (`workflow_dispatch`, dry/live) loops batches until every confirmed subscriber has exactly one copy.
+
+**To go live (needs Ahmed):** set the `ANALYTICS_KEY` GitHub Actions secret to the *same value* as the server's `egybi-config.php` `analytics_key`, then run the Action in `dry` mode to preview before the first `live` send. The mailer gained an injection-hardened optional `$extraHeaders`. Verified: PHP lint + a SQLite flow harness (subscribe → confirm → confirmed-only recipients → idempotent send-log → unsubscribe) + endpoint checks (dry-run sends nothing, wrong key → 403, one-click unsub works). Live SMTP/MySQL send is the one thing that needs a real run to confirm.

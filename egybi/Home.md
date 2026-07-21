@@ -2,7 +2,7 @@
 
 The knowledge base and plan for **EgyBI** — a gamified skills-practice platform for **Business Intelligence, Data Engineering, Data Warehousing, and the modern data stack**, where every challenge is built on real, cited Egyptian data. Deploys to **egybi.com** (Hostinger). Project files map: `../README.md`.
 
-**One-line status:** Phase 0, at launch. A **9-page site** (with a **123-challenge auto-graded SQL engine**) + a **61-table (838-row)** cited knowledge base (18+ sectors) + a read-only PHP/MySQL API + a **Phase-2 accounts layer** (Argon2id + Google Sign-In, XP/streaks/rank, free at launch) + automated data-refresh pipelines are all built, deployed to Hostinger, and verified live on egybi.com (durable MySQL storage, SMTP + Google sign-in live, security-reviewed). Full history in [[Changelog]].
+**One-line status:** Phase 0, at launch. A **9-page site** (with a **123-challenge auto-graded SQL engine**) + a **61-table (838-row)** cited knowledge base (18+ sectors) + a read-only PHP/MySQL API + a **Phase-2 accounts layer** (Argon2id + Google Sign-In, XP/streaks/rank, free at launch) + automated data-refresh pipelines are all built, deployed to Hostinger, and verified live on egybi.com (durable MySQL storage, SMTP + Google sign-in live, security-reviewed). Since launch: a **site-wide wayfinding system** (sticky "On this page" sub-nav + scroll-spy), the tracks grouped into the **3 specializations**, an **automated "Send The Papyrus" newsletter** (double opt-in, one-click unsubscribe, idempotent batched sending), and an **SEO pass** (FAQPage/Dataset schema, RSS feed). Full history in [[Changelog]]; growth playbook in [[Launch Posts & Growth Kit]].
 
 ---
 
