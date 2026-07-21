@@ -58,7 +58,13 @@
   .sp-now .sp-now-ar { color:var(--ink-soft); font-weight:500; }
   .sp-err { margin:10px 0 0; font-size:0.9rem; color:var(--danger); font-weight:600; }
   .sp-err[hidden] { display:none; }
-  .sp-hint { margin:6px 0 0; font-size:0.82rem; color:var(--ink-soft); }
+  .sp-hint { margin:8px 0 0; font-size:0.82rem; color:var(--ink-soft); line-height:1.5; }
+  .sp-sectors { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+  .sp-sector { font:inherit; font-size:0.76rem; font-weight:600; padding:6px 12px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .sp-sector:hover { border-color:var(--gold); color:var(--ink); }
+  .sp-sector.on { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .sp-sector:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
+  .sp-sector .c { opacity:.7; font-weight:800; margin-inline-start:2px; }
 
   /* --- Fundamentals: "how to read these numbers" metric guide --- */
   .metric-guide { margin-top:34px; }
@@ -213,7 +219,8 @@
       </div>
       <p class="sp-now" id="sp-now" aria-live="polite">Now viewing: <strong>CIB · COMI</strong></p>
       <p class="sp-err" id="sp-err" role="alert" hidden></p>
-      <p class="sp-hint">Not in the list? Type any valid EGX ticker (for example <strong>SKPC</strong> or <strong>EGX:JUFO</strong>) and press Enter. If a stock shows &ldquo;invalid symbol&rdquo;, confirm its exact code on the screener above.</p>
+      <div class="sp-sectors" id="sp-sectors" role="group" aria-label="Browse EGX stocks by sector"></div>
+      <p class="sp-hint">Don&rsquo;t know the ticker? Search by <strong>English or Arabic name</strong>, or tap a sector above. The list holds 50+ EGX companies &mdash; and <strong>any</strong> other EGX stock works too: type its ticker (for example <strong>SKPC</strong> or <strong>EGX:JUFO</strong>) and press Enter. If a stock shows &ldquo;invalid symbol&rdquo;, confirm its exact code on the screener above.</p>
     </div>
 
     <div class="tv-card" style="margin-top:22px;">
@@ -367,7 +374,7 @@
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
-<script src="assets/stocks.js?v=1"></script>
+<script src="assets/stocks.js?v=2"></script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>
 <script src="assets/motion.js?v=2"></script>
