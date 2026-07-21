@@ -82,9 +82,16 @@ SOURCE = {
 }
 MIN_ITEMS = 40  # guardrail: the portal normally lists ~130 retail items.
 
-# Stable IDSC general-indicator id -> our category key
+# Stable IDSC general-indicator id -> our category key. The first nine are the
+# populated food categories; the rest are the extra categories the fuller
+# GetGeneralIndicators endpoint exposes. Several are declared-but-empty today
+# (Petroleum, gold, mobile phones, …) — mapping them now means they render with
+# a proper bilingual label the day IDSC starts populating them, no code change.
 CAT_KEY = {5: "grocery", 1: "vegetable", 11: "grain", 7: "meat",
-           8: "dairy", 3: "fish", 2: "fruit", 19: "fertiliser", 18: "building"}
+           8: "dairy", 3: "fish", 2: "fruit", 19: "fertiliser", 18: "building",
+           20: "farm", 15: "commodity", 28: "crops", 21: "petroleum", 27: "metals",
+           24: "livestock", 30: "strategic", 31: "gold", 32: "school",
+           33: "ramadan", 34: "baby", 36: "electronics"}
 
 
 def _ctx():
@@ -104,7 +111,10 @@ def api_get(path):
 
 def fetch_live():
     """Return the same shape as the fixture: {categories, retail{cid:[...]}, names{cid:{id:en}}}."""
-    cats = api_get("/PricesData/GetLocalGeneralIndicators")
+    # GetGeneralIndicators returns the full 21 categories (vs 9 for the "Local"
+    # endpoint), so newly-populated categories are picked up automatically. Empty
+    # ones simply contribute no items; the item guardrail still protects us.
+    cats = api_get("/PricesData/GetGeneralIndicators")
     retail, wholesale, names = {}, {}, {}
     for c in cats:
         cid = c["id"]

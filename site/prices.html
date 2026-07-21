@@ -264,9 +264,14 @@
     grocery:['بقالة','Groceries'], vegetable:['خضار','Vegetables'], fruit:['فاكهة','Fruit'],
     meat:['لحوم ودواجن','Meat & poultry'], dairy:['ألبان','Dairy'], fish:['أسماك','Fish'],
     grain:['حبوب وبقول','Grains & pulses'], building:['مواد بناء','Building materials'], fertiliser:['أسمدة','Fertilisers'],
+    farm:['حقول ومزارع','Fields & farms'], commodity:['سلع رئيسية','Major commodities'], crops:['محاصيل زراعية','Agricultural crops'],
+    petroleum:['بترول','Petroleum'], metals:['معادن','Metals'], livestock:['أعلاف وثروة حيوانية','Fodder & livestock'],
+    strategic:['مخزون استراتيجي','Strategic stock'], gold:['ذهب ومعادن نفيسة','Gold & precious metals'], school:['أدوات مدرسية','School tools'],
+    ramadan:['منتجات رمضانية','Ramadan products'], baby:['ألبان أطفال','Baby dairy'], electronics:['موبايلات','Mobile phones'],
     other:['أخرى','Other']   // fallback so any new category the API adds still renders with a label
   };
-  var ORDER = ['grocery','vegetable','fruit','meat','dairy','fish','grain','building','fertiliser','other'];
+  var ORDER = ['grocery','vegetable','fruit','meat','dairy','fish','grain','building','fertiliser',
+               'farm','commodity','crops','petroleum','metals','livestock','strategic','gold','school','ramadan','baby','electronics','other'];
   var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   function fmtDate(iso){ if(!iso) return ''; var d=iso.split('-'); return parseInt(d[2],10)+' '+MONTHS[parseInt(d[1],10)-1]+' '+d[0]; }
   function fmtNum(n){ if(n==null||isNaN(n)) return n; var neg=n<0; var s=Math.abs(n).toString().split('.'); s[0]=s[0].replace(/\B(?=(\d{3})+(?!\d))/g,','); return (neg?'-':'')+s.join('.'); }
