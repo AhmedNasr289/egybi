@@ -318,10 +318,41 @@
     }
   });
 
+  // --- shared spotlight: the ticker tape and the 12-month mini-chart grid are
+  // both built here from the one EGX company list, so the whole page has a
+  // single source of companies. FEATURED curates which names to spotlight
+  // (a spread across sectors); every symbol/name still comes from EGX. -----
+  var FEATURED = ['COMI', 'HRHO', 'QNBE', 'SWDY', 'ETEL', 'FWRY', 'TMGH', 'MNHD',
+                  'JUFO', 'EFID', 'ISPH', 'ABUK', 'SKPC', 'EAST', 'AMOC', 'ORWE'];
+
+  function buildTicker() {
+    var host = document.getElementById('tvw-ticker');
+    if (!host) return;
+    var syms = FEATURED.map(function (t) { return byTicker[t] ? { proName: 'EGX:' + t, title: t } : null; }).filter(Boolean);
+    buildWidget(host, TV + 'embed-widget-ticker-tape.js',
+      { symbols: syms, showSymbolLogo: true, isTransparent: true, displayMode: 'adaptive', colorTheme: 'light', locale: 'en' }, false);
+  }
+
+  function buildMinis() {
+    var host = document.getElementById('tvw-minis');
+    if (!host) return;
+    host.innerHTML = '';
+    FEATURED.slice(0, 8).forEach(function (t) {
+      if (!byTicker[t]) return;
+      var card = document.createElement('div'); card.className = 'tv-card tv-mini';
+      var cont = document.createElement('div'); cont.className = 'tradingview-widget-container';
+      card.appendChild(cont); host.appendChild(card);
+      buildWidget(cont, TV + 'embed-widget-mini-symbol-overview.js',
+        { symbol: 'EGX:' + t, width: '100%', height: '100%', locale: 'en', dateRange: '12M', colorTheme: 'light', isTransparent: true, autosize: true }, true);
+    });
+  }
+
   // --- init: shared ?stock= wins, then saved choice, else the COMI already
   // rendered server-side (no rebuild needed for the default). -------------
   (function init() {
     renderSectors();
+    buildTicker();
+    buildMinis();
     var initial = null;
     try {
       var p = new URL(window.location.href).searchParams.get('stock');

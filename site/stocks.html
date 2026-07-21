@@ -138,14 +138,8 @@
     <h2 data-aos="fade-up">Egypt's blue chips at a glance.</h2>
     <p class="lead" data-aos="fade-up">A live ticker of the most-traded EGX names. Data and charts are provided by TradingView; figures may be delayed and can contain errors.</p>
     <div class="tv-card" style="margin-top:20px;">
-      <!-- TradingView Widget: Ticker Tape -->
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Data by TradingView</a></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-        {"symbols":[{"proName":"EGX:COMI","title":"CIB"},{"proName":"EGX:HRHO","title":"EFG"},{"proName":"EGX:SWDY","title":"Elsewedy"},{"proName":"EGX:ETEL","title":"Telecom Egypt"},{"proName":"EGX:FWRY","title":"Fawry"},{"proName":"EGX:EAST","title":"Eastern Co"},{"proName":"EGX:TMGH","title":"TMG"},{"proName":"EGX:ABUK","title":"Abu Qir"}],"showSymbolLogo":true,"isTransparent":true,"displayMode":"adaptive","colorTheme":"light","locale":"en"}
-        </script>
-      </div>
+      <!-- Ticker Tape — built by stocks.js from the shared EGX company list -->
+      <div class="tradingview-widget-container" id="tvw-ticker"></div>
     </div>
   </div>
 </section>
@@ -156,14 +150,8 @@
     <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Featured stocks</div>
     <h2 data-aos="fade-up">A year of the biggest names.</h2>
     <p class="lead" data-aos="fade-up">Twelve-month mini-charts for a few EGX heavyweights. Tap any card on the live chart below to dig into it.</p>
-    <div class="tv-grid">
-      <div class="tv-card tv-mini"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{"symbol":"EGX:COMI","width":"100%","height":"100%","locale":"en","dateRange":"12M","colorTheme":"light","isTransparent":true,"autosize":true}</script></div></div>
-      <div class="tv-card tv-mini"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{"symbol":"EGX:HRHO","width":"100%","height":"100%","locale":"en","dateRange":"12M","colorTheme":"light","isTransparent":true,"autosize":true}</script></div></div>
-      <div class="tv-card tv-mini"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{"symbol":"EGX:SWDY","width":"100%","height":"100%","locale":"en","dateRange":"12M","colorTheme":"light","isTransparent":true,"autosize":true}</script></div></div>
-      <div class="tv-card tv-mini"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{"symbol":"EGX:ETEL","width":"100%","height":"100%","locale":"en","dateRange":"12M","colorTheme":"light","isTransparent":true,"autosize":true}</script></div></div>
-      <div class="tv-card tv-mini"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{"symbol":"EGX:FWRY","width":"100%","height":"100%","locale":"en","dateRange":"12M","colorTheme":"light","isTransparent":true,"autosize":true}</script></div></div>
-      <div class="tv-card tv-mini"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{"symbol":"EGX:TMGH","width":"100%","height":"100%","locale":"en","dateRange":"12M","colorTheme":"light","isTransparent":true,"autosize":true}</script></div></div>
-    </div>
+    <!-- Mini-chart grid — built by stocks.js from the shared FEATURED list -->
+    <div class="tv-grid" id="tvw-minis"></div>
   </div>
 </section>
 
@@ -374,7 +362,7 @@
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
-<script src="assets/stocks.js?v=2"></script>
+<script src="assets/stocks.js?v=3"></script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>
 <script src="assets/motion.js?v=2"></script>
