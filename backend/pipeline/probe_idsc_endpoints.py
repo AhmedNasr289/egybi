@@ -111,6 +111,28 @@ def main():
             hits.append(p)
         print("  %-52s HTTP %-3s %s" % (p, st, describe(data) if ok else raw[:60]))
 
+    # 3) If GetGeneralIndicators exists, enumerate all its categories and count
+    #    the retail/wholesale items each one carries — this reveals exactly which
+    #    categories are NEW vs the 9 we already pull.
+    st, gi, _ = get("/PricesData/GetGeneralIndicators")
+    if isinstance(gi, list):
+        known = {5, 1, 11, 7, 8, 3, 2, 19, 18}   # the 9 ids GetLocalGeneralIndicators returns
+        print("\n[ENUMERATE] GetGeneralIndicators — all %d categories + item counts:" % len(gi))
+        new_with_data = []
+        for c in gi:
+            cid = c.get("id")
+            s2, d2, _ = get("/PricesData/GetGeneralIndicatorAllData/%s" % cid)
+            r = len(d2.get("retail") or []) if isinstance(d2, dict) else 0
+            w = len(d2.get("wholesale") or []) if isinstance(d2, dict) else 0
+            is_new = cid not in known
+            tag = "   <-- NEW" if is_new else ""
+            if is_new and (r + w) > 0:
+                new_with_data.append((cid, c.get("nameE"), r, w))
+            print("  id=%-3s %-30s retail %-3d wholesale %-3d%s" % (cid, (c.get("nameE") or "?")[:30], r, w, tag))
+        print("\n  NEW categories that actually carry data: %d" % len(new_with_data))
+        for cid, nm, r, w in new_with_data:
+            print("    id=%-3s %-30s (+%d retail, +%d wholesale)" % (cid, (nm or "?")[:30], r, w))
+
     print("\n" + "-" * 70)
     if hits:
         print("PROMISING endpoints that returned data:")
