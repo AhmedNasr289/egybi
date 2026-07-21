@@ -4,6 +4,8 @@ The knowledge base and plan for **EgyBI** — a gamified skills-practice platfor
 
 **One-line status:** Phase 0, at launch. A **9-page site** (with a **123-challenge auto-graded SQL engine**) + a **61-table (838-row)** cited knowledge base (18+ sectors) + a read-only PHP/MySQL API + a **Phase-2 accounts layer** (Argon2id + Google Sign-In, XP/streaks/rank, free at launch) + automated data-refresh pipelines are all built, deployed to Hostinger, and verified live on egybi.com (durable MySQL storage, SMTP + Google sign-in live, security-reviewed). Since launch: a **site-wide wayfinding system** (sticky "On this page" sub-nav + scroll-spy), the tracks grouped into the **3 specializations**, an **automated "Send The Papyrus" newsletter** (double opt-in, one-click unsubscribe, idempotent batched sending), and an **SEO pass** (FAQPage/Dataset schema, RSS feed). Full history in [[Changelog]]; growth playbook in [[Launch Posts & Growth Kit]].
 
+> 📱 **New device?** See [[Using This Vault]] — how to open this vault in Obsidian on your phone or laptop and keep it synced with the repo.
+
 ---
 
 ## 🧭 The plan
