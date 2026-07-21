@@ -36,6 +36,57 @@
   .disclaimer .label { color:var(--danger); font-weight:800; font-size:0.74rem; letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; }
   .disclaimer p { margin:0 0 10px; font-size:0.95rem; line-height:1.65; color:var(--ink); }
   .disclaimer p:last-child { margin-bottom:0; color:var(--ink-soft); font-size:0.86rem; }
+
+  /* --- Fundamentals: stock picker (accessible combobox) --- */
+  .stock-picker { margin-top:22px; }
+  .stock-picker > label { display:block; font-weight:700; font-size:0.9rem; color:var(--ink); margin-bottom:8px; }
+  .sp-field { position:relative; max-width:540px; }
+  #sp-input { width:100%; box-sizing:border-box; font:inherit; font-size:1rem; padding:12px 14px; border:1.5px solid var(--line-light); border-radius:12px; background:var(--papyrus); color:var(--ink); }
+  #sp-input::placeholder { color:var(--ink-soft); }
+  #sp-input:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,39,.22); }
+  #sp-list { position:absolute; z-index:40; left:0; right:0; top:calc(100% + 6px); margin:0; padding:6px; list-style:none; background:var(--papyrus); border:1.5px solid var(--line-light); border-radius:12px; box-shadow:var(--shadow-light); max-height:322px; overflow-y:auto; }
+  #sp-list[hidden] { display:none; }
+  .sp-opt { display:flex; align-items:baseline; gap:10px; padding:9px 11px; border-radius:8px; cursor:pointer; }
+  .sp-opt:hover, .sp-opt.active { background:var(--papyrus-2); }
+  .sp-opt .t { font-weight:800; color:var(--gold-ink); font-variant-numeric:tabular-nums; min-width:58px; }
+  .sp-opt .n { color:var(--ink); font-size:0.92rem; }
+  .sp-opt .n .ar { color:var(--ink-soft); }
+  .sp-opt .s { margin-left:auto; color:var(--ink-soft); font-size:0.75rem; white-space:nowrap; }
+  .sp-empty { padding:11px; color:var(--ink-soft); font-size:0.9rem; }
+  .sp-now { margin:12px 0 0; font-size:0.95rem; color:var(--ink); }
+  .sp-now strong { color:var(--gold-ink); }
+  .sp-now .sp-now-ar { color:var(--ink-soft); font-weight:500; }
+  .sp-err { margin:10px 0 0; font-size:0.9rem; color:var(--danger); font-weight:600; }
+  .sp-err[hidden] { display:none; }
+  .sp-hint { margin:6px 0 0; font-size:0.82rem; color:var(--ink-soft); }
+
+  /* --- Fundamentals: "how to read these numbers" metric guide --- */
+  .metric-guide { margin-top:34px; }
+  .metric-guide .mg-head { margin:0 0 4px; }
+  .metric-guide .mg-lead { margin:0 0 16px; color:var(--ink-soft); font-size:0.95rem; max-width:70ch; }
+  .mg-list { display:grid; gap:12px; }
+  .mg { border:1px solid var(--line-light); border-radius:12px; background:var(--papyrus-2); overflow:hidden; }
+  .mg > summary { cursor:pointer; list-style:none; padding:14px 16px; font-weight:700; color:var(--ink); display:flex; align-items:baseline; gap:10px; }
+  .mg > summary::-webkit-details-marker { display:none; }
+  .mg > summary .mg-ar { color:var(--ink-soft); font-weight:500; font-size:0.9rem; }
+  .mg > summary::after { content:"+"; margin-left:auto; color:var(--gold-ink); font-weight:800; font-size:1.15rem; line-height:1; }
+  .mg[open] > summary::after { content:"\2013"; }
+  .mg .mg-body { padding:0 16px 16px; }
+  .mg .mg-body p { margin:0 0 10px; font-size:0.94rem; line-height:1.62; color:var(--ink); }
+  .mg .mini-eg { background:var(--papyrus); border-left:3px solid var(--gold); border-radius:6px; padding:10px 12px; font-size:0.88rem; color:var(--ink-soft); line-height:1.55; }
+  .mg .mini-eg b { color:var(--ink); }
+  .mg .watch { color:var(--danger); font-weight:600; }
+
+  /* --- Fundamentals: 5-minute evaluation walkthrough --- */
+  .eval-wrap { margin-top:34px; background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:26px; }
+  .eval-wrap h3 { margin:0; }
+  .eval-wrap .eval-lead { margin:8px 0 0; color:var(--ink-soft); font-size:0.95rem; }
+  .eval-steps { margin:20px 0 0; padding:0; list-style:none; counter-reset:step; display:grid; gap:16px; }
+  .eval-steps li { position:relative; padding-left:48px; }
+  .eval-steps li::before { counter-increment:step; content:counter(step); position:absolute; left:0; top:0; width:32px; height:32px; border-radius:50%; background:var(--blue); color:#fff; font-weight:800; display:grid; place-items:center; font-size:0.92rem; }
+  .eval-steps li h4 { margin:3px 0 4px; font-size:1rem; color:var(--ink); }
+  .eval-steps li p { margin:0; font-size:0.92rem; color:var(--ink-soft); line-height:1.55; }
+  @media (prefers-reduced-motion: reduce) { #sp-list { scroll-behavior:auto; } }
 </style>
 <meta name="google-adsense-account" content="ca-pub-1432845423481814">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814" crossorigin="anonymous"></script>
@@ -151,12 +202,79 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>Company fundamentals</div>
     <h2 data-aos="fade-up">Beyond the chart — the company behind the ticker.</h2>
-    <p class="lead" data-aos="fade-up">A snapshot and full financials for a featured EGX name (CIB &middot; COMI). Look up any other stock in the live chart above. Figures are provided by TradingView, may be delayed, and should be confirmed against the company's official EGX disclosures.</p>
-    <div class="tv-card" style="margin-top:20px;">
-      <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Data by TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>{"symbol":"EGX:COMI","width":"100%","locale":"en","colorTheme":"light","isTransparent":true}</script></div>
+    <p class="lead" data-aos="fade-up">Pick <strong>any</strong> Egyptian Exchange stock and read it properly: a live snapshot, the company profile, and full financials — then the plain-language guide below shows you how to make sense of every number. Figures are provided by TradingView, may be delayed, and should be confirmed against the company's official EGX disclosures.</p>
+
+    <!-- STOCK PICKER (drives the three widgets below) -->
+    <div class="stock-picker" data-aos="fade-up">
+      <label for="sp-input">Choose a stock</label>
+      <div class="sp-field">
+        <input id="sp-input" type="text" role="combobox" aria-expanded="false" aria-controls="sp-list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search any EGX stock — ticker, English or Arabic name">
+        <ul id="sp-list" role="listbox" aria-label="EGX stocks" hidden></ul>
+      </div>
+      <p class="sp-now" id="sp-now" aria-live="polite">Now viewing: <strong>CIB · COMI</strong></p>
+      <p class="sp-err" id="sp-err" role="alert" hidden></p>
+      <p class="sp-hint">Not in the list? Type any valid EGX ticker (for example <strong>SKPC</strong> or <strong>EGX:JUFO</strong>) and press Enter. If a stock shows &ldquo;invalid symbol&rdquo;, confirm its exact code on the screener above.</p>
+    </div>
+
+    <div class="tv-card" style="margin-top:22px;">
+      <div class="tradingview-widget-container" id="tvw-info"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Data by TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>{"symbol":"EGX:COMI","width":"100%","locale":"en","colorTheme":"light","isTransparent":true}</script></div>
+    </div>
+    <div class="tv-card" style="margin-top:16px;">
+      <div class="tradingview-widget-container" id="tvw-profile"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Data by TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-profile.js" async>{"symbol":"EGX:COMI","width":"100%","height":390,"locale":"en","colorTheme":"light","isTransparent":true}</script></div>
     </div>
     <div class="tv-card" style="margin-top:16px;height:520px;">
-      <div class="tradingview-widget-container" style="height:100%;"><div class="tradingview-widget-container__widget" style="height:100%;"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Data by TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-financials.js" async>{"colorTheme":"light","isTransparent":true,"largeChartUrl":"","displayMode":"regular","width":"100%","height":"100%","symbol":"EGX:COMI","locale":"en"}</script></div>
+      <div class="tradingview-widget-container" id="tvw-fin" style="height:100%;"><div class="tradingview-widget-container__widget" style="height:100%;"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Data by TradingView</a></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-financials.js" async>{"colorTheme":"light","isTransparent":true,"largeChartUrl":"","displayMode":"regular","width":"100%","height":"100%","symbol":"EGX:COMI","locale":"en"}</script></div>
+    </div>
+
+    <!-- HOW TO READ THESE NUMBERS -->
+    <div class="metric-guide" data-aos="fade-up">
+      <h3 class="mg-head">How to actually read these numbers.</h3>
+      <p class="mg-lead">The widget hands you the figures; it doesn't tell you what they mean. Open each one for what it measures, what &ldquo;good&rdquo; and &ldquo;bad&rdquo; look like <em>in context</em>, and the mistake people most often make with it. Numbers below are round illustrative examples, not live figures — and none of this is advice about any stock.</p>
+      <div class="mg-list">
+        <details class="mg"><summary>P/E ratio <span class="mg-ar">· مكرر الربحية</span></summary><div class="mg-body">
+          <p>Price divided by earnings per share — roughly how many years of today's profit you're paying for one share. A P/E of 10 means the price is ten times annual per-share earnings.</p>
+          <p>There is no universal &ldquo;good&rdquo; P/E — it only means something <b>next to a peer or the company's own history</b>. A fast-growing tech name (Fawry) will normally carry a much higher P/E than a mature bank (CIB), because buyers pay up for expected growth. Compare a bank to banks, a developer to developers.</p>
+          <p class="mini-eg">Illustrative: Company A trades at a P/E of <b>8</b>, its sector averages <b>12</b>. That's not automatically &ldquo;cheap&rdquo; — it can mean the market expects earnings to <b>fall</b>. Cheap and troubled look identical on the P/E alone.</p>
+          <p class="watch">Most common misread: treating a low P/E as a bargain without asking <em>why</em> it's low.</p>
+        </div></details>
+        <details class="mg"><summary>P/B ratio <span class="mg-ar">· مكرر القيمة الدفترية</span></summary><div class="mg-body">
+          <p>Price divided by book value per share — the market price against the company's net assets on the balance sheet. Especially useful for banks and asset-heavy businesses.</p>
+          <p>Below <b>1.0</b> means the market values the company at less than its stated net assets — a possible value signal, or a warning that the market doubts those asset values. Banks in Egypt have often traded below book; context and the sector matter more than the raw number.</p>
+          <p class="mini-eg">Illustrative: a bank at a P/B of <b>0.7</b> is priced at 70% of book value. Attractive only if the assets and earnings are sound; a discount can be the market pricing in real risk.</p>
+          <p class="watch">Most common misread: assuming below-book always means undervalued.</p>
+        </div></details>
+        <details class="mg"><summary>ROE <span class="mg-ar">· العائد على حقوق الملكية</span></summary><div class="mg-body">
+          <p>Return on equity — annual profit as a percentage of shareholders' money. It answers: how efficiently does this company turn the owners' capital into profit?</p>
+          <p>Higher is generally better, but read it <b>with</b> P/B and debt: a high ROE propped up by heavy borrowing is riskier than the same ROE earned with little debt. A consistently high ROE across several years says more than one strong year.</p>
+          <p class="mini-eg">Illustrative: <b>20%</b> ROE means the company earned 20 piastres of profit for every pound of equity that year. Steady 15–20% over five years beats a one-off spike to 30%.</p>
+          <p class="watch">Most common misread: cheering a high ROE without checking whether debt inflated it.</p>
+        </div></details>
+        <details class="mg"><summary>Dividend yield <span class="mg-ar">· عائد التوزيعات</span></summary><div class="mg-body">
+          <p>The annual dividend as a percentage of the share price — the cash income you'd collect from payouts, before any price change.</p>
+          <p>A moderate, well-covered yield is a sign of a profitable, shareholder-friendly company. A <b>very high</b> yield is often a red flag, not a gift: it usually means the price has fallen on bad news, or the dividend may not be sustainable.</p>
+          <p class="mini-eg">Illustrative: a <b>12%</b> yield looks generous — but if profits are shrinking, the company may cut the dividend, and the price drop that produced that yield can dwarf the payout.</p>
+          <p class="watch">Most common misread: chasing the highest yield on the board.</p>
+        </div></details>
+        <details class="mg"><summary>EPS trend <span class="mg-ar">· اتجاه ربحية السهم</span></summary><div class="mg-body">
+          <p>Earnings per share is the company's profit split across each share. One quarter's EPS barely matters — the <b>trend</b> over several years is what fundamentals are really about.</p>
+          <p>Rising EPS year after year is the engine behind most durable share-price gains. In Egypt, also ask whether growth is <b>real</b> or partly inflation and currency effects — a number growing only as fast as prices isn't truly growing.</p>
+          <p class="mini-eg">Illustrative: EPS of 2.0 → 2.4 → 2.9 → 3.5 over four years is a healthy climb. The same average with wild swings up and down is a very different, riskier story.</p>
+          <p class="watch">Most common misread: reacting to a single quarter instead of the multi-year direction.</p>
+        </div></details>
+      </div>
+    </div>
+
+    <!-- 5-MINUTE EVALUATION WALKTHROUGH -->
+    <div class="eval-wrap" data-aos="fade-up">
+      <h3>Evaluate a company in five minutes.</h3>
+      <p class="eval-lead">A beginner's order of operations using only what's on this page. Follow it top to bottom for the stock you picked above — it builds understanding, and it is a learning exercise, never a recommendation to buy or sell.</p>
+      <ol class="eval-steps">
+        <li><h4>Start with what it does</h4><p>Read the <strong>company profile</strong> above. If you can't say in one sentence how the company makes money, stop here — never &ldquo;invest&rdquo; in a ticker you can't explain.</p></li>
+        <li><h4>Size and price it</h4><p>In the snapshot, note <strong>market cap</strong> (how big) and <strong>P/E</strong> (how the market prices its profit). Big and small, cheap and expensive — you're just placing it on the map.</p></li>
+        <li><h4>Check profitability</h4><p>In the financials, look at <strong>ROE</strong> and the <strong>EPS trend</strong>. Is the company reliably profitable, and is profit per share rising over several years, not just one?</p></li>
+        <li><h4>Compare, never in isolation</h4><p>Open the <strong>screener</strong> and line the stock up against two or three peers in the same sector. Every ratio only means something relative to something else.</p></li>
+        <li><h4>Confirm at the source</h4><p>For anything you'd act on, verify against the company's official <strong>EGX disclosures</strong> — the widget may be delayed, and the filing is the record of truth.</p></li>
+      </ol>
     </div>
   </div>
 </section>
@@ -216,7 +334,7 @@
     <h2 data-aos="fade-up">Information, not advice.</h2>
     <div class="disclaimer" style="margin-top:18px;" data-aos="fade-up">
       <div class="label">Please read</div>
-      <p>This page shows market data, charts, glossary definitions and general guidance for information and education only. The explanations and "for traders" notes are generic educational material, not personalised advice about any specific stock or your situation. Prices and figures are provided by TradingView, may be delayed, and can contain errors — always confirm against an official source such as the <a href="https://www.egx.com.eg/" rel="noopener nofollow" target="_blank" style="color:var(--gold-ink);font-weight:600;">Egyptian Exchange (EGX)</a> or your broker before acting on anything.</p>
+      <p>This page shows market data, charts, glossary definitions, a company picker and general guidance for information and education only. The stock picker, the "how to read these numbers" explanations, the five-minute walkthrough and the "for traders" notes are generic educational material — they help you learn to read any company for yourself and are <strong>not</strong> personalised advice, a recommendation, or a view on whether any specific stock is a good or bad choice for you. Prices and figures are provided by TradingView, may be delayed, and can contain errors — always confirm against an official source such as the <a href="https://www.egx.com.eg/" rel="noopener nofollow" target="_blank" style="color:var(--gold-ink);font-weight:600;">Egyptian Exchange (EGX)</a> or your broker before acting on anything.</p>
       <p><strong>Nothing here is investment advice, a recommendation, or an offer to buy or sell any security.</strong> EgyBI is not licensed by Egypt's Financial Regulatory Authority (FRA) and does not provide investment advice or manage money. Do your own research and consult a licensed financial advisor.</p>
       <p>Charts and data are © TradingView, embedded under their widget terms; EgyBI redistributes no market data of its own here.</p>
     </div>
@@ -249,6 +367,7 @@
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
+<script src="assets/stocks.js?v=1"></script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>
 <script src="assets/motion.js?v=2"></script>
