@@ -1,0 +1,23 @@
+name: Probe IDSC endpoints
+
+# Manual, on-demand utility. Runs the read-only IDSC endpoint probe on a
+# GitHub runner (which can reach the government API, unlike the dev sandbox)
+# and prints what it finds to the job log — so we can see whether the portal's
+# "global/international" or governorate datasets exist and extend the price
+# pipeline on confirmed real data. Writes nothing, commits nothing.
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run the IDSC endpoint probe (read-only)
+        run: python backend/pipeline/probe_idsc_endpoints.py
