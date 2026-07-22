@@ -4,7 +4,7 @@
 
 **How deploy works:** every push to `main` triggers Hostinger's auto-deploy (independent of GitHub Actions — the `[skip ci]` in bot commits only skips *Actions*, not the Hostinger deploy). So a data-refresh commit publishes to egybi.com automatically. Data pipelines run **on GitHub runners** because the dev sandbox can't reach the source (gov/vendor) APIs.
 
-## The six GitHub Actions
+## The seven GitHub Actions
 
 | Workflow | Trigger (UTC) | Runs → writes | Guardrail / failure behavior | Status |
 |---|---|---|---|---|
@@ -14,6 +14,7 @@
 | **build-pages.yml** | on push to `main` + manual | `build_static_pages.py` → 123 challenge + 12 story pages, `sitemap.xml`, `feed.xml` | reads committed data only (no external fetch); job fails → no commit; commit tagged `[skip ci]`; push retries 3× | ✅ Healthy |
 | **send-newsletter.yml** | **manual only** (`workflow_dispatch`, inputs: slug + dry/live) | `curl` → `api/send_issue.php` | **dry-run by default**; `ANALYTICS_KEY`-gated (`hash_equals`); idempotent send-log keyed `(issue_id,email)` → never double-mails; loops batches until `remaining=0` | ✅ Healthy |
 | **probe-idsc.yml** | **manual only** | `probe_idsc_endpoints.py` (read-only) | writes/commits nothing; a utility to re-check IDSC for newly-populated categories | ✅ Healthy (utility) |
+| **papyrus-reminder.yml** | monthly `0 8 1 * *` (1st) + manual | github-script → opens a GitHub issue naming this month's issue slug + send steps | repo-backed backup for the external send-reminder; never sends; deduped per month | ✅ Healthy |
 
 ## Outside the repo (documented here so it isn't lost)
 - **Monthly newsletter send-reminder** — a Claude-Code-Remote scheduled trigger **`trig_018YA7TYh5jKXRzQNWoNcV9r`**, cron `0 7 1 * *` (1st of month, 07:00 UTC), push+email, fires a **fresh session**. It reads `site/newsletter/issues/`, finds the current month's slug, and nudges Ahmed with the exact send steps. It **never sends** — the human runs `send-newsletter`. Single point of failure: if the trigger is deleted/disabled, issues silently stop going out.
@@ -21,8 +22,8 @@
 
 ## Honest gaps (flagged, not silently "fixed" — Ahmed's call)
 1. **Silent failure notification — ✅ ADDRESSED (2026-07-21).** The four unattended workflows (refresh-prices/fx/data, build-pages) now end with an `if: failure()` step that runs the **`.github/actions/notify-failure`** composite action: it opens a GitHub issue titled `⚠️ CI failure: <workflow>` (or comments on the existing open one, so a recurring failure doesn't spam) using the built-in `GITHUB_TOKEN` — no external secret. Requires `issues: write`, which was added to each. Watching the repo = failure emails. (Manual workflows are excluded by design — you see them run live.)
-2. **Source-outage = stale-but-safe.** If the IDSC or ExchangeRate-API source is down for days, the pipelines keep last-good data (correct — never bad data), but the page silently freezes with no notice. Acceptable by design; worth knowing.
-3. **The monthly reminder is a single external trigger** (see above) — the one link in the newsletter chain not backed up in the repo.
+2. **Source-outage = stale data — ✅ ADDRESSED (2026-07-22).** Two paths now alert: an *unreachable* API makes the fetch exit non-zero → the failure alert fires; and a *frozen* source (returns 200 but stops advancing its date) is caught by a new **staleness guard** step in refresh-prices/fx that fails (→ alert) if the newest `as_of` is >5 days old (a threshold that tolerates weekends + a holiday). Data itself is still never overwritten with bad values — the guard only raises a flag.
+3. **Monthly reminder was external-only — ✅ ADDRESSED (2026-07-22).** Added **`papyrus-reminder.yml`**, an in-repo monthly Action that opens a GitHub-issue reminder with this month's slug + send steps. The reminder is now version-controlled and survives even if the external Claude-Code-Remote trigger (`trig_018YA7TYh5jKXRzQNWoNcV9r`) is deleted. Both now fire on the 1st (different channels — issue vs push/email); the external one is now a redundant convenience you may keep or delete.
 
 ## What is *not* automated (by design)
 - **Newsletter sending** stays manual — a deliberate FRA/consent choice; the reminder automates only the nudge, not the send.

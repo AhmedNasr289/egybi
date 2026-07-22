@@ -1,0 +1,58 @@
+name: Papyrus monthly reminder
+
+# Repo-backed backup for the newsletter send-reminder. On the 1st of each month
+# it opens a GitHub issue naming this month's drafted issue and the send steps,
+# so the reminder survives even if the external Claude-Code-Remote trigger is
+# ever deleted. It NEVER sends — the human runs the "Send The Papyrus" Action.
+
+on:
+  schedule:
+    - cron: '0 8 1 * *'      # 08:00 UTC on the 1st (after the external trigger's 07:00)
+  workflow_dispatch: {}        # manual test button
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Open this month's send reminder
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const now = new Date();
+            const ym = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
+            const dir = 'site/newsletter/issues';
+            const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+            const match = files.find(f => f.startsWith(ym));
+            let title, body;
+            if (match) {
+              const slug = match.replace('.json', '');
+              const issue = JSON.parse(fs.readFileSync(`${dir}/${match}`, 'utf8'));
+              title = `📬 Send The Papyrus — ${slug}`;
+              body = [
+                `It's ${ym}. This month's issue is drafted and ready:`,
+                ``,
+                `**${issue.subject}**`,
+                `slug: \`${slug}\``,
+                ``,
+                `To send: run the **Send The Papyrus** Action → slug \`${slug}\` → \`dry\` to preview the recipient count, then \`live\`.`,
+                ``,
+                `_Automated monthly reminder (repo backup for the external trigger). It does not send anything — you do. Close this once sent._`,
+              ].join('\n');
+            } else {
+              title = `📬 The Papyrus — no issue drafted for ${ym}`;
+              body = `It's ${ym} and no issue file is dated for this month in \`${dir}\`. Draft one, or send an earlier unsent slug.\n\n_Automated monthly reminder._`;
+            }
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100,
+            });
+            if (open.some(i => i.title === title)) { core.notice('Reminder already open for this month'); return; }
+            const { data: created } = await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo, title, body,
+            });
+            core.notice(`Opened reminder #${created.number}`);
