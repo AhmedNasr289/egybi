@@ -39,6 +39,22 @@ jobs:
       - name: Fetch latest IDSC prices (stdlib only, no pip)
         run: python backend/pipeline/fetch_prices.py
 
+      - name: Fail (→ alert) if the data has gone stale
+        run: |
+          python - <<'PY'
+          import json, datetime, sys
+          d = json.load(open("site/data/prices-today.json"))
+          as_of = (d.get("retail") or {}).get("as_of") or d.get("fetched_at")
+          age = (datetime.date.today() - datetime.date.fromisoformat(as_of)).days
+          print(f"prices as_of {as_of} — {age} day(s) old")
+          # The pipeline keeps last-good data on a bad fetch, so a frozen source
+          # is otherwise silent. Alert if the newest data is >5 days old (a
+          # threshold that tolerates weekends + a public holiday).
+          if age > 5:
+              print(f"::error::Prices are {age} days stale (as_of {as_of}). The IDSC source may have stopped updating.")
+              sys.exit(1)
+          PY
+
       - name: Commit & push if prices changed
         run: |
           if [ -n "$(git status --porcelain -- site/data/prices-today.json site/data/prices-history.json)" ]; then

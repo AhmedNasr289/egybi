@@ -36,6 +36,21 @@ jobs:
       - name: Fetch latest EGP exchange rates (stdlib only, no pip)
         run: python backend/pipeline/fetch_fx.py
 
+      - name: Fail (→ alert) if the rates have gone stale
+        run: |
+          python - <<'PY'
+          import json, datetime, sys
+          d = json.load(open("site/data/fx-today.json"))
+          as_of = d.get("as_of") or d.get("fetched_at")
+          age = (datetime.date.today() - datetime.date.fromisoformat(as_of)).days
+          print(f"fx as_of {as_of} — {age} day(s) old")
+          # The pipeline keeps last-good rates on a bad fetch; alert if the
+          # newest rates are >5 days old (the source updates daily).
+          if age > 5:
+              print(f"::error::FX rates are {age} days stale (as_of {as_of}). ExchangeRate-API may have stopped updating.")
+              sys.exit(1)
+          PY
+
       - name: Commit & push if rates changed
         run: |
           if [ -n "$(git status --porcelain -- site/data/fx-today.json site/data/fx-history.json)" ]; then
