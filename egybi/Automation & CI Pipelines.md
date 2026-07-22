@@ -20,7 +20,7 @@
 - **Secrets:** `ANALYTICS_KEY` (GitHub Actions secret) = the server's `egybi-config.php` `analytics_key`; gates `send_issue.php` and `insights.php`. See [[Security Posture & Audit Log]] / [[Phase 2 — SaaS & Accounts]].
 
 ## Honest gaps (flagged, not silently "fixed" — Ahmed's call)
-1. **Silent failure notification.** A failed run (push fails after 3 retries, or a guard trips) just shows red in the Actions tab. GitHub's default emails the repo owner on workflow failure, so it's *semi*-covered — but there's no dedicated alert channel. Low effort to add (an email/Slack step) if wanted.
+1. **Silent failure notification — ✅ ADDRESSED (2026-07-21).** The four unattended workflows (refresh-prices/fx/data, build-pages) now end with an `if: failure()` step that runs the **`.github/actions/notify-failure`** composite action: it opens a GitHub issue titled `⚠️ CI failure: <workflow>` (or comments on the existing open one, so a recurring failure doesn't spam) using the built-in `GITHUB_TOKEN` — no external secret. Requires `issues: write`, which was added to each. Watching the repo = failure emails. (Manual workflows are excluded by design — you see them run live.)
 2. **Source-outage = stale-but-safe.** If the IDSC or ExchangeRate-API source is down for days, the pipelines keep last-good data (correct — never bad data), but the page silently freezes with no notice. Acceptable by design; worth knowing.
 3. **The monthly reminder is a single external trigger** (see above) — the one link in the newsletter chain not backed up in the repo.
 

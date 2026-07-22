@@ -1,0 +1,37 @@
+name: Notify on failure
+description: >
+  Opens a GitHub issue (or comments on the existing open one) when a workflow
+  run fails, so an unattended pipeline failure is never silent. Uses the
+  built-in GITHUB_TOKEN — no external secret or service. Dedupes by title, so a
+  repeatedly-failing job appends comments to one thread instead of spamming new
+  issues. Requires the calling job to grant `issues: write`.
+runs:
+  using: composite
+  steps:
+    - uses: actions/github-script@v7
+      with:
+        script: |
+          const title = `⚠️ CI failure: ${context.workflow}`;
+          const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          const body = [
+            `The **${context.workflow}** workflow failed (run #${context.runNumber}, attempt ${context.runAttempt}).`,
+            ``,
+            `Run log: ${runUrl}`,
+            ``,
+            `_Automated alert. Close this issue once resolved — the next failure re-opens the thread._`,
+          ].join('\n');
+          const { data: open } = await github.rest.issues.listForRepo({
+            owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100,
+          });
+          const match = open.find(i => i.title === title);
+          if (match) {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: match.number, body,
+            });
+            core.notice(`Commented on existing failure issue #${match.number}`);
+          } else {
+            const { data: created } = await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo, title, body,
+            });
+            core.notice(`Opened failure issue #${created.number}`);
+          }

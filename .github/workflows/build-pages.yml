@@ -18,6 +18,7 @@ on:
 
 permissions:
   contents: write
+  issues: write             # open a failure-alert issue via notify-failure
 
 concurrency:
   group: build-pages
@@ -60,3 +61,7 @@ jobs:
           else
             echo "Static pages already up to date."
           fi
+
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure

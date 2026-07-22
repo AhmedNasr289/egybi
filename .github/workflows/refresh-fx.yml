@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  issues: write             # open a failure-alert issue via notify-failure
 
 concurrency:
   group: refresh-fx
@@ -52,3 +53,7 @@ jobs:
           else
             echo "No FX changes today (or the API guardrail kept last-good data)."
           fi
+
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
