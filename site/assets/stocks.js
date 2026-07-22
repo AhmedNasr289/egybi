@@ -23,7 +23,7 @@
     { t: 'SAUD', en: 'Al Baraka Bank Egypt', ar: 'بنك البركة مصر', s: 'Banks' },
     { t: 'FAIT', en: 'Faisal Islamic Bank of Egypt', ar: 'بنك فيصل الإسلامي المصري', s: 'Banks' },
     { t: 'HDBK', en: 'Housing & Development Bank', ar: 'بنك التعمير والإسكان', s: 'Banks' },
-    { t: 'EGBE', en: 'Export Development Bank of Egypt', ar: 'البنك المصري لتنمية الصادرات', s: 'Banks' },
+    { t: 'EGBE', en: 'Egyptian Gulf Bank', ar: 'البنك المصري الخليجي', s: 'Banks' },
     { t: 'CICH', en: 'CI Capital Holding', ar: 'سي آي كابيتال القابضة', s: 'Financials' },
     { t: 'BTFH', en: 'Beltone Holding', ar: 'بلتون القابضة', s: 'Financials' },
     { t: 'CCAP', en: 'Qalaa Holdings (Citadel Capital)', ar: 'القلعة للاستشارات المالية', s: 'Financials' },
@@ -66,7 +66,7 @@
     { t: 'ETEL', en: 'Telecom Egypt (WE)', ar: 'المصرية للاتصالات', s: 'Telecom' },
     { t: 'RAYA', en: 'Raya Holding', ar: 'راية القابضة', s: 'Technology' },
     { t: 'MTIE', en: 'MM Group for Industry & Trade', ar: 'إم إم جروب للصناعة والتجارة', s: 'Technology' },
-    { t: 'AUTO', en: 'GB Corp (GB Auto)', ar: 'جي بي كورب', s: 'Automotive' },
+    { t: 'GBCO', en: 'GB Corp (GB Auto)', ar: 'جي بي كورب', s: 'Automotive' },
     // Chemicals, fertilizers & energy
     { t: 'SKPC', en: 'Sidi Kerir Petrochemicals (Sidpec)', ar: 'سيدي كرير للبتروكيماويات', s: 'Petrochemicals' },
     { t: 'ABUK', en: 'Abu Qir Fertilizers', ar: 'أبو قير للأسمدة والصناعات الكيماوية', s: 'Fertilizers' },
