@@ -14,7 +14,7 @@ runs:
           const title = `⚠️ CI failure: ${context.workflow}`;
           const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
           const body = [
-            `The **${context.workflow}** workflow failed (run #${context.runNumber}, attempt ${context.runAttempt}).`,
+            `The **${context.workflow}** workflow failed (run #${context.runNumber}, attempt ${process.env.GITHUB_RUN_ATTEMPT || '1'}).`,
             ``,
             `Run log: ${runUrl}`,
             ``,
