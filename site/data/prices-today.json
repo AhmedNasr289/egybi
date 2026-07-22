@@ -6,7 +6,7 @@
   "kind": "retail",
   "cadence": "daily"
  },
- "fetched_at": "2026-07-21",
+ "fetched_at": "2026-07-22",
  "currency": "EGP",
  "retail": {
   "as_of": "2026-07-21",
@@ -1468,74 +1468,8 @@
  },
  "wholesale": {
   "as_of": "2026-07-09",
-  "count": 103,
+  "count": 72,
   "items": [
-   {
-    "slug": "idsc-698",
-    "name_ar": "برقوق هوليو",
-    "name_en": null,
-    "category": "commodity",
-    "unit": "كيلو",
-    "min": 50,
-    "max": 50,
-    "avg": 50,
-    "change_pct": 233.3
-   },
-   {
-    "slug": "idsc-657",
-    "name_ar": "فلفل الوان (اصفر-احمر-برتقالي)",
-    "name_en": null,
-    "category": "commodity",
-    "unit": "كيلو",
-    "min": 28,
-    "max": 28,
-    "avg": 28,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-676",
-    "name_ar": "مرمرية",
-    "name_en": null,
-    "category": "commodity",
-    "unit": "طبق 250جم",
-    "min": 25,
-    "max": 25,
-    "avg": 25,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-695",
-    "name_ar": "موز صعيدى",
-    "name_en": null,
-    "category": "commodity",
-    "unit": "كيلو",
-    "min": 16,
-    "max": 16,
-    "avg": 16,
-    "change_pct": 60
-   },
-   {
-    "slug": "idsc-74",
-    "name_ar": "المسلى الصناعي",
-    "name_en": "Industrial Margarine",
-    "category": "dairy",
-    "unit": "كيلو",
-    "min": 102,
-    "max": 102,
-    "avg": 102,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-584",
-    "name_ar": "باذنجان حقلي",
-    "name_en": null,
-    "category": "farm",
-    "unit": "كيلو",
-    "min": 4,
-    "max": 4,
-    "avg": 4,
-    "change_pct": 0
-   },
    {
     "slug": "idsc-327",
     "name_ar": "البربوني (متوسط)",
@@ -1669,17 +1603,6 @@
     "change_pct": 12400
    },
    {
-    "slug": "idsc-308",
-    "name_ar": "بلطي أسواني",
-    "name_en": "aswan Tilapia fish",
-    "category": "fish",
-    "unit": "طاولة خشب",
-    "min": 1500,
-    "max": 1500,
-    "avg": 1500,
-    "change_pct": 9900
-   },
-   {
     "slug": "idsc-325",
     "name_ar": "بياض (ممتاز)",
     "name_en": "Excellent Trevally Fish",
@@ -1746,17 +1669,6 @@
     "change_pct": 185.7
    },
    {
-    "slug": "idsc-318",
-    "name_ar": "حدادي",
-    "name_en": "hadady fish",
-    "category": "fish",
-    "unit": "طاولة خشب",
-    "min": 450,
-    "max": 450,
-    "avg": 450,
-    "change_pct": 1185.7
-   },
-   {
     "slug": "idsc-316",
     "name_ar": "سبيط",
     "name_en": "squid fish",
@@ -1788,17 +1700,6 @@
     "max": 3000,
     "avg": 3000,
     "change_pct": 14900
-   },
-   {
-    "slug": "idsc-310",
-    "name_ar": "قشر بياض",
-    "name_en": "Nile Perch",
-    "category": "fish",
-    "unit": "طاولة خشب",
-    "min": 2800,
-    "max": 2800,
-    "avg": 2800,
-    "change_pct": 4416.1
    },
    {
     "slug": "idsc-313",
@@ -1867,17 +1768,6 @@
     "change_pct": 19.1
    },
    {
-    "slug": "idsc-273",
-    "name_ar": "أناناس",
-    "name_en": "Pineapple",
-    "category": "fruit",
-    "unit": "واحدة",
-    "min": 100,
-    "max": 100,
-    "avg": 100,
-    "change_pct": 1566.7
-   },
-   {
     "slug": "idsc-259",
     "name_ar": "البرقوق",
     "name_en": "Plum",
@@ -1942,17 +1832,6 @@
     "max": 40,
     "avg": 31.67,
     "change_pct": 533.4
-   },
-   {
-    "slug": "idsc-294",
-    "name_ar": "بلح عجوة",
-    "name_en": "Pressed dates",
-    "category": "fruit",
-    "unit": "كيلو",
-    "min": 30,
-    "max": 30,
-    "avg": 30,
-    "change_pct": 150
    },
    {
     "slug": "idsc-292",
@@ -2076,28 +1955,6 @@
     "change_pct": 171.4
    },
    {
-    "slug": "idsc-301",
-    "name_ar": "نبق",
-    "name_en": "Heorotbr?r",
-    "category": "fruit",
-    "unit": "كيلو",
-    "min": 8,
-    "max": 8,
-    "avg": 8,
-    "change_pct": -27.3
-   },
-   {
-    "slug": "idsc-557",
-    "name_ar": "الذرة البيضاء",
-    "name_en": "White Corn",
-    "category": "grain",
-    "unit": "طن",
-    "min": 12500,
-    "max": 12500,
-    "avg": 12500,
-    "change_pct": 12400
-   },
-   {
     "slug": "idsc-556",
     "name_ar": "الذرة الصفراء",
     "name_en": "Yellow Corn",
@@ -2107,94 +1964,6 @@
     "max": 750,
     "avg": 750,
     "change_pct": 512.2
-   },
-   {
-    "slug": "idsc-65",
-    "name_ar": "الأرز  المعبأ",
-    "name_en": "Rice",
-    "category": "grocery",
-    "unit": "شيكارة",
-    "min": 300,
-    "max": 350,
-    "avg": 312.5,
-    "change_pct": 1462.5
-   },
-   {
-    "slug": "idsc-187",
-    "name_ar": "البيض",
-    "name_en": "Egg",
-    "category": "grocery",
-    "unit": "كرتونة",
-    "min": 95,
-    "max": 100,
-    "avg": 97.5,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-190",
-    "name_ar": "البيض الأحمر ( بيضة واحدة)",
-    "name_en": "Red Egg Per one egg",
-    "category": "grocery",
-    "unit": "كرتونة",
-    "min": 4.5,
-    "max": 4.5,
-    "avg": 4.5,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-72",
-    "name_ar": "العدس المعبأ (صحيح)",
-    "name_en": "Rough Lentil",
-    "category": "grocery",
-    "unit": "شيكارة",
-    "min": 400,
-    "max": 440,
-    "avg": 420,
-    "change_pct": -4.5
-   },
-   {
-    "slug": "idsc-70",
-    "name_ar": "الفول المعبأ",
-    "name_en": "Rough Beans",
-    "category": "grocery",
-    "unit": "شيكارة",
-    "min": 500,
-    "max": 500,
-    "avg": 500,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-70-2",
-    "name_ar": "الفول المعبأ",
-    "name_en": "Rough Beans",
-    "category": "grocery",
-    "unit": "ربطة",
-    "min": 500,
-    "max": 500,
-    "avg": 500,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-77",
-    "name_ar": "مكرونة معبأة",
-    "name_en": "Macaroni",
-    "category": "grocery",
-    "unit": "شيكارة",
-    "min": 300,
-    "max": 300,
-    "avg": 300,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-880",
-    "name_ar": "الدواجن الطازجة",
-    "name_en": "fresh chicken",
-    "category": "meat",
-    "unit": "كيلو",
-    "min": 66,
-    "max": 66,
-    "avg": 66,
-    "change_pct": 0
    },
    {
     "slug": "idsc-303",
@@ -2417,39 +2186,6 @@
     "change_pct": 300
    },
    {
-    "slug": "idsc-271",
-    "name_ar": "خبيزة",
-    "name_en": "Malva parviflora",
-    "category": "vegetable",
-    "unit": "كيلو",
-    "min": 5,
-    "max": 5,
-    "avg": 5,
-    "change_pct": -83.3
-   },
-   {
-    "slug": "idsc-663",
-    "name_ar": "خس",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "واحدة",
-    "min": 7.5,
-    "max": 10,
-    "avg": 8.5,
-    "change_pct": -5.6
-   },
-   {
-    "slug": "idsc-663-2",
-    "name_ar": "خس",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "ربطة",
-    "min": 2,
-    "max": 5,
-    "avg": 3.25,
-    "change_pct": -63.9
-   },
-   {
     "slug": "idsc-236",
     "name_ar": "خيار صوب",
     "name_en": "Greenhouse Cucumber",
@@ -2461,28 +2197,6 @@
     "change_pct": 170
    },
    {
-    "slug": "idsc-675",
-    "name_ar": "روز ميري",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "طبق 250جم",
-    "min": 25,
-    "max": 25,
-    "avg": 25,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-677",
-    "name_ar": "زعتر",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "واحدة",
-    "min": 25,
-    "max": 25,
-    "avg": 25,
-    "change_pct": 0
-   },
-   {
     "slug": "idsc-237",
     "name_ar": "سبانخ",
     "name_en": "Spinach",
@@ -2492,28 +2206,6 @@
     "max": 12,
     "avg": 9.5,
     "change_pct": 280
-   },
-   {
-    "slug": "idsc-674",
-    "name_ar": "عيش الغراب",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "طبق 250جم",
-    "min": 35,
-    "max": 35,
-    "avg": 35,
-    "change_pct": 40
-   },
-   {
-    "slug": "idsc-671",
-    "name_ar": "فجل صيني",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "ربطة",
-    "min": 12,
-    "max": 12,
-    "avg": 12,
-    "change_pct": 0
    },
    {
     "slug": "idsc-239",
@@ -2538,17 +2230,6 @@
     "change_pct": 350
    },
    {
-    "slug": "idsc-678",
-    "name_ar": "قرع عسل",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "واحدة",
-    "min": 25,
-    "max": 40,
-    "avg": 32.5,
-    "change_pct": 0
-   },
-   {
     "slug": "idsc-268",
     "name_ar": "قرنبيط",
     "name_en": "Cauliflower",
@@ -2558,28 +2239,6 @@
     "max": 15,
     "avg": 15,
     "change_pct": 328.6
-   },
-   {
-    "slug": "idsc-662",
-    "name_ar": "كرات بشوشة",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "ربطة",
-    "min": 3,
-    "max": 3,
-    "avg": 3,
-    "change_pct": 0
-   },
-   {
-    "slug": "idsc-669",
-    "name_ar": "كرفس فرنسي",
-    "name_en": null,
-    "category": "vegetable",
-    "unit": "ربطة",
-    "min": 2,
-    "max": 10,
-    "avg": 6,
-    "change_pct": 0
    },
    {
     "slug": "idsc-267",
