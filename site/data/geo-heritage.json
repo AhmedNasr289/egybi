@@ -1,0 +1,57 @@
+{
+ "as_of": "2026-07-25",
+ "fetched_at": "2026-07-25T19:50:45+00:00",
+ "source": "UNESCO World Heritage Centre — whc.unesco.org list feed",
+ "license": "© UNESCO World Heritage Centre, used with attribution",
+ "sites": [
+  {
+   "name": "Memphis and its Necropolis – the Pyramid Fields from Giza to Dahshur",
+   "lat": 29.8555,
+   "lon": 31.2611,
+   "year": "1979",
+   "category": "Cultural"
+  },
+  {
+   "name": "Ancient Thebes with its Necropolis",
+   "lat": 25.6999,
+   "lon": 32.639,
+   "year": "1979",
+   "category": "Cultural"
+  },
+  {
+   "name": "Nubian Monuments from Abu Simbel to Philae",
+   "lat": 22.3372,
+   "lon": 31.6258,
+   "year": "1979",
+   "category": "Cultural"
+  },
+  {
+   "name": "Historic Cairo",
+   "lat": 30.0067,
+   "lon": 31.2334,
+   "year": "1979",
+   "category": "Cultural"
+  },
+  {
+   "name": "Abu Mena",
+   "lat": 30.8358,
+   "lon": 29.6667,
+   "year": "1979",
+   "category": "Cultural"
+  },
+  {
+   "name": "Saint Catherine Area",
+   "lat": 28.5562,
+   "lon": 33.9754,
+   "year": "2002",
+   "category": "Cultural"
+  },
+  {
+   "name": "Wadi Al-Hitan (Whale Valley)",
+   "lat": 29.3333,
+   "lon": 30.1833,
+   "year": "2005",
+   "category": "Natural"
+  }
+ ]
+}
