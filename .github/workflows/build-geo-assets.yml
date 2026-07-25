@@ -33,7 +33,14 @@ jobs:
       - name: Fetch Atlas layers (stdlib only, no pip)
         run: python backend/pipeline/fetch_geo_layers.py
 
-      - name: Commit & push if any layer changed
+      # Runs even when the fetch step failed. The script's guardrails are
+      # PER LAYER — a broken source skips only its own file and leaves the
+      # others correctly written — but it still exits non-zero so the run
+      # shows red. Without this condition that non-zero exit would discard
+      # the layers that DID succeed, which is the opposite of the intent.
+      # The run still reports failure; only the salvage is unconditional.
+      - name: Commit & push whatever layers were built
+        if: '!cancelled()'
         run: |
           FILES="site/data/geo-health.json site/data/geo-schools.json site/data/geo-heritage.json"
           if [ -n "$(git status --porcelain -- $FILES)" ]; then

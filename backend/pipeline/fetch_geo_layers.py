@@ -48,10 +48,14 @@ OVERPASS = "https://overpass-api.de/api/interpreter"
 UNESCO_XML = "https://whc.unesco.org/en/list/xml/"
 UA = "EgyBI-atlas/1.0 (egybi.com; hello@egybi.com)"
 
-# Thin-result guardrails. OSM Egypt already maps far more than these floors;
-# a result under the floor means a broken/partial response, not reality.
-MIN_HEALTH = 150      # hospitals + clinics combined
-MIN_SCHOOLS = 1000
+# Thin-result guardrails: a result under the floor means a broken/partial
+# response, not reality. Calibrated against the first real run (2026-07-25),
+# which returned 963 health facilities and 1,191 schools — the floors sit well
+# under those so ordinary mapping churn can't false-trip, while still catching
+# a truncated response. The original MIN_SCHOOLS of 1000 was set blind and sat
+# only 16% under the real value, which was too tight to be safe.
+MIN_HEALTH = 400      # hospitals + clinics combined (observed: 963)
+MIN_SCHOOLS = 700     # observed: 1,191
 MIN_HERITAGE = 6      # Egypt has 7 inscribed sites; <6 means a parse failure
 
 
@@ -215,31 +219,63 @@ def build_schools(govs: list[dict]) -> bool:
     return True
 
 
+LAT_TAGS = ("latitude", "lat")
+LON_TAGS = ("longitude", "longitude_", "lon", "long", "lng")
+
+
 def build_heritage() -> bool:
     print("World Heritage sites (UNESCO WHC list XML)…")
     try:
         raw = fetch(UNESCO_XML, timeout=120)
-        root = ET.fromstring(raw)
     except Exception as e:  # noqa: BLE001
-        print(f"  SKIP heritage: UNESCO feed unreachable/unparseable ({e}) — keeping last-good file")
+        print(f"  SKIP heritage: UNESCO feed unreachable ({e}) — keeping last-good file")
         return False
+    try:
+        root = ET.fromstring(raw)
+    except ET.ParseError as e:
+        print(f"  SKIP heritage: feed did not parse as XML ({e}); first 200 bytes: {raw[:200]!r}")
+        return False
+
+    def txt(el, *names: str) -> str:
+        for n in names:
+            c = el.find(n)
+            if c is not None and (c.text or "").strip():
+                return c.text.strip()
+        return ""
+
+    # The first run against the live feed found zero `<row>` elements carrying
+    # an `iso_code`, so don't assume either name. Find record elements
+    # STRUCTURALLY — anything with both a latitude and a longitude child — and
+    # log what was actually seen, so a future break is diagnosable from the run
+    # log instead of guessed at.
+    records = [el for el in root.iter()
+               if txt(el, *LAT_TAGS) and txt(el, *LON_TAGS)]
+    print(f"  feed root <{root.tag}>, {len(records)} record element(s) carrying coordinates")
+    if records:
+        print(f"  record tag <{records[0].tag}>, fields: {sorted({c.tag for c in records[0]})}")
+    else:
+        kids = sorted({c.tag for c in root.iter()})[:25]
+        print(f"  SKIP heritage: no coordinate-bearing records; tags seen: {kids}")
+        return False
+
     sites = []
-    for row in root.iter("row"):
-        def txt(tag: str) -> str:
-            el = row.find(tag)
-            return (el.text or "").strip() if el is not None else ""
-        iso = [c.strip().lower() for c in txt("iso_code").split(",")]
-        if "eg" not in iso:
+    for el in records:
+        iso = [c.strip().lower() for c in txt(el, "iso_code", "iso", "country_iso").split(",")]
+        where = txt(el, "states", "state", "country", "region").lower()
+        if "eg" not in iso and "egypt" not in where:
             continue
         try:
-            lat, lon = float(txt("latitude")), float(txt("longitude"))
+            lat = float(txt(el, *LAT_TAGS))
+            lon = float(txt(el, *LON_TAGS))
         except ValueError:
             continue
-        name = re.sub(r"<[^>]+>", "", txt("site"))
+        name = re.sub(r"<[^>]+>", "", txt(el, "site", "name", "title"))
         sites.append({"name": name, "lat": round(lat, 4), "lon": round(lon, 4),
-                      "year": txt("date_inscribed"), "category": txt("category")})
+                      "year": txt(el, "date_inscribed", "year", "inscribed"),
+                      "category": txt(el, "category", "type")})
     if len(sites) < MIN_HERITAGE:
-        print(f"  SKIP heritage: only {len(sites)} Egyptian sites (<{MIN_HERITAGE}) — parse looks broken")
+        print(f"  SKIP heritage: only {len(sites)} Egyptian sites (<{MIN_HERITAGE}) of "
+              f"{len(records)} records — the country field is not where we looked")
         return False
     sites.sort(key=lambda s: s["year"])
     out = {
