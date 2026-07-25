@@ -23,6 +23,12 @@
   .ov-toggle:hover:not(:disabled), .ov-toggle:focus-visible { border-color: var(--gold); outline: none; }
   .ov-toggle.on { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid var(--gold); }
   .ov-toggle:disabled { opacity: .45; cursor: not-allowed; }
+  /* symbol key for the point overlays — the colour legend covers bins only */
+  .marker-key { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line-light); }
+  .mk-row { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .mk-item { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--ink-soft); }
+  .mk-dot { display: inline-block; border-radius: 50%; border: 1.5px solid #fff;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.18); flex: none; }
 
   /* governorate detail panel */
   .gov-detail { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; margin-top: 14px; }
@@ -123,6 +129,7 @@
       </div>
       <div class="atlas-box" id="atlasMap" role="img" aria-label="Interactive map of Egypt's 27 governorates with selectable data layers"></div>
       <div class="map-legend" id="atlasLegend"></div>
+      <div class="map-legend marker-key" id="atlasKey" hidden></div>
       <div class="gov-detail" id="govDetail" hidden></div>
       <div class="atlas-note" id="layerNote">Loading layers…</div>
       <p class="chart-cap">Boundaries: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), simplified &amp; bundled offline — no external map service is called. Population, density &amp; area: EgyBI knowledge base (<strong>CAPMAS</strong>, Nov 2023); growth compares the 2017 census; urban % is a CAPMAS ~2016 proxy (±1–2 points). Hospitals, clinics &amp; schools: <strong>© OpenStreetMap contributors</strong> (ODbL) — community-mapped, so they show the geographic <em>pattern</em>, not an official registry. Heritage sites: <strong>UNESCO World Heritage Centre</strong>. Colours are quantile bins (six equal-count groups) so extreme skew stays readable.</p>
@@ -205,7 +212,7 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/egypt-geo.js"></script>
-<script src="assets/geospatial.js?v=1"></script>
+<script src="assets/geospatial.js?v=2"></script>
 <script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script>window.EGYBI_AUTH = { base: 'auth/' };</script>
