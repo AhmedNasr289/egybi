@@ -42,8 +42,17 @@ jobs:
       - name: Commit & push whatever layers were built
         if: '!cancelled()'
         run: |
-          FILES="site/data/geo-health.json site/data/geo-schools.json site/data/geo-heritage.json"
-          if [ -n "$(git status --porcelain -- $FILES)" ]; then
+          # Only stage layers that actually exist. `git add` on a missing path
+          # is a hard error (exit 128) that would abort this step under `bash
+          # -e` — which is exactly how run 2 discarded two good layers because
+          # a third was skipped.
+          FILES=""
+          for f in site/data/geo-health.json site/data/geo-schools.json site/data/geo-heritage.json; do
+            [ -f "$f" ] && FILES="$FILES $f"
+          done
+          if [ -z "$FILES" ]; then
+            echo "No layer files were built — nothing to commit."
+          elif [ -n "$(git status --porcelain -- $FILES)" ]; then
             git config user.name  "egybi-data-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add $FILES
