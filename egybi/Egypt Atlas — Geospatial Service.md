@@ -37,6 +37,20 @@ Run by **`.github/workflows/build-geo-assets.yml`** — **manual only** (`workfl
 - Thin-result floors: `<150` health facilities, `<1000` schools, `<6` Egyptian heritage sites → treated as a broken response, layer skipped.
 - Any skipped layer makes the run **exit non-zero**, so a partial run shows red in the Actions UI rather than passing quietly.
 
+### First real run (2026-07-25) — what the sources actually returned
+
+| Layer | Result | Verdict |
+|---|---|---|
+| Health facilities | **963** hospitals + clinics, 0 outside the simplified borders | ✅ |
+| Schools | **1,191** | ✅ passed, but see the floor note below |
+| Heritage | **0** Egyptian sites found | ❌ correctly rejected as a broken parse |
+
+Three things this taught us, all now fixed:
+
+1. **The UNESCO feed isn't shaped the way the first parser assumed.** It fetched and parsed as valid XML, but contained no `<row>` element carrying an `iso_code` — so the Egypt filter matched nothing. The parser now finds records **structurally** (any element carrying both a latitude and a longitude child, under several possible tag spellings), matches Egypt on `iso_code` *or* a `states`/`country` field containing "Egypt", and **prints the feed's root tag, record count and field names** on every run — so if it breaks again the run log says what the feed actually looks like instead of leaving us to guess. Verified against five simulated feed shapes: two plausible schemas parse correctly (and correctly exclude a Jordanian site), and the three broken cases each fail loudly with a useful diagnostic.
+2. **The `MIN_SCHOOLS` floor was set blind and was dangerously tight.** 1,000 sat only 16% below the real 1,191 — ordinary mapping churn could have false-tripped it. Floors are now calibrated against observed reality: **`MIN_SCHOOLS` 1000 → 700**, and `MIN_HEALTH` **150 → 400** (the original 150 was so loose a badly truncated response would have sailed through). Both now sit far enough below the observed values to be safe, and far enough above zero to catch a collapse.
+3. **The workflow discarded the two layers that succeeded.** This was the real bug. The per-layer guardrail worked exactly as designed *inside* the script — health and schools were written correctly, only heritage was skipped — but the script's non-zero exit meant the commit step never ran, so all of it was thrown away. That's the precise opposite of "one bad source can't take the others down." The commit step now carries **`if: '!cancelled()'`**, so successfully-built layers are committed even when a sibling layer fails, while the run *still* reports failure so the breakage isn't silent. Only the salvage is unconditional, not the green tick.
+
 **Per-governorate counts** are assigned by point-in-polygon against the *simplified* bundled boundaries, so facilities right on a border can land one governorate over. This is recorded in each JSON's `note` and stated on the page — not hidden. (The point-in-polygon was verified offline against seven known coordinates: Cairo, Alexandria, Aswan, Luxor, Sharm El Sheikh, Marsa Matruh, and a Mediterranean point that correctly returns nothing.)
 
 ## Graceful empty state (why the page shipped before the data)
