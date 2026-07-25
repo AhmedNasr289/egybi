@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Egypt Atlas — Governorates, Health, Schools &amp; Heritage on One Map | EgyBI</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="An interactive, cited map of Egypt: all 27 governorates coloured by real CAPMAS figures, OpenStreetMap-mapped hospitals and schools, and the seven UNESCO World Heritage sites — every layer sourced and dated.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<link href="assets/egybi.css?v=12" rel="stylesheet">
+<style>
+  /* atlas map card */
+  .atlas-box { position: relative; height: clamp(340px, 56vw, 540px); border-radius: var(--radius); overflow: hidden; }
+  .atlas-note { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 12px 16px; margin: 14px 0 0; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.6; }
+  .map-toggle:disabled { opacity: .45; cursor: not-allowed; }
+  .ov-toggle { font-size: 0.82rem; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px dashed var(--line-light); background: var(--papyrus); color: var(--ink-soft); cursor: pointer; transition: all .15s; }
+  .ov-toggle:hover:not(:disabled), .ov-toggle:focus-visible { border-color: var(--gold); outline: none; }
+  .ov-toggle.on { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid var(--gold); }
+  .ov-toggle:disabled { opacity: .45; cursor: not-allowed; }
+
+  /* governorate detail panel */
+  .gov-detail { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; margin-top: 14px; }
+  .gov-detail h3 { margin: 0 0 10px; color: var(--blue-deep); font-size: 1.15rem; }
+  .gd-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line-light); font-size: 0.9rem; color: var(--ink-soft); }
+  .gd-row:first-of-type { border-top: none; }
+  .gd-row strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .gd-note { font-size: 0.78rem; color: var(--ink-soft); margin: 10px 0 0; }
+
+  /* governorate table */
+  .gov-table-wrap { overflow-x: auto; }
+  .gov-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .gov-table th { text-align: left; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); padding: 9px 12px; border-bottom: 2px solid var(--line-light); white-space: nowrap; }
+  .gov-table td { padding: 8px 12px; border-bottom: 1px solid var(--line-light); color: var(--ink); font-variant-numeric: tabular-nums; }
+  .gov-table td:first-child { font-weight: 600; color: var(--blue-deep); }
+  .gov-table tr:hover td { background: var(--papyrus-2); }
+
+  /* heritage cards */
+  .wh-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); margin-top: 20px; }
+  .wh-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; transition: border-color .2s, box-shadow .2s; }
+  .wh-card:hover { border-color: var(--gold); box-shadow: var(--shadow-light); }
+  .wh-year { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-ink); }
+  .wh-card h3 { margin: 6px 0 8px; color: var(--blue-deep); font-size: 1.02rem; line-height: 1.4; }
+  .wh-coords { margin: 0; font-size: 0.8rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+</style>
+  <link rel="canonical" href="https://egybi.com/geospatial.html">
+  <meta property="og:site_name" content="EgyBI">
+  <meta property="og:title" content="Egypt Atlas — the country on one cited map · EgyBI">
+  <meta property="og:description" content="All 27 governorates coloured by real figures, OSM-mapped hospitals and schools, and the seven UNESCO World Heritage sites — every layer sourced and dated.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://egybi.com/geospatial.html">
+  <meta property="og:image" content="https://egybi.com/og-image.png?v=2">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Egypt Atlas — the country on one cited map · EgyBI">
+  <meta name="twitter:image" content="https://egybi.com/og-image.png?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://egybi.com/geospatial.html#page", "url": "https://egybi.com/geospatial.html", "name": "Egypt Atlas", "isPartOf": {"@id": "https://egybi.com/#site"}, "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Egypt Atlas", "item": "https://egybi.com/geospatial.html"}]}]}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="explore.html">Explore</a>
+      <a href="prices.html">Prices</a>
+      <a href="stocks.html">Stocks</a>
+      <a href="geospatial.html" class="active">Atlas</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="practice.html">Practice</a>
+      <a href="blog.html">Blog</a>
+      <a href="community.html">Community</a>
+      <a href="about.html">About</a>
+      <a class="nav-only-mobile" href="index.html#newsletter">Newsletter</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="cta" href="index.html#newsletter">Newsletter</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="surface-hero center" id="top">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>The Atlas</div>
+    <h1 data-aos="fade-up">Egypt, on one cited map.</h1>
+    <p class="page-intro" data-aos="fade-up">Every layer on this map is real, sourced and dated: 27 governorates coloured by official figures, hospitals and schools as the OpenStreetMap community has mapped them, and the seven UNESCO World Heritage sites — for exploring, not for navigation or emergencies.</p>
+  </div>
+</section>
+
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
+
+<!-- MAP -->
+<section class="surface-light" id="map" data-nav="Map">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>The map</div>
+    <h2 data-aos="fade-up">Pick a lens, then click any governorate.</h2>
+    <p class="lead" data-aos="fade-up">The colour buttons change what the map measures. The dashed buttons switch point overlays on and off. Click a governorate for its full profile.</p>
+    <div class="chart-card" style="margin-top:22px;" data-aos="zoom-in">
+      <div class="map-toolbar" role="group" aria-label="Choose the map metric">
+        <span style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Colour by:</span>
+        <button type="button" class="map-toggle on" data-metric="population">Population</button>
+        <button type="button" class="map-toggle" data-metric="density">Density</button>
+        <button type="button" class="map-toggle" data-metric="urban_pct">Urban %</button>
+        <button type="button" class="map-toggle" data-metric="growth">Growth</button>
+        <button type="button" class="map-toggle" data-metric="area_km2">Area</button>
+        <button type="button" class="map-toggle" data-metric="health" disabled title="Appears after the first layer build">Health facilities</button>
+        <button type="button" class="map-toggle" data-metric="schools" disabled title="Appears after the first layer build">Schools</button>
+      </div>
+      <div class="map-toolbar" role="group" aria-label="Toggle point overlays">
+        <span style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Overlays:</span>
+        <button type="button" class="ov-toggle" data-overlay="health" disabled title="Appears after the first layer build">Hospitals &amp; clinics</button>
+        <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="Appears after the first layer build">World Heritage sites</button>
+      </div>
+      <div class="atlas-box" id="atlasMap" role="img" aria-label="Interactive map of Egypt's 27 governorates with selectable data layers"></div>
+      <div class="map-legend" id="atlasLegend"></div>
+      <div class="gov-detail" id="govDetail" hidden></div>
+      <div class="atlas-note" id="layerNote">Loading layers…</div>
+      <p class="chart-cap">Boundaries: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), simplified &amp; bundled offline — no external map service is called. Population, density &amp; area: EgyBI knowledge base (<strong>CAPMAS</strong>, Nov 2023); growth compares the 2017 census; urban % is a CAPMAS ~2016 proxy (±1–2 points). Hospitals, clinics &amp; schools: <strong>© OpenStreetMap contributors</strong> (ODbL) — community-mapped, so they show the geographic <em>pattern</em>, not an official registry. Heritage sites: <strong>UNESCO World Heritage Centre</strong>. Colours are quantile bins (six equal-count groups) so extreme skew stays readable.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GOVERNORATES -->
+<section class="surface-light-2" id="governorates" data-nav="Governorates">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>The 27, side by side</div>
+    <h2 data-aos="fade-up">Every governorate in one table.</h2>
+    <p class="lead" data-aos="fade-up">Sorted by population. The facility and school columns fill in once the map layers are built, and stay “—” until then rather than showing a made-up zero.</p>
+    <div class="chart-card gov-table-wrap" style="margin-top:22px;" data-aos="fade-up">
+      <table class="gov-table">
+        <thead><tr><th>Governorate</th><th>Population</th><th>Density /km²</th><th>Health facilities (OSM)</th><th>Schools (OSM)</th></tr></thead>
+        <tbody id="govTableBody"><tr><td colspan="5">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- HERITAGE -->
+<section class="surface-light" id="heritage" data-nav="Heritage">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>Seven sites, one list</div>
+    <h2 data-aos="fade-up">Egypt on the World Heritage List.</h2>
+    <p class="lead" data-aos="fade-up">Egypt's inscribed UNESCO World Heritage sites, exactly as the list records them — each one is also a gold marker on the map above.</p>
+    <div class="atlas-note" id="heritageEmpty" hidden>This list appears automatically after the first “Build Atlas geo layers” run populates the heritage data file.</div>
+    <div class="wh-grid" id="heritageCards"></div>
+    <p class="chart-cap" id="heritageMeta" style="margin-top:16px;"></p>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section class="surface-light-2" id="method" data-nav="Method &amp; sources">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>How this page is honest</div>
+    <h2 data-aos="fade-up">Method, sources &amp; what this map is not.</h2>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="chart-card" data-aos="fade-up">
+        <h3>Where every layer comes from</h3>
+        <p style="color:var(--ink-soft);font-size:0.92rem;line-height:1.7;">Governorate boundaries are <strong>geoBoundaries.org</strong> (CC-BY 4.0), simplified and bundled into the page so no external map service is ever called. Demographic figures come from the same CAPMAS-sourced knowledge base every SQL challenge on this site queries. Hospitals, clinics and schools come from <strong>OpenStreetMap</strong> (© OpenStreetMap contributors, ODbL) — a community-maintained map, which means real coverage gaps: these layers show <em>where things are mapped</em>, which is not the same as an official registry of everything that exists. Heritage sites come from the <strong>UNESCO World Heritage Centre</strong>'s public list. Each layer's file records its own fetch date, shown on this page.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>What this map is not</h3>
+        <p style="color:var(--ink-soft);font-size:0.92rem;line-height:1.7;">This page is <strong>informational and educational only</strong>. The health layer is not a care directory and says nothing about quality, capacity or opening hours — for real medical needs use official health-ministry channels. Per-governorate counts are assigned using simplified boundaries, so facilities right on a border can be counted one governorate over. Nothing here is advice of any kind. Where a number is a proxy or an undercount, the caption says so instead of hiding it — that's the same <span style="color:var(--gold-ink);font-weight:600;">cited-data honesty rule</span> the whole site runs on.</p>
+      </div>
+    </div>
+    <div class="atlas-note" style="margin-top:18px;" data-aos="fade-up"><strong>Coming next on the Atlas:</strong> automated daily layers — earthquakes over Egypt and the Red Sea (USGS) and live air traffic (OpenSky) — built on the same fetch-validate-commit pipelines that already refresh the Prices and FX pages every morning.</div>
+  </div>
+</section>
+
+<!-- NEXT STEPS -->
+<section class="surface-light next-steps center">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
+    <h2>Keep exploring the data.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;">
+      <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt, charted &rarr;</h3><p>~23 BI dashboards on the economy, society and infrastructure.</p></a>
+      <a class="ns-card" href="practice.html"><span class="ns-k">Practice</span><h3>Query these numbers yourself &rarr;</h3><p>123 auto-graded SQL challenges on real cited tables — no signup.</p></a>
+      <a class="ns-card" href="prices.html"><span class="ns-k">Prices</span><h3>Today's prices &rarr;</h3><p>Daily retail &amp; wholesale prices from the official portal.</p></a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="practice.html">SQL Practice</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="assets/egybi.js"></script>
+<script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
+<script src="assets/egypt-geo.js"></script>
+<script src="assets/geospatial.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
+<script src="assets/motion.js?v=2"></script>
+<script>window.EGYBI_AUTH = { base: 'auth/' };</script>
+<script src="assets/auth.js?v=10"></script>
+  <script src="assets/analytics.js" defer></script>
+</body>
+</html>

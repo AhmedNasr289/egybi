@@ -4,7 +4,7 @@
 
 **How deploy works:** every push to `main` triggers Hostinger's auto-deploy (independent of GitHub Actions — the `[skip ci]` in bot commits only skips *Actions*, not the Hostinger deploy). So a data-refresh commit publishes to egybi.com automatically. Data pipelines run **on GitHub runners** because the dev sandbox can't reach the source (gov/vendor) APIs.
 
-## The seven GitHub Actions
+## The eight GitHub Actions
 
 | Workflow | Trigger (UTC) | Runs → writes | Guardrail / failure behavior | Status |
 |---|---|---|---|---|
@@ -15,6 +15,7 @@
 | **send-newsletter.yml** | **manual only** (`workflow_dispatch`, inputs: slug + dry/live) | `curl` → `api/send_issue.php` | **dry-run by default**; `ANALYTICS_KEY`-gated (`hash_equals`); idempotent send-log keyed `(issue_id,email)` → never double-mails; loops batches until `remaining=0` | ✅ Healthy |
 | **probe-idsc.yml** | **manual only** | `probe_idsc_endpoints.py` (read-only) | writes/commits nothing; a utility to re-check IDSC for newly-populated categories | ✅ Healthy (utility) |
 | **papyrus-reminder.yml** | monthly `0 8 1 * *` (1st) + manual | github-script → opens a GitHub issue naming this month's issue slug + send steps | repo-backed backup for the external send-reminder; never sends; deduped per month | ✅ Healthy |
+| **build-geo-assets.yml** | **manual only** (`workflow_dispatch`) | `fetch_geo_layers.py` → `site/data/geo-health.json`, `geo-schools.json`, `geo-heritage.json` | **per-layer** abort-and-keep-last-good: Overpass retried 3× then that layer skipped; thin floors (<150 facilities / <1000 schools / <6 heritage sites) skip the layer; any skip exits non-zero → run shows red; commit-if-changed; push retries 3× | 🕐 Built, awaiting first run |
 
 ## Outside the repo (documented here so it isn't lost)
 - **Monthly newsletter send-reminder** — a Claude-Code-Remote scheduled trigger **`trig_018YA7TYh5jKXRzQNWoNcV9r`**, cron `0 7 1 * *` (1st of month, 07:00 UTC), push+email, fires a **fresh session**. It reads `site/newsletter/issues/`, finds the current month's slug, and nudges Ahmed with the exact send steps. It **never sends** — the human runs `send-newsletter`. Single point of failure: if the trigger is deleted/disabled, issues silently stop going out.
