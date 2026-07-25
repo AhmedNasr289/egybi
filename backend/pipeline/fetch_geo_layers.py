@@ -243,34 +243,54 @@ def build_heritage() -> bool:
                 return c.text.strip()
         return ""
 
-    # The first run against the live feed found zero `<row>` elements carrying
-    # an `iso_code`, so don't assume either name. Find record elements
-    # STRUCTURALLY — anything with both a latitude and a longitude child — and
-    # log what was actually seen, so a future break is diagnosable from the run
-    # log instead of guessed at.
-    records = [el for el in root.iter()
-               if txt(el, *LAT_TAGS) and txt(el, *LON_TAGS)]
-    print(f"  feed root <{root.tag}>, {len(records)} record element(s) carrying coordinates")
+    # Learned from run 2's diagnostics rather than guessed: the feed's root is
+    # <query>, and its coordinate-bearing elements are 5,923 nested <poi>
+    # points carrying only ('iso2', 'latitude', 'longitude') — so searching by
+    # coordinates finds sub-points, not sites, and the country code lives in
+    # `iso2`. Anchor on the SITE records instead (elements with a name-ish
+    # child), and take coordinates from the record itself or, failing that,
+    # from its first nested point.
+    NAME_TAGS = ("site", "name", "title")
+    ISO_TAGS = ("iso2", "iso_code", "iso", "country_iso")
+    WHERE_TAGS = ("states", "state", "country", "region")
+
+    def coords(el):
+        """Coordinates from the element itself, else its first nested point."""
+        for cand in [el] + list(el.iter()):
+            la, lo = txt(cand, *LAT_TAGS), txt(cand, *LON_TAGS)
+            if la and lo:
+                try:
+                    return float(la), float(lo)
+                except ValueError:
+                    continue
+        return None
+
+    def country(el) -> tuple[list[str], str]:
+        """ISO codes and place names from the element or any descendant."""
+        iso, where = txt(el, *ISO_TAGS), txt(el, *WHERE_TAGS)
+        for cand in el.iter():
+            iso = iso or txt(cand, *ISO_TAGS)
+            where = where or txt(cand, *WHERE_TAGS)
+        return [c.strip().lower() for c in iso.split(",")], where.lower()
+
+    records = [el for el in root.iter() if txt(el, *NAME_TAGS)]
+    print(f"  feed root <{root.tag}>, {len(records)} named record(s)")
     if records:
         print(f"  record tag <{records[0].tag}>, fields: {sorted({c.tag for c in records[0]})}")
     else:
-        kids = sorted({c.tag for c in root.iter()})[:25]
-        print(f"  SKIP heritage: no coordinate-bearing records; tags seen: {kids}")
+        print(f"  SKIP heritage: no named records; tags seen: {sorted({c.tag for c in root.iter()})[:30]}")
         return False
 
     sites = []
     for el in records:
-        iso = [c.strip().lower() for c in txt(el, "iso_code", "iso", "country_iso").split(",")]
-        where = txt(el, "states", "state", "country", "region").lower()
+        iso, where = country(el)
         if "eg" not in iso and "egypt" not in where:
             continue
-        try:
-            lat = float(txt(el, *LAT_TAGS))
-            lon = float(txt(el, *LON_TAGS))
-        except ValueError:
+        ll = coords(el)
+        if not ll:
             continue
-        name = re.sub(r"<[^>]+>", "", txt(el, "site", "name", "title"))
-        sites.append({"name": name, "lat": round(lat, 4), "lon": round(lon, 4),
+        name = re.sub(r"<[^>]+>", "", txt(el, *NAME_TAGS))
+        sites.append({"name": name, "lat": round(ll[0], 4), "lon": round(ll[1], 4),
                       "year": txt(el, "date_inscribed", "year", "inscribed"),
                       "category": txt(el, "category", "type")})
     if len(sites) < MIN_HERITAGE:

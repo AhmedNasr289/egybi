@@ -34,8 +34,8 @@ Run by **`.github/workflows/build-geo-assets.yml`** — **manual only** (`workfl
 
 **Guardrails** (same abort-and-keep-last-good pattern as prices/FX, applied *per layer* — one bad source never takes the others down):
 - Unreachable Overpass → 3 attempts, 30 s apart, then **skip that layer** (its previous JSON survives untouched).
-- Thin-result floors: `<150` health facilities, `<1000` schools, `<6` Egyptian heritage sites → treated as a broken response, layer skipped.
-- Any skipped layer makes the run **exit non-zero**, so a partial run shows red in the Actions UI rather than passing quietly.
+- Thin-result floors: `<400` health facilities, `<700` schools, `<6` Egyptian heritage sites → treated as a broken response, layer skipped. (Calibrated against real runs — see below; the first values were guesses and one was unsafe.)
+- Any skipped layer makes the run **exit non-zero**, so a partial run shows red in the Actions UI rather than passing quietly — but the commit step still runs and stages whatever layers *did* build, so a red run never means lost data.
 
 ### First real run (2026-07-25) — what the sources actually returned
 
@@ -50,6 +50,19 @@ Three things this taught us, all now fixed:
 1. **The UNESCO feed isn't shaped the way the first parser assumed.** It fetched and parsed as valid XML, but contained no `<row>` element carrying an `iso_code` — so the Egypt filter matched nothing. The parser now finds records **structurally** (any element carrying both a latitude and a longitude child, under several possible tag spellings), matches Egypt on `iso_code` *or* a `states`/`country` field containing "Egypt", and **prints the feed's root tag, record count and field names** on every run — so if it breaks again the run log says what the feed actually looks like instead of leaving us to guess. Verified against five simulated feed shapes: two plausible schemas parse correctly (and correctly exclude a Jordanian site), and the three broken cases each fail loudly with a useful diagnostic.
 2. **The `MIN_SCHOOLS` floor was set blind and was dangerously tight.** 1,000 sat only 16% below the real 1,191 — ordinary mapping churn could have false-tripped it. Floors are now calibrated against observed reality: **`MIN_SCHOOLS` 1000 → 700**, and `MIN_HEALTH` **150 → 400** (the original 150 was so loose a badly truncated response would have sailed through). Both now sit far enough below the observed values to be safe, and far enough above zero to catch a collapse.
 3. **The workflow discarded the two layers that succeeded.** This was the real bug. The per-layer guardrail worked exactly as designed *inside* the script — health and schools were written correctly, only heritage was skipped — but the script's non-zero exit meant the commit step never ran, so all of it was thrown away. That's the precise opposite of "one bad source can't take the others down." The commit step now carries **`if: '!cancelled()'`**, so successfully-built layers are committed even when a sibling layer fails, while the run *still* reports failure so the breakage isn't silent. Only the salvage is unconditional, not the green tick.
+
+### Run 2 (2026-07-25) — the diagnostics paid off
+
+The self-diagnosing parser did its job and told us exactly what the feed is, instead of leaving a second guess:
+
+```
+feed root <query>, 5923 record element(s) carrying coordinates
+record tag <poi>, fields: ['iso2', 'latitude', 'longitude']
+```
+
+Two things follow. The country code lives in **`iso2`** — not `iso_code`, `states` or any of the names the parser looked under. And searching *by coordinates* finds the wrong thing entirely: the 5,923 coordinate-bearing elements are nested `<poi>` sub-points, not site records, and they carry no name, year or category. The parser now anchors on **named site records** instead (`site`/`name`/`title`), reads the country from `iso2` or any of the older spellings on the record *or a descendant*, and takes coordinates from the record itself or, failing that, its first nested point. Verified against a fixture reproducing the real structure — 7 Egyptian sites with correct names, years and coordinates, and a Jordanian decoy correctly excluded — plus the older assumed layout, which still parses (backward compatible).
+
+**The salvage step was still broken, for a second reason.** Run 2 proved `if: '!cancelled()'` works — the step ran — but it died instantly on `fatal: pathspec 'site/data/geo-heritage.json' did not match any files`. `git add` on a missing path is a hard error (exit 128), and under `bash -e` that aborted the whole step, so the two good layers were discarded *again*. The step now stages only files that exist, and says so plainly when none were built. Tested under both the run-2 condition (two of three present → both committed) and the empty case (clean exit, no commit).
 
 **Per-governorate counts** are assigned by point-in-polygon against the *simplified* bundled boundaries, so facilities right on a border can land one governorate over. This is recorded in each JSON's `note` and stated on the page — not hidden. (The point-in-polygon was verified offline against seven known coordinates: Cairo, Alexandria, Aswan, Luxor, Sharm El Sheikh, Marsa Matruh, and a Mediterranean point that correctly returns nothing.)
 
