@@ -1,0 +1,53 @@
+name: Build Atlas geo layers
+
+# Builds the three occasionally-refreshed layers the Atlas page renders on top
+# of the bundled governorate map: health facilities + school counts (both from
+# OpenStreetMap via Overpass) and Egypt's UNESCO World Heritage sites. These
+# change slowly, so this is MANUAL-ONLY — run it to populate the layers the
+# first time, then again a few times a year to pick up new OSM mapping.
+# fetch_geo_layers.py keeps last-good files per layer if a source is
+# unreachable or a result looks broken, so a bad run never wipes good data.
+
+on:
+  workflow_dispatch: {}        # manual "Run workflow" button
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-geo-assets
+  cancel-in-progress: false
+
+jobs:
+  layers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch Atlas layers (stdlib only, no pip)
+        run: python backend/pipeline/fetch_geo_layers.py
+
+      - name: Commit & push if any layer changed
+        run: |
+          FILES="site/data/geo-health.json site/data/geo-schools.json site/data/geo-heritage.json"
+          if [ -n "$(git status --porcelain -- $FILES)" ]; then
+            git config user.name  "egybi-data-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add $FILES
+            git commit -m "Atlas layer refresh — OSM facilities/schools + UNESCO sites [skip ci]"
+            for attempt in 1 2 3; do
+              if git pull --rebase --autostash origin main && git push; then
+                echo "pushed on attempt $attempt"; exit 0
+              fi
+              echo "push attempt $attempt failed; retrying in 5s"; sleep 5
+            done
+            echo "::error::could not push after 3 attempts"; exit 1
+          else
+            echo "No layer changes (or guardrails kept last-good data)."
+          fi
