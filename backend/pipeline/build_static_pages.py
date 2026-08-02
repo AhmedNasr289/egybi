@@ -256,7 +256,7 @@ def build_posts(posts):
     return urls
 
 def build_sitemap(extra):
-    core = [('', '1.0', 'weekly'), ('practice.html', '0.9', 'weekly'), ('explore.html', '0.9', 'weekly'),
+    core = [('', '1.0', 'weekly'), ('practice.html', '0.9', 'weekly'), ('explore.html', '0.9', 'weekly'), ('case.html', '0.9', 'monthly'),
             ('tracks.html', '0.8', 'monthly'), ('blog.html', '0.8', 'weekly'), ('prices.html', '0.7', 'daily'), ('stocks.html', '0.7', 'daily'),
             ('geospatial.html', '0.8', 'monthly'),
             ('about.html', '0.6', 'monthly'), ('community.html', '0.6', 'monthly'), ('privacy.html', '0.3', 'yearly')]

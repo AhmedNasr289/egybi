@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vanishing Economy — a 10-minute SQL case on real Egyptian data | EgyBI</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Egypt's GDP fell 18% in dollars and rose 68% in pounds over the same two years. Both are true. Solve it in six SQL queries, in your browser, no signup.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="assets/egybi.css?v=12" rel="stylesheet">
+<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js" crossorigin>
+<link rel="preload" as="fetch" type="application/wasm" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.wasm" crossorigin>
+<style>
+  .case-progress { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:0 0 4px; }
+  .cp-dot { width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+            font-size:0.72rem; font-weight:800; border:1.5px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); }
+  .cp-dot.done { background:var(--gold); border-color:var(--gold-ink); color:#3a2f10; }
+  .cp-dot.now  { border-color:var(--blue); color:var(--blue-deep); box-shadow:0 0 0 3px var(--gold-soft); }
+  .cp-label { font-size:0.8rem; color:var(--ink-soft); margin-left:6px; font-variant-numeric:tabular-nums; }
+
+  .step { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:22px 24px; margin:0 0 16px; }
+  .step[data-state="locked"] { opacity:.5; }
+  .step[data-state="done"] { border-left:4px solid var(--gold); }
+  .step[data-state="now"]  { border-left:4px solid var(--blue); box-shadow:var(--shadow-light); }
+  .step-head { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .step-n { font-family:'Cinzel',serif; font-size:0.82rem; font-weight:700; color:var(--gold-ink); letter-spacing:.06em; text-transform:uppercase; }
+  .step-head h3 { margin:0; color:var(--blue-deep); font-size:1.12rem; }
+  .step-q { color:var(--ink); line-height:1.7; margin:12px 0 0; }
+  .step-q code { background:var(--gold-soft); color:var(--gold-ink); padding:1px 6px; border-radius:5px; font-size:0.9em; }
+  .step-body { margin-top:14px; }
+  .case-ta { width:100%; min-height:132px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.88rem; line-height:1.55;
+             padding:13px 15px; border:1px solid var(--line-light); border-radius:var(--radius); background:var(--papyrus); color:var(--ink); resize:vertical; }
+  .case-ta:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
+  .case-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+  .case-status { font-size:0.85rem; color:var(--ink-soft); }
+  .case-status.ok  { color:var(--success); font-weight:700; }
+  .case-status.bad { color:var(--danger); font-weight:600; }
+  .case-hint { margin-top:10px; }
+  .case-hint summary { cursor:pointer; font-size:0.84rem; font-weight:600; color:var(--gold-ink); }
+  .case-hint p { font-size:0.86rem; color:var(--ink-soft); line-height:1.65; margin:8px 0 0; }
+  .case-hint code { background:var(--gold-soft); color:var(--gold-ink); padding:1px 5px; border-radius:4px; }
+  .reveal { margin-top:14px; padding:14px 16px; background:var(--papyrus); border:1px solid var(--line-light); border-left:4px solid var(--gold); border-radius:var(--radius);
+            color:var(--ink); line-height:1.7; font-size:0.92rem; }
+  .locked-note { font-size:0.86rem; color:var(--ink-soft); margin:10px 0 0; }
+
+  /* case closed */
+  .closed { background:linear-gradient(160deg,var(--blue-deep),#123a72); color:#f3ead4; border-radius:var(--radius); padding:34px 30px; text-align:center; }
+  .closed .kicker { color:var(--gold-bright); justify-content:center; }
+  .closed h2 { color:#fff; margin:6px 0 14px; }
+  .closed .verdict { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:22px 0 18px; }
+  .vcard { background:rgba(255,255,255,.07); border:1px solid rgba(201,162,39,.45); border-radius:var(--radius); padding:16px 22px; min-width:170px; }
+  .vcard .n { font-family:'Cinzel',serif; font-size:1.9rem; font-weight:700; line-height:1.1; }
+  .vcard .n.down { color:#ff9b7a; } .vcard .n.up { color:#8fe3a6; }
+  .vcard .l { font-size:0.78rem; color:var(--on-dark-soft); margin-top:6px; }
+  .closed .same { font-size:0.95rem; color:#f3ead4; max-width:56ch; margin:0 auto 6px; line-height:1.75; }
+  .closed .caveat { font-size:0.84rem; color:var(--on-dark-soft); max-width:60ch; margin:14px auto 0; line-height:1.7; }
+  .closed .cta-row { justify-content:center; margin-top:24px; }
+  #shareMsg { font-size:0.82rem; color:var(--gold-bright); min-height:1.2em; margin-top:10px; }
+  @media (max-width:560px){ .vcard { min-width:0; flex:1 1 140px; } .closed { padding:26px 18px; } }
+</style>
+  <meta name="google-adsense-account" content="ca-pub-1432845423481814">
+  <link rel="canonical" href="https://egybi.com/case.html">
+  <meta property="og:site_name" content="EgyBI">
+  <meta property="og:title" content="The Vanishing Economy — a 10-minute SQL case">
+  <meta property="og:description" content="Egypt's GDP fell 18% in dollars and rose 68% in pounds over the same two years. Both figures are true. Find out why in six SQL queries — in your browser, no signup.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://egybi.com/case.html">
+  <meta property="og:image" content="https://egybi.com/og-case.png?v=1">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Vanishing Economy — a 10-minute SQL case">
+  <meta name="twitter:description" content="Egypt's GDP fell 18% in dollars and rose 68% in pounds over the same two years. Both are true. Solve it in six SQL queries. No signup.">
+  <meta name="twitter:image" content="https://egybi.com/og-case.png?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&amp;text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&amp;display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"LearningResource","@id":"https://egybi.com/case.html#res","url":"https://egybi.com/case.html","name":"The Vanishing Economy — a SQL case on real Egyptian data","learningResourceType":"Exercise","educationalLevel":"Intermediate","teaches":"SQL joins, self-joins, aggregation, and the difference between nominal and real economic figures","isAccessibleForFree":true,"inLanguage":"en","isPartOf":{"@id":"https://egybi.com/#site"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"EgyBI","item":"https://egybi.com/"},{"@type":"ListItem","position":2,"name":"The Vanishing Economy","item":"https://egybi.com/case.html"}]}]}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="explore.html">Explore</a>
+      <a href="prices.html">Prices</a>
+      <a href="stocks.html">Stocks</a>
+      <a href="geospatial.html">Atlas</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="practice.html">Practice</a>
+      <a href="blog.html">Blog</a>
+      <a href="community.html">Community</a>
+      <a href="about.html">About</a>
+      <a class="nav-only-mobile" href="index.html#newsletter">Newsletter</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="cta" href="index.html#newsletter">Newsletter</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+<!-- HERO -->
+<section class="surface-hero center" id="top">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>A case in six queries</div>
+    <h1 data-aos="fade-up">The Vanishing Economy.</h1>
+    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Between 2022 and 2024 Egypt&rsquo;s GDP fell by 18%. Over exactly the same two years, it rose by 68%. Both numbers are real, both come from the same source, and nothing about the country changed in between. Find out why &mdash; in six SQL queries, in your browser.</p>
+    <p class="lead" style="color:var(--on-dark-soft);font-size:0.92rem;max-width:52ch;margin:14px auto 0;">About ten minutes. No signup, no install, nothing to download. Every figure is real and cited.</p>
+  </div>
+</section>
+
+<!-- THE CASE -->
+<section class="surface-light" id="case">
+  <div class="wrap" style="max-width:860px;">
+    <div class="case-progress" id="caseProgress" role="status" aria-live="polite"></div>
+    <p class="case-status" id="engineStatus">Warming up the SQL engine&hellip;</p>
+    <div id="steps"></div>
+  </div>
+</section>
+
+<!-- CASE CLOSED -->
+<section class="surface-light-2" id="closed" hidden>
+  <div class="wrap" style="max-width:860px;">
+    <div class="closed" id="closedCard">
+      <div class="kicker"><span data-glyph="maat"></span>Case closed</div>
+      <h2>One economy. Two true answers.</h2>
+      <div class="verdict">
+        <div class="vcard"><div class="n down">&minus;18.4%</div><div class="l">measured in US dollars</div></div>
+        <div class="vcard"><div class="n up">+67.9%</div><div class="l">measured in Egyptian pounds</div></div>
+      </div>
+      <p class="same">Same country. Same two years. Same source. The 18% never happened to the economy &mdash; it happened to the <strong>yardstick</strong>: the pound lost about half its dollar value, so a GDP figure quoted in dollars fell even as output did not.</p>
+      <p class="caveat">And the honest limit: neither figure is &ldquo;real&rdquo; growth. Both are nominal. You cannot get real GDP by dividing these by CPI &mdash; CPI is a consumer basket, not the GDP deflator, and doing it here would tell you Egypt <em>contracted</em>, contradicting the World Bank&rsquo;s own real-growth series. Knowing which number you&rsquo;d need next is the actual skill.</p>
+      <div class="cta-row">
+        <button type="button" class="btn btn-primary" id="shareBtn">Share this case</button>
+        <a class="btn btn-ghost" href="practice.html">Try the other 123 challenges &rarr;</a>
+      </div>
+      <p id="shareMsg" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section class="surface-light" id="sources">
+  <div class="wrap" style="max-width:860px;">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>Where every number came from</div>
+    <h2 data-aos="fade-up">Check it yourself.</h2>
+    <p class="lead" data-aos="fade-up">This case is an investigation, not a story. There is no invented detail in it &mdash; no fictional characters, no dramatised events, no rounded-up figures. Every value you queried is a published number you can verify.</p>
+    <ul style="color:var(--ink-soft);line-height:1.9;margin-top:16px;">
+      <li><strong>GDP (current US$)</strong> &mdash; World Bank, indicator <code>NY.GDP.MKTP.CD</code>, 2018&ndash;2024.</li>
+      <li><strong>EGP per US$</strong> &mdash; annual official average exchange rate, 2015&ndash;2024.</li>
+      <li><strong>Inflation (annual %)</strong> &mdash; consumer price index, annual change.</li>
+    </ul>
+    <p class="lead" style="margin-top:16px;">These are the same cited tables the 123 practice challenges run on &mdash; one source of truth, not a copy made for this page. The SQL engine is SQLite compiled to WebAssembly and runs entirely in your browser; nothing you type is sent anywhere.</p>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section class="surface-light-2 next-steps center">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
+    <h2>Keep going.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;">
+      <a class="ns-card" href="practice.html"><span class="ns-k">Practice</span><h3>123 more challenges &rarr;</h3><p>Auto-graded SQL from beginner to advanced, all on real cited Egyptian data. Still no signup.</p></a>
+      <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt, charted &rarr;</h3><p>The dashboards behind the numbers &mdash; GDP, the Suez Canal, population, and an interactive map.</p></a>
+      <a class="ns-card" href="index.html#newsletter"><span class="ns-k">The Papyrus</span><h3>One story a month &rarr;</h3><p>An Egypt deep-dive told through cited data, in the same voice as this case.</p></a>
+    </div>
+  </div>
+</section>
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="practice.html">SQL Practice</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="assets/egybi.js"></script>
+<script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
+<script src="assets/challenges.js"></script>
+<script src="assets/case.js?v=1"></script>
+<script>
+/* Runner for the case. Grading reuses the exact approach practice.html uses:
+   run the learner's query AND a reference solution against the same database,
+   then compare result sets by value. The expected answer is therefore computed
+   live rather than hard-coded, so it cannot drift from the data. */
+(function(){
+  var CASE = window.EGYBI_CASE, steps = CASE.steps, db = null;
+  var KEY = 'egybi.case.' + CASE.slug;
+  var solved = 0;
+  try { solved = Math.min(parseInt(localStorage.getItem(KEY) || '0', 10) || 0, steps.length); } catch(e){}
+
+  function esc(s){ return window.EGYBI && EGYBI.escapeHtml ? EGYBI.escapeHtml(s) : String(s); }
+
+  function renderTable(res){
+    if(!res || !res.length) return '<p class="sql-empty">No rows.</p>';
+    var c=res[0].columns, v=res[0].values;
+    var h='<table class="result-table"><thead><tr>'+c.map(function(x){return '<th>'+esc(x)+'</th>';}).join('')+'</tr></thead><tbody>';
+    v.forEach(function(r){ h+='<tr>'+r.map(function(x){return '<td>'+esc(x===null?'\u2205':x)+'</td>';}).join('')+'</tr>'; });
+    return h+'</tbody></table>';
+  }
+  function normCell(v){
+    if(v===null||v===undefined) return '\u2205';
+    if(typeof v==='number') return String(Math.round(v*1e6)/1e6);
+    var s=String(v).trim();
+    if(/^-?\d+(\.\d+)?$/.test(s)) return String(Math.round(parseFloat(s)*1e6)/1e6);
+    return s;
+  }
+  function normResult(res, orderMatters){
+    if(!res || !res.length) return {cols:0, rows:[]};
+    var rows=res[0].values.map(function(r){ return r.map(normCell); });
+    if(!orderMatters) rows=rows.slice().sort(function(a,b){ var x=JSON.stringify(a),y=JSON.stringify(b); return x<y?-1:(x>y?1:0); });
+    return {cols:res[0].columns.length, rows:rows};
+  }
+  function grade(learner, expected, orderMatters){
+    var L=normResult(learner,orderMatters), E=normResult(expected,orderMatters);
+    if(L.rows.length===0 && E.rows.length>0) return {ok:false,msg:'That returned no rows; the answer has '+E.rows.length+'.'};
+    if(L.cols!==E.cols) return {ok:false,msg:'Wrong number of columns \u2014 you returned '+L.cols+', the answer has '+E.cols+'.'};
+    if(L.rows.length!==E.rows.length) return {ok:false,msg:'Wrong number of rows \u2014 you returned '+L.rows.length+', the answer has '+E.rows.length+'.'};
+    for(var i=0;i<E.rows.length;i++){
+      if(JSON.stringify(L.rows[i])!==JSON.stringify(E.rows[i]))
+        return {ok:false,msg:'Row '+(i+1)+' doesn\u2019t match'+(orderMatters?' \u2014 check your ORDER BY.':'.')};
+    }
+    return {ok:true,msg:'Correct.'};
+  }
+
+  function progressHtml(){
+    var h='';
+    for(var i=0;i<steps.length;i++){
+      var cls = i<solved ? 'done' : (i===solved ? 'now' : '');
+      h += '<span class="cp-dot '+cls+'" title="Step '+(i+1)+'">'+(i<solved?'\u2713':(i+1))+'</span>';
+    }
+    return h + '<span class="cp-label">'+solved+' of '+steps.length+' solved</span>';
+  }
+  function paintProgress(){ document.getElementById('caseProgress').innerHTML = progressHtml(); }
+
+  function stepHtml(i){
+    var s = steps[i];
+    var state = i<solved ? 'done' : (i===solved ? 'now' : 'locked');
+    var h = '<div class="step" data-state="'+state+'" id="step'+i+'">'
+          + '<div class="step-head"><span class="step-n">Step '+(i+1)+'</span><h3>'+s.title+'</h3></div>';
+    if(state==='locked'){
+      h += '<p class="locked-note">Solve step '+(i)+' to unlock this one.</p></div>';
+      return h;
+    }
+    h += '<p class="step-q">'+s.question+'</p><div class="step-body">'
+       + '<textarea class="case-ta mono" spellcheck="false" aria-label="SQL for step '+(i+1)+'">'+esc(s.starter)+'</textarea>'
+       + '<div class="case-row"><button type="button" class="btn btn-primary run" data-i="'+i+'">Run query &rarr;</button>'
+       + '<span class="case-status out"></span></div>'
+       + '<div class="result-wrap res"></div>'
+       + '<details class="case-hint"><summary>Stuck? Show a hint</summary><p>'+s.hint+'</p></details>'
+       + (i<solved ? '<div class="reveal">'+s.reveal+'</div>' : '')
+       + '</div></div>';
+    return h;
+  }
+  function paintSteps(){
+    var host = document.getElementById('steps'), h='';
+    for(var i=0;i<steps.length;i++) h += stepHtml(i);
+    host.innerHTML = h;
+    host.querySelectorAll('.run').forEach(function(b){ b.addEventListener('click', function(){ run(parseInt(b.dataset.i,10)); }); });
+    document.getElementById('closed').hidden = solved < steps.length;
+  }
+
+  function run(i){
+    if(!db) return;
+    var card = document.getElementById('step'+i);
+    var ta = card.querySelector('.case-ta'), out = card.querySelector('.out'), res = card.querySelector('.res');
+    var q = ta.value.trim();
+    if(!q){ out.className='case-status out bad'; out.textContent='Write a query first.'; return; }
+    var learner;
+    try { learner = db.exec(q); }
+    catch(err){ out.className='case-status out bad'; out.textContent='SQL error: '+err.message; res.innerHTML=''; return; }
+    res.innerHTML = renderTable(learner);
+    var expected = db.exec(steps[i].solution);
+    var g = grade(learner, expected, steps[i].orderMatters);
+    out.className = 'case-status out ' + (g.ok?'ok':'bad');
+    out.textContent = g.ok ? '\u2713 ' + g.msg : g.msg;
+    if(g.ok && i === solved){
+      solved = i + 1;
+      try { localStorage.setItem(KEY, String(solved)); } catch(e){}
+      paintProgress(); 
+      var scrollTo = solved < steps.length ? 'step'+solved : 'closed';
+      paintSteps();
+      var next = document.getElementById(scrollTo);
+      if(next) next.scrollIntoView({behavior: (window.EGYBI && EGYBI.reduceMotion) ? 'auto' : 'smooth', block:'center'});
+    }
+  }
+
+  document.getElementById('shareBtn') && document.getElementById('shareBtn').addEventListener('click', function(){
+    var text = 'Egypt\u2019s GDP fell 18% in dollars and rose 68% in pounds \u2014 over the exact same two years. Both are true. I worked out why in six SQL queries:';
+    var url = 'https://egybi.com/case.html';
+    var msg = document.getElementById('shareMsg');
+    if(navigator.share){
+      navigator.share({title:'The Vanishing Economy', text:text, url:url}).catch(function(){});
+      return;
+    }
+    var payload = text + ' ' + url;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(payload).then(function(){ msg.textContent = 'Copied \u2014 paste it anywhere.'; },
+                                                  function(){ msg.textContent = payload; });
+    } else { msg.textContent = payload; }
+  });
+
+  paintProgress(); paintSteps();
+  initSqlJs({ locateFile:function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/'+f; } }).then(function(SQL){
+    db = new SQL.Database();
+    db.run(window.EGYBI_SANDBOX_SQL);
+    document.getElementById('engineStatus').textContent = 'SQL engine ready \u2014 SQLite running in your browser. Nothing you type leaves this page.';
+  }).catch(function(e){
+    document.getElementById('engineStatus').className = 'case-status bad';
+    document.getElementById('engineStatus').textContent = 'The SQL engine failed to load: ' + e.message;
+  });
+})();
+</script>
+<script src="assets/ads.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
+<script src="assets/motion.js?v=2"></script>
+<script src="assets/analytics.js" defer></script>
+</body>
+</html>
