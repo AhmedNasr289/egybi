@@ -13,6 +13,16 @@
 
   var RAMP = ['#E3EAF5', '#B9C9E4', '#8AA6D0', '#5B82BC', '#2E5AA0', '#0E2A5E'];
   var GOLD = '#C9A227', GOLD_INK = '#7A5E10';
+  // Point overlays must read against ANY choropleth bin beneath them, from the
+  // palest to #0E2A5E. Two rules make that work, and both matter:
+  //   1) Markers use hues that are NOT in RAMP. The health layer originally
+  //      reused #0E2A5E — the exact darkest bin — so in Cairo (269 facilities
+  //      over a near-black polygon) the points were invisible.
+  //   2) Every marker carries a light halo. A white stroke separates a dot
+  //      from whatever sits under it, rather than relying on the base being
+  //      pale, which is the standard cartographic fix for this problem.
+  var HOSPITAL = '#B23A0F', CLINIC = '#E2703A', HALO = '#FFFFFF';
+  var DIM_FILL = 0.45, FULL_FILL = 0.92;
 
   var METRICS = {
     population: { label: 'Population (2023)', fmt: function (v) { return (v / 1e6).toFixed(2) + ' M'; } },
@@ -49,9 +59,16 @@
     return p[metric];
   }
   function colorFor(v) { return RAMP[binIndex(v, S.breaks)]; }
+  function overlayOn() {
+    return !!((S.healthLayer && S.map.hasLayer(S.healthLayer)) ||
+              (S.heritageLayer && S.map.hasLayer(S.heritageLayer)));
+  }
   function baseStyle(feature) {
+    // Fade the choropleth while points are shown, so markers sit clearly on
+    // top instead of competing with the fill for the same ink.
     return { fillColor: colorFor(metricValue(feature.properties, S.metric)),
-             weight: 1, opacity: 1, color: '#FCF8EC', fillOpacity: 0.92 };
+             weight: 1, opacity: 1, color: '#FCF8EC',
+             fillOpacity: overlayOn() ? DIM_FILL : FULL_FILL };
   }
   function loadJSON(url) {
     return fetch(url, { cache: 'no-cache' }).then(function (r) {
@@ -113,15 +130,26 @@
   /* ---------------------------------------------------------- overlays */
   function addHealthOverlay() {
     if (!S.health || S.healthLayer) return;
-    var canvas = L.canvas({ padding: 0.3 });
+    var canvas = L.canvas({ padding: 0.3, pane: 'ptsHealth' });
     var g = L.layerGroup();
-    S.health.points.forEach(function (pt) {
+    // Draw clinics first so the larger hospital marks land on top of them.
+    S.health.points.slice().sort(function (a, b) {
+      return (a.k === 'h' ? 1 : 0) - (b.k === 'h' ? 1 : 0);
+    }).forEach(function (pt) {
+      var hosp = pt.k === 'h';
       L.circleMarker([pt.lat, pt.lon], {
-        renderer: canvas, radius: pt.k === 'h' ? 3.5 : 2,
-        color: pt.k === 'h' ? '#0E2A5E' : '#5B82BC',
-        weight: 1, fillOpacity: 0.7, opacity: 0.85
-      }).bindTooltip((pt.n || (pt.k === 'h' ? 'Hospital' : 'Clinic')) +
-                     (pt.n ? (pt.k === 'h' ? ' (hospital)' : ' (clinic)') : ''),
+        renderer: canvas,
+        // The halo has to stay THIN relative to the radius. At r=2.8 with a
+        // 1.1px stroke the white ring ate ~40% of the dot and overlapping
+        // marks rendered as two-tone crescents rather than points.
+        radius: hosp ? 4.5 : 3,
+        fillColor: hosp ? HOSPITAL : CLINIC,
+        color: HALO, weight: 0.9, opacity: 1,
+        // Near-opaque: at 0.7–0.85 the warm fill blended with the blue
+        // polygon underneath and read as muddy mauve instead of ochre.
+        fillOpacity: hosp ? 0.95 : 0.9
+      }).bindTooltip((pt.n || (hosp ? 'Hospital' : 'Clinic')) +
+                     (pt.n ? (hosp ? ' (hospital)' : ' (clinic)') : ''),
                      { direction: 'top', className: 'egypt-map-tip' }).addTo(g);
     });
     S.healthLayer = g;
@@ -131,11 +159,21 @@
     if (!S.heritage || S.heritageLayer) return;
     var g = L.layerGroup();
     S.heritage.sites.forEach(function (s) {
+      // Only 7 of these, and they are the page's landmark symbol — a white
+      // halo under the gold ring keeps them legible where two sites nearly
+      // collide (Memphis/Giza sits ~16 km from Historic Cairo).
       L.circleMarker([s.lat, s.lon], {
-        radius: 8, color: GOLD_INK, fillColor: GOLD, weight: 2, fillOpacity: 0.95
+        pane: 'ptsHeritage',
+        radius: 8, color: HALO, fillColor: GOLD, weight: 3, fillOpacity: 0.98
       }).bindTooltip('<strong>' + s.name + '</strong><br>' + s.category +
                      ' — inscribed ' + s.year,
-                     { direction: 'top', className: 'egypt-map-tip' }).addTo(g);
+                     { direction: 'top', className: 'egypt-map-tip' })
+        .setStyle({ color: HALO })
+        .addTo(g);
+      L.circleMarker([s.lat, s.lon], {
+        pane: 'ptsHeritage',
+        radius: 8, color: GOLD_INK, fill: false, weight: 1.2, interactive: false
+      }).addTo(g);
     });
     S.heritageLayer = g;
   }
@@ -145,6 +183,28 @@
     if (!layer) return;
     if (S.map.hasLayer(layer)) { S.map.removeLayer(layer); btn.classList.remove('on'); }
     else { layer.addTo(S.map); btn.classList.add('on'); }
+    S.layer.setStyle(baseStyle);   // re-apply dim/full fill for the new state
+    buildOverlayKey();
+  }
+
+  /* Symbol key — the choropleth legend explains colour bins only, which left
+     the dots unexplained. Shown only for overlays that are actually on. */
+  function buildOverlayKey() {
+    var el = $('atlasKey');
+    if (!el) return;
+    var bits = [];
+    if (S.healthLayer && S.map.hasLayer(S.healthLayer)) {
+      bits.push('<span class="mk-item"><span class="mk-dot" style="background:' + HOSPITAL + ';width:13px;height:13px;"></span>Hospital</span>' +
+                '<span class="mk-item"><span class="mk-dot" style="background:' + CLINIC + ';width:9px;height:9px;"></span>Clinic</span>');
+    }
+    if (S.heritageLayer && S.map.hasLayer(S.heritageLayer)) {
+      bits.push('<span class="mk-item"><span class="mk-dot" style="background:' + GOLD +
+                ';width:15px;height:15px;box-shadow:0 0 0 2px ' + GOLD_INK + ' inset;"></span>World Heritage site</span>');
+    }
+    el.innerHTML = bits.length
+      ? '<div class="map-legend-title">Points on the map</div><div class="mk-row">' + bits.join('') + '</div>'
+      : '';
+    el.hidden = !bits.length;
   }
 
   /* ---------------------------------------------------------- table */
@@ -210,13 +270,29 @@
       doubleClickZoom: false, dragging: true, keyboard: false,
       fadeAnimation: !rm, zoomAnimation: !rm
     });
+    // Dedicated panes so points ALWAYS sit above the polygons. Hovering a
+    // governorate calls bringToFront() on it, which would otherwise raise the
+    // polygon over the facility dots inside it and hide them mid-interaction.
+    // Heritage sits above health: 7 landmarks should never be buried under
+    // 963 facility dots.
+    S.map.createPane('ptsHealth').style.zIndex = 640;
+    S.map.createPane('ptsHeritage').style.zIndex = 650;
     S.layer = L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: baseStyle,
       onEachFeature: function (feature, lyr) {
         lyr.bindTooltip(tipHtml(feature.properties, 'population'),
                         { sticky: true, direction: 'top', className: 'egypt-map-tip' });
         lyr.on({
-          mouseover: function (e) { e.target.setStyle({ weight: 2, color: GOLD_INK, fillColor: GOLD, fillOpacity: 0.95 }); e.target.bringToFront(); },
+          // Emphasise with a heavy outline, NOT a gold flood fill. Gold is the
+          // World Heritage symbol now, so reusing it for "hovered governorate"
+          // made one colour mean two things — and the opaque fill hid the
+          // facility points sitting inside that governorate.
+          mouseover: function (e) {
+            var base = overlayOn() ? DIM_FILL : FULL_FILL;
+            e.target.setStyle({ weight: 2.5, color: GOLD_INK,
+                                fillOpacity: Math.min(base + 0.15, 1) });
+            e.target.bringToFront();
+          },
           mouseout: function (e) { S.layer.resetStyle(e.target); },
           click: function () { showDetail(feature.properties); }
         });
@@ -276,7 +352,9 @@
         S.heritageLayer.addTo(S.map);           // heritage on by default — only 7 gold points
         var hgBtn = document.querySelector('[data-overlay="heritage"]');
         if (hgBtn) hgBtn.classList.add('on');
+        S.layer.setStyle(baseStyle);            // dim the fill now points are up
       }
+      buildOverlayKey();
       setLayerNote();
       buildTable();
       buildHeritageCards();

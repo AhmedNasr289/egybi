@@ -64,6 +64,22 @@ Two things follow. The country code lives in **`iso2`** — not `iso_code`, `sta
 
 **The salvage step was still broken, for a second reason.** Run 2 proved `if: '!cancelled()'` works — the step ran — but it died instantly on `fatal: pathspec 'site/data/geo-heritage.json' did not match any files`. `git add` on a missing path is a hard error (exit 128), and under `bash -e` that aborted the whole step, so the two good layers were discarded *again*. The step now stages only files that exist, and says so plainly when none were built. Tested under both the run-2 condition (two of three present → both committed) and the empty case (clean exit, no commit).
 
+### Overlay readability pass (2026-07-25, after seeing real data)
+
+With the layers finally live, the point overlays were checked in a real browser against the actual 963 facilities — and several problems only became visible once there was data to render:
+
+| Problem | Cause | Fix |
+|---|---|---|
+| Health points invisible in Cairo & the Delta | Hospitals were drawn in `#0E2A5E` — **the exact hex of the darkest choropleth bin**. Over a dark polygon they vanished entirely on the density metric. | Moved the health layer off the blue ramp to warm ochre (`#B23A0F` hospital / `#E2703A` clinic), hues that appear nowhere in `RAMP`. |
+| Dots read as muddy mauve, not ochre | `fillOpacity` 0.7–0.85 blended the warm fill with the blue polygon beneath. | Raised to 0.90–0.95 so the hue reads true. |
+| Dots rendered as two-tone crescents | A 1.1 px white halo on a 2.8 px-radius dot covered ~40% of it. | Halo thinned to 0.9 px, radii up to 4.5 / 3 — the halo must stay thin *relative to* the radius. |
+| Points competed with the fill for the same ink | Choropleth sat at full 0.92 opacity under the markers. | Base fades to **0.45 whenever any overlay is on**, back to 0.92 when all are off. |
+| Nothing explained the dots | The legend covered colour bins only. | Added a **symbol key** listing only the overlays currently switched on. |
+| Hovering flooded a governorate **gold** | The hover style reused `GOLD` as a fill — the same gold the new key assigns to World Heritage sites, so one colour meant two things, and the opaque fill hid the facilities inside that governorate. | Hover now keeps the metric colour, bumps opacity by 0.15 and emphasises with a gold-**ink outline** instead. |
+| Hovered polygon could cover points | `bringToFront()` raised the polygon above the markers. | Dedicated panes — `ptsHealth` (z 640) and `ptsHeritage` (z 650) — so points always sit above polygons, and the 7 landmarks always above the 963 dots. |
+
+Verified in Chromium at 2–3× DPI against the live data: dim/restore toggling, the key appearing and hiding per overlay, dense-Delta and sparse-Sinai crops, and 375 px mobile with **zero horizontal overflow** and no page errors. The remaining crescent-looking marks in dense areas are *genuine coincident facilities* (a clinic and hospital at nearly the same coordinates), not rendering artifacts — confirmed by inspecting sparse coastline where they resolve into separate dots.
+
 **Per-governorate counts** are assigned by point-in-polygon against the *simplified* bundled boundaries, so facilities right on a border can land one governorate over. This is recorded in each JSON's `note` and stated on the page — not hidden. (The point-in-polygon was verified offline against seven known coordinates: Cairo, Alexandria, Aswan, Luxor, Sharm El Sheikh, Marsa Matruh, and a Mediterranean point that correctly returns nothing.)
 
 ## Graceful empty state (why the page shipped before the data)
