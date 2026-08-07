@@ -320,10 +320,34 @@ def resolve_boundary(ox, d: dict):
     polygon too — nothing here gets to bypass the guardrail for being ours.
     """
     for q in d["queries"]:
-        try:
-            gdf = ox.geocode_to_gdf(q)
-        except Exception as e:  # noqa: BLE001 — try the next candidate
-            log(f"    geocode miss  {q!r}: {type(e).__name__}")
+        # Two failures wear the same clothes here and mean opposite things.
+        # InsufficientResponseError means Nominatim does not know the string and
+        # TypeError means it knows it but has no polygon — both are real ANSWERS,
+        # and the right move is to try the next candidate immediately. A network
+        # error is not an answer, and treating it as one can drop a district as
+        # "no candidate resolved", which reads as a fact about OSM rather than
+        # about the connection. Those get retried.
+        gdf, answered = None, False
+        for attempt in range(3):
+            try:
+                gdf = ox.geocode_to_gdf(q)
+                answered = True
+                break
+            except Exception as e:  # noqa: BLE001
+                name = type(e).__name__
+                if name in ("InsufficientResponseError", "TypeError", "ValueError"):
+                    log(f"    geocode miss  {q!r}: {name}")
+                    answered = True          # a real answer: nothing there
+                    break
+                if attempt < 2:
+                    time.sleep(10 * (attempt + 1))
+                else:
+                    log(f"    geocode UNANSWERED {q!r} after 3 attempts: {name}")
+        if gdf is None:
+            if not answered:
+                # Distinguish it in the log so a run dropped by a flaky network
+                # is not mistaken for one dropped by missing OSM data.
+                log(f"    (network, not OSM — this candidate was never answered)")
             continue
         try:
             area_km2 = float(gdf.to_crs(gdf.estimate_utm_crs()).area.iloc[0]) / 1e6
@@ -422,11 +446,25 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
         if gdf is None:
             failures.append(f"{d['name']}: no candidate query resolved to a plausible boundary")
             continue
-        try:
-            G = ox.graph_from_polygon(gdf.geometry.iloc[0], network_type="drive", simplify=True)
-        except Exception as e:  # noqa: BLE001
-            failures.append(f"{d['name']}: graph download failed ({type(e).__name__})")
-            log(f"    graph failed  {e}")
+        # Same retry as the walk graph below, for the same reason: a transient
+        # timeout here drops the district from the report card entirely, after
+        # its boundary has already been resolved. The guardrails exist to catch
+        # bad DATA; a network blip is not data and should not be recorded as a
+        # district we could not measure.
+        G, why = None, None
+        for attempt in range(3):
+            try:
+                G = ox.graph_from_polygon(gdf.geometry.iloc[0], network_type="drive", simplify=True)
+                why = None
+                break
+            except Exception as e:  # noqa: BLE001
+                why = type(e).__name__
+                if attempt < 2:
+                    log(f"    graph attempt {attempt + 1} failed ({why}); retrying")
+                    time.sleep(20 * (attempt + 1))
+        if G is None:
+            failures.append(f"{d['name']}: graph download failed after 3 attempts ({why})")
+            log(f"    graph failed  {why}")
             continue
 
         n, m = G.number_of_nodes(), G.number_of_edges()
@@ -536,11 +574,32 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
             failures.append(f"{d['name']}: no boundary from the report-card pass")
             continue
         poly = cached[0].geometry.iloc[0]
-        try:
-            W = ox.projection.project_graph(
-                ox.graph_from_polygon(poly, network_type="walk", simplify=True))
-        except Exception as e:  # noqa: BLE001
-            failures.append(f"{d['name']}: walk graph failed ({type(e).__name__})")
+
+        # RETRY THE WALK GRAPH. It had no retry at all, and one ConnectTimeout
+        # was enough to lose a district that the report-card pass had already
+        # measured successfully minutes earlier. New Cairo was dropped this way
+        # in run 4 and again in run 6 — the same district, the same transient
+        # error, twice — while its drive network downloaded fine both times.
+        #
+        # Losing a district to a network blip is not a finding about the
+        # district, and it is the difference between the access layer being
+        # complete and the run going red. The backoff is longer than the
+        # amenity one because these are the biggest downloads in the pipeline
+        # and a timeout usually means the endpoint is busy rather than broken.
+        W, why = None, None
+        for attempt in range(3):
+            try:
+                W = ox.projection.project_graph(
+                    ox.graph_from_polygon(poly, network_type="walk", simplify=True))
+                why = None
+                break
+            except Exception as e:  # noqa: BLE001
+                why = type(e).__name__
+                if attempt < 2:
+                    log(f"    walk graph attempt {attempt + 1} failed ({why}); retrying")
+                    time.sleep(20 * (attempt + 1))
+        if W is None:
+            failures.append(f"{d['name']}: walk graph failed after 3 attempts ({why})")
             continue
         if W.number_of_nodes() < MIN_NODES:
             failures.append(f"{d['name']}: thin walk graph ({W.number_of_nodes()} nodes)")
