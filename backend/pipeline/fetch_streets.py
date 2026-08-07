@@ -421,14 +421,25 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
                 log(f"    nearest_nodes failed for {label}: {e}")
                 per_amenity[label] = None
                 continue
-            # multi-source shortest path: distance from every node to its
+            # Multi-source shortest path: distance from every node to its
             # nearest amenity, in one pass rather than per-node Dijkstra.
+            #
+            # The virtual source is added to W IN PLACE and removed again,
+            # rather than copying the graph. The copy was costing a full
+            # duplicate of the walk network four times per district — once per
+            # amenity type — and on a district the size of 6th of October that
+            # is tens of megabytes of pointless allocation on a 7 GB runner.
+            # remove_node drops the node and every edge incident to it, so W is
+            # left byte-for-byte as it was for the next amenity. Results are
+            # identical; only the memory and time are not.
             src = "__amenity__"
-            Wt = W.copy()
-            Wt.add_node(src)
+            W.add_node(src)
             for t in targets:
-                Wt.add_edge(src, t, length=0.0)
-            dist = nx.single_source_dijkstra_path_length(Wt, src, weight="length")
+                W.add_edge(src, t, length=0.0)
+            try:
+                dist = nx.single_source_dijkstra_path_length(W, src, weight="length")
+            finally:
+                W.remove_node(src)      # restore W even if the search raises
             mins = [v / WALK_SPEED_M_PER_MIN for k, v in dist.items() if k != src]
             if not mins:
                 per_amenity[label] = None
