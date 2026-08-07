@@ -120,7 +120,8 @@
       onEachFeature: function (f, lyr) {
         var d = byKey(f.properties.key);
         if (!d) return;
-        lyr.bindTooltip('<strong>' + esc(d.name) + '</strong><br>' + esc(d.era) +
+        lyr.bindTooltip('<strong>' + esc(d.name) + '</strong>' +
+          (d.boundary_source === 'hand-drawn' ? ' <em>(hand-drawn extent)</em>' : '') + '<br>' + esc(d.era) +
                         '<br>' + m.label + ': <strong>' + m.fmt(d[S.metric]) + '</strong>',
                         { sticky: true, direction: 'top', className: 'egypt-map-tip' });
         lyr.on({
@@ -240,6 +241,19 @@
         '. A low score can mean few facilities <em>or</em> few mapped facilities — this data cannot tell them apart.</p>';
     }
 
+    // Downtown Cairo is the one district whose outline is ours rather than
+    // OSM's, because OSM has none. Saying so beside its numbers — not only in
+    // the method section far below — is the whole condition on drawing it.
+    var boundaryHtml = d.boundary_source === 'hand-drawn'
+      ? '<p class="dd-note dd-drawn"><strong>Hand-drawn extent.</strong> OpenStreetMap has no ' +
+        'polygon for this district under any name or tag — every match we found was a landmark ' +
+        '<em>inside</em> it (a palace, a courthouse, a theatre) rather than the district itself. ' +
+        'This outline is drawn from its known edges: the Nile, Ramses, Port Said Street and ' +
+        'Sayyida Zeinab. Every other district here uses OSM’s own polygon. Because the ' +
+        'per-km² figures depend on where that line falls, these are the numbers on this page ' +
+        'most sensitive to a judgement call.</p>'
+      : '';
+
     var noteHtml = note
       ? '<h4>Planner&rsquo;s note <span class="ai-tag">AI-generated</span></h4>' +
         '<p class="dd-ai">' + esc(note) + '</p>' +
@@ -248,7 +262,7 @@
 
     el.innerHTML = '<h3>' + esc(d.name) + ' <span class="dd-ar">' + esc(d.name_ar) + '</span></h3>' +
       '<p class="dd-era">' + esc(d.era) + ' &middot; ' + d.area_km2.toLocaleString() + ' km²</p>' +
-      '<p class="dd-why">' + esc(d.why) + '</p>' +
+      '<p class="dd-why">' + esc(d.why) + '</p>' + boundaryHtml +
       '<div class="dd-split"><div>' + rose(d.orientation_bins, 190, GOLD) +
       '<p class="dd-note" style="text-align:center">Street orientation &mdash; length of road facing each compass direction</p></div>' +
       '<div class="dd-metrics">' + metricRows + '</div></div>' +
