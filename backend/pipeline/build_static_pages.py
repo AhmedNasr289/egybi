@@ -167,7 +167,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="../assets/egybi.css?v=13" rel="stylesheet">
+<link href="../assets/egybi.css?v=14" rel="stylesheet">
 <script src="../assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
@@ -316,7 +316,7 @@ def build_sitemap(extra):
     # a sitemap, which is a list of what you want crawled as live content.
     core = [('', '1.0', 'weekly'), ('explore.html', '0.9', 'weekly'), ('case.html', '0.9', 'monthly'), ('streets.html', '0.8', 'monthly'),
             ('blog.html', '0.8', 'weekly'), ('prices.html', '0.7', 'daily'), ('stocks.html', '0.7', 'daily'),
-            ('geospatial.html', '0.8', 'monthly'), ('places.html', '0.8', 'monthly'),
+            ('geospatial.html', '0.8', 'monthly'), ('places.html', '0.8', 'monthly'), ('stories.html', '0.9', 'monthly'),
             ('about.html', '0.6', 'monthly'), ('community.html', '0.6', 'monthly'), ('privacy.html', '0.3', 'yearly')]
     rows = [f"  <url>\n    <loc>{SITE_URL}/{n}</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>{f}</changefreq>\n    <priority>{p}</priority>\n  </url>"
             for n, p, f in core]

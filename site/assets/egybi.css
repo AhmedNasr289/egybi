@@ -830,3 +830,50 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
   color: var(--ink-soft); background: var(--gold-soft); border-left: 3px solid var(--gold);
   border-radius: 0 6px 6px 0; }
 .q-coverage[hidden] { display: none; }
+
+/* ===========================================================================
+   SCROLLYTELLING — data stories where the map moves with the reader
+   ---------------------------------------------------------------------------
+   The sticky graphic sits beside the prose on desktop and above it on mobile.
+   Critically, WITHOUT JavaScript this degrades to prose followed by a static
+   graphic — the steps are ordinary sections and stay fully readable, because
+   the article is the story and the map is enhancement.
+   =========================================================================== */
+.scrolly { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.scrolly-graphic { position: sticky; top: calc(var(--header-h, 56px) + 20px);
+  height: min(72vh, 620px); border-radius: var(--radius);
+  background: var(--papyrus-2); border: 1px solid var(--line-light); overflow: hidden; }
+.scrolly-graphic > * { width: 100%; height: 100%; }
+.scrolly-steps { display: flex; flex-direction: column; gap: min(34vh, 260px); padding: 12vh 0 40vh; }
+
+.scrolly-step { padding: 22px 24px; background: var(--papyrus); border: 1px solid var(--line-light);
+  border-left: 4px solid transparent; border-radius: var(--radius);
+  opacity: 0.55; transition: opacity .35s ease, border-color .35s ease, transform .35s ease; }
+.scrolly-step.is-active { opacity: 1; border-left-color: var(--gold); transform: translateY(-2px); }
+.scrolly-step:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; opacity: 1; }
+.scrolly-step h3 { margin: 0 0 10px; color: var(--blue-deep); font-size: 1.08rem; }
+.scrolly-step p { margin: 0 0 10px; line-height: 1.8; color: var(--ink); }
+.scrolly-step p:last-child { margin-bottom: 0; }
+.scrolly-step .src { display: block; margin-top: 12px; font-size: 0.76rem; color: var(--ink-soft); }
+
+/* A reader who asked for less motion gets no transitions — but every step is
+   still reachable, and the JS jumps the map instead of animating it. Reduced
+   motion means no animation, never reduced functionality. */
+@media (prefers-reduced-motion: reduce) {
+  .scrolly-step { transition: none; transform: none; opacity: 0.85; }
+  .scrolly-step.is-active { transform: none; }
+}
+
+/* Single column on narrow screens: graphic first and shorter, so it never eats
+   the whole viewport and leave the prose unreachable. */
+@media (max-width: 900px) {
+  .scrolly { grid-template-columns: 1fr; gap: 18px; }
+  .scrolly-graphic { height: 46vh; top: calc(var(--header-h, 56px) + 8px); }
+  .scrolly-steps { gap: 22vh; padding: 4vh 0 30vh; }
+}
+
+/* No JS: the sticky graphic would strand an empty box, so pin nothing and let
+   the article read straight through. */
+.no-js .scrolly-graphic { position: static; height: auto; min-height: 220px; }
+.no-js .scrolly-steps { gap: 26px; padding: 0; }
+.no-js .scrolly-step { opacity: 1; border-left-color: var(--gold); }
