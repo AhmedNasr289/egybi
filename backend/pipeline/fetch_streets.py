@@ -100,7 +100,15 @@ DISTRICTS = [
         "name_ar": "مدينة السادس من أكتوبر",
         "era": "Desert new town, 1979+",
         "why": "First-generation satellite city, built to pull people off the Nile valley. Master-planned from nothing on open desert.",
-        "queries": ["6th of October City, Giza, Egypt", "6th of October, Giza, Egypt", "Madinat Sitta Uktubar, Egypt"],
+        # The Arabic name is the ONLY one that works, confirmed by the geocode
+        # probe: every English spelling returns TypeError (no polygon among
+        # Nominatim's top 50) or a sports club. The Arabic name resolves to
+        # W1103595802, boundary/administrative, 552 km² — comfortably inside
+        # MAX_AREA_KM2. Both Arabic forms below return that same object; the
+        # second is kept as a spelling fallback, and the English forms are kept
+        # last so a future OSM improvement is picked up automatically.
+        "queries": ["مدينة السادس من أكتوبر", "مدينة 6 أكتوبر",
+                    "6th of October City, Giza, Egypt", "6th of October City, Egypt"],
     },
     {
         "key": "new-cairo",
