@@ -60,16 +60,12 @@ CANDIDATES = {
     # returned a landmark polygon, no polygon, or nothing. The remaining
     # name-based guesses worth a try are the qism spellings Nominatim is most
     # likely to hold in transliteration.
-    "Downtown Cairo (still unresolved)": [
-        "Abdin, Cairo, Egypt",
-        "Abdeen District, Cairo, Egypt",
-        "Qasr El Nil District, Cairo, Egypt",
-        "El Azbakeya, Cairo, Egypt",
-        "Boulaq, Cairo, Egypt",
-        "Garden City, Cairo, Egypt",
-    ],
-    # A working district, kept so the output always shows what a GOOD answer
-    # looks like in the same run rather than from memory.
+    # Round 2 eliminated six more: Abdin (no polygon), Abdeen District and
+    # Qasr El Nil District (no results at all), El Azbakeya (the Central Bank
+    # building), Boulaq (a hospital), Garden City (a real neighbourhood, but
+    # 0.36 km² — under the 1 km² floor). Nineteen candidates are now ruled out,
+    # so round 3 stops guessing names entirely and relies on the tag listings
+    # below to say what actually exists.
     "Nasr City (control)": ["Nasr City, Cairo, Egypt"],
 }
 
@@ -81,8 +77,8 @@ CANDIDATES = {
 DOWNTOWN_BBOX = (31.22, 30.02, 31.27, 30.07)
 
 
-def list_admin_boundaries(ox) -> None:
-    """Ask Overpass directly what administrative boundaries exist downtown.
+def list_polygons(ox, tags: dict, label: str) -> None:
+    """Ask Overpass directly what polygons of a given tag family exist downtown.
 
     Geocoding by name failed for Downtown Cairo in a specific and informative
     way: every candidate that returned a polygon at all returned a LANDMARK —
@@ -93,11 +89,20 @@ def list_admin_boundaries(ox) -> None:
     which districts the page covers.
 
     So stop guessing names and ask the database what it actually contains.
+
+    Round 2 asked only for `boundary=administrative` and found nothing at qism
+    scale — the hierarchy jumps from Cairo governorate (3,006 km²) straight to
+    unlabelled neighbourhood ways. That was NOT enough to conclude OSM has no
+    Downtown polygon, because none of the four districts that already work is
+    an administrative boundary either: Heliopolis is place/quarter, Maadi is
+    place/neighbourhood, Nasr City is place/city. The pipeline never needed an
+    admin boundary, only a plausible polygon. Checking one tagging scheme and
+    declaring the answer would have been an overclaim.
     """
-    print("\nAdministrative boundaries over downtown Cairo (Overpass, by tag)")
+    print(f"\n{label} over downtown Cairo (Overpass, by tag)")
     print(f"  bbox {DOWNTOWN_BBOX} (left, bottom, right, top)\n", flush=True)
     try:
-        gdf = ox.features_from_bbox(DOWNTOWN_BBOX, tags={"boundary": "administrative"})
+        gdf = ox.features_from_bbox(DOWNTOWN_BBOX, tags=tags)
     except Exception as e:  # noqa: BLE001
         print(f"  query failed: {type(e).__name__}: {e}", flush=True)
         return
@@ -113,14 +118,25 @@ def list_admin_boundaries(ox) -> None:
     except Exception:  # noqa: BLE001
         areas = None
 
+    # Only the district-scale band is interesting. Below ~1 km² is a block or a
+    # building; above ~900 km² is a governorate. Both are already rejected by
+    # the pipeline's area check, and printing them buries the useful rows.
+    shown = 0
     for i, (idx, row) in enumerate(polys.iterrows()):
-        area_s = f"{areas.iloc[i]:>8,.2f} km²" if areas is not None else "area n/a"
-        lvl = row.get("admin_level", "?")
+        area = areas.iloc[i] if areas is not None else None
+        if area is not None and not (0.5 <= area <= 900):
+            continue
+        shown += 1
+        area_s = f"{area:>8,.2f} km²" if area is not None else "area n/a"
+        lvl = row.get("admin_level", "—")
+        place = row.get("place", "—")
         # name:en matters as much as name — an English label is what makes a
-        # boundary findable by the English queries the pipeline tries first.
-        print(f"    {area_s}  admin_level={lvl:<4} {idx}", flush=True)
+        # polygon findable by the English queries the pipeline tries first.
+        print(f"    {area_s}  place={place:<14} admin_level={lvl:<5} {idx}", flush=True)
         print(f"        name   : {row.get('name', '—')}", flush=True)
         print(f"        name:en: {row.get('name:en', '—')}", flush=True)
+    if not shown:
+        print("    Nothing in the 0.5–900 km² district band.", flush=True)
 
 
 def main() -> None:
@@ -160,7 +176,13 @@ def main() -> None:
             print(f"           {str(row.get('display_name', ''))[:150]}", flush=True)
         print(flush=True)
 
-    list_admin_boundaries(ox)
+    # place=* FIRST, because that is where the four working districts live —
+    # Heliopolis is place/quarter, Maadi place/neighbourhood, Nasr City
+    # place/city. If Downtown has a usable polygon at all, this is where it is.
+    list_polygons(ox, {"place": ["quarter", "suburb", "neighbourhood",
+                                 "city_district", "borough", "district"]},
+                  "place=* polygons")
+    list_polygons(ox, {"boundary": "administrative"}, "Administrative boundaries")
 
     print("\nProbe complete. Nothing was written or committed.", flush=True)
 
