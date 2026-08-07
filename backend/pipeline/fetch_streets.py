@@ -68,7 +68,42 @@ DISTRICTS = [
         "name_ar": "وسط البلد",
         "era": "Khedivial, 1860s–1870s",
         "why": "Ismail's Paris-on-the-Nile: deliberate boulevards and midans laid over a dense grid. The oldest planned fabric in the comparison.",
-        "queries": ["Abdeen, Cairo, Egypt", "Downtown, Cairo, Egypt", "Wust el-Balad, Cairo, Egypt"],
+        "queries": ["Abdeen, Cairo, Egypt", "Downtown Cairo, Egypt", "Wust El Balad, Cairo, Egypt"],
+        # THE ONE HAND-DRAWN BOUNDARY ON THIS PAGE, and the reason is a finding
+        # in its own right: OpenStreetMap has no polygon for Downtown Cairo.
+        #
+        # That was established by probe_geocodes.py, not assumed. Nineteen name
+        # candidates were tried across English, Arabic and qism spellings; every
+        # one that returned a polygon at all returned a LANDMARK inside downtown
+        # rather than downtown itself — Abdeen Palace, Abdeen Courthouse, Qasr el
+        # Nil Theatre, Azbakeya Garden, the Central Bank building, a vegetable
+        # market, a hospital. Then both plausible tag families were queried
+        # directly over a downtown bounding box: `place=*` returned 25
+        # neighbourhood polygons (Zenhom, Bab El Wazir, Al Orman, Mohamed Mazhar
+        # …), all of them the areas AROUND khedivial Cairo, and
+        # `boundary=administrative` returned nothing between Cairo governorate
+        # (3,006 km²) and unlabelled 0.5–5 km² ways. There is no Downtown to
+        # fetch.
+        #
+        # So this extent is drawn by hand from the district's well-understood
+        # edges: the Nile on the west, Ramses on the north, Port Said Street
+        # (the filled-in Khalig al-Masri) on the east, Sayyida Zeinab on the
+        # south. 7.1 km², which sits sensibly beside Heliopolis at 8.6.
+        #
+        # It is tried ONLY after every query above fails, so the day OSM gains a
+        # real Downtown polygon this is silently superseded. Every district
+        # carries `boundary_source` in the output and the page prints it, because
+        # a hand-drawn extent that isn't labelled as one is just a fabrication
+        # with good intentions.
+        "polygon": [
+            (31.2258, 30.0470),   # Nile bank at Qasr al-Nil / Tahrir
+            (31.2270, 30.0615),   # Nile at 26th of July / Boulaq edge
+            (31.2455, 30.0645),   # Ramses Station
+            (31.2530, 30.0545),   # Ataba, Port Said Street north
+            (31.2520, 30.0415),   # Abdeen, Port Said Street south
+            (31.2440, 30.0335),   # Sayyida Zeinab
+            (31.2300, 30.0360),   # Garden City, back to the Nile
+        ],
     },
     {
         "key": "heliopolis",
@@ -100,7 +135,15 @@ DISTRICTS = [
         "name_ar": "مدينة السادس من أكتوبر",
         "era": "Desert new town, 1979+",
         "why": "First-generation satellite city, built to pull people off the Nile valley. Master-planned from nothing on open desert.",
-        "queries": ["6th of October City, Giza, Egypt", "6th of October, Giza, Egypt", "Madinat Sitta Uktubar, Egypt"],
+        # The Arabic name is the ONLY one that works, confirmed by the geocode
+        # probe: every English spelling returns TypeError (no polygon among
+        # Nominatim's top 50) or a sports club. The Arabic name resolves to
+        # W1103595802, boundary/administrative, 552 km² — comfortably inside
+        # MAX_AREA_KM2. Both Arabic forms below return that same object; the
+        # second is kept as a spelling fallback, and the English forms are kept
+        # last so a future OSM improvement is picked up automatically.
+        "queries": ["مدينة السادس من أكتوبر", "مدينة 6 أكتوبر",
+                    "6th of October City, Giza, Egypt", "6th of October City, Egypt"],
     },
     {
         "key": "new-cairo",
@@ -137,10 +180,13 @@ def log(msg: str) -> None:
 def resolve_boundary(ox, d: dict):
     """Try each candidate query until one geocodes to a plausible polygon.
 
-    Returns (gdf, query, area_km2) or (None, None, None). The area check is the
-    real defence: a wrong geocode usually resolves to something far too small
-    (a single POI) or far too large (a whole governorate), and both would
-    silently corrupt every per-km2 metric downstream.
+    Returns (gdf, query, area_km2, source) or (None, None, None, None), where
+    source is "OSM" for a geocoded boundary and "hand-drawn" for the one
+    district that has no OSM polygon at all. The area check is the real
+    defence: a wrong geocode usually resolves to something far too small (a
+    single POI) or far too large (a whole governorate), and both would silently
+    corrupt every per-km2 metric downstream. It applies to the hand-drawn
+    polygon too — nothing here gets to bypass the guardrail for being ours.
     """
     for q in d["queries"]:
         try:
@@ -157,8 +203,31 @@ def resolve_boundary(ox, d: dict):
             log(f"    implausible   {q!r}: {area_km2:,.1f} km² outside [{MIN_AREA_KM2}, {MAX_AREA_KM2}]")
             continue
         log(f"    resolved      {q!r} → {area_km2:,.1f} km²")
-        return gdf, q, area_km2
-    return None, None, None
+        return gdf, q, area_km2, "OSM"
+
+    # Only now, after every OSM query has failed, fall back to a hand-drawn
+    # extent if this district declares one. Ordering matters: the day OSM gains
+    # a real polygon for the district, the loop above wins and this is silently
+    # superseded without anyone editing the pipeline.
+    coords = d.get("polygon")
+    if not coords:
+        return None, None, None, None
+    try:
+        import geopandas as gpd
+        from shapely.geometry import Polygon
+        gdf = gpd.GeoDataFrame(geometry=[Polygon(coords)], crs="EPSG:4326")
+        area_km2 = float(gdf.to_crs(gdf.estimate_utm_crs()).area.iloc[0]) / 1e6
+    except Exception as e:  # noqa: BLE001
+        log(f"    hand-drawn polygon failed: {type(e).__name__}: {e}")
+        return None, None, None, None
+    # The same area sanity-check the geocodes get. If a bad edit ever makes this
+    # polygon absurd, it must fail exactly as loudly as a bad geocode does.
+    if not (MIN_AREA_KM2 <= area_km2 <= MAX_AREA_KM2):
+        log(f"    hand-drawn    implausible: {area_km2:,.1f} km² outside "
+            f"[{MIN_AREA_KM2}, {MAX_AREA_KM2}]")
+        return None, None, None, None
+    log(f"    HAND-DRAWN    no OSM polygon exists → using declared extent, {area_km2:,.1f} km²")
+    return gdf, "hand-drawn extent (no OSM boundary exists)", area_km2, "hand-drawn"
 
 
 def bearing_graph(ox, G):
@@ -206,7 +275,7 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
 
     for d in DISTRICTS:
         log(f"  {d['name']}")
-        gdf, query, area_km2 = resolve_boundary(ox, d)
+        gdf, query, area_km2, boundary_source = resolve_boundary(ox, d)
         if gdf is None:
             failures.append(f"{d['name']}: no candidate query resolved to a plausible boundary")
             continue
@@ -244,6 +313,9 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
         rows.append({
             "key": d["key"], "name": d["name"], "name_ar": d["name_ar"],
             "era": d["era"], "why": d["why"], "query": query,
+            # The page prints this. A hand-drawn extent that isn't labelled as
+            # one is just a fabrication with good intentions.
+            "boundary_source": boundary_source,
             "area_km2": round(area_km2, 2),
             "nodes": n, "edges": m,
             # TRAP 3: everything countable is normalised per km².
@@ -262,7 +334,8 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
 
         resolved[d["key"]] = (gdf, area_km2)
         geom = json.loads(gdf.to_json())["features"][0]
-        geom["properties"] = {"key": d["key"], "name": d["name"], "era": d["era"]}
+        geom["properties"] = {"key": d["key"], "name": d["name"], "era": d["era"],
+                              "boundary_source": boundary_source}
         boundaries["features"].append(geom)
 
     if len(rows) < MIN_DISTRICTS_OK:
@@ -280,7 +353,13 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
                    "street length per 10° compass sector."),
         "caveat": ("Street geometry is among the best-mapped data in OSM, but these figures describe "
                    "what OSM contains rather than an official cadastre, and district boundaries are "
-                   "OSM's, not an administrative gazetteer's."),
+                   "OSM's, not an administrative gazetteer's — mostly mapper-drawn place polygons "
+                   "rather than official limits. Downtown Cairo is the exception: OpenStreetMap has "
+                   "no polygon for it at all, under any name or tag, so its extent is drawn by hand "
+                   "from the district's known edges (the Nile, Ramses, Port Said Street, Sayyida "
+                   "Zeinab). Every district carries boundary_source saying which it is. Because "
+                   "per-km² figures depend on where the line falls, Downtown's density numbers are "
+                   "the ones most sensitive to that choice."),
         "districts": rows,
         "skipped": failures,
     }

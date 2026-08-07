@@ -62,6 +62,9 @@
   .dd-row:first-child { border-top:none; }
   .dd-row strong { color:var(--ink); font-variant-numeric:tabular-nums; }
   .dd-note { font-size:0.8rem; color:var(--ink-soft); line-height:1.65; margin:10px 0 0; }
+  /* The one hand-drawn boundary on the page. Marked, not buried. */
+  .dd-drawn { border-left:3px solid var(--gold); padding:8px 0 8px 12px; background:var(--papyrus-2); border-radius:0 6px 6px 0; }
+  .dd-drawn strong { color:var(--gold-ink); }
   .dd-access { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; }
   .acc-cell { background:var(--papyrus); border:1px solid var(--line-light); border-radius:var(--radius); padding:12px 14px; text-align:center; }
   .ac-k { display:block; font-size:0.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); }
@@ -200,7 +203,8 @@
     <h2 data-aos="fade-up">The method, in the open.</h2>
     <p class="lead" data-aos="fade-up">Five decisions shape every number on this page. They are written down here because a metric you cannot interrogate is a metric you should not trust.</p>
     <ul style="color:var(--ink-soft);line-height:1.9;margin-top:16px;max-width:78ch;">
-      <li><strong>Boundaries come from OpenStreetMap, not a gazetteer.</strong> Egyptian district names are inconsistent in OSM, so each district is tried against several candidate names and every resolved polygon is area-checked before use. Anything implausible is dropped and named rather than quietly kept.</li>
+      <li><strong>Boundaries come from OpenStreetMap, not a gazetteer.</strong> Egyptian district names are inconsistent in OSM, so each district is tried against several candidate names and every resolved polygon is area-checked before use. Anything implausible is dropped and named rather than quietly kept. Most of these outlines are mapper-drawn <code>place</code> polygons rather than official administrative limits — real, but not a cadastre.</li>
+      <li><strong>Downtown Cairo&rsquo;s outline is ours, and it is the only one.</strong> OpenStreetMap has no polygon for Downtown at all. We tried nineteen name candidates across English, Arabic and <em>qism</em> spellings, and every one that returned a shape returned a landmark <em>inside</em> downtown &mdash; Abdeen Palace, the Qasr el-Nil theatre, Azbakeya Garden, the Central Bank building &mdash; rather than the district. Then we asked OSM directly what it holds over the area: twenty-five small neighbourhood polygons of the districts <em>around</em> khedivial Cairo, and nothing administrative between Cairo governorate at 3,006&nbsp;km² and unnamed 0.5&ndash;5&nbsp;km² fragments. So Downtown&rsquo;s 7.1&nbsp;km² extent is drawn by hand from its known edges: the Nile, Ramses, Port Said Street and Sayyida Zeinab. It is labelled as hand-drawn everywhere it appears, it is area-checked exactly like a geocoded boundary, and it is used <em>only</em> after every OSM lookup fails &mdash; so the day OSM gains a real Downtown polygon, this quietly stops being used.</li>
       <li><strong>Everything is projected before measurement.</strong> Lengths and circuity computed on raw latitude and longitude are meaningless; each network is projected to UTM first.</li>
       <li><strong>Counts are normalised per square kilometre.</strong> 6th of October is vastly larger than Downtown, so raw totals would compare size rather than design.</li>
       <li><strong>Driving and walking networks are kept separate.</strong> The report card uses the drive network, because that is what street design produces. The access score uses the walk network, because a fifteen-minute city is about walking. Mixing them would answer neither question.</li>

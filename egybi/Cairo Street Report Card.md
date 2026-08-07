@@ -34,6 +34,25 @@ These are the decisions that separate a real measurement from a demo. All are in
    `TypeError` is worth understanding precisely: with the default `which_result=None`, `geocode_to_gdf` already asks for **50** results and returns the first `(Multi)Polygon`, so the error means no polygon exists anywhere in that set. Tuning `which_result` cannot rescue it — only a different query string can. Confirmed by reading the osmnx 2.1.1 source, not inferred from the message.
 
    Finding replacement strings by editing the pipeline and re-running costs ~20 minutes and a full Cairo graph download **per guess**, so `probe_geocodes.py` + `probe-geocodes.yml` (read-only, seconds, commits nothing — the `probe-idsc` pattern) geocode candidates alone and print each result's area, `class`/`type` and `display_name`. Candidates get chosen from evidence.
+
+   **What the probe settled, over three rounds:**
+   - **6th of October City resolves only under its Arabic name.** Every English spelling returns `TypeError`; `'Sixth of October City, Egypt'` returns a sports club. `'مدينة السادس من أكتوبر'` → W1103595802, `boundary/administrative`, 552 km². The English forms are kept last in the candidate list so a future OSM improvement is picked up automatically.
+   - **Downtown Cairo does not exist in OSM.** Nineteen name candidates across English, Arabic and *qism* spellings; every one that returned a polygon returned a landmark *inside* downtown (Abdeen Palace, Abdeen Courthouse, Qasr el-Nil Theatre, Azbakeya Garden, the Central Bank building, a vegetable market, a hospital). Then both plausible tag families were queried directly over a downtown bbox: `place=*` gave 25 neighbourhood polygons of the districts *around* khedivial Cairo, and `boundary=administrative` gave nothing between Cairo governorate (3,006 km²) and unnamed 0.5–5 km² fragments.
+
+   **The near-miss worth recording:** round 2 checked only `boundary=administrative`, found nothing, and that looked like a verdict. It wasn't — **none of the four working districts is an administrative boundary either** (Heliopolis is `place/quarter`, Maadi `place/neighbourhood`, Nasr City `place/city`). Concluding from the one tag family that excludes every working district would have been a confident wrong answer. Always check the tag family your *successes* live in before declaring an absence.
+
+## The one hand-drawn boundary
+
+Downtown is the khedivial grid the newer districts are contrasted against, so losing it guts the comparison. Ahmed's call was to keep it with a hand-drawn extent, explicitly labelled. It is defined by the district's well-understood edges — the Nile west, Ramses north, Port Said Street (the filled-in Khalig al-Masri) east, Sayyida Zeinab south — and comes to **7.1 km²**, sitting sensibly beside Heliopolis at 8.6.
+
+Four conditions make it honest rather than fabricated:
+
+1. **Tried last.** `resolve_boundary` falls back to it only after every OSM query fails, so the day OSM gains a real Downtown polygon it is silently superseded with no code change.
+2. **Area-checked identically.** It goes through the same 1–900 km² guardrail as any geocode. Verified: an absurd hand-drawn polygon is rejected exactly like a bad geocode.
+3. **Labelled everywhere it appears.** Every district carries `boundary_source` (`OSM` / `hand-drawn`); the drill-down shows a marked block, the map tooltip says *(hand-drawn extent)*, and the method section explains the whole search that led here.
+4. **Its weakness is stated, not hidden.** Per-km² figures depend on where the line falls, so Downtown's densities are named on the page as the numbers most sensitive to a judgement call.
+
+The framing that makes this defensible rather than a slippery slope: the page's "boundaries are OSM's" claim already carried more precision than it sounded like — Heliopolis and Maadi are *mapper-drawn* `place` polygons, not official limits. A documented hand-drawn extent is a difference of degree from that, not of kind. The page now says both things plainly.
 2. **Projection.** Lengths and circuity computed on raw lat/lon degrees are meaningless. Every graph is projected to UTM before measurement.
 3. **Normalisation.** 6th of October is orders of magnitude larger than Downtown, so raw counts would compare *size* rather than *design*. Every count is divided by the district's real projected area.
 4. **Drive vs walk networks.** The report card uses the **drive** network because that is what street design produces; the access score uses the **walk** network because a 15-minute city is about walking. Mixing them would answer neither question.
