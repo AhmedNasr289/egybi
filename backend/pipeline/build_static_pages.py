@@ -315,7 +315,7 @@ def build_sitemap(extra):
     # a sitemap, which is a list of what you want crawled as live content.
     core = [('', '1.0', 'weekly'), ('explore.html', '0.9', 'weekly'), ('case.html', '0.9', 'monthly'), ('streets.html', '0.8', 'monthly'),
             ('blog.html', '0.8', 'weekly'), ('prices.html', '0.7', 'daily'), ('stocks.html', '0.7', 'daily'),
-            ('geospatial.html', '0.8', 'monthly'), ('places.html', '0.8', 'monthly'), ('stories.html', '0.9', 'monthly'),
+            ('visit.html', '0.9', 'monthly'), ('geospatial.html', '0.8', 'monthly'), ('places.html', '0.8', 'monthly'), ('stories.html', '0.9', 'monthly'),
             ('about.html', '0.6', 'monthly'), ('community.html', '0.6', 'monthly'), ('privacy.html', '0.3', 'yearly')]
     rows = [f"  <url>\n    <loc>{SITE_URL}/{n}</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>{f}</changefreq>\n    <priority>{p}</priority>\n  </url>"
             for n, p, f in core]
