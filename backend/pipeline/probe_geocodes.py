@@ -50,22 +50,64 @@ import sys
 # trimmed to what is still genuinely unknown, plus the confirmed winner as a
 # regression check. Round 1's full results live in the vault note.
 CANDIDATES = {
-    # SOLVED in round 1: the Arabic name is the only one that resolves, to
-    # W1103595802, boundary/administrative, 552 km². Kept as a regression check
-    # because the whole district depends on this one string.
-    "6th of October City (solved — confirming)": ["مدينة السادس من أكتوبر"],
-    # Round 1 eliminated: Abdeen / Qasr an-Nil / Qasr El Nil / Kasr El Nil /
-    # Azbakeya / Ezbekeya / Bab al-Louq / Downtown Cairo / Wust El Balad, and
-    # the Arabic قسم عابدين, قسم قصر النيل, قسم الأزبكية, وسط البلد. Every one
-    # returned a landmark polygon, no polygon, or nothing. The remaining
-    # name-based guesses worth a try are the qism spellings Nominatim is most
-    # likely to hold in transliteration.
-    # Round 2 eliminated six more: Abdin (no polygon), Abdeen District and
-    # Qasr El Nil District (no results at all), El Azbakeya (the Central Bank
-    # building), Boulaq (a hospital), Garden City (a real neighbourhood, but
-    # 0.36 km² — under the 1 km² floor). Nineteen candidates are now ruled out,
-    # so round 3 stops guessing names entirely and relies on the tag listings
-    # below to say what actually exists.
+    # ROUND 4 — expanding the report card past the original six districts.
+    #
+    # Everything learned in rounds 1-3 is applied here rather than rediscovered.
+    # Arabic names are tried FIRST for anything that is not a plain English
+    # exonym, because 6th of October City resolves only in Arabic while every
+    # English spelling returns no polygon or a sports club. And landmark
+    # collision is the dominant failure mode — Abdeen returned a palace and a
+    # courthouse, Boulaq a hospital, Azbakeya a garden — so a bare
+    # neighbourhood name is treated as the least reliable candidate, not the
+    # first choice.
+    #
+    # Only the queries go here. Whether a district earns a place on the page is
+    # a separate question, answered after seeing what actually resolves.
+
+    # Medieval Cairo — the era genuinely missing from the current six. The
+    # organic pre-modern fabric that the first Downtown extent accidentally
+    # measured, this time on purpose and named correctly.
+    "Islamic Cairo (medieval)": [
+        "الدرب الأحمر", "Al Darb Al Ahmar, Cairo, Egypt",
+        "الجمالية", "El Gamaliya, Cairo, Egypt", "Historic Cairo, Egypt",
+    ],
+    # Colonial-era island quarter, planned on a former royal garden.
+    "Zamalek": ["الزمالك", "Zamalek, Cairo, Egypt", "Zamalek, Egypt"],
+    # Dense 19th-20th century northern quarter.
+    "Shubra": ["شبرا", "Shubra, Cairo, Egypt", "شبرا الخيمة",
+               "Shubra El Kheima, Qalyubia, Egypt"],
+    # Giza proper, distinct from the governorate of the same name — expect the
+    # governorate polygon to come back instead, which the area check will flag.
+    "Giza city": ["الجيزة", "Giza, Egypt", "Giza City, Egypt"],
+
+    # Alexandria — a second city with its own khedivial core and modern grid.
+    "Alexandria (whole city)": ["الإسكندرية", "Alexandria, Egypt"],
+    "Alexandria — Mansheya (colonial core)": [
+        "المنشية", "El Mansheya, Alexandria, Egypt", "Mansheya, Alexandria, Egypt"],
+    "Alexandria — Smouha (planned 1920s)": [
+        "سموحة", "Smouha, Alexandria, Egypt"],
+
+    # Canal cities. Port Said is a genuine planned grid from 1859 and the
+    # sharpest available contrast with Cairo's organic fabric.
+    "Port Said": ["بورسعيد", "Port Said, Egypt", "Port Said City, Egypt"],
+    "Ismailia": ["الإسماعيلية", "Ismailia, Egypt"],
+    "Suez": ["السويس", "Suez, Egypt"],
+
+    # Upper Egypt — tourist-facing and completely absent from the page today.
+    "Luxor": ["الأقصر", "Luxor, Egypt", "Luxor City, Egypt"],
+    "Aswan": ["أسوان", "Aswan, Egypt", "Aswan City, Egypt"],
+
+    # The newest desert developments. These are the most likely to be missing
+    # or half-mapped in OSM, which is itself worth knowing.
+    "New Administrative Capital": [
+        "العاصمة الإدارية الجديدة", "New Administrative Capital, Egypt",
+        "New Capital, Egypt"],
+    "New Alamein": ["العلمين الجديدة", "New Alamein, Egypt", "العلمين"],
+    "Sheikh Zayed City": ["مدينة الشيخ زايد", "Sheikh Zayed City, Giza, Egypt"],
+    "10th of Ramadan City": ["مدينة العاشر من رمضان", "10th of Ramadan City, Egypt"],
+
+    # Control: a district already known to resolve, so a Nominatim-side change
+    # is distinguishable from a bad query in this batch.
     "Nasr City (control)": ["Nasr City, Cairo, Egypt"],
 }
 
@@ -176,13 +218,11 @@ def main() -> None:
             print(f"           {str(row.get('display_name', ''))[:150]}", flush=True)
         print(flush=True)
 
-    # place=* FIRST, because that is where the four working districts live —
-    # Heliopolis is place/quarter, Maadi place/neighbourhood, Nasr City
-    # place/city. If Downtown has a usable polygon at all, this is where it is.
-    list_polygons(ox, {"place": ["quarter", "suburb", "neighbourhood",
-                                 "city_district", "borough", "district"]},
-                  "place=* polygons")
-    list_polygons(ox, {"boundary": "administrative"}, "Administrative boundaries")
+    # The two Overpass tag-listings that settled Downtown in round 3 are not
+    # re-run here. They answered their question — OSM holds no Downtown polygon
+    # under either place=* or boundary=administrative — and re-asking a free
+    # service something already recorded is exactly the load this probe exists
+    # to avoid. list_polygons is kept for the next district that needs it.
 
     print("\nProbe complete. Nothing was written or committed.", flush=True)
 
