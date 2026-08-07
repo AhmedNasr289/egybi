@@ -85,10 +85,28 @@ DISTRICTS = [
         # (3,006 km²) and unlabelled 0.5–5 km² ways. There is no Downtown to
         # fetch.
         #
-        # So this extent is drawn by hand from the district's well-understood
-        # edges: the Nile on the west, Ramses on the north, Port Said Street
-        # (the filled-in Khalig al-Masri) on the east, Sayyida Zeinab on the
-        # south. 7.1 km², which sits sensibly beside Heliopolis at 8.6.
+        # So this extent is drawn by hand. TIGHTENED after run 4 measured it
+        # (2026-08-07) — and the first attempt was wrong in a way the numbers
+        # caught, which is the whole argument for measuring before publishing.
+        #
+        # The first extent ran east to Port Said Street and south to Sayyida
+        # Zeinab. It returned 324 intersections/km², 45 m mean segments and a
+        # 23.2% dead-end share — the signature of dense pre-modern fabric full
+        # of alleys, not of a khedivial boulevard plan. Boundary-clipping was
+        # ruled out as the cause with evidence rather than assumed: Heliopolis
+        # has a HIGHER perimeter-to-area ratio (1.79 vs 1.40) and only a 4.2%
+        # dead-end share, so cut-off streets at the edge cannot explain it.
+        #
+        # Measuring the polygon showed 26.6% of it lay outside khedivial Cairo
+        # — 12.4% east of Midan Ataba, where the old Fatimid city begins, and
+        # 14.7% south of Bab al-Louq into Sayyida Zeinab. Those quarters carry
+        # far more street-kilometres per km², so they dominated every per-km²
+        # metric. The extent was measuring the old city and calling it khedivial.
+        #
+        # It now stops at the khedivial plan's own limits: the Nile west, Ramses
+        # and 26th of July north, Midan Ataba east, Bab al-Louq and Falaki
+        # south. 3.8 km². Smaller than any other district here, which is honest
+        # — khedivial Cairo IS small; the previous figure was borrowed area.
         #
         # It is tried ONLY after every query above fails, so the day OSM gains a
         # real Downtown polygon this is silently superseded. Every district
@@ -96,13 +114,13 @@ DISTRICTS = [
         # a hand-drawn extent that isn't labelled as one is just a fabrication
         # with good intentions.
         "polygon": [
-            (31.2258, 30.0470),   # Nile bank at Qasr al-Nil / Tahrir
-            (31.2270, 30.0615),   # Nile at 26th of July / Boulaq edge
-            (31.2455, 30.0645),   # Ramses Station
-            (31.2530, 30.0545),   # Ataba, Port Said Street north
-            (31.2520, 30.0415),   # Abdeen, Port Said Street south
-            (31.2440, 30.0335),   # Sayyida Zeinab
-            (31.2300, 30.0360),   # Garden City, back to the Nile
+            (31.2266, 30.0432),   # Nile at the Garden City / Qasr al-Nil approach
+            (31.2272, 30.0570),   # Nile at 26th of July
+            (31.2400, 30.0602),   # toward Ramses
+            (31.2478, 30.0558),   # Midan Ataba — eastern limit of the khedivial plan
+            (31.2482, 30.0452),   # Abdeen
+            (31.2402, 30.0402),   # Bab al-Louq / Falaki
+            (31.2312, 30.0408),   # back to the Nile at Garden City
         ],
     },
     {
