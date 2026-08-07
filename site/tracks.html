@@ -3,587 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Engineering Roadmap — Free Guide | EgyBI</title>
+<title>The learning tracks have closed | EgyBI</title>
+<meta name="description" content="EgyBI's learning tracks have been retired. EgyBI is now an encyclopaedia of Egypt told through maps and cited open data.">
+<link rel="canonical" href="https://egybi.com/explore.html">
+<meta name="robots" content="noindex,follow">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="description" content="A free data-engineering roadmap: the roles decoded, four phases from zero to job-ready, the 2026 modern data stack, and nine skill tracks with real tools.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=12" rel="stylesheet">
-<style>
-
-  .lead-in { max-width:760px; }
-  .lead-in p { color:var(--ink); line-height:1.75; margin:0 0 12px; }
-
-  /* role stack */
-  .role-flow { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px; }
-  .role { background:var(--kemet-2); border:1px solid var(--line-dark); border-radius:var(--radius); padding:22px 24px; }
-  .role .step { font-family:'Cinzel',serif; font-size:0.74rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-bright); }
-  .role h3 { color:#f3ead4; margin:6px 0 4px; font-size:1.18rem; }
-  .role .owns { color:var(--on-dark); font-size:0.92rem; line-height:1.6; margin:8px 0 12px; }
-  .role .meta { font-size:0.82rem; color:var(--on-dark-soft); line-height:1.7; }
-  .role .meta b { color:var(--gold-bright); font-weight:600; }
-  .role .pay { display:inline-block; margin-top:12px; font-size:0.76rem; font-weight:700; color:#8ad4ac; background:rgba(31,122,92,0.28); padding:3px 10px; border-radius:999px; }
-  @media(max-width:820px){ .role-flow { grid-template-columns:1fr; } }
-
-  /* roadmap phases */
-  .phase { position:relative; background:var(--papyrus-2); border:1px solid var(--line-light); border-left:4px solid var(--gold); border-radius:var(--radius); padding:24px 26px; }
-  .phase .pnum { font-family:'Cinzel',serif; font-size:0.78rem; font-weight:700; color:var(--gold-ink); letter-spacing:0.08em; text-transform:uppercase; }
-  .phase h3 { margin:4px 0 6px; color:var(--blue-deep); font-size:1.22rem; }
-  .phase .goal { color:var(--ink-soft); font-size:0.92rem; line-height:1.6; margin:0 0 14px; }
-  .phase .kv { font-size:0.88rem; line-height:1.7; color:var(--ink); }
-  .phase .kv b { color:var(--blue); font-weight:600; }
-  .phase .time { display:inline-block; margin-top:12px; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold-ink); background:var(--gold-soft); padding:3px 11px; border-radius:999px; }
-
-  /* modern data stack layers */
-  .layer { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:18px 20px; }
-  .layer h4 { margin:0 0 3px; color:var(--blue-deep); font-size:1.02rem; }
-  .layer .what { font-size:0.85rem; color:var(--ink-soft); margin:0 0 10px; line-height:1.5; }
-  .layer .tools { font-size:0.82rem; color:var(--ink); line-height:1.7; }
-  .layer .tools b { color:var(--gold-ink); font-weight:600; }
-
-  /* tracks */
-  .track { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:4px solid var(--gold); border-radius:var(--radius); padding:24px 26px; }
-  .track h3 { margin:0 0 4px; color:var(--blue-deep); font-size:1.22rem; }
-  .track .lvl { font-size:0.76rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--gold-ink); }
-  .track .ww { font-size:0.9rem; color:var(--ink); line-height:1.6; margin:10px 0; }
-  .track .sub { font-size:0.74rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--blue); margin:14px 0 4px; }
-  .track .tools { font-size:0.84rem; color:var(--ink-soft); margin:2px 0 0; }
-  .track .tools b { color:var(--ink); }
-  .track .books { font-size:0.84rem; color:var(--ink-soft); margin:6px 0 0; }
-  .track .books em { color:var(--ink); font-style:normal; font-weight:600; }
-  .check { list-style:none; padding:0; margin:6px 0 0; columns:2; column-gap:22px; }
-  .check li { font-size:0.84rem; margin:0 0 5px; padding-left:17px; position:relative; break-inside:avoid; }
-  .check li::before { content:'✓'; position:absolute; left:0; color:var(--success); font-weight:800; }
-  .track .ex { margin:6px 0 0; padding-left:18px; }
-  .track .ex li { font-size:0.86rem; margin-bottom:4px; }
-  .track .ex li b { color:var(--blue); font-weight:600; }
-  @media(max-width:560px){ .check { columns:1; } }
-
-  /* concepts + reading */
-  .concept { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:20px 22px; }
-  .concept h4 { margin:0 0 6px; color:var(--blue-deep); font-size:1.05rem; }
-  .concept p { font-size:0.9rem; color:var(--ink); line-height:1.65; margin:0; }
-  .concept p .k { color:var(--gold-ink); font-weight:600; }
-  .booklist { columns:2; column-gap:30px; margin-top:8px; }
-  .booklist .b { break-inside:avoid; margin:0 0 12px; font-size:0.9rem; line-height:1.5; }
-  .booklist .b .t { color:var(--blue-deep); font-weight:700; }
-  .booklist .b .a { color:var(--ink-soft); }
-  .booklist .b .d { color:var(--ink); display:block; font-size:0.84rem; }
-  @media(max-width:640px){ .booklist { columns:1; } }
-  .faq { max-width:820px; }
-  .faq details { border-bottom:1px solid var(--line-light); padding:12px 0; }
-  .faq summary { cursor:pointer; font-weight:700; color:var(--blue-deep); font-size:1rem; list-style:none; }
-  .faq summary::-webkit-details-marker { display:none; }
-  .faq summary::before { content:'+ '; color:var(--gold-ink); font-weight:800; }
-  .faq details[open] summary::before { content:'– '; }
-  .faq p { color:var(--ink); line-height:1.7; margin:10px 0 2px; font-size:0.94rem; }
-</style>
-  <meta name="google-adsense-account" content="ca-pub-1432845423481814">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
-     crossorigin="anonymous"></script>
-  <link rel="canonical" href="https://egybi.com/tracks.html">
-  <meta property="og:site_name" content="EgyBI">
-  <meta property="og:title" content="Tracks — The Data Engineering Roadmap · EgyBI">
-  <meta property="og:description" content="A complete, free data-engineering reference: the data roles decoded, a four-phase roadmap from zero to job-ready, the 2026 modern data stack mapped layer by layer, nine deep skill tracks with the concepts and tools to master, core architecture concepts, and a curated reading list. For newbies and gurus alike.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://egybi.com/tracks.html">
-  <meta property="og:image" content="https://egybi.com/og-image.png?v=2">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Tracks — The Data Engineering Roadmap · EgyBI">
-  <meta name="twitter:description" content="A complete, free data-engineering reference: the data roles decoded, a four-phase roadmap from zero to job-ready, the 2026 modern data stack mapped layer by layer, nine deep skill tracks with the concepts and tools to master, core architecture concepts, and a curated reading list. For newbies and gurus alike.">
-  <meta name="twitter:image" content="https://egybi.com/og-image.png?v=2">
-  <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
-       Android and macOS, so these signs would be empty boxes for most
-       visitors. This loads ONLY the nine signs we use (~12 KB). -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<script type="application/ld+json">
-{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://egybi.com/tracks.html#page", "url": "https://egybi.com/tracks.html", "name": "Data Engineering Roadmap", "isPartOf": {"@id": "https://egybi.com/#site"}, "publisher": {"@id": "https://egybi.com/#org"}, "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Data Engineering Roadmap", "item": "https://egybi.com/tracks.html"}]}]}
-</script>
-  <script type="application/ld+json" data-mark="SEO-JSONLD-EXTRA">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do I need a computer-science degree?", "acceptedAnswer": {"@type": "Answer", "text": "No. A degree helps but isn't required — a strong portfolio of real pipelines and solid SQL/Python get interviews. Most hiring is skills-first now."}}, {"@type": "Question", "name": "Do I need to know maths / statistics?", "acceptedAnswer": {"@type": "Answer", "text": "For data engineering, not much beyond comfort with numbers — that's more the data-scientist's world. You need logic, systems thinking and code. Stats matter if you later move toward data science."}}, {"@type": "Question", "name": "Which should I learn first — Python or SQL?", "acceptedAnswer": {"@type": "Answer", "text": "SQL. It's the fastest to become useful with and every role uses it daily. Add Python right after; the two together are your foundation."}}, {"@type": "Question", "name": "Cloud — which one, and do I need to pay?", "acceptedAnswer": {"@type": "Answer", "text": "Any one of AWS / GCP / Azure teaches the concepts; they transfer. Free tiers plus tools that run locally (DuckDB, Postgres in Docker) let you learn the whole stack for almost nothing."}}, {"@type": "Question", "name": "How do I get experience with no job?", "acceptedAnswer": {"@type": "Answer", "text": "Build projects that look like real work: pull from an API, store raw files, transform with dbt, load to a warehouse, feed a dashboard — orchestrated and on a schedule. One end-to-end project beats ten tutorials. EgyBI's tracks are built to be exactly that."}}, {"@type": "Question", "name": "Is AI going to replace data engineers?", "acceptedAnswer": {"@type": "Answer", "text": "It's changing the job, not deleting it — AI writes boilerplate, but someone still designs, tests, secures and runs the systems, and demand for clean, reliable data only grows as AI does. Learn to use the tools; own the judgment."}}]}</script>
+<link href="assets/egybi.css?v=13" rel="stylesheet">
+<!-- .htaccess 301s this URL to explore.html, so this file is normally never
+     served. It exists as the safety net: if mod_rewrite is ever unavailable,
+     the URL still returns a real page instead of a 404. -->
 </head>
 <body>
 
 <header class="site-header">
   <div class="bar">
-    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <a class="brand" href="index.html">EgyBI</a>
     <nav class="nav-links" id="navLinks">
       <a href="index.html">Home</a>
       <a href="explore.html">Explore</a>
       <a href="prices.html">Prices</a>
       <a href="stocks.html">Stocks</a>
-      <a href="geospatial.html">Atlas</a><a href="streets.html">Street report card</a>
+      <a href="geospatial.html">Atlas</a>
       <a href="streets.html">Streets</a>
-      <a href="tracks.html" class="active">Tracks</a>
-      <a href="practice.html">Practice</a>
       <a href="blog.html">Blog</a>
       <a href="community.html">Community</a>
       <a href="about.html">About</a>
-      <a class="nav-only-mobile" href="#newsletter">Newsletter</a>
     </nav>
-    <div class="nav-actions">
-      <a class="cta" href="#newsletter">Newsletter</a>
-    </div>
-    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
   </div>
 </header>
 
-<section class="surface-hero center" style="padding:68px 6vw;">
-  <div class="wrap">
-    <div class="kicker" style="color:var(--gold-bright);"><span data-glyph="scarab"></span>The data-engineering roadmap</div>
-    <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">From zero to data engineer — the whole map.</h1>
-    <p class="lead" style="margin:0 auto;color:#f3ead4;">A free, honest reference for anyone building a data career: what the roles really are, a phase-by-phase roadmap, the 2026 modern data stack mapped out, the concepts and tools to master in each of nine tracks, and a curated reading list. Newbie or guru — start where you are.</p>
+<section class="surface-hero" style="padding-top:72px;padding-bottom:52px;">
+  <div class="wrap" style="max-width:720px;">
+    <p class="hero-eyebrow">Retired section</p>
+    <h1 style="font-size:clamp(1.6rem,5vw,2.4rem);margin:0 0 14px;">The learning tracks have been retired.</h1>
+    <p class="lead" style="margin:0;color:#e9dfc8;">EgyBI is now an encyclopaedia of Egypt &mdash; its places, geography,
+    infrastructure and history, told through maps and cited open data.</p>
   </div>
 </section>
 
-<!-- On-this-page sticky sub-nav (built by wayfinding.js from section[data-nav]) -->
-<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
-
-<!-- HOW TO USE -->
 <section class="surface-light">
-  <div class="wrap lead-in">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Start here</div>
-    <h2 data-aos="fade-up">However you got here, there's a path.</h2>
-    <p data-aos="fade-up"><strong>Completely new?</strong> Don't buy a course yet. Start at <a href="#foundations" style="color:var(--gold-ink);font-weight:600;">Foundations</a> — three months of SQL and Python is worth more than any tool. Then walk the <a href="#roadmap" style="color:var(--gold-ink);font-weight:600;">roadmap</a> phase by phase and build the milestone project at the end of each.</p>
-    <p data-aos="fade-up"><strong>Already working with data?</strong> Skim the <a href="#stack" style="color:var(--gold-ink);font-weight:600;">stack map</a> to see what's changed in 2026 (Iceberg, Dagster, dlt, DuckDB), then use the <a href="#tracks" style="color:var(--gold-ink);font-weight:600;">nine tracks</a> as a checklist to find and close your gaps.</p>
-    <p data-aos="fade-up">One rule holds for everyone: <strong>learn by building</strong>. Every track here maps to hands-on exercises on EgyBI — real, cited Egyptian data instead of toy tables. The books are pointers; the reps are the point.</p>
-  </div>
-</section>
-
-<!-- THE ROLES -->
-<section class="surface-dark" id="roles" data-nav="Roles">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>The roles, decoded</div>
-    <h2 data-aos="fade-up">Data engineer, analytics engineer, analyst — who owns what.</h2>
-    <p class="lead" data-aos="fade-up">Three roles sit along one assembly line: raw data flows from the engineer, through the analytics engineer's models, to the analyst's answers. Know which one you're aiming for — the roadmap below serves all three, and they share the same foundations.</p>
-    <div class="role-flow">
-      <div class="role" data-aos="fade-up">
-        <span class="step">Upstream · builds the plumbing</span>
-        <h3>Data Engineer</h3>
-        <p class="owns">Moves and shapes data at scale: ingestion pipelines, storage, warehouses/lakehouses, streaming, and the reliability that keeps it all running in production.</p>
-        <p class="meta"><b>Owns:</b> pipelines, infrastructure, performance, uptime.<br><b>Core tools:</b> SQL, Python, Spark, Airflow/Dagster, Kafka, a cloud (AWS/GCP/Azure), Docker.</p>
-        <span class="pay">~US$130k median · varies by market</span>
-      </div>
-      <div class="role" data-aos="fade-up" data-aos-delay="100">
-        <span class="step">Midstream · builds the models</span>
-        <h3>Analytics Engineer</h3>
-        <p class="owns">The bridge between engineering and analysis: turns raw warehouse tables into clean, tested, documented models the whole business can trust.</p>
-        <p class="meta"><b>Owns:</b> the transformation layer, metric definitions, data tests, docs.<br><b>Core tools:</b> SQL, dbt, a cloud warehouse, Git, a semantic layer.</p>
-        <span class="pay">~US$150k+ median · fast-growing role</span>
-      </div>
-      <div class="role" data-aos="fade-up" data-aos-delay="200">
-        <span class="step">Downstream · answers the questions</span>
-        <h3>Data / BI Analyst</h3>
-        <p class="owns">Uses the models to answer business questions — dashboards, reports, and the story behind the numbers that drives decisions.</p>
-        <p class="meta"><b>Owns:</b> analysis, dashboards, KPIs, stakeholder insight.<br><b>Core tools:</b> SQL, Excel, Power BI / Tableau / Looker, storytelling.</p>
-        <span class="pay">~US$105k median · the classic entry point</span>
-      </div>
+  <div class="wrap" style="max-width:720px;">
+    <p>The Egyptian data those tracks were built on has not gone anywhere. It is still here, still
+    sourced, and still carries the date it was collected.</p>
+    <div class="cta-row" style="margin-top:26px;">
+      <a class="btn btn-primary" href="explore.html">Explore Egypt in charts &rarr;</a>
+      <a class="btn btn-blue" href="geospatial.html">Open the Atlas &rarr;</a>
     </div>
-    <p class="lead" data-aos="fade-up" style="margin-top:22px;font-size:0.9rem;color:var(--on-dark-soft);">Adjacent roles share the same base: <strong style="color:var(--gold-bright);">Data Scientist</strong> (stats + ML on top of clean data), <strong style="color:var(--gold-bright);">ML / AI Engineer</strong> (models in production), and <strong style="color:var(--gold-bright);">Platform / DataOps Engineer</strong> (the infra the data team runs on). Pay figures are US medians (Research.com / industry surveys, 2026) — adjust for your country; MENA and remote ranges differ.</p>
-  </div>
-</section>
-
-<!-- THE ROADMAP -->
-<section class="surface-light" id="roadmap" data-nav="Roadmap">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>The roadmap</div>
-    <h2 data-aos="fade-up">Four phases from zero to job-ready.</h2>
-    <p class="lead" data-aos="fade-up">A realistic order to learn things in — not a list of everything at once. Most career-changers reach job-ready in <strong>6–9 months part-time</strong> (10–15 hrs/week), or 3–4 months full-time. Finish each phase with its project before moving on.</p>
-    <div class="grid grid-2" style="margin-top:28px;">
-      <div class="phase" data-aos="fade-up">
-        <div class="pnum">Phase 1</div>
-        <h3>Foundations</h3>
-        <p class="goal">The bedrock every data role shares. Don't rush it — depth here pays off forever.</p>
-        <div class="kv"><b>Learn:</b> SQL (joins → window functions), Python (data structures, files, APIs), the command line &amp; Linux basics, Git, how data flows source → warehouse → dashboard.</div>
-        <div class="kv" style="margin-top:8px;"><b>Milestone:</b> pull a real dataset, load it into a database, and answer 10 questions in SQL. Write a Python script that reads an API and saves clean CSVs.</div>
-        <span class="time">≈ 0–3 months</span>
-      </div>
-      <div class="phase" data-aos="fade-up" data-aos-delay="100">
-        <div class="pnum">Phase 2</div>
-        <h3>Build the stack</h3>
-        <p class="goal">Assemble a real, modern pipeline end to end — the core of the job.</p>
-        <div class="kv"><b>Learn:</b> dimensional modeling (star schemas, facts &amp; dimensions, SCDs), a cloud warehouse (Snowflake or BigQuery), <b>dbt</b> for transformation, an orchestrator (Airflow or Dagster), Docker basics.</div>
-        <div class="kv" style="margin-top:8px;"><b>Milestone:</b> API → raw storage → warehouse → dbt models (tested) → a dashboard, all scheduled and orchestrated. This <em>is</em> a portfolio project.</div>
-        <span class="time">≈ 3–6 months</span>
-      </div>
-      <div class="phase" data-aos="fade-up">
-        <div class="pnum">Phase 3</div>
-        <h3>Production &amp; scale</h3>
-        <p class="goal">Make it big, reliable, and trustworthy — what separates juniors from engineers.</p>
-        <div class="kv"><b>Learn:</b> Spark/distributed processing, streaming (Kafka/Flink), the lakehouse &amp; table formats (Iceberg/Delta), data quality &amp; observability, CI/CD, cost &amp; performance tuning, some infra (Docker → Kubernetes, Terraform basics).</div>
-        <div class="kv" style="margin-top:8px;"><b>Milestone:</b> a scalable, tested, monitored pipeline handling both batch and streaming, with alerting when data breaks.</div>
-        <span class="time">≈ 6–12 months</span>
-      </div>
-      <div class="phase" data-aos="fade-up" data-aos-delay="100">
-        <div class="pnum">Phase 4</div>
-        <h3>Specialize &amp; deepen</h3>
-        <p class="goal">Ongoing. Pick a lane and grow toward senior / staff.</p>
-        <div class="kv"><b>Choose a lane:</b> streaming &amp; real-time · analytics engineering · platform / DataOps · ML/AI data engineering · governance &amp; data contracts. Add system design, architecture trade-offs, and mentoring.</div>
-        <div class="kv" style="margin-top:8px;"><b>Milestone:</b> design a data platform on paper, defend the trade-offs, and ship one hard thing others depend on.</div>
-        <span class="time">Ongoing</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOUNDATIONS -->
-<div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-light-2" id="foundations" data-nav="Foundations">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Foundations (Phase 1)</div>
-    <h2 data-aos="fade-up">The five things to nail before any tool.</h2>
-    <p class="lead" data-aos="fade-up">Tools change every year; these don't. Get comfortable here and every framework afterwards is just syntax.</p>
-    <div class="grid grid-3" style="margin-top:26px;">
-      <div class="concept" data-aos="fade-up"><h4>1 · SQL — deeply</h4><p>The one language you'll use every day in every role. Go past <span class="k">SELECT</span>: joins, <span class="k">GROUP BY</span>/<span class="k">HAVING</span>, subqueries, CTEs, window functions, and reading a query plan. Track 1 below is a full SQL path.</p></div>
-      <div class="concept" data-aos="fade-up" data-aos-delay="80"><h4>2 · Python</h4><p>The glue of data engineering. Data structures, functions, files, error handling, and calling <span class="k">APIs</span>. Then pandas/Polars for wrangling. You don't need to be a software architect — you need to be fluent.</p></div>
-      <div class="concept" data-aos="fade-up" data-aos-delay="160"><h4>3 · The command line &amp; Linux</h4><p>Pipelines run on servers, not laptops. Navigate a filesystem, pipe commands, <span class="k">ssh</span>, edit files, read logs, manage environments. A weekend gets you dangerous; you'll use it forever.</p></div>
-      <div class="concept" data-aos="fade-up"><h4>4 · Git &amp; version control</h4><p>All modern data work is code — models, pipelines, configs — reviewed in pull requests. Learn <span class="k">clone / branch / commit / push / PR / merge</span>. It's how teams ship without breaking each other.</p></div>
-      <div class="concept" data-aos="fade-up" data-aos-delay="80"><h4>5 · How data actually flows</h4><p>The mental model: sources → <span class="k">ingestion</span> → raw storage → <span class="k">transformation</span> → warehouse/lakehouse → BI. Know why each layer exists before you learn its tools. The stack map below is exactly this.</p></div>
-      <div class="concept" data-aos="fade-up" data-aos-delay="160"><h4>Helpful, not blocking</h4><p>Basic <span class="k">data structures &amp; algorithms</span>, a little networking (HTTP, ports), and spreadsheet fluency. You can pick these up as you go — don't let them stall you starting.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- MODERN DATA STACK -->
-<section class="surface-light" id="stack" data-nav="Data stack">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>The modern data stack, 2026</div>
-    <h2 data-aos="fade-up">Seven layers, and the tools that own them.</h2>
-    <p class="lead" data-aos="fade-up">Every data platform is some arrangement of these layers. You don't need every tool — you need to understand what each layer <em>does</em> and one solid tool per layer. Named tools are today's common picks, not the only ones.</p>
-    <div class="grid grid-2" style="margin-top:26px;">
-      <div class="layer" data-aos="fade-up"><h4>1 · Ingestion &amp; extraction</h4><p class="what">Get data out of sources (databases, APIs, files, events) and land it — batch or streaming (CDC).</p><p class="tools"><b>Batch/EL:</b> Fivetran, Airbyte, dlt · <b>Streaming/CDC:</b> Kafka, Flink, Debezium</p></div>
-      <div class="layer" data-aos="fade-up" data-aos-delay="80"><h4>2 · Storage &amp; the lakehouse</h4><p class="what">Where raw and modeled data live. Object storage + open table formats now blur "lake" and "warehouse" into the lakehouse.</p><p class="tools"><b>Object store:</b> S3, GCS, ADLS · <b>Table formats:</b> Apache Iceberg (the 2026 default), Delta Lake, Hudi, DuckLake</p></div>
-      <div class="layer" data-aos="fade-up"><h4>3 · Compute &amp; query engines</h4><p class="what">The engines that actually crunch the data — from a single laptop to a thousand-node cluster.</p><p class="tools"><b>Local/embedded:</b> DuckDB, Polars · <b>Distributed:</b> Spark, Trino/Presto</p></div>
-      <div class="layer" data-aos="fade-up" data-aos-delay="80"><h4>4 · Warehousing</h4><p class="what">Managed, columnar, massively-parallel query platforms — the analytics workhorse.</p><p class="tools"><b>Warehouses:</b> Snowflake, BigQuery, Databricks, Redshift</p></div>
-      <div class="layer" data-aos="fade-up"><h4>5 · Transformation</h4><p class="what">Turn raw tables into clean, tested, modeled datasets — as version-controlled code.</p><p class="tools"><b>Transform:</b> dbt (table stakes), SQLMesh · plus a <b>semantic layer</b> for metrics</p></div>
-      <div class="layer" data-aos="fade-up" data-aos-delay="80"><h4>6 · Orchestration</h4><p class="what">Schedule, sequence, retry and monitor the whole pipeline — the conductor.</p><p class="tools"><b>Orchestrators:</b> Airflow (the incumbent), Dagster (asset-centric), Prefect, Kestra</p></div>
-      <div class="layer" data-aos="fade-up"><h4>7 · Serving, BI &amp; the last mile</h4><p class="what">Where data becomes decisions — dashboards, reports, and self-service analytics.</p><p class="tools"><b>BI:</b> Power BI, Tableau, Looker, Metabase, Superset</p></div>
-      <div class="layer" data-aos="fade-up" data-aos-delay="80"><h4>Across it all · quality &amp; governance</h4><p class="what">Trust is a layer too: testing, observability, lineage, cataloging and access control run across everything above.</p><p class="tools"><b>Quality:</b> dbt tests, Great Expectations, Soda, data contracts · <b>Catalog:</b> DataHub, OpenMetadata, Unity Catalog</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- THE NINE TRACKS -->
-<section class="surface-light-2 cluster-head" id="tracks">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>The nine tracks in detail</div>
-    <h2 data-aos="fade-up">Nine skills, grouped into three specializations.</h2>
-    <p class="lead" data-aos="fade-up">Each track lists what it is, why it matters, the concepts to master (your checklist), the tools, a book pointer, and the hands-on EgyBI exercises — all on real, cited Egyptian data. They map to the three roles from the top of the page, so you can follow one path or borrow across all three. SQL underpins every path — start there whatever your goal.</p>
-  </div>
-</section>
-
-<section class="surface-light" id="track-de" data-nav="Data engineering">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Specialization &middot; Data engineering</div>
-    <h2 data-aos="fade-up">Build and run the pipelines.</h2>
-    <p class="lead" data-aos="fade-up">For the engineer who moves and processes data at scale &mdash; ingestion, orchestration, distributed compute, and the cloud platforms it all runs on. Maps to the <strong>Data Engineer</strong> role.</p>
-  </div>
-  <div class="wrap grid grid-2" style="margin-top:8px;">
-
-    <div class="track" data-aos="fade-up">
-      <span class="lvl">Intermediate → Advanced · Phase 2</span>
-      <h3>3 · Orchestration (Airflow / Dagster)</h3>
-      <p class="ww">Pipelines aren't scripts you run by hand — they're scheduled, retried, and monitored. Orchestration is the conductor.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>DAGs, tasks &amp; operators</li><li>Scheduling &amp; backfills</li>
-        <li>Idempotency &amp; retries</li><li>Sensors &amp; triggers</li>
-        <li>Passing data between tasks</li><li>Dynamic pipelines</li>
-        <li>Asset-centric (Dagster) vs task DAGs</li><li>SLAs &amp; alerting</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> Apache Airflow, Dagster, Prefect, Kestra.</p>
-      <p class="books"><strong>Read:</strong> <em>Data Pipelines with Apache Airflow</em> (Harenslak et al.).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Live Ingestion DAG</b> — pull the Met Museum's real nightly Egyptian-art CSV, land it, trigger transforms.</li>
-        <li><b>Backfill</b> — recompute dynasty-level aggregates after a schema change.</li>
-        <li><b>SLA Alerting</b> — fire an alert if the ingestion DAG misses its window.</li>
-      </ul>
-    </div>
-
-    <div class="track" data-aos="fade-up">
-      <span class="lvl">Advanced · Phase 3</span>
-      <h3>5 · Spark / PySpark &amp; Distributed Data</h3>
-      <p class="ww">When data outgrows one machine, you go distributed. Spark is the batch engine behind most large-scale pipelines.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>RDD vs DataFrame vs SQL</li><li>Lazy evaluation, transforms vs actions</li>
-        <li>Partitioning &amp; the shuffle</li><li>Data skew &amp; how to fix it</li>
-        <li>Broadcast joins</li><li>Caching / persist</li>
-        <li>The Catalyst optimizer</li><li>Structured streaming &amp; Parquet</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> Spark/PySpark, Databricks, Parquet, Polars (single-node).</p>
-      <p class="books"><strong>Read:</strong> <em>Learning Spark</em> (Damji et al.) · <em>Designing Data-Intensive Applications</em> (Kleppmann).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Partition Skew</b> — partition the ~30k-row Met dataset by era; detect and fix skew.</li>
-        <li><b>Broadcast Join</b> — broadcast the tiny <code>dim_dynasty</code> against a large fact table.</li>
-        <li><b>Idempotent Ingestion</b> — exactly-once load of the Deir el-Medina records.</li>
-      </ul>
-    </div>
-
-    <div class="track" data-aos="fade-up" data-aos-delay="80">
-      <span class="lvl">Advanced · Phase 3</span>
-      <h3>6 · Cloud Warehouses &amp; Lakehouse</h3>
-      <p class="ww">The managed platforms where modern analytics lives. Understanding how they store and bill data is what makes pipelines fast and cheap.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>Columnar storage &amp; MPP</li><li>Storage/compute separation</li>
-        <li>Partitioning &amp; clustering</li><li>Micro-partitions &amp; pruning</li>
-        <li>Time travel</li><li>Semi-structured (VARIANT/JSON)</li>
-        <li>Cost &amp; credit models</li><li>Iceberg/Delta table formats</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> Snowflake, BigQuery, Databricks; Apache Iceberg.</p>
-      <p class="books"><strong>Read:</strong> <em>Snowflake: The Definitive Guide</em> (Avila).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Clustering Key</b> — choose and justify a clustering key for the Met CSV.</li>
-        <li><b>Semi-structured JSON</b> — query the Met API's nested artist/constituent fields.</li>
-        <li><b>Time Travel</b> — recover from a bad UPDATE to a monument-attribution field.</li>
-      </ul>
-    </div>
-
-    <div class="track" data-aos="fade-up">
-      <span class="lvl">Beginner → Advanced · Phase 1–3</span>
-      <h3>9 · Python for Data Engineers</h3>
-      <p class="ww">The language that ties the whole stack together — ingestion, glue, automation, and the pipelines the orchestrator runs.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>Data structures &amp; comprehensions</li><li>pandas / Polars</li>
-        <li>requests &amp; working with APIs</li><li>Error handling, retries, backoff</li>
-        <li>Logging &amp; typing</li><li>venv / packaging</li>
-        <li>Testing with pytest</li><li>CSV / JSON / Parquet; dlt for EL</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> Python 3, pandas/Polars, requests, dlt, pytest, SQLAlchemy.</p>
-      <p class="books"><strong>Read:</strong> <em>Data Engineering with Python</em> (Crickard) · <em>Fundamentals of Data Engineering</em> (Reis &amp; Housley).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Resilient Ingestion</b> — a retry/backoff script against the real Met Museum API.</li>
-        <li><b>Clean the Papyrus</b> — clean a Wilbour-Papyrus-style ~2,800-row land/tax dataset.</li>
-        <li><b>End-to-End Pipeline</b> — ingest → land → dbt transform → orchestrate → BI-ready mart.</li>
-      </ul>
-    </div>
-
-  </div>
-</section>
-
-<section class="surface-light-2" id="track-ae" data-nav="Analytics engineering">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Specialization &middot; Analytics engineering</div>
-    <h2 data-aos="fade-up">Turn raw data into trusted models.</h2>
-    <p class="lead" data-aos="fade-up">For the builder in the middle &mdash; dimensional modeling, dbt transformations, and the tests and observability that make the numbers trustworthy. Maps to the <strong>Analytics Engineer</strong> role.</p>
-  </div>
-  <div class="wrap grid grid-2" style="margin-top:8px;">
-
-    <div class="track" data-aos="fade-up" data-aos-delay="80">
-      <span class="lvl">Intermediate → Advanced · Phase 2</span>
-      <h3>2 · Dimensional Modeling &amp; Warehousing</h3>
-      <p class="ww">How you shape data so a business can actually use it. The design skill behind every fast, trustworthy warehouse.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>Star vs snowflake schemas</li><li>Facts &amp; dimensions</li>
-        <li>Grain of a fact table</li><li>SCD types 0–6</li>
-        <li>Surrogate keys</li><li>Conformed dimensions</li>
-        <li>Kimball vs Inmon vs Data Vault</li><li>Wide tables / OBT trade-offs</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> any warehouse, dbt, an ERD tool.</p>
-      <p class="books"><strong>Read:</strong> <em>The Data Warehouse Toolkit</em> (Kimball) · <em>Building the Data Warehouse</em> (Inmon) · <em>Star Schema</em> (Adamson).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Monument Star Schema</b> — build <code>fact_monument_construction</code> against pharaoh, dynasty &amp; location dimensions.</li>
-        <li><b>SCD Type 2</b> — model the Great Sphinx's disputed attribution as slowly-changing history.</li>
-        <li><b>Conformed Dimensions</b> — share <code>dim_dynasty</code> across monument and reign facts.</li>
-      </ul>
-    </div>
-
-    <div class="track" data-aos="fade-up" data-aos-delay="80">
-      <span class="lvl">Intermediate · Phase 2</span>
-      <h3>4 · dbt &amp; Analytics Engineering</h3>
-      <p class="ww">The modern transformation layer — SQL, but version-controlled, tested, documented and modular. The heart of the analytics-engineer role.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>staging → intermediate → mart</li><li>Materializations (view/table/incremental)</li>
-        <li>Generic &amp; singular tests</li><li>Sources &amp; freshness</li>
-        <li>refs, the DAG &amp; lineage</li><li>Macros &amp; Jinja</li>
-        <li>Snapshots (SCD)</li><li>Docs, exposures &amp; the semantic layer</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> dbt (Core/Cloud), a warehouse, Git.</p>
-      <p class="books"><strong>Read:</strong> <em>Analytics Engineering with SQL and dbt</em> (Machado &amp; Russa).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Model Layers</b> — build staging → intermediate → mart on the real Met dataset.</li>
-        <li><b>Test Suite</b> — pass <code>not_null</code> / <code>unique</code> / <code>relationships</code> tests.</li>
-        <li><b>Incremental Model</b> — process only Met objects updated since the last run.</li>
-      </ul>
-    </div>
-
-    <div class="track" data-aos="fade-up" data-aos-delay="80">
-      <span class="lvl">Intermediate → Advanced · Phase 3</span>
-      <h3>8 · Data Quality, Testing &amp; Observability</h3>
-      <p class="ww">A pipeline that silently ships wrong numbers is worse than one that's down. Trust is engineered — this is how.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>Quality dimensions (accuracy, freshness…)</li><li>Tests &amp; assertions</li>
-        <li>Data contracts</li><li>Freshness / volume / schema monitors</li>
-        <li>Distribution &amp; anomaly detection</li><li>Lineage &amp; impact analysis</li>
-        <li>Incident management</li><li>SLAs / SLOs for data</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> dbt tests, Great Expectations, Soda, Monte Carlo.</p>
-      <p class="books"><strong>Read:</strong> <em>Data Quality Fundamentals</em> (Moses, Gavish &amp; Vorwerck).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Overlap Validation</b> — no two same-dynasty pharaohs illogically overlap (co-regency allowlist).</li>
-        <li><b>Freshness Check</b> — alert if the Met's nightly CSV hasn't updated in 48h.</li>
-        <li><b>Lineage</b> — when a disputed date shifts, trace which marts need reprocessing.</li>
-      </ul>
-    </div>
-
-  </div>
-</section>
-
-<section class="surface-light" id="track-bi" data-nav="BI development">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Specialization &middot; BI development</div>
-    <h2 data-aos="fade-up">Query the data, turn it into decisions.</h2>
-    <p class="lead" data-aos="fade-up">For the analyst and BI developer &mdash; SQL is the foundation every path starts with, and here it is most of the job, paired with the visualization skills that turn a model into something a business acts on. Maps to the <strong>Data / BI Analyst</strong> and <strong>BI Developer</strong> roles.</p>
-  </div>
-  <div class="wrap grid grid-2" style="margin-top:8px;">
-
-    <div class="track" data-aos="fade-up">
-      <span class="lvl">Beginner → Advanced · Phase 1</span>
-      <h3>1 · SQL — Fundamentals to Advanced</h3>
-      <p class="ww">The single most-used skill in data. Every role queries; the good ones query <em>well</em>. Master this before anything else.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>All join types &amp; anti-joins</li><li>GROUP BY, HAVING, aggregates</li>
-        <li>Subqueries &amp; CTEs</li><li>Window functions</li>
-        <li>Indexes &amp; the query plan</li><li>Normalization &amp; keys</li>
-        <li>NULL logic &amp; set operations</li><li>Date/time &amp; string handling</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> PostgreSQL, any warehouse SQL, SQLite (in-browser here).</p>
-      <p class="books"><strong>Read:</strong> <em>SQL Antipatterns</em> (Karwin) · <em>SQL Performance Explained</em> (Winand).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Longest Reigns</b> — rank pharaohs by reign length; a window-function variant partitions by dynasty.</li>
-        <li><b>The Family Line</b> — self-join to reconstruct father→son succession chains.</li>
-        <li><b>Missing Monuments</b> — anti-join UNESCO sites against monuments to find the gaps.</li>
-      </ul>
-    </div>
-
-    <div class="track" data-aos="fade-up">
-      <span class="lvl">Beginner → Intermediate · any phase</span>
-      <h3>7 · BI &amp; Data Visualization</h3>
-      <p class="ww">Data only matters when someone acts on it. BI turns models into dashboards, measures and stories a business runs on.</p>
-      <div class="sub">Concepts to master</div>
-      <ul class="check">
-        <li>Semantic models &amp; measures (DAX)</li><li>Star schemas for BI</li>
-        <li>Choosing the right chart</li><li>Dashboards vs reports</li>
-        <li>Pre-attentive attributes</li><li>Row-level security</li>
-        <li>Self-service &amp; governance</li><li>KPI &amp; metric design</li>
-      </ul>
-      <p class="tools"><b>Tools:</b> Power BI, Tableau, Looker, Metabase.</p>
-      <p class="books"><strong>Read:</strong> <em>Storytelling with Data</em> (Knaflic).</p>
-      <div class="sub">Practice on EgyBI</div>
-      <ul class="ex">
-        <li><b>Construction Gantt</b> — a timeline of monument-construction eras across dynasties.</li>
-        <li><b>Flood Anomalies</b> — visualize the Nile flood record, highlighting outlier years.</li>
-        <li><b>Fix the Chart</b> — redesign a misleading dual-axis "monuments vs reign length" chart.</li>
-      </ul>
-    </div>
-
-  </div>
-</section>
-
-<!-- CORE CONCEPTS -->
-<section class="surface-dark" id="concepts" data-nav="Concepts">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Core architecture concepts</div>
-    <h2 data-aos="fade-up">The ideas behind the tools.</h2>
-    <p class="lead" data-aos="fade-up">Tools come and go; these concepts are what interviews probe and production demands. Understand the <em>why</em> and any new tool is easy.</p>
-    <div class="grid grid-3" style="margin-top:26px;">
-      <div class="concept" data-aos="fade-up" style="background:var(--kemet-2);border-color:var(--line-dark);"><h4 style="color:#f3ead4;">Batch vs streaming</h4><p style="color:var(--on-dark);">Process data in scheduled chunks, or continuously as it arrives. Most teams run <span class="k" style="color:var(--gold-bright);">both</span> — batch for history, streaming for now. Know the latency/cost trade-off.</p></div>
-      <div class="concept" data-aos="fade-up" data-aos-delay="80" style="background:var(--kemet-2);border-color:var(--line-dark);"><h4 style="color:#f3ead4;">ETL vs ELT</h4><p style="color:var(--on-dark);">Transform before loading, or load raw and transform inside the warehouse. Cheap cloud compute made <span class="k" style="color:var(--gold-bright);">ELT</span> the modern default — the L before the T is why dbt exists.</p></div>
-      <div class="concept" data-aos="fade-up" data-aos-delay="160" style="background:var(--kemet-2);border-color:var(--line-dark);"><h4 style="color:#f3ead4;">Warehouse · lake · lakehouse</h4><p style="color:var(--on-dark);">Structured &amp; fast, cheap &amp; flexible, or both at once. Open table formats (<span class="k" style="color:var(--gold-bright);">Iceberg</span>) gave the lake warehouse-grade reliability — the 2026 direction.</p></div>
-      <div class="concept" data-aos="fade-up" style="background:var(--kemet-2);border-color:var(--line-dark);"><h4 style="color:#f3ead4;">Idempotency</h4><p style="color:var(--on-dark);">Running a pipeline twice must not double the data. <span class="k" style="color:var(--gold-bright);">Idempotent</span> loads (upserts, partition overwrites) are what make retries and backfills safe.</p></div>
-      <div class="concept" data-aos="fade-up" data-aos-delay="80" style="background:var(--kemet-2);border-color:var(--line-dark);"><h4 style="color:#f3ead4;">Data contracts</h4><p style="color:var(--on-dark);">A promised schema &amp; meaning between a producer and its consumers, so an upstream change can't silently break downstream models. The 2026 answer to "who broke the dashboard?"</p></div>
-      <div class="concept" data-aos="fade-up" data-aos-delay="160" style="background:var(--kemet-2);border-color:var(--line-dark);"><h4 style="color:#f3ead4;">Partitioning &amp; the shuffle</h4><p style="color:var(--on-dark);">How data is split across files/nodes decides speed and cost. Moving it around (the <span class="k" style="color:var(--gold-bright);">shuffle</span>) is expensive — designing to avoid it is half of performance tuning.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- READING LIST -->
-<div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-light" id="reading" data-nav="Reading">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>The reading list</div>
-    <h2 data-aos="fade-up">The shelf worth building.</h2>
-    <p class="lead" data-aos="fade-up">A short, respected library that covers the whole field. Read the first two cover to cover; use the rest as track references. (Titles &amp; authors only — EgyBI's exercises are written from scratch, never copied.)</p>
-    <div class="booklist" style="margin-top:8px;">
-      <div class="b"><span class="t">Fundamentals of Data Engineering</span> <span class="a">— Reis &amp; Housley.</span> <span class="d">The best single starting map of the whole field and its lifecycle.</span></div>
-      <div class="b"><span class="t">Designing Data-Intensive Applications</span> <span class="a">— Kleppmann.</span> <span class="d">The deep "why" behind storage, distribution and reliability. A career-long reference.</span></div>
-      <div class="b"><span class="t">The Data Warehouse Toolkit</span> <span class="a">— Kimball &amp; Ross.</span> <span class="d">The canon of dimensional modeling — facts, dimensions, star schemas.</span></div>
-      <div class="b"><span class="t">SQL Antipatterns</span> <span class="a">— Karwin.</span> <span class="d">Learn great SQL by studying the traps to avoid.</span></div>
-      <div class="b"><span class="t">SQL Performance Explained</span> <span class="a">— Winand.</span> <span class="d">How indexes and the query planner really work.</span></div>
-      <div class="b"><span class="t">Analytics Engineering with SQL and dbt</span> <span class="a">— Machado &amp; Russa.</span> <span class="d">The modern transformation-layer workflow.</span></div>
-      <div class="b"><span class="t">Data Pipelines with Apache Airflow</span> <span class="a">— Harenslak et al.</span> <span class="d">Orchestration from first DAG to production patterns.</span></div>
-      <div class="b"><span class="t">Learning Spark</span> <span class="a">— Damji et al.</span> <span class="d">Distributed processing with the DataFrame API.</span></div>
-      <div class="b"><span class="t">Data Quality Fundamentals</span> <span class="a">— Moses, Gavish &amp; Vorwerck.</span> <span class="d">Observability, testing and trust at scale.</span></div>
-      <div class="b"><span class="t">Storytelling with Data</span> <span class="a">— Knaflic.</span> <span class="d">Make the last mile — charts people actually understand.</span></div>
-    </div>
-    <p class="lead" data-aos="fade-up" style="margin-top:22px;font-size:0.9rem;color:var(--ink-soft);">Free resources worth more than most courses: the official docs for <strong>dbt</strong>, <strong>Airflow/Dagster</strong>, <strong>Snowflake/BigQuery</strong> and <strong>Spark</strong>; open datasets (World Bank, the Met Museum's CC0 collection, and the cited data right here on EgyBI); and the data communities on Reddit, Discord and LinkedIn where practitioners debate this stuff daily.</p>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="surface-light-2" id="faq" data-nav="FAQ">
-  <div class="wrap faq">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>Straight answers</div>
-    <h2 data-aos="fade-up">Questions every beginner asks.</h2>
-    <div data-aos="fade-up" style="margin-top:18px;">
-      <details><summary>Do I need a computer-science degree?</summary><p>No. A degree helps but isn't required — a strong portfolio of real pipelines and solid SQL/Python get interviews. Most hiring is skills-first now.</p></details>
-      <details><summary>Do I need to know maths / statistics?</summary><p>For data <em>engineering</em>, not much beyond comfort with numbers — that's more the data-scientist's world. You need logic, systems thinking and code. Stats matter if you later move toward data science.</p></details>
-      <details><summary>Which should I learn first — Python or SQL?</summary><p>SQL. It's the fastest to become useful with and every role uses it daily. Add Python right after; the two together are your foundation.</p></details>
-      <details><summary>Cloud — which one, and do I need to pay?</summary><p>Any one of AWS / GCP / Azure teaches the concepts; they transfer. Free tiers plus tools that run locally (DuckDB, Postgres in Docker) let you learn the whole stack for almost nothing.</p></details>
-      <details><summary>How do I get experience with no job?</summary><p>Build projects that look like real work: pull from an API, store raw files, transform with dbt, load to a warehouse, feed a dashboard — orchestrated and on a schedule. One end-to-end project beats ten tutorials. EgyBI's tracks are built to be exactly that.</p></details>
-      <details><summary>Is AI going to replace data engineers?</summary><p>It's changing the job, not deleting it — AI writes boilerplate, but someone still designs, tests, secures and runs the systems, and demand for clean, reliable data only grows as AI does. Learn to use the tools; own the judgment.</p></details>
-    </div>
-  </div>
-</section>
-
-<section class="surface-dark center">
-  <div class="wrap">
-    <h2 data-aos="fade-up">Stop reading. Start querying.</h2>
-    <p class="lead" data-aos="fade-up">The roadmap only works if you build. Every track here has hands-on reps waiting — real, cited Egyptian data, auto-graded, in your browser.</p>
-    <div class="cta-row center" data-aos="fade-up"><a href="practice.html" class="btn btn-primary">Try the SQL playground →</a><a href="index.html#newsletter" class="btn btn-ghost">Get The Papyrus</a></div>
   </div>
 </section>
 
 <footer class="site-footer">
-  <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life.</p></div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
-    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
-    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.metmuseum.org/" target="_blank" rel="noopener">Met Museum</a></div>
-  </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+  <div class="wrap"><p>&copy; EgyBI &middot; <a href="privacy.html">Privacy</a></p></div>
 </footer>
 
-<script src="assets/vendor/aos.js"></script>
-<script src="assets/vendor/tsparticles.bundle.min.js"></script>
-<script src="assets/egybi.js"></script>
-<script src="assets/glyphs.js?v=3"></script>
-<script src="assets/wayfinding.js?v=1"></script>
-<script src="assets/ads-config.js"></script>
-<script src="assets/ads.js"></script>
-<script src="assets/vendor/motion.min.js"></script>
-<script src="assets/motion.js?v=2"></script>
-<script>window.EGYBI_AUTH = { base: 'auth/' };</script>
-<script src="assets/auth.js?v=10"></script>
-  <script src="assets/analytics.js" defer></script>
 </body>
 </html>

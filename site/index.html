@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EgyBI — Free SQL Practice on Real Egyptian Data</title>
+<title>EgyBI — Egypt in Maps and Cited Data</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="description" content="Practice SQL free on real, cited Egyptian data. 123 auto-graded challenges across 15 sectors, from pharaoh reigns to today's food prices. No signup.">
-<meta property="og:title" content="EgyBI — The House of Life for Data Engineers & BI Developers">
-<meta property="og:description" content="Practice BI & data engineering on real, cited Egyptian history and economics.">
+<meta name="description" content="An encyclopaedia of Egypt told through maps and open data — governorates, heritage sites, street networks, prices and history. Every figure carries its source and date.">
+<meta property="og:title" content="EgyBI — Egypt in Maps and Cited Data">
+<meta property="og:description" content="An encyclopaedia of Egypt told through maps and open data. Every figure carries its source and date.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://egybi.com">
 <meta property="og:image" content="https://egybi.com/og-image.png?v=2">
@@ -18,13 +18,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=12" rel="stylesheet">
+<link href="assets/egybi.css?v=13" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
   <link rel="canonical" href="https://egybi.com/">
-  <meta name="twitter:title" content="EgyBI — The House of Life for Data Engineers &amp; BI Developers">
-  <meta name="twitter:description" content="EgyBI is a gamified, HackerRank/LeetCode-style skills-practice platform for BI, data engineering, data warehousing, and the modern data stack — every challenge built on real, cited Egyptian data.">
+  <meta name="twitter:title" content="EgyBI — Egypt in Maps and Cited Data">
+  <meta name="twitter:description" content="An encyclopaedia of Egypt told through maps and open data — geography, heritage, infrastructure and history, every figure traceable to a named source.">
   <meta name="twitter:image" content="https://egybi.com/og-image.png?v=2">
   <!-- ENTITY NOTE. Google resolves a brand name to an entity largely through
        sameAs — the set of external profiles that assert the same identity.
@@ -47,25 +47,21 @@
  "alternateName":["egybi","EgyBI.com","Egy BI"],
  "url":"https://egybi.com/","logo":"https://egybi.com/og-image.png?v=2",
  "email":"hello@egybi.com","foundingDate":"2026",
- "knowsAbout":["SQL","Business Intelligence","Data Engineering","Data Warehousing","Egyptian open data"],
+ "knowsAbout":["Egypt","Egyptian open data","Geographic information systems","Cartography","Data journalism"],
  "founder":{"@id":"https://egybi.com/#founder"},
- "description":"EgyBI is a free SQL practice platform where every dataset is real, cited Egyptian data."},
+ "description":"EgyBI is a free encyclopaedia of Egypt told through maps and cited open data — places, geography, infrastructure and history, with every figure traceable to a named source."},
 {"@type":"Person","@id":"https://egybi.com/#founder","name":"Ahmed Nasr",
- "description":"Data engineer and BI developer; sole author of EgyBI.",
- "knowsAbout":["SQL","Business Intelligence","Data Engineering"]},
+ "description":"Civil engineer working in data; sole author of EgyBI.",
+ "knowsAbout":["Egypt","Civil engineering","Geographic information systems","Data engineering"]},
 {"@type":"WebSite","@id":"https://egybi.com/#site","url":"https://egybi.com/","name":"EgyBI",
  "publisher":{"@id":"https://egybi.com/#org"},"inLanguage":"en"},
-{"@type":"LearningResource","name":"EgyBI SQL Challenges",
- "url":"https://egybi.com/practice.html","learningResourceType":"Interactive exercise",
- "teaches":["SQL","Business Intelligence","Data Engineering"],
- "isAccessibleForFree":true,"provider":{"@id":"https://egybi.com/#org"}}
+{"@type":"Dataset","name":"Egypt open data on EgyBI",
+ "url":"https://egybi.com/explore.html",
+ "description":"Sourced Egyptian data on economy, population, land, heritage and infrastructure. Every figure carries its source and date.",
+ "isAccessibleForFree":true,"creator":{"@id":"https://egybi.com/#org"},
+ "license":"https://creativecommons.org/licenses/by/4.0/"}
 ]}
 </script>
-  <!-- The hero cannot run until the SQL engine arrives, and it was queued
-       behind decorative libraries. Preload starts the 314 KB wasm at high
-       priority in parallel, without changing execution order. -->
-  <link rel="preload" as="script" href="assets/vendor/sql-wasm.js">
-  <link rel="preload" as="fetch" type="application/wasm" href="assets/vendor/sql-wasm.wasm">
   <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
        Android and macOS, so these signs would be empty boxes for most
        visitors. This loads ONLY the nine signs we use (~12 KB). -->
@@ -97,10 +93,8 @@
       <a href="explore.html">Explore</a>
       <a href="prices.html">Prices</a>
       <a href="stocks.html">Stocks</a>
-      <a href="geospatial.html">Atlas</a><a href="streets.html">Street report card</a>
+      <a href="geospatial.html">Atlas</a>
       <a href="streets.html">Streets</a>
-      <a href="tracks.html">Tracks</a>
-      <a href="practice.html">Practice</a>
       <a href="blog.html">Blog</a>
       <a href="community.html">Community</a>
       <a href="about.html">About</a>
@@ -117,9 +111,9 @@
 <section class="surface-hero hero-v2" style="position:relative;overflow:hidden;padding-top:74px;padding-bottom:62px;">
   <div id="hero-particles" class="hero-particles" aria-hidden="true" data-parallax="0.12"></div>
   <div class="hero-inner wrap" data-mo-hero>
-    <p class="hero-eyebrow"><span data-glyph="reed"></span> Real SQL &middot; Real Egyptian data &middot; No signup <span data-glyph="scroll"></span></p>
-    <h1 class="hero-h1">Write SQL against 4,000 years of Egypt.</h1>
-    <p class="lead hero-lead">123 auto-graded challenges on 61 tables of cited Egyptian data &mdash; pharaohs, obelisks, the Suez Canal, today&rsquo;s food prices. Runs in your browser; nothing to install or join.</p>
+    <p class="hero-eyebrow"><span data-glyph="reed"></span> Real data &middot; Every figure sourced &middot; No signup <span data-glyph="scroll"></span></p>
+    <h1 class="hero-h1">Egypt, in maps and cited data.</h1>
+    <p class="lead hero-lead">An encyclopaedia of Egypt built on open data &mdash; its 27 governorates, its heritage sites, its streets and its prices. Every figure carries the source and date it came from, and you can query any of it yourself.</p>
 
     <div class="sandbox hero-sandbox">
       <label for="sqlInput">Table: <code>pharaohs(name, dynasty, reign_start, reign_end)</code> &mdash; years are signed, so BCE is negative</label>
@@ -136,7 +130,7 @@ LIMIT 5;</textarea>
     </div>
 
     <div class="cta-row hero-cta">
-      <a href="practice.html" class="btn btn-primary" data-ev="hero_browse_challenges">Browse all 123 challenges &rarr;</a>
+      <a href="geospatial.html" class="btn btn-primary" data-ev="hero_open_atlas">Open the Atlas &rarr;</a>
       <a href="#newsletter" class="btn btn-ghost">Get The Papyrus</a>
     </div>
   </div>
@@ -153,7 +147,7 @@ LIMIT 5;</textarea>
         <p class="lead">Both numbers are real and come from the same source. Nothing about the country changed in between. Work out why in six SQL queries, in your browser &mdash; no signup, nothing to install.</p>
         <div class="cta-row" style="margin-top:20px;">
           <a class="btn btn-primary" href="case.html" data-ev="home_open_case">Open the case &rarr;</a>
-          <a class="btn btn-blue" href="practice.html">Or browse all 123 challenges</a>
+          <a class="btn btn-blue" href="explore.html">Or explore Egypt in charts</a>
         </div>
       </div>
       <div class="cs-nums" aria-hidden="true">
@@ -167,12 +161,12 @@ LIMIT 5;</textarea>
 <section class="surface-dark center">
   <div class="wrap">
     <h2 data-aos="fade-up">What you actually get.</h2>
-    <p class="lead" data-aos="fade-up"><strong>EgyBI</strong> is a free SQL practice platform where every dataset is real, cited Egyptian data. Every challenge is graded against a real SQLite database, and every row in it carries a source &mdash; this is the product, not a themed skin.</p>
+    <p class="lead" data-aos="fade-up"><strong>EgyBI</strong> is a free encyclopaedia of Egypt told through maps and open data. Every row behind every chart carries a named source and a date, and where sources disagree the page says so rather than picking the tidier number.</p>
     <div class="stat-grid" style="margin-top:40px;">
-      <div class="stat" data-aos="fade-up"><div class="num" data-count="123">123</div><div class="label">Auto-graded challenges</div><div class="cap">41 easy &middot; 53 medium &middot; 29 hard</div></div>
+      <div class="stat" data-aos="fade-up"><div class="num" data-count="27">27</div><div class="label">Governorates mapped</div><div class="cap">Population, density, urban share</div></div>
       <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="61">61</div><div class="label">Tables of cited data</div><div class="cap">Every row carries its source</div></div>
       <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="33">33</div><div class="label">Surviving obelisks</div><div class="cap">Only 15 are still in Egypt</div></div>
-      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="0" data-raw="0">0</div><div class="label">Signups required</div><div class="cap">Start solving in your browser</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="0" data-raw="0">0</div><div class="label">Signups required</div><div class="cap">Nothing to install or join</div></div>
     </div>
   </div>
 </section>
@@ -229,7 +223,7 @@ LIMIT 5;</textarea>
       <span class="pill">Data Quality &amp; Testing</span>
       <span class="pill">Python for Data Engineers</span>
     </div>
-    <div class="cta-row" data-aos="fade-up"><a href="tracks.html" class="btn btn-primary">Explore all tracks →</a></div>
+    <div class="cta-row" data-aos="fade-up"><a href="explore.html" class="btn btn-primary">Explore Egypt&rsquo;s data →</a></div>
   </div>
 </section>
 
@@ -344,7 +338,7 @@ LIMIT 5;</textarea>
       <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
       <p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life. A gamified home for BI, data engineering, and the modern data stack — built on real, cited Egyptian data.</p>
     </div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a></div>
     <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="explore.html">Full source list</a></div>
   </div>
@@ -355,8 +349,8 @@ LIMIT 5;</textarea>
 <script src="assets/vendor/tsparticles.bundle.min.js"></script>
 <script src="assets/vendor/countUp.umd.js"></script>
 <script src="assets/vendor/chart.umd.js"></script>
-<script src="assets/vendor/sql-wasm.js"></script>
 <script src="assets/egybi.js"></script>
+<script src="assets/query.js?v=1"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/egx-symbols.js?v=2"></script>
@@ -401,13 +395,39 @@ LIMIT 5;</textarea>
   // sql.js demo
   var sqlDb=null, runBtn=document.getElementById('runQueryBtn'), statusEl=document.getElementById('sqlStatus'), outputEl=document.getElementById('sqlOutput'), inputEl=document.getElementById('sqlInput');
   function runQuery(){ if(!sqlDb)return; try{ var res=sqlDb.exec(inputEl.value); if(!res.length){outputEl.innerHTML='<p class="sql-empty">Query ran fine but returned no rows.</p>';return;} var c=res[0].columns,v=res[0].values,h='<table class="result-table"><thead><tr>'+c.map(function(x){return '<th>'+EGYBI.escapeHtml(x)+'</th>';}).join('')+'</tr></thead><tbody>'; v.forEach(function(r){h+='<tr>'+r.map(function(x){return '<td>'+EGYBI.escapeHtml(x)+'</td>';}).join('')+'</tr>';}); outputEl.innerHTML=h+'</tbody></table>'; }catch(err){ outputEl.innerHTML='<p class="sql-error">SQL error: '+EGYBI.escapeHtml(err.message)+'</p>'; } }
-  initSqlJs({ locateFile: function(f){ return 'assets/vendor/'+f; } }).then(function(SQL){
+  // The engine is 655 KB of WebAssembly. EgyBI is an encyclopaedia of Egypt
+  // now, so most people arriving here want to read about a place and will
+  // never touch this box — loading it eagerly would tax every one of them for
+  // a feature they did not ask for. It loads on the first Run instead.
+  var enginePromise=null;
+  function ensureEngine(){
+    if(enginePromise) return enginePromise;
+    statusEl.textContent='Starting the SQL engine…'; statusEl.className='sql-status';
+    enginePromise=new Promise(function(resolve,reject){
+      var s=document.createElement('script');
+      s.src='assets/vendor/sql-wasm.js';
+      s.onload=resolve; s.onerror=function(){ reject(new Error('script blocked')); };
+      document.head.appendChild(s);
+    }).then(function(){ return initSqlJs({ locateFile: function(f){ return 'assets/vendor/'+f; } }); });
+    return enginePromise;
+  }
+  ensureEngine.boot=function(SQL){
     sqlDb=new SQL.Database();
     sqlDb.run('CREATE TABLE pharaohs (name TEXT, dynasty TEXT, reign_start INTEGER, reign_end INTEGER);');
     sqlDb.run("INSERT INTO pharaohs VALUES ('Narmer','I',-3100,-3080),('Djoser','III',-2670,-2650),('Sneferu','IV',-2613,-2589),('Khufu','IV',-2589,-2566),('Khafre','IV',-2558,-2532),('Menkaure','IV',-2532,-2503),('Unas','V',-2375,-2345),('Pepi II','VI',-2278,-2184),('Mentuhotep II','XI',-2061,-2010),('Senusret III','XII',-1878,-1839),('Sobekneferu','XII',-1806,-1802),('Ahmose I','XVIII',-1550,-1525),('Hatshepsut','XVIII',-1479,-1458),('Thutmose III','XVIII',-1479,-1425),('Amenhotep III','XVIII',-1388,-1351),('Akhenaten','XVIII',-1353,-1336),('Tutankhamun','XVIII',-1332,-1323),('Seti I','XIX',-1290,-1279),('Ramesses II','XIX',-1279,-1213),('Merneptah','XIX',-1213,-1203),('Ramesses III','XX',-1184,-1153),('Taharqa','XXV',-690,-664),('Psamtik I','XXVI',-664,-610),('Nectanebo II','XXX',-360,-343),('Ptolemy I Soter','Ptolemaic',-305,-282),('Cleopatra VII','Ptolemaic',-51,-30);");
-    statusEl.textContent='Ready — this is a real SQL engine running in your browser.'; statusEl.className='sql-status ready'; runBtn.disabled=false; runQuery();
-  }).catch(function(err){ statusEl.textContent='Could not load the SQL engine ('+err.message+'). Reload to retry.'; statusEl.className='sql-status error'; });
-  runBtn.addEventListener('click', function(){ if(window.EGYBI_TRACK) EGYBI_TRACK('hero_run_clicked'); runQuery(); });
+    statusEl.textContent='Ready — this is a real SQL engine running in your browser.'; statusEl.className='sql-status ready';
+  };
+  statusEl.textContent='Press Run to start the SQL engine.'; statusEl.className='sql-status'; runBtn.disabled=false;
+  runBtn.addEventListener('click', function(){
+    if(window.EGYBI_TRACK) EGYBI_TRACK('hero_run_clicked');
+    if(sqlDb) return runQuery();
+    runBtn.disabled=true;
+    ensureEngine().then(function(SQL){ ensureEngine.boot(SQL); runBtn.disabled=false; runQuery(); })
+      .catch(function(err){
+        statusEl.textContent='The SQL engine could not load ('+err.message+'). Everything else on this page works.';
+        statusEl.className='sql-status error'; runBtn.disabled=false;
+      });
+  });
 </script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>

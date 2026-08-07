@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="assets/egybi.css?v=12" rel="stylesheet">
+<link href="assets/egybi.css?v=13" rel="stylesheet">
 <style>
   .src-strip { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:4px solid var(--gold); border-radius:var(--radius); padding:16px 20px; margin:0 0 22px; }
   .src-strip .live { display:inline-flex; align-items:center; gap:7px; font-weight:700; color:var(--blue-deep); }
@@ -167,10 +167,8 @@
       <a href="explore.html">Explore</a>
       <a href="prices.html" class="active">Prices</a>
       <a href="stocks.html">Stocks</a>
-      <a href="geospatial.html">Atlas</a><a href="streets.html">Street report card</a>
+      <a href="geospatial.html">Atlas</a>
       <a href="streets.html">Streets</a>
-      <a href="tracks.html">Tracks</a>
-      <a href="practice.html">Practice</a>
       <a href="blog.html">Blog</a>
       <a href="community.html">Community</a>
       <a href="about.html">About</a>
@@ -237,7 +235,7 @@
     <h2>More cited Egyptian data.</h2>
     <div class="ns-grid" style="text-align:left;margin-top:22px;">
       <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt, charted &rarr;</h3><p>~23 BI dashboards and an interactive map of all 27 governorates.</p></a>
-      <a class="ns-card" href="practice.html"><span class="ns-k">Practice</span><h3>Query the data yourself &rarr;</h3><p>123 auto-graded SQL challenges on real cited tables — no signup.</p></a>
+      <a class="ns-card" href="geospatial.html"><span class="ns-k">Atlas</span><h3>See it on the map &rarr;</h3><p>Egypt&rsquo;s 27 governorates, health facilities, schools and the seven World Heritage sites &mdash; every layer sourced and dated.</p></a>
       <a class="ns-card" href="blog.html"><span class="ns-k">The Papyrus</span><h3>Egypt, told through its data &rarr;</h3><p>Short, cited stories about the country and its numbers.</p></a>
     </div>
   </div>
@@ -246,7 +244,7 @@
 <footer class="site-footer">
   <div class="cols">
     <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="practice.html">SQL Practice</a></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a></div>
     <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h5>Price source</h5><a href="http://www.agriprice.gov.eg/" target="_blank" rel="noopener">بوابة الأسعار</a><a href="https://www.idsc.gov.eg/" target="_blank" rel="noopener">مركز معلومات الوزراء</a></div>
   </div>
@@ -256,6 +254,7 @@
 <script src="assets/vendor/aos.js"></script>
 <script src="assets/vendor/chart.umd.js"></script>
 <script src="assets/egybi.js"></script>
+<script src="assets/query.js?v=1"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/fx.js?v=1"></script>
