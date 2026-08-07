@@ -1,6 +1,1721 @@
 {
- "generated": false,
- "reason": "fetch_tourism.py has not completed a successful run yet, so this layer holds no data.",
- "note": "This file exists deliberately and contains NO figures. The page requesting a file that does not exist produced a 404 on every visit; a 200 that says plainly 'not generated' is better than a 404 that says nothing. The page reads the generated flag rather than inferring absence from a failed fetch, and shows its empty state. The first successful run of the NASA POWER climatology pipeline overwrites this whole file with real, sourced measurements. Nothing here is a placeholder value that could be mistaken for data — the sites array is empty on purpose.",
- "sites": []
+ "as_of": "2026-08-07",
+ "fetched_at": "2026-08-07T23:03:11+00:00",
+ "source": "NASA POWER climatology (MERRA-2 reanalysis)",
+ "source_url": "https://power.larc.nasa.gov/",
+ "license": "Public domain (US Government) — cite NASA POWER",
+ "note": "Long-term monthly means from NASA's POWER climatology API, which derives them from the MERRA-2 reanalysis. These are MODELLED long-run averages, not weather-station observations and not a forecast: they answer what a month is typically like at this spot, and say nothing about any particular day. Temperatures are °C; rainfall is the mean millimetres per day for that month.",
+ "missing": [],
+ "sites": [
+  {
+   "key": "giza",
+   "name": "The Giza Pyramids",
+   "name_ar": "أهرامات الجيزة",
+   "gov": "Giza",
+   "lat": 29.9773,
+   "lon": 31.1325,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 12.1,
+     "t_max": 29.1,
+     "t_min": 1.4,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 2,
+     "t_mean": 13.7,
+     "t_max": 34.8,
+     "t_min": 1.6,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 3,
+     "t_mean": 17.1,
+     "t_max": 38.6,
+     "t_min": 2.6,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 4,
+     "t_mean": 20.9,
+     "t_max": 43.4,
+     "t_min": 7.0,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 5,
+     "t_mean": 25.3,
+     "t_max": 45.3,
+     "t_min": 11.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 28.5,
+     "t_max": 45.4,
+     "t_min": 15.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 29.9,
+     "t_max": 45.3,
+     "t_min": 17.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 29.9,
+     "t_max": 44.8,
+     "t_min": 19.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 27.5,
+     "t_max": 42.4,
+     "t_min": 15.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 23.7,
+     "t_max": 40.8,
+     "t_min": 11.8,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 11,
+     "t_mean": 18.7,
+     "t_max": 35.6,
+     "t_min": 7.2,
+     "rain_mm_day": 0.6
+    },
+    {
+     "month": 12,
+     "t_mean": 14.0,
+     "t_max": 32.5,
+     "t_min": 2.2,
+     "rain_mm_day": 0.2
+    }
+   ]
+  },
+  {
+   "key": "saqqara",
+   "name": "Saqqara",
+   "name_ar": "سقارة",
+   "gov": "Giza",
+   "lat": 29.8712,
+   "lon": 31.2165,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 12.1,
+     "t_max": 29.1,
+     "t_min": 1.4,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 2,
+     "t_mean": 13.7,
+     "t_max": 34.8,
+     "t_min": 1.6,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 3,
+     "t_mean": 17.1,
+     "t_max": 38.6,
+     "t_min": 2.6,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 4,
+     "t_mean": 20.9,
+     "t_max": 43.4,
+     "t_min": 7.0,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 5,
+     "t_mean": 25.3,
+     "t_max": 45.3,
+     "t_min": 11.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 28.5,
+     "t_max": 45.4,
+     "t_min": 15.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 29.9,
+     "t_max": 45.3,
+     "t_min": 17.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 29.9,
+     "t_max": 44.8,
+     "t_min": 19.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 27.5,
+     "t_max": 42.4,
+     "t_min": 15.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 23.7,
+     "t_max": 40.8,
+     "t_min": 11.8,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 11,
+     "t_mean": 18.7,
+     "t_max": 35.6,
+     "t_min": 7.2,
+     "rain_mm_day": 0.6
+    },
+    {
+     "month": 12,
+     "t_mean": 14.0,
+     "t_max": 32.5,
+     "t_min": 2.2,
+     "rain_mm_day": 0.2
+    }
+   ]
+  },
+  {
+   "key": "karnak",
+   "name": "Karnak Temple",
+   "name_ar": "معبد الكرنك",
+   "gov": "Luxor",
+   "lat": 25.7188,
+   "lon": 32.6573,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 13.3,
+     "t_max": 32.7,
+     "t_min": 0.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 2,
+     "t_mean": 15.9,
+     "t_max": 36.2,
+     "t_min": 1.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 3,
+     "t_mean": 20.1,
+     "t_max": 40.5,
+     "t_min": 3.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 4,
+     "t_mean": 24.8,
+     "t_max": 43.3,
+     "t_min": 7.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 29.3,
+     "t_max": 46.8,
+     "t_min": 13.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 31.9,
+     "t_max": 47.3,
+     "t_min": 18.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 32.5,
+     "t_max": 47.4,
+     "t_min": 19.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 32.5,
+     "t_max": 47.3,
+     "t_min": 19.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 30.0,
+     "t_max": 45.6,
+     "t_min": 16.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 26.3,
+     "t_max": 43.2,
+     "t_min": 11.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 19.9,
+     "t_max": 38.3,
+     "t_min": 5.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 12,
+     "t_mean": 15.0,
+     "t_max": 33.7,
+     "t_min": 1.7,
+     "rain_mm_day": 0.0
+    }
+   ]
+  },
+  {
+   "key": "valley-kings",
+   "name": "Valley of the Kings",
+   "name_ar": "وادي الملوك",
+   "gov": "Luxor",
+   "lat": 25.7402,
+   "lon": 32.6014,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 13.3,
+     "t_max": 32.7,
+     "t_min": 0.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 2,
+     "t_mean": 15.9,
+     "t_max": 36.2,
+     "t_min": 1.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 3,
+     "t_mean": 20.1,
+     "t_max": 40.5,
+     "t_min": 3.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 4,
+     "t_mean": 24.8,
+     "t_max": 43.3,
+     "t_min": 7.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 29.3,
+     "t_max": 46.8,
+     "t_min": 13.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 31.9,
+     "t_max": 47.3,
+     "t_min": 18.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 32.5,
+     "t_max": 47.4,
+     "t_min": 19.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 32.5,
+     "t_max": 47.3,
+     "t_min": 19.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 30.0,
+     "t_max": 45.6,
+     "t_min": 16.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 26.3,
+     "t_max": 43.2,
+     "t_min": 11.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 19.9,
+     "t_max": 38.3,
+     "t_min": 5.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 12,
+     "t_mean": 15.0,
+     "t_max": 33.7,
+     "t_min": 1.7,
+     "rain_mm_day": 0.0
+    }
+   ]
+  },
+  {
+   "key": "abu-simbel",
+   "name": "Abu Simbel",
+   "name_ar": "أبو سمبل",
+   "gov": "Aswan",
+   "lat": 22.3372,
+   "lon": 31.6258,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 15.8,
+     "t_max": 35.1,
+     "t_min": 1.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 2,
+     "t_mean": 18.5,
+     "t_max": 38.4,
+     "t_min": 4.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 3,
+     "t_mean": 22.6,
+     "t_max": 40.8,
+     "t_min": 5.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 4,
+     "t_mean": 27.3,
+     "t_max": 44.6,
+     "t_min": 10.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 31.4,
+     "t_max": 46.6,
+     "t_min": 15.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 33.5,
+     "t_max": 46.1,
+     "t_min": 20.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 34.0,
+     "t_max": 45.7,
+     "t_min": 22.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 34.5,
+     "t_max": 46.1,
+     "t_min": 22.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 32.2,
+     "t_max": 45.0,
+     "t_min": 19.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 28.7,
+     "t_max": 43.0,
+     "t_min": 13.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 22.2,
+     "t_max": 38.0,
+     "t_min": 7.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 12,
+     "t_mean": 17.4,
+     "t_max": 34.1,
+     "t_min": 3.8,
+     "rain_mm_day": 0.0
+    }
+   ]
+  },
+  {
+   "key": "philae",
+   "name": "Philae Temple",
+   "name_ar": "معبد فيلة",
+   "gov": "Aswan",
+   "lat": 24.0256,
+   "lon": 32.8843,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 15.1,
+     "t_max": 35.1,
+     "t_min": 0.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 2,
+     "t_mean": 17.8,
+     "t_max": 38.5,
+     "t_min": 2.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 3,
+     "t_mean": 22.0,
+     "t_max": 41.8,
+     "t_min": 4.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 4,
+     "t_mean": 26.7,
+     "t_max": 44.6,
+     "t_min": 9.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 31.1,
+     "t_max": 47.7,
+     "t_min": 14.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 33.4,
+     "t_max": 48.8,
+     "t_min": 19.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 34.0,
+     "t_max": 48.3,
+     "t_min": 20.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 34.2,
+     "t_max": 48.4,
+     "t_min": 20.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 31.9,
+     "t_max": 47.1,
+     "t_min": 17.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 28.4,
+     "t_max": 44.5,
+     "t_min": 12.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 21.8,
+     "t_max": 39.4,
+     "t_min": 7.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 12,
+     "t_mean": 16.8,
+     "t_max": 35.4,
+     "t_min": 2.2,
+     "rain_mm_day": 0.0
+    }
+   ]
+  },
+  {
+   "key": "abydos",
+   "name": "Abydos",
+   "name_ar": "أبيدوس",
+   "gov": "Sohag",
+   "lat": 26.1847,
+   "lon": 31.9194,
+   "unesco": false,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 12.3,
+     "t_max": 32.0,
+     "t_min": -0.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 2,
+     "t_mean": 14.9,
+     "t_max": 36.1,
+     "t_min": 1.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 3,
+     "t_mean": 19.1,
+     "t_max": 39.4,
+     "t_min": 2.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 4,
+     "t_mean": 23.8,
+     "t_max": 43.4,
+     "t_min": 6.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 28.3,
+     "t_max": 46.8,
+     "t_min": 12.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 30.9,
+     "t_max": 46.6,
+     "t_min": 17.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 31.6,
+     "t_max": 47.2,
+     "t_min": 19.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 31.5,
+     "t_max": 46.6,
+     "t_min": 18.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 28.9,
+     "t_max": 45.0,
+     "t_min": 16.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 25.2,
+     "t_max": 42.2,
+     "t_min": 11.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 19.1,
+     "t_max": 37.3,
+     "t_min": 4.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 12,
+     "t_mean": 14.1,
+     "t_max": 32.6,
+     "t_min": 1.7,
+     "rain_mm_day": 0.0
+    }
+   ]
+  },
+  {
+   "key": "dendera",
+   "name": "Dendera Temple",
+   "name_ar": "معبد دندرة",
+   "gov": "Qena",
+   "lat": 26.1417,
+   "lon": 32.67,
+   "unesco": false,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 13.5,
+     "t_max": 32.8,
+     "t_min": -0.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 2,
+     "t_mean": 16.2,
+     "t_max": 36.8,
+     "t_min": 1.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 3,
+     "t_mean": 20.4,
+     "t_max": 40.0,
+     "t_min": 3.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 4,
+     "t_mean": 25.1,
+     "t_max": 43.3,
+     "t_min": 7.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 29.6,
+     "t_max": 47.6,
+     "t_min": 13.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 32.3,
+     "t_max": 47.8,
+     "t_min": 18.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 33.0,
+     "t_max": 48.6,
+     "t_min": 19.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 32.9,
+     "t_max": 48.0,
+     "t_min": 19.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 30.4,
+     "t_max": 46.2,
+     "t_min": 17.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 26.7,
+     "t_max": 43.4,
+     "t_min": 12.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 20.4,
+     "t_max": 39.0,
+     "t_min": 5.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 12,
+     "t_mean": 15.4,
+     "t_max": 34.0,
+     "t_min": 1.7,
+     "rain_mm_day": 0.0
+    }
+   ]
+  },
+  {
+   "key": "islamic-cairo",
+   "name": "Historic Cairo",
+   "name_ar": "القاهرة التاريخية",
+   "gov": "Cairo",
+   "lat": 30.0444,
+   "lon": 31.262,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 12.1,
+     "t_max": 29.1,
+     "t_min": 1.4,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 2,
+     "t_mean": 13.7,
+     "t_max": 34.8,
+     "t_min": 1.6,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 3,
+     "t_mean": 17.1,
+     "t_max": 38.6,
+     "t_min": 2.6,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 4,
+     "t_mean": 20.9,
+     "t_max": 43.4,
+     "t_min": 7.0,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 5,
+     "t_mean": 25.3,
+     "t_max": 45.3,
+     "t_min": 11.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 28.5,
+     "t_max": 45.4,
+     "t_min": 15.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 29.9,
+     "t_max": 45.3,
+     "t_min": 17.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 29.9,
+     "t_max": 44.8,
+     "t_min": 19.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 27.5,
+     "t_max": 42.4,
+     "t_min": 15.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 23.7,
+     "t_max": 40.8,
+     "t_min": 11.8,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 11,
+     "t_mean": 18.7,
+     "t_max": 35.6,
+     "t_min": 7.2,
+     "rain_mm_day": 0.6
+    },
+    {
+     "month": 12,
+     "t_mean": 14.0,
+     "t_max": 32.5,
+     "t_min": 2.2,
+     "rain_mm_day": 0.2
+    }
+   ]
+  },
+  {
+   "key": "alexandria",
+   "name": "Alexandria",
+   "name_ar": "الإسكندرية",
+   "gov": "Alexandria",
+   "lat": 31.2001,
+   "lon": 29.9187,
+   "unesco": false,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 13.9,
+     "t_max": 28.1,
+     "t_min": 5.5,
+     "rain_mm_day": 0.8
+    },
+    {
+     "month": 2,
+     "t_mean": 14.6,
+     "t_max": 32.2,
+     "t_min": 5.8,
+     "rain_mm_day": 0.6
+    },
+    {
+     "month": 3,
+     "t_mean": 16.7,
+     "t_max": 36.8,
+     "t_min": 6.7,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 4,
+     "t_mean": 19.4,
+     "t_max": 40.9,
+     "t_min": 9.6,
+     "rain_mm_day": 0.5
+    },
+    {
+     "month": 5,
+     "t_mean": 23.1,
+     "t_max": 42.1,
+     "t_min": 11.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 26.1,
+     "t_max": 43.4,
+     "t_min": 15.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 27.8,
+     "t_max": 45.0,
+     "t_min": 19.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 28.2,
+     "t_max": 41.7,
+     "t_min": 21.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 26.7,
+     "t_max": 40.1,
+     "t_min": 18.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 23.8,
+     "t_max": 38.8,
+     "t_min": 16.1,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 11,
+     "t_mean": 19.9,
+     "t_max": 34.2,
+     "t_min": 11.1,
+     "rain_mm_day": 0.4
+    },
+    {
+     "month": 12,
+     "t_mean": 16.0,
+     "t_max": 31.0,
+     "t_min": 7.2,
+     "rain_mm_day": 0.6
+    }
+   ]
+  },
+  {
+   "key": "siwa",
+   "name": "Siwa Oasis",
+   "name_ar": "واحة سيوة",
+   "gov": "Matrouh",
+   "lat": 29.2041,
+   "lon": 25.5195,
+   "unesco": false,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 11.1,
+     "t_max": 27.8,
+     "t_min": 0.7,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 2,
+     "t_mean": 12.7,
+     "t_max": 34.3,
+     "t_min": 0.8,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 3,
+     "t_mean": 16.6,
+     "t_max": 37.7,
+     "t_min": 2.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 4,
+     "t_mean": 20.9,
+     "t_max": 39.7,
+     "t_min": 6.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 25.5,
+     "t_max": 44.1,
+     "t_min": 10.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 28.9,
+     "t_max": 45.7,
+     "t_min": 15.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 30.2,
+     "t_max": 45.3,
+     "t_min": 17.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 30.2,
+     "t_max": 43.0,
+     "t_min": 18.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 27.8,
+     "t_max": 41.5,
+     "t_min": 15.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 23.3,
+     "t_max": 38.1,
+     "t_min": 11.8,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 11,
+     "t_mean": 17.4,
+     "t_max": 34.5,
+     "t_min": 6.5,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 12,
+     "t_mean": 12.9,
+     "t_max": 28.0,
+     "t_min": 2.7,
+     "rain_mm_day": 0.2
+    }
+   ]
+  },
+  {
+   "key": "white-desert",
+   "name": "The White Desert",
+   "name_ar": "الصحراء البيضاء",
+   "gov": "New Valley",
+   "lat": 27.2,
+   "lon": 28.1833,
+   "unesco": false,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 11.6,
+     "t_max": 30.3,
+     "t_min": 0.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 2,
+     "t_mean": 13.7,
+     "t_max": 35.0,
+     "t_min": 0.5,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 3,
+     "t_mean": 17.8,
+     "t_max": 39.3,
+     "t_min": 3.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 4,
+     "t_mean": 22.3,
+     "t_max": 42.3,
+     "t_min": 7.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 26.9,
+     "t_max": 46.5,
+     "t_min": 12.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 29.9,
+     "t_max": 45.7,
+     "t_min": 16.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 30.8,
+     "t_max": 45.1,
+     "t_min": 18.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 31.0,
+     "t_max": 43.8,
+     "t_min": 19.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 28.2,
+     "t_max": 42.0,
+     "t_min": 16.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 23.7,
+     "t_max": 40.5,
+     "t_min": 11.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 17.8,
+     "t_max": 36.2,
+     "t_min": 6.3,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 12,
+     "t_mean": 13.2,
+     "t_max": 30.6,
+     "t_min": 2.1,
+     "rain_mm_day": 0.0
+    }
+   ]
+  },
+  {
+   "key": "st-catherine",
+   "name": "Saint Catherine's Monastery",
+   "name_ar": "دير سانت كاترين",
+   "gov": "South Sinai",
+   "lat": 28.5559,
+   "lon": 33.976,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 10.0,
+     "t_max": 26.7,
+     "t_min": -2.4,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 2,
+     "t_mean": 12.0,
+     "t_max": 29.4,
+     "t_min": -1.7,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 3,
+     "t_mean": 15.7,
+     "t_max": 33.1,
+     "t_min": -0.2,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 4,
+     "t_mean": 19.8,
+     "t_max": 36.3,
+     "t_min": 2.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 24.3,
+     "t_max": 39.6,
+     "t_min": 8.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 27.4,
+     "t_max": 40.9,
+     "t_min": 12.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 28.5,
+     "t_max": 41.5,
+     "t_min": 16.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 28.5,
+     "t_max": 41.7,
+     "t_min": 16.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 26.4,
+     "t_max": 40.2,
+     "t_min": 13.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 22.4,
+     "t_max": 37.9,
+     "t_min": 8.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 16.6,
+     "t_max": 33.0,
+     "t_min": 2.0,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 12,
+     "t_mean": 11.9,
+     "t_max": 29.2,
+     "t_min": -1.0,
+     "rain_mm_day": 0.1
+    }
+   ]
+  },
+  {
+   "key": "dahab",
+   "name": "Dahab",
+   "name_ar": "دهب",
+   "gov": "South Sinai",
+   "lat": 28.5091,
+   "lon": 34.5136,
+   "unesco": false,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 13.4,
+     "t_max": 29.3,
+     "t_min": 2.0,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 2,
+     "t_mean": 15.2,
+     "t_max": 32.0,
+     "t_min": 2.2,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 3,
+     "t_mean": 18.5,
+     "t_max": 35.4,
+     "t_min": 3.6,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 4,
+     "t_mean": 22.4,
+     "t_max": 38.2,
+     "t_min": 7.2,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 5,
+     "t_mean": 26.8,
+     "t_max": 41.5,
+     "t_min": 11.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 29.5,
+     "t_max": 42.9,
+     "t_min": 15.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 31.2,
+     "t_max": 44.7,
+     "t_min": 18.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 31.2,
+     "t_max": 44.2,
+     "t_min": 19.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 28.9,
+     "t_max": 43.5,
+     "t_min": 17.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 25.3,
+     "t_max": 39.0,
+     "t_min": 12.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 11,
+     "t_mean": 19.6,
+     "t_max": 34.8,
+     "t_min": 6.3,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 12,
+     "t_mean": 15.1,
+     "t_max": 31.4,
+     "t_min": 3.6,
+     "rain_mm_day": 0.1
+    }
+   ]
+  },
+  {
+   "key": "hurghada",
+   "name": "Hurghada",
+   "name_ar": "الغردقة",
+   "gov": "Red Sea",
+   "lat": 27.2579,
+   "lon": 33.8116,
+   "unesco": false,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 18.1,
+     "t_max": 27.9,
+     "t_min": 9.5,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 2,
+     "t_mean": 19.1,
+     "t_max": 29.8,
+     "t_min": 10.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 3,
+     "t_mean": 21.2,
+     "t_max": 32.3,
+     "t_min": 11.2,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 4,
+     "t_mean": 23.9,
+     "t_max": 33.8,
+     "t_min": 13.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 5,
+     "t_mean": 27.2,
+     "t_max": 39.2,
+     "t_min": 17.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 29.4,
+     "t_max": 39.0,
+     "t_min": 20.8,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 30.8,
+     "t_max": 42.2,
+     "t_min": 22.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 31.1,
+     "t_max": 42.4,
+     "t_min": 24.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 29.3,
+     "t_max": 38.5,
+     "t_min": 22.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 27.0,
+     "t_max": 36.0,
+     "t_min": 19.5,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 11,
+     "t_mean": 23.6,
+     "t_max": 33.1,
+     "t_min": 15.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 12,
+     "t_mean": 20.0,
+     "t_max": 29.2,
+     "t_min": 11.0,
+     "rain_mm_day": 0.0
+    }
+   ]
+  },
+  {
+   "key": "wadi-al-hitan",
+   "name": "Wadi al-Hitan",
+   "name_ar": "وادي الحيتان",
+   "gov": "Faiyum",
+   "lat": 29.2694,
+   "lon": 30.0417,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 11.0,
+     "t_max": 27.5,
+     "t_min": 1.2,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 2,
+     "t_mean": 12.6,
+     "t_max": 33.1,
+     "t_min": 0.8,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 3,
+     "t_mean": 15.9,
+     "t_max": 37.7,
+     "t_min": 1.8,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 4,
+     "t_mean": 19.9,
+     "t_max": 40.8,
+     "t_min": 6.0,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 5,
+     "t_mean": 24.3,
+     "t_max": 44.0,
+     "t_min": 10.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 27.3,
+     "t_max": 44.4,
+     "t_min": 13.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 28.4,
+     "t_max": 44.5,
+     "t_min": 16.6,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 28.5,
+     "t_max": 42.8,
+     "t_min": 17.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 26.2,
+     "t_max": 41.5,
+     "t_min": 14.0,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 22.4,
+     "t_max": 38.8,
+     "t_min": 11.6,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 11,
+     "t_mean": 17.4,
+     "t_max": 34.3,
+     "t_min": 6.7,
+     "rain_mm_day": 0.6
+    },
+    {
+     "month": 12,
+     "t_mean": 12.9,
+     "t_max": 30.4,
+     "t_min": 2.0,
+     "rain_mm_day": 0.3
+    }
+   ]
+  },
+  {
+   "key": "abu-mena",
+   "name": "Abu Mena",
+   "name_ar": "أبو مينا",
+   "gov": "Alexandria",
+   "lat": 30.8419,
+   "lon": 29.6647,
+   "unesco": true,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 15.1,
+     "t_max": 24.2,
+     "t_min": 9.2,
+     "rain_mm_day": 1.1
+    },
+    {
+     "month": 2,
+     "t_mean": 15.2,
+     "t_max": 28.7,
+     "t_min": 9.2,
+     "rain_mm_day": 0.7
+    },
+    {
+     "month": 3,
+     "t_mean": 16.4,
+     "t_max": 30.1,
+     "t_min": 9.5,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 4,
+     "t_mean": 18.4,
+     "t_max": 35.1,
+     "t_min": 12.5,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 5,
+     "t_mean": 21.4,
+     "t_max": 36.1,
+     "t_min": 14.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 24.4,
+     "t_max": 39.8,
+     "t_min": 18.2,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 26.3,
+     "t_max": 40.8,
+     "t_min": 21.4,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 27.1,
+     "t_max": 37.6,
+     "t_min": 23.5,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 26.1,
+     "t_max": 35.8,
+     "t_min": 20.7,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 23.8,
+     "t_max": 35.5,
+     "t_min": 18.8,
+     "rain_mm_day": 0.2
+    },
+    {
+     "month": 11,
+     "t_mean": 20.6,
+     "t_max": 30.5,
+     "t_min": 14.4,
+     "rain_mm_day": 0.6
+    },
+    {
+     "month": 12,
+     "t_mean": 17.2,
+     "t_max": 25.8,
+     "t_min": 10.4,
+     "rain_mm_day": 1.0
+    }
+   ]
+  },
+  {
+   "key": "suez-canal",
+   "name": "The Suez Canal at Ismailia",
+   "name_ar": "قناة السويس",
+   "gov": "Ismailia",
+   "lat": 30.5852,
+   "lon": 32.2715,
+   "unesco": false,
+   "months": [
+    {
+     "month": 1,
+     "t_mean": 12.4,
+     "t_max": 28.2,
+     "t_min": 1.4,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 2,
+     "t_mean": 13.8,
+     "t_max": 34.4,
+     "t_min": 2.4,
+     "rain_mm_day": 0.4
+    },
+    {
+     "month": 3,
+     "t_mean": 16.7,
+     "t_max": 39.0,
+     "t_min": 3.4,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 4,
+     "t_mean": 20.1,
+     "t_max": 42.3,
+     "t_min": 7.7,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 5,
+     "t_mean": 24.1,
+     "t_max": 44.4,
+     "t_min": 11.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 6,
+     "t_mean": 27.0,
+     "t_max": 43.5,
+     "t_min": 14.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 7,
+     "t_mean": 28.9,
+     "t_max": 43.0,
+     "t_min": 17.9,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 8,
+     "t_mean": 28.9,
+     "t_max": 43.9,
+     "t_min": 19.3,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 9,
+     "t_mean": 26.6,
+     "t_max": 41.3,
+     "t_min": 16.1,
+     "rain_mm_day": 0.0
+    },
+    {
+     "month": 10,
+     "t_mean": 23.4,
+     "t_max": 39.5,
+     "t_min": 12.7,
+     "rain_mm_day": 0.1
+    },
+    {
+     "month": 11,
+     "t_mean": 18.8,
+     "t_max": 35.4,
+     "t_min": 7.9,
+     "rain_mm_day": 0.3
+    },
+    {
+     "month": 12,
+     "t_mean": 14.3,
+     "t_max": 31.6,
+     "t_min": 3.8,
+     "rain_mm_day": 0.2
+    }
+   ]
+  }
+ ]
 }

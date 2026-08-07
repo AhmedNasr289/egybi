@@ -1,6 +1,137 @@
 {
- "generated": false,
- "reason": "fetch_tourism.py has not completed a successful run yet, so this layer holds no data.",
- "note": "This file exists deliberately and contains NO figures. The page requesting a file that does not exist produced a 404 on every visit; a 200 that says plainly 'not generated' is better than a 404 that says nothing. The page reads the generated flag rather than inferring absence from a failed fetch, and shows its empty state. The first successful run of the NASA SRTM 30 m elevation pipeline overwrites this whole file with real, sourced measurements. Nothing here is a placeholder value that could be mistaken for data — the sites array is empty on purpose.",
- "sites": []
+ "as_of": "2026-08-07",
+ "fetched_at": "2026-08-07T23:03:12+00:00",
+ "source": "NASA SRTM 30 m (SRTMGL1 v003) via Open-Topo-Data",
+ "source_url": "https://www.opentopodata.org/datasets/srtm/",
+ "license": "Public domain (NASA/USGS)",
+ "note": "Ground elevation sampled from NASA's Shuttle Radar Topography Mission 30 m digital elevation model at each site's own coordinates. SRTM measures the reflective surface, so in built-up or densely vegetated places the figure can sit slightly above bare ground. It is a real measurement of the land, not a rendering.",
+ "missing": [],
+ "sites": [
+  {
+   "key": "giza",
+   "name": "The Giza Pyramids",
+   "lat": 29.9773,
+   "lon": 31.1325,
+   "elevation_m": 60.0
+  },
+  {
+   "key": "saqqara",
+   "name": "Saqqara",
+   "lat": 29.8712,
+   "lon": 31.2165,
+   "elevation_m": 67.0
+  },
+  {
+   "key": "karnak",
+   "name": "Karnak Temple",
+   "lat": 25.7188,
+   "lon": 32.6573,
+   "elevation_m": 80.0
+  },
+  {
+   "key": "valley-kings",
+   "name": "Valley of the Kings",
+   "lat": 25.7402,
+   "lon": 32.6014,
+   "elevation_m": 183.0
+  },
+  {
+   "key": "abu-simbel",
+   "name": "Abu Simbel",
+   "lat": 22.3372,
+   "lon": 31.6258,
+   "elevation_m": 196.0
+  },
+  {
+   "key": "philae",
+   "name": "Philae Temple",
+   "lat": 24.0256,
+   "lon": 32.8843,
+   "elevation_m": 125.0
+  },
+  {
+   "key": "abydos",
+   "name": "Abydos",
+   "lat": 26.1847,
+   "lon": 31.9194,
+   "elevation_m": 75.0
+  },
+  {
+   "key": "dendera",
+   "name": "Dendera Temple",
+   "lat": 26.1417,
+   "lon": 32.67,
+   "elevation_m": 79.0
+  },
+  {
+   "key": "islamic-cairo",
+   "name": "Historic Cairo",
+   "lat": 30.0444,
+   "lon": 31.262,
+   "elevation_m": 37.0
+  },
+  {
+   "key": "alexandria",
+   "name": "Alexandria",
+   "lat": 31.2001,
+   "lon": 29.9187,
+   "elevation_m": 7.0
+  },
+  {
+   "key": "siwa",
+   "name": "Siwa Oasis",
+   "lat": 29.2041,
+   "lon": 25.5195,
+   "elevation_m": -14.0
+  },
+  {
+   "key": "white-desert",
+   "name": "The White Desert",
+   "lat": 27.2,
+   "lon": 28.1833,
+   "elevation_m": 58.0
+  },
+  {
+   "key": "st-catherine",
+   "name": "Saint Catherine's Monastery",
+   "lat": 28.5559,
+   "lon": 33.976,
+   "elevation_m": 1586.0
+  },
+  {
+   "key": "dahab",
+   "name": "Dahab",
+   "lat": 28.5091,
+   "lon": 34.5136,
+   "elevation_m": 19.0
+  },
+  {
+   "key": "hurghada",
+   "name": "Hurghada",
+   "lat": 27.2579,
+   "lon": 33.8116,
+   "elevation_m": 10.0
+  },
+  {
+   "key": "wadi-al-hitan",
+   "name": "Wadi al-Hitan",
+   "lat": 29.2694,
+   "lon": 30.0417,
+   "elevation_m": 143.0
+  },
+  {
+   "key": "abu-mena",
+   "name": "Abu Mena",
+   "lat": 30.8419,
+   "lon": 29.6647,
+   "elevation_m": 37.0
+  },
+  {
+   "key": "suez-canal",
+   "name": "The Suez Canal at Ismailia",
+   "lat": 30.5852,
+   "lon": 32.2715,
+   "elevation_m": 7.0
+  }
+ ]
 }
