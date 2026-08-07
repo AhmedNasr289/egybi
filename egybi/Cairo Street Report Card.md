@@ -1,6 +1,8 @@
 # Cairo Street Report Card
 
-> EgyBI's fifth data service, at **egybi.com/streets.html**. Ten districts spanning six planning eras and three cities, measured rather than described. Built **2026-08-07**. Back to [[Home]]. Related: [[Egypt Atlas — Geospatial Service]], [[Places & Data Stories]], [[Automation & CI Pipelines]], [[Frontend & Design System]].
+> EgyBI's fifth data service, at **egybi.com/streets.html**. Egyptian districts spanning six planning eras, measured rather than described — six at launch, ten once the expanded list has run. Built **2026-08-07**. Back to [[Home]]. Related: [[Egypt Atlas — Geospatial Service]], [[Places & Data Stories]], [[Automation & CI Pipelines]], [[Frontend & Design System]].
+
+**No page copy states how many districts there are.** The title, meta description, social cards and hero all used to say "six", which meant five separate edits the moment the list grew, on a page whose entire premise is that the list keeps growing. Anything that has to name a count is now computed from the published data at render time; everything else is written so it never needs one. A number in a `<title>` on a growing dataset is a promise to keep editing it, and that promise is always eventually broken.
 
 ## What it is
 

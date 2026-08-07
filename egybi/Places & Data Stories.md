@@ -64,10 +64,12 @@ Every figure is **computed in the browser** from data already in the repository 
 | Story | The argument | Figures it computes |
 |---|---|---|
 | **The ribbon** | Egypt is not a country the size of its map | 106,668,704 people; the 10 densest governorates hold half of them on **2.4%** of the land; 5 sparse governorates are **77.9%** of the land and **1.9%** of the people |
-| **Where the hospitals are** | Facility distribution follows the ribbon, not the borders | **963** mapped health facilities; a **143×** spread from South Sinai to Beheira |
+| **Where the hospitals are** | Facility distribution follows the ribbon, not the borders | **964** mapped health facilities; a **143×** spread from South Sinai to Beheira |
 | **Six ways to build a street** | Planning eras leave a measurable geometric signature | the street report card's districts, their entropies and dead-end shares |
 
 The health story leads with *this is not a map of hospitals, it is a map of what has been mapped* — the same OSM caveat as everywhere else, placed **before** the number rather than after it.
+
+**The approach earned its keep within the hour.** The story was built against 963 mapped health facilities; the next Overpass refresh, run the same evening, returned **964**. A figure typed into the prose would already have been wrong, in a paragraph that reads as sourced, with nothing to flag it. The computed one moved on its own. This is the smallest possible version of the drift problem and it still happened immediately — which is the argument for the rule, not an anecdote alongside it.
 
 ---
 
