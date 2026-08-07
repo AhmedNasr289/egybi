@@ -1,5 +1,15 @@
 # Curriculum & Skill Tracks
 
+> [!warning] **RETIRED on 2026-08-07 by the pivot.**
+> The nine skill tracks no longer exist. `tracks.html` is a tombstone behind a 301,
+> and the three specialisations were removed from the homepage. EgyBI is an
+> encyclopaedia of Egypt built on GIS and data storytelling — see
+> [[The Pivot — From SQL Practice to Encyclopaedia]].
+>
+> Kept as the record of what the curriculum *was* and how it was sourced, because
+> the book-copyright boundary it establishes ([[IP & Content Rules]]) still governs
+> everything written here. Read it as history, not as a plan.
+
 9 tracks, each beginner → advanced, with a book-grounded reading list and named, hands-on use-case exercises (never copied from the books themselves — see [[IP & Content Rules]]). Full book source list: [[Sources]].
 
 **Content update:** the use cases below are generic/technique-grounded. For the historically-grounded versions of these same tracks — real pharaoh/dynasty data, monuments, museum collections, and quantitative Egyptian records mapped into concrete challenges per track — see [[Historical Data & Challenge Themes]], which is the version to actually build toward.
