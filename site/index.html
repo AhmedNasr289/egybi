@@ -174,10 +174,16 @@ LIMIT 5;</textarea>
   </div>
 </section>
 
-<!-- WHAT'S INSIDE — the encyclopaedia's rooms. Counts here are filled by
-     index.js from the published data files rather than typed in, because a
-     hardcoded count is a promise to keep editing it every time a pipeline
-     runs, and that promise always eventually breaks. -->
+<!-- WHAT'S INSIDE — the encyclopaedia's rooms.
+     No card names a count. An earlier draft of this block carried a comment
+     saying the numbers were filled from the published data at render time;
+     nothing did that, and the markup rendered its static fallback instead. A
+     comment describing behaviour the code does not have is worse than no
+     comment, so the hook is gone and the copy says what each room is for.
+     Fetching a 96 kB gazetteer on the homepage to print one number would not
+     have been worth it either. Where a count genuinely earns its place, it is
+     computed on the page that owns the data — see the entropy spread and the
+     dead-end finding on streets.html. -->
 <section class="surface-dark" id="inside">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>What&rsquo;s inside</div>
@@ -196,7 +202,7 @@ LIMIT 5;</textarea>
       </a>
       <a class="card card-link" href="places.html" data-aos="fade-up" data-aos-delay="120" data-ev="home_to_places">
         <span class="tag">Places</span>
-        <h3><span id="hcPlaces">Every mapped place</span>, searchable.</h3>
+        <h3>Every mapped place, searchable.</h3>
         <p>Cities and towns, airports and archaeological sites, filterable by governorate &mdash; the geographic pattern of what OpenStreetMap has recorded.</p>
       </a>
       <a class="card card-link" href="stories.html" data-aos="fade-up" data-aos-delay="180" data-ev="home_to_stories">
