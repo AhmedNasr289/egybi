@@ -1,5 +1,16 @@
 # Improvement Roadmap (2026-07-18)
 
+> [!warning] **SUPERSEDED on 2026-08-07 by the pivot.**
+> This note plans the SQL-practice product — leaderboards, a daily challenge, guided
+> tracks under the nine skill tracks, an AI tutor that explains query errors. That
+> product was retired: EgyBI is now an encyclopaedia of Egypt built on GIS and data
+> storytelling. See [[The Pivot — From SQL Practice to Encyclopaedia]].
+>
+> It is kept rather than deleted because the *reasoning* is still worth reading — the
+> engine survived as site infrastructure, and several ideas here (progressive
+> disclosure, the in-browser data tier, DuckDB-Wasm) were re-judged on their merits
+> rather than discarded with the product. Read it as history, not as a plan.
+
 Written after the Phase 0 landing page got a real upgrade — a genuine live SQL demo (sql.js/SQLite-over-WASM, verified working: real queries, real aggregations, real error handling), motion, mobile-responsive layout, meta tags, and an accessibility pass. See `C:\dev\perankh\site\index.html`. This note is the next-actions plan for everything *beyond* the page — concrete and decisive, one recommended action per area, not a menu.
 
 > **Progress update (2026-07-18, later):** two roadmap areas below have jumped ahead. **(b) Technical architecture** — the backend now exists: a tested framework-free PHP read-only API over a 12-table MySQL knowledge base spanning ancient→modern Egypt, with dataset-snapshot endpoints purpose-built to feed the sql.js sandbox. See [[Backend & Knowledge Base]] + `backend/DEPLOY.md`. The remaining (b) work is wiring the sandbox to load snapshots from `/datasets/{name}` and adding the result-comparison grading layer. **The frontend** also got a second, bigger polish pass (Cinzel font, AOS, particles, Typed.js, CountUp stat band, and a real Chart.js Egypt-tourism dashboard). Areas **(a) curriculum authoring, (c) brand assets, (d) pricing, (e) GTM** are still the open priorities, roughly in that order.
