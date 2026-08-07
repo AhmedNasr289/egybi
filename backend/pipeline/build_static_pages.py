@@ -8,17 +8,42 @@ indexable URLs. This script renders a real HTML page for every challenge and
 every post, so each one can be found, linked and shared on its own.
 
 It writes:
-    site/practice/<challenge-title-slug>.html   (one per challenge)
-    site/papyrus/<post-id>.html                 (one per post)
-    site/sitemap.xml                            (regenerated with every URL)
+    site/practice/<challenge-title-slug>.html   (one RETIRED-page notice each)
+    site/papyrus/<post-id>.html                 (one per newsletter issue)
+    site/sitemap.xml                            (regenerated)
+    site/feed.xml                               (The Papyrus RSS)
 
 Design notes:
   * The nav and footer are lifted from site/blog.html at build time rather than
     duplicated here, so the generated pages cannot drift from the real site.
-  * Reference solutions are deliberately NOT published — the pages carry the
-    problem, the schema, the starter and the sourced note, which is genuinely
-    useful, without giving the answer away.
+    Editing blog.html's nav therefore updates all 135 generated pages.
   * Pages live one directory deep, so relative asset paths are rewritten to ../
+
+THE PRACTICE SECTION IS RETIRED (2026-08-07)
+--------------------------------------------
+EgyBI is now an encyclopaedia of Egypt built on GIS and data storytelling, not
+a SQL practice platform. The 123 challenge URLs are indexed and are the site's
+only real search presence, so they are NOT deleted and NOT redirected — each
+one keeps its URL and returns 200 with a retirement notice.
+
+Redirects were considered and rejected. 123 pages collapsing onto ~10 section
+anchors is a many-to-few redirect that search engines treat as a soft 404 and
+drop, which would lose both the explanation and the traffic. A 200 page with
+genuinely distinct content keeps ranking for its own long tail while routing
+the reader onward.
+
+What each retired page keeps is the part that was always about Egypt rather
+than about SQL: the question itself and the sourced "did you know" note. What
+it drops is the schema, the starter query and the links to sibling challenges —
+tombstones linking to tombstones is a crawl trap with nothing at the end of it.
+
+The onward link is chosen by the challenge's own `sector` field via
+SECTOR_DESTINATION below, so re-pointing a whole sector when new encyclopaedia
+sections land is a one-line change.
+
+The Papyrus (site/papyrus/) is NOT part of this retirement. It is the
+newsletter archive and the site's only long-form writing about Egypt, which is
+precisely what the encyclopaedia is built on.
 
 Run:  python backend/pipeline/build_static_pages.py
 """
@@ -47,7 +72,39 @@ _force_utf8_output()
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = os.path.join(ROOT, 'site')
 SITE_URL = 'https://egybi.com'
-TODAY = '2026-07-20'
+TODAY = '2026-08-07'
+
+# Where a retired challenge sends its reader, keyed by the challenge's own
+# `sector`. Every destination below is a section that EXISTS today — verified
+# against the anchors in explore.html and geospatial.html — because sending a
+# retired page to a URL that 404s would be worse than leaving it alone.
+#
+# When the encyclopaedia's own sections land, re-point a whole sector by
+# editing one line here; nothing else in the pipeline knows about this mapping.
+SECTOR_DESTINATION = {
+    # 48 challenges. "Egypt from the Ptolemies to today" is a sourced timeline
+    # of eras and turning points — the closest real home for the history set.
+    'History':         ('explore.html#timeline',      'the sourced timeline of Egypt’s eras'),
+    'Economy':         ('explore.html#economy',       'Egypt’s economy in charts'),
+    'Business':        ('explore.html#business',      'business and industry data'),
+    'Industry':        ('explore.html#industry',      'industry data'),
+    'Logistics':       ('explore.html#logistics',     'trade and logistics data'),
+    'Suez Canal':      ('explore.html#logistics',     'trade and logistics data'),
+    'Agriculture':     ('explore.html#agriculture',   'land and water data'),
+    'Water':           ('explore.html#water',         'land and water data'),
+    'Sports':          ('explore.html#sports',        'sport in Egypt'),
+    'Art & Cinema':    ('explore.html#cinema',        'a century of Egyptian cinema'),
+    'Science & Space': ('explore.html#science',       'science and space data'),
+    'Defence':         ('explore.html#defence',       'defence data'),
+    # These three go to the Atlas rather than Explore, because the map is the
+    # better answer: governorate population, the schools overlay, and the seven
+    # World Heritage sites are all layers on it.
+    'Demographics':    ('geospatial.html#governorates', 'population by governorate on the Atlas'),
+    'Education':       ('geospatial.html#map',          'schools mapped across Egypt on the Atlas'),
+    'Tourism':         ('geospatial.html#heritage',     'the seven World Heritage sites on the Atlas'),
+}
+# Any sector not listed above goes home rather than to a guessed URL.
+DEFAULT_DESTINATION = ('index.html', 'the rest of EgyBI')
 
 def slug(s):
     return re.sub(r'^-|-$', '', re.sub(r'[^a-z0-9]+', '-', s.lower()))
@@ -110,7 +167,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="../assets/egybi.css?v=12" rel="stylesheet">
+<link href="../assets/egybi.css?v=13" rel="stylesheet">
 <script src="../assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
@@ -120,6 +177,7 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 {body}
 {FOOT}
 <script src="../assets/egybi.js"></script>
+<script src="../assets/query.js?v=1"></script>
 <script src="../assets/glyphs.js?v=3"></script>
 <script src="../assets/wayfinding.js?v=1"></script>
 <script src="../assets/ads.js"></script>
@@ -141,69 +199,66 @@ def breadcrumb(name, url, parent_name, parent_url):
         {"@type": "ListItem", "position": 3, "name": name, "item": url}]}
 
 def build_challenges(chs, docs):
+    """Write a RETIRED-page notice at each of the 123 former challenge URLs.
+
+    Returns [] deliberately: these pages keep resolving so existing links and
+    index entries do not break, but a retired page has no business being
+    advertised in the sitemap as fresh content. They stay indexable (no
+    noindex) because dropping them from the index would throw away the exact
+    search presence this whole approach exists to preserve.
+    """
     outdir = os.path.join(SITE, 'practice')
     os.makedirs(outdir, exist_ok=True)
-    by_sector = {}
-    for c in chs:
-        by_sector.setdefault(c['sector'], []).append(c)
-    urls = []
     for c in chs:
         sl = slug(c['title'])
         url = f"{SITE_URL}/practice/{sl}.html"
-        # Title stays under ~60 chars so Google does not truncate it; the old
-        # form ran to 73. Description leads with the task, then the distinctive
-        # claim, and is trimmed on a word boundary so it never ends mid-word.
-        title = f"{c['title']} — {c['difficulty']} SQL challenge | EgyBI"
+        dest, dest_label = SECTOR_DESTINATION.get(c['sector'], DEFAULT_DESTINATION)
+
+        title = f"{c['title']} | EgyBI"
         stmt = re.sub(r'\s+', ' ', c['statement']).strip()
-        tail = " Free, auto-graded, on real cited Egyptian data."
+        tail = " This SQL practice page has been retired; the Egyptian data behind it is still here."
         if len(stmt) + len(tail) > 155:
             stmt = stmt[:155 - len(tail)].rsplit(' ', 1)[0] + '...'
         desc = stmt + tail
-        related = [x for x in by_sector.get(c['sector'], []) if x['id'] != c['id']][:5]
-        rel_html = ''.join(
-            f'<li><a href="{slug(x["title"])}.html">{esc(x["title"])}</a> <span class="pill">{esc(x["difficulty"])}</span></li>'
-            for x in related)
-        ld = {"@context": "https://schema.org", "@type": "LearningResource",
-              "name": c['title'], "url": url,
-              "learningResourceType": "Interactive SQL exercise",
-              "educationalLevel": c['difficulty'],
-              "teaches": ["SQL", c['sector']],
+
+        # A WebPage, not a LearningResource — it no longer teaches anything.
+        # The breadcrumb's parent is the destination section rather than the
+        # retired Practice page, so the trail points somewhere that still works.
+        ld = {"@context": "https://schema.org", "@type": "WebPage",
+              "name": c['title'], "url": url, "description": desc,
               "isAccessibleForFree": True,
-              "description": desc,
-              "provider": {"@type": "Organization", "name": "EgyBI", "url": SITE_URL + "/"}}
+              "publisher": {"@type": "Organization", "name": "EgyBI", "url": SITE_URL + "/"}}
         ld = {"@context": "https://schema.org", "@graph": [
-            ld, breadcrumb(c['title'], url, "Practice", SITE_URL + "/practice.html")]}
+            ld, breadcrumb(c['title'], url, "Explore Egypt",
+                           f"{SITE_URL}/{dest.split('#')[0]}")]}
+
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:820px;">
-    <p class="hero-eyebrow"><span data-glyph="reed"></span> <a href="../practice.html" style="color:var(--gold-bright);">Practice</a> &middot; {esc(c['sector'])} &middot; {esc(c['difficulty'])}</p>
+    <p class="hero-eyebrow"><span data-glyph="reed"></span> {esc(c['sector'])} &middot; Retired page</p>
     <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{esc(c['title'])}</h1>
     <p class="lead" style="margin:0;color:#e9dfc8;">{esc(c['statement'])}</p>
-    <div class="cta-row" style="margin-top:26px;">
-      <a class="btn btn-primary" href="../practice.html#{esc(c['id'])}" data-ev="static_solve_clicked">Solve this challenge &rarr;</a>
-    </div>
-    <p style="margin-top:14px;font-size:0.85rem;opacity:0.75;">Runs in your browser. No signup needed.</p>
   </div>
 </section>
 
 <section class="surface-light">
   <div class="wrap" style="max-width:820px;">
-    <h2 style="font-size:1.25rem;"><span data-glyph="scroll"></span> What you are given</h2>
-    <p>{esc(c['givens'])}</p>
-    <h2 style="font-size:1.25rem;margin-top:28px;">Starting point</h2>
-    <pre class="mono" style="background:var(--kemet);color:var(--on-dark);padding:16px 18px;border-radius:10px;overflow-x:auto;"><code>{esc(c['starter'])}</code></pre>
-    <p style="font-size:0.9rem;color:var(--ink-soft);">The reference solution is checked automatically when you run your query on the practice page &mdash; results are compared row by row{', and order matters for this one' if c.get('orderMatters') else ''}.</p>
-    <h2 style="font-size:1.25rem;margin-top:28px;"><span data-glyph="maat"></span> Did you know</h2>
+    <div class="retired-note">
+      <p><strong>This page used to be a SQL practice challenge.</strong> EgyBI is now an
+      encyclopaedia of Egypt &mdash; its places, geography, infrastructure and history, told
+      through maps and cited data &mdash; and the practice section has closed.</p>
+      <p style="margin-bottom:0;">The Egyptian data this question was built on is still here, and still sourced:
+      <a href="../{dest}">{esc(dest_label)}</a>.</p>
+    </div>
+    <h2 style="font-size:1.25rem;margin-top:32px;"><span data-glyph="maat"></span> About this</h2>
     <p>{esc(c['didYouKnow'])}</p>
-    {f'<h2 style="font-size:1.25rem;margin-top:28px;">More {esc(c["sector"])} challenges</h2><ul class="plain-list">{rel_html}</ul>' if rel_html else ''}
-    <p style="margin-top:30px;"><a class="btn btn-primary" href="../practice.html#{esc(c['id'])}">Open it in the playground &rarr;</a></p>
+    <p style="margin-top:30px;"><a class="btn btn-primary" href="../{dest}">{esc(dest_label.capitalize())} &rarr;</a></p>
   </div>
 </section>
 """
         io.open(os.path.join(outdir, sl + '.html'), 'w', encoding='utf-8').write(
             page(title, desc, url, body, ld))
-        urls.append((url, '0.6'))
-    return urls
+    return []
 
 def build_posts(posts):
     outdir = os.path.join(SITE, 'papyrus')
@@ -245,7 +300,7 @@ def build_posts(posts):
   <div class="wrap post-body-static" style="max-width:720px;">
     {p['body']}
     <hr style="margin:34px 0;border:none;border-top:1px solid var(--line-light);">
-    <p style="font-size:0.9rem;color:var(--ink-soft);">Every figure here is real and cited, and where sources disagree we say so. You can query the same data yourself &mdash; <a href="../practice.html">try a SQL challenge</a> or <a href="../explore.html">explore the datasets</a>.</p>
+    <p style="font-size:0.9rem;color:var(--ink-soft);">Every figure here is real and cited, and where sources disagree we say so. You can see the same data yourself &mdash; <a href="../explore.html">explore the datasets</a> or <a href="../geospatial.html">open the Atlas</a>.</p>
     {f'<h2 style="font-size:1.2rem;margin-top:28px;">More from The Papyrus</h2><ul class="plain-list">{more}</ul>' if more else ''}
   </div>
 </section>
@@ -256,8 +311,11 @@ def build_posts(posts):
     return urls
 
 def build_sitemap(extra):
-    core = [('', '1.0', 'weekly'), ('practice.html', '0.9', 'weekly'), ('explore.html', '0.9', 'weekly'), ('case.html', '0.9', 'monthly'), ('streets.html', '0.8', 'monthly'),
-            ('tracks.html', '0.8', 'monthly'), ('blog.html', '0.8', 'weekly'), ('prices.html', '0.7', 'daily'), ('stocks.html', '0.7', 'daily'),
+    # practice.html and tracks.html are retired and 301 away in .htaccess, and
+    # the 123 challenge URLs return retirement notices — none of them belong in
+    # a sitemap, which is a list of what you want crawled as live content.
+    core = [('', '1.0', 'weekly'), ('explore.html', '0.9', 'weekly'), ('case.html', '0.9', 'monthly'), ('streets.html', '0.8', 'monthly'),
+            ('blog.html', '0.8', 'weekly'), ('prices.html', '0.7', 'daily'), ('stocks.html', '0.7', 'daily'),
             ('geospatial.html', '0.8', 'monthly'),
             ('about.html', '0.6', 'monthly'), ('community.html', '0.6', 'monthly'), ('privacy.html', '0.3', 'yearly')]
     rows = [f"  <url>\n    <loc>{SITE_URL}/{n}</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>{f}</changefreq>\n    <priority>{p}</priority>\n  </url>"
@@ -333,31 +391,14 @@ def write_index_block(path, marker, html):
 
 
 def build_link_indexes(chs, posts):
-    """Static, crawlable indexes of every generated page."""
-    by_sector = {}
-    for c in chs:
-        by_sector.setdefault(c['sector'], []).append(c)
+    """Static, crawlable index of The Papyrus.
 
-    _diff_rank = {'Easy': 0, 'Medium': 1, 'Hard': 2}
-    parts = ['<section class="surface-light-2" id="all-challenges" data-nav="All 123">',
-             '  <div class="wrap">',
-             '    <h2 style="font-size:1.35rem;"><span data-glyph="reed"></span> All 123 SQL challenges</h2>',
-             '    <p style="color:var(--ink-soft);max-width:70ch;">Every challenge has its own page, so you can link '
-             'straight to a technique or find one from search. Grouped by sector, then ordered easy&rarr;hard.</p>']
-    for sector in sorted(by_sector):
-        # order Easy -> Medium -> Hard within a sector, then by title, so a long
-        # sector (History) reads as a gentle difficulty ramp, not a flat wall.
-        items = sorted(by_sector[sector], key=lambda x: (_diff_rank.get(x['difficulty'], 9), x['title']))
-        parts.append(f'    <h3 style="font-size:1.02rem;margin-top:22px;">{esc(sector)} '
-                     f'<span style="color:var(--ink-soft);font-weight:400;font-size:0.82rem;">'
-                     f'&middot; {len(items)}</span></h3>')
-        parts.append('    <ul class="plain-list link-grid">')
-        for c in items:
-            parts.append(f'      <li><a href="practice/{slug(c["title"])}.html">{esc(c["title"])}</a> '
-                         f'<span class="pill">{esc(c["difficulty"])}</span></li>')
-        parts.append('    </ul>')
-    parts += ['  </div>', '</section>']
-    n1 = write_index_block('practice.html', 'CHALLENGE-INDEX', chr(10).join(parts))
+    The challenge index is gone with practice.html. Retired pages must not be
+    linked from a live page: it would advertise them as current content and
+    build an internal crawl path into 123 dead ends. They keep resolving for
+    people arriving from search or an old link, which is the whole point.
+    """
+    n1 = 0
 
     sp = ['<section class="surface-light" id="all-stories">',
           '  <div class="wrap">',
@@ -373,12 +414,20 @@ def build_link_indexes(chs, posts):
 def main():
     data = load_js()
     ch, posts, docs = data['c'], data['p'], data.get('docs', {})
-    cu = build_challenges(ch, docs)
+    build_challenges(ch, docs)          # returns [] — retired pages stay out of the sitemap
     pu = build_posts(posts)
     build_link_indexes(ch, posts)
-    total = build_sitemap(cu + pu)
+    total = build_sitemap(pu)
     nfeed = build_feed(posts)
-    print(f"challenge pages : {len(cu)}")
+    # Report the sector split so a mis-mapped sector is visible in the log
+    # rather than discovered by a reader landing on the wrong section.
+    counts = {}
+    for c in ch:
+        dest = SECTOR_DESTINATION.get(c['sector'], DEFAULT_DESTINATION)[0]
+        counts[dest] = counts.get(dest, 0) + 1
+    print(f"retired pages   : {len(ch)}")
+    for dest in sorted(counts, key=lambda d: -counts[d]):
+        print(f"    {counts[dest]:>4} -> {dest}")
     print(f"post pages      : {len(pu)}")
     print(f"sitemap URLs    : {total}")
     print(f"RSS feed items  : {nfeed}")

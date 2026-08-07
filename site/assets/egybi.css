@@ -765,3 +765,68 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
   .auth-submit .spin { animation-duration: 1.4s; }
   .auth-submit:active { transform: none; }
 }
+
+/* ===========================================================================
+   RETIRED PAGES + THE "QUERY THIS YOURSELF" PANEL            (added 2026-08-07)
+   ---------------------------------------------------------------------------
+   EgyBI is an encyclopaedia of Egypt now. The 123 former SQL-challenge URLs
+   keep resolving and explain themselves; the query panel is what survives of
+   the practice engine, repurposed so any table on the site can be interrogated
+   by the reader instead of only read.
+   =========================================================================== */
+
+/* The notice on a retired page. Gold rule on the left, matching the
+   hand-drawn-boundary note on the street report card — the house signal for
+   "read this, it qualifies what you are looking at". */
+.retired-note { background: var(--papyrus-2); border: 1px solid var(--line-light);
+  border-left: 4px solid var(--gold); border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 18px 22px; }
+.retired-note p { margin: 0 0 10px; color: var(--ink-soft); line-height: 1.7; }
+.retired-note p:last-child { margin-bottom: 0; }
+.retired-note strong { color: var(--gold-ink); }
+.retired-note a { color: var(--blue); font-weight: 600; }
+
+/* The button that appears under a queryable table. Deliberately quiet: it is
+   an offer, not a call to action, and must not compete with the data above it. */
+.query-btn { display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 0;
+  padding: 8px 14px; font: 600 0.84rem/1 'Inter', system-ui, sans-serif;
+  color: var(--blue); background: var(--papyrus-2); cursor: pointer;
+  border: 1px solid var(--line-light); border-radius: 999px;
+  transition: background .15s ease, border-color .15s ease, color .15s ease; }
+.query-btn:hover { background: var(--gold-soft); border-color: var(--gold); color: var(--gold-ink); }
+.query-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.query-panel { position: fixed; inset: 0; z-index: 200; display: flex;
+  align-items: center; justify-content: center; padding: 20px;
+  background: rgba(10, 20, 40, 0.55); backdrop-filter: blur(3px); }
+.query-panel[hidden] { display: none; }
+.q-box { width: min(880px, 100%); max-height: 86vh; overflow: auto;
+  background: var(--papyrus); border: 1px solid var(--line-light);
+  border-top: 4px solid var(--gold); border-radius: var(--radius);
+  box-shadow: var(--shadow-dark); padding: 22px 24px; }
+.q-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.q-title { font-family: 'Cinzel', serif; color: var(--blue-deep); font-size: 1.1rem; }
+/* The source line. Small, but it is the reason the panel is allowed to exist. */
+.q-src { color: var(--ink-soft); font-size: 0.82rem; }
+.q-close { background: none; border: none; font-size: 1.6rem; line-height: 1;
+  color: var(--ink-soft); cursor: pointer; padding: 0 4px; }
+.q-close:hover { color: var(--gold-ink); }
+.q-close:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.q-sql { width: 100%; min-height: 96px; margin-top: 14px; padding: 12px 14px;
+  background: var(--kemet); color: var(--on-dark); font-size: 0.86rem; line-height: 1.6;
+  border: 1px solid var(--line-dark); border-radius: 8px; resize: vertical; }
+.q-sql:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.q-actions { display: flex; align-items: center; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+.q-status { color: var(--ink-soft); font-size: 0.82rem; }
+.q-out { margin-top: 16px; overflow-x: auto; }
+.q-err { color: var(--danger); font-size: 0.88rem; }
+.q-empty, .q-note { color: var(--ink-soft); font-size: 0.84rem; }
+.q-note a { color: var(--blue); }
+@media (max-width: 640px) { .q-box { padding: 18px 16px; max-height: 92vh; } }
+/* Coverage disclosure. Sits above the query box, not below the results,
+   because a reader needs to know the slice is narrower BEFORE reading rows
+   off it. Gold rule for the same reason the retired-page notice has one. */
+.q-coverage { margin: 12px 0 0; padding: 10px 14px; font-size: 0.82rem; line-height: 1.6;
+  color: var(--ink-soft); background: var(--gold-soft); border-left: 3px solid var(--gold);
+  border-radius: 0 6px 6px 0; }
+.q-coverage[hidden] { display: none; }

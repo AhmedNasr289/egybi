@@ -35,6 +35,21 @@
     #    file here is what actually gets served to crawlers.
     RewriteRule ^robots\.txt$ - [L]
 
+    # 2b) Retired sections (2026-08-07). EgyBI is an encyclopaedia of Egypt
+    #     now, not a SQL practice platform, and these two pages have no unique
+    #     subject worth preserving — unlike the 123 former challenge URLs under
+    #     /practice/, which each keep their own page and return 200 with the
+    #     question they always asked plus an onward link. A 301 is right here
+    #     and wrong there: collapsing 123 distinct pages onto a handful of
+    #     section anchors reads to a crawler as a soft 404 and loses them.
+    #
+    #     MUST come before rule 3, which would otherwise rewrite the request
+    #     into site/ and serve the file before this rule is ever considered.
+    #     The trailing $ matters: without it this would also swallow
+    #     /practice/<slug>.html, redirecting away the very pages being kept.
+    RewriteRule ^practice\.html$ /explore.html [L,R=301]
+    RewriteRule ^tracks\.html$ /explore.html [L,R=301]
+
     # 3) Serve everything else from the site/ web root. Requests already inside
     #    /site/ are left alone so there is no rewrite loop. Anything that isn't
     #    under site/ (README.md, GO-LIVE.md, egy_raw.geojson, etc.) maps to a

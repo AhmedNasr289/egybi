@@ -36,7 +36,16 @@ concurrency:
 jobs:
   streets:
     runs-on: ubuntu-latest
-    timeout-minutes: 60      # Overpass downloads for six districts are slow
+    # Raised from 60 after run 4 hit the ceiling. This is not a code problem to
+    # engineer around: the cost is dominated by Overpass download and queuing
+    # time for the WALK network, and 6th of October City at 552 km² is larger
+    # than the four districts of run 3 put together. Run 3 covered four
+    # districts in 19 minutes; six, including that one, does not fit in 60.
+    #
+    # Giving it the time it actually needs is the honest fix. Sampling the walk
+    # network would be faster but would turn a measured share into an estimate,
+    # so it is held back until there is evidence that more time is not enough.
+    timeout-minutes: 120
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4

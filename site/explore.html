@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=12" rel="stylesheet">
+<link href="assets/egybi.css?v=13" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -49,10 +49,8 @@
       <a href="explore.html" class="active">Explore</a>
       <a href="prices.html">Prices</a>
       <a href="stocks.html">Stocks</a>
-      <a href="geospatial.html">Atlas</a><a href="streets.html">Street report card</a>
+      <a href="geospatial.html">Atlas</a>
       <a href="streets.html">Streets</a>
-      <a href="tracks.html">Tracks</a>
-      <a href="practice.html">Practice</a>
       <a href="blog.html">Blog</a>
       <a href="community.html">Community</a>
       <a href="about.html">About</a>
@@ -94,7 +92,7 @@
       </div>
       <div class="map-box" id="egyptMap" role="img" aria-label="Choropleth map of Egypt's 27 governorates coloured by the selected metric"></div>
       <div class="map-legend" id="egyptMapLegend"></div>
-      <p class="chart-cap">Boundaries: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), simplified &amp; bundled offline. Metrics: population, density &amp; area from the EgyBI knowledge base (CAPMAS, Nov 2023); <strong>growth</strong> compares that against the <strong>2017 CAPMAS census</strong> (via citypopulation.de) — see the desert frontier governorates (South Sinai +43%, Matrouh +36%) outpace the crowded Delta; <strong>urban %</strong> is the urban share (Wikipedia governorates table, CAPMAS ~2016 — a proxy, ±1–2 points) and lights up the fully-urban city governorates (Cairo, Port Said, Suez). Colours are <strong>quantile bins</strong> (six equal-count groups) so extreme skew — Cairo's ~10.5M vs South Sinai's ~146k — stays readable. Every figure is queryable on the <a href="practice.html" style="color:var(--gold-ink);">Practice</a> page.</p>
+      <p class="chart-cap">Boundaries: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), simplified &amp; bundled offline. Metrics: population, density &amp; area from the EgyBI knowledge base (CAPMAS, Nov 2023); <strong>growth</strong> compares that against the <strong>2017 CAPMAS census</strong> (via citypopulation.de) — see the desert frontier governorates (South Sinai +43%, Matrouh +36%) outpace the crowded Delta; <strong>urban %</strong> is the urban share (Wikipedia governorates table, CAPMAS ~2016 — a proxy, ±1–2 points) and lights up the fully-urban city governorates (Cairo, Port Said, Suez). Colours are <strong>quantile bins</strong> (six equal-count groups) so extreme skew — Cairo's ~10.5M vs South Sinai's ~146k — stays readable. Every figure is queryable on the page.</p>
     </div>
   </div>
 </section>
@@ -253,7 +251,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Through the ages</div>
     <h2 data-aos="fade-up">Egypt from the Ptolemies to today.</h2>
-    <p class="lead" data-aos="fade-up">A sourced timeline of eras and turning points — the same data behind the platform's history challenges.</p>
+    <p class="lead" data-aos="fade-up">A sourced timeline of eras and turning points, from the Ptolemies to the present day.</p>
     <div class="timeline" style="margin-top:10px;" id="timeline"></div>
   </div>
 </section>
@@ -427,7 +425,13 @@
     <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Education &amp; knowledge</div>
     <h2 data-aos="fade-up">20 universities on the world stage.</h2>
     <p class="lead" data-aos="fade-up">Egypt placed <strong style="color:var(--gold-ink);">20 universities</strong> in the QS World University Rankings 2026, up from 15 the year before — led by Cairo University (347th) and the American University in Cairo (381st). Al-Azhar traces its teaching to 970 CE, making it one of the oldest universities on Earth.</p>
-    <div class="grid grid-3" id="universityGrid" style="margin-top:26px;"></div>
+    <div class="grid grid-3" id="universityGrid" style="margin-top:26px;" data-query="universities"
+         data-query-note="Coverage note: the queryable table holds 8 Egyptian universities, fewer than the 20 this section discusses. It is a curated slice, not the full ranking."
+     data-query-sql="SELECT name, city, founded, qs_rank
+FROM universities
+ORDER BY founded;"
+     data-query-source="QS World University Rankings + university records"
+     data-query-asof="2025"></div>
     <p class="chart-cap" data-aos="fade-up">Source: QS World University Rankings 2026. Bands (e.g. 1201–1400) are QS's own grouping for lower ranks. Enrollment figures are approximate.</p>
   </div>
 </section>
@@ -438,7 +442,13 @@
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>World heritage</div>
     <h2 data-aos="fade-up">Seven UNESCO World Heritage Sites.</h2>
     <p class="lead" data-aos="fade-up">Six cultural, one natural — from the Giza pyramid fields to the Whale Valley fossils that record how whales left the land. Six were inscribed in a single year, 1979.</p>
-    <div class="grid grid-3" id="unescoGrid" style="margin-top:26px;"></div>
+    <div class="grid grid-3" id="unescoGrid" style="margin-top:26px;"
+         data-query="unesco_sites"
+         data-query-sql="SELECT site, governorate, year_inscribed, type
+FROM unesco_sites
+ORDER BY year_inscribed;"
+         data-query-source="UNESCO World Heritage Centre list"
+         data-query-asof="2026-07-25"></div>
   </div>
 </section>
 
@@ -470,7 +480,7 @@
   <div class="wrap">
     <h2 data-aos="fade-up">Every number here is real and cited.</h2>
     <p class="lead" data-aos="fade-up">Primary sources include the World Bank, the Central Bank of Egypt, CAPMAS, the Suez Canal Authority, Egypt's State Information Service, UNESCO, and the Met Museum. Disputed and approximate figures are flagged in the data itself — accuracy over polish.</p>
-    <div class="cta-row center" data-aos="fade-up"><a href="practice.html" class="btn btn-primary">Query this data yourself →</a></div>
+    <div class="cta-row center" data-aos="fade-up"><a href="geospatial.html" class="btn btn-primary">See it on the map →</a></div>
   </div>
 </section>
 
@@ -480,7 +490,7 @@
     <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Where to next</div>
     <h2 data-aos="fade-up">Carry on through Egypt.</h2>
     <div class="ns-grid" style="text-align:left;margin-top:22px;" data-aos="fade-up">
-      <a class="ns-card" href="practice.html"><span class="ns-k">Practice</span><h3>Query this data yourself →</h3><p>123 auto-graded SQL challenges on the same cited tables — no signup.</p></a>
+      <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt in charts &rarr;</h3><p>Two dozen sourced charts on economy, society, land and heritage &mdash; every figure cited and dated.</p></a>
       <a class="ns-card" href="prices.html"><span class="ns-k">Prices</span><h3>Today's market prices →</h3><p>Egypt's retail &amp; wholesale product prices, refreshed daily.</p></a>
       <a class="ns-card" href="blog.html"><span class="ns-k">The Papyrus</span><h3>Egypt, told through its data →</h3><p>Short, cited data-stories for readers who came for the country.</p></a>
     </div>
@@ -490,7 +500,7 @@
 <footer class="site-footer">
   <div class="cols">
     <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data for real data-engineering practice.</p></div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="practice.html">SQL Practice</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a></div>
     <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://tradingeconomics.com/egypt/indicators" target="_blank" rel="noopener">Trading Economics</a></div>
   </div>
@@ -503,6 +513,7 @@
 <script src="assets/vendor/countUp.umd.js"></script>
 <script src="assets/vendor/leaflet.js"></script>
 <script src="assets/egybi.js"></script>
+<script src="assets/query.js?v=1"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/egypt-geo.js"></script>
