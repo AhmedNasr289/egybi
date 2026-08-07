@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cairo Street Report Card — Six Districts, Six Eras, Measured | EgyBI</title>
+<title>Cairo Street Report Card — Ten Districts, Six Eras, Measured | EgyBI</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="description" content="Cairo's street networks measured, not asserted: intersection density, dead ends, circuity and orientation entropy across six districts from khedivial Downtown to the desert new towns.">
+<meta name="description" content="Egypt's street networks measured, not asserted: intersection density, dead ends, circuity and orientation entropy across ten districts, from khedivial Downtown to the newest coastal city.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
@@ -92,13 +92,13 @@
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <link rel="canonical" href="https://egybi.com/streets.html">
   <meta property="og:site_name" content="EgyBI">
-  <meta property="og:title" content="Cairo Street Report Card — six districts, six eras, measured">
-  <meta property="og:description" content="Intersection density, dead ends, circuity and orientation entropy across six Cairo districts — from the khedivial grid to the desert new towns. Open data, open method.">
+  <meta property="og:title" content="Cairo Street Report Card — ten districts, six eras, measured">
+  <meta property="og:description" content="Intersection density, dead ends, circuity and orientation entropy across ten Egyptian districts — from the khedivial grid to the newest coastal city. Open data, open method.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://egybi.com/streets.html">
   <meta property="og:image" content="https://egybi.com/og-image.png?v=2">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Cairo Street Report Card — six districts, six eras, measured">
+  <meta name="twitter:title" content="Cairo Street Report Card — ten districts, six eras, measured">
   <meta name="twitter:image" content="https://egybi.com/og-image.png?v=2">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&amp;text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&amp;display=swap" rel="stylesheet">
 </head>
@@ -130,7 +130,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Street report card</div>
     <h1 data-aos="fade-up">Cairo, measured street by street.</h1>
-    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Six districts built across six eras &mdash; from Ismail&rsquo;s 1860s boulevards to the desert compounds of the 2000s. Not opinions about which is better planned: <strong>intersection density, dead-end share, circuity and orientation entropy</strong>, computed from open street data with the method written down.</p>
+    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Ten districts built across six eras &mdash; from Ismail&rsquo;s 1860s boulevards to a coastal city begun in 2018. Not opinions about which is better planned: <strong>intersection density, dead-end share, circuity and orientation entropy</strong>, computed from open street data with the method written down.</p>
   </div>
 </section>
 
@@ -138,7 +138,7 @@
 
 <section class="surface-light" id="map" data-nav="The map">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Six districts, one metric at a time</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Every district, one metric at a time</div>
     <h2 data-aos="fade-up">Where each district lands.</h2>
     <div id="cardEmpty" class="streets-note" hidden></div>
     <div id="mapSection">
@@ -153,7 +153,7 @@
           <button type="button" class="metric-toggle" data-metric="circuity_avg">Circuity</button>
           <button type="button" class="metric-toggle" data-metric="orientation_entropy">Orientation entropy</button>
         </div>
-        <div class="streets-box" id="streetsMap" role="img" aria-label="Map of six Cairo districts shaded by the selected street-network metric"></div>
+        <div class="streets-box" id="streetsMap" role="img" aria-label="Map of the measured Egyptian districts, shaded by the selected street-network metric"></div>
         <div class="map-legend" id="streetsLegend"></div>
         <div class="dd" id="districtDetail" hidden></div>
         <div class="streets-note" id="streetsMeta"></div>
@@ -162,13 +162,15 @@
   </div>
 </section>
 
-<section class="surface-light-2" id="grid" data-nav="How grid-like">
+<section class="surface-light-2" id="grid" data-nav="Which way streets face">
   <div class="wrap" id="roseSection">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>Orientation</div>
-    <h2 data-aos="fade-up">How grid-like is each district?</h2>
-    <p class="lead" data-aos="fade-up">Each rose shows how much street length faces each compass direction. A planned grid concentrates into a few opposing spokes; organic fabric spreads evenly around the circle. The number underneath is <strong>orientation entropy</strong> &mdash; about <strong>1.39</strong> for a perfect four-way grid, up to <strong>3.58</strong> for streets pointing every which way.</p>
+    <h2 data-aos="fade-up">Which way do the streets face?</h2>
+    <p class="lead" data-aos="fade-up">Each rose shows how much street length faces each compass direction. The number underneath is <strong>orientation entropy</strong>, which measures one thing only: <strong>how concentrated those bearings are into a few directions</strong>. A four-way grid puts nearly all its length into two opposing pairs and scores about <strong>1.39</strong>; streets facing every which way approach <strong>3.58</strong>.</p>
     <div class="rose-grid" id="roseGrid"></div>
-    <p class="chart-cap" style="margin-top:18px;">Bearings are computed on unprojected coordinates because they are compass directions, and weighted by segment length so a long avenue counts for more than a short lane. Click any rose for that district&rsquo;s full card.</p>
+    <p class="chart-cap" style="margin-top:18px;" id="roseSpread"></p>
+    <p class="chart-cap"><strong>A high score is not the same as an unplanned district.</strong> Concentration is not regularity. A radial plan &mdash; avenues converging on circular midans, the Haussmannian idea Ismail brought to Cairo &mdash; is rigorously planned and spreads its bearings across many sectors <em>by design</em>, so it scores high for the same reason a tangle of lanes does. This number cannot tell the two apart; the rose above it can, because a star reads differently from a smear. Read them together.</p>
+    <p class="chart-cap">Bearings are computed on unprojected coordinates because they are compass directions, and weighted by segment length so a long avenue counts for more than a short lane. Click any rose for that district&rsquo;s full card.</p>
   </div>
 </section>
 
@@ -240,7 +242,7 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/vendor/leaflet.js"></script>
-<script src="assets/streets.js?v=1"></script>
+<script src="assets/streets.js?v=2"></script>
 <script src="assets/ads.js"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>

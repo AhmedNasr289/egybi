@@ -52,9 +52,13 @@
       what: 'How much further you travel along streets than the straight-line distance. 1.00 would be a perfect straight shot; higher means detours.'
     },
     orientation_entropy: {
+      // `good: 'low'` here is a DISPLAY CONVENTION, not a quality claim — it
+      // only puts the more directionally concentrated districts at the dark end
+      // of the ramp. Low entropy is not "better": a radial plan is deliberate,
+      // walkable and scores high. See the caveat printed under the roses.
       label: 'Orientation entropy', unit: '', good: 'low',
       fmt: function (v) { return v.toFixed(2); },
-      what: 'How disordered the street directions are. A perfect grid scores about 1.39; a fully random network approaches 3.58. Lower means more grid-like.'
+      what: 'How concentrated the street directions are. A four-way grid puts nearly all its length into two opposing pairs and scores about 1.39; bearings spread evenly around the compass approach 3.58. A high score can mean disorder or a deliberate radial plan — this number alone cannot tell you which.'
     }
   };
   var ORDER = ['intersection_density_km2', 'dead_end_share_pct', 'street_density_km_km2',
@@ -191,6 +195,30 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(c.dataset.key); }
       });
     });
+    paintRoseSpread();
+  }
+
+  /* The finding the roses make but a reader can miss: the districts barely
+     differ on this metric. Computed from the data rather than written down,
+     so it stays true when the pipeline reruns and cannot become a stale
+     claim about numbers that have since moved. */
+  function paintRoseSpread() {
+    var el = $('roseSpread'); if (!el) return;
+    var hs = S.card.districts
+      .map(function (d) { return d.orientation_entropy; })
+      .filter(function (h) { return typeof h === 'number'; });
+    if (hs.length < 2) { el.textContent = ''; return; }
+    var lo = Math.min.apply(null, hs), hi = Math.max.apply(null, hs);
+    var GRID = Math.log(4), MAX = Math.log(36);          // 1.386 … 3.584
+    var share = (hi - lo) / (MAX - GRID) * 100;
+    el.innerHTML = 'Read the numbers together before reading any one of them. ' +
+      'Across the ' + hs.length + ' districts measured here, entropy runs from <strong>' +
+      lo.toFixed(2) + '</strong> to <strong>' + hi.toFixed(2) + '</strong> &mdash; a spread of ' +
+      (hi - lo).toFixed(2) + ', or <strong>' + share.toFixed(0) + '%</strong> of the ' +
+      GRID.toFixed(2) + '&ndash;' + MAX.toFixed(2) + ' range. ' +
+      (share < 25
+        ? 'They are clustered near the high end, which is the actual finding: <strong>none of these districts is a grid by this measure</strong>, khedivial Downtown included. The textbook contrast between a planned grid and an organic tangle does not appear in Cairo, and a metric this flat should not be used to rank the districts against each other. The differences that do separate them are in the other six columns.'
+        : 'That is a wide enough spread for the differences between districts to be meaningful.');
   }
 
   function paintTable() {
