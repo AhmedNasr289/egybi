@@ -192,11 +192,15 @@ def orientation_histogram(Gb, bins: int = ORIENTATION_BINS) -> list[float]:
     return [round(c / total, 5) for c in counts] if total > 0 else counts
 
 
-def build_report_card(ox, resolved: dict) -> bool:
+def build_report_card(ox, resolved: dict, skipped: list) -> bool:
     """Builds the report card and RECORDS each resolved boundary in `resolved`,
     so the access layer can reuse it instead of geocoding every district a
     second time. Nominatim and Overpass are free shared infrastructure; asking
-    them the same question twice per run is rude and slower."""
+    them the same question twice per run is rude and slower.
+
+    The return value means only "the file was written". Any district that was
+    dropped is appended to `skipped`, which main() turns into a non-zero exit —
+    see the note there for why a partial build must not be reported as green."""
     log("Street-network report card (OSMnx drive networks)…")
     rows, boundaries, failures = [], {"type": "FeatureCollection", "features": []}, []
 
@@ -287,10 +291,11 @@ def build_report_card(ox, resolved: dict) -> bool:
     log(f"  wrote streets-districts.json ({len(rows)} districts) + streets-boundaries.json")
     if failures:
         log(f"  note: {len(failures)} district(s) skipped — {'; '.join(failures)}")
+    skipped.extend(f"report-card / {f}" for f in failures)
     return True
 
 
-def build_access(ox, resolved: dict) -> bool:
+def build_access(ox, resolved: dict, skipped: list) -> bool:
     """15-minute access: walking time from street nodes to the nearest amenity.
 
     Uses the WALK network (trap 4) and reports the SHARE of network nodes within
@@ -392,6 +397,7 @@ def build_access(ox, resolved: dict) -> bool:
     (OUT / "streets-access.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     log(f"  wrote streets-access.json ({len(rows)} districts)")
+    skipped.extend(f"access / {f}" for f in failures)
     return True
 
 
@@ -404,15 +410,33 @@ def main() -> None:
 
     OUT.mkdir(parents=True, exist_ok=True)
     resolved: dict = {}                      # key -> (boundary gdf, area km²)
-    ok_card = build_report_card(ox, resolved)
-    ok_access = build_access(ox, resolved) if ok_card else False
+    skipped: list = []                       # every district dropped, either layer
+    ok_card = build_report_card(ox, resolved, skipped)
+    ok_access = build_access(ox, resolved, skipped) if ok_card else False
     if not ok_card:
         log("\n(access layer skipped because the report card did not build)")
 
     failed = [n for n, ok in [("report-card", ok_card), ("access", ok_access)] if not ok]
     if failed:
         sys.exit(f"\nFAILED layers (last-good files kept): {', '.join(failed)}")
-    log("\nBoth layers written.")
+
+    # A PARTIAL build is not a green build. MIN_DISTRICTS_OK only decides
+    # whether the file is worth writing at all; it must not double as "this
+    # result is complete". Run 3 cleared that floor by exactly one district
+    # while silently dropping Downtown Cairo — the khedivial grid every other
+    # district is implicitly compared against — and reported success. A page
+    # whose premise is six eras cannot quietly become four without anyone
+    # being told.
+    #
+    # Exiting non-zero here costs nothing that matters: the workflow's commit
+    # step runs under `if: '!cancelled()'`, so the layers that DID build are
+    # still committed. All this does is turn a silent degradation into a red
+    # run and a failure issue, which is a human's decision to make, not this
+    # script's.
+    if skipped:
+        sys.exit("\nPARTIAL build (files written, run marked failed):\n  "
+                 + "\n  ".join(skipped))
+    log("\nBoth layers written, all districts resolved.")
 
 
 if __name__ == "__main__":

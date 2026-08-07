@@ -22,6 +22,18 @@ Street-network geometry is one of the few things about urban form you can measur
 These are the decisions that separate a real measurement from a demo. All are in the pipeline docstring and restated on the page, because *a metric you cannot interrogate is a metric you should not trust*.
 
 1. **Place-name boundaries.** OSMnx resolves a district by geocoding a string, and Egyptian district names are inconsistent in OSM (English vs Arabic, "Nasr City" vs "Madinat Nasr", missing relations). Each district carries **several candidate queries tried in order**, and every resolved polygon is **area-checked** (1–900 km²) before use. A wrong geocode usually lands on a single POI or a whole governorate; both would silently corrupt every per-km² figure downstream. Anything implausible is dropped **and named** in the output's `skipped` list, which the page displays.
+
+   This is the trap that actually sprang. On the first successful run, `'Abdeen, Cairo, Egypt'` resolved to a polygon of **0.0 km²** — Abdeen *Palace*, a building, rather than the Abdeen qism — and the area check caught it exactly as designed. Three distinct failure modes showed up, and they mean different things:
+
+   | What osmnx does | Meaning |
+   |---|---|
+   | `InsufficientResponseError` | Nominatim doesn't know the string at all |
+   | `TypeError` | Results exist, but **none is a polygon** |
+   | resolves, implausible area | A polygon was found — the **wrong** one. The dangerous case, silent without the area check |
+
+   `TypeError` is worth understanding precisely: with the default `which_result=None`, `geocode_to_gdf` already asks for **50** results and returns the first `(Multi)Polygon`, so the error means no polygon exists anywhere in that set. Tuning `which_result` cannot rescue it — only a different query string can. Confirmed by reading the osmnx 2.1.1 source, not inferred from the message.
+
+   Finding replacement strings by editing the pipeline and re-running costs ~20 minutes and a full Cairo graph download **per guess**, so `probe_geocodes.py` + `probe-geocodes.yml` (read-only, seconds, commits nothing — the `probe-idsc` pattern) geocode candidates alone and print each result's area, `class`/`type` and `display_name`. Candidates get chosen from evidence.
 2. **Projection.** Lengths and circuity computed on raw lat/lon degrees are meaningless. Every graph is projected to UTM before measurement.
 3. **Normalisation.** 6th of October is orders of magnitude larger than Downtown, so raw counts would compare *size* rather than *design*. Every count is divided by the district's real projected area.
 4. **Drive vs walk networks.** The report card uses the **drive** network because that is what street design produces; the access score uses the **walk** network because a 15-minute city is about walking. Mixing them would answer neither question.
@@ -55,9 +67,15 @@ If `ANTHROPIC_API_KEY` is absent the script **exits cleanly without writing a fi
 
 **Manual only, deliberately.** Street networks change on the timescale of construction projects, so a weekly cron would produce byte-identical output while hammering the free public Overpass API, whose usage policy asks for exactly the restraint a pointless cron job fails to show. For the same reason each district's boundary is **geocoded once and shared** between the report-card and access passes rather than looked up twice.
 
-**Not stdlib-only** — the first pipeline here that isn't. OSMnx pulls geopandas, shapely and networkx. Versions are pinned so an upstream release cannot silently change published measurements, and pip is cached. **`scipy` is pinned explicitly** because `orientation_entropy` needs it as an *optional* dependency that osmnx does not install by default — omit it and the metric raises `ImportError` at runtime rather than at install time. That was caught by testing locally; it would otherwise have failed only on the runner.
+**Not stdlib-only** — the first pipeline here that isn't. OSMnx pulls geopandas, shapely and networkx. Versions are pinned in **`backend/pipeline/requirements-streets.txt`** so an upstream release cannot silently change published measurements, and pip is cached against that file. **`scipy` is pinned explicitly** because `orientation_entropy` needs it as an *optional* dependency that osmnx does not install by default — omit it and the metric raises `ImportError` at runtime rather than at install time. That was caught by testing locally; it would otherwise have failed only on the runner.
+
+The pins live in a file rather than inline in the workflow for a reason the first run made concrete: `actions/setup-python`'s `cache: pip` globs for `**/requirements.txt` or `**/pyproject.toml` to build its cache key, and because every other EgyBI pipeline is stdlib-only the repo had neither. The cache step **hard-errored** eight seconds in — before pip, before Overpass, before any of the pipeline's own guardrails could matter. Keeping the pins in the requirements file means the versions the cache is keyed on are by construction the versions installed.
 
 Guardrails follow the house pattern: thin-graph floors (150 nodes / 300 edges), a minimum of 4 districts before publishing a comparison, abort-and-keep-last-good per layer, non-zero exit on any skip, and a commit step under `if: '!cancelled()'` that stages only files that exist.
+
+**The "non-zero exit on any skip" part was not actually true until 2026-08-07**, and the first successful run is what exposed it. `MIN_DISTRICTS_OK` was doing two jobs: deciding whether the file is worth writing *and*, by omission, standing in for "this result is complete". A run that resolved exactly four of six districts cleared the floor, logged the two drops as a note, and reported **success** — with Downtown Cairo, the grid every other district is implicitly compared against, among the missing. Every dropped district in either layer is now collected and forces a non-zero exit. That costs nothing, because `if: '!cancelled()'` still commits the layers that built; it only converts a silent degradation into a red run and a failure issue, which is a human's call to make.
+
+The lesson generalises past this pipeline: **a floor that gates publication must not double as a completeness check.** Clearing the minimum bar is not the same as having everything.
 
 ## Verified
 
