@@ -1,0 +1,83 @@
+name: Build visitor layers
+
+# Builds the two layers behind site/visit.html: climate normals from NASA
+# POWER and site elevations from NASA SRTM.
+#
+# MANUAL-ONLY, on purpose. Both are long-run constants: POWER's climatology is
+# a multi-decade mean and SRTM is a fixed 2000 radar survey that will not change
+# again. A cron here would re-download identical bytes forever and hammer two
+# free public services for nothing, which is the opposite of what their usage
+# policies ask for. Run it when the site list changes, and otherwise leave it.
+#
+# fetch_tourism.py keeps last-good files per layer, so a run that cannot reach
+# a source degrades to "yesterday's data still published" rather than to an
+# empty page — and still exits non-zero so the failure is visible.
+
+on:
+  workflow_dispatch: {}        # manual "Run workflow" button
+
+permissions:
+  contents: write
+  issues: write                # the failure notifier opens/comments on an issue
+
+concurrency:
+  group: build-visit-layers
+  cancel-in-progress: false
+
+jobs:
+  visit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30        # 18 sites, one request each plus one batched
+                               # elevation call; generous even with backoff.
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch the visitor layers (stdlib only, no pip)
+        run: python backend/pipeline/fetch_tourism.py
+
+      # Runs even when the fetch step failed. The script's guardrails are PER
+      # LAYER — an unreachable source skips only its own file and leaves the
+      # other correctly written — but it still exits non-zero so the run shows
+      # red. Without this condition that non-zero exit would discard the layer
+      # that DID succeed, which is the opposite of the intent.
+      - name: Commit & push whatever layers were built
+        if: '!cancelled()'
+        run: |
+          # Stage only files that exist: `git add` on a missing path is a hard
+          # error (exit 128) that would abort this step under `bash -e`.
+          FILES=""
+          for f in site/data/visit-climate.json site/data/visit-terrain.json; do
+            [ -f "$f" ] && FILES="$FILES $f"
+          done
+          if [ -z "$FILES" ]; then
+            echo "No visitor layers were built — nothing to commit."
+          elif [ -n "$(git status --porcelain -- $FILES)" ]; then
+            git config user.name  "egybi-data-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add $FILES
+            git commit -m "Visitor layer refresh — NASA POWER climatology + SRTM elevation [skip ci]"
+            # Rebase against the ref this run was dispatched on. Hardcoding main
+            # means a branch dispatch rewrites the branch history and the push is
+            # rejected as a non-fast-forward — the bug that cost refresh-streets
+            # a completed run. On main this behaves identically.
+            for attempt in 1 2 3; do
+              if git pull --rebase --autostash origin "$GITHUB_REF_NAME" \
+                 && git push origin "HEAD:$GITHUB_REF_NAME"; then
+                echo "pushed on attempt $attempt"; exit 0
+              fi
+              echo "push attempt $attempt failed; retrying in 5s"; sleep 5
+            done
+            echo "::error::could not push after 3 attempts"; exit 1
+          else
+            echo "No visitor-layer changes (or guardrails kept last-good data)."
+          fi
+
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
