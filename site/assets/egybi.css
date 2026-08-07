@@ -211,13 +211,11 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .surface-dark .tl-item p { color: var(--on-dark-soft); }
 
 /* ---------- ranks / badges ---------- */
-.rank-ladder { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 24px 0; }
-.rank { background: var(--kemet-2); border: 1px solid var(--line-dark); padding: 9px 15px; border-radius: 9px; font-size: 0.88rem; color: var(--gold-bright); font-weight: 600; }
-.rank-arrow { color: rgba(255,255,255,0.32); }
-.badge-card { background: var(--kemet-2); border: 1px solid var(--line-dark); border-radius: 12px; padding: 18px; transition: transform .25s, border-color .25s, box-shadow .25s; }
-.badge-card:hover, .badge-card:focus-within { transform: translateY(-5px); border-color: var(--gold-bright); box-shadow: 0 10px 24px rgba(201,162,39,0.18); }
-.badge-card .name { color: var(--gold-bright); font-weight: 700; font-size: 0.92rem; }
-.badge-card p { font-size: 0.84rem; color: var(--on-dark-soft); margin: 7px 0 0; }
+/* The .rank-ladder / .rank / .badge-card rules were removed on 2026-08-07
+   with the markup they styled. about.html carried a six-rung rank ladder and
+   eight badges awarded for SQL skills; those challenges are retired and
+   nothing could grant them, so both sections went and these rules had no
+   remaining call site. */
 
 /* ---------- trivia / callout ---------- */
 .callout { background: var(--papyrus-2); border: 2px solid var(--gold); border-radius: var(--radius); padding: 26px 30px; box-shadow: 0 14px 34px rgba(201,162,39,0.14); }
@@ -262,8 +260,6 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 
 @media (max-width: 560px) {
   section { padding: 52px 6vw; }
-  .rank-ladder { flex-direction: column; align-items: flex-start; }
-  .rank-arrow { display: none; }
   .site-footer .cols { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
