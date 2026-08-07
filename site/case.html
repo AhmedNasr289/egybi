@@ -11,10 +11,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/egybi.css?v=12" rel="stylesheet">
-<link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js" crossorigin>
-<link rel="preload" as="fetch" type="application/wasm" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.wasm" crossorigin>
+<link rel="preload" as="script" href="assets/vendor/sql-wasm.js">
+<link rel="preload" as="fetch" type="application/wasm" href="assets/vendor/sql-wasm.wasm">
 <style>
   .case-progress { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:0 0 4px; }
   .cp-dot { width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
@@ -182,11 +182,11 @@
   </div>
   <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
 </footer>
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="assets/vendor/aos.js"></script>
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
-<script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
+<script src="assets/vendor/sql-wasm.js"></script>
 <script src="assets/challenges.js"></script>
 <script src="assets/case.js?v=1"></script>
 <script>
@@ -312,7 +312,7 @@
   });
 
   paintProgress(); paintSteps();
-  initSqlJs({ locateFile:function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/'+f; } }).then(function(SQL){
+  initSqlJs({ locateFile:function(f){ return 'assets/vendor/'+f; } }).then(function(SQL){
     db = new SQL.Database();
     db.run(window.EGYBI_SANDBOX_SQL);
     document.getElementById('engineStatus').textContent = 'SQL engine ready \u2014 SQLite running in your browser. Nothing you type leaves this page.';
@@ -323,7 +323,7 @@
 })();
 </script>
 <script src="assets/ads.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
+<script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script src="assets/analytics.js" defer></script>
 </body>

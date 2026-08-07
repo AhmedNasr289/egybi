@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/egybi.css?v=12" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
@@ -61,12 +61,11 @@
  "isAccessibleForFree":true,"provider":{"@id":"https://egybi.com/#org"}}
 ]}
 </script>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <!-- The hero cannot run until the SQL engine arrives, and it was queued
        behind decorative libraries. Preload starts the 314 KB wasm at high
        priority in parallel, without changing execution order. -->
-  <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js" crossorigin>
-  <link rel="preload" as="fetch" type="application/wasm" href="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.wasm" crossorigin>
+  <link rel="preload" as="script" href="assets/vendor/sql-wasm.js">
+  <link rel="preload" as="fetch" type="application/wasm" href="assets/vendor/sql-wasm.wasm">
   <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
        Android and macOS, so these signs would be empty boxes for most
        visitors. This loads ONLY the nine signs we use (~12 KB). -->
@@ -352,11 +351,11 @@ LIMIT 5;</textarea>
   <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-<script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
+<script src="assets/vendor/aos.js"></script>
+<script src="assets/vendor/tsparticles.bundle.min.js"></script>
+<script src="assets/vendor/countUp.umd.js"></script>
+<script src="assets/vendor/chart.umd.js"></script>
+<script src="assets/vendor/sql-wasm.js"></script>
 <script src="assets/egybi.js"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
@@ -402,7 +401,7 @@ LIMIT 5;</textarea>
   // sql.js demo
   var sqlDb=null, runBtn=document.getElementById('runQueryBtn'), statusEl=document.getElementById('sqlStatus'), outputEl=document.getElementById('sqlOutput'), inputEl=document.getElementById('sqlInput');
   function runQuery(){ if(!sqlDb)return; try{ var res=sqlDb.exec(inputEl.value); if(!res.length){outputEl.innerHTML='<p class="sql-empty">Query ran fine but returned no rows.</p>';return;} var c=res[0].columns,v=res[0].values,h='<table class="result-table"><thead><tr>'+c.map(function(x){return '<th>'+EGYBI.escapeHtml(x)+'</th>';}).join('')+'</tr></thead><tbody>'; v.forEach(function(r){h+='<tr>'+r.map(function(x){return '<td>'+EGYBI.escapeHtml(x)+'</td>';}).join('')+'</tr>';}); outputEl.innerHTML=h+'</tbody></table>'; }catch(err){ outputEl.innerHTML='<p class="sql-error">SQL error: '+EGYBI.escapeHtml(err.message)+'</p>'; } }
-  initSqlJs({ locateFile: function(f){ return 'https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/'+f; } }).then(function(SQL){
+  initSqlJs({ locateFile: function(f){ return 'assets/vendor/'+f; } }).then(function(SQL){
     sqlDb=new SQL.Database();
     sqlDb.run('CREATE TABLE pharaohs (name TEXT, dynasty TEXT, reign_start INTEGER, reign_end INTEGER);');
     sqlDb.run("INSERT INTO pharaohs VALUES ('Narmer','I',-3100,-3080),('Djoser','III',-2670,-2650),('Sneferu','IV',-2613,-2589),('Khufu','IV',-2589,-2566),('Khafre','IV',-2558,-2532),('Menkaure','IV',-2532,-2503),('Unas','V',-2375,-2345),('Pepi II','VI',-2278,-2184),('Mentuhotep II','XI',-2061,-2010),('Senusret III','XII',-1878,-1839),('Sobekneferu','XII',-1806,-1802),('Ahmose I','XVIII',-1550,-1525),('Hatshepsut','XVIII',-1479,-1458),('Thutmose III','XVIII',-1479,-1425),('Amenhotep III','XVIII',-1388,-1351),('Akhenaten','XVIII',-1353,-1336),('Tutankhamun','XVIII',-1332,-1323),('Seti I','XIX',-1290,-1279),('Ramesses II','XIX',-1279,-1213),('Merneptah','XIX',-1213,-1203),('Ramesses III','XX',-1184,-1153),('Taharqa','XXV',-690,-664),('Psamtik I','XXVI',-664,-610),('Nectanebo II','XXX',-360,-343),('Ptolemy I Soter','Ptolemaic',-305,-282),('Cleopatra VII','Ptolemaic',-51,-30);");
@@ -412,7 +411,7 @@ LIMIT 5;</textarea>
 </script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
+<script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script>window.EGYBI_AUTH = { base: 'auth/' };</script>
 <script src="assets/auth.js?v=10"></script>
