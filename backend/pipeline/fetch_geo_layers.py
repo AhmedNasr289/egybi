@@ -406,16 +406,34 @@ out center tags;""",
     if unassigned:
         print(f"    (unassigned to a governorate: {unassigned} — coastal or outside the outlines)")
 
-    # Floors are deliberately conservative on this first build. The Atlas
-    # heritage layer taught the lesson: a floor guessed too high turns a good
-    # run red, and a floor guessed too low lets a broken one through. These are
-    # set low enough to pass a healthy run and high enough to catch a collapse,
-    # and should be recalibrated against the first real numbers printed above.
-    floors = {"settlement": 120, "airport": 8, "antiquity": 40}
+    # CALIBRATED against the first real build (2026-08-07), which returned
+    # settlement 335, airport 29, antiquity 393. Set to roughly 65% of observed:
+    # high enough that a collapse or a truncated Overpass response trips them,
+    # low enough that ordinary mapping churn does not turn a healthy run red.
+    # The provisional 120/8/40 were guesses and are now retired.
+    floors = {"settlement": 220, "airport": 18, "antiquity": 250}
     thin = [f"{k} {counts.get(k, 0)} < {v}" for k, v in floors.items() if counts.get(k, 0) < v]
     if thin:
         print(f"  SKIP places: thin result ({'; '.join(thin)}) — keeping last-good file")
         return False
+
+    # COVERAGE SELF-CHECK. Spot-checking the first build against major Egyptian
+    # cities found three genuinely absent from a place=city|town query —
+    # Mansoura, Sohag and Sharm el-Sheikh — each a significant city. That is
+    # what an incomplete gazetteer looks like in practice, and it is far more
+    # useful to a reader than a generic "coverage may vary". Rather than write
+    # that observation down once and let it rot, the check runs every build and
+    # ships its result, so the page always states the CURRENT gap rather than a
+    # remembered one. Absence here is reported, never treated as an error: OSM
+    # improving is the expected outcome and would simply shorten the list.
+    BENCHMARK = ["Cairo", "Alexandria", "Giza", "Port Said", "Suez", "Luxor",
+                 "Aswan", "Hurghada", "Sharm", "Ismail", "Mansoura", "Tanta",
+                 "Asyut", "Sohag", "Minya", "Zagazig", "Damanhur", "Faiyum",
+                 "Qena", "Damietta", "Marsa Matruh", "Siwa"]
+    settle_names = " | ".join(p["name"].lower() for p in places if p["kind"] == "settlement")
+    absent = [b for b in BENCHMARK if b.lower() not in settle_names]
+    print(f"    coverage check: {len(BENCHMARK) - len(absent)}/{len(BENCHMARK)} "
+          f"benchmark cities present" + (f"; absent: {', '.join(absent)}" if absent else ""))
 
     with_pop = sum(1 for p in places if "population_osm" in p)
     out = {
@@ -429,6 +447,16 @@ out center tags;""",
                  "recorded, not an official gazetteer: places are missing, and the set is richer "
                  "in well-mapped areas. Governorate is computed by point-in-polygon against the "
                  "bundled boundaries, so a place just offshore may come back unassigned."),
+        "coverage_check": {
+            "benchmark_n": len(BENCHMARK),
+            "present_n": len(BENCHMARK) - len(absent),
+            "absent": absent,
+            "note": ("A fixed list of major Egyptian cities is checked against this "
+                     "gazetteer on every build. Any named below is genuinely missing "
+                     "from OpenStreetMap's place=city|town data at this date — not "
+                     "missing from Egypt. It is published because a gazetteer that "
+                     "hides its gaps invites you to mistake it for complete."),
+        },
         "population_note": (f"{with_pop} of {counts.get('settlement', 0)} settlements carry a "
                             "population tag in OSM. That tag is community-maintained and often "
                             "years out of date — it is not a census figure and is shown only "

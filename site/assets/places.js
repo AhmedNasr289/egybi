@@ -210,6 +210,19 @@
           fmt(c.settlement) + ' cities and towns · ' + fmt(c.airport) + ' airports · ' +
           fmt(c.antiquity) + ' ancient sites';
         $('placesNote').textContent = d.note || '';
+        // Coverage gap, stated where a reader will see it. The pipeline checks
+        // a fixed list of major Egyptian cities on every build and ships the
+        // result, so this is the CURRENT gap rather than a remembered one.
+        // Older files predate the check, hence the guard.
+        var cov = d.coverage_check, ce = $('placesCoverage');
+        if (ce && cov) {
+          ce.innerHTML = '<strong>' + cov.present_n + ' of ' + cov.benchmark_n +
+            ' benchmark cities are in this gazetteer.</strong> ' +
+            (cov.absent && cov.absent.length
+              ? 'Absent right now: <em>' + cov.absent.map(esc).join(', ') + '</em>. ' + esc(cov.note)
+              : 'None are missing at this build.');
+          ce.hidden = false;
+        }
         $('placesPopNote').textContent = d.population_note || '';
         fillGovs(); wireControls();
         Object.keys(KIND).forEach(drawKind);

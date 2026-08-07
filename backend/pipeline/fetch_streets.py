@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-EgyBI — Cairo street-network report card + 15-minute access score.
+EgyBI — Egyptian street-network report card + 15-minute access score.
 
-Downloads the street network for a set of Cairo districts chosen to span
-distinct planning eras, computes real network-geometry metrics, and emits the
+Downloads the street network for a set of Egyptian districts chosen to span
+distinct planning eras — six in Cairo, plus Luxor, 10th of Ramadan, Sheikh
+Zayed and New Alamein — computes real network-geometry metrics, and emits the
 JSON the /streets.html page reads.
 
 WHY THESE METRICS. Street-network geometry is one of the few things about urban
@@ -19,9 +20,24 @@ FIVE METHODOLOGICAL TRAPS, ALL HANDLED EXPLICITLY:
      and Egyptian district names are inconsistent in OSM (English vs Arabic,
      "Nasr City" vs "Madinat Nasr", missing relations). Each district therefore
      carries SEVERAL candidate queries tried in order, and every resolved
-     polygon is sanity-checked for plausible area before it is used. A district
-     that resolves to something absurd is dropped with a loud reason rather
-     than silently poisoning the comparison.
+     polygon is checked for plausible area AND for actually being in Egypt. A
+     district that resolves to something absurd is dropped with a loud reason
+     rather than silently poisoning the comparison.
+
+     The country check is not belt-and-braces. The geocode probe returned a
+     4.70 km² administrative boundary for 'شبرا' that sits in RIYADH, and a
+     1.17 km² one for 'المنشية' in KAIROUAN, Tunisia. Both are inside the
+     plausible-area band, so area alone would have accepted a Saudi district
+     onto a page about Egypt. Arabic place names are shared across the Arab
+     world, which makes this routine for an Arabic-first query strategy.
+
+     What survives that gauntlet is a smaller list than the ambition. Of
+     eighteen candidate districts probed, four resolved. Seven returned their
+     GOVERNORATE rather than their city — Aswan came back as 57,962 km² — and
+     one Arabic name returned a 108,500 km² polygon whose display name is
+     LIBERIA. The dropped list is kept in DISTRICTS with the reason for each,
+     because a district list showing only its successes misrepresents how
+     complete OSM actually is.
 
   2. Projection. Circuity and any length-based metric are meaningless computed
      on unprojected lat/lon degrees. Every graph is projected to UTM before
@@ -163,6 +179,71 @@ DISTRICTS = [
         "queries": ["مدينة السادس من أكتوبر", "مدينة 6 أكتوبر",
                     "6th of October City, Giza, Egypt", "6th of October City, Egypt"],
     },
+    # --- ADDED 2026-08-07, each one proved by the geocode probe -------------
+    # Only these four of eighteen candidates resolved to a plausible Egyptian
+    # polygon. What happened to the other fourteen is recorded below, because a
+    # district list that shows only the successes hides how OSM actually is.
+    {
+        "key": "luxor",
+        "name": "Luxor City",
+        "name_ar": "الأقصر",
+        "era": "Temple town, ancient core + modern grid",
+        "why": "A working Egyptian city wrapped around a pharaonic temple complex — the only district here whose street plan has to negotiate 3,000-year-old stone.",
+        # 'Luxor, Egypt' returns the GOVERNORATE at 4,286 km², and the Arabic
+        # 'الأقصر' returns a 108,500 km² polygon whose display name is LIBERIA.
+        # Only 'Luxor City' resolves to the city: 9.77 km², place/suburb.
+        "queries": ["Luxor City, Egypt"],
+    },
+    {
+        "key": "10th-ramadan",
+        "name": "10th of Ramadan City",
+        "name_ar": "مدينة العاشر من رمضان",
+        "era": "Industrial new town, 1977+",
+        "why": "Egypt's first satellite city, built around factories rather than housing — an industrial-first plan that predates the desert suburbs by two decades.",
+        # 71.87 km², place/city. Both the Arabic and English forms resolve to
+        # the same object, which is unusual enough here to be worth noting.
+        "queries": ["مدينة العاشر من رمضان", "10th of Ramadan City, Egypt"],
+    },
+    {
+        "key": "sheikh-zayed",
+        "name": "Sheikh Zayed City",
+        "name_ar": "مدينة الشيخ زايد",
+        "era": "Desert new town, 1995+",
+        "why": "The compound-and-arterial template that New Cairo and 6th of October scaled up, at a size where the pattern is still legible.",
+        # 53.45 km², boundary/administrative — Arabic only; the English form
+        # returns no polygon at all.
+        "queries": ["مدينة الشيخ زايد"],
+    },
+    {
+        "key": "new-alamein",
+        "name": "New Alamein",
+        "name_ar": "مدينة العلمين الجديدة",
+        "era": "Coastal new city, 2018+",
+        "why": "The newest fabric in the comparison and the only one on the Mediterranean — a city still being built, which is itself visible in the network.",
+        # 17.63 km², landuse/residential. Not an administrative boundary, which
+        # is stated here rather than glossed: it is the built extent as OSM
+        # records it. 'New Alamein, Egypt' returns a 0.04 km² construction site.
+        "queries": ["العلمين الجديدة"],
+    },
+    # DROPPED, with the reason, rather than quietly omitted:
+    #   Zamalek, New Administrative Capital, El Gamaliya, Historic Cairo —
+    #     no polygon in OSM under any candidate tried.
+    #   Giza (38,239 km²), Alexandria (4,195), Port Said (2,493), Ismailia
+    #     (4,553), Suez (10,360), Aswan (57,962), Luxor governorate (4,286) —
+    #     every one resolves to the GOVERNORATE, not the city. Rejected by the
+    #     area check.
+    #   Shubra — 'شبرا' returns an administrative boundary in RIYADH; the
+    #     English form returns a bus station.
+    #   Alexandria Mansheya — 'المنشية' is in KAIROUAN, Tunisia; the local one
+    #     is 0.26 km², under the floor.
+    #   Alexandria Smouha — returns a field hockey pitch.
+    #   Al-Darb Al-Ahmar (medieval Cairo) — 0.05 km², far under the floor. The
+    #     era stays missing, and that is better than measuring a city block and
+    #     calling it Islamic Cairo.
+    #
+    # A hand-drawn extent was NOT created for any of these. That was justified
+    # for Downtown because OSM demonstrably has no polygon AND it is the
+    # reference the whole comparison is built against. Neither holds here.
     {
         "key": "new-cairo",
         "name": "New Cairo",
@@ -180,6 +261,15 @@ MIN_NODES = 150
 MIN_EDGES = 300
 MIN_AREA_KM2 = 1.0        # a district smaller than this is not a district
 MAX_AREA_KM2 = 900.0      # 6th of October is genuinely huge; beyond this is a governorate
+
+# Egypt's bounding box, (min_lon, min_lat, max_lon, max_lat), generous at the
+# edges. Used to reject a geocode that is the right SIZE but the wrong COUNTRY.
+# This is not a hypothetical: the geocode probe returned a 4.70 km²
+# administrative boundary for 'شبرا' that is in Riyadh, and a 1.17 km² one for
+# 'المنشية' that is in Kairouan, Tunisia. Both pass the area check. Arabic place
+# names are shared right across the Arab world, so this is a routine failure
+# mode for an Arabic-first query strategy, not an exotic one.
+EGYPT_BBOX = (24.5, 21.5, 37.5, 32.0)
 MIN_DISTRICTS_OK = 4      # fewer than this and the comparison isn't worth publishing
 
 ORIENTATION_BINS = 36     # 10° bins, the OSMnx convention
@@ -219,6 +309,18 @@ def resolve_boundary(ox, d: dict):
             continue
         if not (MIN_AREA_KM2 <= area_km2 <= MAX_AREA_KM2):
             log(f"    implausible   {q!r}: {area_km2:,.1f} km² outside [{MIN_AREA_KM2}, {MAX_AREA_KM2}]")
+            continue
+        # IS IT EVEN IN EGYPT? The area check alone is not enough, and the
+        # geocode probe proved it: 'شبرا' returns a 4.70 km² administrative
+        # boundary in RIYADH, and 'المنشية' a 1.17 km² one in KAIROUAN,
+        # TUNISIA. Both sit comfortably inside the plausible-area band, so both
+        # would have been accepted and silently added to a page about Cairo.
+        # Arabic place names are widely shared across the Arab world, which
+        # makes this failure mode routine rather than exotic.
+        c = gdf.geometry.iloc[0].centroid
+        if not (EGYPT_BBOX[0] <= c.x <= EGYPT_BBOX[2] and EGYPT_BBOX[1] <= c.y <= EGYPT_BBOX[3]):
+            where = str(gdf.iloc[0].get("display_name", ""))[-60:]
+            log(f"    NOT IN EGYPT  {q!r}: centroid {c.y:.3f},{c.x:.3f} — {where}")
             continue
         log(f"    resolved      {q!r} → {area_km2:,.1f} km²")
         return gdf, q, area_km2, "OSM"
