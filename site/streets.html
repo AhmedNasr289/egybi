@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cairo Street Report Card — Six Districts, Six Eras, Measured | EgyBI</title>
+<title>Street Report Card — Egypt's Districts, Measured Not Asserted | EgyBI</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="description" content="Cairo's street networks measured, not asserted: intersection density, dead ends, circuity and orientation entropy across six districts from khedivial Downtown to the desert new towns.">
+<meta name="description" content="Egypt's street networks measured, not asserted: intersection density, dead ends, circuity and orientation entropy, district by district, from khedivial Downtown to the desert new towns.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=13" rel="stylesheet">
+<link href="assets/egybi.css?v=14" rel="stylesheet">
 <style>
   .streets-box { position:relative; height:clamp(340px,54vw,520px); border-radius:var(--radius); overflow:hidden; }
   .metric-toggle { font-size:0.8rem; font-weight:600; padding:7px 14px; border-radius:999px; border:1px solid var(--line-light);
@@ -92,13 +92,13 @@
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <link rel="canonical" href="https://egybi.com/streets.html">
   <meta property="og:site_name" content="EgyBI">
-  <meta property="og:title" content="Cairo Street Report Card — six districts, six eras, measured">
-  <meta property="og:description" content="Intersection density, dead ends, circuity and orientation entropy across six Cairo districts — from the khedivial grid to the desert new towns. Open data, open method.">
+  <meta property="og:title" content="Street Report Card — Egypt's districts, measured not asserted">
+  <meta property="og:description" content="Intersection density, dead ends, circuity and orientation entropy, district by district — from the khedivial grid to the desert new towns. Open data, open method.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://egybi.com/streets.html">
   <meta property="og:image" content="https://egybi.com/og-image.png?v=2">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Cairo Street Report Card — six districts, six eras, measured">
+  <meta name="twitter:title" content="Street Report Card — Egypt's districts, measured not asserted">
   <meta name="twitter:image" content="https://egybi.com/og-image.png?v=2">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&amp;text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&amp;display=swap" rel="stylesheet">
 </head>
@@ -108,10 +108,13 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
     <nav class="nav-links" id="navLinks">
       <a href="index.html">Home</a>
+      <a href="visit.html">Visit</a>
       <a href="explore.html">Explore</a>
       <a href="prices.html">Prices</a>
       <a href="stocks.html">Stocks</a>
       <a href="geospatial.html">Atlas</a>
+      <a href="places.html">Places</a>
+      <a href="stories.html">Stories</a>
       <a href="streets.html">Streets</a>
       <a href="blog.html">Blog</a>
       <a href="community.html">Community</a>
@@ -128,7 +131,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Street report card</div>
     <h1 data-aos="fade-up">Cairo, measured street by street.</h1>
-    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Six districts built across six eras &mdash; from Ismail&rsquo;s 1860s boulevards to the desert compounds of the 2000s. Not opinions about which is better planned: <strong>intersection density, dead-end share, circuity and orientation entropy</strong>, computed from open street data with the method written down.</p>
+    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Districts built across six planning eras &mdash; from Ismail&rsquo;s 1860s boulevards to the desert new towns. Not opinions about which is better planned: <strong>intersection density, dead-end share, circuity and orientation entropy</strong>, computed from open street data with the method written down.</p>
   </div>
 </section>
 
@@ -136,7 +139,7 @@
 
 <section class="surface-light" id="map" data-nav="The map">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Six districts, one metric at a time</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Every district, one metric at a time</div>
     <h2 data-aos="fade-up">Where each district lands.</h2>
     <div id="cardEmpty" class="streets-note" hidden></div>
     <div id="mapSection">
@@ -151,7 +154,7 @@
           <button type="button" class="metric-toggle" data-metric="circuity_avg">Circuity</button>
           <button type="button" class="metric-toggle" data-metric="orientation_entropy">Orientation entropy</button>
         </div>
-        <div class="streets-box" id="streetsMap" role="img" aria-label="Map of six Cairo districts shaded by the selected street-network metric"></div>
+        <div class="streets-box" id="streetsMap" role="img" aria-label="Map of the measured Egyptian districts, shaded by the selected street-network metric"></div>
         <div class="map-legend" id="streetsLegend"></div>
         <div class="dd" id="districtDetail" hidden></div>
         <div class="streets-note" id="streetsMeta"></div>
@@ -160,13 +163,15 @@
   </div>
 </section>
 
-<section class="surface-light-2" id="grid" data-nav="How grid-like">
+<section class="surface-light-2" id="grid" data-nav="Which way streets face">
   <div class="wrap" id="roseSection">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>Orientation</div>
-    <h2 data-aos="fade-up">How grid-like is each district?</h2>
-    <p class="lead" data-aos="fade-up">Each rose shows how much street length faces each compass direction. A planned grid concentrates into a few opposing spokes; organic fabric spreads evenly around the circle. The number underneath is <strong>orientation entropy</strong> &mdash; about <strong>1.39</strong> for a perfect four-way grid, up to <strong>3.58</strong> for streets pointing every which way.</p>
+    <h2 data-aos="fade-up">Which way do the streets face?</h2>
+    <p class="lead" data-aos="fade-up">Each rose shows how much street length faces each compass direction. The number underneath is <strong>orientation entropy</strong>, which measures one thing only: <strong>how concentrated those bearings are into a few directions</strong>. A four-way grid puts nearly all its length into two opposing pairs and scores about <strong>1.39</strong>; streets facing every which way approach <strong>3.58</strong>.</p>
     <div class="rose-grid" id="roseGrid"></div>
-    <p class="chart-cap" style="margin-top:18px;">Bearings are computed on unprojected coordinates because they are compass directions, and weighted by segment length so a long avenue counts for more than a short lane. Click any rose for that district&rsquo;s full card.</p>
+    <p class="chart-cap" style="margin-top:18px;" id="roseSpread"></p>
+    <p class="chart-cap"><strong>A high score is not the same as an unplanned district.</strong> Concentration is not regularity. A radial plan &mdash; avenues converging on circular midans, the Haussmannian idea Ismail brought to Cairo &mdash; is rigorously planned and spreads its bearings across many sectors <em>by design</em>, so it scores high for the same reason a tangle of lanes does. This number cannot tell the two apart; the rose above it can, because a star reads differently from a smear. Read them together.</p>
+    <p class="chart-cap">Bearings are computed on unprojected coordinates because they are compass directions, and weighted by segment length so a long avenue counts for more than a short lane. Click any rose for that district&rsquo;s full card.</p>
   </div>
 </section>
 
@@ -181,6 +186,7 @@
         <tbody id="cardTableBody"></tbody>
       </table>
     </div>
+    <p class="chart-cap" style="margin-top:18px;" id="deadEndFinding"></p>
   </div>
 </section>
 
@@ -225,9 +231,9 @@
 </section>
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a></div>
-    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">An encyclopaedia of Egypt told through maps and cited open data.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a></div>
+    <div><h5>More</h5><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
   </div>
   <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
@@ -238,7 +244,7 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/vendor/leaflet.js"></script>
-<script src="assets/streets.js?v=1"></script>
+<script src="assets/streets.js?v=4"></script>
 <script src="assets/ads.js"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>

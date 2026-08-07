@@ -1,0 +1,6 @@
+{
+ "generated": false,
+ "reason": "fetch_tourism.py has not completed a successful run yet, so this layer holds no data.",
+ "note": "This file exists deliberately and contains NO figures. The page requesting a file that does not exist produced a 404 on every visit; a 200 that says plainly 'not generated' is better than a 404 that says nothing. The page reads the generated flag rather than inferring absence from a failed fetch, and shows its empty state. The first successful run of the NASA SRTM 30 m elevation pipeline overwrites this whole file with real, sourced measurements. Nothing here is a placeholder value that could be mistaken for data — the sites array is empty on purpose.",
+ "sites": []
+}

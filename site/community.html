@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contribute Datasets and SQL Challenges | EgyBI</title>
+<title>Contribute Cited Data About Egypt | EgyBI</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="description" content="How to contribute cited Egyptian datasets and SQL challenges to EgyBI — the accuracy rules, the public roadmap, and the automations that keep data fresh.">
+<meta name="description" content="How to contribute cited Egyptian datasets and data stories to EgyBI — the accuracy rules, the public roadmap, and the automations that keep the data fresh.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=13" rel="stylesheet">
+<link href="assets/egybi.css?v=14" rel="stylesheet">
 <style>
   .step { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 20px; }
   .step::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-family: 'Cinzel', serif; display: flex; align-items: center; justify-content: center; }
@@ -36,7 +36,7 @@
   <link rel="canonical" href="https://egybi.com/community.html">
   <meta property="og:site_name" content="EgyBI">
   <meta property="og:title" content="Community — EgyBI">
-  <meta property="og:description" content="How to contribute cited datasets and SQL challenges to EgyBI, the content and accuracy rules, the public roadmap, and the automations that keep the data fresh and honest.">
+  <meta property="og:description" content="How to contribute cited datasets and data stories to EgyBI, the content and accuracy rules, the public roadmap, and the automations that keep the data fresh and honest.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://egybi.com/community.html">
   <meta property="og:image" content="https://egybi.com/og-image.png?v=2">
@@ -44,7 +44,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Community — EgyBI">
-  <meta name="twitter:description" content="How to contribute cited datasets and SQL challenges to EgyBI, the content and accuracy rules, the public roadmap, and the automations that keep the data fresh and honest.">
+  <meta name="twitter:description" content="How to contribute cited datasets and data stories to EgyBI, the content and accuracy rules, the public roadmap, and the automations that keep the data fresh and honest.">
   <meta name="twitter:image" content="https://egybi.com/og-image.png?v=2">
   <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
        Android and macOS, so these signs would be empty boxes for most
@@ -61,10 +61,13 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
     <nav class="nav-links" id="navLinks">
       <a href="index.html">Home</a>
+      <a href="visit.html">Visit</a>
       <a href="explore.html">Explore</a>
       <a href="prices.html">Prices</a>
       <a href="stocks.html">Stocks</a>
       <a href="geospatial.html">Atlas</a>
+      <a href="places.html">Places</a>
+      <a href="stories.html">Stories</a>
       <a href="streets.html">Streets</a>
       <a href="blog.html">Blog</a>
       <a href="community.html" class="active">Community</a>
@@ -82,7 +85,7 @@
   <div class="wrap">
     <div class="kicker"><span data-glyph="scribe"></span>The community</div>
     <h1 style="font-size:clamp(1.9rem,4.4vw,2.9rem);margin:0 0 12px;">Help build the House of Life.</h1>
-    <p class="lead" style="margin:0 auto;color:#f3ead4;">EgyBI grows through cited data and good problems. If you can bring a real dataset about Egypt, a sharp SQL challenge, or a fix — there is a place for you here.</p>
+    <p class="lead" style="margin:0 auto;color:#f3ead4;">EgyBI grows through cited data and good problems. If you can bring a real dataset about Egypt, a correction, or a fix — there is a place for you here.</p>
   </div>
 </section>
 
@@ -105,12 +108,12 @@
         </div>
       </div>
       <div class="card" data-aos="fade-up" data-aos-delay="100">
-        <span class="tag">A challenge</span>
-        <h3>Write a SQL challenge</h3>
+        <span class="tag">A story</span>
+        <h3>Propose a data story</h3>
         <div class="steps" style="margin-top:14px;">
-          <div class="step"><strong>Pick a table</strong> already in the sandbox and a genuinely useful question (a ranking, a growth rate, a join, a window function).</div>
-          <div class="step"><strong>Write it</strong> with a plain-English statement, the givens, a starter query, and a reference solution — the expected output is computed live from the solution.</div>
-          <div class="step"><strong>Add a sourced &ldquo;Did You Know&rdquo;</strong> so a correct answer teaches something true about Egypt. Then it slots straight into the catalog.</div>
+          <div class="step"><strong>Find the argument</strong> &mdash; something true about Egypt that a map or a chart can show and a paragraph cannot. &ldquo;Half the country lives on 2.4% of the land&rdquo; is a story; &ldquo;here is a map of Egypt&rdquo; is not.</div>
+          <div class="step"><strong>Name the data</strong> it rests on, with a source and a date. If the figure cannot be traced to a published dataset it cannot go on the site, however good the line is.</div>
+          <div class="step"><strong>Say what it cannot tell you.</strong> Every story here ends with its own limits &mdash; the coverage gap, the disputed number, the thing the data simply does not measure.</div>
         </div>
       </div>
     </div>
@@ -145,8 +148,8 @@
       <div class="road-item"><span class="badge done">Done</span><span>An automated World Bank data-refresh pipeline with a human review gate, and a map-build script.</span></div>
       <div class="road-item"><span class="badge done">Done</span><span><strong>The Papyrus</strong> newsletter with a real, spam-guarded signup.</span></div>
       <div class="road-item"><span class="badge now">Now</span><span>Deepening every sector to 2026 — business, defence, logistics, sport, culture economics — and surfacing it as charts.</span></div>
-      <div class="road-item"><span class="badge next">Next</span><span>A Python/pandas sandbox alongside the SQL one, so you can solve the same challenges either way.</span></div>
-      <div class="road-item"><span class="badge next">Next</span><span>Accounts, streaks and a daily challenge — then an AI tutor that explains your query errors.</span></div>
+      <div class="road-item"><span class="badge next">Next</span><span>Elevation and climate layers on the Atlas, so a place can be read by terrain and season as well as by population.</span></div>
+      <div class="road-item"><span class="badge next">Next</span><span>More districts on the street report card, and more governorates covered by the gazetteer as OpenStreetMap fills in.</span></div>
     </div>
   </div>
 </section>
@@ -200,9 +203,9 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a></div>
-    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">An encyclopaedia of Egypt told through maps and cited open data.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a></div>
+    <div><h5>More</h5><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.sipri.org/databases/armstransfers" target="_blank" rel="noopener">SIPRI</a></div>
   </div>
   <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
@@ -220,7 +223,6 @@
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script>window.EGYBI_AUTH = { base: 'auth/' };</script>
-<script src="assets/auth.js?v=10"></script>
   <script src="assets/analytics.js" defer></script>
 </body>
 </html>

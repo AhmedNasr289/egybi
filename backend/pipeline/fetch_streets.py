@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-EgyBI — Cairo street-network report card + 15-minute access score.
+EgyBI — Egyptian street-network report card + 15-minute access score.
 
-Downloads the street network for a set of Cairo districts chosen to span
-distinct planning eras, computes real network-geometry metrics, and emits the
+Downloads the street network for a set of Egyptian districts chosen to span
+distinct planning eras — six in Cairo, plus Luxor, 10th of Ramadan, Sheikh
+Zayed and New Alamein — computes real network-geometry metrics, and emits the
 JSON the /streets.html page reads.
 
 WHY THESE METRICS. Street-network geometry is one of the few things about urban
@@ -19,9 +20,24 @@ FIVE METHODOLOGICAL TRAPS, ALL HANDLED EXPLICITLY:
      and Egyptian district names are inconsistent in OSM (English vs Arabic,
      "Nasr City" vs "Madinat Nasr", missing relations). Each district therefore
      carries SEVERAL candidate queries tried in order, and every resolved
-     polygon is sanity-checked for plausible area before it is used. A district
-     that resolves to something absurd is dropped with a loud reason rather
-     than silently poisoning the comparison.
+     polygon is checked for plausible area AND for actually being in Egypt. A
+     district that resolves to something absurd is dropped with a loud reason
+     rather than silently poisoning the comparison.
+
+     The country check is not belt-and-braces. The geocode probe returned a
+     4.70 km² administrative boundary for 'شبرا' that sits in RIYADH, and a
+     1.17 km² one for 'المنشية' in KAIROUAN, Tunisia. Both are inside the
+     plausible-area band, so area alone would have accepted a Saudi district
+     onto a page about Egypt. Arabic place names are shared across the Arab
+     world, which makes this routine for an Arabic-first query strategy.
+
+     What survives that gauntlet is a smaller list than the ambition. Of
+     eighteen candidate districts probed, four resolved. Seven returned their
+     GOVERNORATE rather than their city — Aswan came back as 57,962 km² — and
+     one Arabic name returned a 108,500 km² polygon whose display name is
+     LIBERIA. The dropped list is kept in DISTRICTS with the reason for each,
+     because a district list showing only its successes misrepresents how
+     complete OSM actually is.
 
   2. Projection. Circuity and any length-based metric are meaningless computed
      on unprojected lat/lon degrees. Every graph is projected to UTM before
@@ -92,10 +108,7 @@ DISTRICTS = [
         # The first extent ran east to Port Said Street and south to Sayyida
         # Zeinab. It returned 324 intersections/km², 45 m mean segments and a
         # 23.2% dead-end share — the signature of dense pre-modern fabric full
-        # of alleys, not of a khedivial boulevard plan. Boundary-clipping was
-        # ruled out as the cause with evidence rather than assumed: Heliopolis
-        # has a HIGHER perimeter-to-area ratio (1.79 vs 1.40) and only a 4.2%
-        # dead-end share, so cut-off streets at the edge cannot explain it.
+        # of alleys, not of a khedivial boulevard plan.
         #
         # Measuring the polygon showed 26.6% of it lay outside khedivial Cairo
         # — 12.4% east of Midan Ataba, where the old Fatimid city begins, and
@@ -107,6 +120,32 @@ DISTRICTS = [
         # and 26th of July north, Midan Ataba east, Bab al-Louq and Falaki
         # south. 3.8 km². Smaller than any other district here, which is honest
         # — khedivial Cairo IS small; the previous figure was borrowed area.
+        #
+        # WHAT RUN 5 THEN MEASURED (2026-08-07), and where the above was wrong.
+        # The tightening moved every metric substantially and in the predicted
+        # direction: 324 → 223.4 intersections/km² (-31%), 23.2% → 17.2% dead
+        # ends (-26%), 45.3 → 55.2 m mean segment (+22%), 2.68 → 2.86 streets
+        # per junction. So the spill was real and it was large.
+        #
+        # It was NOT the whole story, and one supporting argument has to be
+        # withdrawn. The original note ruled out boundary clipping by observing
+        # that Heliopolis has a higher perimeter-to-area ratio (1.79 vs 1.40)
+        # and far fewer dead ends. That comparison no longer holds: the tightened
+        # polygon's ratio is 1.91, which is HIGHER than Heliopolis, so the
+        # refutation as stated is invalid against the extent actually shipped.
+        #
+        # Clipping still does not look like the driver, but on weaker ground: a
+        # 7% difference in perimeter-to-area cannot produce a 4x difference in
+        # dead-end share (Downtown 17.2% against Heliopolis 4.2%), and across
+        # all six districts the correlation between the two is only +0.37.
+        #
+        # What is left unexplained is that Downtown still has the highest
+        # dead-end share on the page, nearly double Nasr City's 9.3%, inside a
+        # plan built on through-boulevards. The untested hypothesis is service
+        # alleys and courtyard entrances inside khedivial blocks, which OSM maps
+        # as highway=service and the drive network therefore includes. That is
+        # testable — group dead-end nodes by the highway tag of their incident
+        # edge — and it is NOT asserted here until it has been.
         #
         # It is tried ONLY after every query above fails, so the day OSM gains a
         # real Downtown polygon this is silently superseded. Every district
@@ -163,6 +202,71 @@ DISTRICTS = [
         "queries": ["مدينة السادس من أكتوبر", "مدينة 6 أكتوبر",
                     "6th of October City, Giza, Egypt", "6th of October City, Egypt"],
     },
+    # --- ADDED 2026-08-07, each one proved by the geocode probe -------------
+    # Only these four of eighteen candidates resolved to a plausible Egyptian
+    # polygon. What happened to the other fourteen is recorded below, because a
+    # district list that shows only the successes hides how OSM actually is.
+    {
+        "key": "luxor",
+        "name": "Luxor City",
+        "name_ar": "الأقصر",
+        "era": "Temple town, ancient core + modern grid",
+        "why": "A working Egyptian city wrapped around a pharaonic temple complex — the only district here whose street plan has to negotiate 3,000-year-old stone.",
+        # 'Luxor, Egypt' returns the GOVERNORATE at 4,286 km², and the Arabic
+        # 'الأقصر' returns a 108,500 km² polygon whose display name is LIBERIA.
+        # Only 'Luxor City' resolves to the city: 9.77 km², place/suburb.
+        "queries": ["Luxor City, Egypt"],
+    },
+    {
+        "key": "10th-ramadan",
+        "name": "10th of Ramadan City",
+        "name_ar": "مدينة العاشر من رمضان",
+        "era": "Industrial new town, 1977+",
+        "why": "Egypt's first satellite city, built around factories rather than housing — an industrial-first plan that predates the desert suburbs by two decades.",
+        # 71.87 km², place/city. Both the Arabic and English forms resolve to
+        # the same object, which is unusual enough here to be worth noting.
+        "queries": ["مدينة العاشر من رمضان", "10th of Ramadan City, Egypt"],
+    },
+    {
+        "key": "sheikh-zayed",
+        "name": "Sheikh Zayed City",
+        "name_ar": "مدينة الشيخ زايد",
+        "era": "Desert new town, 1995+",
+        "why": "The compound-and-arterial template that New Cairo and 6th of October scaled up, at a size where the pattern is still legible.",
+        # 53.45 km², boundary/administrative — Arabic only; the English form
+        # returns no polygon at all.
+        "queries": ["مدينة الشيخ زايد"],
+    },
+    {
+        "key": "new-alamein",
+        "name": "New Alamein",
+        "name_ar": "مدينة العلمين الجديدة",
+        "era": "Coastal new city, 2018+",
+        "why": "The newest fabric in the comparison and the only one on the Mediterranean — a city still being built, which is itself visible in the network.",
+        # 17.63 km², landuse/residential. Not an administrative boundary, which
+        # is stated here rather than glossed: it is the built extent as OSM
+        # records it. 'New Alamein, Egypt' returns a 0.04 km² construction site.
+        "queries": ["العلمين الجديدة"],
+    },
+    # DROPPED, with the reason, rather than quietly omitted:
+    #   Zamalek, New Administrative Capital, El Gamaliya, Historic Cairo —
+    #     no polygon in OSM under any candidate tried.
+    #   Giza (38,239 km²), Alexandria (4,195), Port Said (2,493), Ismailia
+    #     (4,553), Suez (10,360), Aswan (57,962), Luxor governorate (4,286) —
+    #     every one resolves to the GOVERNORATE, not the city. Rejected by the
+    #     area check.
+    #   Shubra — 'شبرا' returns an administrative boundary in RIYADH; the
+    #     English form returns a bus station.
+    #   Alexandria Mansheya — 'المنشية' is in KAIROUAN, Tunisia; the local one
+    #     is 0.26 km², under the floor.
+    #   Alexandria Smouha — returns a field hockey pitch.
+    #   Al-Darb Al-Ahmar (medieval Cairo) — 0.05 km², far under the floor. The
+    #     era stays missing, and that is better than measuring a city block and
+    #     calling it Islamic Cairo.
+    #
+    # A hand-drawn extent was NOT created for any of these. That was justified
+    # for Downtown because OSM demonstrably has no polygon AND it is the
+    # reference the whole comparison is built against. Neither holds here.
     {
         "key": "new-cairo",
         "name": "New Cairo",
@@ -180,6 +284,15 @@ MIN_NODES = 150
 MIN_EDGES = 300
 MIN_AREA_KM2 = 1.0        # a district smaller than this is not a district
 MAX_AREA_KM2 = 900.0      # 6th of October is genuinely huge; beyond this is a governorate
+
+# Egypt's bounding box, (min_lon, min_lat, max_lon, max_lat), generous at the
+# edges. Used to reject a geocode that is the right SIZE but the wrong COUNTRY.
+# This is not a hypothetical: the geocode probe returned a 4.70 km²
+# administrative boundary for 'شبرا' that is in Riyadh, and a 1.17 km² one for
+# 'المنشية' that is in Kairouan, Tunisia. Both pass the area check. Arabic place
+# names are shared right across the Arab world, so this is a routine failure
+# mode for an Arabic-first query strategy, not an exotic one.
+EGYPT_BBOX = (24.5, 21.5, 37.5, 32.0)
 MIN_DISTRICTS_OK = 4      # fewer than this and the comparison isn't worth publishing
 
 ORIENTATION_BINS = 36     # 10° bins, the OSMnx convention
@@ -207,10 +320,34 @@ def resolve_boundary(ox, d: dict):
     polygon too — nothing here gets to bypass the guardrail for being ours.
     """
     for q in d["queries"]:
-        try:
-            gdf = ox.geocode_to_gdf(q)
-        except Exception as e:  # noqa: BLE001 — try the next candidate
-            log(f"    geocode miss  {q!r}: {type(e).__name__}")
+        # Two failures wear the same clothes here and mean opposite things.
+        # InsufficientResponseError means Nominatim does not know the string and
+        # TypeError means it knows it but has no polygon — both are real ANSWERS,
+        # and the right move is to try the next candidate immediately. A network
+        # error is not an answer, and treating it as one can drop a district as
+        # "no candidate resolved", which reads as a fact about OSM rather than
+        # about the connection. Those get retried.
+        gdf, answered = None, False
+        for attempt in range(3):
+            try:
+                gdf = ox.geocode_to_gdf(q)
+                answered = True
+                break
+            except Exception as e:  # noqa: BLE001
+                name = type(e).__name__
+                if name in ("InsufficientResponseError", "TypeError", "ValueError"):
+                    log(f"    geocode miss  {q!r}: {name}")
+                    answered = True          # a real answer: nothing there
+                    break
+                if attempt < 2:
+                    time.sleep(10 * (attempt + 1))
+                else:
+                    log(f"    geocode UNANSWERED {q!r} after 3 attempts: {name}")
+        if gdf is None:
+            if not answered:
+                # Distinguish it in the log so a run dropped by a flaky network
+                # is not mistaken for one dropped by missing OSM data.
+                log(f"    (network, not OSM — this candidate was never answered)")
             continue
         try:
             area_km2 = float(gdf.to_crs(gdf.estimate_utm_crs()).area.iloc[0]) / 1e6
@@ -219,6 +356,18 @@ def resolve_boundary(ox, d: dict):
             continue
         if not (MIN_AREA_KM2 <= area_km2 <= MAX_AREA_KM2):
             log(f"    implausible   {q!r}: {area_km2:,.1f} km² outside [{MIN_AREA_KM2}, {MAX_AREA_KM2}]")
+            continue
+        # IS IT EVEN IN EGYPT? The area check alone is not enough, and the
+        # geocode probe proved it: 'شبرا' returns a 4.70 km² administrative
+        # boundary in RIYADH, and 'المنشية' a 1.17 km² one in KAIROUAN,
+        # TUNISIA. Both sit comfortably inside the plausible-area band, so both
+        # would have been accepted and silently added to a page about Cairo.
+        # Arabic place names are widely shared across the Arab world, which
+        # makes this failure mode routine rather than exotic.
+        c = gdf.geometry.iloc[0].centroid
+        if not (EGYPT_BBOX[0] <= c.x <= EGYPT_BBOX[2] and EGYPT_BBOX[1] <= c.y <= EGYPT_BBOX[3]):
+            where = str(gdf.iloc[0].get("display_name", ""))[-60:]
+            log(f"    NOT IN EGYPT  {q!r}: centroid {c.y:.3f},{c.x:.3f} — {where}")
             continue
         log(f"    resolved      {q!r} → {area_km2:,.1f} km²")
         return gdf, q, area_km2, "OSM"
@@ -297,11 +446,25 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
         if gdf is None:
             failures.append(f"{d['name']}: no candidate query resolved to a plausible boundary")
             continue
-        try:
-            G = ox.graph_from_polygon(gdf.geometry.iloc[0], network_type="drive", simplify=True)
-        except Exception as e:  # noqa: BLE001
-            failures.append(f"{d['name']}: graph download failed ({type(e).__name__})")
-            log(f"    graph failed  {e}")
+        # Same retry as the walk graph below, for the same reason: a transient
+        # timeout here drops the district from the report card entirely, after
+        # its boundary has already been resolved. The guardrails exist to catch
+        # bad DATA; a network blip is not data and should not be recorded as a
+        # district we could not measure.
+        G, why = None, None
+        for attempt in range(3):
+            try:
+                G = ox.graph_from_polygon(gdf.geometry.iloc[0], network_type="drive", simplify=True)
+                why = None
+                break
+            except Exception as e:  # noqa: BLE001
+                why = type(e).__name__
+                if attempt < 2:
+                    log(f"    graph attempt {attempt + 1} failed ({why}); retrying")
+                    time.sleep(20 * (attempt + 1))
+        if G is None:
+            failures.append(f"{d['name']}: graph download failed after 3 attempts ({why})")
+            log(f"    graph failed  {why}")
             continue
 
         n, m = G.number_of_nodes(), G.number_of_edges()
@@ -411,22 +574,87 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
             failures.append(f"{d['name']}: no boundary from the report-card pass")
             continue
         poly = cached[0].geometry.iloc[0]
-        try:
-            W = ox.projection.project_graph(
-                ox.graph_from_polygon(poly, network_type="walk", simplify=True))
-        except Exception as e:  # noqa: BLE001
-            failures.append(f"{d['name']}: walk graph failed ({type(e).__name__})")
+
+        # RETRY THE WALK GRAPH. It had no retry at all, and one ConnectTimeout
+        # was enough to lose a district that the report-card pass had already
+        # measured successfully minutes earlier. New Cairo was dropped this way
+        # in run 4 and again in run 6 — the same district, the same transient
+        # error, twice — while its drive network downloaded fine both times.
+        #
+        # Losing a district to a network blip is not a finding about the
+        # district, and it is the difference between the access layer being
+        # complete and the run going red. The backoff is longer than the
+        # amenity one because these are the biggest downloads in the pipeline
+        # and a timeout usually means the endpoint is busy rather than broken.
+        W, why = None, None
+        for attempt in range(3):
+            try:
+                W = ox.projection.project_graph(
+                    ox.graph_from_polygon(poly, network_type="walk", simplify=True))
+                why = None
+                break
+            except Exception as e:  # noqa: BLE001
+                why = type(e).__name__
+                if attempt < 2:
+                    log(f"    walk graph attempt {attempt + 1} failed ({why}); retrying")
+                    time.sleep(20 * (attempt + 1))
+        if W is None:
+            failures.append(f"{d['name']}: walk graph failed after 3 attempts ({why})")
             continue
         if W.number_of_nodes() < MIN_NODES:
             failures.append(f"{d['name']}: thin walk graph ({W.number_of_nodes()} nodes)")
             continue
 
-        per_amenity, counts = {}, {}
-        for label, tag in AMENITIES.items():
+        per_amenity, counts, unanswered = {}, {}, []
+
+        # ONE Overpass request per district, not one per amenity type.
+        #
+        # This used to loop the four categories and query each separately: 4
+        # requests per district, 24 per run, on a free public endpoint that is
+        # also serving the walk-graph downloads. Run 5's log is what that costs.
+        # Heliopolis came back {hospital: 0, clinic: 12, school: 0, pharmacy: 0}
+        # and Nasr City {hospital: 26, clinic: 0, school: 0, pharmacy: 0} — two
+        # of the best-mapped districts in Cairo reporting no schools and no
+        # pharmacies. Those are not zeros, they are refusals; the endpoint was
+        # shedding load and every failure was being recorded as a count of none.
+        # Three districts produced nothing at all and the layer fell below its
+        # floor, after 65 minutes.
+        #
+        # Overpass accepts a list of values as one regex-matched query, so the
+        # four categories cost a single round trip and are split locally. Six
+        # requests per run instead of twenty-four, which is both faster and far
+        # less likely to be throttled — and it is the politer thing to do to a
+        # free service whose usage policy asks for exactly this restraint.
+        allf, failed = None, None
+        for attempt in range(3):
             try:
-                feats = ox.features.features_from_polygon(poly, tags={"amenity": tag})
-            except Exception:  # noqa: BLE001 — an empty/erroring category is not fatal
-                feats = None
+                allf = ox.features.features_from_polygon(
+                    poly, tags={"amenity": list(AMENITIES.values())})
+                failed = None
+                break
+            except Exception as e:  # noqa: BLE001
+                # osmnx raises InsufficientResponseError for a genuinely empty
+                # result, so that one IS a real zero across all four categories.
+                # Anything else is an unanswered question, never a number.
+                if type(e).__name__ == "InsufficientResponseError":
+                    allf, failed = None, None
+                    break
+                failed = type(e).__name__
+                if attempt < 2:
+                    time.sleep(10 * (attempt + 1))
+
+        if failed:
+            log(f"    amenity query unanswered after 3 attempts ({failed})")
+            failures.append(f"{d['name']}: amenity query unanswered ({failed}) "
+                            f"— no data, not zero access")
+            continue
+
+        col = None
+        if allf is not None and len(allf) and "amenity" in allf.columns:
+            col = allf["amenity"]
+
+        for label, tag in AMENITIES.items():
+            feats = None if col is None else allf[col == tag]
             if feats is None or len(feats) == 0:
                 counts[label] = 0
                 per_amenity[label] = None
@@ -471,16 +699,39 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
 
         got = [v for v in per_amenity.values() if v]
         if not got:
-            failures.append(f"{d['name']}: no amenity category produced a result")
+            # Reaching here means the query ANSWERED and the answer was empty —
+            # a failed query already returned above with a named failure. So
+            # this is a real finding about OSM coverage rather than a broken
+            # run, and dropping the district silently would hide exactly the
+            # sparseness the layer exists to show. It is published with a null
+            # mean and a flag, never as zero access.
+            rows.append({
+                "key": d["key"], "name": d["name"],
+                "walk_nodes": W.number_of_nodes(),
+                "amenity_counts": counts,
+                "access": per_amenity,
+                "unanswered": unanswered,
+                "mean_within_15min_pct": None,
+                "no_amenities_mapped": True,
+            })
+            log(f"    ok (empty)    {counts} → nothing of these four kinds is "
+                f"mapped inside this boundary; published as a coverage finding")
             continue
         rows.append({
             "key": d["key"], "name": d["name"],
             "walk_nodes": W.number_of_nodes(),
             "amenity_counts": counts,
             "access": per_amenity,
+            # Which categories we never got an answer for. The mean below is an
+            # average over the categories that ANSWERED, so a reader has to be
+            # able to see when that is fewer than four — otherwise two runs print
+            # the same-looking number over different denominators.
+            "unanswered": unanswered,
             "mean_within_15min_pct": round(sum(v["within_15min_pct"] for v in got) / len(got), 1),
         })
-        log(f"    ok            {counts} → mean {rows[-1]['mean_within_15min_pct']}% within 15 min")
+        log(f"    ok            {counts} → mean {rows[-1]['mean_within_15min_pct']}% "
+            f"within 15 min (over {len(got)}/{len(AMENITIES)} categories"
+            + (f", unanswered: {', '.join(unanswered)}" if unanswered else "") + ")")
 
     if len(rows) < MIN_DISTRICTS_OK:
         log(f"  SKIP access: only {len(rows)} districts produced results (<{MIN_DISTRICTS_OK})")

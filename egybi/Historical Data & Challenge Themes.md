@@ -1,5 +1,14 @@
 # Historical Data & Challenge Themes
 
+> [!warning] **PARTLY SUPERSEDED on 2026-08-07 by the pivot.**
+> The exercises this note designs themes for are retired — the 123 challenge pages
+> are tombstones now. See [[The Pivot — From SQL Practice to Encyclopaedia]].
+>
+> The *subject matter* survived the product and is worth keeping: the sourcing
+> decisions, the disputed figures, and which Egyptian topics have data solid enough
+> to build on all still apply to the charts, maps and stories that replaced the
+> exercises. Read the themes as live and the exercise framing as history.
+
 The Egyptian identity ([[Brand & Creative Identity]]) so far lives in the visual/gamification layer. This note takes it deeper: into the actual subject matter of the practice exercises across [[Curriculum & Skill Tracks]], so a learner practicing SQL or data modeling is simultaneously absorbing real Egyptian history — not solving abstract "customer/orders" problems with a themed skin on top. Every dataset below is real and sourced (see [[Sources]]); nothing here is invented history.
 
 ## The real historical datasets

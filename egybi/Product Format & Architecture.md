@@ -1,5 +1,17 @@
 # Product Format & Architecture
 
+> [!warning] **LARGELY SUPERSEDED on 2026-08-07 by the pivot.**
+> The product this describes — an auto-graded sandbox with leaderboards, streaks and
+> badges, difficulty progressing per track — is retired. See
+> [[The Pivot — From SQL Practice to Encyclopaedia]].
+>
+> Two parts of it are still live and still correct: the **execution-security**
+> reasoning for running SQL in the browser (the engine survived as site
+> infrastructure, and `query.js` puts it under any table), and the **architecture**
+> constraints — framework-free, no build step, static hosting — which are now
+> load-bearing rather than incidental. Read those sections as current and the
+> gamification as history.
+
 ## Core format
 In-browser code/query sandbox, real execution (never multiple choice), auto-graded, progressive difficulty per track ([[Curriculum & Skill Tracks]]), leaderboard/streak/badge system ([[Brand & Creative Identity]]).
 

@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=13" rel="stylesheet">
+<link href="assets/egybi.css?v=14" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -90,10 +90,13 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
     <nav class="nav-links" id="navLinks">
       <a href="index.html" class="active">Home</a>
+      <a href="visit.html">Visit</a>
       <a href="explore.html">Explore</a>
       <a href="prices.html">Prices</a>
       <a href="stocks.html">Stocks</a>
       <a href="geospatial.html">Atlas</a>
+      <a href="places.html">Places</a>
+      <a href="stories.html">Stories</a>
       <a href="streets.html">Streets</a>
       <a href="blog.html">Blog</a>
       <a href="community.html">Community</a>
@@ -171,59 +174,54 @@ LIMIT 5;</textarea>
   </div>
 </section>
 
-<!-- GAP -->
-<section class="surface-light">
+<!-- WHAT'S INSIDE — the encyclopaedia's rooms.
+     No card names a count. An earlier draft of this block carried a comment
+     saying the numbers were filled from the published data at render time;
+     nothing did that, and the markup rendered its static fallback instead. A
+     comment describing behaviour the code does not have is worse than no
+     comment, so the hook is gone and the copy says what each room is for.
+     Fetching a 96 kB gazetteer on the homepage to print one number would not
+     have been worth it either. Where a count genuinely earns its place, it is
+     computed on the page that owns the data — see the entropy spread and the
+     dead-end finding on streets.html. -->
+<section class="surface-dark" id="inside">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>The gap</div>
-    <h2 data-aos="fade-up">Real competitive practice, meet the real modern data stack.</h2>
-    <p class="lead" data-aos="fade-up">No existing platform combines genuine gamification with real modern-data-stack content. EgyBI does — and grounds every challenge in real Egyptian data.</p>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>What&rsquo;s inside</div>
+    <h2 data-aos="fade-up">Six ways into the country.</h2>
+    <p class="lead" data-aos="fade-up">Egypt is a large subject and there is no single right door. Each of these answers a different question, and they all draw on the same cited data underneath.</p>
     <div class="grid grid-3" style="margin-top:32px;">
-      <div class="card" data-aos="fade-up"><h3>HackerRank &amp; LeetCode</h3><p>Gamified — badges, streaks, contests — but SQL content tops out at joins and window functions. No dbt, Airflow, Spark, or warehouse modeling.</p></div>
-      <div class="card" data-aos="fade-up" data-aos-delay="100"><h3>DataCamp</h3><p>Real modern-stack breadth, but guided tutorial — not competitive, auto-graded practice. A different use occasion entirely.</p></div>
-      <div class="card" data-aos="fade-up" data-aos-delay="200"><h3>SQLZoo &amp; Exercism</h3><p>Free and useful, but SQL-fundamentals only, with little gamification. Nothing touches the modern data stack.</p></div>
+      <a class="card card-link" href="visit.html" data-aos="fade-up" data-ev="home_to_visit">
+        <span class="tag">Start here</span>
+        <h3>Planning a visit.</h3>
+        <p>Where to go, what each place actually is, and what the weather is really like in the month you are thinking of &mdash; from climate records, not from a brochure.</p>
+      </a>
+      <a class="card card-link" href="geospatial.html" data-aos="fade-up" data-aos-delay="60" data-ev="home_to_atlas">
+        <span class="tag">The Atlas</span>
+        <h3>All 27 governorates.</h3>
+        <p>Population, density and urban share on one map, with health and school layers and Egypt&rsquo;s UNESCO World Heritage sites.</p>
+      </a>
+      <a class="card card-link" href="places.html" data-aos="fade-up" data-aos-delay="120" data-ev="home_to_places">
+        <span class="tag">Places</span>
+        <h3>Every mapped place, searchable.</h3>
+        <p>Cities and towns, airports and archaeological sites, filterable by governorate &mdash; the geographic pattern of what OpenStreetMap has recorded.</p>
+      </a>
+      <a class="card card-link" href="stories.html" data-aos="fade-up" data-aos-delay="180" data-ev="home_to_stories">
+        <span class="tag">Data stories</span>
+        <h3>Arguments, not dashboards.</h3>
+        <p>The map moves as you read. Why Egypt is smaller than it looks, where the clinics are, and what a century of street plans left behind.</p>
+      </a>
+      <a class="card card-link" href="explore.html" data-aos="fade-up" data-aos-delay="240" data-ev="home_to_explore">
+        <span class="tag">The charts</span>
+        <h3>Economy to antiquity.</h3>
+        <p>GDP, the Suez Canal, tourism, energy, agriculture and the ancient chronology &mdash; every figure with a named source and a date.</p>
+      </a>
+      <a class="card card-link" href="streets.html" data-aos="fade-up" data-aos-delay="300" data-ev="home_to_streets">
+        <span class="tag">Street geometry</span>
+        <h3>A century of plans, measured.</h3>
+        <p>Intersection density, dead ends and circuity across districts spanning the 1860s to the desert new towns &mdash; measured, not asserted.</p>
+      </a>
     </div>
-  </div>
-</section>
-
-<!-- SPECIALIZATIONS -->
-<section class="surface-dark" id="specializations">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Specialize</div>
-    <h2 data-aos="fade-up">Three specializations. One House of Life.</h2>
-    <p class="lead" data-aos="fade-up">EgyBI isn't a generic coding site — it's built for the data profession. Pick the path that matches the career you want, and master the exact stack it demands.</p>
-    <div class="grid grid-3" style="margin-top:32px;">
-      <div class="card" data-aos="fade-up">
-        <span class="tag">Data Engineering</span>
-        <h3>Build &amp; run the pipelines.</h3>
-        <p style="margin-bottom:12px;">Ingest, orchestrate, and scale data at production quality.</p>
-        <p style="font-size:0.84rem;"><strong style="color:var(--gold-bright);">Tracks:</strong> SQL · Python · Airflow · Spark/PySpark · Cloud Warehouses · Data Quality</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="100">
-        <span class="tag">Analytics Engineering</span>
-        <h3>Model &amp; transform the data.</h3>
-        <p style="margin-bottom:12px;">Turn raw tables into trusted, tested, well-modeled datasets.</p>
-        <p style="font-size:0.84rem;"><strong style="color:var(--gold-bright);">Tracks:</strong> SQL · dbt · Dimensional Modeling · Data Quality</p>
-      </div>
-      <div class="card" data-aos="fade-up" data-aos-delay="200">
-        <span class="tag">BI Development</span>
-        <h3>Turn data into decisions.</h3>
-        <p style="margin-bottom:12px;">Design the models, measures, and dashboards a business runs on.</p>
-        <p style="font-size:0.84rem;"><strong style="color:var(--gold-bright);">Tracks:</strong> SQL · BI Tooling · Dimensional Modeling · Cloud Warehouses</p>
-      </div>
-    </div>
-    <p class="lead" style="margin-top:36px;" data-aos="fade-up">All powered by <strong style="color:#fff;">9 skill tracks</strong>, beginner to advanced, each grounded in a real, respected book:</p>
-    <div class="pills" style="margin-top:18px;" data-aos="fade-up">
-      <span class="pill">SQL Fundamentals &amp; Advanced</span>
-      <span class="pill">Dimensional Modeling &amp; DW</span>
-      <span class="pill">Orchestration (Airflow)</span>
-      <span class="pill">dbt &amp; Analytics Engineering</span>
-      <span class="pill">Spark / PySpark</span>
-      <span class="pill">Cloud Data Warehouses</span>
-      <span class="pill">BI Tooling</span>
-      <span class="pill">Data Quality &amp; Testing</span>
-      <span class="pill">Python for Data Engineers</span>
-    </div>
-    <div class="cta-row" data-aos="fade-up"><a href="explore.html" class="btn btn-primary">Explore Egypt&rsquo;s data →</a></div>
+    <div class="cta-row" data-aos="fade-up"><a href="visit.html" class="btn btn-primary">Plan a visit to Egypt →</a></div>
   </div>
 </section>
 
@@ -231,8 +229,8 @@ LIMIT 5;</textarea>
 <section class="surface-light">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Explore Egypt data</div>
-    <h2 data-aos="fade-up">This is a BI platform. So here's real Egyptian data, charted.</h2>
-    <p class="lead" data-aos="fade-up">The knowledge base spans ancient chronology to modern economics — pharaohs, monuments, GDP, the Suez Canal, tourism, energy, demographics, and megaprojects.</p>
+    <h2 data-aos="fade-up">One chart, to show you what the rest look like.</h2>
+    <p class="lead" data-aos="fade-up">The knowledge base spans ancient chronology to modern economics — pharaohs, monuments, GDP, the Suez Canal, tourism, energy, demographics, and megaprojects. Note where the caption below refuses to draw a line: that is the house style, not an oversight.</p>
     <div class="chart-card" style="margin-top:26px;" data-aos="zoom-in">
       <h3>Egypt tourism — arrivals &amp; revenue</h3>
       <div class="chart-box"><canvas id="tourismChart"></canvas></div>
@@ -257,15 +255,14 @@ LIMIT 5;</textarea>
 </section>
 
 <div class="wrap"><div class="glyph-rule" aria-hidden="false"><span data-glyph="ra"></span></div></div>
-<!-- HERE FOR EGYPT — catches the visitor who came for the country, not the query.
-     A SQL editor above the fold is the right pitch for a practice platform and the
-     wrong one for someone who arrived curious about Egypt. This gives them a door
-     that needs no query. Both figures below are from the shipped database. -->
+<!-- TWO EXAMPLES — what "cited, and honest about disagreement" looks like in
+     practice, rather than as a claim. Both figures come from the shipped
+     database, and the second one exists precisely because the sources conflict. -->
 <section class="surface-light-2" id="for-egypt">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>No SQL required</div>
-    <h2 data-aos="fade-up">Here for Egypt, not for SQL?</h2>
-    <p class="lead" data-aos="fade-up">Plenty of people arrive curious about the country rather than about databases. You do not have to write a single query. The same cited knowledge base is also a shelf of short data stories and a room full of charts &mdash; every figure sourced, every disagreement flagged.</p>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Two examples</div>
+    <h2 data-aos="fade-up">What &ldquo;every figure is sourced&rdquo; looks like in practice.</h2>
+    <p class="lead" data-aos="fade-up">Claiming to be careful with data is easy. These two entries are what it costs: one is a count that surprises people, the other is a number two respectable sources disagree about &mdash; where the tidy move would be to pick one and say nothing.</p>
 
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="card" data-aos="fade-up">
@@ -286,6 +283,7 @@ LIMIT 5;</textarea>
     <div class="cta-row" data-aos="fade-up" style="margin-top:26px;">
       <a href="blog.html" class="btn btn-primary" data-ev="egypt_read_papyrus">Read The Papyrus &rarr;</a>
       <a href="explore.html" class="btn btn-ghost" data-ev="egypt_browse_charts">Browse the charts &rarr;</a>
+      <a href="places.html" class="btn btn-ghost" data-ev="egypt_open_places">Find a place &rarr;</a>
     </div>
   </div>
 </section>
@@ -294,12 +292,12 @@ LIMIT 5;</textarea>
 <section class="surface-light">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>The identity</div>
-    <h2 data-aos="fade-up">Every challenge is built on real Egyptian history — not a themed skin.</h2>
-    <p class="lead" data-aos="fade-up">Guided by <strong>Ibi</strong>, an ibis-headed scribe's apprentice inspired by Thoth. Rise through a real rank ladder, earn Egyptian badges, and unlock a sourced "Did You Know" after every correct answer.</p>
+    <h2 data-aos="fade-up">Egyptian history is the subject here, not a theme laid over it.</h2>
+    <p class="lead" data-aos="fade-up">The guide through the House of Life is <strong>Ibi</strong>, an ibis-headed scribe&rsquo;s apprentice after Thoth, who kept the records. The scribe&rsquo;s job was to write down what was actually counted &mdash; including when the count was uncertain.</p>
     <div class="callout" style="margin-top:26px;" data-aos="zoom-in">
-      <div class="label">Did you know?</div>
-      <p>Pepi II is traditionally credited with a 94-year reign — the longest in recorded history — per the Turin King List. Most Egyptologists today believe this figure was mistranscribed, and favor a shorter reign closer to 64 years.</p>
-      <span class="src">This is the exact kind of note that appears after solving the "Longest Reigns" challenge above.</span>
+      <div class="label">Which looks like this</div>
+      <p>Pepi II is traditionally credited with a 94-year reign &mdash; the longest in recorded history &mdash; per the Turin King List. Most Egyptologists today believe the figure was mistranscribed, and favour a reign closer to 64 years.</p>
+      <span class="src">Both readings are kept, because the disagreement is part of what is known. Turin King List; Egyptological consensus per Beckerath, <em>Chronologie des pharaonischen Ägypten</em>.</span>
     </div>
     <div class="cta-row" data-aos="fade-up"><a href="about.html" class="btn btn-blue">Meet Ibi &amp; the House of Life →</a></div>
   </div>
@@ -336,10 +334,10 @@ LIMIT 5;</textarea>
   <div class="cols">
     <div>
       <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
-      <p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life. A gamified home for BI, data engineering, and the modern data stack — built on real, cited Egyptian data.</p>
+      <p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">An encyclopaedia of Egypt told through maps and cited open data — every figure carries its source and its date.</p>
     </div>
-    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a></div>
-    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="#newsletter">Newsletter</a></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a></div>
+    <div><h5>More</h5><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="#newsletter">Newsletter</a></div>
     <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="explore.html">Full source list</a></div>
   </div>
   <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
@@ -434,7 +432,6 @@ LIMIT 5;</textarea>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script>window.EGYBI_AUTH = { base: 'auth/' };</script>
-<script src="assets/auth.js?v=10"></script>
   <script src="assets/analytics.js" defer></script>
 </body>
 </html>

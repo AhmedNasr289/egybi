@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data stories — Egypt, argued from the map | EgyBI</title>
+<meta name="description" content="Three data stories about Egypt where the map moves with the reader: where Egyptians actually live, what the health layer really measures, and what a century of street plans looks like when you measure it.">
+<link rel="canonical" href="https://egybi.com/stories.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="Data stories — Egypt, argued from the map">
+<meta property="og:description" content="Where Egyptians actually live, what the health layer really measures, and a century of street plans.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://egybi.com/stories.html">
+<meta property="og:image" content="https://egybi.com/og-image.png?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+<link href="assets/vendor/aos.css" rel="stylesheet">
+<link href="assets/vendor/leaflet.css" rel="stylesheet">
+<link href="assets/egybi.css?v=14" rel="stylesheet">
+<script>document.documentElement.classList.remove('no-js');</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="visit.html">Visit</a>
+      <a href="explore.html">Explore</a>
+      <a href="prices.html">Prices</a>
+      <a href="stocks.html">Stocks</a>
+      <a href="geospatial.html">Atlas</a>
+      <a href="places.html">Places</a>
+      <a href="stories.html" class="active">Stories</a>
+      <a href="streets.html">Streets</a>
+      <a href="blog.html">Blog</a>
+      <a href="community.html">Community</a>
+      <a href="about.html">About</a>
+      <a class="nav-only-mobile" href="index.html#newsletter">Newsletter</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="cta" href="index.html#newsletter">Newsletter</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+
+<section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
+  <div class="wrap">
+    <p class="hero-eyebrow"><span data-glyph="scroll"></span> Data stories</p>
+    <h1 style="font-size:clamp(1.7rem,5vw,2.7rem);margin:0 0 14px;">Egypt, argued from the map.</h1>
+    <p class="lead" style="margin:0;max-width:72ch;color:#e9dfc8;">Three stories where the map moves
+    as you read. Every figure below is computed in your browser from the data in this repository,
+    so the numbers in the prose cannot drift away from their source. Scroll, or press Tab to walk
+    the steps by keyboard.</p>
+  </div>
+</section>
+
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
+
+<section class="surface-light" id="ribbon" data-nav="Where people live">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>For a first visit</div>
+    <h2 data-aos="fade-up">Half of Egypt lives on a fortieth of it.</h2>
+    <p class="lead" data-aos="fade-up" style="max-width:70ch;">The country is enormous and almost
+    all of it is empty. Here is what that means for where you will actually go.</p>
+  <div class="scrolly" data-scrolly data-graphic="mapRibbon">
+    <div class="scrolly-graphic"><div id="mapRibbon"></div></div>
+    <div class="scrolly-steps">
+      <section class="scrolly-step is-active" data-step="whole" tabindex="0">
+        <h3>Egypt is mostly empty</h3>
+        <p>Egypt covers <strong id="rbTotArea">—</strong> square kilometres and holds
+        <strong id="rbTotPop">—</strong> people. Both numbers are true, and together they mislead:
+        the population is not spread across the country, it is pressed into a thin strip beside
+        one river and one delta.</p>
+      </section>
+      <section class="scrolly-step" data-step="dense" tabindex="0">
+        <h3>Half the country, on a rounding error of land</h3>
+        <p>Rank the governorates by density and add them up. Half of everyone in Egypt lives
+        in the <strong id="rbHalfN">—</strong> densest, which together are
+        <strong id="rbHalfArea">—</strong> of the land area.</p>
+        <p>That is the Nile valley and the Delta, in blue. If you visit Egypt, almost everything
+        you will see is inside this shape.</p>
+      </section>
+      <section class="scrolly-step" data-step="empty" tabindex="0">
+        <h3>And the rest</h3>
+        <p>Now the opposite end. <strong id="rbSparseN">—</strong> governorates hold under
+        25 people per square kilometre. They are <strong id="rbSparseArea">—</strong> of Egypt's
+        land and <strong id="rbSparsePop">—</strong> of its people.</p>
+        <p>This is the Western Desert, Sinai and the Red Sea coast — in gold. Larger than most
+        European countries, and nearly nobody lives there.</p>
+      </section>
+      <section class="scrolly-step" data-step="both" tabindex="0">
+        <h3>The shape of the country</h3>
+        <p>Put them together and Egypt's real geography appears: a blue ribbon of people, a
+        gold expanse of almost nobody, and very little in between.</p>
+        <p>Every road, every city and nearly every ancient site in this encyclopaedia sits on
+        the blue. That is not a metaphor — it is what the density data says.</p>
+      </section>
+    </div>
+  </div>
+    <p class="src" style="font-size:0.8rem;color:var(--ink-soft);margin-top:24px;">
+    <strong>Sources.</strong> Governorate boundaries: geoBoundaries EGY ADM1 (CC BY 4.0). Population,
+    area and density attributes: CAPMAS figures bundled with those boundaries. Percentages are
+    computed in the browser from those attributes.
+    <strong>What this cannot tell you:</strong> governorate averages hide everything inside them —
+    Giza spans both dense city and open desert, and a single density figure flattens that.</p>
+  </div>
+</section>
+
+<section class="surface-light-2" id="mapped" data-nav="What the map knows">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>For a resident</div>
+    <h2 data-aos="fade-up">This is not a map of hospitals.</h2>
+    <p class="lead" data-aos="fade-up" style="max-width:70ch;">It is a map of where people have
+    done the mapping — and telling the difference is the most useful skill for reading any open
+    dataset about Egypt.</p>
+  <div class="scrolly" data-scrolly data-graphic="mapHealth">
+    <div class="scrolly-graphic"><div id="mapHealth"></div></div>
+    <div class="scrolly-steps">
+      <section class="scrolly-step is-active" data-step="flat" tabindex="0">
+        <h3>A map of hospitals, or a map of mappers?</h3>
+        <p>The Atlas plots <strong id="hlTotal">—</strong> health facilities across Egypt,
+        as recorded in OpenStreetMap on <strong id="hlAsOf">—</strong>. It is tempting to read that
+        as a map of healthcare. It is not, and the numbers show why.</p>
+        <p id="hlNote"></p>
+      </section>
+      <section class="scrolly-step" data-step="rate" tabindex="0">
+        <h3>Facilities per million people</h3>
+        <p>Divide the mapped facilities in each governorate by its population and colour the
+        map. If this measured healthcare, you would expect the pattern to follow population,
+        wealth or urbanisation.</p>
+        <p>It follows none of them.</p>
+      </section>
+      <section class="scrolly-step" data-step="sinai" tabindex="0">
+        <h3>The top of the range</h3>
+        <p><strong id="hlHi">—</strong> comes out highest, at <strong id="hlHiR">—</strong>
+        mapped facilities per million residents.</p>
+        <p>It is also where the dive resorts are. Tourist regions attract visiting mappers, and
+        visiting mappers add detail. What is high here is the mapping, not necessarily the
+        medicine.</p>
+      </section>
+      <section class="scrolly-step" data-step="delta" tabindex="0">
+        <h3>The bottom of it</h3>
+        <p><strong id="hlLo">—</strong> comes out lowest, at <strong id="hlLoR">—</strong>
+        per million — a spread of <strong id="hlRatio">—</strong> from top to bottom.</p>
+        <p>It is a densely populated agricultural governorate with millions of residents. It
+        certainly has clinics. They are simply not in OpenStreetMap yet.</p>
+        <p><strong>So read this layer as a map of where volunteers have been, not where
+        Egyptians can get treatment.</strong> That is the honest reading, and it is why this
+        figure never appears on the site without that caveat attached.</p>
+      </section>
+    </div>
+  </div>
+    <p class="src" style="font-size:0.8rem;color:var(--ink-soft);margin-top:24px;">
+    <strong>Sources.</strong> Facilities: OpenStreetMap via Overpass (ODbL), as dated above.
+    Population: CAPMAS attributes on the bundled geoBoundaries outlines (CC BY 4.0).
+    <strong>What this cannot tell you:</strong> nothing here counts Egypt's actual hospitals, beds,
+    staff or opening hours. A governorate with few mapped facilities may be well served and poorly
+    mapped, and this data cannot separate the two.</p>
+  </div>
+</section>
+
+<section class="surface-light" id="plans" data-nav="A century of plans">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>The engineering</div>
+    <h2 data-aos="fade-up">Every planning era leaves a fingerprint you can measure.</h2>
+    <p class="lead" data-aos="fade-up" style="max-width:70ch;">Street geometry is one of the few
+    things about a city you can measure objectively from open data. Here is what a century of
+    Egyptian plans looks like in numbers.</p>
+  <div class="scrolly" data-scrolly data-graphic="mapStreets">
+    <div class="scrolly-graphic"><div id="mapStreets"></div></div>
+    <div class="scrolly-steps">
+      <section class="scrolly-step is-active" data-step="all" tabindex="0">
+        <h3>A century of plans, measured</h3>
+        <p>EgyBI measures the street geometry of <strong id="stN">—</strong> Egyptian districts
+        spanning the 1860s to the 2020s, from OpenStreetMap on <strong id="stAsOf">—</strong>.
+        Intersection density, dead-end share, circuity and orientation entropy are computed the
+        way a highway engineer would, then normalised per square kilometre.</p>
+        <p id="stNote"></p>
+      </section>
+      <section class="scrolly-step" data-step="oldest" tabindex="0">
+        <h3>The oldest fabric</h3>
+        <p>Downtown Cairo, laid out for Khedive Ismail in the 1860s, is the densest network
+        measured here. Short blocks, many junctions, walkable by construction rather than by
+        policy.</p>
+        <p>Its boundary is the one hand-drawn extent on the site, because OpenStreetMap has no
+        polygon for Downtown Cairo at all — and it is labelled as hand-drawn everywhere it
+        appears.</p>
+      </section>
+      <section class="scrolly-step" data-step="newest" tabindex="0">
+        <h3>The newest</h3>
+        <p>The desert cities invert it. Longer segments, fewer junctions per square kilometre,
+        higher circuity — the distance you actually travel versus the straight line.</p>
+        <p>The spread between the densest and sparsest district measured is
+        <strong id="stRatio">—</strong>: <strong id="stHi">—</strong> at
+        <strong id="stHiD">—</strong> intersections per square kilometre against
+        <strong id="stLo">—</strong> at <strong id="stLoD">—</strong>.</p>
+      </section>
+      <section class="scrolly-step" data-step="biggest" tabindex="0">
+        <h3>What the geometry cannot tell you</h3>
+        <p>None of this says which district is better to live in. A cul-de-sac layout is
+        quieter on your own street and harder to cross on foot; both are true at once, and the
+        geometry measures the trade-off without resolving it.</p>
+        <p>It also says nothing about pavement quality, traffic, safety or whether the street is
+        pleasant. Those are not in the data, so they are not in the conclusion.</p>
+      </section>
+    </div>
+  </div>
+    <p class="src" style="font-size:0.8rem;color:var(--ink-soft);margin-top:24px;">
+    <strong>Sources.</strong> Street networks: OpenStreetMap via OSMnx (ODbL), as dated above.
+    Metrics computed on graphs projected to UTM and normalised per square kilometre.
+    Hand-drawn boundaries in this story: <strong id="stDrawn">—</strong>.
+    <strong>What this cannot tell you:</strong> geometry is not quality. These figures say nothing
+    about pavement condition, traffic, safety or whether a street is pleasant to walk down, and no
+    conclusion here depends on them.</p>
+  </div>
+</section>
+
+<section class="surface-light-2">
+  <div class="wrap next-steps">
+    <a class="ns-card" href="geospatial.html"><span class="ns-k">Atlas</span><h3>The layered map &rarr;</h3><p>Every governorate, with health, schools and the World Heritage sites on top.</p></a>
+    <a class="ns-card" href="places.html"><span class="ns-k">Places</span><h3>The gazetteer &rarr;</h3><p>Cities, towns, airports and ancient sites, searchable.</p></a>
+    <a class="ns-card" href="streets.html"><span class="ns-k">Streets</span><h3>The full report card &rarr;</h3><p>All seven metrics for every district measured.</p></a>
+  </div>
+</section>
+
+
+<section class="surface-light-2 next-steps center" id="next" data-nav="Where next">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
+    <h2>Keep going.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;"><a class="ns-card" href="visit.html"><span class="ns-k">Visit</span><h3>See it for yourself &rarr;</h3><p>Where the great sites are, and what the weather really does month by month.</p></a><a class="ns-card" href="places.html"><span class="ns-k">Places</span><h3>Find a place &rarr;</h3><p>Every city, town, airport and ancient site OpenStreetMap has mapped.</p></a><a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>The full charts &rarr;</h3><p>Economy, the Suez Canal, tourism, energy and the ancient chronology.</p></a></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">An encyclopaedia of Egypt told through maps and cited open data.</p></div>
+    <div><h5>Egypt</h5><a href="visit.html">Plan a Visit</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="explore.html">Egypt Data</a></div>
+    <div><h5>More</h5><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+</footer>
+
+<script src="assets/vendor/aos.js"></script>
+<script src="assets/vendor/leaflet.js"></script>
+<script src="assets/egypt-geo.js"></script>
+<script src="assets/egybi.js"></script>
+<script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
+<script src="assets/scrolly.js?v=1"></script>
+<script src="assets/stories.js?v=1"></script>
+<script src="assets/analytics.js"></script>
+</body>
+</html>

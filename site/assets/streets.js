@@ -52,9 +52,13 @@
       what: 'How much further you travel along streets than the straight-line distance. 1.00 would be a perfect straight shot; higher means detours.'
     },
     orientation_entropy: {
+      // `good: 'low'` here is a DISPLAY CONVENTION, not a quality claim — it
+      // only puts the more directionally concentrated districts at the dark end
+      // of the ramp. Low entropy is not "better": a radial plan is deliberate,
+      // walkable and scores high. See the caveat printed under the roses.
       label: 'Orientation entropy', unit: '', good: 'low',
       fmt: function (v) { return v.toFixed(2); },
-      what: 'How disordered the street directions are. A perfect grid scores about 1.39; a fully random network approaches 3.58. Lower means more grid-like.'
+      what: 'How concentrated the street directions are. A four-way grid puts nearly all its length into two opposing pairs and scores about 1.39; bearings spread evenly around the compass approach 3.58. A high score can mean disorder or a deliberate radial plan — this number alone cannot tell you which.'
     }
   };
   var ORDER = ['intersection_density_km2', 'dead_end_share_pct', 'street_density_km_km2',
@@ -191,6 +195,65 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(c.dataset.key); }
       });
     });
+    paintRoseSpread();
+  }
+
+  /* The finding the roses make but a reader can miss: the districts barely
+     differ on this metric. Computed from the data rather than written down,
+     so it stays true when the pipeline reruns and cannot become a stale
+     claim about numbers that have since moved. */
+  function paintRoseSpread() {
+    var el = $('roseSpread'); if (!el) return;
+    var hs = S.card.districts
+      .map(function (d) { return d.orientation_entropy; })
+      .filter(function (h) { return typeof h === 'number'; });
+    if (hs.length < 2) { el.textContent = ''; return; }
+    var lo = Math.min.apply(null, hs), hi = Math.max.apply(null, hs);
+    var GRID = Math.log(4), MAX = Math.log(36);          // 1.386 … 3.584
+    var share = (hi - lo) / (MAX - GRID) * 100;
+    el.innerHTML = 'Read the numbers together before reading any one of them. ' +
+      'Across the ' + hs.length + ' districts measured here, entropy runs from <strong>' +
+      lo.toFixed(2) + '</strong> to <strong>' + hi.toFixed(2) + '</strong> &mdash; a spread of ' +
+      (hi - lo).toFixed(2) + ', or <strong>' + share.toFixed(0) + '%</strong> of the ' +
+      GRID.toFixed(2) + '&ndash;' + MAX.toFixed(2) + ' range. ' +
+      (share < 25
+        ? 'They are clustered near the high end, which is the actual finding: <strong>none of these districts is a grid by this measure</strong>, khedivial Downtown included. The textbook contrast between a planned grid and an organic tangle does not appear in Cairo, and a metric this flat should not be used to rank the districts against each other. The differences that do separate them are in the other six columns.'
+        : 'That is a wide enough spread for the differences between districts to be meaningful.');
+  }
+
+  /* The dead-end story, computed rather than asserted.
+     The stock critique of desert new towns is that they are cul-de-sac sprawl,
+     and the measured data does not support it here. Whatever it does support,
+     it should say for itself — so this splits the districts at a fixed
+     threshold, names both groups from the data, and prints what it finds. If a
+     future run changes the pattern, the sentence changes with it. */
+  function paintDeadEndFinding() {
+    var el = $('deadEndFinding'); if (!el || !S.card) return;
+    var rows = S.card.districts
+      .filter(function (d) { return typeof d.dead_end_share_pct === 'number'; })
+      .slice().sort(function (a, b) { return b.dead_end_share_pct - a.dead_end_share_pct; });
+    if (rows.length < 4) { el.textContent = ''; return; }
+
+    var hi = rows[0], lo = rows[rows.length - 1];
+    // Districts at least twice the lowest share — an arbitrary but stated line,
+    // chosen because a factor of two is a difference a reader can see.
+    var outliers = rows.filter(function (d) { return d.dead_end_share_pct >= 2 * lo.dead_end_share_pct; });
+    var names = outliers.map(function (d) { return esc(d.name); });
+
+    el.innerHTML =
+      '<strong>The cul-de-sac story is not in this data.</strong> Dead-end share runs from <strong>' +
+      lo.dead_end_share_pct.toFixed(1) + '%</strong> at ' + esc(lo.name) + ' to <strong>' +
+      hi.dead_end_share_pct.toFixed(1) + '%</strong> at ' + esc(hi.name) + '. ' +
+      (outliers.length && outliers.length < rows.length - 1
+        ? 'The ' + (outliers.length === 1 ? 'one district' : outliers.length + ' districts') +
+          ' at or above twice the lowest share &mdash; ' + names.join(', ') + ' &mdash; ' +
+          (outliers.length === 1 ? 'is' : 'are') + ' not the newest here. ' +
+          'The desert and coastal new towns, the ones a cul-de-sac critique is usually aimed at, ' +
+          'sit near the bottom. What separates them from the older districts is <em>coarseness</em>, ' +
+          'not disconnection: far fewer junctions per square kilometre and much longer blocks, ' +
+          'which is a different criticism and has to be argued differently.'
+        : 'The districts do not separate cleanly on this metric.') +
+      ' Era labels are ours; the numbers are not.';
   }
 
   function paintTable() {
@@ -226,19 +289,43 @@
 
     var accHtml = '';
     if (acc) {
+      // Three states, kept distinct. A category can have facilities (a
+      // percentage), have none mapped (a real zero), or never have answered
+      // (null). Printing an unanswered query as "0" would state a count we
+      // never obtained, which is the one thing this site must not do.
+      var un = acc.unanswered || [];
+      var isUn = function (k) { return un.indexOf(k) !== -1; };
       accHtml = '<h4>Walking access</h4><div class="dd-access">' +
         Object.keys(acc.access).map(function (kind) {
-          var a = acc.access[kind];
-          return '<div class="acc-cell"><span class="ac-k">' + esc(kind) + '</span>' +
-                 (a ? '<strong>' + a.within_15min_pct.toFixed(0) + '%</strong><span class="ac-s">within 15 min · median ' +
-                      a.median_min.toFixed(0) + ' min</span>'
-                    : '<strong>—</strong><span class="ac-s">none mapped in OSM</span>') +
-                 '</div>';
+          var a = acc.access[kind], body;
+          if (a) {
+            body = '<strong>' + a.within_15min_pct.toFixed(0) + '%</strong><span class="ac-s">within 15 min · median ' +
+                   a.median_min.toFixed(0) + ' min</span>';
+          } else if (isUn(kind)) {
+            body = '<strong>?</strong><span class="ac-s">not retrieved this build</span>';
+          } else {
+            body = '<strong>—</strong><span class="ac-s">none mapped in OSM</span>';
+          }
+          return '<div class="acc-cell"><span class="ac-k">' + esc(kind) + '</span>' + body + '</div>';
         }).join('') + '</div>' +
         '<p class="dd-note">Counted from OSM: ' +
         Object.keys(acc.amenity_counts).map(function (k) {
-          return acc.amenity_counts[k] + ' ' + k; }).join(', ') +
-        '. A low score can mean few facilities <em>or</em> few mapped facilities — this data cannot tell them apart.</p>';
+          var n = acc.amenity_counts[k];
+          return (n === null || n === undefined ? 'not retrieved' : n) + ' ' + k; }).join(', ') +
+        '. A low score can mean few facilities <em>or</em> few mapped facilities — this data cannot tell them apart.' +
+        (un.length
+          ? ' <strong>' + esc(un.join(' and ')) + ' did not return a result on this build</strong>, so ' +
+            (un.length === 1 ? 'that category is' : 'those categories are') +
+            ' shown as unknown rather than as zero, and the score above averages the ' +
+            (Object.keys(acc.access).length - un.length) + ' that answered.'
+          : '') +
+        '</p>' +
+        (acc.no_amenities_mapped
+          ? '<p class="dd-note dd-drawn"><strong>Nothing of these four kinds is mapped here.</strong> ' +
+            'Every query returned an answer and every answer was empty, so this is a statement about ' +
+            'OpenStreetMap coverage in this district, not about whether the district has clinics or ' +
+            'schools. It almost certainly has both.</p>'
+          : '');
     }
 
     // Downtown Cairo is the one district whose outline is ours rather than
@@ -286,16 +373,32 @@
     if (!host) return;
     if (!S.access) { if (empty) empty.hidden = false; host.innerHTML = ''; return; }
     if (empty) empty.hidden = true;
-    var rows = S.access.districts.slice().sort(function (a, b) {
-      return b.mean_within_15min_pct - a.mean_within_15min_pct; });
+    // A district with nothing of these four kinds mapped has a null mean, not a
+    // zero. Sorting it as 0 would be arithmetically convenient and wrong: it
+    // would rank below districts we actually measured, implying we measured it
+    // and found the worst access. It sorts to the end and says what it is.
+    var num = function (a) {
+      return typeof a.mean_within_15min_pct === 'number' ? a.mean_within_15min_pct : -1; };
+    var rows = S.access.districts.slice().sort(function (a, b) { return num(b) - num(a); });
     host.innerHTML = rows.map(function (a) {
       var pct = a.mean_within_15min_pct;
+      if (typeof pct !== 'number') {
+        return '<div class="acc-card" data-key="' + esc(a.key) + '">' +
+          '<div class="acc-name">' + esc(a.name) + '</div>' +
+          '<div class="acc-bar"><span style="width:2%"></span></div>' +
+          '<div class="acc-pct">no data</div>' +
+          '<div class="acc-sub">no hospital, clinic, school or pharmacy is mapped inside this ' +
+          'boundary, so there is nothing to measure a walk to &mdash; a gap in OpenStreetMap, ' +
+          'not a finding about the district</div></div>';
+      }
+      var un = (a.unanswered || []).length;
       return '<div class="acc-card" data-key="' + esc(a.key) + '">' +
         '<div class="acc-name">' + esc(a.name) + '</div>' +
         '<div class="acc-bar"><span style="width:' + Math.max(2, Math.min(100, pct)) + '%"></span></div>' +
         '<div class="acc-pct">' + pct.toFixed(0) + '%</div>' +
-        '<div class="acc-sub">of walkable street within 15 minutes of a mapped hospital, clinic, school or pharmacy</div>' +
-        '</div>';
+        '<div class="acc-sub">of walkable street within 15 minutes of a mapped hospital, clinic, school or pharmacy' +
+        (un ? ' &middot; averaged over the ' + (4 - un) + ' categories that returned a result this build' : '') +
+        '</div></div>';
     }).join('');
     host.querySelectorAll('.acc-card').forEach(function (c) {
       c.addEventListener('click', function () { select(c.dataset.key); });
@@ -354,7 +457,7 @@
         });
       });
 
-      paintTable(); paintRoses(); paintAccessSection(); paintMeta();
+      paintTable(); paintDeadEndFinding(); paintRoses(); paintAccessSection(); paintMeta();
       if (S.bounds) initMap(); else { var ms = $('mapSection'); if (ms) ms.hidden = true; }
     });
   }

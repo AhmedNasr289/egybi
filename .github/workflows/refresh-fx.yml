@@ -59,7 +59,14 @@ jobs:
             git add site/data/fx-today.json site/data/fx-history.json
             git commit -m "Automated daily FX refresh — ExchangeRate-API [skip ci]"
             for attempt in 1 2 3; do
-              if git pull --rebase --autostash origin main && git push; then
+            # Rebase against the ref this run was dispatched on rather than a
+            # hardcoded main. These are cron-or-push on main in normal use, but
+            # all four accept workflow_dispatch, so any of them CAN be aimed at a
+            # branch — and there the rebase onto main rewrites the branch history
+            # and the push is rejected as a non-fast-forward, discarding the work.
+            # refresh-streets hit exactly this. On main the behaviour is identical.
+              if git pull --rebase --autostash origin "$GITHUB_REF_NAME" \
+                 && git push origin "HEAD:$GITHUB_REF_NAME"; then
                 echo "pushed on attempt $attempt"; exit 0
               fi
               echo "push attempt $attempt failed; retrying in 5s"; sleep 5

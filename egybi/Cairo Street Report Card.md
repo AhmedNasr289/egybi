@@ -1,10 +1,14 @@
 # Cairo Street Report Card
 
-> EgyBI's fifth data service, at **egybi.com/streets.html**. Six Cairo districts spanning six planning eras, measured rather than described. Built **2026-08-07**. Back to [[Home]]. Related: [[Egypt Atlas — Geospatial Service]], [[Automation & CI Pipelines]], [[Frontend & Design System]].
+> EgyBI's fifth data service, at **egybi.com/streets.html**. Egyptian districts spanning six planning eras, measured rather than described — six at launch, ten once the expanded list has run. Built **2026-08-07**. Back to [[Home]]. Related: [[Egypt Atlas — Geospatial Service]], [[Places & Data Stories]], [[Automation & CI Pipelines]], [[Frontend & Design System]].
+
+**No page copy states how many districts there are.** The title, meta description, social cards and hero all used to say "six", which meant five separate edits the moment the list grew, on a page whose entire premise is that the list keeps growing. Anything that has to name a count is now computed from the published data at render time; everything else is written so it never needs one. A number in a `<title>` on a growing dataset is a promise to keep editing it, and that promise is always eventually broken.
 
 ## What it is
 
-Street-network geometry is one of the few things about urban form you can measure **objectively** from open data. This page computes seven metrics per district and shows how a khedivial grid differs from a desert cul-de-sac subdivision *numerically*, instead of asserting it.
+Street-network geometry is one of the few things about urban form you can measure **objectively** from open data. This page computes seven metrics per district and compares planning eras *numerically* rather than by assertion.
+
+> **The premise this started from turned out to be wrong, and the page says so.** The original idea was that a khedivial grid would differ from a "desert cul-de-sac subdivision" — that newer districts score badly on connectivity. Measured across ten districts, they do not: the desert new towns have *fewer* dead ends than the historic cores, not more. What separates them is coarseness, not disconnection. See [the finding](#the-finding-that-was-worth-the-whole-exercise) below. Being able to be wrong about this is the entire reason for measuring instead of describing.
 
 | District | Era | Why it earns a place |
 |---|---|---|
@@ -14,8 +18,38 @@ Street-network geometry is one of the few things about urban form you can measur
 | Nasr City | Nasserist, 1958+ | The state's post-revolution expansion: arterials and superblocks |
 | 6th of October | Desert new town, 1979+ | First-generation satellite city, planned from nothing |
 | New Cairo | Desert new town, 1990s–2000s | Compound-led suburban form — the sharpest contrast with the grid |
+| Luxor | Ancient core + modern town | The only district outside Greater Cairo built on a pre-Islamic street pattern |
+| 10th of Ramadan | Industrial new town, 1977+ | Planned around factories rather than housing — the industrial variant of the new-town idea |
+| Sheikh Zayed | Desert new town, 1995+ | 6th of October's compound-led neighbour, a decade and a doctrine later |
+| New Alamein | Coastal new city, 2018+ | The newest thing here, added as the test of whether the newest form is the least connected. **It is not** — 6.2% dead ends, mid-table, below Nasr City. |
 
 **Metrics:** intersection density per km², dead-end share, street density, mean segment length, streets per junction, circuity, and orientation entropy.
+
+### The four that were added, and the fourteen that weren't
+
+The list grew from six to ten on 2026-08-07. Candidates came from **probe round 4** — eighteen district groups, Arabic name first — rather than from picking names that sounded right, because each guess costs a full Cairo graph download when tested through the pipeline instead.
+
+Fourteen candidates were dropped, and **the reason is recorded beside each one in `DISTRICTS`** so the next person doesn't re-litigate them:
+
+- **Seven resolved to a whole governorate.** `أسوان` came back at **57,962 km²**. These pass no area check and would have compared a province against a neighbourhood.
+- **Four have no OSM polygon at all** — Zamalek, the New Administrative Capital, Gamaliya, Historic Cairo. Same `TypeError` as Downtown, same meaning: results exist, none is a polygon.
+- **Three resolved to the wrong country.** See below.
+
+### The trap the area check could not catch
+
+Three Arabic queries returned polygons of an entirely plausible size, in the wrong country:
+
+| Query | Resolved to | Area |
+|---|---|---|
+| `شبرا` | **Riyadh**, Saudi Arabia | 4.70 km² |
+| `المنشية` | **Kairouan**, Tunisia | 1.17 km² |
+| `الأقصر` | **Liberia** | 108,500 km² |
+
+The first two sail straight through the 1–900 km² guardrail — they are the *right size*, which is the only question that guardrail asks. Arabic place names are widely shared across the Arab world and Nominatim has no reason to prefer Egypt, so this was never going to stay theoretical once the district list went Arabic-first.
+
+`resolve_boundary` now also checks the resolved polygon's **centroid against Egypt's bounding box** (`EGYPT_BBOX = (24.5, 21.5, 37.5, 32.0)`) and logs `NOT IN EGYPT` with the offending `display_name` when it fails. Verified against all five probe cases before shipping.
+
+The general lesson, which is worth more than the fix: **a plausibility check on one dimension is not a plausibility check.** Area answers *is this the right kind of thing*. It says nothing at all about where on Earth it is.
 
 ## The five methodological traps, and how each is handled
 
@@ -41,9 +75,14 @@ These are the decisions that separate a real measurement from a demo. All are in
 
    **The near-miss worth recording:** round 2 checked only `boundary=administrative`, found nothing, and that looked like a verdict. It wasn't — **none of the four working districts is an administrative boundary either** (Heliopolis is `place/quarter`, Maadi `place/neighbourhood`, Nasr City `place/city`). Concluding from the one tag family that excludes every working district would have been a confident wrong answer. Always check the tag family your *successes* live in before declaring an absence.
 
+2. **Projection.** Lengths and circuity computed on raw lat/lon degrees are meaningless. Every graph is projected to UTM before measurement.
+3. **Normalisation.** 6th of October is orders of magnitude larger than Downtown, so raw counts would compare *size* rather than *design*. Every count is divided by the district's real projected area.
+4. **Drive vs walk networks.** The report card uses the **drive** network because that is what street design produces; the access score uses the **walk** network because a 15-minute city is about walking. Mixing them would answer neither question.
+5. **Bearings unprojected and length-weighted.** Bearings are compass directions, so they must come from lat/lon — and a two-kilometre avenue should count for more than a fifty-metre lane.
+
 ## The one hand-drawn boundary
 
-Downtown is the khedivial grid the newer districts are contrasted against, so losing it guts the comparison. Ahmed's call was to keep it with a hand-drawn extent, explicitly labelled. It is defined by the district's well-understood edges — the Nile west, Ramses north, Port Said Street (the filled-in Khalig al-Masri) east, Sayyida Zeinab south — and comes to **7.1 km²**, sitting sensibly beside Heliopolis at 8.6.
+Downtown is the khedivial grid the newer districts are contrasted against, so losing it guts the comparison. Ahmed's call was to keep it with a hand-drawn extent, explicitly labelled.
 
 Four conditions make it honest rather than fabricated:
 
@@ -53,16 +92,65 @@ Four conditions make it honest rather than fabricated:
 4. **Its weakness is stated, not hidden.** Per-km² figures depend on where the line falls, so Downtown's densities are named on the page as the numbers most sensitive to a judgement call.
 
 The framing that makes this defensible rather than a slippery slope: the page's "boundaries are OSM's" claim already carried more precision than it sounded like — Heliopolis and Maadi are *mapper-drawn* `place` polygons, not official limits. A documented hand-drawn extent is a difference of degree from that, not of kind. The page now says both things plainly.
-2. **Projection.** Lengths and circuity computed on raw lat/lon degrees are meaningless. Every graph is projected to UTM before measurement.
-3. **Normalisation.** 6th of October is orders of magnitude larger than Downtown, so raw counts would compare *size* rather than *design*. Every count is divided by the district's real projected area.
-4. **Drive vs walk networks.** The report card uses the **drive** network because that is what street design produces; the access score uses the **walk** network because a 15-minute city is about walking. Mixing them would answer neither question.
-5. **Bearings unprojected and length-weighted.** Bearings are compass directions, so they must come from lat/lon — and a two-kilometre avenue should count for more than a fifty-metre lane.
 
-## Orientation entropy — why it's the most interesting number
+### Where the first extent went wrong, and how that was established
 
-A perfect four-way grid scores about **1.39** (= ln 4); a fully disordered network approaches **3.58** (= ln 36). Everything real sits between. It is rotation-invariant, so a grid tilted 45° scores identically to a north-south one — it measures *regularity*, not *direction*.
+The first version ran to the district's well-understood modern edges — the Nile west, Ramses north, Port Said Street (the filled-in Khalig al-Masri) east, Sayyida Zeinab south — and came to **7.14 km²**, which sat plausibly beside Heliopolis at 8.6. Run 4 measured it and returned **324 intersections per km², 45 m mean segments and a 23.2% dead-end share**. That is pre-modern alley fabric. It is not Ismail's boulevard plan, and the whole point of including Downtown is to have the boulevard plan in the comparison.
+
+The tempting explanation was boundary clipping — a small polygon cuts more streets at its edge, inflating dead ends. **That was ruled out with evidence rather than argued about**: Heliopolis has a *higher* perimeter-to-area ratio, 1.79 against Downtown's 1.40, and only a 4.2% dead-end share. If clipping drove the number, Heliopolis would be worse.
+
+Measuring the polygon instead of theorising about it found the real cause: **26.6% of it lay outside khedivial Cairo** — 12.4% east of Midan Ataba into the old Fatimid city, and 14.7% south of Bab al-Louq into Sayyida Zeinab. Those quarters carry far more street-kilometres per km² than the boulevard plan does, so they dominated every per-km² metric while occupying a quarter of the area.
+
+The extent now stops at the plan's own limits: the Nile, 26th of July, Ramses, Midan Ataba, Abdeen, Bab al-Louq. It measures **3.78 km²** — the smallest district on the page, which is honest, because khedivial Cairo *is* small. **Both sets of numbers are kept in the code comment**, so the sensitivity of every Downtown figure to that one judgement call stays visible instead of being quietly replaced by the better-looking answer.
+
+## Orientation entropy — the most interesting number, and the most misread
+
+A perfect four-way grid scores about **1.39** (= ln 4); a fully disordered network approaches **3.58** (= ln 36). Everything real sits between. It is rotation-invariant: a grid tilted 45° scores identically to a north-south one.
 
 Verified against synthetic networks before trusting it on real data: a generated perfect grid returned 1.386, the same grid rotated 45° returned 1.386 with the occupied compass sectors shifted, and a random walk returned 3.565 against the theoretical maximum of 3.584.
+
+**An earlier version of this note said it measures "regularity". That is wrong, and the error matters here specifically.** Entropy measures how **concentrated street bearings are into a few compass directions** — nothing more. A plan can be rigorously regular and still score high if its regularity is *radial* rather than orthogonal, because a star of avenues radiating from a midan puts bearings into many sectors by design.
+
+That is exactly what Downtown is. Ismail's plan is **Haussmannian**: diagonal boulevards converging on circular midans, laid over an orthogonal base. So the intuition the page was built on — *the grid should score low, the desert new towns should score high* — was never safe for this district. Downtown returning a high entropy is at least partly the plan working as designed, not only a boundary problem. The page now frames entropy as directional concentration, and says plainly that a high score can mean disorder **or** a deliberate radial geometry, and that this metric alone cannot tell you which.
+
+## The finding that was worth the whole exercise
+
+Run 6 measured all ten districts, and the result contradicts the premise the project started from.
+
+The original idea — the one that made this look worth building — was that *newer districts score badly on connectivity, which is a genuine planning critique with numbers behind it.* **The numbers do not support it.** Dead-end share, by district:
+
+| District | Era | Dead ends |
+|---|---|---|
+| **Luxor** | ancient core + modern town | **19.2%** |
+| **Downtown Cairo** | khedivial, 1860s | **17.2%** |
+| Nasr City | Nasserist, 1958 | 9.3% |
+| 6th of October | desert new town, 1979 | 6.7% |
+| New Cairo | desert new town, 1990s–2000s | 6.2% |
+| New Alamein | coastal new city, 2018 | 6.2% |
+| Maadi | garden suburb, 1900s | 5.5% |
+| Sheikh Zayed | desert new town, 1995 | 4.5% |
+| 10th of Ramadan | industrial new town, 1977 | 4.5% |
+| Heliopolis | garden suburb, 1905 | 4.2% |
+
+Dead-end share does not rise with recency. **It falls.** The two historic cores carry two to four times the cul-de-sac share of the desert new towns the critique is usually aimed at, and the newest thing on the page — New Alamein, begun 2018 — sits in the middle of the pack.
+
+What *does* separate the new towns is **coarseness rather than disconnection**: intersection density falls from Downtown's 223/km² to 6th of October's 31, and mean segment length rises from 55 m to 121 m. Far fewer junctions, much longer blocks. That is a real criticism — a superblock you have to walk around is a genuine cost — but it is a different one and has to be argued differently. It is not the cul-de-sac story.
+
+The page states this in a paragraph **computed from the published data**: it finds the lowest share, names every district at or above twice it, and rewrites itself if a future run changes the pattern. Same discipline as the entropy spread, for the same reason.
+
+### And it bears on Downtown's residual
+
+The two districts with the highest dead-end share are **both dense pre-modern fabric threading around old quarters** — Luxor's modern streets negotiate temple precincts, Downtown's khedivial blocks have service passages and courtyard entrances. That is exactly the geometry the service-alley hypothesis predicts.
+
+It is **corroboration, not proof**, and it is recorded as such. Confirming it needs the dead-end nodes grouped by the `highway` tag of their incident edge, which has not been run.
+
+### The bigger finding: the metric is nearly flat here
+
+Reading the measured districts together rather than one at a time: across the ten in run 6, entropy runs **3.2959 to 3.5098**. That is a spread of 0.21 across a 1.386–3.584 scale — about **10% of the theoretical range**, with every district bunched at the high end. Adding four districts and 140 years of planning history widened the band by four hundredths.
+
+So the honest reading is not "Downtown scored oddly". It is that **no district measured here is a grid by this metric, khedivial Downtown included**, and the textbook contrast between a planned grid and an organic tangle simply does not show up in Cairo. A metric that flat cannot rank these districts against each other, and the page now says so where a reader will see it, directly under the roses.
+
+The sentence is **computed in the browser from the published data**, not written down — it prints the real min, max and percentage of range, and switches to a different sentence if a future run ever produces a wide spread. A hand-typed version of this paragraph would become a false claim the first time the pipeline reran. Same discipline as the stories page: *a finding stated as a literal is a finding that will eventually be wrong.*
 
 ## The page
 

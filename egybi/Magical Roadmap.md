@@ -1,5 +1,16 @@
 # Making EgyBI Magical — Plan & Next Steps
 
+> [!warning] **SUPERSEDED on 2026-08-07 by the pivot.**
+> This note plans the SQL-practice product — leaderboards, a daily challenge, guided
+> tracks under the nine skill tracks, an AI tutor that explains query errors. That
+> product was retired: EgyBI is now an encyclopaedia of Egypt built on GIS and data
+> storytelling. See [[The Pivot — From SQL Practice to Encyclopaedia]].
+>
+> It is kept rather than deleted because the *reasoning* is still worth reading — the
+> engine survived as site infrastructure, and several ideas here (progressive
+> disclosure, the in-browser data tier, DuckDB-Wasm) were re-judged on their merits
+> rather than discarded with the product. Read it as history, not as a plan.
+
 Back to [[Home]]. Companion to [[Improvement Roadmap]] (which covers curriculum/GTM/pricing); this note is specifically about the **product experience** — what turns EgyBI from "a beautiful cited-data site" into a platform people come back to daily.
 
 **Where we are (2026-07-18):** a 5-page static site with a disciplined papyrus/kemet identity, a 35-table cited Egyptian knowledge base, a framework-free read-only PHP API, and a real in-browser SQL sandbox (sql.js). Everything below builds on that — most of Phase 1 needs **no new infrastructure** and can ship on the current Hostinger static hosting.

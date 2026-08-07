@@ -1,6 +1,6 @@
 {
  "as_of": "2026-08-07",
- "fetched_at": "2026-08-07T18:14:08+00:00",
+ "fetched_at": "2026-08-07T22:33:46+00:00",
  "source": "OpenStreetMap amenities + walk network via OSMnx",
  "license": "ODbL — © OpenStreetMap contributors",
  "method": "Walk network per district. Walking time at 80 m/min (~4.8 km/h) along the network — not straight-line. 'Within 15 min' is the share of walk-network nodes whose nearest facility of that type is inside 15 minutes.",
@@ -9,32 +9,33 @@
   {
    "key": "downtown",
    "name": "Downtown Cairo",
-   "walk_nodes": 4417,
+   "walk_nodes": 1863,
    "amenity_counts": {
-    "hospital": 7,
-    "clinic": 4,
-    "school": 6,
-    "pharmacy": 10
+    "hospital": 4,
+    "clinic": 2,
+    "school": 4,
+    "pharmacy": 7
    },
    "access": {
     "hospital": {
-     "median_min": 8.9,
-     "within_15min_pct": 91.8
+     "median_min": 9.2,
+     "within_15min_pct": 82.9
     },
     "clinic": {
-     "median_min": 11.0,
-     "within_15min_pct": 73.6
+     "median_min": 12.8,
+     "within_15min_pct": 58.1
     },
     "school": {
-     "median_min": 13.8,
-     "within_15min_pct": 56.7
+     "median_min": 10.9,
+     "within_15min_pct": 77.0
     },
     "pharmacy": {
-     "median_min": 8.2,
-     "within_15min_pct": 81.7
+     "median_min": 7.9,
+     "within_15min_pct": 81.3
     }
    },
-   "mean_within_15min_pct": 76.0
+   "unanswered": [],
+   "mean_within_15min_pct": 74.8
   },
   {
    "key": "heliopolis",
@@ -64,6 +65,7 @@
      "within_15min_pct": 88.9
     }
    },
+   "unanswered": [],
    "mean_within_15min_pct": 88.8
   },
   {
@@ -94,6 +96,7 @@
      "within_15min_pct": 31.3
     }
    },
+   "unanswered": [],
    "mean_within_15min_pct": 36.1
   },
   {
@@ -104,7 +107,7 @@
     "hospital": 26,
     "clinic": 9,
     "school": 42,
-    "pharmacy": 0
+    "pharmacy": 25
    },
    "access": {
     "hospital": {
@@ -119,13 +122,186 @@
      "median_min": 17.8,
      "within_15min_pct": 41.7
     },
+    "pharmacy": {
+     "median_min": 17.6,
+     "within_15min_pct": 42.6
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 35.5
+  },
+  {
+   "key": "6th-october",
+   "name": "6th of October City",
+   "walk_nodes": 55242,
+   "amenity_counts": {
+    "hospital": 19,
+    "clinic": 3,
+    "school": 66,
+    "pharmacy": 29
+   },
+   "access": {
+    "hospital": {
+     "median_min": 60.8,
+     "within_15min_pct": 9.0
+    },
+    "clinic": {
+     "median_min": 78.6,
+     "within_15min_pct": 3.8
+    },
+    "school": {
+     "median_min": 30.0,
+     "within_15min_pct": 31.9
+    },
+    "pharmacy": {
+     "median_min": 41.2,
+     "within_15min_pct": 19.8
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 16.1
+  },
+  {
+   "key": "luxor",
+   "name": "Luxor City",
+   "walk_nodes": 2449,
+   "amenity_counts": {
+    "hospital": 3,
+    "clinic": 9,
+    "school": 8,
+    "pharmacy": 1
+   },
+   "access": {
+    "hospital": {
+     "median_min": 11.1,
+     "within_15min_pct": 74.5
+    },
+    "clinic": {
+     "median_min": 6.4,
+     "within_15min_pct": 88.2
+    },
+    "school": {
+     "median_min": 9.2,
+     "within_15min_pct": 73.3
+    },
+    "pharmacy": {
+     "median_min": 29.7,
+     "within_15min_pct": 12.2
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 62.0
+  },
+  {
+   "key": "10th-ramadan",
+   "name": "10th of Ramadan City",
+   "walk_nodes": 27498,
+   "amenity_counts": {
+    "hospital": 8,
+    "clinic": 1,
+    "school": 16,
+    "pharmacy": 6
+   },
+   "access": {
+    "hospital": {
+     "median_min": 29.0,
+     "within_15min_pct": 22.4
+    },
+    "clinic": {
+     "median_min": 52.6,
+     "within_15min_pct": 3.7
+    },
+    "school": {
+     "median_min": 19.0,
+     "within_15min_pct": 36.6
+    },
+    "pharmacy": {
+     "median_min": 40.0,
+     "within_15min_pct": 15.2
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 19.5
+  },
+  {
+   "key": "sheikh-zayed",
+   "name": "Sheikh Zayed City",
+   "walk_nodes": 10038,
+   "amenity_counts": {
+    "hospital": 7,
+    "clinic": 3,
+    "school": 11,
+    "pharmacy": 0
+   },
+   "access": {
+    "hospital": {
+     "median_min": 37.0,
+     "within_15min_pct": 22.3
+    },
+    "clinic": {
+     "median_min": 27.8,
+     "within_15min_pct": 18.4
+    },
+    "school": {
+     "median_min": 13.4,
+     "within_15min_pct": 57.8
+    },
     "pharmacy": null
    },
-   "mean_within_15min_pct": 33.1
+   "unanswered": [],
+   "mean_within_15min_pct": 32.8
+  },
+  {
+   "key": "new-alamein",
+   "name": "New Alamein",
+   "walk_nodes": 2906,
+   "amenity_counts": {
+    "hospital": 0,
+    "clinic": 0,
+    "school": 0,
+    "pharmacy": 0
+   },
+   "access": {
+    "hospital": null,
+    "clinic": null,
+    "school": null,
+    "pharmacy": null
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": null,
+   "no_amenities_mapped": true
+  },
+  {
+   "key": "new-cairo",
+   "name": "New Cairo",
+   "walk_nodes": 47168,
+   "amenity_counts": {
+    "hospital": 9,
+    "clinic": 7,
+    "school": 48,
+    "pharmacy": 15
+   },
+   "access": {
+    "hospital": {
+     "median_min": 29.3,
+     "within_15min_pct": 18.2
+    },
+    "clinic": {
+     "median_min": 41.3,
+     "within_15min_pct": 5.0
+    },
+    "school": {
+     "median_min": 15.3,
+     "within_15min_pct": 49.0
+    },
+    "pharmacy": {
+     "median_min": 36.7,
+     "within_15min_pct": 13.2
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 21.4
   }
  ],
- "skipped": [
-  "6th of October City: no amenity category produced a result",
-  "New Cairo: walk graph failed (ConnectTimeout)"
- ]
+ "skipped": []
 }
