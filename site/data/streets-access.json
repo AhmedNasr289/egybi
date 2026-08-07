@@ -1,6 +1,6 @@
 {
  "as_of": "2026-08-07",
- "fetched_at": "2026-08-07T20:26:03+00:00",
+ "fetched_at": "2026-08-07T22:33:46+00:00",
  "source": "OpenStreetMap amenities + walk network via OSMnx",
  "license": "ODbL — © OpenStreetMap contributors",
  "method": "Walk network per district. Walking time at 80 m/min (~4.8 km/h) along the network — not straight-line. 'Within 15 min' is the share of walk-network nodes whose nearest facility of that type is inside 15 minutes.",
@@ -250,10 +250,58 @@
    },
    "unanswered": [],
    "mean_within_15min_pct": 32.8
+  },
+  {
+   "key": "new-alamein",
+   "name": "New Alamein",
+   "walk_nodes": 2906,
+   "amenity_counts": {
+    "hospital": 0,
+    "clinic": 0,
+    "school": 0,
+    "pharmacy": 0
+   },
+   "access": {
+    "hospital": null,
+    "clinic": null,
+    "school": null,
+    "pharmacy": null
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": null,
+   "no_amenities_mapped": true
+  },
+  {
+   "key": "new-cairo",
+   "name": "New Cairo",
+   "walk_nodes": 47168,
+   "amenity_counts": {
+    "hospital": 9,
+    "clinic": 7,
+    "school": 48,
+    "pharmacy": 15
+   },
+   "access": {
+    "hospital": {
+     "median_min": 29.3,
+     "within_15min_pct": 18.2
+    },
+    "clinic": {
+     "median_min": 41.3,
+     "within_15min_pct": 5.0
+    },
+    "school": {
+     "median_min": 15.3,
+     "within_15min_pct": 49.0
+    },
+    "pharmacy": {
+     "median_min": 36.7,
+     "within_15min_pct": 13.2
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 21.4
   }
  ],
- "skipped": [
-  "New Alamein: walk graph failed (ConnectTimeout)",
-  "New Cairo: walk graph failed (ConnectTimeout)"
- ]
+ "skipped": []
 }

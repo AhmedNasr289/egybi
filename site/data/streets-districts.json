@@ -1,6 +1,6 @@
 {
  "as_of": "2026-08-07",
- "fetched_at": "2026-08-07T20:01:37+00:00",
+ "fetched_at": "2026-08-07T22:24:37+00:00",
  "source": "OpenStreetMap street network via OSMnx",
  "license": "ODbL — © OpenStreetMap contributors",
  "method": "Drive networks per district, projected to UTM before measurement. Counts are normalised by the district's projected area. Orientation bins are share of street length per 10° compass sector.",
