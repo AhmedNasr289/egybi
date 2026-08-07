@@ -21,7 +21,7 @@ Street-network geometry is one of the few things about urban form you can measur
 | Luxor | Ancient core + modern town | The only district outside Greater Cairo built on a pre-Islamic street pattern |
 | 10th of Ramadan | Industrial new town, 1977+ | Planned around factories rather than housing — the industrial variant of the new-town idea |
 | Sheikh Zayed | Desert new town, 1995+ | 6th of October's compound-led neighbour, a decade and a doctrine later |
-| New Alamein | Coastal new city, 2018+ | The newest thing here, and the test of whether the newest form is still the least connected |
+| New Alamein | Coastal new city, 2018+ | The newest thing here, added as the test of whether the newest form is the least connected. **It is not** — 6.2% dead ends, mid-table, below Nasr City. |
 
 **Metrics:** intersection density per km², dead-end share, street density, mean segment length, streets per junction, circuity, and orientation entropy.
 
