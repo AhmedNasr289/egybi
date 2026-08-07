@@ -185,13 +185,27 @@ def build_climate() -> bool:
                 return round(float(v), 1)
             months.append({
                 "month": i,
+                # NAMING MATTERS HERE, and the first version got it wrong.
+                # In POWER's CLIMATOLOGY mode, T2M_MAX and T2M_MIN are the
+                # extremes observed in that month across the whole record —
+                # the hottest and coldest hours ever measured — NOT the mean
+                # daily maximum and minimum. The difference is not academic:
+                # Giza's January T2M_MAX is 29.1 °C against a published mean
+                # daily max of about 19 °C, and its T2M_MIN of 1.4 °C is
+                # Cairo's record low, not a typical January night.
+                #
+                # Only T2M is a mean, and it is a good one: 12.1 °C in January
+                # and 29.9 in August against Cairo's published 14 and 29.
+                #
+                # The fields are named for what they are so the page cannot
+                # mislabel them again.
                 "t_mean": val("T2M"),
-                "t_max": val("T2M_MAX"),
-                "t_min": val("T2M_MIN"),
+                "t_record_max": val("T2M_MAX"),
+                "t_record_min": val("T2M_MIN"),
                 "rain_mm_day": val("PRECTOTCORR"),
             })
 
-        if not any(m["t_max"] is not None for m in months):
+        if not any(m["t_mean"] is not None for m in months):
             missing.append(s["name"])
             log(f"  {s['name']}: every month empty — treated as no data")
             continue
@@ -199,8 +213,8 @@ def build_climate() -> bool:
         rows.append({"key": s["key"], "name": s["name"], "name_ar": s["name_ar"],
                      "gov": s["gov"], "lat": s["lat"], "lon": s["lon"],
                      "unesco": s["unesco"], "months": months})
-        hot = max((m["t_max"] for m in months if m["t_max"] is not None), default=None)
-        log(f"  {s['name']}: ok (peak daily max {hot} °C)")
+        hot = max((m["t_mean"] for m in months if m["t_mean"] is not None), default=None)
+        log(f"  {s['name']}: ok (warmest monthly mean {hot} °C)")
 
     if len(rows) < MIN_CLIMATE_SITES:
         log(f"  SKIP climate: only {len(rows)} sites resolved "
@@ -217,8 +231,14 @@ def build_climate() -> bool:
                  "derives them from the MERRA-2 reanalysis. These are MODELLED "
                  "long-run averages, not weather-station observations and not a "
                  "forecast: they answer what a month is typically like at this "
-                 "spot, and say nothing about any particular day. Temperatures "
-                 "are °C; rainfall is the mean millimetres per day for that month."),
+                 "spot, and say nothing about any particular day.\n\n"
+                 "t_mean is the long-run MEAN temperature for that month and is the "
+                 "figure to quote. t_record_max and t_record_min are the EXTREMES "
+                 "observed across the whole record — the hottest and coldest hours "
+                 "ever measured in that month — not the mean daily high and low. "
+                 "They are useful for 'how bad can it get' and wrong for 'what is a "
+                 "normal day like'. Temperatures are °C; rainfall is the mean "
+                 "millimetres per day for that month."),
         "missing": missing,
         "sites": rows,
     })

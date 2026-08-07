@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planning a Visit to Egypt — What Each Place Is, and What the Weather Really Does | EgyBI</title>
-<meta name="description" content="A first look at Egypt for visitors: where the major sites are, how high above sea level, and the mean daily maximum in every month from NASA climate records. Sourced, dated, and honest about what it cannot tell you.">
+<meta name="description" content="A first look at Egypt for visitors: where the major sites are, how high above sea level, and what each month averages, from NASA climate records. Sourced, dated, and honest about what it cannot tell you.">
 <link rel="canonical" href="https://egybi.com/visit.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -128,11 +128,12 @@
       <div class="scrolly-graphic">
         <div id="visitMap" role="img" aria-label="Map of Egypt showing the major visitor sites"></div>
         <div class="v-scale" aria-hidden="true">
-          <span><i class="v-sw" style="background:#2C6FAD"></i>under 20&nbsp;°C</span>
-          <span><i class="v-sw" style="background:#4FA3A5"></i>20&ndash;26</span>
-          <span><i class="v-sw" style="background:#C9A227"></i>26&ndash;32</span>
-          <span><i class="v-sw" style="background:#D97B2B"></i>32&ndash;38</span>
-          <span><i class="v-sw" style="background:#B23A0F"></i>38&nbsp;°C and above</span>
+          <span><i class="v-sw" style="background:#2C6FAD"></i>under 15&nbsp;°C</span>
+          <span><i class="v-sw" style="background:#4FA3A5"></i>15&ndash;21</span>
+          <span><i class="v-sw" style="background:#C9A227"></i>21&ndash;27</span>
+          <span><i class="v-sw" style="background:#D97B2B"></i>27&ndash;31</span>
+          <span><i class="v-sw" style="background:#B23A0F"></i>31&nbsp;°C and above</span>
+          <span style="width:100%;margin-top:2px;">monthly mean, not a daily high</span>
         </div>
       </div>
       <div class="scrolly-steps">
@@ -184,15 +185,14 @@
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Heat is the whole planning problem</div>
     <h2 data-aos="fade-up">What is it like in&hellip;?</h2>
     <p class="lead" data-aos="fade-up" style="max-width:72ch;">Egypt&rsquo;s sites are spread across
-    nine degrees of latitude and the difference is not small. Pick a month and the map and table below
-    both move to it.</p>
+    nine degrees of latitude and the difference is not small. Pick a month and the map and table below both move to it.</p>
     <div class="atlas-note" id="climateEmpty" hidden>The climate layer has not been generated yet, so
       this section is empty rather than showing invented figures. It fills in on the next pipeline run.</div>
     <div class="mo-row" id="monthPicker" role="group" aria-label="Choose a month"></div>
     <p class="chart-cap" id="monthCap" data-aos="fade-up"></p>
     <div class="v-wrap">
       <table class="v-table">
-        <thead><tr><th>Site</th><th class="num">Day</th><th class="num">Night</th>
+        <thead><tr><th>Site</th><th class="num">Month mean</th><th class="num">Record low</th>
           <th class="num">Rain mm/day</th><th></th></tr></thead>
         <tbody id="monthBody"></tbody>
       </table>
@@ -203,6 +203,12 @@
     not weather-station readings, and emphatically not a forecast. They answer &ldquo;what is August
     usually like at Abu Simbel&rdquo;. They cannot tell you anything about the day you actually travel,
     and a single hot week will not appear in them at all.</p>
+    <p class="chart-cap"><strong>The headline figure is the monthly mean, not a daily high.</strong> An
+    earlier version of this page labelled POWER&rsquo;s <code>T2M_MAX</code> as the mean daily maximum. It is
+    not &mdash; in climatology mode it is the hottest hour ever recorded in that month across the whole
+    series, which for Giza in January is 29&nbsp;°C against a typical daily high near 19. Those extremes
+    are still shown, in the panel for each site, labelled as extremes. Expect a real day to run several
+    degrees above the mean by afternoon and several below it overnight.</p>
   </div>
 </section>
 
@@ -270,7 +276,7 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/scrolly.js?v=1"></script>
-<script src="assets/visit.js?v=1"></script>
+<script src="assets/visit.js?v=2"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script src="assets/analytics.js"></script>
