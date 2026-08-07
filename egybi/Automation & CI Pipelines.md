@@ -4,7 +4,7 @@
 
 **How deploy works:** every push to `main` triggers Hostinger's auto-deploy (independent of GitHub Actions — the `[skip ci]` in bot commits only skips *Actions*, not the Hostinger deploy). So a data-refresh commit publishes to egybi.com automatically. Data pipelines run **on GitHub runners** because the dev sandbox can't reach the source (gov/vendor) APIs.
 
-## The nine GitHub Actions
+## The ten GitHub Actions
 
 | Workflow | Trigger (UTC) | Runs → writes | Guardrail / failure behavior | Status |
 |---|---|---|---|---|
@@ -14,9 +14,20 @@
 | **build-pages.yml** | on push to `main` + manual | `build_static_pages.py` → 123 challenge + 12 story pages, `sitemap.xml`, `feed.xml` | reads committed data only (no external fetch); job fails → no commit; commit tagged `[skip ci]`; push retries 3× | ✅ Healthy |
 | **send-newsletter.yml** | **manual only** (`workflow_dispatch`, inputs: slug + dry/live) | `curl` → `api/send_issue.php` | **dry-run by default**; `ANALYTICS_KEY`-gated (`hash_equals`); idempotent send-log keyed `(issue_id,email)` → never double-mails; loops batches until `remaining=0` | ✅ Healthy |
 | **probe-idsc.yml** | **manual only** | `probe_idsc_endpoints.py` (read-only) | writes/commits nothing; a utility to re-check IDSC for newly-populated categories | ✅ Healthy (utility) |
-| **refresh-streets.yml** | **manual only** (`workflow_dispatch`, input: planner_notes yes/no) | `fetch_streets.py` → `streets-districts.json`, `streets-boundaries.json`, `streets-access.json`; optional `build_planner_notes.py` → `streets-notes.json` | per-layer abort-and-keep-last-good; thin-graph floors (150 nodes/300 edges) and a 4-district minimum; area sanity-check on every geocoded boundary; non-zero exit on any skip with the commit step under `if: '!cancelled()'`; **not stdlib-only** — osmnx/scipy/networkx pinned in `backend/pipeline/requirements-streets.txt`, pip cached against it | ⚠️ Run 1 red (pip-cache setup); fixed, re-run pending |
+| **refresh-streets.yml** | **manual only** (`workflow_dispatch`, input: planner_notes yes/no) | `fetch_streets.py` → `streets-districts.json`, `streets-boundaries.json`, `streets-access.json`; optional `build_planner_notes.py` → `streets-notes.json` | per-layer abort-and-keep-last-good; thin-graph floors (150 nodes/300 edges) and a 4-district minimum; area sanity-check on every geocoded boundary; non-zero exit on any skip with the commit step under `if: '!cancelled()'`; **not stdlib-only** — osmnx/scipy/networkx pinned in `backend/pipeline/requirements-streets.txt`, pip cached against it | ⚠️ Runs 1–3 exposed three bugs (below); fixed, full re-run pending |
+| **probe-geocodes.yml** | **manual only** | `probe_geocodes.py` (read-only) | writes/commits nothing; geocodes candidate district names alone (seconds, no Overpass graph downloads) and prints each result's area, class/type and display_name, so a failed district geocode is fixed from evidence instead of a 20-minute pipeline run per guess | ✅ Healthy (utility) |
 | **papyrus-reminder.yml** | monthly `0 8 1 * *` (1st) + manual | github-script → opens a GitHub issue naming this month's issue slug + send steps | repo-backed backup for the external send-reminder; never sends; deduped per month | ✅ Healthy |
 | **build-geo-assets.yml** | **manual only** (`workflow_dispatch`) | `fetch_geo_layers.py` → `site/data/geo-health.json`, `geo-schools.json`, `geo-heritage.json` | **per-layer** abort-and-keep-last-good: Overpass retried 3× then that layer skipped; thin floors (<400 facilities / <700 schools / <6 heritage sites, calibrated against the first real run) skip the layer; any skip exits non-zero → run shows red, but the commit step is `if: '!cancelled()'` so layers that *did* build are still saved; push retries 3× | ⚠️ Run 1 red (heritage parse); fixed, re-run pending |
+
+## What the first three street runs taught (2026-08-07)
+
+Three bugs, none of them in the measurement code, all worth remembering because each generalises:
+
+1. **`cache: pip` needs something to hash.** Run 1 died in **8 seconds** — before pip, before Overpass — on `No file … matched to [**/requirements.txt or **/pyproject.toml]`. `actions/setup-python`'s pip cache globs for a dependency file, and every other pipeline here is stdlib-only so the repo had none. It is a hard error, not a warning. Fixed by putting the pins in `requirements-streets.txt` and pointing `cache-dependency-path` at it — which also means the versions the cache is keyed on *are* the versions installed, by construction.
+2. **A `workflow_dispatch`-only job cannot assume it is on `main`.** The commit step ended `git pull --rebase origin main` + bare `git push`. Correct for every cron-or-push pipeline here; wrong for the one workflow that can be aimed at any ref, where rebasing a feature branch onto main rewrites its history and the push is rejected as a non-fast-forward — discarding a finished 20-minute download at the last step. Now rebases against `GITHUB_REF_NAME` and pushes explicitly to it.
+3. **A publication floor is not a completeness check.** Run 3 succeeded while dropping 2 of 6 districts, because `MIN_DISTRICTS_OK=4` was met *exactly*. See [[Cairo Street Report Card]] — this is the one with teeth, because the other two failed loudly and this one shipped green.
+
+The through-line: **the failure that matters is the one that looks like success.** Runs 1 and 2 were red and self-announcing. Run 3 was green, committed data, and quietly lost the reference district the whole comparison depends on.
 
 ## Outside the repo (documented here so it isn't lost)
 - **Monthly newsletter send-reminder** — a Claude-Code-Remote scheduled trigger **`trig_018YA7TYh5jKXRzQNWoNcV9r`**, cron `0 7 1 * *` (1st of month, 07:00 UTC), push+email, fires a **fresh session**. It reads `site/newsletter/issues/`, finds the current month's slug, and nudges Ahmed with the exact send steps. It **never sends** — the human runs `send-newsletter`. Single point of failure: if the trigger is deleted/disabled, issues silently stop going out.
