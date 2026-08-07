@@ -46,14 +46,17 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
+          # Without this, `cache: pip` hard-errors: it globs for
+          # **/requirements.txt or **/pyproject.toml to hash, and every other
+          # EgyBI pipeline is stdlib-only so the repo has neither at the root.
+          cache-dependency-path: backend/pipeline/requirements-streets.txt
 
       - name: Install the geospatial stack (pinned)
         run: |
           python -m pip install --upgrade pip
-          # scipy is an OPTIONAL osmnx dependency that orientation_entropy
-          # requires — omit it and the entropy metric raises ImportError at
-          # runtime rather than at install time.
-          pip install 'osmnx==2.1.1' 'scipy==1.17.1' 'networkx==3.6.1'
+          # Pins live in the requirements file, not here, so the versions the
+          # cache is keyed on are the versions actually installed.
+          pip install -r backend/pipeline/requirements-streets.txt
 
       - name: Build the report card and access layers
         run: python backend/pipeline/fetch_streets.py

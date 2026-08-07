@@ -1,0 +1,17 @@
+# Dependencies for the Cairo street report card (fetch_streets.py) — the ONLY
+# EgyBI pipeline that is not stdlib-only.
+#
+# Versions are pinned exactly so an upstream release cannot silently change a
+# published measurement. Bump them deliberately, and re-check the numbers.
+#
+# scipy is listed even though nothing here imports it directly: osmnx treats it
+# as an OPTIONAL dependency and does not install it, but orientation_entropy
+# needs it. Omit it and the metric raises ImportError at run time on the runner
+# rather than failing at install time where you'd see it.
+#
+# This file also exists so `actions/setup-python`'s pip cache has something to
+# hash — with no requirements.txt anywhere in the repo, `cache: pip` errors out
+# before the install step ever runs.
+osmnx==2.1.1
+scipy==1.17.1
+networkx==3.6.1
