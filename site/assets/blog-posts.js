@@ -104,7 +104,7 @@ window.EGYBI_POSTS = [
       '<p>Egypt is a serious farming nation. It grows roughly <strong>9 million tonnes of wheat</strong> a year, is a top global producer of tomatoes and the leading exporter of oranges, and turns the Nile valley into some of the most productive farmland anywhere (FAOSTAT).</p>' +
       '<p>And yet, in most years, Egypt is also the <strong>world&rsquo;s largest wheat importer</strong>. The reason is simple arithmetic: 116 million people eat more bread than even a very good harvest can supply. Bread is not a side dish here; the flat <em>baladi</em> loaf is a daily staple, heavily subsidised so that the poorest can afford it. The Arabic word for bread, <em>aish</em>, also means &ldquo;life&rdquo;.</p>' +
       '<p>That is why global wheat prices are front-page news in Cairo in a way they are not in most capitals, and why the 2022 disruption to Black Sea grain hit Egypt so directly. It is also why the government runs one of the world&rsquo;s largest food-subsidy programmes and keeps trying to reclaim new farmland out of the desert.</p>' +
-      '<p>The everyday version of all this is the price board at the market. On our own <a href="prices.html">daily prices page</a> you can watch the retail cost of bread, oil, rice and vegetables move day to day &mdash; the same numbers, close up, that the wheat story is really about.</p>'
+      '<p>The everyday version of all this is the price board at the market. On our own <a href="/prices.html">daily prices page</a> you can watch the retail cost of bread, oil, rice and vegetables move day to day &mdash; the same numbers, close up, that the wheat story is really about.</p>'
   },
   {
     id: 'a-capital-in-the-desert',
