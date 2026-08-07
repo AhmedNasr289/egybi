@@ -221,6 +221,41 @@
         : 'That is a wide enough spread for the differences between districts to be meaningful.');
   }
 
+  /* The dead-end story, computed rather than asserted.
+     The stock critique of desert new towns is that they are cul-de-sac sprawl,
+     and the measured data does not support it here. Whatever it does support,
+     it should say for itself — so this splits the districts at a fixed
+     threshold, names both groups from the data, and prints what it finds. If a
+     future run changes the pattern, the sentence changes with it. */
+  function paintDeadEndFinding() {
+    var el = $('deadEndFinding'); if (!el || !S.card) return;
+    var rows = S.card.districts
+      .filter(function (d) { return typeof d.dead_end_share_pct === 'number'; })
+      .slice().sort(function (a, b) { return b.dead_end_share_pct - a.dead_end_share_pct; });
+    if (rows.length < 4) { el.textContent = ''; return; }
+
+    var hi = rows[0], lo = rows[rows.length - 1];
+    // Districts at least twice the lowest share — an arbitrary but stated line,
+    // chosen because a factor of two is a difference a reader can see.
+    var outliers = rows.filter(function (d) { return d.dead_end_share_pct >= 2 * lo.dead_end_share_pct; });
+    var names = outliers.map(function (d) { return esc(d.name); });
+
+    el.innerHTML =
+      '<strong>The cul-de-sac story is not in this data.</strong> Dead-end share runs from <strong>' +
+      lo.dead_end_share_pct.toFixed(1) + '%</strong> at ' + esc(lo.name) + ' to <strong>' +
+      hi.dead_end_share_pct.toFixed(1) + '%</strong> at ' + esc(hi.name) + '. ' +
+      (outliers.length && outliers.length < rows.length - 1
+        ? 'The ' + (outliers.length === 1 ? 'one district' : outliers.length + ' districts') +
+          ' at or above twice the lowest share &mdash; ' + names.join(', ') + ' &mdash; ' +
+          (outliers.length === 1 ? 'is' : 'are') + ' not the newest here. ' +
+          'The desert and coastal new towns, the ones a cul-de-sac critique is usually aimed at, ' +
+          'sit near the bottom. What separates them from the older districts is <em>coarseness</em>, ' +
+          'not disconnection: far fewer junctions per square kilometre and much longer blocks, ' +
+          'which is a different criticism and has to be argued differently.'
+        : 'The districts do not separate cleanly on this metric.') +
+      ' Era labels are ours; the numbers are not.';
+  }
+
   function paintTable() {
     var tb = $('cardTableBody'); if (!tb) return;
     var rows = S.card.districts.slice().sort(function (a, b) {
@@ -422,7 +457,7 @@
         });
       });
 
-      paintTable(); paintRoses(); paintAccessSection(); paintMeta();
+      paintTable(); paintDeadEndFinding(); paintRoses(); paintAccessSection(); paintMeta();
       if (S.bounds) initMap(); else { var ms = $('mapSection'); if (ms) ms.hidden = true; }
     });
   }
