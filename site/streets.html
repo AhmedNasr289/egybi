@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cairo Street Report Card — Six Districts, Six Eras, Measured | EgyBI</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="description" content="Cairo's street networks measured, not asserted: intersection density, dead ends, circuity and orientation entropy across six districts from khedivial Downtown to the desert new towns.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<link href="assets/egybi.css?v=12" rel="stylesheet">
+<style>
+  .streets-box { position:relative; height:clamp(340px,54vw,520px); border-radius:var(--radius); overflow:hidden; }
+  .metric-toggle { font-size:0.8rem; font-weight:600; padding:7px 14px; border-radius:999px; border:1px solid var(--line-light);
+                   background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .metric-toggle:hover, .metric-toggle:focus-visible { border-color:var(--gold); outline:none; }
+  .metric-toggle.on { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .ramp-row { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  .ramp-sw { width:34px; height:13px; display:inline-block; border:1px solid rgba(0,0,0,.08); }
+  .ramp-sw:first-of-type { border-radius:4px 0 0 4px; } .ramp-sw:last-of-type { border-radius:0 4px 4px 0; }
+  .ramp-end { font-size:0.78rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .ramp-note { font-size:0.84rem; color:var(--ink-soft); line-height:1.6; margin:10px 0 0; max-width:76ch; }
+
+  /* orientation roses */
+  .rose-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:18px; margin-top:22px; }
+  .rose-card { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius);
+               padding:14px 12px 12px; margin:0; text-align:center; cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s; }
+  .rose-card:hover, .rose-card:focus-visible, .rose-card.on { border-color:var(--gold); box-shadow:var(--shadow-light); outline:none; transform:translateY(-3px); }
+  .rose { width:100%; height:auto; display:block; }
+  .rose-ring { fill:none; stroke:var(--line-light); stroke-width:1; }
+  .rose-card figcaption { margin-top:8px; display:flex; flex-direction:column; gap:2px; }
+  .rose-card figcaption strong { color:var(--blue-deep); font-size:0.94rem; }
+  .rc-era { font-size:0.72rem; color:var(--ink-soft); }
+  .rc-h { font-size:0.72rem; color:var(--gold-ink); font-weight:700; font-variant-numeric:tabular-nums; }
+
+  /* comparison table */
+  .card-wrap { overflow-x:auto; }
+  .card-table { width:100%; border-collapse:collapse; font-size:0.88rem; min-width:760px; }
+  .card-table th { text-align:left; font-size:0.7rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft);
+                   padding:9px 11px; border-bottom:2px solid var(--line-light); white-space:nowrap; }
+  .card-table td { padding:9px 11px; border-bottom:1px solid var(--line-light); color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .card-table td:first-child { font-weight:600; color:var(--blue-deep); white-space:normal; }
+  .card-table tr { cursor:pointer; } .card-table tr:hover td, .card-table tr.on td { background:var(--papyrus-2); }
+  .td-era { display:block; font-size:0.72rem; color:var(--ink-soft); font-weight:400; }
+
+  /* drill-down */
+  .dd { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:5px solid var(--gold);
+        border-radius:var(--radius); padding:24px 26px; margin-top:20px; }
+  .dd h3 { margin:0 0 4px; color:var(--blue-deep); font-size:1.3rem; }
+  .dd h4 { margin:22px 0 10px; color:var(--blue-deep); font-size:1rem; }
+  .dd-ar { font-weight:400; color:var(--ink-soft); font-size:1rem; }
+  .dd-era { margin:0 0 10px; font-size:0.82rem; color:var(--gold-ink); font-weight:700; }
+  .dd-why { margin:0 0 16px; color:var(--ink-soft); line-height:1.75; font-size:0.95rem; max-width:72ch; }
+  .dd-split { display:grid; grid-template-columns:220px 1fr; gap:24px; align-items:start; }
+  .dd-metrics { display:grid; gap:2px; }
+  .dd-row { display:flex; justify-content:space-between; gap:14px; padding:7px 0; border-top:1px solid var(--line-light); font-size:0.9rem; color:var(--ink-soft); }
+  .dd-row:first-child { border-top:none; }
+  .dd-row strong { color:var(--ink); font-variant-numeric:tabular-nums; }
+  .dd-note { font-size:0.8rem; color:var(--ink-soft); line-height:1.65; margin:10px 0 0; }
+  .dd-access { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; }
+  .acc-cell { background:var(--papyrus); border:1px solid var(--line-light); border-radius:var(--radius); padding:12px 14px; text-align:center; }
+  .ac-k { display:block; font-size:0.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); }
+  .acc-cell strong { display:block; font-family:'Cinzel',serif; font-size:1.5rem; color:var(--blue-deep); line-height:1.2; margin:4px 0 2px; }
+  .ac-s { font-size:0.7rem; color:var(--ink-soft); }
+  .dd-ai { background:var(--papyrus); border:1px solid var(--line-light); border-radius:var(--radius);
+           padding:14px 16px; color:var(--ink); line-height:1.75; font-size:0.93rem; margin:0; }
+  .ai-tag { font-size:0.64rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--gold-ink);
+            background:var(--gold-soft); border-radius:999px; padding:3px 9px; vertical-align:middle; margin-left:6px; }
+
+  /* access bars */
+  .acc-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-top:20px; }
+  .acc-card { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:16px 18px; cursor:pointer; transition:border-color .2s,box-shadow .2s; }
+  .acc-card:hover { border-color:var(--gold); box-shadow:var(--shadow-light); }
+  .acc-name { font-weight:700; color:var(--blue-deep); font-size:0.98rem; }
+  .acc-bar { height:9px; background:var(--papyrus); border:1px solid var(--line-light); border-radius:999px; overflow:hidden; margin:10px 0 6px; }
+  .acc-bar span { display:block; height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-bright)); }
+  .acc-pct { font-family:'Cinzel',serif; font-size:1.5rem; color:var(--blue-deep); line-height:1; }
+  .acc-sub { font-size:0.74rem; color:var(--ink-soft); line-height:1.5; margin-top:4px; }
+
+  .streets-note { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:4px solid var(--gold);
+                  border-radius:var(--radius); padding:13px 16px; margin:16px 0 0; font-size:0.85rem; color:var(--ink-soft); line-height:1.65; }
+  @media (max-width:720px){ .dd-split { grid-template-columns:1fr; } }
+</style>
+  <meta name="google-adsense-account" content="ca-pub-1432845423481814">
+  <link rel="canonical" href="https://egybi.com/streets.html">
+  <meta property="og:site_name" content="EgyBI">
+  <meta property="og:title" content="Cairo Street Report Card — six districts, six eras, measured">
+  <meta property="og:description" content="Intersection density, dead ends, circuity and orientation entropy across six Cairo districts — from the khedivial grid to the desert new towns. Open data, open method.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://egybi.com/streets.html">
+  <meta property="og:image" content="https://egybi.com/og-image.png?v=2">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cairo Street Report Card — six districts, six eras, measured">
+  <meta name="twitter:image" content="https://egybi.com/og-image.png?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&amp;text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&amp;display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="explore.html">Explore</a>
+      <a href="prices.html">Prices</a>
+      <a href="stocks.html">Stocks</a>
+      <a href="geospatial.html">Atlas</a><a href="streets.html">Street report card</a>
+      <a href="streets.html">Streets</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="practice.html">Practice</a>
+      <a href="blog.html">Blog</a>
+      <a href="community.html">Community</a>
+      <a href="about.html">About</a>
+      <a class="nav-only-mobile" href="index.html#newsletter">Newsletter</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="cta" href="index.html#newsletter">Newsletter</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+<section class="surface-hero center" id="top">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Street report card</div>
+    <h1 data-aos="fade-up">Cairo, measured street by street.</h1>
+    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Six districts built across six eras &mdash; from Ismail&rsquo;s 1860s boulevards to the desert compounds of the 2000s. Not opinions about which is better planned: <strong>intersection density, dead-end share, circuity and orientation entropy</strong>, computed from open street data with the method written down.</p>
+  </div>
+</section>
+
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
+
+<section class="surface-light" id="map" data-nav="The map">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Six districts, one metric at a time</div>
+    <h2 data-aos="fade-up">Where each district lands.</h2>
+    <div id="cardEmpty" class="streets-note" hidden></div>
+    <div id="mapSection">
+      <div class="chart-card" style="margin-top:20px;">
+        <div class="map-toolbar" role="group" aria-label="Choose the metric">
+          <span style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Colour by:</span>
+          <button type="button" class="metric-toggle on" data-metric="intersection_density_km2">Intersection density</button>
+          <button type="button" class="metric-toggle" data-metric="dead_end_share_pct">Dead ends</button>
+          <button type="button" class="metric-toggle" data-metric="street_density_km_km2">Street density</button>
+          <button type="button" class="metric-toggle" data-metric="mean_street_length_m">Mean segment</button>
+          <button type="button" class="metric-toggle" data-metric="streets_per_node_avg">Streets per junction</button>
+          <button type="button" class="metric-toggle" data-metric="circuity_avg">Circuity</button>
+          <button type="button" class="metric-toggle" data-metric="orientation_entropy">Orientation entropy</button>
+        </div>
+        <div class="streets-box" id="streetsMap" role="img" aria-label="Map of six Cairo districts shaded by the selected street-network metric"></div>
+        <div class="map-legend" id="streetsLegend"></div>
+        <div class="dd" id="districtDetail" hidden></div>
+        <div class="streets-note" id="streetsMeta"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="surface-light-2" id="grid" data-nav="How grid-like">
+  <div class="wrap" id="roseSection">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>Orientation</div>
+    <h2 data-aos="fade-up">How grid-like is each district?</h2>
+    <p class="lead" data-aos="fade-up">Each rose shows how much street length faces each compass direction. A planned grid concentrates into a few opposing spokes; organic fabric spreads evenly around the circle. The number underneath is <strong>orientation entropy</strong> &mdash; about <strong>1.39</strong> for a perfect four-way grid, up to <strong>3.58</strong> for streets pointing every which way.</p>
+    <div class="rose-grid" id="roseGrid"></div>
+    <p class="chart-cap" style="margin-top:18px;">Bearings are computed on unprojected coordinates because they are compass directions, and weighted by segment length so a long avenue counts for more than a short lane. Click any rose for that district&rsquo;s full card.</p>
+  </div>
+</section>
+
+<section class="surface-light" id="table" data-nav="The numbers">
+  <div class="wrap" id="reportCardBody">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>The report card</div>
+    <h2 data-aos="fade-up">Every metric, side by side.</h2>
+    <p class="lead" data-aos="fade-up">Sorted by intersection density &mdash; the single best one-number summary of how connected a street network is. Click a row for the full district card.</p>
+    <div class="card-wrap" style="margin-top:20px;">
+      <table class="card-table">
+        <thead><tr><th>District</th><th>Intersections</th><th>Dead ends</th><th>Street density</th><th>Mean segment</th><th>Streets/junction</th><th>Circuity</th><th>Entropy</th></tr></thead>
+        <tbody id="cardTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="surface-light-2" id="access" data-nav="15-minute city">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Walking access</div>
+    <h2 data-aos="fade-up">Can you walk to a hospital, school or pharmacy?</h2>
+    <p class="lead" data-aos="fade-up">Walking time along the <em>actual street network</em> &mdash; not straight-line distance &mdash; at 80 metres a minute, roughly 4.8 km/h. The score is the share of walkable street that sits within fifteen minutes of a mapped facility.</p>
+    <div class="streets-note" id="accessEmpty" hidden>The walking-access layer has not been generated yet. It appears here after the first pipeline run that completes it.</div>
+    <div class="acc-grid" id="accessGrid"></div>
+    <div class="streets-note" style="margin-top:20px;"><strong>Read this before you read the scores.</strong> Amenity coverage in OpenStreetMap is incomplete and uneven across Cairo. A low score can mean a district genuinely lacks facilities, <em>or</em> that its facilities simply have not been mapped &mdash; and this data cannot separate the two. It also says nothing about whether a facility is open, affordable, staffed, or any good. It is a map of what is mapped.</div>
+  </div>
+</section>
+
+<section class="surface-light" id="method" data-nav="Method">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="eye"></span>How this was measured</div>
+    <h2 data-aos="fade-up">The method, in the open.</h2>
+    <p class="lead" data-aos="fade-up">Five decisions shape every number on this page. They are written down here because a metric you cannot interrogate is a metric you should not trust.</p>
+    <ul style="color:var(--ink-soft);line-height:1.9;margin-top:16px;max-width:78ch;">
+      <li><strong>Boundaries come from OpenStreetMap, not a gazetteer.</strong> Egyptian district names are inconsistent in OSM, so each district is tried against several candidate names and every resolved polygon is area-checked before use. Anything implausible is dropped and named rather than quietly kept.</li>
+      <li><strong>Everything is projected before measurement.</strong> Lengths and circuity computed on raw latitude and longitude are meaningless; each network is projected to UTM first.</li>
+      <li><strong>Counts are normalised per square kilometre.</strong> 6th of October is vastly larger than Downtown, so raw totals would compare size rather than design.</li>
+      <li><strong>Driving and walking networks are kept separate.</strong> The report card uses the drive network, because that is what street design produces. The access score uses the walk network, because a fifteen-minute city is about walking. Mixing them would answer neither question.</li>
+      <li><strong>Bearings are computed unprojected and weighted by length</strong>, because they are compass directions and because a two-kilometre avenue should count for more than a fifty-metre lane.</li>
+    </ul>
+    <div class="streets-note" style="margin-top:18px;">Street geometry is among the best-mapped data in OpenStreetMap, which is what makes this comparison reasonable. It is still community-mapped data describing <em>what OSM contains</em>, not an official cadastre &mdash; and district boundaries here are OSM&rsquo;s, which do not always match administrative ones. Source: <strong>&copy; OpenStreetMap contributors</strong> (ODbL), via OSMnx.</div>
+  </div>
+</section>
+
+<section class="surface-light-2 next-steps center">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
+    <h2>More of Egypt, measured.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;">
+      <a class="ns-card" href="geospatial.html"><span class="ns-k">Atlas</span><h3>All 27 governorates &rarr;</h3><p>Population, density, hospitals, schools and the seven World Heritage sites on one cited map.</p></a>
+      <a class="ns-card" href="case.html"><span class="ns-k">The case</span><h3>Solve one in SQL &rarr;</h3><p>Egypt&rsquo;s GDP fell 18% and rose 68% over the same two years. Six queries, ten minutes, no signup.</p></a>
+      <a class="ns-card" href="practice.html"><span class="ns-k">Practice</span><h3>123 SQL challenges &rarr;</h3><p>Auto-graded, on real cited Egyptian data, running in your browser.</p></a>
+    </div>
+  </div>
+</section>
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Train in the House of Life — real, cited Egyptian data.</p></div>
+    <div><h5>Explore</h5><a href="explore.html">Egypt Data</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="geospatial.html">Egypt Atlas</a><a href="practice.html">SQL Practice</a></div>
+    <div><h5>Platform</h5><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h5>Data sources</h5><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="assets/egybi.js"></script>
+<script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="assets/streets.js?v=1"></script>
+<script src="assets/ads.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@10.18.0/dist/motion.min.js"></script>
+<script src="assets/motion.js?v=2"></script>
+<script src="assets/analytics.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+name: Refresh street report card
+
+# Builds the Cairo street-network report card and the 15-minute access layer
+# for site/streets.html, then optionally writes the AI planner's notes.
+#
+# MANUAL ONLY, AND THAT IS DELIBERATE. Street networks change on the timescale
+# of construction projects, not days — re-running this weekly would produce
+# byte-identical output while hammering the public Overpass API, whose usage
+# policy asks for exactly the restraint a pointless cron job fails to show.
+# Run it when a district is worth re-measuring, a few times a year.
+#
+# Unlike every other pipeline here this one is NOT stdlib-only: OSMnx pulls in
+# geopandas, shapely and networkx, and orientation_entropy additionally needs
+# scipy, which osmnx does not install by default. Versions are pinned so a
+# breaking upstream release cannot silently change published measurements, and
+# pip is cached so a re-run does not rebuild the whole geospatial stack.
+
+on:
+  workflow_dispatch:
+    inputs:
+      planner_notes:
+        description: "Also generate the AI planner's notes (needs ANTHROPIC_API_KEY)"
+        required: true
+        type: choice
+        default: 'no'
+        options: ['no', 'yes']
+
+permissions:
+  contents: write
+  issues: write             # open a failure-alert issue via notify-failure
+
+concurrency:
+  group: refresh-streets
+  cancel-in-progress: false
+
+jobs:
+  streets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60      # Overpass downloads for six districts are slow
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install the geospatial stack (pinned)
+        run: |
+          python -m pip install --upgrade pip
+          # scipy is an OPTIONAL osmnx dependency that orientation_entropy
+          # requires — omit it and the entropy metric raises ImportError at
+          # runtime rather than at install time.
+          pip install 'osmnx==2.1.1' 'scipy==1.17.1' 'networkx==3.6.1'
+
+      - name: Build the report card and access layers
+        run: python backend/pipeline/fetch_streets.py
+
+      - name: Generate the planner's notes
+        if: ${{ inputs.planner_notes == 'yes' }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python backend/pipeline/build_planner_notes.py
+
+      # Runs even when the fetch step failed. fetch_streets.py's guardrails are
+      # per layer, so a broken layer keeps its last-good file while the others
+      # are written correctly — and it still exits non-zero so the run shows
+      # red. Without this the non-zero exit would discard the layers that DID
+      # build, which is the opposite of the intent.
+      - name: Commit & push whatever layers were built
+        if: '!cancelled()'
+        run: |
+          # Stage only files that exist: `git add` on a missing path is a hard
+          # error (exit 128) that would abort this step under `bash -e`.
+          FILES=""
+          for f in site/data/streets-districts.json site/data/streets-boundaries.json \
+                   site/data/streets-access.json site/data/streets-notes.json; do
+            [ -f "$f" ] && FILES="$FILES $f"
+          done
+          if [ -z "$FILES" ]; then
+            echo "No street layers were built — nothing to commit."
+          elif [ -n "$(git status --porcelain -- $FILES)" ]; then
+            git config user.name  "egybi-data-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add $FILES
+            git commit -m "Street report card refresh — OSM via OSMnx [skip ci]"
+            for attempt in 1 2 3; do
+              if git pull --rebase --autostash origin main && git push; then
+                echo "pushed on attempt $attempt"; exit 0
+              fi
+              echo "push attempt $attempt failed; retrying in 5s"; sleep 5
+            done
+            echo "::error::could not push after 3 attempts"; exit 1
+          else
+            echo "No changes (or the guardrails kept last-good data)."
+          fi
+
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure

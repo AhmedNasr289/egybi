@@ -4,7 +4,7 @@
 
 **How deploy works:** every push to `main` triggers Hostinger's auto-deploy (independent of GitHub Actions — the `[skip ci]` in bot commits only skips *Actions*, not the Hostinger deploy). So a data-refresh commit publishes to egybi.com automatically. Data pipelines run **on GitHub runners** because the dev sandbox can't reach the source (gov/vendor) APIs.
 
-## The eight GitHub Actions
+## The nine GitHub Actions
 
 | Workflow | Trigger (UTC) | Runs → writes | Guardrail / failure behavior | Status |
 |---|---|---|---|---|
@@ -14,6 +14,7 @@
 | **build-pages.yml** | on push to `main` + manual | `build_static_pages.py` → 123 challenge + 12 story pages, `sitemap.xml`, `feed.xml` | reads committed data only (no external fetch); job fails → no commit; commit tagged `[skip ci]`; push retries 3× | ✅ Healthy |
 | **send-newsletter.yml** | **manual only** (`workflow_dispatch`, inputs: slug + dry/live) | `curl` → `api/send_issue.php` | **dry-run by default**; `ANALYTICS_KEY`-gated (`hash_equals`); idempotent send-log keyed `(issue_id,email)` → never double-mails; loops batches until `remaining=0` | ✅ Healthy |
 | **probe-idsc.yml** | **manual only** | `probe_idsc_endpoints.py` (read-only) | writes/commits nothing; a utility to re-check IDSC for newly-populated categories | ✅ Healthy (utility) |
+| **refresh-streets.yml** | **manual only** (`workflow_dispatch`, input: planner_notes yes/no) | `fetch_streets.py` → `streets-districts.json`, `streets-boundaries.json`, `streets-access.json`; optional `build_planner_notes.py` → `streets-notes.json` | per-layer abort-and-keep-last-good; thin-graph floors (150 nodes/300 edges) and a 4-district minimum; area sanity-check on every geocoded boundary; non-zero exit on any skip with the commit step under `if: '!cancelled()'`; **not stdlib-only** — osmnx/scipy/networkx pinned, pip cached | 🕐 Built, awaiting first run |
 | **papyrus-reminder.yml** | monthly `0 8 1 * *` (1st) + manual | github-script → opens a GitHub issue naming this month's issue slug + send steps | repo-backed backup for the external send-reminder; never sends; deduped per month | ✅ Healthy |
 | **build-geo-assets.yml** | **manual only** (`workflow_dispatch`) | `fetch_geo_layers.py` → `site/data/geo-health.json`, `geo-schools.json`, `geo-heritage.json` | **per-layer** abort-and-keep-last-good: Overpass retried 3× then that layer skipped; thin floors (<400 facilities / <700 schools / <6 heritage sites, calibrated against the first real run) skip the layer; any skip exits non-zero → run shows red, but the commit step is `if: '!cancelled()'` so layers that *did* build are still saved; push retries 3× | ⚠️ Run 1 red (heritage parse); fixed, re-run pending |
 
