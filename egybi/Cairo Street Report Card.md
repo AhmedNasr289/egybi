@@ -6,7 +6,9 @@
 
 ## What it is
 
-Street-network geometry is one of the few things about urban form you can measure **objectively** from open data. This page computes seven metrics per district and shows how a khedivial grid differs from a desert cul-de-sac subdivision *numerically*, instead of asserting it.
+Street-network geometry is one of the few things about urban form you can measure **objectively** from open data. This page computes seven metrics per district and compares planning eras *numerically* rather than by assertion.
+
+> **The premise this started from turned out to be wrong, and the page says so.** The original idea was that a khedivial grid would differ from a "desert cul-de-sac subdivision" — that newer districts score badly on connectivity. Measured across ten districts, they do not: the desert new towns have *fewer* dead ends than the historic cores, not more. What separates them is coarseness, not disconnection. See [the finding](#the-finding-that-was-worth-the-whole-exercise) below. Being able to be wrong about this is the entire reason for measuring instead of describing.
 
 | District | Era | Why it earns a place |
 |---|---|---|
@@ -111,9 +113,40 @@ Verified against synthetic networks before trusting it on real data: a generated
 
 That is exactly what Downtown is. Ismail's plan is **Haussmannian**: diagonal boulevards converging on circular midans, laid over an orthogonal base. So the intuition the page was built on — *the grid should score low, the desert new towns should score high* — was never safe for this district. Downtown returning a high entropy is at least partly the plan working as designed, not only a boundary problem. The page now frames entropy as directional concentration, and says plainly that a high score can mean disorder **or** a deliberate radial geometry, and that this metric alone cannot tell you which.
 
+## The finding that was worth the whole exercise
+
+Run 6 measured all ten districts, and the result contradicts the premise the project started from.
+
+The original idea — the one that made this look worth building — was that *newer districts score badly on connectivity, which is a genuine planning critique with numbers behind it.* **The numbers do not support it.** Dead-end share, by district:
+
+| District | Era | Dead ends |
+|---|---|---|
+| **Luxor** | ancient core + modern town | **19.2%** |
+| **Downtown Cairo** | khedivial, 1860s | **17.2%** |
+| Nasr City | Nasserist, 1958 | 9.3% |
+| 6th of October | desert new town, 1979 | 6.7% |
+| New Cairo | desert new town, 1990s–2000s | 6.2% |
+| New Alamein | coastal new city, 2018 | 6.2% |
+| Maadi | garden suburb, 1900s | 5.5% |
+| Sheikh Zayed | desert new town, 1995 | 4.5% |
+| 10th of Ramadan | industrial new town, 1977 | 4.5% |
+| Heliopolis | garden suburb, 1905 | 4.2% |
+
+Dead-end share does not rise with recency. **It falls.** The two historic cores carry two to four times the cul-de-sac share of the desert new towns the critique is usually aimed at, and the newest thing on the page — New Alamein, begun 2018 — sits in the middle of the pack.
+
+What *does* separate the new towns is **coarseness rather than disconnection**: intersection density falls from Downtown's 223/km² to 6th of October's 31, and mean segment length rises from 55 m to 121 m. Far fewer junctions, much longer blocks. That is a real criticism — a superblock you have to walk around is a genuine cost — but it is a different one and has to be argued differently. It is not the cul-de-sac story.
+
+The page states this in a paragraph **computed from the published data**: it finds the lowest share, names every district at or above twice it, and rewrites itself if a future run changes the pattern. Same discipline as the entropy spread, for the same reason.
+
+### And it bears on Downtown's residual
+
+The two districts with the highest dead-end share are **both dense pre-modern fabric threading around old quarters** — Luxor's modern streets negotiate temple precincts, Downtown's khedivial blocks have service passages and courtyard entrances. That is exactly the geometry the service-alley hypothesis predicts.
+
+It is **corroboration, not proof**, and it is recorded as such. Confirming it needs the dead-end nodes grouped by the `highway` tag of their incident edge, which has not been run.
+
 ### The bigger finding: the metric is nearly flat here
 
-Reading the six measured districts together rather than one at a time: entropy runs **3.2959 to 3.4703**. That is a spread of 0.17 across a 1.386–3.584 scale — under **8% of the theoretical range**, with every district bunched at the high end.
+Reading the measured districts together rather than one at a time: across the ten in run 6, entropy runs **3.2959 to 3.5098**. That is a spread of 0.21 across a 1.386–3.584 scale — about **10% of the theoretical range**, with every district bunched at the high end. Adding four districts and 140 years of planning history widened the band by four hundredths.
 
 So the honest reading is not "Downtown scored oddly". It is that **no district measured here is a grid by this metric, khedivial Downtown included**, and the textbook contrast between a planned grid and an organic tangle simply does not show up in Cairo. A metric that flat cannot rank these districts against each other, and the page now says so where a reader will see it, directly under the roses.
 
