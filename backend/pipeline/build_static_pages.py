@@ -181,7 +181,6 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <script src="../assets/glyphs.js?v=3"></script>
 <script src="../assets/wayfinding.js?v=1"></script>
 <script src="../assets/ads.js"></script>
-<script src="../assets/auth.js?v=10"></script>
 <script src="../assets/analytics.js"></script>
 </body>
 </html>

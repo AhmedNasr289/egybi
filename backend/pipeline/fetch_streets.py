@@ -108,10 +108,7 @@ DISTRICTS = [
         # The first extent ran east to Port Said Street and south to Sayyida
         # Zeinab. It returned 324 intersections/km², 45 m mean segments and a
         # 23.2% dead-end share — the signature of dense pre-modern fabric full
-        # of alleys, not of a khedivial boulevard plan. Boundary-clipping was
-        # ruled out as the cause with evidence rather than assumed: Heliopolis
-        # has a HIGHER perimeter-to-area ratio (1.79 vs 1.40) and only a 4.2%
-        # dead-end share, so cut-off streets at the edge cannot explain it.
+        # of alleys, not of a khedivial boulevard plan.
         #
         # Measuring the polygon showed 26.6% of it lay outside khedivial Cairo
         # — 12.4% east of Midan Ataba, where the old Fatimid city begins, and
@@ -123,6 +120,32 @@ DISTRICTS = [
         # and 26th of July north, Midan Ataba east, Bab al-Louq and Falaki
         # south. 3.8 km². Smaller than any other district here, which is honest
         # — khedivial Cairo IS small; the previous figure was borrowed area.
+        #
+        # WHAT RUN 5 THEN MEASURED (2026-08-07), and where the above was wrong.
+        # The tightening moved every metric substantially and in the predicted
+        # direction: 324 → 223.4 intersections/km² (-31%), 23.2% → 17.2% dead
+        # ends (-26%), 45.3 → 55.2 m mean segment (+22%), 2.68 → 2.86 streets
+        # per junction. So the spill was real and it was large.
+        #
+        # It was NOT the whole story, and one supporting argument has to be
+        # withdrawn. The original note ruled out boundary clipping by observing
+        # that Heliopolis has a higher perimeter-to-area ratio (1.79 vs 1.40)
+        # and far fewer dead ends. That comparison no longer holds: the tightened
+        # polygon's ratio is 1.91, which is HIGHER than Heliopolis, so the
+        # refutation as stated is invalid against the extent actually shipped.
+        #
+        # Clipping still does not look like the driver, but on weaker ground: a
+        # 7% difference in perimeter-to-area cannot produce a 4x difference in
+        # dead-end share (Downtown 17.2% against Heliopolis 4.2%), and across
+        # all six districts the correlation between the two is only +0.37.
+        #
+        # What is left unexplained is that Downtown still has the highest
+        # dead-end share on the page, nearly double Nasr City's 9.3%, inside a
+        # plan built on through-boulevards. The untested hypothesis is service
+        # alleys and courtyard entrances inside khedivial blocks, which OSM maps
+        # as highway=service and the drive network therefore includes. That is
+        # testable — group dead-end nodes by the highway tag of their incident
+        # edge — and it is NOT asserted here until it has been.
         #
         # It is tried ONLY after every query above fails, so the day OSM gains a
         # real Downtown polygon this is silently superseded. Every district
@@ -524,36 +547,55 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
             continue
 
         per_amenity, counts, unanswered = {}, {}, []
-        for label, tag in AMENITIES.items():
-            # A query that FAILED and a query that legitimately found nothing are
-            # different facts, and collapsing them is a data-honesty bug, not a
-            # tidiness one. Recording a transient Overpass error as "0 pharmacies"
-            # publishes a count we never obtained — and it is the reason Nasr City
-            # reported 25 pharmacies in one run and 0 in the next, which also moved
-            # the access mean because the set of contributing categories changed.
-            #
-            # osmnx raises InsufficientResponseError for a genuinely empty result,
-            # so that one IS a real zero. Anything else is an unanswered question
-            # and is recorded as null, never as a number.
-            feats, failed = None, None
-            for attempt in range(3):
-                try:
-                    feats = ox.features.features_from_polygon(poly, tags={"amenity": tag})
-                    failed = None
+
+        # ONE Overpass request per district, not one per amenity type.
+        #
+        # This used to loop the four categories and query each separately: 4
+        # requests per district, 24 per run, on a free public endpoint that is
+        # also serving the walk-graph downloads. Run 5's log is what that costs.
+        # Heliopolis came back {hospital: 0, clinic: 12, school: 0, pharmacy: 0}
+        # and Nasr City {hospital: 26, clinic: 0, school: 0, pharmacy: 0} — two
+        # of the best-mapped districts in Cairo reporting no schools and no
+        # pharmacies. Those are not zeros, they are refusals; the endpoint was
+        # shedding load and every failure was being recorded as a count of none.
+        # Three districts produced nothing at all and the layer fell below its
+        # floor, after 65 minutes.
+        #
+        # Overpass accepts a list of values as one regex-matched query, so the
+        # four categories cost a single round trip and are split locally. Six
+        # requests per run instead of twenty-four, which is both faster and far
+        # less likely to be throttled — and it is the politer thing to do to a
+        # free service whose usage policy asks for exactly this restraint.
+        allf, failed = None, None
+        for attempt in range(3):
+            try:
+                allf = ox.features.features_from_polygon(
+                    poly, tags={"amenity": list(AMENITIES.values())})
+                failed = None
+                break
+            except Exception as e:  # noqa: BLE001
+                # osmnx raises InsufficientResponseError for a genuinely empty
+                # result, so that one IS a real zero across all four categories.
+                # Anything else is an unanswered question, never a number.
+                if type(e).__name__ == "InsufficientResponseError":
+                    allf, failed = None, None
                     break
-                except Exception as e:  # noqa: BLE001
-                    if type(e).__name__ == "InsufficientResponseError":
-                        feats, failed = None, None   # a real, mapped-nothing zero
-                        break
-                    failed = type(e).__name__
-                    if attempt < 2:
-                        time.sleep(5 * (attempt + 1))
-            if failed:
-                log(f"    {label}: query unanswered after 3 attempts ({failed})")
-                counts[label] = None          # null, never 0 — we did not get an answer
-                per_amenity[label] = None
-                unanswered.append(label)
-                continue
+                failed = type(e).__name__
+                if attempt < 2:
+                    time.sleep(10 * (attempt + 1))
+
+        if failed:
+            log(f"    amenity query unanswered after 3 attempts ({failed})")
+            failures.append(f"{d['name']}: amenity query unanswered ({failed}) "
+                            f"— no data, not zero access")
+            continue
+
+        col = None
+        if allf is not None and len(allf) and "amenity" in allf.columns:
+            col = allf["amenity"]
+
+        for label, tag in AMENITIES.items():
+            feats = None if col is None else allf[col == tag]
             if feats is None or len(feats) == 0:
                 counts[label] = 0
                 per_amenity[label] = None
@@ -598,27 +640,23 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
 
         got = [v for v in per_amenity.values() if v]
         if not got:
-            # Two very different situations used to produce this one message.
-            # "Every query failed" is a broken run and must be reported as one.
-            # "Every query genuinely returned nothing" is a FINDING about OSM
-            # coverage in a 552 km² desert new town, and dropping the district
-            # silently would hide exactly the sparseness worth showing.
-            if len(unanswered) == len(AMENITIES):
-                failures.append(
-                    f"{d['name']}: every amenity query went unanswered "
-                    f"({', '.join(unanswered)}) — no data, not zero access")
-            else:
-                rows.append({
-                    "key": d["key"], "name": d["name"],
-                    "walk_nodes": W.number_of_nodes(),
-                    "amenity_counts": counts,
-                    "access": per_amenity,
-                    "unanswered": unanswered,
-                    "mean_within_15min_pct": None,
-                    "no_amenities_mapped": True,
-                })
-                log(f"    ok (empty)    {counts} → nothing of these four kinds is "
-                    f"mapped inside this boundary; published as a coverage finding")
+            # Reaching here means the query ANSWERED and the answer was empty —
+            # a failed query already returned above with a named failure. So
+            # this is a real finding about OSM coverage rather than a broken
+            # run, and dropping the district silently would hide exactly the
+            # sparseness the layer exists to show. It is published with a null
+            # mean and a flag, never as zero access.
+            rows.append({
+                "key": d["key"], "name": d["name"],
+                "walk_nodes": W.number_of_nodes(),
+                "amenity_counts": counts,
+                "access": per_amenity,
+                "unanswered": unanswered,
+                "mean_within_15min_pct": None,
+                "no_amenities_mapped": True,
+            })
+            log(f"    ok (empty)    {counts} → nothing of these four kinds is "
+                f"mapped inside this boundary; published as a coverage finding")
             continue
         rows.append({
             "key": d["key"], "name": d["name"],
