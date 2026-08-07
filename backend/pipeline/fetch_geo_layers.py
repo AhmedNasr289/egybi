@@ -311,17 +311,148 @@ def build_heritage() -> bool:
     return True
 
 
+def build_places(govs: list[dict]) -> bool:
+    """Egypt-wide gazetteer: cities and towns, airports, archaeological sites.
+
+    WHY THIS IS FETCHED RATHER THAN WRITTEN DOWN. A list of Egyptian cities with
+    coordinates is the kind of thing that looks harmless to type from memory and
+    is exactly the kind of thing this site must not do — every one of those
+    numbers would be an unsourced figure wearing a citation's clothes. So the
+    gazetteer is queried from OpenStreetMap, dated, and labelled as OSM's view
+    of Egypt rather than an official one.
+
+    WHAT IS DELIBERATELY NOT DONE. The obvious next move is to sort these into
+    "oases", "canal cities", "Red Sea resorts" and so on. That classification
+    would be ours, not the data's, and would quietly become an authored claim
+    sitting among sourced ones. Instead each place carries only what OSM
+    actually says — its `place` tag, its name, its coordinates — plus the
+    governorate computed by point-in-polygon against the bundled boundaries.
+    The geographic groupings a reader wants are then visible on the map, which
+    is where geography belongs, rather than asserted in a label.
+
+    POPULATION is the one field to treat carefully. OSM's `population` tag is
+    community-maintained, patchy and often years stale, so it travels with that
+    caveat attached and is never presented as a census figure.
+    """
+    print("Places gazetteer (OpenStreetMap via Overpass)…")
+
+    # node+way+relation so a city mapped as an area is not missed. `out center`
+    # collapses areas to a representative point, which is all a marker needs.
+    queries = {
+        "settlement": """[out:json][timeout:180];
+area["ISO3166-1"="EG"][admin_level=2]->.eg;
+(node["place"~"^(city|town)$"]["name"](area.eg);
+ way["place"~"^(city|town)$"]["name"](area.eg);
+ relation["place"~"^(city|town)$"]["name"](area.eg););
+out center tags;""",
+        # iata filter keeps this to airports a traveller can actually fly into,
+        # rather than every airstrip and military field in the desert.
+        "airport": """[out:json][timeout:180];
+area["ISO3166-1"="EG"][admin_level=2]->.eg;
+(node["aeroway"="aerodrome"]["iata"]["name"](area.eg);
+ way["aeroway"="aerodrome"]["iata"]["name"](area.eg);
+ relation["aeroway"="aerodrome"]["iata"]["name"](area.eg););
+out center tags;""",
+        "antiquity": """[out:json][timeout:180];
+area["ISO3166-1"="EG"][admin_level=2]->.eg;
+(node["historic"="archaeological_site"]["name"](area.eg);
+ way["historic"="archaeological_site"]["name"](area.eg);
+ relation["historic"="archaeological_site"]["name"](area.eg););
+out center tags;""",
+    }
+
+    places, counts, unassigned = [], {}, 0
+    for kind, q in queries.items():
+        try:
+            data = overpass(q)
+        except Exception as e:  # noqa: BLE001
+            print(f"  SKIP places: overpass failed for {kind} ({type(e).__name__}: {e})")
+            return False
+        n = 0
+        for el in data.get("elements", []):
+            c = element_coords(el)
+            if not c:
+                continue
+            lon, lat = c
+            tags = el.get("tags", {})
+            name = tags.get("name:en") or tags.get("name")
+            if not name:
+                continue
+            gov = assign(lon, lat, govs)
+            if gov is None:
+                unassigned += 1        # just offshore, or outside the bundled outlines
+            rec = {
+                "name": name,
+                "name_ar": tags.get("name:ar", ""),
+                "kind": kind,
+                "lat": round(lat, 5),
+                "lon": round(lon, 5),
+                "gov": gov or "",
+            }
+            if kind == "settlement":
+                rec["place"] = tags.get("place", "")
+                pop = tags.get("population", "")
+                # Keep only clean integers; OSM population values include
+                # ranges, footnotes and stray text often enough to matter.
+                if pop.isdigit():
+                    rec["population_osm"] = int(pop)
+            if kind == "airport":
+                rec["iata"] = tags.get("iata", "")
+            places.append(rec)
+            n += 1
+        counts[kind] = n
+        print(f"    {kind:<11} {n:>5}")
+
+    if unassigned:
+        print(f"    (unassigned to a governorate: {unassigned} — coastal or outside the outlines)")
+
+    # Floors are deliberately conservative on this first build. The Atlas
+    # heritage layer taught the lesson: a floor guessed too high turns a good
+    # run red, and a floor guessed too low lets a broken one through. These are
+    # set low enough to pass a healthy run and high enough to catch a collapse,
+    # and should be recalibrated against the first real numbers printed above.
+    floors = {"settlement": 120, "airport": 8, "antiquity": 40}
+    thin = [f"{k} {counts.get(k, 0)} < {v}" for k, v in floors.items() if counts.get(k, 0) < v]
+    if thin:
+        print(f"  SKIP places: thin result ({'; '.join(thin)}) — keeping last-good file")
+        return False
+
+    with_pop = sum(1 for p in places if "population_osm" in p)
+    out = {
+        "as_of": date.today().isoformat(),
+        "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "source": "OpenStreetMap via Overpass API",
+        "license": "ODbL — © OpenStreetMap contributors",
+        "counts": counts,
+        "note": ("Cities, towns, airports with an IATA code, and archaeological sites AS MAPPED "
+                 "IN OPENSTREETMAP. This is the geographic pattern of what the OSM community has "
+                 "recorded, not an official gazetteer: places are missing, and the set is richer "
+                 "in well-mapped areas. Governorate is computed by point-in-polygon against the "
+                 "bundled boundaries, so a place just offshore may come back unassigned."),
+        "population_note": (f"{with_pop} of {counts.get('settlement', 0)} settlements carry a "
+                            "population tag in OSM. That tag is community-maintained and often "
+                            "years out of date — it is not a census figure and is shown only "
+                            "where OSM has one."),
+        "places": sorted(places, key=lambda p: (p["kind"], p["name"])),
+    }
+    (OUT_DIR / "geo-places.json").write_text(
+        json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    print(f"  wrote geo-places.json ({len(places)} places, {with_pop} with a population tag)")
+    return True
+
+
 def main() -> None:
     govs = load_governorates()
     print(f"Loaded {len(govs)} governorate outlines from {GEO_BUNDLE.name}\n")
     ok_health = build_health(govs)
     ok_schools = build_schools(govs)
     ok_heritage = build_heritage()
+    ok_places = build_places(govs)
     failed = [n for n, ok in [("health", ok_health), ("schools", ok_schools),
-                              ("heritage", ok_heritage)] if not ok]
+                              ("heritage", ok_heritage), ("places", ok_places)] if not ok]
     if failed:
         sys.exit(f"\nFAILED layers (last-good files kept): {', '.join(failed)}")
-    print("\nAll three layers written.")
+    print("\nAll four layers written.")
 
 
 if __name__ == "__main__":

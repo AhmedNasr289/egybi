@@ -47,7 +47,8 @@ jobs:
           # -e` — which is exactly how run 2 discarded two good layers because
           # a third was skipped.
           FILES=""
-          for f in site/data/geo-health.json site/data/geo-schools.json site/data/geo-heritage.json; do
+          for f in site/data/geo-health.json site/data/geo-schools.json \
+                   site/data/geo-heritage.json site/data/geo-places.json; do
             [ -f "$f" ] && FILES="$FILES $f"
           done
           if [ -z "$FILES" ]; then
@@ -56,9 +57,14 @@ jobs:
             git config user.name  "egybi-data-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add $FILES
-            git commit -m "Atlas layer refresh — OSM facilities/schools + UNESCO sites [skip ci]"
+            git commit -m "Atlas layer refresh — OSM facilities/schools/places + UNESCO sites [skip ci]"
             for attempt in 1 2 3; do
-              if git pull --rebase --autostash origin main && git push; then
+              # Rebase against the ref this run was dispatched on. Hardcoding
+              # main means a branch dispatch rewrites the branch history and the
+              # push is rejected as a non-fast-forward — the same failure
+              # refresh-streets hit. On main this behaves identically.
+              if git pull --rebase --autostash origin "$GITHUB_REF_NAME" \
+                 && git push origin "HEAD:$GITHUB_REF_NAME"; then
                 echo "pushed on attempt $attempt"; exit 0
               fi
               echo "push attempt $attempt failed; retrying in 5s"; sleep 5
