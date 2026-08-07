@@ -523,12 +523,37 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
             failures.append(f"{d['name']}: thin walk graph ({W.number_of_nodes()} nodes)")
             continue
 
-        per_amenity, counts = {}, {}
+        per_amenity, counts, unanswered = {}, {}, []
         for label, tag in AMENITIES.items():
-            try:
-                feats = ox.features.features_from_polygon(poly, tags={"amenity": tag})
-            except Exception:  # noqa: BLE001 — an empty/erroring category is not fatal
-                feats = None
+            # A query that FAILED and a query that legitimately found nothing are
+            # different facts, and collapsing them is a data-honesty bug, not a
+            # tidiness one. Recording a transient Overpass error as "0 pharmacies"
+            # publishes a count we never obtained — and it is the reason Nasr City
+            # reported 25 pharmacies in one run and 0 in the next, which also moved
+            # the access mean because the set of contributing categories changed.
+            #
+            # osmnx raises InsufficientResponseError for a genuinely empty result,
+            # so that one IS a real zero. Anything else is an unanswered question
+            # and is recorded as null, never as a number.
+            feats, failed = None, None
+            for attempt in range(3):
+                try:
+                    feats = ox.features.features_from_polygon(poly, tags={"amenity": tag})
+                    failed = None
+                    break
+                except Exception as e:  # noqa: BLE001
+                    if type(e).__name__ == "InsufficientResponseError":
+                        feats, failed = None, None   # a real, mapped-nothing zero
+                        break
+                    failed = type(e).__name__
+                    if attempt < 2:
+                        time.sleep(5 * (attempt + 1))
+            if failed:
+                log(f"    {label}: query unanswered after 3 attempts ({failed})")
+                counts[label] = None          # null, never 0 — we did not get an answer
+                per_amenity[label] = None
+                unanswered.append(label)
+                continue
             if feats is None or len(feats) == 0:
                 counts[label] = 0
                 per_amenity[label] = None
@@ -573,16 +598,43 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
 
         got = [v for v in per_amenity.values() if v]
         if not got:
-            failures.append(f"{d['name']}: no amenity category produced a result")
+            # Two very different situations used to produce this one message.
+            # "Every query failed" is a broken run and must be reported as one.
+            # "Every query genuinely returned nothing" is a FINDING about OSM
+            # coverage in a 552 km² desert new town, and dropping the district
+            # silently would hide exactly the sparseness worth showing.
+            if len(unanswered) == len(AMENITIES):
+                failures.append(
+                    f"{d['name']}: every amenity query went unanswered "
+                    f"({', '.join(unanswered)}) — no data, not zero access")
+            else:
+                rows.append({
+                    "key": d["key"], "name": d["name"],
+                    "walk_nodes": W.number_of_nodes(),
+                    "amenity_counts": counts,
+                    "access": per_amenity,
+                    "unanswered": unanswered,
+                    "mean_within_15min_pct": None,
+                    "no_amenities_mapped": True,
+                })
+                log(f"    ok (empty)    {counts} → nothing of these four kinds is "
+                    f"mapped inside this boundary; published as a coverage finding")
             continue
         rows.append({
             "key": d["key"], "name": d["name"],
             "walk_nodes": W.number_of_nodes(),
             "amenity_counts": counts,
             "access": per_amenity,
+            # Which categories we never got an answer for. The mean below is an
+            # average over the categories that ANSWERED, so a reader has to be
+            # able to see when that is fewer than four — otherwise two runs print
+            # the same-looking number over different denominators.
+            "unanswered": unanswered,
             "mean_within_15min_pct": round(sum(v["within_15min_pct"] for v in got) / len(got), 1),
         })
-        log(f"    ok            {counts} → mean {rows[-1]['mean_within_15min_pct']}% within 15 min")
+        log(f"    ok            {counts} → mean {rows[-1]['mean_within_15min_pct']}% "
+            f"within 15 min (over {len(got)}/{len(AMENITIES)} categories"
+            + (f", unanswered: {', '.join(unanswered)}" if unanswered else "") + ")")
 
     if len(rows) < MIN_DISTRICTS_OK:
         log(f"  SKIP access: only {len(rows)} districts produced results (<{MIN_DISTRICTS_OK})")
