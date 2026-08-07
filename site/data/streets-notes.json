@@ -1,0 +1,6 @@
+{
+  "generated": false,
+  "reason": "No ANTHROPIC_API_KEY is set, so the planner's notes were not generated.",
+  "note": "This file exists deliberately. build_planner_notes.py still writes nothing when it has no key — the honest behaviour it was designed for — but the page requesting a file that does not exist produced a 404 on every visit. A 200 that says plainly 'not generated' is better than a 404 that says nothing, and the page reads the generated flag rather than inferring absence from a failed fetch. A real run overwrites this whole file.",
+  "districts": {}
+}
