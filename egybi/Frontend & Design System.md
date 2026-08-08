@@ -34,7 +34,7 @@ All via jsdelivr CDN, self-contained, degrade gracefully, and respect `prefers-r
 - **Typed.js** — rotating hero tagline.
 - **CountUp.js** — animated stat counters (real cited figures).
 - **Chart.js** — the 8 explore-page charts + the home teaser chart.
-- **sql.js** — the live in-browser SQL engine (home + practice).
+- **sql.js** — the in-browser SQL engine, loaded **on demand only**. It is not on the home page (the hero sandbox was removed on 2026-08-08) and the practice section is retired. It loads when a reader presses *Query this yourself* on one of the three tables marked `data-query` (two on Explore, one on the Atlas), and from a script tag on the case study. Every other page ships without it.
 - **Google Fonts** — Cinzel + Inter.
 
 ## Verified live (2026-07-18)
