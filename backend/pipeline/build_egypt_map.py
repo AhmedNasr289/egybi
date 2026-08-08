@@ -39,7 +39,30 @@ _force_utf8_output()
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RAW = os.path.join(HERE, "..", "..", "egy_raw.geojson")   # downloaded geoBoundaries file
+# The SIMPLIFIED boundary file, not the raw download.
+#
+# geoBoundaries ADM1 ships 6,773 coordinate pairs for 27 governorates. Rounding
+# to 4 decimal places (~11 m) had already been done and saved nothing in point
+# COUNT — the file still carried every vertex, and one screen pixel at
+# governorate zoom is about 2 km, so most of them could never be seen.
+#
+# Simplified with mapshaper, which is an offline tool: its output is committed
+# and it is never a build or runtime dependency.
+#
+#   npx mapshaper egy_raw.geojson -simplify 15% keep-shapes -clean \
+#       -o precision=0.0001 egy_adm1_simplified.geojson
+#
+# 15%, not the 8% the Map & Data Visualisation Toolkit recommends. That figure
+# was written for a country-scale choropleth; these maps now zoom to level 18,
+# and rendered at Delta zoom 8% turns the coastline into straight segments and
+# the Damietta promontory into a triangle. 15% keeps the character and still
+# drops 5,377 of the 6,773 pairs. Compared side by side before choosing —
+# the byte count alone would have picked 8%.
+#
+# keep-shapes preserves every polygon, so no small island is simplified out of
+# existence, and -clean keeps shared borders topologically identical so
+# neighbouring governorates cannot develop gaps between them.
+RAW = os.path.join(HERE, "..", "..", "egy_adm1_simplified.geojson")
 DB = os.path.join(HERE, "..", "test", "egybi_test.sqlite")
 OUT = os.path.join(HERE, "..", "..", "site", "assets", "egypt-geo.js")
 PRECISION = 4  # decimal places (~11 m) — plenty for a national choropleth
