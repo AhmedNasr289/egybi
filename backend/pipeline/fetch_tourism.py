@@ -31,13 +31,33 @@ published page still makes zero runtime calls to anything.
 
 WHAT THE CLIMATE FIGURES ARE, EXACTLY
 -------------------------------------
-POWER's climatology endpoint returns a long-term monthly mean per parameter,
-derived from MERRA-2 reanalysis. That is a *model reanalysis*, not a weather
-station reading, and the difference matters enough to print: it is excellent
-for "how hot is Aswan in July" and wrong to quote as "the temperature on the
-day you visit". The page says so. We keep T2M (mean), T2M_MAX, T2M_MIN and
-PRECTOTCORR (precipitation), because a visitor deciding between February and
-August needs the daily maximum, not the mean.
+POWER is a *model reanalysis* (MERRA-2), not a weather station reading, and the
+difference matters enough to print: it is excellent for "how hot is Aswan in
+July" and wrong to quote as "the temperature on the day you visit". The page
+says so.
+
+TWO ENDPOINTS, BECAUSE ONE OF THEM DOES NOT MEAN WHAT IT LOOKS LIKE.
+
+  * temporal/CLIMATOLOGY gives T2M as a genuine long-run monthly mean, and
+    T2M_MAX / T2M_MIN as the EXTREMES across the whole record — the hottest and
+    coldest hours ever measured in that month. An earlier version of this file
+    published those as the "mean daily maximum" and put Giza's August at 45 C
+    when a typical afternoon is nearer 35. They are kept, because "how bad can
+    it get" is a real question, but they are named t_record_max / t_record_min.
+
+  * temporal/MONTHLY gives, for each individual year and month, the mean of
+    that month's daily maxima. Averaging those across twenty years is the
+    climatological MEAN DAILY MAXIMUM — the figure a visitor deciding between
+    February and August actually wants, and the one the climatology endpoint
+    cannot provide. Published as t_daily_max / t_daily_min.
+
+So the page can now say all three honestly: what a month averages, what a
+normal afternoon reaches, and what the record holds. That needed a better use
+of the source already adopted rather than a new vendor — Open-Meteo would have
+answered it too, but its free tier is for non-commercial use and this site
+carries advertising, which is exactly the kind of ambiguity the open-source
+constraint exists to avoid. POWER is US-Government public domain with no such
+question attached.
 
 No descriptive prose about any site is generated here. Where a place has no
 sourced description, the page shows what the data has — coordinates, altitude,
@@ -61,6 +81,15 @@ OUT_DIR = REPO / "site" / "data"
 POWER = ("https://power.larc.nasa.gov/api/temporal/climatology/point"
          "?parameters=T2M,T2M_MAX,T2M_MIN,PRECTOTCORR&community=RE"
          "&longitude={lon}&latitude={lat}&format=JSON")
+
+# Twenty full years. Long enough that a single hot summer cannot move a monthly
+# mean much, recent enough to describe the climate a visitor will actually meet
+# rather than the one their grandparents would have. Both ends are inclusive.
+NORM_START, NORM_END = 2001, 2020
+POWER_MONTHLY = ("https://power.larc.nasa.gov/api/temporal/monthly/point"
+                 "?parameters=T2M_MAX,T2M_MIN&community=RE"
+                 "&longitude={lon}&latitude={lat}"
+                 f"&start={NORM_START}&end={NORM_END}&format=JSON")
 ELEV = "https://api.opentopodata.org/v1/srtm30m?locations={pairs}"
 UA = "EgyBI-visit/1.0 (egybi.com; hello@egybi.com)"
 
@@ -156,6 +185,54 @@ def write(name: str, payload: dict) -> None:
 
 
 # --------------------------------------------------------------- climate ----
+def true_daily_means(lat: float, lon: float) -> dict[int, dict] | None:
+    """The climatological MEAN DAILY maximum and minimum, per calendar month.
+
+    POWER's monthly endpoint returns one value per year and month, and for
+    T2M_MAX that value is the mean of that month's daily maxima. Averaging
+    across NORM_START..NORM_END therefore gives the figure the climatology
+    endpoint cannot: what a normal afternoon in this month actually reaches.
+
+    Returns {1..12: {"t_daily_max": x, "t_daily_min": y, "years": n}} or None if
+    the endpoint could not be reached. Never invents a month it has no years for.
+    """
+    d = get(POWER_MONTHLY.format(lat=lat, lon=lon))
+    if not d:
+        return None
+    try:
+        params = d["properties"]["parameter"]
+    except (KeyError, TypeError):
+        return None
+
+    buckets: dict[int, dict[str, list]] = {m: {"max": [], "min": []} for m in range(1, 13)}
+    for key, field in (("T2M_MAX", "max"), ("T2M_MIN", "min")):
+        for stamp, v in (params.get(key) or {}).items():
+            # Keys are YYYYMM. POWER appends month 13 as the annual figure for
+            # the year, which is not a month and must not be averaged in.
+            if len(stamp) != 6:
+                continue
+            mm = int(stamp[4:])
+            if not 1 <= mm <= 12:
+                continue
+            if v is None or float(v) <= POWER_FILL + 1:
+                continue
+            buckets[mm][field].append(float(v))
+
+    out = {}
+    for mm in range(1, 13):
+        hi, lo = buckets[mm]["max"], buckets[mm]["min"]
+        # Require most of the window before publishing a normal. A mean over
+        # three stray years is not a climatology and should read as absent.
+        if len(hi) < (NORM_END - NORM_START + 1) * 0.6:
+            continue
+        out[mm] = {
+            "t_daily_max": round(sum(hi) / len(hi), 1),
+            "t_daily_min": round(sum(lo) / len(lo), 1) if lo else None,
+            "years": len(hi),
+        }
+    return out or None
+
+
 def build_climate() -> bool:
     log("Climate normals (NASA POWER climatology, MERRA-2 reanalysis)…")
     rows, missing = [], []
@@ -172,6 +249,11 @@ def build_climate() -> bool:
             missing.append(s["name"])
             log(f"  {s['name']}: unexpected payload shape")
             continue
+
+        # Second request: the true mean daily max/min. If it fails the site
+        # still publishes with its climatology figures and the daily means read
+        # as absent, because a missing normal is not a reason to drop a site.
+        daily = true_daily_means(s["lat"], s["lon"])
 
         months = []
         for i, m in enumerate(MONTHS, start=1):
@@ -203,6 +285,11 @@ def build_climate() -> bool:
                 "t_record_max": val("T2M_MAX"),
                 "t_record_min": val("T2M_MIN"),
                 "rain_mm_day": val("PRECTOTCORR"),
+                # From the monthly endpoint, averaged across the normal window.
+                # Null rather than absent-key so the page can tell "we have no
+                # normal for this month" from "this field does not exist".
+                "t_daily_max": (daily or {}).get(i, {}).get("t_daily_max"),
+                "t_daily_min": (daily or {}).get(i, {}).get("t_daily_min"),
             })
 
         if not any(m["t_mean"] is not None for m in months):
@@ -213,8 +300,11 @@ def build_climate() -> bool:
         rows.append({"key": s["key"], "name": s["name"], "name_ar": s["name_ar"],
                      "gov": s["gov"], "lat": s["lat"], "lon": s["lon"],
                      "unesco": s["unesco"], "months": months})
-        hot = max((m["t_mean"] for m in months if m["t_mean"] is not None), default=None)
-        log(f"  {s['name']}: ok (warmest monthly mean {hot} °C)")
+        hot = max((m["t_daily_max"] for m in months if m.get("t_daily_max") is not None),
+                  default=None)
+        if hot is None:
+            hot = max((m["t_mean"] for m in months if m["t_mean"] is not None), default=None)
+        log(f"  {s['name']}: ok (hottest month averages {hot} °C by day)")
 
     if len(rows) < MIN_CLIMATE_SITES:
         log(f"  SKIP climate: only {len(rows)} sites resolved "
@@ -232,13 +322,18 @@ def build_climate() -> bool:
                  "long-run averages, not weather-station observations and not a "
                  "forecast: they answer what a month is typically like at this "
                  "spot, and say nothing about any particular day.\n\n"
-                 "t_mean is the long-run MEAN temperature for that month and is the "
-                 "figure to quote. t_record_max and t_record_min are the EXTREMES "
-                 "observed across the whole record — the hottest and coldest hours "
-                 "ever measured in that month — not the mean daily high and low. "
-                 "They are useful for 'how bad can it get' and wrong for 'what is a "
+                 "Three temperature figures per month, and they answer three "
+                 "different questions. t_daily_max and t_daily_min are the "
+                 f"CLIMATOLOGICAL MEAN DAILY high and low, averaged over {NORM_START}"
+                 f"\u2013{NORM_END} from POWER's monthly series — what a normal "
+                 "afternoon and night actually reach, and the figures to quote to a "
+                 "visitor. t_mean is the long-run mean across the whole day. "
+                 "t_record_max and t_record_min are the EXTREMES across the entire "
+                 "record, the hottest and coldest hours ever measured in that month; "
+                 "they answer 'how bad can it get' and are wrong for 'what is a "
                  "normal day like'. Temperatures are °C; rainfall is the mean "
                  "millimetres per day for that month."),
+        "normal_window": f"{NORM_START}-{NORM_END}",
         "missing": missing,
         "sites": rows,
     })

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planning a Visit to Egypt — What Each Place Is, and What the Weather Really Does | EgyBI</title>
-<meta name="description" content="A first look at Egypt for visitors: where the major sites are, how high above sea level, and what each month averages, from NASA climate records. Sourced, dated, and honest about what it cannot tell you.">
+<meta name="description" content="A first look at Egypt for visitors: where the major sites are, how high above sea level, and what a normal afternoon in each month actually reaches, from NASA climate records. Sourced, dated, and honest about what it cannot tell you.">
 <link rel="canonical" href="https://egybi.com/visit.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -127,12 +127,12 @@
       <div class="scrolly-graphic">
         <div id="visitMap" role="img" aria-label="Map of Egypt showing the major visitor sites"></div>
         <div class="v-scale" aria-hidden="true">
-          <span><i class="v-sw" style="background:#2C6FAD"></i>under 15&nbsp;°C</span>
-          <span><i class="v-sw" style="background:#4FA3A5"></i>15&ndash;21</span>
-          <span><i class="v-sw" style="background:#C9A227"></i>21&ndash;27</span>
-          <span><i class="v-sw" style="background:#D97B2B"></i>27&ndash;31</span>
-          <span><i class="v-sw" style="background:#B23A0F"></i>31&nbsp;°C and above</span>
-          <span style="width:100%;margin-top:2px;">monthly mean, not a daily high</span>
+          <span><i class="v-sw" style="background:#2C6FAD"></i>under 22&nbsp;°C</span>
+          <span><i class="v-sw" style="background:#4FA3A5"></i>22&ndash;28</span>
+          <span><i class="v-sw" style="background:#C9A227"></i>28&ndash;34</span>
+          <span><i class="v-sw" style="background:#D97B2B"></i>34&ndash;39</span>
+          <span><i class="v-sw" style="background:#B23A0F"></i>39&nbsp;°C and above</span>
+          <span style="width:100%;margin-top:2px;">mean daily maximum &mdash; what a normal afternoon reaches</span>
         </div>
       </div>
       <div class="scrolly-steps">
@@ -191,7 +191,7 @@
     <p class="chart-cap" id="monthCap" data-aos="fade-up"></p>
     <div class="v-wrap">
       <table class="v-table">
-        <thead><tr><th>Site</th><th class="num">Month mean</th><th class="num">Record low</th>
+        <thead><tr><th>Site</th><th class="num">Day</th><th class="num">Night</th>
           <th class="num">Rain mm/day</th><th></th></tr></thead>
         <tbody id="monthBody"></tbody>
       </table>
@@ -202,12 +202,13 @@
     not weather-station readings, and emphatically not a forecast. They answer &ldquo;what is August
     usually like at Abu Simbel&rdquo;. They cannot tell you anything about the day you actually travel,
     and a single hot week will not appear in them at all.</p>
-    <p class="chart-cap"><strong>The headline figure is the monthly mean, not a daily high.</strong> An
-    earlier version of this page labelled POWER&rsquo;s <code>T2M_MAX</code> as the mean daily maximum. It is
-    not &mdash; in climatology mode it is the hottest hour ever recorded in that month across the whole
-    series, which for Giza in January is 29&nbsp;°C against a typical daily high near 19. Those extremes
-    are still shown, in the panel for each site, labelled as extremes. Expect a real day to run several
-    degrees above the mean by afternoon and several below it overnight.</p>
+    <p class="chart-cap"><strong>Three figures, three different questions.</strong> The <em>day</em> and <em>night</em> columns are
+    the climatological mean daily maximum and minimum, averaged across 2001&ndash;2020 from POWER&rsquo;s monthly
+    series &mdash; what a normal afternoon and night actually reach. Each site&rsquo;s own panel also shows the
+    all-day mean and the record extremes, the hottest and coldest hours ever measured in that month.
+    An earlier version of this page published those extremes under the words &ldquo;mean daily maximum&rdquo;,
+    which put Giza&rsquo;s August at 45&nbsp;°C when a normal afternoon is nearer 35. The climatology endpoint
+    cannot give a mean daily maximum at all; the monthly one can, so the page now uses both.</p>
   </div>
 </section>
 
@@ -275,7 +276,7 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/scrolly.js?v=1"></script>
-<script src="assets/visit.js?v=2"></script>
+<script src="assets/visit.js?v=3"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script src="assets/analytics.js"></script>

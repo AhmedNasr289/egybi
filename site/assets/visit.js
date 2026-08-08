@@ -77,14 +77,14 @@
      unbearable to one visitor and unremarkable to another, and the data cannot
      tell which one is reading. */
   function heatColour(t) {
-    // Bands are for the MONTHLY MEAN, not a daily maximum, so they sit lower
-    // than they would for a "how hot does it get" scale. Egypt's monthly means
-    // run roughly 12 °C (Cairo in January) to 34 °C (Aswan in July).
+    // Bands are for the MEAN DAILY MAXIMUM — how hot a normal afternoon gets,
+    // which is the question the colour is answering. Egypt runs roughly 19 °C
+    // (Cairo in January) to 42 °C (Aswan in July) on that measure.
     if (t == null) return '#9A9A9A';
-    if (t < 15) return '#2C6FAD';
-    if (t < 21) return '#4FA3A5';
-    if (t < 27) return '#C9A227';
-    if (t < 31) return '#D97B2B';
+    if (t < 22) return '#2C6FAD';
+    if (t < 28) return '#4FA3A5';
+    if (t < 34) return '#C9A227';
+    if (t < 39) return '#D97B2B';
     return '#B23A0F';
   }
 
@@ -97,6 +97,20 @@
      what they were being called was wrong. */
   function recMax(m) { return m && (m.t_record_max != null ? m.t_record_max : m.t_max); }
   function recMin(m) { return m && (m.t_record_min != null ? m.t_record_min : m.t_min); }
+
+  /* The headline figure. t_daily_max is the climatological MEAN DAILY maximum,
+     averaged from POWER's monthly series — what a normal afternoon reaches, and
+     what a visitor is actually asking about. It is what the page leads with.
+     Older published data has no such field, so this falls back to the all-day
+     mean and reports which one it returned, because a page showing an all-day
+     mean under the word "day" would repeat the exact mistake this replaced. */
+  function dayTemp(m) {
+    if (!m) return { v: null, kind: 'none' };
+    if (m.t_daily_max != null) return { v: m.t_daily_max, kind: 'daily-max' };
+    if (m.t_mean != null) return { v: m.t_mean, kind: 'all-day-mean' };
+    return { v: null, kind: 'none' };
+  }
+  function nightTemp(m) { return m && m.t_daily_min != null ? m.t_daily_min : null; }
 
   function monthOf(site, mi) {
     if (!site || !site.months) return null;
@@ -112,7 +126,7 @@
     var g = L.layerGroup();
     S.climate.sites.forEach(function (site) {
       var m = monthOf(site, S.month);
-      var t = m ? m.t_mean : null;
+      var t = dayTemp(m).v;
       var mk = L.circleMarker([site.lat, site.lon], {
         radius: 8, weight: 2, color: '#fff', opacity: 1,
         fillColor: heatColour(t), fillOpacity: 0.95
@@ -120,7 +134,7 @@
       mk.bindTooltip(
         '<strong>' + esc(site.name) + '</strong><br>' +
         (t == null ? 'no reading for this month'
-                   : MONTHS[S.month] + ' averages ' + fmt(t, 0) + ' °C'),
+                   : MONTHS[S.month] + ' reaches about ' + fmt(t, 0) + ' °C by day'),
         { direction: 'top' });
       mk.on('click', function () { select(site.key); });
       g.addLayer(mk);
@@ -153,8 +167,9 @@
       // t is the MONTHLY MEAN, which is the figure that answers "what is
       // this month like". The record extremes are carried separately and
       // labelled as extremes — see the note in fetch_tourism.py.
-      return { s: s, t: m ? m.t_mean : null,
-               hi: recMax(m), lo: recMin(m),
+      var d = dayTemp(m);
+      return { s: s, t: d.v, kind: d.kind, night: nightTemp(m),
+               hi: recMax(m), lo: recMin(m), mean: m ? m.t_mean : null,
                rain: m ? m.rain_mm_day : null };
     }).sort(function (a, b) {
       if (a.t == null) return 1; if (b.t == null) return -1;
@@ -165,7 +180,7 @@
         '<td>' + esc(r.s.name) + '<span class="v-gov">' + esc(r.s.gov) + '</span></td>' +
         '<td class="num"><span class="v-chip" style="background:' + heatColour(r.t) + '">' +
           (r.t == null ? '—' : fmt(r.t, 0) + '°') + '</span></td>' +
-        '<td class="num">' + (r.lo == null ? '—' : fmt(r.lo, 0) + '°') + '</td>' +
+        '<td class="num">' + (r.night == null ? '—' : fmt(r.night, 0) + '°') + '</td>' +
         '<td class="num">' + (r.rain == null ? '—' : fmt(r.rain, 1)) + '</td>' +
         '<td>' + (r.s.unesco ? '<span class="v-un">World Heritage</span>' : '') + '</td>' +
         '</tr>';
@@ -178,10 +193,13 @@
       var hot = rows.filter(function (r) { return r.t != null; });
       if (hot.length) {
         var hi = hot[0], lo = hot[hot.length - 1];
-        cap.innerHTML = 'In <strong>' + MONTHS[S.month] + '</strong>, the long-run monthly mean ' +
+        var fellBack = hot.some(function (r) { return r.kind === 'all-day-mean'; });
+        cap.innerHTML = 'In <strong>' + MONTHS[S.month] + '</strong>, a normal afternoon ' +
           'across these ' + hot.length + ' sites runs from <strong>' + fmt(lo.t, 0) + ' °C</strong> at ' +
           esc(lo.s.name) + ' to <strong>' + fmt(hi.t, 0) + ' °C</strong> at ' + esc(hi.s.name) +
-          ' — a spread of ' + fmt(hi.t - lo.t, 0) + ' degrees within one country, on the same day of the year.';
+          ' — a spread of ' + fmt(hi.t - lo.t, 0) + ' degrees within one country, on the same day of the year.' +
+          (fellBack ? ' <em>Some sites have no daily normal yet and are showing their all-day mean, ' +
+                      'which reads lower; those fill in on the next pipeline run.</em>' : '');
       }
     }
   }
@@ -223,8 +241,8 @@
     }
 
     var bars = site.months.map(function (m) {
-      var t = m.t_mean;
-      var h = t == null ? 2 : Math.max(2, Math.round((t - 5) / 32 * 100));
+      var t = dayTemp(m).v;
+      var h = t == null ? 2 : Math.max(2, Math.round((t - 10) / 35 * 100));
       return '<div class="v-bar' + (m.month - 1 === S.month ? ' on' : '') + '" title="' +
              MONTHS[m.month - 1] + ': ' + (t == null ? 'no reading' : fmt(t, 0) + ' °C') + '">' +
              '<span style="height:' + h + '%;background:' + heatColour(t) + '"></span>' +
@@ -241,9 +259,17 @@
         (listed === true ? ' &middot; <strong>UNESCO World Heritage</strong>' : '') +
       '</p>' +
       '<div class="v-year">' + bars + '</div>' +
-      '<p class="v-cap">Long-run monthly mean temperature, by month. ' +
-        (now && now.t_mean != null
-          ? '<strong>' + MONTHS[S.month] + ' averages ' + fmt(now.t_mean, 0) + ' °C' +
+      '<p class="v-cap">' + (dayTemp(now).kind === 'daily-max'
+          ? 'Mean daily maximum, by month. ' : 'All-day mean, by month. ') +
+        (now && dayTemp(now).v != null
+          ? '<strong>' + MONTHS[S.month] +
+            (dayTemp(now).kind === 'daily-max'
+              ? ' reaches about ' + fmt(dayTemp(now).v, 0) + ' °C by day' +
+                (nightTemp(now) != null ? ', dropping to ' + fmt(nightTemp(now), 0) + ' °C at night' : '') +
+                (now.t_mean != null ? ', averaging ' + fmt(now.t_mean, 0) + ' °C across the whole day' : '')
+              // No daily normal for this site yet, so print ONE figure under its
+              // real name rather than the same number twice under two labels.
+              : ' averages ' + fmt(dayTemp(now).v, 0) + ' °C across the whole day') +
             (now.rain_mm_day != null ? ', with ' + fmt(now.rain_mm_day, 1) + ' mm of rain a day' : '') +
             '.</strong>' +
             (recMax(now) != null
@@ -256,8 +282,11 @@
       '</p>' +
       '<p class="v-note">These are modelled long-run averages from NASA POWER, not a forecast and ' +
         'not station readings. They describe what the month is usually like here; they say nothing ' +
-        'about the day you travel. The daily high will usually run several degrees above the monthly ' +
-        'mean shown, and the daily low several below.' +
+        'about the day you travel.' +
+        (dayTemp(now).kind === 'daily-max'
+          ? ' The day and night figures are the 2001&ndash;2020 mean daily maximum and minimum.'
+          : ' No mean daily maximum has been published for this site yet, so the figure above is the ' +
+            'all-day mean and a real afternoon will run several degrees warmer.') +
         (terr ? ' Elevation is sampled from NASA SRTM 30 m at this site&rsquo;s own coordinates.' : '') +
       '</p>';
   }
