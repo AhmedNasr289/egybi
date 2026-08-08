@@ -77,7 +77,12 @@
         '<div class="acct-email">' + esc(user.email) + '</div>' +
         '<div class="acct-plan">Plan: ' + esc(user.plan || 'free') + (user.verified ? '' : ' · unverified') + '</div>' +
         sHtml +
-        '<a href="practice.html">Your progress</a><button id="acctOut">Sign out</button></div>';
+        // "Your progress" pointed at practice.html, which .htaccess 301s to
+        // explore.html — a signed-in reader clicking their own progress landed
+        // on the country data page. The SQL practice product it belonged to is
+        // retired. No link checker could see this: the menu is built in JS and
+        // only renders when signed in, which never happens in a crawl.
+        '<button id="acctOut">Sign out</button></div>';
       document.getElementById('acctBtn').addEventListener('click', function (e) {
         var m = document.getElementById('acctMenu'); var open = m.hasAttribute('hidden');
         if (open) { m.removeAttribute('hidden'); this.setAttribute('aria-expanded', 'true'); } else { m.setAttribute('hidden', ''); this.setAttribute('aria-expanded', 'false'); }
