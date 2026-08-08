@@ -27,7 +27,7 @@ concurrency:
 jobs:
   visit:
     runs-on: ubuntu-latest
-    timeout-minutes: 30        # 18 sites, one request each plus one batched
+    timeout-minutes: 30        # 18 sites, one request each, one batched
                                # elevation call; generous even with backoff.
     steps:
       - name: Check out the repo
@@ -52,7 +52,8 @@ jobs:
           # Stage only files that exist: `git add` on a missing path is a hard
           # error (exit 128) that would abort this step under `bash -e`.
           FILES=""
-          for f in site/data/visit-climate.json site/data/visit-terrain.json; do
+          for f in site/data/visit-climate.json site/data/visit-terrain.json \
+                   site/data/visit-relief.json site/data/visit-station-normals.json; do
             [ -f "$f" ] && FILES="$FILES $f"
           done
           if [ -z "$FILES" ]; then
@@ -61,7 +62,7 @@ jobs:
             git config user.name  "egybi-data-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add $FILES
-            git commit -m "Visitor layer refresh — NASA POWER climatology + SRTM elevation [skip ci]"
+            git commit -m "Visitor layer refresh — climate normals, elevation and terrain profiles [skip ci]"
             # Rebase against the ref this run was dispatched on. Hardcoding main
             # means a branch dispatch rewrites the branch history and the push is
             # rejected as a non-fast-forward — the bug that cost refresh-streets

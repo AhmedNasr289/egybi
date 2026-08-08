@@ -37,8 +37,8 @@
   var SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  var S = { climate: null, terrain: null, heritage: null, map: null,
-            layer: null, month: null, selected: null };
+  var S = { climate: null, terrain: null, heritage: null, relief: null,
+            map: null, layer: null, month: null, selected: null };
 
   function $(id) { return document.getElementById(id); }
   function esc(s) {
@@ -77,14 +77,14 @@
      unbearable to one visitor and unremarkable to another, and the data cannot
      tell which one is reading. */
   function heatColour(t) {
-    // Bands are for the MONTHLY MEAN, not a daily maximum, so they sit lower
-    // than they would for a "how hot does it get" scale. Egypt's monthly means
-    // run roughly 12 °C (Cairo in January) to 34 °C (Aswan in July).
+    // Bands are for the MEAN DAILY MAXIMUM — how hot a normal afternoon gets,
+    // which is the question the colour is answering. Egypt runs roughly 19 °C
+    // (Cairo in January) to 42 °C (Aswan in July) on that measure.
     if (t == null) return '#9A9A9A';
-    if (t < 15) return '#2C6FAD';
-    if (t < 21) return '#4FA3A5';
-    if (t < 27) return '#C9A227';
-    if (t < 31) return '#D97B2B';
+    if (t < 22) return '#2C6FAD';
+    if (t < 28) return '#4FA3A5';
+    if (t < 34) return '#C9A227';
+    if (t < 39) return '#D97B2B';
     return '#B23A0F';
   }
 
@@ -97,6 +97,20 @@
      what they were being called was wrong. */
   function recMax(m) { return m && (m.t_record_max != null ? m.t_record_max : m.t_max); }
   function recMin(m) { return m && (m.t_record_min != null ? m.t_record_min : m.t_min); }
+
+  /* The headline figure. t_daily_max is the climatological MEAN DAILY maximum,
+     averaged from POWER's daily series — what a normal afternoon reaches, and
+     what a visitor is actually asking about. It is what the page leads with.
+     Older published data has no such field, so this falls back to the all-day
+     mean and reports which one it returned, because a page showing an all-day
+     mean under the word "day" would repeat the exact mistake this replaced. */
+  function dayTemp(m) {
+    if (!m) return { v: null, kind: 'none' };
+    if (m.t_daily_max != null) return { v: m.t_daily_max, kind: 'daily-max' };
+    if (m.t_mean != null) return { v: m.t_mean, kind: 'all-day-mean' };
+    return { v: null, kind: 'none' };
+  }
+  function nightTemp(m) { return m && m.t_daily_min != null ? m.t_daily_min : null; }
 
   function monthOf(site, mi) {
     if (!site || !site.months) return null;
@@ -112,7 +126,7 @@
     var g = L.layerGroup();
     S.climate.sites.forEach(function (site) {
       var m = monthOf(site, S.month);
-      var t = m ? m.t_mean : null;
+      var t = dayTemp(m).v;
       var mk = L.circleMarker([site.lat, site.lon], {
         radius: 8, weight: 2, color: '#fff', opacity: 1,
         fillColor: heatColour(t), fillOpacity: 0.95
@@ -120,7 +134,7 @@
       mk.bindTooltip(
         '<strong>' + esc(site.name) + '</strong><br>' +
         (t == null ? 'no reading for this month'
-                   : MONTHS[S.month] + ' averages ' + fmt(t, 0) + ' °C'),
+                   : MONTHS[S.month] + ' reaches about ' + fmt(t, 0) + ' °C by day'),
         { direction: 'top' });
       mk.on('click', function () { select(site.key); });
       g.addLayer(mk);
@@ -153,8 +167,9 @@
       // t is the MONTHLY MEAN, which is the figure that answers "what is
       // this month like". The record extremes are carried separately and
       // labelled as extremes — see the note in fetch_tourism.py.
-      return { s: s, t: m ? m.t_mean : null,
-               hi: recMax(m), lo: recMin(m),
+      var d = dayTemp(m);
+      return { s: s, t: d.v, kind: d.kind, night: nightTemp(m),
+               hi: recMax(m), lo: recMin(m), mean: m ? m.t_mean : null,
                rain: m ? m.rain_mm_day : null };
     }).sort(function (a, b) {
       if (a.t == null) return 1; if (b.t == null) return -1;
@@ -165,7 +180,7 @@
         '<td>' + esc(r.s.name) + '<span class="v-gov">' + esc(r.s.gov) + '</span></td>' +
         '<td class="num"><span class="v-chip" style="background:' + heatColour(r.t) + '">' +
           (r.t == null ? '—' : fmt(r.t, 0) + '°') + '</span></td>' +
-        '<td class="num">' + (r.lo == null ? '—' : fmt(r.lo, 0) + '°') + '</td>' +
+        '<td class="num">' + (r.night == null ? '—' : fmt(r.night, 0) + '°') + '</td>' +
         '<td class="num">' + (r.rain == null ? '—' : fmt(r.rain, 1)) + '</td>' +
         '<td>' + (r.s.unesco ? '<span class="v-un">World Heritage</span>' : '') + '</td>' +
         '</tr>';
@@ -178,10 +193,13 @@
       var hot = rows.filter(function (r) { return r.t != null; });
       if (hot.length) {
         var hi = hot[0], lo = hot[hot.length - 1];
-        cap.innerHTML = 'In <strong>' + MONTHS[S.month] + '</strong>, the long-run monthly mean ' +
+        var fellBack = hot.some(function (r) { return r.kind === 'all-day-mean'; });
+        cap.innerHTML = 'In <strong>' + MONTHS[S.month] + '</strong>, a normal afternoon ' +
           'across these ' + hot.length + ' sites runs from <strong>' + fmt(lo.t, 0) + ' °C</strong> at ' +
           esc(lo.s.name) + ' to <strong>' + fmt(hi.t, 0) + ' °C</strong> at ' + esc(hi.s.name) +
-          ' — a spread of ' + fmt(hi.t - lo.t, 0) + ' degrees within one country, on the same day of the year.';
+          ' — a spread of ' + fmt(hi.t - lo.t, 0) + ' degrees within one country, on the same day of the year.' +
+          (fellBack ? ' <em>Some sites have no daily normal yet and are showing their all-day mean, ' +
+                      'which reads lower; those fill in on the next pipeline run.</em>' : '');
       }
     }
   }
@@ -223,8 +241,8 @@
     }
 
     var bars = site.months.map(function (m) {
-      var t = m.t_mean;
-      var h = t == null ? 2 : Math.max(2, Math.round((t - 5) / 32 * 100));
+      var t = dayTemp(m).v;
+      var h = t == null ? 2 : Math.max(2, Math.round((t - 10) / 35 * 100));
       return '<div class="v-bar' + (m.month - 1 === S.month ? ' on' : '') + '" title="' +
              MONTHS[m.month - 1] + ': ' + (t == null ? 'no reading' : fmt(t, 0) + ' °C') + '">' +
              '<span style="height:' + h + '%;background:' + heatColour(t) + '"></span>' +
@@ -241,9 +259,17 @@
         (listed === true ? ' &middot; <strong>UNESCO World Heritage</strong>' : '') +
       '</p>' +
       '<div class="v-year">' + bars + '</div>' +
-      '<p class="v-cap">Long-run monthly mean temperature, by month. ' +
-        (now && now.t_mean != null
-          ? '<strong>' + MONTHS[S.month] + ' averages ' + fmt(now.t_mean, 0) + ' °C' +
+      '<p class="v-cap">' + (dayTemp(now).kind === 'daily-max'
+          ? 'Mean daily maximum, by month. ' : 'All-day mean, by month. ') +
+        (now && dayTemp(now).v != null
+          ? '<strong>' + MONTHS[S.month] +
+            (dayTemp(now).kind === 'daily-max'
+              ? ' reaches about ' + fmt(dayTemp(now).v, 0) + ' °C by day' +
+                (nightTemp(now) != null ? ', dropping to ' + fmt(nightTemp(now), 0) + ' °C at night' : '') +
+                (now.t_mean != null ? ', averaging ' + fmt(now.t_mean, 0) + ' °C across the whole day' : '')
+              // No daily normal for this site yet, so print ONE figure under its
+              // real name rather than the same number twice under two labels.
+              : ' averages ' + fmt(dayTemp(now).v, 0) + ' °C across the whole day') +
             (now.rain_mm_day != null ? ', with ' + fmt(now.rain_mm_day, 1) + ' mm of rain a day' : '') +
             '.</strong>' +
             (recMax(now) != null
@@ -256,8 +282,11 @@
       '</p>' +
       '<p class="v-note">These are modelled long-run averages from NASA POWER, not a forecast and ' +
         'not station readings. They describe what the month is usually like here; they say nothing ' +
-        'about the day you travel. The daily high will usually run several degrees above the monthly ' +
-        'mean shown, and the daily low several below.' +
+        'about the day you travel.' +
+        (dayTemp(now).kind === 'daily-max'
+          ? ' The day and night figures are the 2001&ndash;2020 mean daily maximum and minimum.'
+          : ' No mean daily maximum has been published for this site yet, so the figure above is the ' +
+            'all-day mean and a real afternoon will run several degrees warmer.') +
         (terr ? ' Elevation is sampled from NASA SRTM 30 m at this site&rsquo;s own coordinates.' : '') +
       '</p>';
   }
@@ -289,6 +318,277 @@
     host.querySelectorAll('.v-terr').forEach(function (d) {
       d.addEventListener('click', function () { select(d.dataset.key); });
     });
+  }
+
+  /* --------------------------------------------------------- cross-sections
+     The honest version of "fly over Egypt". Imagery good enough to fly through
+     is licensed rather than open, and a 3D render would mean a GPU pipeline and
+     a repo full of frames. What IS open is the ground itself, so the page draws
+     the land's own profile from measured elevation and lets the reader travel
+     along it. Every point on the curve is a radar reading with a latitude and a
+     longitude, and the map beside it shows exactly where that point is.
+
+     The slider is the control, not the animation. A moving dot is precisely
+     what prefers-reduced-motion exists to suppress, so there is no autoplay to
+     suppress: dragging works identically either way, and the profile itself
+     already shows the whole line at once. Reduced motion loses nothing here. */
+  var R = { t: null, i: 0, line: null, dot: null, map: null };
+
+  function reliefPath(t, w, h) {
+    var pad = { l: 42, r: 10, t: 12, b: 26 };
+    var known = t.samples.filter(function (s) { return s.m != null; });
+    var lo = Math.min(0, t.min_m), hi = t.max_m;
+    var span = (hi - lo) || 1;
+    var x = function (km) { return pad.l + (km / t.length_km) * (w - pad.l - pad.r); };
+    var y = function (m) { return pad.t + (1 - (m - lo) / span) * (h - pad.t - pad.b); };
+
+    // Nulls break the line rather than being drawn as sea level: an unknown
+    // elevation is not a flat shelf, and joining across one would invent ground.
+    var segs = [], cur = [];
+    t.samples.forEach(function (s) {
+      if (s.m == null) { if (cur.length) segs.push(cur); cur = []; }
+      else cur.push(s);
+    });
+    if (cur.length) segs.push(cur);
+
+    var stroke = segs.map(function (seg) {
+      return seg.map(function (s, i) {
+        return (i ? 'L' : 'M') + x(s.km).toFixed(1) + ' ' + y(s.m).toFixed(1);
+      }).join(' ');
+    }).join(' ');
+    var fill = segs.map(function (seg) {
+      return 'M' + x(seg[0].km).toFixed(1) + ' ' + y(lo).toFixed(1) + ' ' +
+        seg.map(function (s) { return 'L' + x(s.km).toFixed(1) + ' ' + y(s.m).toFixed(1); }).join(' ') +
+        ' L' + x(seg[seg.length - 1].km).toFixed(1) + ' ' + y(lo).toFixed(1) + ' Z';
+    }).join(' ');
+
+    var ticks = [];
+    [hi, lo < 0 ? 0 : null, lo].forEach(function (m) {
+      if (m == null || ticks.indexOf(m) > -1) return;
+      ticks.push(m);
+    });
+    return { x: x, y: y, lo: lo, hi: hi, stroke: stroke, fill: fill, pad: pad,
+             ticks: ticks, known: known };
+  }
+
+  function paintRelief() {
+    var host = $('reliefChart'), pick = $('reliefPicker');
+    if (!host || !S.relief) return;
+    var list = S.relief.transects;
+
+    pick.innerHTML = list.map(function (t, i) {
+      return '<button type="button" class="mo-btn' + (i === 0 ? ' on' : '') +
+        '" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + esc(t.name) + '</button>';
+    }).join('');
+    pick.querySelectorAll('.mo-btn').forEach(function (b) {
+      b.addEventListener('click', function () { selectTransect(+b.dataset.i); });
+    });
+
+    var cap = $('reliefCap');
+    if (cap) {
+      cap.innerHTML = 'Elevation in metres above sea level against distance along the line, from ' +
+        esc(S.relief.source) + '. ' + esc(S.relief.license) + '. Built ' + esc(S.relief.as_of) +
+        '. Gaps in a curve are points the model has no value for, drawn as gaps rather than as zero.';
+    }
+    selectTransect(0);
+  }
+
+  function selectTransect(i) {
+    var list = S.relief.transects, t = list[i];
+    if (!t) return;
+    R.t = t; R.i = i;
+    $('reliefPicker').querySelectorAll('.mo-btn').forEach(function (b) {
+      var on = +b.dataset.i === i;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    var why = $('reliefWhy');
+    if (why) why.textContent = t.why;
+
+    var w = 720, h = 300, g = reliefPath(t, w, h);
+    $('reliefChart').innerHTML =
+      '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true">' +
+        '<defs><linearGradient id="rgrad" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="' + GOLD + '" stop-opacity=".75"/>' +
+          '<stop offset="1" stop-color="' + GOLD + '" stop-opacity=".08"/>' +
+        '</linearGradient></defs>' +
+        g.ticks.map(function (m) {
+          return '<line x1="' + g.pad.l + '" y1="' + g.y(m).toFixed(1) + '" x2="' + (w - g.pad.r) +
+            '" y2="' + g.y(m).toFixed(1) + '" stroke="' + (m === 0 ? '#4FA3A5' : 'rgba(255,255,255,.16)') +
+            '" stroke-width="1"/>' +
+            '<text x="' + (g.pad.l - 6) + '" y="' + (g.y(m) + 4).toFixed(1) +
+            '" text-anchor="end" font-size="11" fill="rgba(255,255,255,.6)">' +
+            fmt(m, 0) + '</text>';
+        }).join('') +
+        '<path d="' + g.fill + '" fill="url(#rgrad)"/>' +
+        '<path d="' + g.stroke + '" fill="none" stroke="' + GOLD +
+          '" stroke-width="2" stroke-linejoin="round"/>' +
+        '<line id="reliefCursor" x1="0" y1="' + g.pad.t + '" x2="0" y2="' + (h - g.pad.b) +
+          '" stroke="#fff" stroke-width="1.5" opacity=".85"/>' +
+        '<circle id="reliefKnob" r="4.5" cx="0" cy="0" fill="#fff"/>' +
+        '<text x="' + g.pad.l + '" y="' + (h - 8) + '" font-size="11" fill="rgba(255,255,255,.6)">0 km</text>' +
+        '<text x="' + (w - g.pad.r) + '" y="' + (h - 8) + '" text-anchor="end" font-size="11" ' +
+          'fill="rgba(255,255,255,.6)">' + fmt(t.length_km, 0) + ' km</text>' +
+      '</svg>';
+
+    // Accessible summary of the curve for anyone not looking at it.
+    $('reliefChart').setAttribute('aria-label',
+      t.name + ': ' + t.length_km + ' kilometres, from ' + fmt(t.min_m, 0) +
+      ' to ' + fmt(t.max_m, 0) + ' metres above sea level.');
+
+    var scrub = $('reliefScrub');
+    if (scrub) {
+      scrub.max = String(t.samples.length - 1);
+      scrub.value = '0';
+      scrub.setAttribute('aria-label', 'Position along ' + t.name);
+    }
+    drawLine(t);
+    moveTo(0);
+  }
+
+  function drawLine(t) {
+    if (!R.map || !window.L) return;
+    if (R.line) { R.map.removeLayer(R.line); R.line = null; }
+    if (R.dot) { R.map.removeLayer(R.dot); R.dot = null; }
+    var pts = t.samples.map(function (s) { return [s.lat, s.lon]; });
+    R.line = L.polyline(pts, { color: GOLD, weight: 3, opacity: 0.95 }).addTo(R.map);
+    R.dot = L.circleMarker(pts[0], { radius: 6, color: '#fff', weight: 2,
+      fillColor: GOLD, fillOpacity: 1 }).addTo(R.map);
+    R.map.fitBounds(R.line.getBounds(), { padding: [26, 26] });
+  }
+
+  function moveTo(idx) {
+    var t = R.t;
+    if (!t) return;
+    var s = t.samples[Math.min(Math.max(idx, 0), t.samples.length - 1)];
+    if (!s) return;
+    var svg = $('reliefChart').querySelector('svg');
+    if (svg) {
+      var g = reliefPath(t, 720, 300);
+      var cx = g.x(s.km);
+      var cur = svg.querySelector('#reliefCursor'), knob = svg.querySelector('#reliefKnob');
+      if (cur) { cur.setAttribute('x1', cx.toFixed(1)); cur.setAttribute('x2', cx.toFixed(1)); }
+      if (knob) {
+        knob.setAttribute('cx', cx.toFixed(1));
+        knob.setAttribute('cy', (s.m == null ? -20 : g.y(s.m)).toFixed(1));
+      }
+    }
+    if (R.dot) R.dot.setLatLng([s.lat, s.lon]);
+    var out = $('reliefReadout');
+    if (out) {
+      out.innerHTML = '<b>' + fmt(s.km, 1) + ' km</b> along the line &middot; ' +
+        (s.m == null ? '<b>no elevation</b> at this point &mdash; the model has no value here, ' +
+                       'so nothing is drawn'
+                     : 'ground at <b>' + fmt(s.m, 0) + ' m</b>' +
+                       (s.m < 0 ? ' &mdash; below sea level' : '')) +
+        '<br><span style="opacity:.7">' + s.lat.toFixed(4) + '&deg;N, ' +
+        s.lon.toFixed(4) + '&deg;E</span>';
+    }
+  }
+
+  /* ----------------------------------------------------------- the self-check
+     The build compares every modelled mean daily maximum against the nearest
+     published station normal and refuses to publish if the comparison fails.
+     That check is worth nothing to a reader who cannot see it, so the whole
+     comparison is carried in the JSON and printed here — including the site-
+     months where the model and the station disagree most. Hiding those would
+     turn a validation into a reassurance. */
+  function paintCheck() {
+    var host = $('checkResult'), tbl = $('checkTable'), body = $('checkBody');
+    if (!host) return;
+    var v = S.climate && S.climate.validation;
+    if (!v || !v.pairs || !v.pairs.length) { showEmpty(['checkEmpty']); return; }
+
+    var pairs = v.pairs;
+    var deltas = pairs.map(function (p) { return p.delta_c; });
+    var mean = deltas.reduce(function (a, b) { return a + b; }, 0) / deltas.length;
+    var near = deltas.filter(function (d) { return Math.abs(d) <= 2; }).length;
+
+    host.innerHTML =
+      '<div class="v-gate">' +
+        '<div><strong>Average gap, model vs station</strong>' +
+          '<b>' + (mean >= 0 ? '+' : '') + mean.toFixed(2) + ' &deg;C</b>' +
+          '<em>Across ' + pairs.length + ' site-months. A pipeline reading the wrong ' +
+          'variable pushes every figure the same way; a model differing from a ' +
+          'station does not, and largely cancels. This is the number that caught ' +
+          'the two earlier mistakes on this page.</em></div>' +
+        '<div><strong>Within 2 &deg;C of the station</strong>' +
+          '<b>' + near + ' of ' + pairs.length + '</b>' +
+          '<em>' + Math.round(near / pairs.length * 100) + '% land close. The gaps that ' +
+          'remain are not noise &mdash; they cluster over Lower Egypt in summer, and ' +
+          'the reason is below.</em></div>' +
+      '</div>';
+
+    // One row per site: twelve rows per site would be a data dump, and the
+    // per-month numbers are already in the JSON for anyone who wants them.
+    var bySite = {};
+    pairs.forEach(function (p) {
+      var k = p.site;
+      if (!bySite[k]) bySite[k] = { station: p.station, km: p.station_km,
+                                    period: p.period, elev: p.site_elev_m, d: [] };
+      bySite[k].d.push(p.delta_c);
+    });
+    var names = {};
+    if (S.climate.sites) S.climate.sites.forEach(function (s) { names[s.key] = s.name; });
+
+    var keys = Object.keys(bySite).sort(function (a, b) {
+      return Math.abs(avg(bySite[b].d)) - Math.abs(avg(bySite[a].d));
+    });
+    if (body) {
+      body.innerHTML = keys.map(function (k) {
+        var r = bySite[k], m = avg(r.d);
+        var worst = r.d.reduce(function (a, b) {
+          return Math.abs(b) > Math.abs(a) ? b : a; }, 0);
+        var big = Math.abs(worst) > 3;
+        // Temperature falls about 6.5 °C per kilometre of height, so a site
+        // well above its nearest station is being compared across an altitude
+        // difference as much as across a model. Saying so beside the number is
+        // the difference between a caveat and an excuse made later.
+        var alt = r.elev != null && r.elev > 600
+          ? '<span class="v-gov">site sits at ' + fmt(r.elev, 0) +
+            ' m; the station is near sea level</span>' : '';
+        return '<tr><td>' + esc(names[k] || k) + alt + '</td>' +
+          '<td>' + esc(r.station) +
+             (r.period ? '<span class="v-gov">normals ' + esc(r.period) + '</span>' : '') +
+             '</td>' +
+          '<td class="num">' + fmt(r.km, 0) + ' km</td>' +
+          '<td class="num">' + r.d.length + '</td>' +
+          '<td class="num">' + (m >= 0 ? '+' : '') + m.toFixed(1) + '</td>' +
+          '<td class="num' + (big ? ' v-far' : '') + '">' +
+             (worst >= 0 ? '+' : '') + worst.toFixed(1) + '</td></tr>';
+      }).join('');
+      if (tbl) tbl.hidden = false;
+    }
+
+    var cap = $('checkCap');
+    if (cap) {
+      var anyPeriod = pairs.some(function (p) { return p.period; });
+      cap.innerHTML = 'Gaps are in &deg;C, modelled mean daily maximum minus the published ' +
+        'station normal. Positive means the model runs warmer than the station. ' +
+        'Source of the yardstick: ' + esc(v.reference_source || 'published station normals') +
+        (v.reference_source_url ? ' (<a href="' + esc(v.reference_source_url) +
+           '" target="_blank" rel="noopener">worldweather.wmo.int</a>)' : '') + '. ' +
+        (anyPeriod ? ''
+                   : 'The source does not state which years its normals average, so the ' +
+                     'comparison is against an undated published normal &mdash; noted rather ' +
+                     'than filled in with a plausible-looking range.');
+    }
+
+    var why = $('checkWhy');
+    if (why && v.known_divergence) {
+      why.hidden = false;
+      why.innerHTML =
+        '<p style="margin:0 0 10px;"><strong>Where the two disagree, and why we are not ' +
+        'hiding it.</strong> ' + esc(v.known_divergence) + '</p>' +
+        '<p style="margin:0;"><strong>What this check is and is not.</strong> ' +
+        esc(v.method || '') + ' It does not certify the model is right. It certifies the ' +
+        'pipeline is reading the quantity it claims to be reading &mdash; which is the ' +
+        'specific thing that went wrong here twice before it was caught.</p>';
+    }
+  }
+
+  function avg(a) {
+    return a.reduce(function (x, y) { return x + y; }, 0) / (a.length || 1);
   }
 
   /* --------------------------------------------------------------- sources */
@@ -333,11 +633,21 @@
 
     var box = $('visitMap');
     if (box) S.map = baseMap('visitMap');
+    if ($('reliefMap')) R.map = baseMap('reliefMap');
+
+    var scrub = $('reliefScrub');
+    if (scrub) {
+      // 'input' rather than 'change' so the map dot tracks the drag. This is
+      // the reader moving the control, never the page moving on its own, so it
+      // is correct under prefers-reduced-motion without a special case.
+      scrub.addEventListener('input', function () { moveTo(+scrub.value); });
+    }
 
     Promise.allSettled([
       load('data/visit-climate.json'),
       load('data/visit-terrain.json'),
-      load('data/geo-heritage.json')
+      load('data/geo-heritage.json'),
+      load('data/visit-relief.json')
     ]).then(function (r) {
       // A layer file always exists so the page never 404s, but an
       // ungenerated one carries generated:false and an empty sites array.
@@ -349,6 +659,11 @@
       if (r[0].status === 'fulfilled') S.climate = usable(r[0].value);
       if (r[1].status === 'fulfilled') S.terrain = usable(r[1].value);
       if (r[2].status === 'fulfilled') S.heritage = r[2].value;
+      if (r[3].status === 'fulfilled') {
+        var v = r[3].value;
+        S.relief = v && v.generated !== false && Array.isArray(v.transects) &&
+                   v.transects.length ? v : null;
+      }
 
       if (S.climate) {
         paintMonthPicker(); paintMap(); paintMonthTable();
@@ -357,6 +672,8 @@
         showEmpty(['climateEmpty']);
       }
       if (S.terrain) paintTerrain(); else showEmpty(['terrainEmpty']);
+      if (S.climate) paintCheck(); else showEmpty(['checkEmpty']);
+      if (S.relief) paintRelief(); else showEmpty(['reliefEmpty']);
       paintMeta();
 
       if (window.EGYBI_SCROLLY && S.map) wireStory();
