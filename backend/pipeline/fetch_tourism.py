@@ -86,10 +86,23 @@ POWER = ("https://power.larc.nasa.gov/api/temporal/climatology/point"
 # mean much, recent enough to describe the climate a visitor will actually meet
 # rather than the one their grandparents would have. Both ends are inclusive.
 NORM_START, NORM_END = 2001, 2020
-POWER_MONTHLY = ("https://power.larc.nasa.gov/api/temporal/monthly/point"
-                 "?parameters=T2M_MAX,T2M_MIN&community=RE"
-                 "&longitude={lon}&latitude={lat}"
-                 f"&start={NORM_START}&end={NORM_END}&format=JSON")
+# The DAILY endpoint, not the monthly one. This is the second wrong turn on the
+# same question and the reason for the reference check below.
+#
+#   climatology T2M_MAX -> the hottest hour in that month across the WHOLE
+#                          record. Cairo January: 29.1 C.
+#   monthly     T2M_MAX -> the hottest hour in that ONE month and year.
+#                          Averaged over 20 years, Cairo January: 24.7 C.
+#   daily       T2M_MAX -> that day's maximum. Averaged over every January day
+#                          in 20 years: the mean daily maximum, which is what a
+#                          visitor is asking for. Cairo January: about 19 C.
+#
+# The first two both look like a mean daily maximum in a JSON payload and are
+# out by 6 to 8 degrees. Only the third is one.
+POWER_DAILY = ("https://power.larc.nasa.gov/api/temporal/daily/point"
+               "?parameters=T2M_MAX,T2M_MIN&community=RE"
+               "&longitude={lon}&latitude={lat}"
+               f"&start={NORM_START}0101&end={NORM_END}1231&format=JSON")
 ELEV = "https://api.opentopodata.org/v1/srtm30m?locations={pairs}"
 UA = "EgyBI-visit/1.0 (egybi.com; hello@egybi.com)"
 
@@ -188,15 +201,15 @@ def write(name: str, payload: dict) -> None:
 def true_daily_means(lat: float, lon: float) -> dict[int, dict] | None:
     """The climatological MEAN DAILY maximum and minimum, per calendar month.
 
-    POWER's monthly endpoint returns one value per year and month, and for
-    T2M_MAX that value is the mean of that month's daily maxima. Averaging
-    across NORM_START..NORM_END therefore gives the figure the climatology
-    endpoint cannot: what a normal afternoon in this month actually reaches.
+    POWER's DAILY endpoint returns one value per day. Averaging every January
+    day across NORM_START..NORM_END gives the mean daily maximum for January —
+    what a normal afternoon actually reaches, which neither the climatology nor
+    the monthly endpoint can provide (see the note beside POWER_DAILY).
 
     Returns {1..12: {"t_daily_max": x, "t_daily_min": y, "years": n}} or None if
     the endpoint could not be reached. Never invents a month it has no years for.
     """
-    d = get(POWER_MONTHLY.format(lat=lat, lon=lon))
+    d = get(POWER_DAILY.format(lat=lat, lon=lon))
     if not d:
         return None
     try:
@@ -207,11 +220,10 @@ def true_daily_means(lat: float, lon: float) -> dict[int, dict] | None:
     buckets: dict[int, dict[str, list]] = {m: {"max": [], "min": []} for m in range(1, 13)}
     for key, field in (("T2M_MAX", "max"), ("T2M_MIN", "min")):
         for stamp, v in (params.get(key) or {}).items():
-            # Keys are YYYYMM. POWER appends month 13 as the annual figure for
-            # the year, which is not a month and must not be averaged in.
-            if len(stamp) != 6:
+            # Keys are YYYYMMDD in daily mode.
+            if len(stamp) != 8:
                 continue
-            mm = int(stamp[4:])
+            mm = int(stamp[4:6])
             if not 1 <= mm <= 12:
                 continue
             if v is None or float(v) <= POWER_FILL + 1:
@@ -221,16 +233,73 @@ def true_daily_means(lat: float, lon: float) -> dict[int, dict] | None:
     out = {}
     for mm in range(1, 13):
         hi, lo = buckets[mm]["max"], buckets[mm]["min"]
-        # Require most of the window before publishing a normal. A mean over
-        # three stray years is not a climatology and should read as absent.
-        if len(hi) < (NORM_END - NORM_START + 1) * 0.6:
+        # Roughly 600 daily readings per calendar month over twenty years.
+        # Require most of them: a mean over a handful of scattered days is not
+        # a climatology and should read as absent rather than as a normal.
+        if len(hi) < 300:
             continue
         out[mm] = {
             "t_daily_max": round(sum(hi) / len(hi), 1),
             "t_daily_min": round(sum(lo) / len(lo), 1) if lo else None,
-            "years": len(hi),
+            "days": len(hi),
         }
     return out or None
+
+
+# ---------------------------------------------------------------- reference --
+# Published mean daily maxima, in °C, for cells this pipeline computes. Sourced
+# from standard station climate normals rather than from POWER, which is the
+# point: an independent yardstick cannot be fooled by the same misreading that
+# produced the number under test.
+#
+# This exists because the mean daily maximum was got wrong TWICE, in the same
+# way both times — a POWER parameter was assumed to mean what its name suggests
+# instead of being checked against something known. The climatology endpoint's
+# T2M_MAX put Cairo's August at 45 °C; the monthly endpoint's, averaged, put it
+# at 41. A normal August afternoon in Cairo is about 35. Both were published
+# under the words "mean daily maximum" before the error was caught by hand.
+#
+# So the pipeline now checks itself. If the computed value drifts more than
+# TOLERANCE from the published normal the layer is REFUSED, because a figure
+# that fails its own reference check is not a figure worth publishing, and
+# noticing by hand is not a control.
+REFERENCE_DAILY_MAX = {
+    ("giza", 1): 19.0,   ("giza", 8): 35.0,
+    ("alexandria", 1): 18.0, ("alexandria", 8): 30.0,
+    ("karnak", 7): 41.0,
+    ("abu-simbel", 7): 42.0,
+}
+TOLERANCE = 3.5   # generous: a reanalysis grid cell is not a station, and Giza
+                  # is not central Cairo. Wide enough for real modelling
+                  # difference, far too tight for a 6-degree category error.
+
+
+def reference_check(rows: list) -> tuple[bool, list]:
+    """Compare computed mean daily maxima against published normals.
+
+    Returns (ok, notes). Cells with no computed value are reported but do not
+    fail the check, because a missing normal is already handled elsewhere; only
+    a value that is present AND wrong fails.
+    """
+    by_key = {r["key"]: r for r in rows}
+    notes, bad = [], 0
+    for (key, mon), published in sorted(REFERENCE_DAILY_MAX.items()):
+        site = by_key.get(key)
+        if not site:
+            notes.append(f"{key} {mon:02d}: site absent from this build")
+            continue
+        m = next((x for x in site["months"] if x["month"] == mon), None)
+        got = (m or {}).get("t_daily_max")
+        if got is None:
+            notes.append(f"{key} {mon:02d}: no daily normal computed")
+            continue
+        delta = got - published
+        flag = "" if abs(delta) <= TOLERANCE else "  <-- OUT OF TOLERANCE"
+        notes.append(f"{key} {mon:02d}: computed {got:.1f} vs published {published:.1f} "
+                     f"({delta:+.1f}){flag}")
+        if abs(delta) > TOLERANCE:
+            bad += 1
+    return bad == 0, notes
 
 
 def build_climate() -> bool:
@@ -310,6 +379,17 @@ def build_climate() -> bool:
         log(f"  SKIP climate: only {len(rows)} sites resolved "
             f"(<{MIN_CLIMATE_SITES}) — keeping last-good")
         return False
+
+    log("\n  reference check — computed mean daily max vs published normals:")
+    ok, notes = reference_check(rows)
+    for n in notes:
+        log(f"    {n}")
+    if not ok:
+        log("  SKIP climate: the computed daily normals disagree with published "
+            "station normals beyond tolerance. This is what a wrong POWER "
+            "parameter looks like, and it has happened twice. Keeping last-good.")
+        return False
+    log("  reference check passed")
 
     write("visit-climate.json", {
         "as_of": date.today().isoformat(),
