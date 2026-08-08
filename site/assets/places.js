@@ -89,8 +89,12 @@
        needs a real marker to spiderfy, and a div lets the dot keep the same
        size and colour it always had. The animations follow reduced motion —
        with it off, a cluster still opens, it just does not spring. */
+    /* No custom pane here. The old circleMarkers were SVG in the overlay pane
+       and needed 'pts' to sit above the governorate polygons; L.marker renders
+       into Leaflet's markerPane, which is already above the overlay pane. Worse,
+       forcing MarkerClusterGroup's markers into a foreign pane stops it managing
+       them — it rendered no clusters at all and only a stray marker or two. */
     var group = (L.markerClusterGroup ? L.markerClusterGroup({
-      clusterPane: 'pts',
       showCoverageOnHover: false,      // the hull flickers over a dense delta
       spiderfyOnMaxZoom: true,
       disableClusteringAtZoom: 9,      // by governorate zoom every place stands alone
@@ -114,7 +118,6 @@
     S.data.places.filter(function (p) { return p.kind === kind; }).forEach(function (p) {
       var d = spec.r * 2;
       var m = L.marker([p.lat, p.lon], {
-        pane: 'pts',
         keyboard: true,
         title: p.name,
         alt: p.name + (p.gov ? ', ' + p.gov : ''),

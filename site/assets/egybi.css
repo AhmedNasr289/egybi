@@ -221,7 +221,15 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .map-legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 0.8rem; color: var(--ink-soft); }
 .map-legend-item .sw { width: 16px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid rgba(0,0,0,0.08); }
 /* Leaflet: no tiles — papyrus background, themed controls + tooltip */
-.map-box.leaflet-container { background: var(--papyrus); border-radius: 12px; font-family: 'Inter', sans-serif; outline: none; }
+/* Every Leaflet container on this site is ours, so style the class itself
+   rather than enumerating wrappers. The rule was .map-box only, so .atlas-box,
+   .streets-box and the two visit maps (which carry no box class at all) fell
+   through to Leaflet's default grey — a colour that appears nowhere else in
+   this palette. Enumerating containers meant every new map had to remember to
+   join the list, and three of six did not. */
+.leaflet-container { background: var(--papyrus); font-family: 'Inter', sans-serif; outline: none; }
+.map-box.leaflet-container, .atlas-box.leaflet-container, .streets-box.leaflet-container
+  { border-radius: 12px; }
 .leaflet-container a.leaflet-control-zoom-in, .leaflet-container a.leaflet-control-zoom-out { color: var(--blue-deep); }
 .egypt-map-tip { background: var(--kemet); color: var(--on-dark); border: 1px solid var(--gold); border-radius: 8px; font-size: 0.82rem; padding: 6px 10px; box-shadow: var(--shadow-dark); }
 .egypt-map-tip strong { color: var(--gold-bright); }
@@ -997,10 +1005,32 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 
 /* Cluster bubbles in the Egyptian palette. The upstream defaults stay loaded
    underneath, so removing these degrades to a working cluster, not a broken one. */
-.marker-cluster { background: rgba(23, 64, 139, 0.28); }
-.marker-cluster div { background: var(--blue); color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.76rem; }
-.marker-cluster-antiquity div { background: #B23A0F; color: #fff; }
-.marker-cluster-airport div { background: #0F7B6C; color: #fff; }
+/* Upstream sizes the bubble with a fixed 30px inner div, 5px margins and a
+   15px radius, which only makes a circle at exactly its default icon size.
+   These clusters are 34px and 42px, so the fixed numbers produced rectangles
+   with the inner block overflowing the outer halo. Sizing in percentages makes
+   a true circle at any size, and centring with flex drops the line-height
+   arithmetic the default relies on. */
+.marker-cluster {
+  background: rgba(23, 64, 139, 0.25); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.marker-cluster div {
+  width: 76%; height: 76%; margin: 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--blue); color: #fff;
+  font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.76rem;
+}
+.marker-cluster span { line-height: 1; }
+/* Settlements take the default blue. Written out rather than left implicit:
+   the class is on the element either way, and a class in the DOM with no rule
+   anywhere is indistinguishable from one whose rule was lost. */
+.marker-cluster-settlement { background: rgba(23, 64, 139, 0.25); }
+.marker-cluster-settlement div { background: var(--blue); }
+.marker-cluster-antiquity { background: rgba(178, 58, 15, 0.25); }
+.marker-cluster-antiquity div { background: #B23A0F; }
+.marker-cluster-airport { background: rgba(15, 123, 108, 0.25); }
+.marker-cluster-airport div { background: #0F7B6C; }
 
 @media (prefers-reduced-motion: reduce) {
   .mk-locator, .mk-btn { transition: none !important; }

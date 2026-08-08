@@ -218,6 +218,14 @@
       doubleClickZoom: opts.doubleClickZoom !== false,
       dragging: opts.dragging !== false,
       keyboard: true,
+      // A tile layer normally supplies the zoom range. These maps have no tile
+      // layer at all — that is the point of the site — so maxZoom stays
+      // Infinity, and anything that asks the map how far it zooms gets an
+      // answer it cannot use. MarkerClusterGroup throws "Map has no maxZoom
+      // specified" on construction, and because the caller wrapped its render
+      // in a .catch that reports "the layer has not been generated yet", the
+      // Places map showed a plausible, wrong explanation instead of the bug.
+      maxZoom: opts.maxZoom || 18,
       fadeAnimation: !rm,
       zoomAnimation: !rm,
       markerZoomAnimation: !rm,
@@ -270,7 +278,12 @@
      here rather than passed to create(). */
   function setHome(map, bounds, onReset) {
     if (!map || !bounds) return;
+    // Callers repaint. streets.js rebuilds its layer on every metric change and
+    // calls this each time, which added a second, third and fourth reset button
+    // to the corner. Update the destination, add the control once.
+    var first = !map._mkHome;
     map._mkHome = bounds;
+    if (!first) return;
     map.addControl(barControl('topright', [button('Reset the view', '\u27F2', function () {
       if (RM()) map.fitBounds(map._mkHome, { padding: [10, 10], animate: false });
       else map.flyToBounds(map._mkHome, { padding: [10, 10], duration: 0.6 });

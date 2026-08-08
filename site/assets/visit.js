@@ -73,6 +73,10 @@
       interactive: false
     }).addTo(m);
     m.fitBounds([[22.0, 24.7], [31.7, 36.9]], { padding: [10, 10] });
+    // Both visitor maps get the same reset control every other map has. The
+    // relief map re-fits to each transect as you pick one, so "put it back"
+    // is more use here than anywhere.
+    window.EGYBI.mapkit.setHome(m, L.latLngBounds([[22.0, 24.7], [31.7, 36.9]]));
     return m;
   }
 

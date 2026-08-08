@@ -106,6 +106,30 @@
            + 'street-network metric. Tab to a district and press Enter for its figures.'
     });
     if (!S.map) return;
+
+    /* The ten measured districts run from New Alamein on the north coast to
+       Luxor 600 km south, so fitting all of them puts the eight Cairo districts
+       at a few pixels across. That was not a bug — the extent was correct — but
+       the result read as specks of nothing on an empty ground, because there was
+       no country underneath to locate them against.
+
+       Drawing Egypt's governorates as a pale base fixes the legibility without
+       touching the extent: the same view now says "ten districts, here, in this
+       country" instead of "some marks". It also gives the locator inset an
+       outline to draw, which it silently had none of before. */
+    if (window.EGYBI_EGYPT_GEO) {
+      S.base = L.geoJSON(window.EGYBI_EGYPT_GEO, {
+        interactive: false,          // context, not a target — never steal a click
+        // Deliberately flatter and paler than the districts. The first version
+        // reused the Places base style, which is the SAME fill and stroke the
+        // districts use, so ten measured districts vanished into the country
+        // behind them.
+        style: function () {
+          return { color: '#FFFFFF', weight: 0.8, fillColor: '#E7ECF3', fillOpacity: 0.75 };
+        }
+      }).addTo(S.map);
+      S.base.bringToBack();
+    }
     paintMap();
     setTimeout(function () {
       S.map.invalidateSize();
@@ -137,6 +161,25 @@
         });
       }
     }).addTo(S.map);
+    if (S.pins) S.map.removeLayer(S.pins);
+    S.pins = L.layerGroup();
+    S.layer.eachLayer(function (lyr) {
+      var d = byKey(lyr.feature.properties.key);
+      if (!d) return;
+      var c = lyr.getBounds().getCenter();
+      var pin = L.circleMarker(c, {
+        radius: 6, fillColor: col(d[S.metric]), fillOpacity: 0.95,
+        color: GOLD_INK, weight: 1.5
+      });
+      pin.bindTooltip('<strong>' + esc(d.name) + '</strong><br>' + m.label +
+                      ': <strong>' + m.fmt(d[S.metric]) + '</strong>',
+                      { direction: 'top', className: 'egypt-map-tip' });
+      pin.on('click', function () { select(d.key); });
+      pin.on('mouseover', function () { pin.setStyle({ radius: 8, color: GOLD }); });
+      pin.on('mouseout', function () { pin.setStyle({ radius: 6, color: GOLD_INK }); });
+      S.pins.addLayer(pin);
+    });
+    S.pins.addTo(S.map);
     S.map.fitBounds(S.layer.getBounds(), { padding: [12, 12] });
     window.EGYBI.mapkit.setHome(S.map, S.layer.getBounds());
     paintLegend();
