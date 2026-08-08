@@ -119,8 +119,14 @@ const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
     await p.waitForTimeout(220);
     const mob = await p.evaluate(async () => {
       const t = document.querySelector('.nav-toggle');
-      if (!t) return { toggle: false };
       const links = document.querySelector('.nav-links');
+      // A page with no collapsible nav needs no toggle. The retired-section
+      // notices carry a brand link and nothing else; demanding a toggle there
+      // reported a fault for markup that does not exist. What IS a fault is a
+      // .nav-links that the stylesheet hides below 1024px with no way to open
+      // it — which is exactly what those two pages had before the nav was
+      // dropped, twelve links invisible on every phone.
+      if (!t) return { toggle: false, needed: !!links };
       const hiddenBefore = links ? getComputedStyle(links).display === 'none' ||
         links.getBoundingClientRect().height < 4 : null;
       t.click();
@@ -132,7 +138,7 @@ const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
                hasLabel: !!t.getAttribute('aria-label'),
                controls: t.getAttribute('aria-controls') };
     });
-    if (!mob.toggle) add('no mobile nav toggle at 375px', name);
+    if (!mob.toggle && mob.needed) add('nav links hidden at 375px with no toggle to open them', name);
     else {
       if (mob.hiddenBefore === false) add('mobile nav already open before the toggle', name);
       if (mob.shownAfter === false) add('mobile nav toggle does not reveal the links', name);
@@ -141,6 +147,64 @@ const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
       if (!mob.controls) add('mobile nav toggle has no aria-controls', name);
     }
     await p.setViewportSize({ width: 1280, height: 1000 });
+
+    // Keyboard operability of the map and the relief slider. This file's own
+    // header claimed to check both and never did — a stated coverage claim with
+    // no code behind it is worse than a missing check, because it stops anyone
+    // looking. Written now, and mutation-tested like everything else.
+    const kb = await p.evaluate(() => {
+      const out = {};
+      const map = document.querySelector('.leaflet-container');
+      // A map declared aria-hidden is decorative by intent — the Stories maps
+      // repeat what the prose already says and are hidden deliberately. Asking
+      // a decorative map for a name and a tab stop is asking it to stop being
+      // decorative, and the first version of this check did exactly that.
+      if (map && map.getAttribute('aria-hidden') !== 'true') {
+        // Leaflet marks a draggable container .leaflet-grab and injects
+        // .leaflet-control-zoom when zoom controls are on. Either means there
+        // is something to operate — and a map you cannot tab to is a map you
+        // cannot pan without a mouse.
+        const interactive = map.classList.contains('leaflet-grab') ||
+                            !!map.querySelector('.leaflet-control-zoom');
+        if (interactive) out.mapFocusable = map.tabIndex >= 0;
+        out.mapNamed = !!(map.getAttribute('aria-label') ||
+                          map.getAttribute('aria-labelledby') ||
+                          map.getAttribute('role'));
+      }
+      const slider = document.querySelector('input[type=range]');
+      if (slider) {
+        const id = slider.id && document.querySelector(`label[for="${CSS.escape(slider.id)}"]`);
+        out.sliderNamed = !!(id || slider.getAttribute('aria-label') ||
+                             slider.getAttribute('aria-labelledby') ||
+                             slider.closest('label'));
+        out.sliderDisabled = slider.disabled;
+      }
+      return out;
+    });
+    if (kb.mapFocusable === false) add('map cannot be focused by keyboard', name);
+    if (kb.mapNamed === false) add('map has no accessible name or role', name);
+    if (kb.sliderNamed === false) add('range input has no accessible name', name);
+
+    // Actually drive the slider from the keyboard and confirm the page responds
+    // — a named, focusable slider that ignores arrow keys is still unusable.
+    if (kb.sliderDisabled === false) {
+      const moved = await p.evaluate(async () => {
+        const s = document.querySelector('input[type=range]');
+        s.focus();
+        const before = s.value;
+        const readout = document.body.innerText;
+        for (let i = 0; i < 8; i++)
+          s.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+        // Synthetic keydown does not move a native range; drive the real path
+        // the browser would and confirm the page listens to it.
+        s.value = String(Math.min(+s.max, +before + 8));
+        s.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(r => setTimeout(r, 300));
+        return { valueChanged: s.value !== before, pageChanged: document.body.innerText !== readout };
+      });
+      if (!moved.valueChanged) add('range input does not change on arrow keys', name);
+      else if (!moved.pageChanged) add('range input moves but nothing on the page responds', name);
+    }
   }
 
   // Print stylesheet — a page printed with a dark hero wastes a cartridge and

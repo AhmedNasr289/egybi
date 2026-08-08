@@ -54,7 +54,25 @@ derives the version in use, and an inapplicable mutation prints
 `COULD NOT MUTATE` rather than passing in silence. A mutation that cannot be
 applied is coverage lost quietly.
 
-A fifth was the chrome-drift check comparing whole footers, which reported
+A fifth was `a11y2.js` claiming in its own header to check "keyboard operability
+of the map and slider" while containing no such code. A stated coverage claim
+with nothing behind it is worse than a missing check, because it stops anyone
+looking. Written now — and it immediately found three maps that could not be
+panned without a mouse.
+
+A sixth was the contrast check approximating a gradient by its brightest stop.
+That is the right cheap filter — it asks whether text stays legible over the
+whole gradient — but it is an approximation, and it left one standing flag on
+text that is genuinely fine where it sits. Anything it flags is now screenshot
+and measured against the pixels actually painted behind it, and reported
+separately when the approximation was the thing that was wrong.
+
+A seventh was the CSSOM check reporting ten unstyled classes flat, seven of
+which were selector hooks a script genuinely uses and three vendor-injected. It
+now reads every script the site ships and separates hooks from the classes that
+promise styling and deliver none.
+
+An eighth was the chrome-drift check comparing whole footers, which reported
 eleven "variants" that were all the cited-data rule working correctly — each
 page names its own sources, and `stocks.html` carries the FRA line in its
 colophon. Drowning a real signal in required differences is how a check gets

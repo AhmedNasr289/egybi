@@ -6,7 +6,32 @@ const fs = require('fs');
 const B = BASE;
 const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
   .concat(['practice/your-first-select.html', 'papyrus/nineteen-million.html']);
-const IGNORE = /^(aos|leaflet|cm-|chartjs|swiper|gsl)/;
+// Injected by third-party embeds and styled by them, not by this stylesheet.
+const IGNORE = /^(aos|leaflet|cm-|chartjs|swiper|gsl|tradingview)/;
+
+/* A class with no CSS rule is only a defect if it was MEANT to paint something.
+   Plenty are selector hooks — community.js does querySelectorAll('.community-form')
+   — and reporting those beside the genuinely dead ones buries the signal, which
+   is the same mistake the footer-drift check was making. So read every script
+   this site ships and treat a class named in one as a hook. */
+const HOOKS = (() => {
+  const names = new Set();
+  const scan = t => {
+    for (const m of t.matchAll(/querySelector(?:All)?\(\s*['"`]([^'"`]+)/g))
+      for (const c of m[1].matchAll(/\.([\w-]+)/g)) names.add(c[1]);
+    for (const m of t.matchAll(/classList\.\w+\(\s*['"`]([\w-]+)/g)) names.add(m[1]);
+    for (const m of t.matchAll(/closest\(\s*['"`]\.([\w-]+)/g)) names.add(m[1]);
+  };
+  const walk = dir => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = `${dir}/${e.name}`;
+      if (e.isDirectory()) { if (e.name !== 'vendor') walk(full); }
+      else if (/\.(js|html)$/.test(e.name)) scan(fs.readFileSync(full, 'utf8'));
+    }
+  };
+  walk('site');
+  return names;
+})();
 
 (async () => {
   const b = await chromium.launch({ executablePath });
@@ -36,8 +61,12 @@ const IGNORE = /^(aos|leaflet|cm-|chartjs|swiper|gsl)/;
       all.get(c).push(`${path}×${n}`);
     }
   }
+  const hooks = [...all].filter(([c]) => HOOKS.has(c));
+  const dead = [...all].filter(([c]) => !HOOKS.has(c));
   console.log(`pages inspected: ${PAGES.length}`);
-  console.log(`classes in the DOM with no CSS rule: ${all.size}`);
-  for (const [c, where] of [...all].sort()) console.log(`   .${c.padEnd(24)} ${where.slice(0,4).join(', ')}`);
+  console.log(`classes in the DOM with no CSS rule and no script using them: ${dead.length}`);
+  for (const [c, where] of dead.sort()) console.log(`   .${c.padEnd(24)} ${where.slice(0,4).join(', ')}`);
+  console.log(`\nno CSS rule, but a script selects them — hooks, not defects (${hooks.length}):`);
+  console.log('   ' + hooks.map(([c]) => '.' + c).sort().join(', '));
   await b.close();
 })();
