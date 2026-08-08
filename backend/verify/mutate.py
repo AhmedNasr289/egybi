@@ -45,6 +45,7 @@ def case(name, tool, files, mutate, detects, cmd, timeout=900):
         mutate()
     except Exception as e:  # noqa: BLE001
         results.append((name, tool, "COULD NOT MUTATE", str(e)[:70]))
+        print(f"  {'COULD NOT MUTATE':16} {name}  ({str(e)[:60]})")
         revert(*files)
         return
     # 3. does it catch it?
@@ -79,8 +80,19 @@ case("anchor to a missing id", "static-audit.py", ["site/about.html"],
      lambda o: "anchors pointing at an id that is not there" in o, PY_AUDIT)
 
 # ---- 3. static audit: one page left on an older asset build -----------------
+def drift_version():
+    """Read the version in use rather than hardcoding one: this case silently
+    stopped applying the moment the stylesheet was bumped, and a mutation that
+    cannot be applied is coverage quietly lost."""
+    p = Path("site/about.html")
+    t = p.read_text(encoding="utf-8")
+    m = re.search(r"egybi\.css\?v=(\d+)", t)
+    assert m, "no versioned egybi.css link in about.html"
+    cur = int(m.group(1))
+    p.write_text(t.replace(f"egybi.css?v={cur}", f"egybi.css?v={cur - 1}", 1), encoding="utf-8")
+
 case("asset version drift", "static-audit.py", ["site/about.html"],
-     lambda: edit("site/about.html", "egybi.css?v=21", "egybi.css?v=20"),
+     drift_version,
      lambda o: "shared assets requested at different versions" in o, PY_AUDIT)
 
 # ---- 4. static audit: a field a page reads that the data stopped writing ----
