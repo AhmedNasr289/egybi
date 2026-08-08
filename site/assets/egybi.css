@@ -297,6 +297,22 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { animation: none !important; transition: none !important; }
+
+  /* Reduced motion must remove the animation, never the content.
+     AOS hides every [data-aos] element at opacity 0 and only restores it by
+     adding .aos-animate on scroll. Initialising AOS with disable:true stops
+     that class from ever being added — and while AOS strips the attribute from
+     elements present when it initialises, anything a renderer inserts AFTERWARDS
+     keeps its data-aos and stays invisible for good. That silently hid 68
+     content cards on the Explore page, 18 on About and 12 on the blog index
+     from exactly the readers who had asked for less movement.
+
+     Doing it in CSS rather than in the renderers fixes it once, for every
+     renderer that exists now or later, and does not depend on when a node is
+     added or on whether any script ran at all. !important is required because
+     AOS doubles its own selectors ([data-aos^=fade][data-aos^=fade]) to win on
+     specificity. */
+  [data-aos] { opacity: 1 !important; transform: none !important; }
 }
 
 /* ---------- motion micro-interactions (disabled under reduced-motion above) ---------- */

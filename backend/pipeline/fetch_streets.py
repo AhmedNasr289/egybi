@@ -546,6 +546,15 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
     }
     (OUT / "streets-districts.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    # A GeoJSON FeatureCollection has nowhere to say when it was fetched, so
+    # these are foreign members — RFC 7946 allows them and every consumer,
+    # Leaflet included, ignores what it does not recognise. Without them the
+    # boundaries are the one published layer here with no date on it, which is
+    # not a standard this project gets to keep for geometry only.
+    boundaries["as_of"] = date.today().isoformat()
+    boundaries["source"] = ("OpenStreetMap via Nominatim, except Downtown Cairo, "
+                            "whose extent is drawn by hand from its known edges "
+                            "and marked boundary_source: hand-drawn")
     (OUT / "streets-boundaries.json").write_text(
         json.dumps(boundaries, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     log(f"  wrote streets-districts.json ({len(rows)} districts) + streets-boundaries.json")

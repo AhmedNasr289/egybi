@@ -16,6 +16,8 @@ The centrepiece is a **month picker**. Choose a month and the map recolours and 
 
 The UNESCO flag is **cross-checked against the fetched heritage file** rather than trusted from our own table. If the two ever disagree the fetched one wins, because that one has a source.
 
+**The temperatures check themselves, and the check is on the page.** The mean daily maximum was published wrong twice — `T2M_MAX` means three different things across POWER's three endpoints, and two of them are not a mean daily maximum. So the build now compares every computed figure against Egypt's published station normals from the WMO's World Weather Information Service, and refuses to write the layer if the comparison fails. The first full run: **mean bias +0.15 °C across 168 site-months, 125 of them within 2 °C**. The whole comparison — both gates, all fourteen site-station pairs, the elevation caveat on Saint Catherine, and the reason the largest gaps cluster over the irrigated Delta in summer — is printed in a *How it was checked* section. A validation a reader cannot see is one they have to take on trust.
+
 ## The two refusals, which are the point
 
 **It describes no site in prose.** There is no sourced, licence-clear dataset of what Karnak feels like at dawn. Writing that would mean inventing atmosphere and setting it beside measured temperatures, where a reader would reasonably take it to be equally sourced — and they would be right to, because the page gives them no way to tell the two apart. So each place shows what the data holds and stops. *A visitor is better served by a real August temperature than by an adjective.*
@@ -44,6 +46,22 @@ A cinematic aerial tour would have to be either footage somebody shot — which 
 
 It looks like a data visualisation rather than a photograph. That is the point — it can carry a source line. The full ruling, including the supplied Veo 3.1 workflow and the three separate constraints it fails, is in [[Technology Rulings — What Was Declined and Why]].
 
+**Updated 2026-08-08 — there is now a flight, over real ground.** A single elevation per site was the weak version of this answer: it says Saint Catherine is 1 586 m and leaves the reader to imagine the rest. The page now carries **five measured cross-sections**, sampled at up to 300 points each from the same SRTM model, with a slider that walks along the profile while a marker walks the line on a tile-free map. Every point is a radar reading with a latitude, a longitude and an elevation.
+
+That is the flyover, built the only way it can be built inside the constraints. The imagery is licensed; the ground is not.
+
+| Line | Length | Range | Median | What it shows |
+|---|---|---|---|---|
+| Across the valley at Luxor | 24 km | 68–258 m | 84 m | The floodplain is a flat 78–80 m run about 6 km wide, desert on both sides. That strip is where Egypt lives. |
+| The Giza plateau edge | 14 km | 11–119 m | 24 m | The ground climbs 108 m from floodplain to scarp. The builders chose that plateau; they did not raise it. |
+| Gulf of Aqaba to Saint Catherine | 53 km | 19–1 879 m | 1 262 m | Sea level to the Sinai massif in under an hour's drive. This is why the monastery is cold. |
+| Siwa and the depressions | 198 km | −82–199 m | −17 m | Egypt's west falls below the sea, and stays there for most of the line. |
+| The Nile, Cairo to Abu Simbel | 1 041 km | 11–366 m | 76 m | A thousand kilometres of river and the ground barely moves. |
+
+**Quartiles are published alongside the extremes, and that is a correction.** The first Nile line used eleven coarse waypoints; straight legs between them cut across the Qena bend and put 400 m of Eastern Desert in the middle of a river profile. Twenty-three waypoints on the actual course fixed most of it — samples above 200 m fell from 99-in-200 to 38-in-300 — but straight legs still clip the terrace where the river meanders hardest. Rather than hide that, every transect now reports p25, median and p75. A min and a max describe the two most unusual points on a line and nothing about the rest of it.
+
+**No autoplay, so nothing for reduced motion to suppress.** A dot moving on its own is exactly what `prefers-reduced-motion` exists to prevent, so there is none: the slider is the control, dragging behaves identically either way, and the profile already shows the whole line at once. Verified — reduced motion loses no rows, no chips and no function.
+
 ## Engineering notes
 
 **One engine, not two.** The scrollytelling run reuses `scrolly.js` — the same IntersectionObserver engine the data stories use, with a six-step register call. A second engine would have doubled the accessibility surface for nothing.
@@ -68,4 +86,6 @@ The pipeline was also run with the network unreachable to prove the failure path
 
 ## Open
 
-**The data does not exist yet.** A new workflow file is not dispatchable until it exists on the default branch, so the first real run happens after this merges. Until then the page ships its empty state, honestly labelled. This is the same position every new pipeline in this repo has started from.
+**Resolved 2026-08-08 — the data exists.** All three layers built and are live: 18 sites of validated climate normals, 18 elevations, and 5 cross-sections. The path from empty state to real data took four runs, each one refused by the guardrail for a different and correct reason, and each refusal named the next thing to fix. That is what the guardrail is for.
+
+**Still open.** The WMO source states no normal period for any of its six Egyptian stations, so the comparison is against an undated published normal. The page says so rather than filling in a plausible range. If a dated set can be found from an equally open source, the check gets sharper.

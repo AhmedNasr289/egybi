@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  issues: write             # open a failure-alert issue via notify-failure
 
 concurrency:
   group: build-geo-assets
@@ -21,6 +22,9 @@ concurrency:
 jobs:
   layers:
     runs-on: ubuntu-latest
+    timeout-minutes: 45       # three Overpass queries, which are the slow part.
+                               # Without a bound a hung request runs for
+                               # GitHub's default six hours.
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -73,3 +77,11 @@ jobs:
           else
             echo "No layer changes (or guardrails kept last-good data)."
           fi
+
+      # Same contract as every other pipeline here: if the run failed, say so
+      # somewhere a human will see it. This was the only data workflow that
+      # could fail silently, and a pipeline nobody is told about failing is a
+      # pipeline that stays broken.
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure

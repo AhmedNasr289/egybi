@@ -24,6 +24,9 @@ concurrency:
 jobs:
   fx:
     runs-on: ubuntu-latest
+    timeout-minutes: 15       # five currency pairs from one endpoint; generous even with backoff.
+                               # Without a bound a hung request runs for
+                               # GitHub's default six hours.
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4

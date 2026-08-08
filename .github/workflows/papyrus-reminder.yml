@@ -17,6 +17,7 @@ permissions:
 jobs:
   remind:
     runs-on: ubuntu-latest
+    timeout-minutes: 10       # opens an issue; no network work of its own.
     steps:
       - uses: actions/checkout@v4
       - name: Open this month's send reminder

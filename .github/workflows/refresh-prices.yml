@@ -27,6 +27,9 @@ concurrency:
 jobs:
   prices:
     runs-on: ubuntu-latest
+    timeout-minutes: 25       # one IDSC scrape plus history merge.
+                               # Without a bound a hung request runs for
+                               # GitHub's default six hours.
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
