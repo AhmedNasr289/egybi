@@ -376,18 +376,44 @@ def fetch_station_normals() -> dict | None:
     if not raw:
         return None
 
+    # The list is a delimited text file, but "which delimiter and which column"
+    # is a property of someone else's export, not a contract. So try the
+    # plausible separators and identify the columns by what they contain — the
+    # country cell is the one that says Egypt, the coordinates are the numeric
+    # pair, the id is the remaining integer. Guessing an index is how a working
+    # parser silently returns nothing after an upstream tweak.
     egypt = []
     for line in raw.splitlines():
-        parts = [p.strip() for p in line.split(";")]
-        if len(parts) < 5 or parts[0].lower() != "egypt":
+        if "egypt" not in line.lower():
             continue
-        try:
-            egypt.append({"name": parts[1], "cid": parts[2],
-                          "lat": float(parts[3]), "lon": float(parts[4])})
-        except ValueError:
-            continue
+        for sep in (";", "\t", "|", ","):
+            parts = [p.strip().strip('"') for p in line.split(sep)]
+            if len(parts) < 4:
+                continue
+            nums, ints, name = [], [], None
+            for i, p in enumerate(parts):
+                if p.lower() == "egypt":
+                    continue
+                if p.lstrip("-").replace(".", "", 1).isdigit():
+                    (ints if p.lstrip("-").isdigit() else nums).append((i, p))
+                elif name is None and p:
+                    name = p
+            # Latitude 22..32, longitude 24..37 for anywhere in Egypt. An id
+            # that happens to be an integer cannot masquerade as a coordinate.
+            coords = [(i, float(p)) for i, p in nums + ints]
+            lat = next((v for _, v in coords if 21.5 <= v <= 32.5), None)
+            lon = next((v for _, v in coords if 24.0 <= v <= 37.5 and v != lat), None)
+            ident = next((p for _, p in ints
+                          if float(p) != lat and float(p) != lon), None)
+            if name and lat is not None and lon is not None and ident:
+                egypt.append({"name": name, "cid": ident, "lat": lat, "lon": lon})
+                break
     if not egypt:
-        log("    WWIS city list carried no Egyptian stations — shape changed?")
+        # Print what actually came back. "Shape changed?" with no evidence is a
+        # dead end that costs another run to diagnose.
+        head = "\n".join(raw.splitlines()[:3])[:300].replace("\n", " ⏎ ")
+        log(f"    WWIS city list carried no Egyptian stations. "
+            f"{len(raw)} bytes, first lines: {head!r}")
         return None
     log(f"    WWIS lists {len(egypt)} Egyptian stations")
 
@@ -745,13 +771,208 @@ def build_terrain() -> bool:
     return True
 
 
+# ----------------------------------------------------------------- relief ---
+# A single elevation per site says Saint Catherine is 1586 m and leaves the
+# reader to imagine the rest. What actually explains Egypt is the SHAPE of the
+# ground: a valley two kilometres wide with desert on both sides, a plateau edge
+# the pyramids sit exactly on, a river that falls eighty metres in a thousand
+# kilometres. None of that is visible in a point.
+#
+# So this layer walks a line across the ground and samples the real elevation
+# model along it. Every point is a radar measurement of Egypt, not a rendering
+# of it, and the profile the page draws is the land's own cross-section.
+#
+# WHY THIS AND NOT A FLYOVER. The obvious version of this feature is a cinematic
+# drone shot. Every route to one fails a constraint already committed to here:
+# satellite and aerial imagery good enough to fly through is licensed, not open,
+# so deriving video from it breaks the licence chain at the source; a 3D render
+# from open elevation alone needs a headless GPU pipeline that GitHub Actions
+# does not have and would commit hundreds of megabytes of frames to a repo that
+# a static host serves; and generative video means a vendor account and an API
+# key at build time. What IS open, honest and cheap is the terrain itself. A
+# profile drawn from measured elevation tells a reader more about the Nile
+# valley than a flythrough of invented pixels, and every metre of it is citable.
+#
+# Sampling is along a great-circle path through named waypoints, because the
+# Nile does not run in a straight line and a straight-line "profile of the Nile"
+# would cut through the Eastern Desert and read as a mountain range.
+# The public instance caps a request at 100 locations and asks for no more than
+# one call a second, so a transect is sampled in chunks of 100 with a pause
+# between them. Long lines get more points, because 10 km between samples on the
+# Nile would miss the cataracts entirely.
+RELIEF_CHUNK = 100
+RELIEF_SAMPLES = 100          # default points per transect
+RELIEF_PAUSE = 1.2
+
+TRANSECTS = [
+    {
+        "key": "luxor",
+        "name": "Across the valley at Luxor",
+        "why": ("West to east at the latitude of the Theban necropolis: desert, "
+                "then the tomb valleys, then the floodplain, the river, Karnak, "
+                "and desert again. The strip of green Egypt actually lives on is "
+                "the flat part in the middle, and this is how wide it is."),
+        "path": [(25.7300, 32.5200), (25.7300, 32.7600)],
+        "n": 100,
+    },
+    {
+        "key": "giza",
+        "name": "The Giza plateau edge",
+        "why": ("East to west from the Nile floodplain, up the limestone scarp "
+                "the pyramids stand on, and out into the Western Desert. The "
+                "builders did not raise that ground; they chose it."),
+        "path": [(29.9773, 31.2200), (29.9773, 31.0700)],
+        "n": 100,
+    },
+    {
+        "key": "sinai",
+        "name": "From the Gulf of Aqaba up to Saint Catherine",
+        "why": ("Dahab is at sea level and Saint Catherine's Monastery sits "
+                "above 1500 m about eighty kilometres inland. This is the climb "
+                "between them, and it is the reason the monastery is cold."),
+        "path": [(28.5091, 34.5136), (28.5600, 34.1000), (28.5559, 33.9760)],
+        "n": 100,
+    },
+    {
+        "key": "qattara",
+        "name": "Siwa and the depressions",
+        "why": ("West of the Nile the desert is not flat. It falls below sea "
+                "level — Siwa sits in one hollow and the Qattara Depression, "
+                "the lowest land in Africa outside the Afar, is the next one "
+                "north."),
+        "path": [(29.2041, 25.5195), (29.6000, 26.5000), (29.9000, 27.4000)],
+        "n": 200,
+    },
+    {
+        "key": "nile",
+        "name": "The Nile, Cairo to Abu Simbel",
+        "why": ("Following the river rather than a straight line, because a "
+                "straight line from Cairo to Abu Simbel crosses the Eastern "
+                "Desert and would read as a mountain range. About a thousand "
+                "kilometres of river, and the ground barely rises."),
+        # Waypoints on the river itself, north to south.
+        "path": [(30.0500, 31.2300), (29.0700, 31.0900), (28.1000, 30.7500),
+                 (27.1800, 31.1800), (26.5600, 31.7000), (26.1600, 32.7200),
+                 (25.6900, 32.6400), (24.9800, 32.8700), (24.0900, 32.9000),
+                 (23.3000, 31.9000), (22.3400, 31.6300)],
+        "n": 200,
+    },
+]
+
+
+def interpolate(path: list, n: int) -> list:
+    """n points spread evenly along a polyline, by cumulative great-circle
+    distance so a long leg gets proportionally more samples than a short one."""
+    legs = [haversine_km(*path[i], *path[i + 1]) for i in range(len(path) - 1)]
+    total = sum(legs)
+    if total <= 0:
+        return [path[0]]
+    out = []
+    for i in range(n):
+        want = total * i / (n - 1) if n > 1 else 0.0
+        run = 0.0
+        for j, leg in enumerate(legs):
+            if run + leg >= want or j == len(legs) - 1:
+                f = 0.0 if leg <= 0 else (want - run) / leg
+                f = min(max(f, 0.0), 1.0)
+                a, b = path[j], path[j + 1]
+                out.append((a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f))
+                break
+            run += leg
+    return out
+
+
+def build_relief() -> bool:
+    log("Terrain cross-sections (NASA SRTM 30 m via Open-Topo-Data)…")
+    rows, missing = [], []
+
+    for t in TRANSECTS:
+        n = t.get("n", RELIEF_SAMPLES)
+        pts = interpolate(t["path"], n)
+
+        results, broke = [], False
+        for i in range(0, len(pts), RELIEF_CHUNK):
+            chunk = pts[i:i + RELIEF_CHUNK]
+            pairs = "|".join(f"{la:.5f},{lo:.5f}" for la, lo in chunk)
+            d = get(ELEV.format(pairs=pairs), tries=3, pause=8.0)
+            time.sleep(RELIEF_PAUSE)
+            if not d or d.get("status") != "OK" or not isinstance(d.get("results"), list):
+                broke = True
+                break
+            results.extend(d["results"])
+        if broke or len(results) != len(pts):
+            missing.append(t["name"])
+            log(f"  {t['name']}: no usable response")
+            continue
+
+        samples, run = [], 0.0
+        prev = None
+        for (la, lo), r in zip(pts, results):
+            e = r.get("elevation")
+            if prev is not None:
+                run += haversine_km(prev[0], prev[1], la, lo)
+            prev = (la, lo)
+            # A null elevation is unknown ground, not sea level. Ocean is a real
+            # 0 or below and SRTM reports it; None means the model has no value,
+            # and writing 0 there would draw a flat shelf that is not there.
+            samples.append({"km": round(run, 2), "lat": round(la, 5),
+                            "lon": round(lo, 5),
+                            "m": None if e is None else round(float(e), 1)})
+
+        known = [s["m"] for s in samples if s["m"] is not None]
+        if len(known) < n * 0.8:
+            missing.append(t["name"])
+            log(f"  {t['name']}: only {len(known)}/{len(samples)} points "
+                "returned an elevation — treated as a failed transect")
+            continue
+
+        rows.append({"key": t["key"], "name": t["name"], "why": t["why"],
+                     "length_km": round(samples[-1]["km"], 1),
+                     "min_m": min(known), "max_m": max(known),
+                     "samples": samples})
+        log(f"  {t['name']}: {len(known)} points over "
+            f"{samples[-1]['km']:.0f} km, {min(known):.0f} to {max(known):.0f} m")
+
+    # Every transect is hand-chosen and known-good, so a miss is the endpoint
+    # failing rather than the ground being absent. Publishing three of five
+    # would quietly drop a cross-section a reader had seen before.
+    if len(rows) < len(TRANSECTS):
+        log(f"  SKIP relief: {len(rows)}/{len(TRANSECTS)} transects resolved "
+            "— keeping last-good")
+        return False
+
+    write("visit-relief.json", {
+        "as_of": date.today().isoformat(),
+        "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "source": "NASA SRTM 30 m (SRTMGL1 v003) via Open-Topo-Data",
+        "source_url": "https://www.opentopodata.org/datasets/srtm/",
+        "license": "Public domain (NASA/USGS)",
+        "note": ("Ground elevation sampled at 100 to 200 points along each "
+                 "line, from NASA's Shuttle "
+                 "Radar Topography Mission 30 m model. Distances are along the "
+                 "path in kilometres; elevations are metres above sea level and "
+                 "can be negative, because parts of the Western Desert are. A "
+                 "null elevation means the model has no value at that point and "
+                 "is drawn as a gap, never as zero. SRTM measures the reflective "
+                 "surface, so buildings and dense vegetation sit slightly above "
+                 "bare ground. This is a measurement of the land, not a "
+                 "rendering of it, and no part of it is an artist's impression."),
+        "missing": missing,
+        "transects": rows,
+    })
+    return True
+
+
 def main() -> None:
-    log(f"EgyBI visitor layer — {len(SITES)} sites\n")
+    log(f"EgyBI visitor layer — {len(SITES)} sites, {len(TRANSECTS)} transects\n")
     ok_climate = build_climate()
     log("")
     ok_terrain = build_terrain()
+    log("")
+    ok_relief = build_relief()
 
-    failed = [n for n, ok in (("climate", ok_climate), ("terrain", ok_terrain)) if not ok]
+    failed = [n for n, ok in (("climate", ok_climate), ("terrain", ok_terrain),
+                              ("relief", ok_relief)) if not ok]
     if failed:
         # Same contract as every other pipeline here: layers that built are
         # written and committed, layers that did not keep their last-good file,
