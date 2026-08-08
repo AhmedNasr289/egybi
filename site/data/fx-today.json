@@ -8,8 +8,8 @@
   "note_en": "Market reference rates, not the Central Bank of Egypt official fixing.",
   "note_ar": "أسعار استرشادية من السوق، وليست السعر الرسمي للبنك المركزي المصري."
  },
- "fetched_at": "2026-08-07",
- "as_of": "2026-08-07",
+ "fetched_at": "2026-08-08",
+ "as_of": "2026-08-08",
  "base": "EGP",
  "count": 10,
  "rates": [
@@ -17,71 +17,71 @@
    "code": "USD",
    "name_ar": "دولار أمريكي",
    "name_en": "US Dollar",
-   "egp": 49.7884,
-   "change_pct": -0.03
+   "egp": 49.7934,
+   "change_pct": 0.01
   },
   {
    "code": "EUR",
    "name_ar": "يورو",
    "name_en": "Euro",
-   "egp": 57.4812,
-   "change_pct": -0.06
+   "egp": 57.4713,
+   "change_pct": -0.02
   },
   {
    "code": "GBP",
    "name_ar": "جنيه إسترليني",
    "name_en": "British Pound",
-   "egp": 67.0421,
-   "change_pct": -0.04
+   "egp": 67.0196,
+   "change_pct": -0.03
   },
   {
    "code": "SAR",
    "name_ar": "ريال سعودي",
    "name_en": "Saudi Riyal",
-   "egp": 13.277,
-   "change_pct": -0.04
+   "egp": 13.2783,
+   "change_pct": 0.01
   },
   {
    "code": "AED",
    "name_ar": "درهم إماراتي",
    "name_en": "UAE Dirham",
-   "egp": 13.5573,
-   "change_pct": -0.04
+   "egp": 13.5584,
+   "change_pct": 0.01
   },
   {
    "code": "KWD",
    "name_ar": "دينار كويتي",
    "name_en": "Kuwaiti Dinar",
-   "egp": 161.5509,
-   "change_pct": -0.21
+   "egp": 161.4726,
+   "change_pct": -0.05
   },
   {
    "code": "QAR",
    "name_ar": "ريال قطري",
    "name_en": "Qatari Riyal",
-   "egp": 13.6782,
-   "change_pct": -0.04
+   "egp": 13.6795,
+   "change_pct": 0.01
   },
   {
    "code": "CAD",
    "name_ar": "دولار كندي",
    "name_en": "Canadian Dollar",
-   "egp": 35.5454,
-   "change_pct": 0.15
+   "egp": 35.6494,
+   "change_pct": 0.29
   },
   {
    "code": "CNY",
    "name_ar": "يوان صيني",
    "name_en": "Chinese Yuan",
-   "egp": 7.3615,
-   "change_pct": -0.06
+   "egp": 7.3663,
+   "change_pct": 0.07
   },
   {
    "code": "TRY",
    "name_ar": "ليرة تركية",
    "name_en": "Turkish Lira",
-   "egp": 1.046,
-   "change_pct": -0.04
+   "egp": 1.0435,
+   "change_pct": -0.24
   }
  ]
 }
