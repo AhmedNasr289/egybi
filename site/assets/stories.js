@@ -25,6 +25,22 @@
   function put(id, txt) { var e = document.getElementById(id); if (e) e.textContent = txt; }
 
   function baseMap(id) {
+    /* Deliberately NOT routed through mapkit, and deliberately still inert.
+       Considered making these interactive with the rest and decided against it.
+
+       These maps sit inside a data story and illustrate the sentence beside
+       them — the prose already states every figure the shape encodes. Giving
+       them zoom buttons, a locator and tab stops would add a second focus stop
+       per paragraph for a reader who gains nothing by landing there, and would
+       invite panning away from the one view the sentence is about. An
+       illustration that can be moved off its subject is worse than one that
+       cannot.
+
+       So they keep dragging:false, keyboard:false and aria-hidden: nothing to
+       operate, nothing announced twice. The interactive maps on the Atlas,
+       Places, Streets, Explore and Visit are where a reader goes to explore;
+       this is where they go to read. If a story ever carries a figure the
+       prose does NOT state, this decision should be revisited for that map. */
     var m = L.map(id, { zoomControl: false, attributionControl: false,
                         scrollWheelZoom: false, dragging: false, keyboard: false });
     // The map repeats what the prose says, so it is hidden from screen readers

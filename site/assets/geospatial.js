@@ -107,6 +107,22 @@
   }
 
   /* ---------------------------------------------------------- detail panel */
+  /* Clicking or pressing Enter on a governorate flies to it and fills the
+     detail panel. The fly is what makes the map feel like a place rather than a
+     picture; under reduced motion mapkit lands on exactly the same view with no
+     travel, so the figures are equally reachable either way. */
+  function activate(lyr, feature) {
+    window.EGYBI.mapkit.flyTo(S.map, lyr, { padding: [40, 40] });
+    showDetail(feature.properties);
+    S.layer.eachLayer(function (l) {
+      var el = l.getElement && l.getElement();
+      if (el) {
+        el.classList.toggle('mk-selected', l === lyr);
+        el.setAttribute('aria-pressed', l === lyr ? 'true' : 'false');
+      }
+    });
+  }
+
   function showDetail(p) {
     var el = $('govDetail');
     if (!el) return;
@@ -265,16 +281,16 @@
     var feats = window.EGYBI_EGYPT_GEO.features;
     S.breaks = quantileBreaks(feats.map(function (f) { return f.properties.population; }), 6);
 
-    S.map = L.map('atlasMap', {
-      zoomControl: true, attributionControl: false, scrollWheelZoom: false,
-      doubleClickZoom: false, dragging: true,
-      // Leaflet binds arrow-key pan and +/- zoom only while the map has
-      // focus, so this does not hijack page scrolling — scrollWheelZoom
-      // above is what guards that. With keyboard:false the map could be
-      // panned with a mouse and by no other means.
-      keyboard: true,
-      fadeAnimation: !rm, zoomAnimation: !rm
+    // Built through the shared kit so the Atlas, the Street Report Card and
+    // the Explore choropleth cannot drift apart again: same buttons, same
+    // keyboard contract, same reduced-motion behaviour, all in one file.
+    S.map = window.EGYBI.mapkit.create('atlasMap', {
+      doubleClickZoom: false,
+      locator: window.EGYBI_EGYPT_GEO,
+      label: 'Interactive map of Egypt\u2019s 27 governorates. '
+           + 'Tab to a governorate and press Enter for its figures.'
     });
+    if (!S.map) return;
     // Dedicated panes so points ALWAYS sit above the polygons. Hovering a
     // governorate calls bringToFront() on it, which would otherwise raise the
     // polygon over the facility dots inside it and hide them mid-interaction.
@@ -299,11 +315,19 @@
             e.target.bringToFront();
           },
           mouseout: function (e) { S.layer.resetStyle(e.target); },
-          click: function () { showDetail(feature.properties); }
+          click: function () { activate(lyr, feature); }
+        });
+        // A choropleth only a mouse can read is half a map. Each governorate
+        // becomes a real tab stop announcing its name, and Enter runs the same
+        // handler the click does, so the two paths cannot drift apart.
+        lyr.once('add', function () {
+          window.EGYBI.mapkit.makeFocusable(lyr, feature.properties.name + ' governorate',
+            function () { activate(lyr, feature); });
         });
       }
     }).addTo(S.map);
-    S.map.fitBounds(S.layer.getBounds(), { padding: [6, 6] });
+    S.home = S.layer.getBounds();
+    S.map.fitBounds(S.home, { padding: [6, 6] });
     buildLegend('population', feats.map(function (f) { return f.properties.population; }));
     buildTable();
 

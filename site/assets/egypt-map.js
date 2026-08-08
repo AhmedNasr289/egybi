@@ -70,16 +70,13 @@
     window.EGYBI_MAP.metric = 'population';
     window.EGYBI_MAP.breaks = quantileBreaks(feats.map(function (f) { return f.properties.population; }), 6);
 
-    var map = L.map(mapId, {
-      zoomControl: true, attributionControl: false, scrollWheelZoom: false,
-      doubleClickZoom: false, dragging: true,
-      // Leaflet binds arrow-key pan and +/- zoom only while the map has
-      // focus, so this does not hijack page scrolling — scrollWheelZoom
-      // above is what guards that. With keyboard:false the map could be
-      // panned with a mouse and by no other means.
-      keyboard: true,
-      fadeAnimation: !rm, zoomAnimation: !rm
+    var map = window.EGYBI.mapkit.create(mapId, {
+      doubleClickZoom: false,
+      locator: window.EGYBI_EGYPT_GEO || null,
+      label: 'Choropleth map of Egypt’s 27 governorates coloured by the '
+           + 'selected metric. Tab to a governorate for its value.'
     });
+    if (!map) return;
     window.EGYBI_MAP.map = map;
 
     var layer = L.geoJSON(geo, {

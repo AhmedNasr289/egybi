@@ -6,7 +6,13 @@
    marked queryable, and from a script tag on the case study. */
 (function () {
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.EGYBI = { reduceMotion: reduceMotion };
+  // Merge, never replace. This was a bare assignment, so any module that had
+  // already registered on window.EGYBI was silently wiped the moment this file
+  // loaded — mapkit.js registered, this ran a tag later, and four maps failed
+  // with "Cannot read properties of undefined (reading 'create')". The
+  // namespace belongs to whoever gets there first.
+  window.EGYBI = window.EGYBI || {};
+  window.EGYBI.reduceMotion = reduceMotion;
 
   // ---- mobile nav toggle ----
   var toggle = document.querySelector('.nav-toggle');

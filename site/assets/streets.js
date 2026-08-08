@@ -99,16 +99,13 @@
   function initMap() {
     if (!window.L || !S.bounds || !$('streetsMap')) return;
     var rm = window.EGYBI ? window.EGYBI.reduceMotion : false;
-    S.map = L.map('streetsMap', {
-      zoomControl: true, attributionControl: false, scrollWheelZoom: false,
-      doubleClickZoom: false, dragging: true,
-      // Leaflet binds arrow-key pan and +/- zoom only while the map has
-      // focus, so this does not hijack page scrolling — scrollWheelZoom
-      // above is what guards that. With keyboard:false the map could be
-      // panned with a mouse and by no other means.
-      keyboard: true,
-      fadeAnimation: !rm, zoomAnimation: !rm
+    S.map = window.EGYBI.mapkit.create('streetsMap', {
+      doubleClickZoom: false,
+      locator: window.EGYBI_EGYPT_GEO || null,
+      label: 'Map of the measured Egyptian districts, shaded by the selected '
+           + 'street-network metric. Tab to a district and press Enter for its figures.'
     });
+    if (!S.map) return;
     paintMap();
     setTimeout(function () {
       S.map.invalidateSize();

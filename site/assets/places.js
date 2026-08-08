@@ -43,9 +43,12 @@
 
   function initMap() {
     if (!window.L || !window.EGYBI_EGYPT_GEO) return false;
-    S.map = L.map('placesMap', {
-      zoomControl: true, attributionControl: false, scrollWheelZoom: false
+    S.map = window.EGYBI.mapkit.create('placesMap', {
+      locator: window.EGYBI_EGYPT_GEO,
+      label: 'Map of Egypt showing mapped places. '
+           + 'Nearby places group into a cluster; open a cluster to see them.'
     });
+    if (!S.map) return false;
     // Points must sit above the governorate polygons even while one is hovered
     // and brought to front, which is what these panes are for.
     S.map.createPane('pts').style.zIndex = 640;
@@ -69,15 +72,55 @@
     if (S.layers[kind]) { S.map.removeLayer(S.layers[kind]); delete S.layers[kind]; }
     if (!S.active[kind]) return;
     var spec = KIND[kind];
-    var group = L.layerGroup([], { pane: 'pts' });
+    var rm = window.EGYBI.mapkit.reduceMotion();
+    /* 757 places, and in the Delta and around Cairo they land on top of one
+       another — at country zoom a dozen towns render as one dot and eleven of
+       them are unclickable. MarkerClusterGroup counts them instead and
+       spiderfies the last few apart when you reach them.
+
+       These are L.marker with a divIcon rather than circleMarker: clustering
+       needs a real marker to spiderfy, and a div lets the dot keep the same
+       size and colour it always had. The animations follow reduced motion —
+       with it off, a cluster still opens, it just does not spring. */
+    var group = (L.markerClusterGroup ? L.markerClusterGroup({
+      clusterPane: 'pts',
+      showCoverageOnHover: false,      // the hull flickers over a dense delta
+      spiderfyOnMaxZoom: true,
+      disableClusteringAtZoom: 9,      // by governorate zoom every place stands alone
+      maxClusterRadius: 44,
+      animate: !rm,
+      animateAddingMarkers: false,
+      iconCreateFunction: function (c) {
+        var n = c.getChildCount();
+        return L.divIcon({
+          html: '<div><span>' + n + '</span></div>',
+          className: 'marker-cluster marker-cluster-' + kind,
+          iconSize: L.point(n > 99 ? 42 : 34, n > 99 ? 42 : 34)
+        });
+      }
+    }) : L.layerGroup([], { pane: 'pts' }));
+
     S.data.places.filter(function (p) { return p.kind === kind; }).forEach(function (p) {
-      var m = L.circleMarker([p.lat, p.lon], {
-        pane: 'pts', radius: spec.r, color: '#FFFFFF', weight: 0.9,
-        fillColor: spec.colour, fillOpacity: 0.92
+      var d = spec.r * 2;
+      var m = L.marker([p.lat, p.lon], {
+        pane: 'pts',
+        keyboard: true,
+        title: p.name,
+        alt: p.name + (p.gov ? ', ' + p.gov : ''),
+        icon: L.divIcon({
+          className: 'pl-dot',
+          html: '<i style="width:' + d + 'px;height:' + d + 'px;background:' + spec.colour + '"></i>',
+          iconSize: [d, d], iconAnchor: [d / 2, d / 2]
+        })
       });
       m.bindTooltip('<strong>' + esc(p.name) + '</strong>' +
         (p.gov ? '<br>' + esc(p.gov) : ''), { direction: 'top' });
       m.on('click', function () { select(p); });
+      // L.marker is focusable, so Enter must do what a click does or the
+      // keyboard path stops at "I can reach it but not open it".
+      m.on('keypress', function (e) {
+        if (e.originalEvent && (e.originalEvent.key === 'Enter' || e.originalEvent.key === ' ')) select(p);
+      });
       group.addLayer(m);
     });
     group.addTo(S.map);

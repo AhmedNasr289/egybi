@@ -59,8 +59,13 @@
 
   /* ------------------------------------------------------------- the map */
   function baseMap(id) {
-    var m = L.map(id, { zoomControl: true, attributionControl: false,
-                        scrollWheelZoom: false });
+    var m = window.EGYBI.mapkit.create(id, {
+      locator: window.EGYBI_EGYPT_GEO || null,
+      label: id === 'reliefMap'
+        ? 'Map of Egypt showing where the selected elevation line runs'
+        : 'Map of Egypt showing the major visitor sites'
+    });
+    if (!m) return null;
     L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: function () {
         return { color: '#C7BCA1', weight: 1, fillColor: '#EFE7D4', fillOpacity: 1 };
