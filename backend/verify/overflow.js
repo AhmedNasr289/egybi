@@ -51,6 +51,10 @@ const TOL = 2;   // sub-pixel rounding and 1px borders are not overflow
         if (cs.position === 'fixed') return;              // overlays are their own thing
         const rc = el.getBoundingClientRect();
         if (rc.width === 0 || rc.height === 0) return;
+        // Absolutely positioned entirely off-screen to the left is the standard
+        // hidden-until-focused idiom, which is what the skip link uses. That is
+        // deliberately out of view, not content clipped away from a reader.
+        if (cs.position === 'absolute' && rc.right <= 0) return;
         const over = Math.max(rc.right - vw, -rc.left);
         if (over <= tol) return;
         if (scrollableAncestor(el)) return;               // reachable by scrolling its wrapper

@@ -26,7 +26,7 @@ def orphans():
         for a in re.findall(r'class=\\?["\']([^"\'\\]+)', t):
             used.update(a.split())
         used.update(re.findall(r"classList\.\w+\(\s*['\"]([\w-]+)", t))
-        used.update(re.findall(r"['\"]([a-z][\w-]{2,})['\"]", t))
+        used.update(re.findall(r"['\"]([a-z][\w-]+)['\"]", t))  # + not {2,}: ".ok" is two characters and was reported orphaned
     orph = sorted(c for c in defined - used
                   if not c.startswith(("aos", "leaflet", "cm-", "js-")))
     print(f"CSS classes defined: {len(defined)}   orphaned: {len(orph)}")
