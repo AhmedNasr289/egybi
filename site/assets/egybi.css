@@ -220,14 +220,11 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .sandbox textarea { width: 100%; min-height: 108px; border-radius: 10px; border: 1.5px solid var(--line-dark); background: #262019; color: var(--on-dark); padding: 14px 16px; font-size: 0.95rem; resize: vertical; line-height: 1.5; }
 .sandbox textarea:focus-visible { outline: 2px solid var(--gold); border-color: var(--gold); }
 .sandbox .row { display: flex; gap: 14px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
-.sql-status { font-size: 0.85rem; color: var(--on-dark-soft); }
-.sql-status.ready { color: #6bd6ab; } .sql-status.ready::before { content: "● "; }
-.sql-status.error { color: #e08a5c; }
 .result-wrap { margin-top: 20px; overflow-x: auto; background: #fff; border-radius: 10px; }
 .result-table { border-collapse: collapse; width: 100%; font-size: 0.88rem; color: var(--ink); }
 .result-table th, .result-table td { padding: 10px 15px; border-bottom: 1px solid var(--line-light); text-align: left; white-space: nowrap; }
 .result-table th { background: var(--papyrus); color: var(--blue-deep); font-family: 'Inter', sans-serif; }
-.sql-error, .sql-empty { color: var(--danger); padding: 15px; margin: 0; font-size: 0.9rem; }
+.sql-empty { color: var(--danger); padding: 15px; margin: 0; font-size: 0.9rem; }
 .hint { font-size: 0.82rem; color: var(--on-dark-soft); margin-top: 16px; }
 .hint a { color: var(--gold-bright); }
 
@@ -365,28 +362,14 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .hero-v2 .hero-lead {
   margin: 0 0 26px; color: #e9dfc8; font-size: clamp(0.98rem, 2.4vw, 1.12rem);
 }
-.hero-sandbox { margin: 0; }
-.hero-sandbox textarea { min-height: 104px; font-size: 0.9rem; }
-.hero-sandbox .result-wrap { max-height: 320px; overflow: auto; }
-.hero-hint { border-top: 1px solid var(--line-dark); padding-top: 13px; }
 .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
 
-/* The result table unrolls like papyrus rather than popping in. */
-.hero-sandbox .result-wrap:not(:empty) { animation: unroll 420ms cubic-bezier(.22,.9,.3,1); transform-origin: top center; }
-@keyframes unroll { from { opacity: 0; transform: scaleY(0.82) translateY(-6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .hero-sandbox .result-wrap:not(:empty) { animation: none; }
 }
 
 @media (max-width: 640px) {
   .surface-hero.hero-v2 { padding-top: 60px !important; padding-bottom: 48px !important; }
-  .hero-sandbox { padding: 18px 16px; border-radius: 14px; }
-  .hero-sandbox textarea { font-size: 13px; min-height: 96px; padding: 12px; }
-  .hero-sandbox label { font-size: 0.78rem; }
-  .hero-sandbox label code { font-size: 0.72rem; word-break: break-word; }
   .hero-cta .btn { width: 100%; text-align: center; }
-  .hero-sandbox .row .btn { width: 100%; }
-  .hero-sandbox .row { gap: 10px; }
 }
 
 /* Phone tuning: on a 390px screen the hero result table fell ~12px below the
@@ -398,11 +381,6 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
   .hero-v2 .hero-h1 { font-size: 1.72rem; line-height: 1.1; margin-bottom: 10px; }
   .hero-v2 .hero-lead { font-size: 0.95rem; line-height: 1.45; margin-bottom: 16px; }
   .hero-eyebrow { font-size: 0.68rem; margin-bottom: 10px; }
-  .hero-sandbox { padding: 14px 14px 16px; }
-  .hero-sandbox label { font-size: 0.74rem; margin-bottom: 7px; line-height: 1.35; }
-  .hero-sandbox textarea { min-height: 86px; font-size: 12.5px; padding: 10px 11px; }
-  .hero-sandbox .row { margin-top: 11px; }
-  .hero-sandbox .result-wrap { margin-top: 13px; max-height: 260px; }
 }
 
 /* ---------- header: three zones (brand | links | actions) ------------------
@@ -580,7 +558,6 @@ body { overflow-x: clip; }
   .papyrus-letter.sealed .pl-seal { animation: none; }
 }
 
-
 /* ---------- wayfinding: purpose line, on-this-page sub-nav, next-steps -------
    The site-wide fix for "I feel lost". Three reusable pieces + one global
    anchor fix, so every page gains the same orientation aids rather than one
@@ -651,7 +628,6 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
    ~23 identical bands. */
 .cluster-head h2 { font-size: clamp(1.9rem, 3.6vw, 2.6rem); }
 .cluster-head .lead { max-width: 760px; }
-
 
 /* ---------- accounts & the auth dialog --------------------------------------
    Moved here from an injected <style> in auth.js so the whole design system
