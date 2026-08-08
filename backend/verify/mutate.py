@@ -2,10 +2,12 @@
 
 A check that has never been observed failing is not evidence. For each checker,
 this injects one specific defect that checker exists to catch, runs it, asserts
-it reports the defect, reverts via git, and asserts it goes quiet again.
+it reports the defect, reverts it, and asserts it goes quiet again.
 
-Reverting through `git checkout --` rather than by re-editing means a mutation
-cannot survive a crash: the file goes back to exactly what is committed.
+Reverting restores the exact bytes read before the mutation, and verifies the
+restore landed. It used `git checkout --`, which silently does nothing for an
+untracked file — so the first mutation of a brand-new file left the defect in
+the working tree and reported only that the checker had failed to catch it.
 """
 import json
 import os
@@ -30,9 +32,35 @@ def sh(cmd, timeout=900):
     return r.returncode, (r.stdout or "") + (r.stderr or "")
 
 
-def revert(*paths):
-    for p in paths:
-        subprocess.run(["git", "checkout", "--", p], check=False)
+def snapshot(paths):
+    """Read the exact bytes before mutating.
+
+    revert() used `git checkout --`, which silently does NOTHING for a file git
+    does not track. The first mutation aimed at a brand-new, untracked
+    site/assets/mapkit.js therefore stripped its aria-labels and its keyboard
+    focus and left them stripped: the harness reported FAILS TO CATCH, moved on,
+    and the defect sat in the working tree waiting to be committed. A mutation
+    that cannot be applied is coverage lost in silence; a mutation that cannot
+    be REVERTED is a defect shipped in silence, which is worse.
+
+    Bytes in, bytes out — works the same whether git has heard of the file."""
+    return {p: (Path(p).read_bytes() if Path(p).exists() else None) for p in paths}
+
+
+def revert(snap):
+    for p, data in snap.items():
+        if data is None:
+            if Path(p).exists():
+                Path(p).unlink()
+        else:
+            Path(p).write_bytes(data)
+    # Never take the restore on trust — that assumption is what let a stripped
+    # file through in the first place.
+    for p, data in snap.items():
+        now = Path(p).read_bytes() if Path(p).exists() else None
+        if now != data:
+            raise SystemExit("REVERT FAILED for %s — stop and restore it by hand "
+                             "before committing anything." % p)
 
 
 def edit(path, old, new):
@@ -48,6 +76,8 @@ def case(name, tool, files, mutate, detects, cmd, timeout=900):
     if WANT and WANT not in name.lower():
         skipped += 1
         return
+    # 0. exact bytes, so the revert cannot depend on git knowing the file
+    snap = snapshot(files)
     # 1. quiet before
     rc0, out0 = sh(cmd, timeout)
     before_clean = not detects(out0)
@@ -57,13 +87,13 @@ def case(name, tool, files, mutate, detects, cmd, timeout=900):
     except Exception as e:  # noqa: BLE001
         results.append((name, tool, "COULD NOT MUTATE", str(e)[:70]))
         print(f"  {'COULD NOT MUTATE':16} {name}  ({str(e)[:60]})")
-        revert(*files)
+        revert(snap)
         return
     # 3. does it catch it?
     rc1, out1 = sh(cmd, timeout)
     caught = detects(out1)
     # 4. revert
-    revert(*files)
+    revert(snap)
     # 5. quiet after
     rc2, out2 = sh(cmd, timeout)
     after_clean = not detects(out2)
@@ -215,6 +245,30 @@ def date_field_not_a_date():
 case("date field holding a boolean", "static-audit.py", ["site/data/visit-terrain.json"],
      date_field_not_a_date,
      lambda o: "data files with no date on them" in o, PY_AUDIT)
+
+MAPINT = ("ONLY=geospatial.html FAST=1 node " + str(HERE) + "/map-interaction.js")
+
+# ---- 20. a map that calls a provider the moment you touch it ---------------
+# The whole point of map-interaction.js: a tile provider is contacted on pan and
+# zoom, never on load, so a checker that only loads the page cannot see it.
+case("map fetches off-origin on interaction", "map-interaction.js",
+     ["site/assets/geospatial.js"],
+     lambda: edit("site/assets/geospatial.js", "  function showDetail(p) {",
+                  "  function showDetail(p) {\n"
+                  "    fetch('https://tile.example.com/0/0/0.png').catch(function () {});"),
+     lambda o: "OFF-ORIGIN REQUEST during interaction" in o, MAPINT)
+
+# ---- 21. a map control that a screen reader cannot name --------------------
+case("map control loses its accessible name", "map-interaction.js",
+     ["site/assets/mapkit.js"],
+     lambda: edit("site/assets/mapkit.js", "    b.setAttribute('aria-label', label);", ""),
+     lambda o: "map control with no accessible name" in o, MAPINT)
+
+# ---- 22. a choropleth that only a mouse can read --------------------------
+case("governorates stop being keyboard-focusable", "map-interaction.js",
+     ["site/assets/mapkit.js"],
+     lambda: edit("site/assets/mapkit.js", "    el.setAttribute('tabindex', '0');", ""),
+     lambda o: "governorates not keyboard-focusable" in o, MAPINT)
 
 
 # ---- 17. page sweep: a nav container that renders with nothing in it --------
