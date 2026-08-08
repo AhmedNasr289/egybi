@@ -126,8 +126,15 @@ def load_js():
         sys.exit('node failed: ' + out.stderr[:400])
     return json.loads(out.stdout)
 
-def chrome():
-    """Lift the real nav + footer out of blog.html and fix relative paths for /subdir/ pages."""
+def chrome(prefix='../'):
+    """Lift the real nav + footer out of blog.html and re-root their relative paths.
+
+    prefix='../' for pages one directory down, which is every generated page.
+    prefix='/'  for a page that can be served from ANY depth — the 404, which
+    Apache renders for /nonsense.html and /practice/nonsense.html alike. A
+    ../-prefixed asset would 404 in its own right from the wrong depth, giving
+    an error page with no stylesheet.
+    """
     src = io.open(os.path.join(SITE, 'blog.html'), encoding='utf-8').read()
     head = src[src.index('<header'):src.index('</header>') + len('</header>')]
     foot = src[src.index('<footer'):src.index('</footer>') + len('</footer>')]
@@ -136,14 +143,15 @@ def chrome():
         # depth, and prefixing ../ to it produces a link that works from no
         # depth at all. Same reason the site-root price link had to become
         # root-relative in the first place.
-        frag = re.sub(r'href="(?!https?:|#|/|\.\./|mailto:)', 'href="../', frag)
-        frag = re.sub(r'src="(?!https?:|/|\.\./|data:)', 'src="../', frag)
+        frag = re.sub(r'href="(?!https?:|#|/|\.\./|mailto:)', 'href="' + prefix, frag)
+        frag = re.sub(r'src="(?!https?:|/|\.\./|data:)', 'src="' + prefix, frag)
         return frag
     return up(head), up(foot)
 
 NAV, FOOT = chrome()
 
-def page(title, desc, canonical, body, ld=None, extra_head=''):
+def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
+         nav=None, foot=None):
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -171,21 +179,21 @@ def page(title, desc, canonical, body, ld=None, extra_head=''):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="../assets/egybi.css?v=16" rel="stylesheet">
-<script src="../assets/ads-config.js"></script>
+<link href="{prefix}assets/egybi.css?v=16" rel="stylesheet">
+<script src="{prefix}assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
 </head>
 <body>
-{NAV}
+{nav if nav is not None else NAV}
 {body}
-{FOOT}
-<script src="../assets/egybi.js"></script>
-<script src="../assets/query.js?v=1"></script>
-<script src="../assets/glyphs.js?v=3"></script>
-<script src="../assets/wayfinding.js?v=1"></script>
-<script src="../assets/ads.js"></script>
-<script src="../assets/analytics.js"></script>
+{foot if foot is not None else FOOT}
+<script src="{prefix}assets/egybi.js"></script>
+<script src="{prefix}assets/query.js?v=1"></script>
+<script src="{prefix}assets/glyphs.js?v=3"></script>
+<script src="{prefix}assets/wayfinding.js?v=1"></script>
+<script src="{prefix}assets/ads.js"></script>
+<script src="{prefix}assets/analytics.js"></script>
 </body>
 </html>
 """
@@ -414,6 +422,73 @@ def build_link_indexes(chs, posts):
     return n1, n2
 
 
+def build_404():
+    """The page Apache serves for a URL that is not here.
+
+    Generated rather than hand-written for the same reason the retirement
+    notices are: it carries the shared nav and footer, so it cannot drift out of
+    sync with them the next time the header changes.
+
+    Every path in it is ROOT-relative. Apache renders this same file for
+    /nonsense.html and for /practice/nonsense.html, so a ../-prefixed
+    stylesheet would itself 404 from the wrong depth and the error page would
+    arrive unstyled — an error about an error.
+
+    No canonical and no sitemap entry: this is a status, not a document, and
+    telling a crawler to index it would be inviting it to.
+    """
+    nav, foot = chrome('/')
+    body = """<section class="surface-hero" style="padding:90px 0 70px;">
+  <div class="wrap" style="max-width:760px;">
+    <p class="hero-eyebrow"><span data-glyph="reed"></span> 404</p>
+    <h1>That page is not here.</h1>
+    <p class="lead" style="max-width:62ch;">Either the address has a typo in it, or
+    something that used to live at this URL has moved. Both happen; neither is your
+    fault. Here is where the country actually is.</p>
+    <div class="cta-row" style="margin-top:30px;">
+      <a href="/index.html" class="btn btn-primary">Back to the start &rarr;</a>
+      <a href="/explore.html" class="btn btn-ghost">Egypt in data &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<section class="surface-light" id="where" data-nav="Where to go">
+  <div class="wrap" style="max-width:900px;">
+    <div class="kicker"><span data-glyph="scarab"></span>Six ways in</div>
+    <h2>Try one of these instead.</h2>
+    <div class="cards" style="margin-top:22px;">
+      <a class="card card-link" href="/visit.html"><h3>Plan a visit</h3>
+        <p>Where the major sites are, how high they sit, and what a normal afternoon
+        in each month actually reaches.</p></a>
+      <a class="card card-link" href="/geospatial.html"><h3>The Atlas</h3>
+        <p>Governorates, heritage sites, hospitals and schools on a tile-free map.</p></a>
+      <a class="card card-link" href="/places.html"><h3>Places</h3>
+        <p>Every place OpenStreetMap has mapped in Egypt, searchable.</p></a>
+      <a class="card card-link" href="/stories.html"><h3>Data stories</h3>
+        <p>The Papyrus &mdash; one figure, followed properly.</p></a>
+      <a class="card card-link" href="/streets.html"><h3>Street report card</h3>
+        <p>Ten districts measured on how their street networks actually connect.</p></a>
+      <a class="card card-link" href="/prices.html"><h3>Daily prices</h3>
+        <p>What food costs in Egypt this week, from the official series.</p></a>
+    </div>
+    <p class="chart-cap" style="margin-top:24px;">If you followed a link from
+    somewhere on this site and landed here, that is a bug on our side rather than
+    a typo on yours &mdash; <a href="mailto:hello@egybi.com">tell us</a> and it gets
+    fixed.</p>
+  </div>
+</section>"""
+    html_out = page('Page not found — EgyBI',
+                    'That page is not here. Ways back into EgyBI: the Atlas, Places, '
+                    'the data stories, the street report card and the daily prices.',
+                    SITE_URL + '/404.html', body, prefix='/', nav=nav, foot=foot)
+    # A 404 must not advertise itself as canonical content.
+    html_out = re.sub(r'<link rel="canonical"[^>]*>\n', '', html_out)
+    html_out = html_out.replace('<meta name="description"',
+                                '<meta name="robots" content="noindex">\n<meta name="description"')
+    io.open(os.path.join(SITE, '404.html'), 'w', encoding='utf-8', newline='\n').write(html_out)
+    return True
+
+
 def main():
     data = load_js()
     ch, posts, docs = data['c'], data['p'], data.get('docs', {})
@@ -422,6 +497,7 @@ def main():
     build_link_indexes(ch, posts)
     total = build_sitemap(pu)
     nfeed = build_feed(posts)
+    build_404()
     # Report the sector split so a mis-mapped sector is visible in the log
     # rather than discovered by a reader landing on the wrong section.
     counts = {}
@@ -434,6 +510,7 @@ def main():
     print(f"post pages      : {len(pu)}")
     print(f"sitemap URLs    : {total}")
     print(f"RSS feed items  : {nfeed}")
+    print("404 page        : written (root-relative, noindex)")
 
 if __name__ == '__main__':
     main()
