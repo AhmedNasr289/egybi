@@ -1,15 +1,15 @@
 /* Classes present in the live DOM with no CSS rule behind them. Only the browser
    can answer this: half the markup is painted by renderers after load, and grep
    cannot resolve a selector list, a media query or a nested rule. */
-const { chromium } = require('/tmp/claude-0/-home-user-egybi/88e1f418-6292-5215-8c2f-e114945c6b86/scratchpad/node_modules/playwright-core');
+const { chromium, executablePath, BASE, LOGDIR } = require('./env');
 const fs = require('fs');
-const B = 'http://localhost:8793';
+const B = BASE;
 const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
   .concat(['practice/your-first-select.html', 'papyrus/nineteen-million.html']);
 const IGNORE = /^(aos|leaflet|cm-|chartjs|swiper|gsl)/;
 
 (async () => {
-  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+  const b = await chromium.launch({ executablePath });
   const p = await b.newPage({ viewport: { width: 1280, height: 1000 } });
   await p.route('**/*', r => { const u = r.request().url();
     return (u.startsWith(B) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort(); });

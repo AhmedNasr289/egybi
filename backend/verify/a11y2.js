@@ -2,14 +2,14 @@
    plus one generated challenge and one generated story: landmark structure,
    heading order, focus visibility on every interactive control, tab order, the
    mobile nav at 375px, and keyboard operability of the map and slider. */
-const { chromium } = require('/tmp/claude-0/-home-user-egybi/88e1f418-6292-5215-8c2f-e114945c6b86/scratchpad/node_modules/playwright-core');
+const { chromium, executablePath, BASE, LOGDIR } = require('./env');
 const fs = require('fs');
-const B = 'http://localhost:8793';
+const B = BASE;
 const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
   .concat(['practice/your-first-select.html', 'papyrus/nineteen-million.html']);
 
 (async () => {
-  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+  const b = await chromium.launch({ executablePath });
   const p = await b.newPage({ viewport: { width: 1280, height: 1000 } });
   await p.route('**/*', r => { const u = r.request().url();
     return (u.startsWith(B) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort(); });

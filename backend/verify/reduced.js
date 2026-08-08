@@ -1,15 +1,15 @@
 /* "Reduced motion means no animation, never reduced functionality."
    Load each page twice — normal and reduced — and compare what a reader ends
    up with. Content must match; animation must be gone. */
-const { chromium } = require('/tmp/claude-0/-home-user-egybi/88e1f418-6292-5215-8c2f-e114945c6b86/scratchpad/node_modules/playwright-core');
-const B = 'http://localhost:8793';
+const { chromium, executablePath, BASE, LOGDIR } = require('./env');
+const B = BASE;
 const PAGES = ['404.html','index.html','visit.html','explore.html','geospatial.html','places.html',
                'stories.html','streets.html','case.html','prices.html','stocks.html',
                'blog.html','about.html','community.html','privacy.html',
                'practice/your-first-select.html','papyrus/nineteen-million.html'];
 
 (async () => {
-  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+  const b = await chromium.launch({ executablePath });
   const measure = async (ctx, path) => {
     const p = await ctx.newPage({ viewport: { width: 1280, height: 950 } });
     await p.route('**/*', r => { const u = r.request().url();

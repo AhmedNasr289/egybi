@@ -1,9 +1,8 @@
 /* Drive every page in site/ — all 16 top-level, all 123 challenges, all 12
    stories. Reports only what went wrong, plus a per-group tally. */
-const { chromium } = require('/tmp/claude-0/-home-user-egybi/88e1f418-6292-5215-8c2f-e114945c6b86/scratchpad/node_modules/playwright-core');
+const { chromium, executablePath, BASE, LOGDIR } = require('./env');
 const fs = require('fs');
-const BASE = 'http://localhost:8793';
-const LOG = '/tmp/claude-0/-home-user-egybi/88e1f418-6292-5215-8c2f-e114945c6b86/scratchpad/pages.log';
+const LOG = require('path').join(LOGDIR, 'pages.log');
 fs.writeFileSync(LOG, '');
 const ALLOWED_EXTERNAL = /fonts\.g|googlesyndication|pagead|tradingview/;
 
@@ -17,7 +16,7 @@ const ALL = [...top, ...prac, ...pap];
 const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
 
 (async () => {
-  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+  const b = await chromium.launch({ executablePath });
   const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
   const bad = [];
   let n = 0, mapPages = 0;

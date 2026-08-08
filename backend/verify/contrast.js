@@ -1,14 +1,14 @@
 /* WCAG contrast measured against the background actually painted behind each
    text node, walking up until an opaque ancestor is found. A token that passes
    against the palette can still fail on the surface it lands on. */
-const { chromium } = require('/tmp/claude-0/-home-user-egybi/88e1f418-6292-5215-8c2f-e114945c6b86/scratchpad/node_modules/playwright-core');
+const { chromium, executablePath, BASE, LOGDIR } = require('./env');
 const fs = require('fs');
-const B = 'http://localhost:8793';
+const B = BASE;
 const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
   .concat(['practice/your-first-select.html', 'papyrus/nineteen-million.html']);
 
 (async () => {
-  const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+  const b = await chromium.launch({ executablePath });
   const p = await b.newPage({ viewport: { width: 1280, height: 1000 } });
   await p.route('**/*', r => { const u = r.request().url();
     return (u.startsWith(B) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort(); });

@@ -14,8 +14,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-SCRATCH = "/tmp/claude-0/-home-user-egybi/88e1f418-6292-5215-8c2f-e114945c6b86/scratchpad"
+# The checkers live next to this file. Pointing at one container's scratch
+# directory meant the committed harness only ever ran in the sandbox that wrote
+# it; resolve siblings relative to this file so it runs from any checkout.
+HERE = Path(__file__).resolve().parent
+# CASE=<substring> re-runs a single case instead of all thirteen — a repaired
+# case needs re-proving, and re-proving it should not cost the whole suite.
+WANT = os.environ.get("CASE", "").lower()
 results = []
+skipped = 0
 
 
 def sh(cmd, timeout=900):
@@ -37,6 +44,10 @@ def edit(path, old, new):
 
 def case(name, tool, files, mutate, detects, cmd, timeout=900):
     """detects(output) -> bool : did the tool report THIS defect?"""
+    global skipped
+    if WANT and WANT not in name.lower():
+        skipped += 1
+        return
     # 1. quiet before
     rc0, out0 = sh(cmd, timeout)
     before_clean = not detects(out0)
@@ -64,8 +75,8 @@ def case(name, tool, files, mutate, detects, cmd, timeout=900):
     print(f"  {verdict:16} {name}")
 
 
-PY_AUDIT = f"python3 {SCRATCH}/static-audit.py"
-SWEEP1 = "ONLY={p} node " + SCRATCH + "/all-pages.js"
+PY_AUDIT = f"python3 {HERE}/static-audit.py"
+SWEEP1 = "ONLY={p} node " + str(HERE) + "/all-pages.js"
 
 print("mutation tests — each injects a defect the checker exists to catch\n")
 
@@ -137,7 +148,7 @@ case("console error on a page", "all-pages.js", ["site/places.html"],
 case("content clipped off-screen at 375px", "overflow.js", ["site/places.html"],
      lambda: edit("site/places.html", "</body>",
                   '<section><div style="width:900px;height:8px">wide</div></section></body>'),
-     lambda o: "clipped off-screen: 1" in o, f"node {SCRATCH}/overflow.js")
+     lambda o: "clipped off-screen: 1" in o, f"node {HERE}/overflow.js")
 
 # ---- 9. page sweep: a sub-nav chip pointing at a section that is gone -------
 case("section[data-nav] with no id", "all-pages.js", ["site/visit.html"],
@@ -155,14 +166,14 @@ case("off-origin request", "all-pages.js", ["site/places.html"],
 case("class in DOM with no CSS rule", "cssom.js", ["site/places.html"],
      lambda: edit("site/places.html", "</body>",
                   '<p class="zz-no-rule-here">x</p></body>'),
-     lambda o: "zz-no-rule-here" in o, f"node {SCRATCH}/cssom.js"),
+     lambda o: "zz-no-rule-here" in o, f"node {HERE}/cssom.js")
 
 # ---- 12. contrast: text below AA against its painted ground ----------------
 case("sub-AA contrast", "contrast.js", ["site/places.html"],
      lambda: edit("site/places.html", "</body>",
                   '<p style="color:#d8d2c4;background:#f6eedc;font-size:14px">'
                   'deliberately faint</p></body>'),
-     lambda o: "deliberately faint" in o, f"node {SCRATCH}/contrast.js"),
+     lambda o: "deliberately faint" in o, f"node {HERE}/contrast.js")
 
 # ---- 13. reduced motion: content hidden when animation is suppressed -------
 case("content hidden under reduced motion", "reduced.js", ["site/assets/egybi.css"],
@@ -170,9 +181,12 @@ case("content hidden under reduced motion", "reduced.js", ["site/assets/egybi.cs
                   "  [data-aos] { opacity: 1 !important; transform: none !important; }",
                   "  /* removed by mutation test */"),
      lambda o: re.search(r"lost content or hid a reveal: [1-9]", o) is not None,
-     f"node {SCRATCH}/reduced.js"),
+     f"node {HERE}/reduced.js")
 
 print()
+if not results:
+    print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")
+    sys.exit(2)
 w = max(len(r[0]) for r in results)
 print(f"{'defect injected':<{w}}  {'checker':<18} verdict")
 print("-" * (w + 60))
@@ -181,6 +195,8 @@ for name, tool, verdict, detail in results:
 
 bad = [r for r in results if r[2] != "PASS"]
 print(f"\n{len(results) - len(bad)}/{len(results)} checkers demonstrably catch what they claim to")
+if skipped:
+    print(f"({skipped} case(s) not run — CASE={WANT!r} filtered them out)")
 if bad:
     print("NOT PROVEN:")
     for r in bad:
