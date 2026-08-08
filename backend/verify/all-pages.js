@@ -18,21 +18,41 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
 (async () => {
   const b = await chromium.launch({ executablePath });
   const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
+
+  // THIRD-PARTY REQUESTS ARE RECORDED AND THEN ABORTED, never allowed to run.
+  //
+  // They used to be allowed. On a machine whose egress is filtered — this
+  // sandbox, and any CI runner behind a proxy — the font and ad requests do not
+  // fail fast, they hang until something upstream gives up, and every page load
+  // took about 13 seconds against a 15-second timeout. Two of 153 pages crossed
+  // it under load and were reported as broken. They load clean in isolation:
+  // the tool was measuring the network it was running on rather than the site.
+  //
+  // Aborting fixes that without weakening the check, because the request is
+  // pushed onto `ext` BEFORE it is aborted — the off-origin measurement, which
+  // is the whole point of this file, is taken from the attempt rather than from
+  // the response. Nothing here needs a third party's bytes to be judged.
+  let ext = [];
+  await p.route('**/*', route => {
+    const u = route.request().url();
+    if (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
+    if (!ALLOWED_EXTERNAL.test(u)) { try { ext.push(new URL(u).host); } catch (e) { ext.push(u.slice(0, 40)); } }
+    return route.abort();
+  });
   const bad = [], noSiteNav = [];
   let n = 0, mapPages = 0;
   const t0 = Date.now();
 
   for (const path of PAGES) {
-    const errs = [], f404 = [], ext = [];
+    const errs = [], f404 = [];
+    ext = [];                      // filled by the route handler above, per page
     const onErr = e => errs.push(String(e).slice(0, 120));
     const onResp = r => { if (r.status() >= 400) f404.push(r.status() + ' ' + r.url().split('/').pop()); };
-    const onReq = r => { const u = r.url();
-      if (!u.startsWith(BASE) && !u.startsWith('data:') && !ALLOWED_EXTERNAL.test(u)) ext.push(new URL(u).host); };
-    p.on('pageerror', onErr); p.on('response', onResp); p.on('request', onReq);
+    p.on('pageerror', onErr); p.on('response', onResp);
 
     let resp = null;
     try { resp = await p.goto(`${BASE}/${path}`, { waitUntil: 'load', timeout: 15000 }); }
-    catch (e) { bad.push(path + '  ->  goto failed: ' + String(e).slice(0, 80)); p.off('pageerror', onErr); p.off('response', onResp); p.off('request', onReq); n++; continue; }
+    catch (e) { bad.push(path + '  ->  goto failed: ' + String(e).slice(0, 80)); p.off('pageerror', onErr); p.off('response', onResp); n++; continue; }
     await p.waitForTimeout(250);
     const m = await p.evaluate(() => ({
       stuck: (document.body.innerText.match(/Loading[…\.]|Loading the/g) || []).length,
@@ -122,7 +142,7 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
     if (m.navMountEmpty) problems.push('on-this-page mount with no sections to list');
     if (problems.length) bad.push(path + '  ->  ' + problems.join(' | '));
 
-    p.off('pageerror', onErr); p.off('response', onResp); p.off('request', onReq);
+    p.off('pageerror', onErr); p.off('response', onResp);
     fs.appendFileSync(LOG, `${++n}/${PAGES.length} ${path}${problems.length ? '  <<< ' + problems.join(' | ') : ''}\n`);
   }
 
