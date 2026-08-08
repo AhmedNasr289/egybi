@@ -1,10 +1,1700 @@
 {
- "as_of": "2026-08-07",
- "fetched_at": "2026-08-07T23:03:11+00:00",
+ "as_of": "2026-08-08",
+ "fetched_at": "2026-08-08T09:47:56+00:00",
  "source": "NASA POWER climatology (MERRA-2 reanalysis)",
  "source_url": "https://power.larc.nasa.gov/",
  "license": "Public domain (US Government) — cite NASA POWER",
- "note": "Long-term monthly means from NASA's POWER climatology API, which derives them from the MERRA-2 reanalysis. These are MODELLED long-run averages, not weather-station observations and not a forecast: they answer what a month is typically like at this spot, and say nothing about any particular day. Temperatures are °C; rainfall is the mean millimetres per day for that month.",
+ "note": "Long-term monthly means from NASA's POWER climatology API, which derives them from the MERRA-2 reanalysis. These are MODELLED long-run averages, not weather-station observations and not a forecast: they answer what a month is typically like at this spot, and say nothing about any particular day.\n\nThree temperature figures per month, and they answer three different questions. t_daily_max and t_daily_min are the CLIMATOLOGICAL MEAN DAILY high and low, averaged over 2001–2020 from POWER's daily series — what a normal afternoon and night actually reach, and the figures to quote to a visitor. t_mean is the long-run mean across the whole day. t_record_max and t_record_min are the EXTREMES across the entire record, the hottest and coldest hours ever measured in that month; they answer 'how bad can it get' and are wrong for 'what is a normal day like'. Temperatures are °C; rainfall is the mean millimetres per day for that month.",
+ "normal_window": "2001-2020",
+ "validation": {
+  "method": "Every computed mean daily maximum is compared against the nearest published station normal within 120 km. The build is refused if the mean signed bias exceeds ±2.0 °C, or if fewer than 33% of site-months land within 2 °C. Those two gates test for a wrongly-read variable, which shifts every cell the same way; they are not a claim that the model equals the station.",
+  "reference_source": "World Meteorological Organization — World Weather Information Service; normals supplied by the Egyptian Meteorological Authority",
+  "reference_source_url": "https://worldweather.wmo.int/",
+  "reference_provenance": "fetched live",
+  "known_divergence": "MERRA-2, which POWER derives these from, resolves about half a degree of latitude and carries no irrigation. Over the watered Delta in summer it therefore runs warmer than a coastal or city station — the residuals below are largest exactly there, and smallest over the desert reaches where the model's dry land matches the real one.",
+  "pairs": [
+   {
+    "site": "giza",
+    "month": 1,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 19.0,
+    "station_c": 19.0,
+    "delta_c": 0.0
+   },
+   {
+    "site": "giza",
+    "month": 2,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 21.2,
+    "station_c": 20.3,
+    "delta_c": 0.9
+   },
+   {
+    "site": "giza",
+    "month": 3,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 25.5,
+    "station_c": 23.4,
+    "delta_c": 2.1
+   },
+   {
+    "site": "giza",
+    "month": 4,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 29.6,
+    "station_c": 28.2,
+    "delta_c": 1.4
+   },
+   {
+    "site": "giza",
+    "month": 5,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 34.1,
+    "station_c": 31.9,
+    "delta_c": 2.2
+   },
+   {
+    "site": "giza",
+    "month": 6,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 37.3,
+    "station_c": 34.6,
+    "delta_c": 2.7
+   },
+   {
+    "site": "giza",
+    "month": 7,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 38.6,
+    "station_c": 34.8,
+    "delta_c": 3.8
+   },
+   {
+    "site": "giza",
+    "month": 8,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 38.4,
+    "station_c": 34.5,
+    "delta_c": 3.9
+   },
+   {
+    "site": "giza",
+    "month": 9,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 35.8,
+    "station_c": 33.1,
+    "delta_c": 2.7
+   },
+   {
+    "site": "giza",
+    "month": 10,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 31.2,
+    "station_c": 29.7,
+    "delta_c": 1.5
+   },
+   {
+    "site": "giza",
+    "month": 11,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 25.7,
+    "station_c": 24.7,
+    "delta_c": 1.0
+   },
+   {
+    "site": "giza",
+    "month": 12,
+    "station": "Cairo",
+    "station_km": 18.7,
+    "period": "",
+    "model_c": 20.8,
+    "station_c": 20.4,
+    "delta_c": 0.4
+   },
+   {
+    "site": "saqqara",
+    "month": 1,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 19.0,
+    "station_c": 19.0,
+    "delta_c": 0.0
+   },
+   {
+    "site": "saqqara",
+    "month": 2,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 21.2,
+    "station_c": 20.3,
+    "delta_c": 0.9
+   },
+   {
+    "site": "saqqara",
+    "month": 3,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 25.5,
+    "station_c": 23.4,
+    "delta_c": 2.1
+   },
+   {
+    "site": "saqqara",
+    "month": 4,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 29.6,
+    "station_c": 28.2,
+    "delta_c": 1.4
+   },
+   {
+    "site": "saqqara",
+    "month": 5,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 34.1,
+    "station_c": 31.9,
+    "delta_c": 2.2
+   },
+   {
+    "site": "saqqara",
+    "month": 6,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 37.3,
+    "station_c": 34.6,
+    "delta_c": 2.7
+   },
+   {
+    "site": "saqqara",
+    "month": 7,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 38.6,
+    "station_c": 34.8,
+    "delta_c": 3.8
+   },
+   {
+    "site": "saqqara",
+    "month": 8,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 38.4,
+    "station_c": 34.5,
+    "delta_c": 3.9
+   },
+   {
+    "site": "saqqara",
+    "month": 9,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 35.8,
+    "station_c": 33.1,
+    "delta_c": 2.7
+   },
+   {
+    "site": "saqqara",
+    "month": 10,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 31.2,
+    "station_c": 29.7,
+    "delta_c": 1.5
+   },
+   {
+    "site": "saqqara",
+    "month": 11,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 25.7,
+    "station_c": 24.7,
+    "delta_c": 1.0
+   },
+   {
+    "site": "saqqara",
+    "month": 12,
+    "station": "Cairo",
+    "station_km": 24.5,
+    "period": "",
+    "model_c": 20.8,
+    "station_c": 20.4,
+    "delta_c": 0.4
+   },
+   {
+    "site": "karnak",
+    "month": 1,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 21.9,
+    "station_c": 23.0,
+    "delta_c": -1.1
+   },
+   {
+    "site": "karnak",
+    "month": 2,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 25.0,
+    "station_c": 25.1,
+    "delta_c": -0.1
+   },
+   {
+    "site": "karnak",
+    "month": 3,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 29.5,
+    "station_c": 29.5,
+    "delta_c": 0.0
+   },
+   {
+    "site": "karnak",
+    "month": 4,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 34.0,
+    "station_c": 35.3,
+    "delta_c": -1.3
+   },
+   {
+    "site": "karnak",
+    "month": 5,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 38.2,
+    "station_c": 39.0,
+    "delta_c": -0.8
+   },
+   {
+    "site": "karnak",
+    "month": 6,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 40.6,
+    "station_c": 41.3,
+    "delta_c": -0.7
+   },
+   {
+    "site": "karnak",
+    "month": 7,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 40.7,
+    "station_c": 41.4,
+    "delta_c": -0.7
+   },
+   {
+    "site": "karnak",
+    "month": 8,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 41.0,
+    "station_c": 41.0,
+    "delta_c": 0.0
+   },
+   {
+    "site": "karnak",
+    "month": 9,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 39.0,
+    "station_c": 39.3,
+    "delta_c": -0.3
+   },
+   {
+    "site": "karnak",
+    "month": 10,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 35.1,
+    "station_c": 35.3,
+    "delta_c": -0.2
+   },
+   {
+    "site": "karnak",
+    "month": 11,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 28.6,
+    "station_c": 29.0,
+    "delta_c": -0.4
+   },
+   {
+    "site": "karnak",
+    "month": 12,
+    "station": "Luxor",
+    "station_km": 6.9,
+    "period": "",
+    "model_c": 23.5,
+    "station_c": 24.3,
+    "delta_c": -0.8
+   },
+   {
+    "site": "valley-kings",
+    "month": 1,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 21.9,
+    "station_c": 23.0,
+    "delta_c": -1.1
+   },
+   {
+    "site": "valley-kings",
+    "month": 2,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 25.0,
+    "station_c": 25.1,
+    "delta_c": -0.1
+   },
+   {
+    "site": "valley-kings",
+    "month": 3,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 29.5,
+    "station_c": 29.5,
+    "delta_c": 0.0
+   },
+   {
+    "site": "valley-kings",
+    "month": 4,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 34.0,
+    "station_c": 35.3,
+    "delta_c": -1.3
+   },
+   {
+    "site": "valley-kings",
+    "month": 5,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 38.2,
+    "station_c": 39.0,
+    "delta_c": -0.8
+   },
+   {
+    "site": "valley-kings",
+    "month": 6,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 40.6,
+    "station_c": 41.3,
+    "delta_c": -0.7
+   },
+   {
+    "site": "valley-kings",
+    "month": 7,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 40.7,
+    "station_c": 41.4,
+    "delta_c": -0.7
+   },
+   {
+    "site": "valley-kings",
+    "month": 8,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 41.0,
+    "station_c": 41.0,
+    "delta_c": 0.0
+   },
+   {
+    "site": "valley-kings",
+    "month": 9,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 39.0,
+    "station_c": 39.3,
+    "delta_c": -0.3
+   },
+   {
+    "site": "valley-kings",
+    "month": 10,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 35.1,
+    "station_c": 35.3,
+    "delta_c": -0.2
+   },
+   {
+    "site": "valley-kings",
+    "month": 11,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 28.6,
+    "station_c": 29.0,
+    "delta_c": -0.4
+   },
+   {
+    "site": "valley-kings",
+    "month": 12,
+    "station": "Luxor",
+    "station_km": 12.6,
+    "period": "",
+    "model_c": 23.5,
+    "station_c": 24.3,
+    "delta_c": -0.8
+   },
+   {
+    "site": "philae",
+    "month": 1,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 24.1,
+    "station_c": 22.9,
+    "delta_c": 1.2
+   },
+   {
+    "site": "philae",
+    "month": 2,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 27.2,
+    "station_c": 24.8,
+    "delta_c": 2.4
+   },
+   {
+    "site": "philae",
+    "month": 3,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 31.6,
+    "station_c": 29.4,
+    "delta_c": 2.2
+   },
+   {
+    "site": "philae",
+    "month": 4,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 36.1,
+    "station_c": 35.2,
+    "delta_c": 0.9
+   },
+   {
+    "site": "philae",
+    "month": 5,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 40.1,
+    "station_c": 39.0,
+    "delta_c": 1.1
+   },
+   {
+    "site": "philae",
+    "month": 6,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 42.2,
+    "station_c": 41.2,
+    "delta_c": 1.0
+   },
+   {
+    "site": "philae",
+    "month": 7,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 42.3,
+    "station_c": 41.4,
+    "delta_c": 0.9
+   },
+   {
+    "site": "philae",
+    "month": 8,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 42.6,
+    "station_c": 41.2,
+    "delta_c": 1.4
+   },
+   {
+    "site": "philae",
+    "month": 9,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 40.9,
+    "station_c": 39.5,
+    "delta_c": 1.4
+   },
+   {
+    "site": "philae",
+    "month": 10,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 37.2,
+    "station_c": 35.7,
+    "delta_c": 1.5
+   },
+   {
+    "site": "philae",
+    "month": 11,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 30.5,
+    "station_c": 29.0,
+    "delta_c": 1.5
+   },
+   {
+    "site": "philae",
+    "month": 12,
+    "station": "Asswan",
+    "station_km": 12.3,
+    "period": "",
+    "model_c": 25.7,
+    "station_c": 24.2,
+    "delta_c": 1.5
+   },
+   {
+    "site": "abydos",
+    "month": 1,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 20.7,
+    "station_c": 23.0,
+    "delta_c": -2.3
+   },
+   {
+    "site": "abydos",
+    "month": 2,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 23.7,
+    "station_c": 25.1,
+    "delta_c": -1.4
+   },
+   {
+    "site": "abydos",
+    "month": 3,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 28.3,
+    "station_c": 29.5,
+    "delta_c": -1.2
+   },
+   {
+    "site": "abydos",
+    "month": 4,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 32.8,
+    "station_c": 35.3,
+    "delta_c": -2.5
+   },
+   {
+    "site": "abydos",
+    "month": 5,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 37.0,
+    "station_c": 39.0,
+    "delta_c": -2.0
+   },
+   {
+    "site": "abydos",
+    "month": 6,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 39.4,
+    "station_c": 41.3,
+    "delta_c": -1.9
+   },
+   {
+    "site": "abydos",
+    "month": 7,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 39.5,
+    "station_c": 41.4,
+    "delta_c": -1.9
+   },
+   {
+    "site": "abydos",
+    "month": 8,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 39.6,
+    "station_c": 41.0,
+    "delta_c": -1.4
+   },
+   {
+    "site": "abydos",
+    "month": 9,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 37.5,
+    "station_c": 39.3,
+    "delta_c": -1.8
+   },
+   {
+    "site": "abydos",
+    "month": 10,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 33.7,
+    "station_c": 35.3,
+    "delta_c": -1.6
+   },
+   {
+    "site": "abydos",
+    "month": 11,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 27.4,
+    "station_c": 29.0,
+    "delta_c": -1.6
+   },
+   {
+    "site": "abydos",
+    "month": 12,
+    "station": "Luxor",
+    "station_km": 96.8,
+    "period": "",
+    "model_c": 22.4,
+    "station_c": 24.3,
+    "delta_c": -1.9
+   },
+   {
+    "site": "dendera",
+    "month": 1,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 22.2,
+    "station_c": 23.0,
+    "delta_c": -0.8
+   },
+   {
+    "site": "dendera",
+    "month": 2,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 25.3,
+    "station_c": 25.1,
+    "delta_c": 0.2
+   },
+   {
+    "site": "dendera",
+    "month": 3,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 29.9,
+    "station_c": 29.5,
+    "delta_c": 0.4
+   },
+   {
+    "site": "dendera",
+    "month": 4,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 34.4,
+    "station_c": 35.3,
+    "delta_c": -0.9
+   },
+   {
+    "site": "dendera",
+    "month": 5,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 38.6,
+    "station_c": 39.0,
+    "delta_c": -0.4
+   },
+   {
+    "site": "dendera",
+    "month": 6,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 41.1,
+    "station_c": 41.3,
+    "delta_c": -0.2
+   },
+   {
+    "site": "dendera",
+    "month": 7,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 41.3,
+    "station_c": 41.4,
+    "delta_c": -0.1
+   },
+   {
+    "site": "dendera",
+    "month": 8,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 41.5,
+    "station_c": 41.0,
+    "delta_c": 0.5
+   },
+   {
+    "site": "dendera",
+    "month": 9,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 39.6,
+    "station_c": 39.3,
+    "delta_c": 0.3
+   },
+   {
+    "site": "dendera",
+    "month": 10,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 35.6,
+    "station_c": 35.3,
+    "delta_c": 0.3
+   },
+   {
+    "site": "dendera",
+    "month": 11,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 29.0,
+    "station_c": 29.0,
+    "delta_c": 0.0
+   },
+   {
+    "site": "dendera",
+    "month": 12,
+    "station": "Luxor",
+    "station_km": 52.5,
+    "period": "",
+    "model_c": 24.0,
+    "station_c": 24.3,
+    "delta_c": -0.3
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 1,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 19.0,
+    "station_c": 19.0,
+    "delta_c": 0.0
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 2,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 21.2,
+    "station_c": 20.3,
+    "delta_c": 0.9
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 3,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 25.5,
+    "station_c": 23.4,
+    "delta_c": 2.1
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 4,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 29.6,
+    "station_c": 28.2,
+    "delta_c": 1.4
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 5,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 34.1,
+    "station_c": 31.9,
+    "delta_c": 2.2
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 6,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 37.3,
+    "station_c": 34.6,
+    "delta_c": 2.7
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 7,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 38.6,
+    "station_c": 34.8,
+    "delta_c": 3.8
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 8,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 38.4,
+    "station_c": 34.5,
+    "delta_c": 3.9
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 9,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 35.8,
+    "station_c": 33.1,
+    "delta_c": 2.7
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 10,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 31.2,
+    "station_c": 29.7,
+    "delta_c": 1.5
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 11,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 25.7,
+    "station_c": 24.7,
+    "delta_c": 1.0
+   },
+   {
+    "site": "islamic-cairo",
+    "month": 12,
+    "station": "Cairo",
+    "station_km": 4.8,
+    "period": "",
+    "model_c": 20.8,
+    "station_c": 20.4,
+    "delta_c": 0.4
+   },
+   {
+    "site": "alexandria",
+    "month": 1,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 18.7,
+    "station_c": 18.3,
+    "delta_c": 0.4
+   },
+   {
+    "site": "alexandria",
+    "month": 2,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 19.9,
+    "station_c": 18.6,
+    "delta_c": 1.3
+   },
+   {
+    "site": "alexandria",
+    "month": 3,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 22.9,
+    "station_c": 20.6,
+    "delta_c": 2.3
+   },
+   {
+    "site": "alexandria",
+    "month": 4,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 26.2,
+    "station_c": 24.0,
+    "delta_c": 2.2
+   },
+   {
+    "site": "alexandria",
+    "month": 5,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 29.9,
+    "station_c": 26.3,
+    "delta_c": 3.6
+   },
+   {
+    "site": "alexandria",
+    "month": 6,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 32.7,
+    "station_c": 28.7,
+    "delta_c": 4.0
+   },
+   {
+    "site": "alexandria",
+    "month": 7,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 34.1,
+    "station_c": 29.9,
+    "delta_c": 4.2
+   },
+   {
+    "site": "alexandria",
+    "month": 8,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 34.4,
+    "station_c": 30.4,
+    "delta_c": 4.0
+   },
+   {
+    "site": "alexandria",
+    "month": 9,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 32.7,
+    "station_c": 29.8,
+    "delta_c": 2.9
+   },
+   {
+    "site": "alexandria",
+    "month": 10,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 29.3,
+    "station_c": 27.4,
+    "delta_c": 1.9
+   },
+   {
+    "site": "alexandria",
+    "month": 11,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 24.8,
+    "station_c": 23.7,
+    "delta_c": 1.1
+   },
+   {
+    "site": "alexandria",
+    "month": 12,
+    "station": "Alexandria",
+    "station_km": 3.0,
+    "period": "",
+    "model_c": 20.6,
+    "station_c": 20.1,
+    "delta_c": 0.5
+   },
+   {
+    "site": "st-catherine",
+    "month": 1,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 16.9,
+    "station_c": 21.9,
+    "delta_c": -5.0
+   },
+   {
+    "site": "st-catherine",
+    "month": 2,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 19.0,
+    "station_c": 23.0,
+    "delta_c": -4.0
+   },
+   {
+    "site": "st-catherine",
+    "month": 3,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 23.1,
+    "station_c": 25.8,
+    "delta_c": -2.7
+   },
+   {
+    "site": "st-catherine",
+    "month": 4,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 27.1,
+    "station_c": 30.1,
+    "delta_c": -3.0
+   },
+   {
+    "site": "st-catherine",
+    "month": 5,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 31.4,
+    "station_c": 34.2,
+    "delta_c": -2.8
+   },
+   {
+    "site": "st-catherine",
+    "month": 6,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 34.8,
+    "station_c": 37.2,
+    "delta_c": -2.4
+   },
+   {
+    "site": "st-catherine",
+    "month": 7,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 35.5,
+    "station_c": 37.9,
+    "delta_c": -2.4
+   },
+   {
+    "site": "st-catherine",
+    "month": 8,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 35.8,
+    "station_c": 38.8,
+    "delta_c": -3.0
+   },
+   {
+    "site": "st-catherine",
+    "month": 9,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 33.9,
+    "station_c": 35.7,
+    "delta_c": -1.8
+   },
+   {
+    "site": "st-catherine",
+    "month": 10,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 29.3,
+    "station_c": 31.9,
+    "delta_c": -2.6
+   },
+   {
+    "site": "st-catherine",
+    "month": 11,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 23.5,
+    "station_c": 27.3,
+    "delta_c": -3.8
+   },
+   {
+    "site": "st-catherine",
+    "month": 12,
+    "station": "Sharm El-Sheikh",
+    "station_km": 76.2,
+    "period": "",
+    "model_c": 18.8,
+    "station_c": 23.4,
+    "delta_c": -4.6
+   },
+   {
+    "site": "dahab",
+    "month": 1,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 20.2,
+    "station_c": 21.9,
+    "delta_c": -1.7
+   },
+   {
+    "site": "dahab",
+    "month": 2,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 22.4,
+    "station_c": 23.0,
+    "delta_c": -0.6
+   },
+   {
+    "site": "dahab",
+    "month": 3,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 26.1,
+    "station_c": 25.8,
+    "delta_c": 0.3
+   },
+   {
+    "site": "dahab",
+    "month": 4,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 30.0,
+    "station_c": 30.1,
+    "delta_c": -0.1
+   },
+   {
+    "site": "dahab",
+    "month": 5,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 34.3,
+    "station_c": 34.2,
+    "delta_c": 0.1
+   },
+   {
+    "site": "dahab",
+    "month": 6,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 37.3,
+    "station_c": 37.2,
+    "delta_c": 0.1
+   },
+   {
+    "site": "dahab",
+    "month": 7,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 38.6,
+    "station_c": 37.9,
+    "delta_c": 0.7
+   },
+   {
+    "site": "dahab",
+    "month": 8,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 38.9,
+    "station_c": 38.8,
+    "delta_c": 0.1
+   },
+   {
+    "site": "dahab",
+    "month": 9,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 36.7,
+    "station_c": 35.7,
+    "delta_c": 1.0
+   },
+   {
+    "site": "dahab",
+    "month": 10,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 32.5,
+    "station_c": 31.9,
+    "delta_c": 0.6
+   },
+   {
+    "site": "dahab",
+    "month": 11,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 26.2,
+    "station_c": 27.3,
+    "delta_c": -1.1
+   },
+   {
+    "site": "dahab",
+    "month": 12,
+    "station": "Sharm El-Sheikh",
+    "station_km": 61.4,
+    "period": "",
+    "model_c": 21.7,
+    "station_c": 23.4,
+    "delta_c": -1.7
+   },
+   {
+    "site": "hurghada",
+    "month": 1,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 21.2,
+    "station_c": 21.7,
+    "delta_c": -0.5
+   },
+   {
+    "site": "hurghada",
+    "month": 2,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 22.5,
+    "station_c": 22.7,
+    "delta_c": -0.2
+   },
+   {
+    "site": "hurghada",
+    "month": 3,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 24.9,
+    "station_c": 25.4,
+    "delta_c": -0.5
+   },
+   {
+    "site": "hurghada",
+    "month": 4,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 27.7,
+    "station_c": 29.3,
+    "delta_c": -1.6
+   },
+   {
+    "site": "hurghada",
+    "month": 5,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 31.1,
+    "station_c": 31.8,
+    "delta_c": -0.7
+   },
+   {
+    "site": "hurghada",
+    "month": 6,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 33.3,
+    "station_c": 33.9,
+    "delta_c": -0.6
+   },
+   {
+    "site": "hurghada",
+    "month": 7,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 34.4,
+    "station_c": 35.0,
+    "delta_c": -0.6
+   },
+   {
+    "site": "hurghada",
+    "month": 8,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 34.7,
+    "station_c": 35.1,
+    "delta_c": -0.4
+   },
+   {
+    "site": "hurghada",
+    "month": 9,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 33.1,
+    "station_c": 33.3,
+    "delta_c": -0.2
+   },
+   {
+    "site": "hurghada",
+    "month": 10,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 30.5,
+    "station_c": 31.3,
+    "delta_c": -0.8
+   },
+   {
+    "site": "hurghada",
+    "month": 11,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 26.6,
+    "station_c": 27.0,
+    "delta_c": -0.4
+   },
+   {
+    "site": "hurghada",
+    "month": 12,
+    "station": "Hurghada",
+    "station_km": 15.0,
+    "period": "",
+    "model_c": 22.9,
+    "station_c": 23.2,
+    "delta_c": -0.3
+   },
+   {
+    "site": "abu-mena",
+    "month": 1,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 17.3,
+    "station_c": 18.3,
+    "delta_c": -1.0
+   },
+   {
+    "site": "abu-mena",
+    "month": 2,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 17.8,
+    "station_c": 18.6,
+    "delta_c": -0.8
+   },
+   {
+    "site": "abu-mena",
+    "month": 3,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 19.4,
+    "station_c": 20.6,
+    "delta_c": -1.2
+   },
+   {
+    "site": "abu-mena",
+    "month": 4,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 21.7,
+    "station_c": 24.0,
+    "delta_c": -2.3
+   },
+   {
+    "site": "abu-mena",
+    "month": 5,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 24.6,
+    "station_c": 26.3,
+    "delta_c": -1.7
+   },
+   {
+    "site": "abu-mena",
+    "month": 6,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 27.1,
+    "station_c": 28.7,
+    "delta_c": -1.6
+   },
+   {
+    "site": "abu-mena",
+    "month": 7,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 28.8,
+    "station_c": 29.9,
+    "delta_c": -1.1
+   },
+   {
+    "site": "abu-mena",
+    "month": 8,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 29.5,
+    "station_c": 30.4,
+    "delta_c": -0.9
+   },
+   {
+    "site": "abu-mena",
+    "month": 9,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 28.5,
+    "station_c": 29.8,
+    "delta_c": -1.3
+   },
+   {
+    "site": "abu-mena",
+    "month": 10,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 26.1,
+    "station_c": 27.4,
+    "delta_c": -1.3
+   },
+   {
+    "site": "abu-mena",
+    "month": 11,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 22.7,
+    "station_c": 23.7,
+    "delta_c": -1.0
+   },
+   {
+    "site": "abu-mena",
+    "month": 12,
+    "station": "Alexandria",
+    "station_km": 48.2,
+    "period": "",
+    "model_c": 19.2,
+    "station_c": 20.1,
+    "delta_c": -0.9
+   },
+   {
+    "site": "suez-canal",
+    "month": 1,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 18.8,
+    "station_c": 19.0,
+    "delta_c": -0.2
+   },
+   {
+    "site": "suez-canal",
+    "month": 2,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 20.8,
+    "station_c": 20.3,
+    "delta_c": 0.5
+   },
+   {
+    "site": "suez-canal",
+    "month": 3,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 24.5,
+    "station_c": 23.4,
+    "delta_c": 1.1
+   },
+   {
+    "site": "suez-canal",
+    "month": 4,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 28.2,
+    "station_c": 28.2,
+    "delta_c": 0.0
+   },
+   {
+    "site": "suez-canal",
+    "month": 5,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 32.6,
+    "station_c": 31.9,
+    "delta_c": 0.7
+   },
+   {
+    "site": "suez-canal",
+    "month": 6,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 35.5,
+    "station_c": 34.6,
+    "delta_c": 0.9
+   },
+   {
+    "site": "suez-canal",
+    "month": 7,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 37.4,
+    "station_c": 34.8,
+    "delta_c": 2.6
+   },
+   {
+    "site": "suez-canal",
+    "month": 8,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 37.1,
+    "station_c": 34.5,
+    "delta_c": 2.6
+   },
+   {
+    "site": "suez-canal",
+    "month": 9,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 34.1,
+    "station_c": 33.1,
+    "delta_c": 1.0
+   },
+   {
+    "site": "suez-canal",
+    "month": 10,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 30.2,
+    "station_c": 29.7,
+    "delta_c": 0.5
+   },
+   {
+    "site": "suez-canal",
+    "month": 11,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 25.2,
+    "station_c": 24.7,
+    "delta_c": 0.5
+   },
+   {
+    "site": "suez-canal",
+    "month": 12,
+    "station": "Cairo",
+    "station_km": 110.0,
+    "period": "",
+    "model_c": 20.5,
+    "station_c": 20.4,
+    "delta_c": 0.1
+   }
+  ]
+ },
  "missing": [],
  "sites": [
   {
@@ -19,86 +1709,110 @@
     {
      "month": 1,
      "t_mean": 12.1,
-     "t_max": 29.1,
-     "t_min": 1.4,
-     "rain_mm_day": 0.3
+     "t_record_max": 29.1,
+     "t_record_min": 1.4,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 19.0,
+     "t_daily_min": 6.8
     },
     {
      "month": 2,
      "t_mean": 13.7,
-     "t_max": 34.8,
-     "t_min": 1.6,
-     "rain_mm_day": 0.2
+     "t_record_max": 34.8,
+     "t_record_min": 1.6,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 21.2,
+     "t_daily_min": 7.8
     },
     {
      "month": 3,
      "t_mean": 17.1,
-     "t_max": 38.6,
-     "t_min": 2.6,
-     "rain_mm_day": 0.2
+     "t_record_max": 38.6,
+     "t_record_min": 2.6,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 25.5,
+     "t_daily_min": 10.0
     },
     {
      "month": 4,
      "t_mean": 20.9,
-     "t_max": 43.4,
-     "t_min": 7.0,
-     "rain_mm_day": 0.3
+     "t_record_max": 43.4,
+     "t_record_min": 7.0,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 29.6,
+     "t_daily_min": 13.0
     },
     {
      "month": 5,
      "t_mean": 25.3,
-     "t_max": 45.3,
-     "t_min": 11.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.3,
+     "t_record_min": 11.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.1,
+     "t_daily_min": 17.0
     },
     {
      "month": 6,
      "t_mean": 28.5,
-     "t_max": 45.4,
-     "t_min": 15.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.4,
+     "t_record_min": 15.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.3,
+     "t_daily_min": 19.8
     },
     {
      "month": 7,
      "t_mean": 29.9,
-     "t_max": 45.3,
-     "t_min": 17.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.3,
+     "t_record_min": 17.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.6,
+     "t_daily_min": 21.5
     },
     {
      "month": 8,
      "t_mean": 29.9,
-     "t_max": 44.8,
-     "t_min": 19.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.8,
+     "t_record_min": 19.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.4,
+     "t_daily_min": 22.0
     },
     {
      "month": 9,
      "t_mean": 27.5,
-     "t_max": 42.4,
-     "t_min": 15.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.4,
+     "t_record_min": 15.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.8,
+     "t_daily_min": 20.2
     },
     {
      "month": 10,
      "t_mean": 23.7,
-     "t_max": 40.8,
-     "t_min": 11.8,
-     "rain_mm_day": 0.1
+     "t_record_max": 40.8,
+     "t_record_min": 11.8,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 31.2,
+     "t_daily_min": 17.5
     },
     {
      "month": 11,
      "t_mean": 18.7,
-     "t_max": 35.6,
-     "t_min": 7.2,
-     "rain_mm_day": 0.6
+     "t_record_max": 35.6,
+     "t_record_min": 7.2,
+     "rain_mm_day": 0.6,
+     "t_daily_max": 25.7,
+     "t_daily_min": 13.2
     },
     {
      "month": 12,
      "t_mean": 14.0,
-     "t_max": 32.5,
-     "t_min": 2.2,
-     "rain_mm_day": 0.2
+     "t_record_max": 32.5,
+     "t_record_min": 2.2,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 20.8,
+     "t_daily_min": 9.1
     }
    ]
   },
@@ -114,86 +1828,110 @@
     {
      "month": 1,
      "t_mean": 12.1,
-     "t_max": 29.1,
-     "t_min": 1.4,
-     "rain_mm_day": 0.3
+     "t_record_max": 29.1,
+     "t_record_min": 1.4,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 19.0,
+     "t_daily_min": 6.8
     },
     {
      "month": 2,
      "t_mean": 13.7,
-     "t_max": 34.8,
-     "t_min": 1.6,
-     "rain_mm_day": 0.2
+     "t_record_max": 34.8,
+     "t_record_min": 1.6,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 21.2,
+     "t_daily_min": 7.8
     },
     {
      "month": 3,
      "t_mean": 17.1,
-     "t_max": 38.6,
-     "t_min": 2.6,
-     "rain_mm_day": 0.2
+     "t_record_max": 38.6,
+     "t_record_min": 2.6,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 25.5,
+     "t_daily_min": 10.0
     },
     {
      "month": 4,
      "t_mean": 20.9,
-     "t_max": 43.4,
-     "t_min": 7.0,
-     "rain_mm_day": 0.3
+     "t_record_max": 43.4,
+     "t_record_min": 7.0,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 29.6,
+     "t_daily_min": 13.0
     },
     {
      "month": 5,
      "t_mean": 25.3,
-     "t_max": 45.3,
-     "t_min": 11.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.3,
+     "t_record_min": 11.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.1,
+     "t_daily_min": 17.0
     },
     {
      "month": 6,
      "t_mean": 28.5,
-     "t_max": 45.4,
-     "t_min": 15.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.4,
+     "t_record_min": 15.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.3,
+     "t_daily_min": 19.8
     },
     {
      "month": 7,
      "t_mean": 29.9,
-     "t_max": 45.3,
-     "t_min": 17.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.3,
+     "t_record_min": 17.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.6,
+     "t_daily_min": 21.5
     },
     {
      "month": 8,
      "t_mean": 29.9,
-     "t_max": 44.8,
-     "t_min": 19.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.8,
+     "t_record_min": 19.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.4,
+     "t_daily_min": 22.0
     },
     {
      "month": 9,
      "t_mean": 27.5,
-     "t_max": 42.4,
-     "t_min": 15.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.4,
+     "t_record_min": 15.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.8,
+     "t_daily_min": 20.2
     },
     {
      "month": 10,
      "t_mean": 23.7,
-     "t_max": 40.8,
-     "t_min": 11.8,
-     "rain_mm_day": 0.1
+     "t_record_max": 40.8,
+     "t_record_min": 11.8,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 31.2,
+     "t_daily_min": 17.5
     },
     {
      "month": 11,
      "t_mean": 18.7,
-     "t_max": 35.6,
-     "t_min": 7.2,
-     "rain_mm_day": 0.6
+     "t_record_max": 35.6,
+     "t_record_min": 7.2,
+     "rain_mm_day": 0.6,
+     "t_daily_max": 25.7,
+     "t_daily_min": 13.2
     },
     {
      "month": 12,
      "t_mean": 14.0,
-     "t_max": 32.5,
-     "t_min": 2.2,
-     "rain_mm_day": 0.2
+     "t_record_max": 32.5,
+     "t_record_min": 2.2,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 20.8,
+     "t_daily_min": 9.1
     }
    ]
   },
@@ -209,86 +1947,110 @@
     {
      "month": 1,
      "t_mean": 13.3,
-     "t_max": 32.7,
-     "t_min": 0.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 32.7,
+     "t_record_min": 0.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 21.9,
+     "t_daily_min": 6.5
     },
     {
      "month": 2,
      "t_mean": 15.9,
-     "t_max": 36.2,
-     "t_min": 1.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 36.2,
+     "t_record_min": 1.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 25.0,
+     "t_daily_min": 8.5
     },
     {
      "month": 3,
      "t_mean": 20.1,
-     "t_max": 40.5,
-     "t_min": 3.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.5,
+     "t_record_min": 3.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 29.5,
+     "t_daily_min": 11.9
     },
     {
      "month": 4,
      "t_mean": 24.8,
-     "t_max": 43.3,
-     "t_min": 7.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.3,
+     "t_record_min": 7.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.0,
+     "t_daily_min": 16.2
     },
     {
      "month": 5,
      "t_mean": 29.3,
-     "t_max": 46.8,
-     "t_min": 13.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.8,
+     "t_record_min": 13.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.2,
+     "t_daily_min": 20.7
     },
     {
      "month": 6,
      "t_mean": 31.9,
-     "t_max": 47.3,
-     "t_min": 18.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.3,
+     "t_record_min": 18.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 40.6,
+     "t_daily_min": 23.1
     },
     {
      "month": 7,
      "t_mean": 32.5,
-     "t_max": 47.4,
-     "t_min": 19.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.4,
+     "t_record_min": 19.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 40.7,
+     "t_daily_min": 24.2
     },
     {
      "month": 8,
      "t_mean": 32.5,
-     "t_max": 47.3,
-     "t_min": 19.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.3,
+     "t_record_min": 19.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 41.0,
+     "t_daily_min": 24.2
     },
     {
      "month": 9,
      "t_mean": 30.0,
-     "t_max": 45.6,
-     "t_min": 16.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.6,
+     "t_record_min": 16.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 39.0,
+     "t_daily_min": 21.8
     },
     {
      "month": 10,
      "t_mean": 26.3,
-     "t_max": 43.2,
-     "t_min": 11.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.2,
+     "t_record_min": 11.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.1,
+     "t_daily_min": 18.9
     },
     {
      "month": 11,
      "t_mean": 19.9,
-     "t_max": 38.3,
-     "t_min": 5.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 38.3,
+     "t_record_min": 5.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 28.6,
+     "t_daily_min": 13.2
     },
     {
      "month": 12,
      "t_mean": 15.0,
-     "t_max": 33.7,
-     "t_min": 1.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 33.7,
+     "t_record_min": 1.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 23.5,
+     "t_daily_min": 8.5
     }
    ]
   },
@@ -304,86 +2066,110 @@
     {
      "month": 1,
      "t_mean": 13.3,
-     "t_max": 32.7,
-     "t_min": 0.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 32.7,
+     "t_record_min": 0.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 21.9,
+     "t_daily_min": 6.5
     },
     {
      "month": 2,
      "t_mean": 15.9,
-     "t_max": 36.2,
-     "t_min": 1.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 36.2,
+     "t_record_min": 1.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 25.0,
+     "t_daily_min": 8.5
     },
     {
      "month": 3,
      "t_mean": 20.1,
-     "t_max": 40.5,
-     "t_min": 3.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.5,
+     "t_record_min": 3.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 29.5,
+     "t_daily_min": 11.9
     },
     {
      "month": 4,
      "t_mean": 24.8,
-     "t_max": 43.3,
-     "t_min": 7.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.3,
+     "t_record_min": 7.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.0,
+     "t_daily_min": 16.2
     },
     {
      "month": 5,
      "t_mean": 29.3,
-     "t_max": 46.8,
-     "t_min": 13.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.8,
+     "t_record_min": 13.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.2,
+     "t_daily_min": 20.7
     },
     {
      "month": 6,
      "t_mean": 31.9,
-     "t_max": 47.3,
-     "t_min": 18.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.3,
+     "t_record_min": 18.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 40.6,
+     "t_daily_min": 23.1
     },
     {
      "month": 7,
      "t_mean": 32.5,
-     "t_max": 47.4,
-     "t_min": 19.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.4,
+     "t_record_min": 19.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 40.7,
+     "t_daily_min": 24.2
     },
     {
      "month": 8,
      "t_mean": 32.5,
-     "t_max": 47.3,
-     "t_min": 19.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.3,
+     "t_record_min": 19.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 41.0,
+     "t_daily_min": 24.2
     },
     {
      "month": 9,
      "t_mean": 30.0,
-     "t_max": 45.6,
-     "t_min": 16.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.6,
+     "t_record_min": 16.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 39.0,
+     "t_daily_min": 21.8
     },
     {
      "month": 10,
      "t_mean": 26.3,
-     "t_max": 43.2,
-     "t_min": 11.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.2,
+     "t_record_min": 11.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.1,
+     "t_daily_min": 18.9
     },
     {
      "month": 11,
      "t_mean": 19.9,
-     "t_max": 38.3,
-     "t_min": 5.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 38.3,
+     "t_record_min": 5.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 28.6,
+     "t_daily_min": 13.2
     },
     {
      "month": 12,
      "t_mean": 15.0,
-     "t_max": 33.7,
-     "t_min": 1.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 33.7,
+     "t_record_min": 1.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 23.5,
+     "t_daily_min": 8.5
     }
    ]
   },
@@ -399,86 +2185,110 @@
     {
      "month": 1,
      "t_mean": 15.8,
-     "t_max": 35.1,
-     "t_min": 1.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 35.1,
+     "t_record_min": 1.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 23.6,
+     "t_daily_min": 9.1
     },
     {
      "month": 2,
      "t_mean": 18.5,
-     "t_max": 38.4,
-     "t_min": 4.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 38.4,
+     "t_record_min": 4.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 26.7,
+     "t_daily_min": 11.3
     },
     {
      "month": 3,
      "t_mean": 22.6,
-     "t_max": 40.8,
-     "t_min": 5.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.8,
+     "t_record_min": 5.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 31.0,
+     "t_daily_min": 14.6
     },
     {
      "month": 4,
      "t_mean": 27.3,
-     "t_max": 44.6,
-     "t_min": 10.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.6,
+     "t_record_min": 10.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.5,
+     "t_daily_min": 19.0
     },
     {
      "month": 5,
      "t_mean": 31.4,
-     "t_max": 46.6,
-     "t_min": 15.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.6,
+     "t_record_min": 15.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 39.2,
+     "t_daily_min": 23.2
     },
     {
      "month": 6,
      "t_mean": 33.5,
-     "t_max": 46.1,
-     "t_min": 20.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.1,
+     "t_record_min": 20.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 40.9,
+     "t_daily_min": 25.5
     },
     {
      "month": 7,
      "t_mean": 34.0,
-     "t_max": 45.7,
-     "t_min": 22.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.7,
+     "t_record_min": 22.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 40.9,
+     "t_daily_min": 26.6
     },
     {
      "month": 8,
      "t_mean": 34.5,
-     "t_max": 46.1,
-     "t_min": 22.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.1,
+     "t_record_min": 22.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 41.4,
+     "t_daily_min": 27.2
     },
     {
      "month": 9,
      "t_mean": 32.2,
-     "t_max": 45.0,
-     "t_min": 19.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.0,
+     "t_record_min": 19.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 39.7,
+     "t_daily_min": 24.7
     },
     {
      "month": 10,
      "t_mean": 28.7,
-     "t_max": 43.0,
-     "t_min": 13.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.0,
+     "t_record_min": 13.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 36.2,
+     "t_daily_min": 21.8
     },
     {
      "month": 11,
      "t_mean": 22.2,
-     "t_max": 38.0,
-     "t_min": 7.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 38.0,
+     "t_record_min": 7.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 29.7,
+     "t_daily_min": 15.6
     },
     {
      "month": 12,
      "t_mean": 17.4,
-     "t_max": 34.1,
-     "t_min": 3.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 34.1,
+     "t_record_min": 3.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 25.0,
+     "t_daily_min": 10.9
     }
    ]
   },
@@ -494,86 +2304,110 @@
     {
      "month": 1,
      "t_mean": 15.1,
-     "t_max": 35.1,
-     "t_min": 0.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 35.1,
+     "t_record_min": 0.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 24.1,
+     "t_daily_min": 7.7
     },
     {
      "month": 2,
      "t_mean": 17.8,
-     "t_max": 38.5,
-     "t_min": 2.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 38.5,
+     "t_record_min": 2.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 27.2,
+     "t_daily_min": 9.7
     },
     {
      "month": 3,
      "t_mean": 22.0,
-     "t_max": 41.8,
-     "t_min": 4.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 41.8,
+     "t_record_min": 4.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 31.6,
+     "t_daily_min": 13.1
     },
     {
      "month": 4,
      "t_mean": 26.7,
-     "t_max": 44.6,
-     "t_min": 9.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.6,
+     "t_record_min": 9.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 36.1,
+     "t_daily_min": 17.6
     },
     {
      "month": 5,
      "t_mean": 31.1,
-     "t_max": 47.7,
-     "t_min": 14.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.7,
+     "t_record_min": 14.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 40.1,
+     "t_daily_min": 22.1
     },
     {
      "month": 6,
      "t_mean": 33.4,
-     "t_max": 48.8,
-     "t_min": 19.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 48.8,
+     "t_record_min": 19.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 42.2,
+     "t_daily_min": 24.3
     },
     {
      "month": 7,
      "t_mean": 34.0,
-     "t_max": 48.3,
-     "t_min": 20.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 48.3,
+     "t_record_min": 20.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 42.3,
+     "t_daily_min": 25.4
     },
     {
      "month": 8,
      "t_mean": 34.2,
-     "t_max": 48.4,
-     "t_min": 20.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 48.4,
+     "t_record_min": 20.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 42.6,
+     "t_daily_min": 25.7
     },
     {
      "month": 9,
      "t_mean": 31.9,
-     "t_max": 47.1,
-     "t_min": 17.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.1,
+     "t_record_min": 17.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 40.9,
+     "t_daily_min": 23.4
     },
     {
      "month": 10,
      "t_mean": 28.4,
-     "t_max": 44.5,
-     "t_min": 12.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.5,
+     "t_record_min": 12.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.2,
+     "t_daily_min": 20.6
     },
     {
      "month": 11,
      "t_mean": 21.8,
-     "t_max": 39.4,
-     "t_min": 7.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.4,
+     "t_record_min": 7.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 30.5,
+     "t_daily_min": 14.4
     },
     {
      "month": 12,
      "t_mean": 16.8,
-     "t_max": 35.4,
-     "t_min": 2.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 35.4,
+     "t_record_min": 2.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 25.7,
+     "t_daily_min": 9.6
     }
    ]
   },
@@ -589,86 +2423,110 @@
     {
      "month": 1,
      "t_mean": 12.3,
-     "t_max": 32.0,
-     "t_min": -0.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 32.0,
+     "t_record_min": -0.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 20.7,
+     "t_daily_min": 5.9
     },
     {
      "month": 2,
      "t_mean": 14.9,
-     "t_max": 36.1,
-     "t_min": 1.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 36.1,
+     "t_record_min": 1.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 23.7,
+     "t_daily_min": 7.8
     },
     {
      "month": 3,
      "t_mean": 19.1,
-     "t_max": 39.4,
-     "t_min": 2.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.4,
+     "t_record_min": 2.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 28.3,
+     "t_daily_min": 11.1
     },
     {
      "month": 4,
      "t_mean": 23.8,
-     "t_max": 43.4,
-     "t_min": 6.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.4,
+     "t_record_min": 6.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 32.8,
+     "t_daily_min": 15.4
     },
     {
      "month": 5,
      "t_mean": 28.3,
-     "t_max": 46.8,
-     "t_min": 12.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.8,
+     "t_record_min": 12.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.0,
+     "t_daily_min": 19.8
     },
     {
      "month": 6,
      "t_mean": 30.9,
-     "t_max": 46.6,
-     "t_min": 17.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.6,
+     "t_record_min": 17.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 39.4,
+     "t_daily_min": 22.4
     },
     {
      "month": 7,
      "t_mean": 31.6,
-     "t_max": 47.2,
-     "t_min": 19.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.2,
+     "t_record_min": 19.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 39.5,
+     "t_daily_min": 23.6
     },
     {
      "month": 8,
      "t_mean": 31.5,
-     "t_max": 46.6,
-     "t_min": 18.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.6,
+     "t_record_min": 18.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 39.6,
+     "t_daily_min": 23.5
     },
     {
      "month": 9,
      "t_mean": 28.9,
-     "t_max": 45.0,
-     "t_min": 16.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.0,
+     "t_record_min": 16.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.5,
+     "t_daily_min": 21.0
     },
     {
      "month": 10,
      "t_mean": 25.2,
-     "t_max": 42.2,
-     "t_min": 11.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.2,
+     "t_record_min": 11.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 33.7,
+     "t_daily_min": 18.0
     },
     {
      "month": 11,
      "t_mean": 19.1,
-     "t_max": 37.3,
-     "t_min": 4.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 37.3,
+     "t_record_min": 4.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 27.4,
+     "t_daily_min": 12.5
     },
     {
      "month": 12,
      "t_mean": 14.1,
-     "t_max": 32.6,
-     "t_min": 1.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 32.6,
+     "t_record_min": 1.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 22.4,
+     "t_daily_min": 7.9
     }
    ]
   },
@@ -684,86 +2542,110 @@
     {
      "month": 1,
      "t_mean": 13.5,
-     "t_max": 32.8,
-     "t_min": -0.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 32.8,
+     "t_record_min": -0.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 22.2,
+     "t_daily_min": 6.7
     },
     {
      "month": 2,
      "t_mean": 16.2,
-     "t_max": 36.8,
-     "t_min": 1.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 36.8,
+     "t_record_min": 1.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 25.3,
+     "t_daily_min": 8.7
     },
     {
      "month": 3,
      "t_mean": 20.4,
-     "t_max": 40.0,
-     "t_min": 3.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.0,
+     "t_record_min": 3.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 29.9,
+     "t_daily_min": 12.0
     },
     {
      "month": 4,
      "t_mean": 25.1,
-     "t_max": 43.3,
-     "t_min": 7.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.3,
+     "t_record_min": 7.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.4,
+     "t_daily_min": 16.3
     },
     {
      "month": 5,
      "t_mean": 29.6,
-     "t_max": 47.6,
-     "t_min": 13.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.6,
+     "t_record_min": 13.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.6,
+     "t_daily_min": 20.8
     },
     {
      "month": 6,
      "t_mean": 32.3,
-     "t_max": 47.8,
-     "t_min": 18.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 47.8,
+     "t_record_min": 18.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 41.1,
+     "t_daily_min": 23.3
     },
     {
      "month": 7,
      "t_mean": 33.0,
-     "t_max": 48.6,
-     "t_min": 19.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 48.6,
+     "t_record_min": 19.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 41.3,
+     "t_daily_min": 24.5
     },
     {
      "month": 8,
      "t_mean": 32.9,
-     "t_max": 48.0,
-     "t_min": 19.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 48.0,
+     "t_record_min": 19.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 41.5,
+     "t_daily_min": 24.5
     },
     {
      "month": 9,
      "t_mean": 30.4,
-     "t_max": 46.2,
-     "t_min": 17.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.2,
+     "t_record_min": 17.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 39.6,
+     "t_daily_min": 22.0
     },
     {
      "month": 10,
      "t_mean": 26.7,
-     "t_max": 43.4,
-     "t_min": 12.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.4,
+     "t_record_min": 12.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.6,
+     "t_daily_min": 19.2
     },
     {
      "month": 11,
      "t_mean": 20.4,
-     "t_max": 39.0,
-     "t_min": 5.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.0,
+     "t_record_min": 5.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 29.0,
+     "t_daily_min": 13.5
     },
     {
      "month": 12,
      "t_mean": 15.4,
-     "t_max": 34.0,
-     "t_min": 1.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 34.0,
+     "t_record_min": 1.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 24.0,
+     "t_daily_min": 8.8
     }
    ]
   },
@@ -779,86 +2661,110 @@
     {
      "month": 1,
      "t_mean": 12.1,
-     "t_max": 29.1,
-     "t_min": 1.4,
-     "rain_mm_day": 0.3
+     "t_record_max": 29.1,
+     "t_record_min": 1.4,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 19.0,
+     "t_daily_min": 6.8
     },
     {
      "month": 2,
      "t_mean": 13.7,
-     "t_max": 34.8,
-     "t_min": 1.6,
-     "rain_mm_day": 0.2
+     "t_record_max": 34.8,
+     "t_record_min": 1.6,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 21.2,
+     "t_daily_min": 7.8
     },
     {
      "month": 3,
      "t_mean": 17.1,
-     "t_max": 38.6,
-     "t_min": 2.6,
-     "rain_mm_day": 0.2
+     "t_record_max": 38.6,
+     "t_record_min": 2.6,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 25.5,
+     "t_daily_min": 10.0
     },
     {
      "month": 4,
      "t_mean": 20.9,
-     "t_max": 43.4,
-     "t_min": 7.0,
-     "rain_mm_day": 0.3
+     "t_record_max": 43.4,
+     "t_record_min": 7.0,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 29.6,
+     "t_daily_min": 13.0
     },
     {
      "month": 5,
      "t_mean": 25.3,
-     "t_max": 45.3,
-     "t_min": 11.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.3,
+     "t_record_min": 11.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.1,
+     "t_daily_min": 17.0
     },
     {
      "month": 6,
      "t_mean": 28.5,
-     "t_max": 45.4,
-     "t_min": 15.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.4,
+     "t_record_min": 15.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.3,
+     "t_daily_min": 19.8
     },
     {
      "month": 7,
      "t_mean": 29.9,
-     "t_max": 45.3,
-     "t_min": 17.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.3,
+     "t_record_min": 17.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.6,
+     "t_daily_min": 21.5
     },
     {
      "month": 8,
      "t_mean": 29.9,
-     "t_max": 44.8,
-     "t_min": 19.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.8,
+     "t_record_min": 19.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.4,
+     "t_daily_min": 22.0
     },
     {
      "month": 9,
      "t_mean": 27.5,
-     "t_max": 42.4,
-     "t_min": 15.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.4,
+     "t_record_min": 15.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.8,
+     "t_daily_min": 20.2
     },
     {
      "month": 10,
      "t_mean": 23.7,
-     "t_max": 40.8,
-     "t_min": 11.8,
-     "rain_mm_day": 0.1
+     "t_record_max": 40.8,
+     "t_record_min": 11.8,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 31.2,
+     "t_daily_min": 17.5
     },
     {
      "month": 11,
      "t_mean": 18.7,
-     "t_max": 35.6,
-     "t_min": 7.2,
-     "rain_mm_day": 0.6
+     "t_record_max": 35.6,
+     "t_record_min": 7.2,
+     "rain_mm_day": 0.6,
+     "t_daily_max": 25.7,
+     "t_daily_min": 13.2
     },
     {
      "month": 12,
      "t_mean": 14.0,
-     "t_max": 32.5,
-     "t_min": 2.2,
-     "rain_mm_day": 0.2
+     "t_record_max": 32.5,
+     "t_record_min": 2.2,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 20.8,
+     "t_daily_min": 9.1
     }
    ]
   },
@@ -874,86 +2780,110 @@
     {
      "month": 1,
      "t_mean": 13.9,
-     "t_max": 28.1,
-     "t_min": 5.5,
-     "rain_mm_day": 0.8
+     "t_record_max": 28.1,
+     "t_record_min": 5.5,
+     "rain_mm_day": 0.8,
+     "t_daily_max": 18.7,
+     "t_daily_min": 10.3
     },
     {
      "month": 2,
      "t_mean": 14.6,
-     "t_max": 32.2,
-     "t_min": 5.8,
-     "rain_mm_day": 0.6
+     "t_record_max": 32.2,
+     "t_record_min": 5.8,
+     "rain_mm_day": 0.6,
+     "t_daily_max": 19.9,
+     "t_daily_min": 10.4
     },
     {
      "month": 3,
      "t_mean": 16.7,
-     "t_max": 36.8,
-     "t_min": 6.7,
-     "rain_mm_day": 0.3
+     "t_record_max": 36.8,
+     "t_record_min": 6.7,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 22.9,
+     "t_daily_min": 11.8
     },
     {
      "month": 4,
      "t_mean": 19.4,
-     "t_max": 40.9,
-     "t_min": 9.6,
-     "rain_mm_day": 0.5
+     "t_record_max": 40.9,
+     "t_record_min": 9.6,
+     "rain_mm_day": 0.5,
+     "t_daily_max": 26.2,
+     "t_daily_min": 14.0
     },
     {
      "month": 5,
      "t_mean": 23.1,
-     "t_max": 42.1,
-     "t_min": 11.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.1,
+     "t_record_min": 11.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 29.9,
+     "t_daily_min": 17.3
     },
     {
      "month": 6,
      "t_mean": 26.1,
-     "t_max": 43.4,
-     "t_min": 15.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.4,
+     "t_record_min": 15.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 32.7,
+     "t_daily_min": 20.5
     },
     {
      "month": 7,
      "t_mean": 27.8,
-     "t_max": 45.0,
-     "t_min": 19.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.0,
+     "t_record_min": 19.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.1,
+     "t_daily_min": 22.6
     },
     {
      "month": 8,
      "t_mean": 28.2,
-     "t_max": 41.7,
-     "t_min": 21.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 41.7,
+     "t_record_min": 21.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.4,
+     "t_daily_min": 23.4
     },
     {
      "month": 9,
      "t_mean": 26.7,
-     "t_max": 40.1,
-     "t_min": 18.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.1,
+     "t_record_min": 18.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 32.7,
+     "t_daily_min": 22.3
     },
     {
      "month": 10,
      "t_mean": 23.8,
-     "t_max": 38.8,
-     "t_min": 16.1,
-     "rain_mm_day": 0.2
+     "t_record_max": 38.8,
+     "t_record_min": 16.1,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 29.3,
+     "t_daily_min": 19.9
     },
     {
      "month": 11,
      "t_mean": 19.9,
-     "t_max": 34.2,
-     "t_min": 11.1,
-     "rain_mm_day": 0.4
+     "t_record_max": 34.2,
+     "t_record_min": 11.1,
+     "rain_mm_day": 0.4,
+     "t_daily_max": 24.8,
+     "t_daily_min": 16.4
     },
     {
      "month": 12,
      "t_mean": 16.0,
-     "t_max": 31.0,
-     "t_min": 7.2,
-     "rain_mm_day": 0.6
+     "t_record_max": 31.0,
+     "t_record_min": 7.2,
+     "rain_mm_day": 0.6,
+     "t_daily_max": 20.6,
+     "t_daily_min": 12.6
     }
    ]
   },
@@ -969,86 +2899,110 @@
     {
      "month": 1,
      "t_mean": 11.1,
-     "t_max": 27.8,
-     "t_min": 0.7,
-     "rain_mm_day": 0.2
+     "t_record_max": 27.8,
+     "t_record_min": 0.7,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 17.6,
+     "t_daily_min": 6.0
     },
     {
      "month": 2,
      "t_mean": 12.7,
-     "t_max": 34.3,
-     "t_min": 0.8,
-     "rain_mm_day": 0.2
+     "t_record_max": 34.3,
+     "t_record_min": 0.8,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 19.7,
+     "t_daily_min": 7.0
     },
     {
      "month": 3,
      "t_mean": 16.6,
-     "t_max": 37.7,
-     "t_min": 2.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 37.7,
+     "t_record_min": 2.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 24.1,
+     "t_daily_min": 9.8
     },
     {
      "month": 4,
      "t_mean": 20.9,
-     "t_max": 39.7,
-     "t_min": 6.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.7,
+     "t_record_min": 6.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 28.7,
+     "t_daily_min": 13.5
     },
     {
      "month": 5,
      "t_mean": 25.5,
-     "t_max": 44.1,
-     "t_min": 10.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.1,
+     "t_record_min": 10.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 33.1,
+     "t_daily_min": 17.7
     },
     {
      "month": 6,
      "t_mean": 28.9,
-     "t_max": 45.7,
-     "t_min": 15.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.7,
+     "t_record_min": 15.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 36.5,
+     "t_daily_min": 20.9
     },
     {
      "month": 7,
      "t_mean": 30.2,
-     "t_max": 45.3,
-     "t_min": 17.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.3,
+     "t_record_min": 17.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.5,
+     "t_daily_min": 22.3
     },
     {
      "month": 8,
      "t_mean": 30.2,
-     "t_max": 43.0,
-     "t_min": 18.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.0,
+     "t_record_min": 18.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.3,
+     "t_daily_min": 22.9
     },
     {
      "month": 9,
      "t_mean": 27.8,
-     "t_max": 41.5,
-     "t_min": 15.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 41.5,
+     "t_record_min": 15.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.8,
+     "t_daily_min": 21.1
     },
     {
      "month": 10,
      "t_mean": 23.3,
-     "t_max": 38.1,
-     "t_min": 11.8,
-     "rain_mm_day": 0.1
+     "t_record_max": 38.1,
+     "t_record_min": 11.8,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 29.8,
+     "t_daily_min": 17.3
     },
     {
      "month": 11,
      "t_mean": 17.4,
-     "t_max": 34.5,
-     "t_min": 6.5,
-     "rain_mm_day": 0.1
+     "t_record_max": 34.5,
+     "t_record_min": 6.5,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 23.7,
+     "t_daily_min": 12.2
     },
     {
      "month": 12,
      "t_mean": 12.9,
-     "t_max": 28.0,
-     "t_min": 2.7,
-     "rain_mm_day": 0.2
+     "t_record_max": 28.0,
+     "t_record_min": 2.7,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 19.1,
+     "t_daily_min": 8.1
     }
    ]
   },
@@ -1064,86 +3018,110 @@
     {
      "month": 1,
      "t_mean": 11.6,
-     "t_max": 30.3,
-     "t_min": 0.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 30.3,
+     "t_record_min": 0.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 18.9,
+     "t_daily_min": 5.9
     },
     {
      "month": 2,
      "t_mean": 13.7,
-     "t_max": 35.0,
-     "t_min": 0.5,
-     "rain_mm_day": 0.1
+     "t_record_max": 35.0,
+     "t_record_min": 0.5,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 21.4,
+     "t_daily_min": 7.2
     },
     {
      "month": 3,
      "t_mean": 17.8,
-     "t_max": 39.3,
-     "t_min": 3.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.3,
+     "t_record_min": 3.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 26.0,
+     "t_daily_min": 10.6
     },
     {
      "month": 4,
      "t_mean": 22.3,
-     "t_max": 42.3,
-     "t_min": 7.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.3,
+     "t_record_min": 7.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 30.6,
+     "t_daily_min": 14.6
     },
     {
      "month": 5,
      "t_mean": 26.9,
-     "t_max": 46.5,
-     "t_min": 12.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 46.5,
+     "t_record_min": 12.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.0,
+     "t_daily_min": 18.8
     },
     {
      "month": 6,
      "t_mean": 29.9,
-     "t_max": 45.7,
-     "t_min": 16.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.7,
+     "t_record_min": 16.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.6,
+     "t_daily_min": 21.9
     },
     {
      "month": 7,
      "t_mean": 30.8,
-     "t_max": 45.1,
-     "t_min": 18.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 45.1,
+     "t_record_min": 18.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.2,
+     "t_daily_min": 23.1
     },
     {
      "month": 8,
      "t_mean": 31.0,
-     "t_max": 43.8,
-     "t_min": 19.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.8,
+     "t_record_min": 19.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.3,
+     "t_daily_min": 23.6
     },
     {
      "month": 9,
      "t_mean": 28.2,
-     "t_max": 42.0,
-     "t_min": 16.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.0,
+     "t_record_min": 16.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.7,
+     "t_daily_min": 21.2
     },
     {
      "month": 10,
      "t_mean": 23.7,
-     "t_max": 40.5,
-     "t_min": 11.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.5,
+     "t_record_min": 11.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 31.0,
+     "t_daily_min": 17.3
     },
     {
      "month": 11,
      "t_mean": 17.8,
-     "t_max": 36.2,
-     "t_min": 6.3,
-     "rain_mm_day": 0.1
+     "t_record_max": 36.2,
+     "t_record_min": 6.3,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 25.0,
+     "t_daily_min": 12.0
     },
     {
      "month": 12,
      "t_mean": 13.2,
-     "t_max": 30.6,
-     "t_min": 2.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 30.6,
+     "t_record_min": 2.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 20.2,
+     "t_daily_min": 7.8
     }
    ]
   },
@@ -1159,86 +3137,110 @@
     {
      "month": 1,
      "t_mean": 10.0,
-     "t_max": 26.7,
-     "t_min": -2.4,
-     "rain_mm_day": 0.1
+     "t_record_max": 26.7,
+     "t_record_min": -2.4,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 16.9,
+     "t_daily_min": 4.9
     },
     {
      "month": 2,
      "t_mean": 12.0,
-     "t_max": 29.4,
-     "t_min": -1.7,
-     "rain_mm_day": 0.1
+     "t_record_max": 29.4,
+     "t_record_min": -1.7,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 19.0,
+     "t_daily_min": 6.2
     },
     {
      "month": 3,
      "t_mean": 15.7,
-     "t_max": 33.1,
-     "t_min": -0.2,
-     "rain_mm_day": 0.1
+     "t_record_max": 33.1,
+     "t_record_min": -0.2,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 23.1,
+     "t_daily_min": 9.1
     },
     {
      "month": 4,
      "t_mean": 19.8,
-     "t_max": 36.3,
-     "t_min": 2.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 36.3,
+     "t_record_min": 2.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 27.1,
+     "t_daily_min": 12.8
     },
     {
      "month": 5,
      "t_mean": 24.3,
-     "t_max": 39.6,
-     "t_min": 8.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.6,
+     "t_record_min": 8.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 31.4,
+     "t_daily_min": 17.1
     },
     {
      "month": 6,
      "t_mean": 27.4,
-     "t_max": 40.9,
-     "t_min": 12.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.9,
+     "t_record_min": 12.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.8,
+     "t_daily_min": 19.7
     },
     {
      "month": 7,
      "t_mean": 28.5,
-     "t_max": 41.5,
-     "t_min": 16.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 41.5,
+     "t_record_min": 16.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.5,
+     "t_daily_min": 21.2
     },
     {
      "month": 8,
      "t_mean": 28.5,
-     "t_max": 41.7,
-     "t_min": 16.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 41.7,
+     "t_record_min": 16.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.8,
+     "t_daily_min": 21.6
     },
     {
      "month": 9,
      "t_mean": 26.4,
-     "t_max": 40.2,
-     "t_min": 13.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.2,
+     "t_record_min": 13.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 33.9,
+     "t_daily_min": 19.8
     },
     {
      "month": 10,
      "t_mean": 22.4,
-     "t_max": 37.9,
-     "t_min": 8.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 37.9,
+     "t_record_min": 8.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 29.3,
+     "t_daily_min": 16.8
     },
     {
      "month": 11,
      "t_mean": 16.6,
-     "t_max": 33.0,
-     "t_min": 2.0,
-     "rain_mm_day": 0.1
+     "t_record_max": 33.0,
+     "t_record_min": 2.0,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 23.5,
+     "t_daily_min": 11.3
     },
     {
      "month": 12,
      "t_mean": 11.9,
-     "t_max": 29.2,
-     "t_min": -1.0,
-     "rain_mm_day": 0.1
+     "t_record_max": 29.2,
+     "t_record_min": -1.0,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 18.8,
+     "t_daily_min": 6.9
     }
    ]
   },
@@ -1254,86 +3256,110 @@
     {
      "month": 1,
      "t_mean": 13.4,
-     "t_max": 29.3,
-     "t_min": 2.0,
-     "rain_mm_day": 0.1
+     "t_record_max": 29.3,
+     "t_record_min": 2.0,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 20.2,
+     "t_daily_min": 8.3
     },
     {
      "month": 2,
      "t_mean": 15.2,
-     "t_max": 32.0,
-     "t_min": 2.2,
-     "rain_mm_day": 0.1
+     "t_record_max": 32.0,
+     "t_record_min": 2.2,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 22.4,
+     "t_daily_min": 9.4
     },
     {
      "month": 3,
      "t_mean": 18.5,
-     "t_max": 35.4,
-     "t_min": 3.6,
-     "rain_mm_day": 0.1
+     "t_record_max": 35.4,
+     "t_record_min": 3.6,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 26.1,
+     "t_daily_min": 12.0
     },
     {
      "month": 4,
      "t_mean": 22.4,
-     "t_max": 38.2,
-     "t_min": 7.2,
-     "rain_mm_day": 0.1
+     "t_record_max": 38.2,
+     "t_record_min": 7.2,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 30.0,
+     "t_daily_min": 15.4
     },
     {
      "month": 5,
      "t_mean": 26.8,
-     "t_max": 41.5,
-     "t_min": 11.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 41.5,
+     "t_record_min": 11.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.3,
+     "t_daily_min": 19.4
     },
     {
      "month": 6,
      "t_mean": 29.5,
-     "t_max": 42.9,
-     "t_min": 15.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.9,
+     "t_record_min": 15.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.3,
+     "t_daily_min": 21.8
     },
     {
      "month": 7,
      "t_mean": 31.2,
-     "t_max": 44.7,
-     "t_min": 18.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.7,
+     "t_record_min": 18.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.6,
+     "t_daily_min": 23.7
     },
     {
      "month": 8,
      "t_mean": 31.2,
-     "t_max": 44.2,
-     "t_min": 19.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.2,
+     "t_record_min": 19.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 38.9,
+     "t_daily_min": 23.9
     },
     {
      "month": 9,
      "t_mean": 28.9,
-     "t_max": 43.5,
-     "t_min": 17.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.5,
+     "t_record_min": 17.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 36.7,
+     "t_daily_min": 21.9
     },
     {
      "month": 10,
      "t_mean": 25.3,
-     "t_max": 39.0,
-     "t_min": 12.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.0,
+     "t_record_min": 12.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 32.5,
+     "t_daily_min": 19.2
     },
     {
      "month": 11,
      "t_mean": 19.6,
-     "t_max": 34.8,
-     "t_min": 6.3,
-     "rain_mm_day": 0.1
+     "t_record_max": 34.8,
+     "t_record_min": 6.3,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 26.2,
+     "t_daily_min": 14.4
     },
     {
      "month": 12,
      "t_mean": 15.1,
-     "t_max": 31.4,
-     "t_min": 3.6,
-     "rain_mm_day": 0.1
+     "t_record_max": 31.4,
+     "t_record_min": 3.6,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 21.7,
+     "t_daily_min": 10.2
     }
    ]
   },
@@ -1349,86 +3375,110 @@
     {
      "month": 1,
      "t_mean": 18.1,
-     "t_max": 27.9,
-     "t_min": 9.5,
-     "rain_mm_day": 0.1
+     "t_record_max": 27.9,
+     "t_record_min": 9.5,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 21.2,
+     "t_daily_min": 15.5
     },
     {
      "month": 2,
      "t_mean": 19.1,
-     "t_max": 29.8,
-     "t_min": 10.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 29.8,
+     "t_record_min": 10.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 22.5,
+     "t_daily_min": 16.2
     },
     {
      "month": 3,
      "t_mean": 21.2,
-     "t_max": 32.3,
-     "t_min": 11.2,
-     "rain_mm_day": 0.1
+     "t_record_max": 32.3,
+     "t_record_min": 11.2,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 24.9,
+     "t_daily_min": 17.8
     },
     {
      "month": 4,
      "t_mean": 23.9,
-     "t_max": 33.8,
-     "t_min": 13.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 33.8,
+     "t_record_min": 13.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 27.7,
+     "t_daily_min": 20.1
     },
     {
      "month": 5,
      "t_mean": 27.2,
-     "t_max": 39.2,
-     "t_min": 17.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.2,
+     "t_record_min": 17.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 31.1,
+     "t_daily_min": 23.3
     },
     {
      "month": 6,
      "t_mean": 29.4,
-     "t_max": 39.0,
-     "t_min": 20.8,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.0,
+     "t_record_min": 20.8,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 33.3,
+     "t_daily_min": 25.3
     },
     {
      "month": 7,
      "t_mean": 30.8,
-     "t_max": 42.2,
-     "t_min": 22.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.2,
+     "t_record_min": 22.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.4,
+     "t_daily_min": 27.0
     },
     {
      "month": 8,
      "t_mean": 31.1,
-     "t_max": 42.4,
-     "t_min": 24.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.4,
+     "t_record_min": 24.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.7,
+     "t_daily_min": 27.4
     },
     {
      "month": 9,
      "t_mean": 29.3,
-     "t_max": 38.5,
-     "t_min": 22.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 38.5,
+     "t_record_min": 22.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 33.1,
+     "t_daily_min": 25.7
     },
     {
      "month": 10,
      "t_mean": 27.0,
-     "t_max": 36.0,
-     "t_min": 19.5,
-     "rain_mm_day": 0.1
+     "t_record_max": 36.0,
+     "t_record_min": 19.5,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 30.5,
+     "t_daily_min": 24.0
     },
     {
      "month": 11,
      "t_mean": 23.6,
-     "t_max": 33.1,
-     "t_min": 15.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 33.1,
+     "t_record_min": 15.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 26.6,
+     "t_daily_min": 21.0
     },
     {
      "month": 12,
      "t_mean": 20.0,
-     "t_max": 29.2,
-     "t_min": 11.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 29.2,
+     "t_record_min": 11.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 22.9,
+     "t_daily_min": 17.5
     }
    ]
   },
@@ -1444,86 +3494,110 @@
     {
      "month": 1,
      "t_mean": 11.0,
-     "t_max": 27.5,
-     "t_min": 1.2,
-     "rain_mm_day": 0.2
+     "t_record_max": 27.5,
+     "t_record_min": 1.2,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 17.7,
+     "t_daily_min": 5.9
     },
     {
      "month": 2,
      "t_mean": 12.6,
-     "t_max": 33.1,
-     "t_min": 0.8,
-     "rain_mm_day": 0.3
+     "t_record_max": 33.1,
+     "t_record_min": 0.8,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 19.8,
+     "t_daily_min": 6.9
     },
     {
      "month": 3,
      "t_mean": 15.9,
-     "t_max": 37.7,
-     "t_min": 1.8,
-     "rain_mm_day": 0.1
+     "t_record_max": 37.7,
+     "t_record_min": 1.8,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 24.1,
+     "t_daily_min": 9.0
     },
     {
      "month": 4,
      "t_mean": 19.9,
-     "t_max": 40.8,
-     "t_min": 6.0,
-     "rain_mm_day": 0.1
+     "t_record_max": 40.8,
+     "t_record_min": 6.0,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 28.4,
+     "t_daily_min": 12.1
     },
     {
      "month": 5,
      "t_mean": 24.3,
-     "t_max": 44.0,
-     "t_min": 10.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.0,
+     "t_record_min": 10.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 32.8,
+     "t_daily_min": 16.0
     },
     {
      "month": 6,
      "t_mean": 27.3,
-     "t_max": 44.4,
-     "t_min": 13.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.4,
+     "t_record_min": 13.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.8,
+     "t_daily_min": 18.8
     },
     {
      "month": 7,
      "t_mean": 28.4,
-     "t_max": 44.5,
-     "t_min": 16.6,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.5,
+     "t_record_min": 16.6,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 36.8,
+     "t_daily_min": 20.3
     },
     {
      "month": 8,
      "t_mean": 28.5,
-     "t_max": 42.8,
-     "t_min": 17.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 42.8,
+     "t_record_min": 17.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 36.6,
+     "t_daily_min": 20.7
     },
     {
      "month": 9,
      "t_mean": 26.2,
-     "t_max": 41.5,
-     "t_min": 14.0,
-     "rain_mm_day": 0.0
+     "t_record_max": 41.5,
+     "t_record_min": 14.0,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.1,
+     "t_daily_min": 19.1
     },
     {
      "month": 10,
      "t_mean": 22.4,
-     "t_max": 38.8,
-     "t_min": 11.6,
-     "rain_mm_day": 0.1
+     "t_record_max": 38.8,
+     "t_record_min": 11.6,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 29.7,
+     "t_daily_min": 16.4
     },
     {
      "month": 11,
      "t_mean": 17.4,
-     "t_max": 34.3,
-     "t_min": 6.7,
-     "rain_mm_day": 0.6
+     "t_record_max": 34.3,
+     "t_record_min": 6.7,
+     "rain_mm_day": 0.6,
+     "t_daily_max": 24.1,
+     "t_daily_min": 12.1
     },
     {
      "month": 12,
      "t_mean": 12.9,
-     "t_max": 30.4,
-     "t_min": 2.0,
-     "rain_mm_day": 0.3
+     "t_record_max": 30.4,
+     "t_record_min": 2.0,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 19.3,
+     "t_daily_min": 8.1
     }
    ]
   },
@@ -1539,86 +3613,110 @@
     {
      "month": 1,
      "t_mean": 15.1,
-     "t_max": 24.2,
-     "t_min": 9.2,
-     "rain_mm_day": 1.1
+     "t_record_max": 24.2,
+     "t_record_min": 9.2,
+     "rain_mm_day": 1.1,
+     "t_daily_max": 17.3,
+     "t_daily_min": 13.2
     },
     {
      "month": 2,
      "t_mean": 15.2,
-     "t_max": 28.7,
-     "t_min": 9.2,
-     "rain_mm_day": 0.7
+     "t_record_max": 28.7,
+     "t_record_min": 9.2,
+     "rain_mm_day": 0.7,
+     "t_daily_max": 17.8,
+     "t_daily_min": 13.0
     },
     {
      "month": 3,
      "t_mean": 16.4,
-     "t_max": 30.1,
-     "t_min": 9.5,
-     "rain_mm_day": 0.3
+     "t_record_max": 30.1,
+     "t_record_min": 9.5,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 19.4,
+     "t_daily_min": 14.0
     },
     {
      "month": 4,
      "t_mean": 18.4,
-     "t_max": 35.1,
-     "t_min": 12.5,
-     "rain_mm_day": 0.3
+     "t_record_max": 35.1,
+     "t_record_min": 12.5,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 21.7,
+     "t_daily_min": 15.8
     },
     {
      "month": 5,
      "t_mean": 21.4,
-     "t_max": 36.1,
-     "t_min": 14.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 36.1,
+     "t_record_min": 14.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 24.6,
+     "t_daily_min": 18.7
     },
     {
      "month": 6,
      "t_mean": 24.4,
-     "t_max": 39.8,
-     "t_min": 18.2,
-     "rain_mm_day": 0.0
+     "t_record_max": 39.8,
+     "t_record_min": 18.2,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 27.1,
+     "t_daily_min": 22.0
     },
     {
      "month": 7,
      "t_mean": 26.3,
-     "t_max": 40.8,
-     "t_min": 21.4,
-     "rain_mm_day": 0.0
+     "t_record_max": 40.8,
+     "t_record_min": 21.4,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 28.8,
+     "t_daily_min": 24.2
     },
     {
      "month": 8,
      "t_mean": 27.1,
-     "t_max": 37.6,
-     "t_min": 23.5,
-     "rain_mm_day": 0.0
+     "t_record_max": 37.6,
+     "t_record_min": 23.5,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 29.5,
+     "t_daily_min": 25.2
     },
     {
      "month": 9,
      "t_mean": 26.1,
-     "t_max": 35.8,
-     "t_min": 20.7,
-     "rain_mm_day": 0.0
+     "t_record_max": 35.8,
+     "t_record_min": 20.7,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 28.5,
+     "t_daily_min": 24.3
     },
     {
      "month": 10,
      "t_mean": 23.8,
-     "t_max": 35.5,
-     "t_min": 18.8,
-     "rain_mm_day": 0.2
+     "t_record_max": 35.5,
+     "t_record_min": 18.8,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 26.1,
+     "t_daily_min": 22.1
     },
     {
      "month": 11,
      "t_mean": 20.6,
-     "t_max": 30.5,
-     "t_min": 14.4,
-     "rain_mm_day": 0.6
+     "t_record_max": 30.5,
+     "t_record_min": 14.4,
+     "rain_mm_day": 0.6,
+     "t_daily_max": 22.7,
+     "t_daily_min": 18.9
     },
     {
      "month": 12,
      "t_mean": 17.2,
-     "t_max": 25.8,
-     "t_min": 10.4,
-     "rain_mm_day": 1.0
+     "t_record_max": 25.8,
+     "t_record_min": 10.4,
+     "rain_mm_day": 1.0,
+     "t_daily_max": 19.2,
+     "t_daily_min": 15.5
     }
    ]
   },
@@ -1634,86 +3732,110 @@
     {
      "month": 1,
      "t_mean": 12.4,
-     "t_max": 28.2,
-     "t_min": 1.4,
-     "rain_mm_day": 0.3
+     "t_record_max": 28.2,
+     "t_record_min": 1.4,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 18.8,
+     "t_daily_min": 7.6
     },
     {
      "month": 2,
      "t_mean": 13.8,
-     "t_max": 34.4,
-     "t_min": 2.4,
-     "rain_mm_day": 0.4
+     "t_record_max": 34.4,
+     "t_record_min": 2.4,
+     "rain_mm_day": 0.4,
+     "t_daily_max": 20.8,
+     "t_daily_min": 8.4
     },
     {
      "month": 3,
      "t_mean": 16.7,
-     "t_max": 39.0,
-     "t_min": 3.4,
-     "rain_mm_day": 0.3
+     "t_record_max": 39.0,
+     "t_record_min": 3.4,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 24.5,
+     "t_daily_min": 10.5
     },
     {
      "month": 4,
      "t_mean": 20.1,
-     "t_max": 42.3,
-     "t_min": 7.7,
-     "rain_mm_day": 0.3
+     "t_record_max": 42.3,
+     "t_record_min": 7.7,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 28.2,
+     "t_daily_min": 13.2
     },
     {
      "month": 5,
      "t_mean": 24.1,
-     "t_max": 44.4,
-     "t_min": 11.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 44.4,
+     "t_record_min": 11.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 32.6,
+     "t_daily_min": 16.9
     },
     {
      "month": 6,
      "t_mean": 27.0,
-     "t_max": 43.5,
-     "t_min": 14.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.5,
+     "t_record_min": 14.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 35.5,
+     "t_daily_min": 19.7
     },
     {
      "month": 7,
      "t_mean": 28.9,
-     "t_max": 43.0,
-     "t_min": 17.9,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.0,
+     "t_record_min": 17.9,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.4,
+     "t_daily_min": 21.7
     },
     {
      "month": 8,
      "t_mean": 28.9,
-     "t_max": 43.9,
-     "t_min": 19.3,
-     "rain_mm_day": 0.0
+     "t_record_max": 43.9,
+     "t_record_min": 19.3,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 37.1,
+     "t_daily_min": 22.3
     },
     {
      "month": 9,
      "t_mean": 26.6,
-     "t_max": 41.3,
-     "t_min": 16.1,
-     "rain_mm_day": 0.0
+     "t_record_max": 41.3,
+     "t_record_min": 16.1,
+     "rain_mm_day": 0.0,
+     "t_daily_max": 34.1,
+     "t_daily_min": 20.7
     },
     {
      "month": 10,
      "t_mean": 23.4,
-     "t_max": 39.5,
-     "t_min": 12.7,
-     "rain_mm_day": 0.1
+     "t_record_max": 39.5,
+     "t_record_min": 12.7,
+     "rain_mm_day": 0.1,
+     "t_daily_max": 30.2,
+     "t_daily_min": 18.3
     },
     {
      "month": 11,
      "t_mean": 18.8,
-     "t_max": 35.4,
-     "t_min": 7.9,
-     "rain_mm_day": 0.3
+     "t_record_max": 35.4,
+     "t_record_min": 7.9,
+     "rain_mm_day": 0.3,
+     "t_daily_max": 25.2,
+     "t_daily_min": 14.2
     },
     {
      "month": 12,
      "t_mean": 14.3,
-     "t_max": 31.6,
-     "t_min": 3.8,
-     "rain_mm_day": 0.2
+     "t_record_max": 31.6,
+     "t_record_min": 3.8,
+     "rain_mm_day": 0.2,
+     "t_daily_max": 20.5,
+     "t_daily_min": 9.8
     }
    ]
   }
