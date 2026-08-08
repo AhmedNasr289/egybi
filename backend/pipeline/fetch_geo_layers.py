@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-EgyBI — Atlas layer builder (health facilities, schools, heritage sites).
+EgyBI — Atlas layer builder (health, schools, heritage, places, industry).
 
-Fetches the three occasionally-refreshed layers the Atlas page
+Fetches the occasionally-refreshed layers the Atlas page
 (site/geospatial.html) renders on top of the bundled governorate map
 (site/assets/egypt-geo.js — geoBoundaries EGY ADM1, CC-BY 4.0):
 
@@ -14,6 +14,16 @@ Fetches the three occasionally-refreshed layers the Atlas page
                                                                   → geo-schools.json
   3. Heritage sites     — UNESCO World Heritage Centre list (XML feed),
                           filtered to Egypt.                      → geo-heritage.json
+  4. Places gazetteer   — OpenStreetMap: cities and towns, museums, airports
+                          with an IATA code and archaeological sites, plus the
+                          reference tags that let a reader go and check for
+                          themselves — Wikipedia, Wikidata, official website,
+                          opening hours, step-free access.        → geo-places.json
+  5. Industry and ports — OpenStreetMap: power plants, ports and named
+                          industrial zones. This is the geography the knowledge
+                          base's investment tables actually live in; see
+                          build_industry() for why it is separate from the
+                          visitor gazetteer.                      → geo-industry.json
 
 This is NOT a daily pipeline. OSM coverage and the World Heritage List change
 slowly, so it runs manually (workflow_dispatch) a few times a year. Guardrail
@@ -223,6 +233,124 @@ LAT_TAGS = ("latitude", "lat")
 LON_TAGS = ("longitude", "longitude_", "lon", "long", "lng")
 
 
+def build_industry(govs: list[dict]) -> bool:
+    """Power plants, ports and industrial zones — the geography of the KB's
+    investment rows.
+
+    WHY THIS LAYER EXISTS. `build_invest_map.py` joins the knowledge base's
+    megaprojects, renewable, hydrogen, logistics and deal tables to coordinates.
+    None of those tables carries a coordinate, so the join has to find the
+    project somewhere else — and the only gazetteer available held cities,
+    airports and archaeological sites. A wind farm is none of those. Seven rows
+    out of forty could be placed, and the ones that could not were precisely
+    the interesting ones: Benban, Zafarana, Gabal El Zeit, West Bakr, the
+    Sokhna and East Port Said terminals.
+
+    OSM maps all of them, just not as places. Benban is `power=plant` with
+    `plant:source=solar`; the terminals are `industrial=port` and
+    `harbour=yes`. Fetching those tags gives the join something to match a
+    project NAME against exactly — and an exact name match against an object of
+    the right kind is a strong join, because the OSM object and the KB row are
+    the same physical thing rather than two things that share a word.
+
+    This is kept OUT of geo-places.json on purpose. That file is the visitor
+    gazetteer, and a reader browsing places to go should not have power
+    stations dealt into it.
+    """
+    print("Industry, energy and ports (OpenStreetMap via Overpass)…")
+    queries = {
+        "power_plant": """[out:json][timeout:180];
+area["ISO3166-1"="EG"][admin_level=2]->.eg;
+(node["power"="plant"]["name"](area.eg);
+ way["power"="plant"]["name"](area.eg);
+ relation["power"="plant"]["name"](area.eg););
+out center tags;""",
+        "port": """[out:json][timeout:180];
+area["ISO3166-1"="EG"][admin_level=2]->.eg;
+(node["industrial"="port"]["name"](area.eg);
+ way["industrial"="port"]["name"](area.eg);
+ relation["industrial"="port"]["name"](area.eg);
+ node["harbour"="yes"]["name"](area.eg);
+ way["harbour"="yes"]["name"](area.eg);
+ relation["harbour"="yes"]["name"](area.eg););
+out center tags;""",
+        "industrial_zone": """[out:json][timeout:180];
+area["ISO3166-1"="EG"][admin_level=2]->.eg;
+(way["landuse"="industrial"]["name"](area.eg);
+ relation["landuse"="industrial"]["name"](area.eg););
+out center tags;""",
+    }
+
+    sites, counts = [], {}
+    for kind, q in queries.items():
+        try:
+            data = overpass(q)
+        except Exception as e:  # noqa: BLE001
+            print(f"  SKIP industry: overpass failed for {kind} ({type(e).__name__}: {e})")
+            return False
+        n = 0
+        for el in data.get("elements", []):
+            c = element_coords(el)
+            if not c:
+                continue
+            lon, lat = c
+            tags = el.get("tags", {})
+            name = tags.get("name:en") or tags.get("name")
+            if not name:
+                continue
+            rec = {
+                "name": name,
+                "name_ar": tags.get("name:ar", ""),
+                "kind": kind,
+                "lat": round(lat, 5),
+                "lon": round(lon, 5),
+                "gov": assign(lon, lat, govs) or "",
+            }
+            if kind == "power_plant":
+                # The fuel matters: it is what tells a solar park from a gas
+                # station, and it is the field that makes the renewable rows
+                # checkable against something other than their own name.
+                for tag, key in (("plant:source", "source"),
+                                 ("plant:output:electricity", "output")):
+                    v = (tags.get(tag) or "").strip()
+                    if v:
+                        rec[key] = v
+            rec.update(reference_fields(tags))
+            sites.append(rec)
+            n += 1
+        counts[kind] = n
+        print(f"    {kind:<16} {n:>5}")
+
+    # NO FLOORS. Every other guardrail in this file was calibrated against an
+    # observed run; this layer has never been fetched, so a floor here would be
+    # a guess dressed as a threshold. What IS checked is the failure this can
+    # actually have — a total collapse, which means a broken query rather than
+    # a thinly mapped country.
+    if not sites:
+        print("  SKIP industry: every query returned nothing — that is a broken "
+              "query, not an empty country. Keeping last-good file.")
+        return False
+
+    out = {
+        "as_of": date.today().isoformat(),
+        "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "source": "OpenStreetMap via Overpass API",
+        "license": "ODbL — © OpenStreetMap contributors",
+        "counts": counts,
+        "note": ("Power plants, ports and named industrial zones AS MAPPED IN "
+                 "OPENSTREETMAP. This is what the OSM community has recorded, not a "
+                 "register: a plant absent here is absent from OSM, not from Egypt, "
+                 "and capacities in the `output` field are OSM's tag rather than an "
+                 "operator's published figure. Governorate is computed by "
+                 "point-in-polygon against the bundled boundaries."),
+        "sites": sorted(sites, key=lambda s: (s["kind"], s["name"])),
+    }
+    (OUT_DIR / "geo-industry.json").write_text(
+        json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    print(f"  wrote geo-industry.json ({len(sites)} sites)")
+    return True
+
+
 def build_heritage() -> bool:
     print("World Heritage sites (UNESCO WHC list XML)…")
     try:
@@ -311,6 +439,51 @@ def build_heritage() -> bool:
     return True
 
 
+WIKIPEDIA_TAG = re.compile(r"^([a-z\-]{2,12}):(.+)$")
+
+
+def reference_fields(tags: dict) -> dict:
+    """The handful of OSM tags that let a reader go and check for themselves.
+
+    WHY THESE AND NOT MORE. A visitor page is where a beautiful site starts
+    lying, because opening hours, ticket prices and "best time to go" all rot
+    and none of them announce it. So this captures only tags that either cannot
+    go stale (a Wikidata Q-id, a Wikipedia title, a UNESCO reference) or that
+    can be published WITH the date they were read and a caution attached
+    (opening hours, wheelchair access, official website).
+
+    Ticket prices are not captured even though OSM sometimes carries a `fee`
+    or `charge` tag. A monthly refresh cannot keep a price honest, and a stale
+    price is worse than no price because a reader budgets against it.
+
+    Everything here is a plain string copied verbatim from OSM. Nothing is
+    parsed into a claim: `opening_hours` stays in OSM's own syntax and the page
+    presents it as what OSM recorded, not as when the place is open.
+    """
+    out = {}
+    for key, tag in (("wikidata", "wikidata"),
+                     ("website", "website"),
+                     ("opening_hours", "opening_hours"),
+                     ("wheelchair", "wheelchair"),
+                     ("commons", "wikimedia_commons")):
+        v = (tags.get(tag) or "").strip()
+        if v:
+            out[key] = v
+    # `website` is absent far more often than `contact:website`, which is the
+    # newer spelling; take either, preferring the plain one.
+    if "website" not in out:
+        v = (tags.get("contact:website") or "").strip()
+        if v:
+            out["website"] = v
+    # OSM stores this as "en:Article Title". Split it rather than shipping the
+    # raw tag, so the page never has to parse a source format at runtime.
+    wp = (tags.get("wikipedia") or "").strip()
+    m = WIKIPEDIA_TAG.match(wp)
+    if m:
+        out["wikipedia_lang"], out["wikipedia_title"] = m.group(1), m.group(2)
+    return out
+
+
 def build_places(govs: list[dict]) -> bool:
     """Egypt-wide gazetteer: cities and towns, airports, archaeological sites.
 
@@ -344,6 +517,17 @@ area["ISO3166-1"="EG"][admin_level=2]->.eg;
 (node["place"~"^(city|town)$"]["name"](area.eg);
  way["place"~"^(city|town)$"]["name"](area.eg);
  relation["place"~"^(city|town)$"]["name"](area.eg););
+out center tags;""",
+        # Museums earn their own kind because they are the one category a
+        # visitor can act on directly and OSM maps them well in Egypt. They are
+        # NOT merged into `antiquity`: a museum is a building with a door and
+        # opening hours, an archaeological site is a place in the ground, and
+        # flattening the two would make the visitor layer's own labels wrong.
+        "museum": """[out:json][timeout:180];
+area["ISO3166-1"="EG"][admin_level=2]->.eg;
+(node["tourism"="museum"]["name"](area.eg);
+ way["tourism"="museum"]["name"](area.eg);
+ relation["tourism"="museum"]["name"](area.eg););
 out center tags;""",
         # iata filter keeps this to airports a traveller can actually fly into,
         # rather than every airstrip and military field in the desert.
@@ -398,6 +582,7 @@ out center tags;""",
                     rec["population_osm"] = int(pop)
             if kind == "airport":
                 rec["iata"] = tags.get("iata", "")
+            rec.update(reference_fields(tags))
             places.append(rec)
             n += 1
         counts[kind] = n
@@ -411,6 +596,11 @@ out center tags;""",
     # high enough that a collapse or a truncated Overpass response trips them,
     # low enough that ordinary mapping churn does not turn a healthy run red.
     # The provisional 120/8/40 were guesses and are now retired.
+    # `museum` has NO floor. Every other number here was calibrated against an
+    # observed run at roughly 65% of the real count; museums have never been
+    # fetched, so any floor would be a guess wearing a calibrated number's
+    # clothes — exactly what the retired 120/8/40 guesses were. It gets one
+    # after the first real run, from that run's count.
     floors = {"settlement": 220, "airport": 18, "antiquity": 250}
     thin = [f"{k} {counts.get(k, 0)} < {v}" for k, v in floors.items() if counts.get(k, 0) < v]
     if thin:
@@ -436,17 +626,36 @@ out center tags;""",
           f"benchmark cities present" + (f"; absent: {', '.join(absent)}" if absent else ""))
 
     with_pop = sum(1 for p in places if "population_osm" in p)
+    # How much of the reference layer OSM actually carries. Published rather
+    # than kept in the build log, because the visitor pages show a link only
+    # where the tag exists, and a reader deserves to know that a place with no
+    # Wikipedia link means OSM has no Wikipedia tag for it — not that nothing
+    # has been written about it.
+    ref_coverage = {
+        field: sum(1 for p in places if p.get(field))
+        for field in ("wikidata", "wikipedia_title", "website",
+                      "opening_hours", "wheelchair", "commons")
+    }
     out = {
         "as_of": date.today().isoformat(),
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "source": "OpenStreetMap via Overpass API",
         "license": "ODbL — © OpenStreetMap contributors",
         "counts": counts,
-        "note": ("Cities, towns, airports with an IATA code, and archaeological sites AS MAPPED "
-                 "IN OPENSTREETMAP. This is the geographic pattern of what the OSM community has "
-                 "recorded, not an official gazetteer: places are missing, and the set is richer "
+        "note": ("Cities, towns, museums, airports with an IATA code, and archaeological sites AS "
+                 "MAPPED IN OPENSTREETMAP. This is the geographic pattern of what the OSM community "
+                 "has recorded, not an official gazetteer: places are missing, and the set is richer "
                  "in well-mapped areas. Governorate is computed by point-in-polygon against the "
                  "bundled boundaries, so a place just offshore may come back unassigned."),
+        "reference_coverage": ref_coverage,
+        "reference_note": ("Wikipedia, Wikidata, website, opening-hours and step-free-access "
+                           "fields are copied verbatim from OpenStreetMap on the date above and "
+                           "are only as current as OSM is. Opening hours in particular are "
+                           "community-maintained and change without notice: treat them as what "
+                           "OSM recorded, not as when a place is open, and confirm before "
+                           "travelling. Ticket prices are deliberately not carried at all — a "
+                           "layer refreshed a few times a year cannot keep a price honest, and a "
+                           "stale price is worse than none because a reader budgets against it."),
         "coverage_check": {
             "benchmark_n": len(BENCHMARK),
             "present_n": len(BENCHMARK) - len(absent),
@@ -466,6 +675,8 @@ out center tags;""",
     (OUT_DIR / "geo-places.json").write_text(
         json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"  wrote geo-places.json ({len(places)} places, {with_pop} with a population tag)")
+    print("    reference tags: " + ", ".join(
+        f"{k} {v}" for k, v in ref_coverage.items()))
     return True
 
 
@@ -476,11 +687,13 @@ def main() -> None:
     ok_schools = build_schools(govs)
     ok_heritage = build_heritage()
     ok_places = build_places(govs)
+    ok_industry = build_industry(govs)
     failed = [n for n, ok in [("health", ok_health), ("schools", ok_schools),
-                              ("heritage", ok_heritage), ("places", ok_places)] if not ok]
+                              ("heritage", ok_heritage), ("places", ok_places),
+                              ("industry", ok_industry)] if not ok]
     if failed:
         sys.exit(f"\nFAILED layers (last-good files kept): {', '.join(failed)}")
-    print("\nAll four layers written.")
+    print("\nAll five layers written.")
 
 
 if __name__ == "__main__":

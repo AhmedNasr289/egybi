@@ -51,8 +51,18 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
       // carrying the map without any interaction. This is the one rule here
       // that is a legal obligation rather than a quality bar, which is exactly
       // why it belongs in the build and not in anyone's memory.
-      maps: document.querySelectorAll('.leaflet-container').length,
-      creditVisible: [...document.querySelectorAll('.map-credit, .site-footer')]
+      // WHAT COUNTS AS USING THE GEOMETRY. This asked only "is there a Leaflet
+      // map", which was true of the obligation right up until the home page
+      // started drawing the national outline on the flag. That outline is
+      // dissolved from the same geoBoundaries file, so index.html owes the
+      // same attribution while carrying no map at all — a licence breach the
+      // old question could not see. Ask instead whether the page renders
+      // anything DERIVED from the dataset, by any of the three routes that
+      // exist: a live map, the bundled boundary asset, or the silhouette.
+      maps: document.querySelectorAll('.leaflet-container').length
+        + document.querySelectorAll('script[src*="egypt-geo"]').length
+        + document.querySelectorAll('img[src*="egypt-silhouette"]').length,
+      creditVisible: [...document.querySelectorAll('[data-geo-credit], .map-credit, .site-footer')]
         .filter(function (el) {
           var s = getComputedStyle(el);
           return s.display !== 'none' && s.visibility !== 'hidden';
@@ -101,8 +111,8 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
     // Any page that is not noindex still has to have one.
     if (!m.canonical && !m.noindex) problems.push('no canonical');
     if (m.canonical && m.noindex) problems.push('noindex page also claims a canonical');
-    if (m.maps && !m.creditVisible) problems.push('map with no visible geoBoundaries credit (CC BY 4.0 breach)');
-    if (m.maps && !m.deedLinked) problems.push('map credit does not link the CC BY 4.0 deed');
+    if (m.maps && !m.creditVisible) problems.push('geoBoundaries geometry rendered with no visible credit (CC BY 4.0 breach)');
+    if (m.maps && !m.deedLinked) problems.push('geoBoundaries credit does not link the CC BY 4.0 deed');
     if (m.hasNavEl && m.navLinks === 0) problems.push('a .nav-links container with no links in it');
     if (m.onward === 0) problems.push('dead end: no link to any other page');
     if (!m.hasNavEl) noSiteNav.push(path);

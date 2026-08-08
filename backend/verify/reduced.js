@@ -59,12 +59,17 @@ const PAGES = ['404.html','index.html','visit.html','explore.html','geospatial.h
     const n = await measure(normal, path), r = await measure(reduced, path);
     const dText = Math.abs(n.text - r.text);
     const lost = (r.links < n.links) || (r.buttons < n.buttons) || (r.chips < n.chips) || dText > 40;
+    // A page that keeps animating under reduce IS the failure this file is
+    // named after, and until now the tool only printed it in the margin. Every
+    // one of the 17 pages measures 0 here, so promoting it to a failure costs
+    // nothing today and is the only reason it will still be 0 later.
     const stillMoving = r.animated > 0;
-    if (lost || r.invisibleAos > 0) bad++;
+    if (lost || r.invisibleAos > 0 || stillMoving) bad++;
     console.log(`${path.padEnd(33)} ${String(dText).padStart(5)}  ${String(r.links).padStart(5)} ${String(r.buttons).padStart(5)} ${String(r.chips).padStart(5)} |`
       + ` ${String(n.animated).padStart(4)} → ${String(r.animated).padStart(4)}${stillMoving?'  <-- still animating':''}`
       + `      ${r.invisibleAos}${lost?'   <-- LOST CONTENT':''}`);
   }
-  console.log(`\npages where reduced motion lost content or hid a reveal: ${bad}`);
+  console.log(`\npages where reduced motion lost content, hid a reveal, or kept animating: ${bad}`);
   await b.close();
+  process.exit(bad ? 1 : 0);
 })();

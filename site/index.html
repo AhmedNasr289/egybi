@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=28" rel="stylesheet">
+<link href="assets/egybi.css?v=29" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -118,6 +118,8 @@
 <section class="surface-hero hero-v2" style="position:relative;overflow:hidden;padding-top:74px;padding-bottom:62px;">
   <div id="hero-particles" class="hero-particles" aria-hidden="true" data-parallax="0.12"></div>
   <div class="hero-inner wrap" data-mo-hero>
+   <div class="hero-layout">
+    <div>
     <p class="hero-eyebrow"><span data-glyph="reed"></span> Real data &middot; Every figure sourced &middot; No signup <span data-glyph="scroll"></span></p>
     <h1 class="hero-h1">Egypt, in maps and cited data.</h1>
     <p class="lead hero-lead">An encyclopaedia of Egypt built on open data &mdash; its 27 governorates, its heritage sites, its streets and its prices. Every figure carries the source and date it came from, and links back to the dataset it was taken out of.</p>
@@ -127,6 +129,23 @@
       <a href="geospatial.html" class="btn btn-primary" data-ev="hero_open_atlas">Open the Atlas &rarr;</a>
       <a href="#newsletter" class="btn btn-ghost">Get The Papyrus</a>
     </div>
+    </div>
+
+    <!-- role="img" makes this a single leaf in the accessibility tree, which is
+         correct for a graphic and is why nothing interactive may go inside it.
+         The caption sits OUTSIDE for that reason: its link has to stay
+         reachable. -->
+    <figure class="eg-flag-fig">
+      <div class="eg-flag" role="img" aria-label="The three bands of the Egyptian flag &mdash; red, white and black &mdash; with the outline of Egypt across them in gold.">
+        <span class="eg-flag-pole" aria-hidden="true"></span>
+        <div class="eg-flag-cloth">
+          <img class="eg-flag-outline" src="assets/egypt-silhouette.svg" alt="" width="113" height="100" decoding="async">
+          <span class="eg-flag-sheen" aria-hidden="true"></span>
+        </div>
+      </div>
+      <figcaption class="eg-flag-cap" data-geo-credit>Not a drawing &mdash; the border is dissolved from the same geometry the Atlas maps draw. <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>, <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>.</figcaption>
+    </figure>
+   </div>
   </div>
 </section>
 
