@@ -183,6 +183,39 @@ case("content hidden under reduced motion", "reduced.js", ["site/assets/egybi.cs
      lambda o: re.search(r"lost content or hid a reveal: [1-9]", o) is not None,
      f"node {HERE}/reduced.js")
 
+COVERAGE = f"python3 {HERE}/coverage.py"
+
+# ---- 14. chrome drift: a footer nav link that exists on every page but one --
+case("footer nav link dropped from one page", "coverage.py", ["site/about.html"],
+     lambda: edit("site/about.html", '<a href="stories.html">Data Stories</a>', ""),
+     lambda o: "footer links differ" in o and "Data Stories" in o, COVERAGE)
+
+# ---- 15. chrome drift: 404 links made relative ------------------------------
+# The same file answers /nonsense.html and /deep/path/nonsense.html; a relative
+# href sends a lost reader deeper into a directory that does not exist.
+case("404 chrome link made relative", "coverage.py", ["site/404.html"],
+     lambda: edit("site/404.html", 'href="/explore.html"', 'href="explore.html"'),
+     lambda o: "not root-absolute" in o, COVERAGE)
+
+
+# ---- 16. static audit: a date field holding something that is not a date ----
+def date_field_not_a_date():
+    """The rule used to test for the KEY. streets-notes.json shipped
+    "generated": false — a boolean sharing a name with a date field — and passed
+    "every data file is dated" while carrying no date. Prove the value is now
+    what gets checked."""
+    p = Path("site/data/visit-terrain.json")
+    d = json.loads(p.read_text(encoding="utf-8"))
+    for k in ("as_of", "fetched_at", "generated_at", "updated"):
+        d.pop(k, None)
+    d["generated"] = True
+    p.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+
+
+case("date field holding a boolean", "static-audit.py", ["site/data/visit-terrain.json"],
+     date_field_not_a_date,
+     lambda o: "data files with no date on them" in o, PY_AUDIT)
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")

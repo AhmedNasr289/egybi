@@ -80,8 +80,14 @@ for f in sorted(DATA.glob("*.json")):
         fails["data files that are not valid JSON"].append(f"{f}: {e}")
         continue
     if isinstance(d, dict):
-        if not any(k in d for k in ("as_of", "fetched_at", "generated_at",
-                                            "generated", "updated")):
+        # Test the VALUE, not the key. streets-notes.json carries
+        # "generated": false — a boolean flag that happened to share a name with
+        # a date field — and so satisfied "every data file is dated" while
+        # carrying no date at all. A rule that passes for the wrong reason is
+        # indistinguishable from no rule.
+        stamps = [d.get(k) for k in ("as_of", "fetched_at", "generated_at",
+                                     "generated", "updated")]
+        if not any(re.match(r"\d{4}-\d\d-\d\d", str(s)) for s in stamps if s is not None):
             fails["data files with no date on them"].append(str(f))
         blob = json.dumps(d)
         if "-999" in blob:

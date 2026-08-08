@@ -14,6 +14,7 @@ control.
 | `reduced.js` | Content and animation compared with and without `prefers-reduced-motion`. |
 | `a11y2.js` | Landmarks, heading order, focus visibility, accessible names, the mobile nav. |
 | `coverage.py` | Titles, descriptions, alt text, JSON-LD, drift between duplicated chrome, data older than its pipeline's cadence. |
+| `env.js` | Not a check — resolves Chromium, `playwright-core`, the preview server and the log directory for the browser checkers. |
 | `checks.py` | `orphans`, `workflows`, `secrets`, `fra`. |
 
 ## mutate.py — the check on the checks
@@ -41,4 +42,47 @@ reporting "clean" while being incapable of detecting anything:
   that can actually happen: a `data-nav` section with no id (silently gets no
   chip), a blank label, and a mount with nothing to list.
 
-Requires a local server: `python3 -m http.server 8793 --directory site`.
+`CASE=<substring>` runs a single case, so a repaired case can be re-proven
+without paying for the other fourteen. Run the cases one at a time or let the
+whole suite run alone — a case reverts through `git checkout --`, which will
+pull files out from under any other checker reading them concurrently.
+
+A fourth defect, found later, was the harness lying about its own coverage: the
+asset-version case searched for the literal `egybi.css?v=21` and had silently
+stopped applying four stylesheet bumps earlier, reporting nothing at all. It now
+derives the version in use, and an inapplicable mutation prints
+`COULD NOT MUTATE` rather than passing in silence. A mutation that cannot be
+applied is coverage lost quietly.
+
+A fifth was the chrome-drift check comparing whole footers, which reported
+eleven "variants" that were all the cited-data rule working correctly — each
+page names its own sources, and `stocks.html` carries the FRA line in its
+colophon. Drowning a real signal in required differences is how a check gets
+ignored. It now compares the navigable link sets and leaves editorial wording
+alone.
+
+## Running them
+
+From the repo root, with a local server up:
+
+```sh
+python3 -m http.server 8793 --directory site &
+python3 backend/verify/static-audit.py
+node   backend/verify/all-pages.js
+python3 backend/verify/mutate.py
+```
+
+The browser checkers need `playwright-core` and a Chromium build. `env.js`
+resolves both and names the knob when either is missing, rather than failing on
+a path that only existed on one machine:
+
+| Variable | Default | Use when |
+|---|---|---|
+| `PLAYWRIGHT_CORE` | resolved from `node_modules` | `playwright-core` is installed outside the repo |
+| `CHROME` | highest `chromium-*` build under `PLAYWRIGHT_BROWSERS_PATH` (or `/opt/pw-browsers`) | a browser somewhere else |
+| `BASE` | `http://localhost:8793` | the preview server is on another port |
+| `VERIFY_LOG_DIR` | the system temp directory | progress logs belong elsewhere |
+
+These were hardcoded absolute paths until 2026-08-08 — the committed tools ran
+in exactly one sandbox and nowhere else, which is the same failure as a check
+that cannot fire.
