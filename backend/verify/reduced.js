@@ -3,10 +3,15 @@
    up with. Content must match; animation must be gone. */
 const { chromium, executablePath, BASE, LOGDIR } = require('./env');
 const B = BASE;
-const PAGES = ['404.html','index.html','visit.html','explore.html','geospatial.html','places.html',
-               'stories.html','streets.html','case.html','prices.html','stocks.html',
-               'blog.html','about.html','community.html','privacy.html',
-               'practice/your-first-select.html','papyrus/nineteen-million.html'];
+const ALL = ['404.html','index.html','visit.html','explore.html','geospatial.html','places.html',
+             'invest.html','stories.html','streets.html','case.html','prices.html','stocks.html',
+             'blog.html','about.html','community.html','privacy.html',
+             'practice/your-first-select.html','papyrus/nineteen-million.html'];
+// ONLY lets the mutation harness drive one page instead of eighteen, each of
+// which is loaded twice. Same code path and same assertions — a mutation case
+// that exercised a copy of this logic would prove nothing about the tool that
+// actually runs.
+const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
 
 (async () => {
   const b = await chromium.launch({ executablePath });
@@ -67,7 +72,11 @@ const PAGES = ['404.html','index.html','visit.html','explore.html','geospatial.h
     if (lost || r.invisibleAos > 0 || stillMoving) bad++;
     console.log(`${path.padEnd(33)} ${String(dText).padStart(5)}  ${String(r.links).padStart(5)} ${String(r.buttons).padStart(5)} ${String(r.chips).padStart(5)} |`
       + ` ${String(n.animated).padStart(4)} → ${String(r.animated).padStart(4)}${stillMoving?'  <-- still animating':''}`
-      + `      ${r.invisibleAos}${lost?'   <-- LOST CONTENT':''}`);
+      // A hidden reveal needs its own marker. It was printed as a bare number
+      // in this column, which meant a mutation case could only anchor on the
+      // summary counter — and that counter also moves for LOST CONTENT, so the
+      // case could not tell the two failures apart.
+      + `      ${r.invisibleAos}${r.invisibleAos?'   <-- HIDDEN REVEAL':''}${lost?'   <-- LOST CONTENT':''}`);
   }
   console.log(`\npages where reduced motion lost content, hid a reveal, or kept animating: ${bad}`);
   await b.close();

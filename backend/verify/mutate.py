@@ -205,13 +205,56 @@ case("sub-AA contrast", "contrast.js", ["site/places.html"],
                   'deliberately faint</p></body>'),
      lambda o: "deliberately faint" in o, f"node {HERE}/contrast.js")
 
+REDUCED1 = "ONLY={p} node " + str(HERE) + "/reduced.js"
+
 # ---- 13. reduced motion: content hidden when animation is suppressed -------
+# Detects the per-row marker, not the summary sentence. The summary WAS the
+# anchor, and rewording it to mention the new failure silently turned this case
+# vacuous — it kept passing while testing nothing, which is the same class of
+# bug as the asset-version case above.
 case("content hidden under reduced motion", "reduced.js", ["site/assets/egybi.css"],
      lambda: edit("site/assets/egybi.css",
                   "  [data-aos] { opacity: 1 !important; transform: none !important; }",
                   "  /* removed by mutation test */"),
-     lambda o: re.search(r"lost content or hid a reveal: [1-9]", o) is not None,
-     f"node {HERE}/reduced.js")
+     lambda o: "HIDDEN REVEAL" in o,
+     # explore.html, not index.html. AOS strips data-aos from every element
+     # present when it initialises, so on most pages the attribute the check
+     # looks for is gone by the time anything could hide it and the mutation is
+     # unobservable — it caught nothing and the case looked like a broken
+     # checker rather than a badly aimed test. Measured across five pages,
+     # explore.html is where 68 attributes survive, which is the same 68 the
+     # comment in egybi.css records having been hidden.
+     REDUCED1.format(p="explore.html"))
+
+# ---- 13b. reduced motion: an animation that keeps running under reduce -----
+# The failure the file is named after, and until now it was only printed in the
+# margin rather than failing the run.
+#
+# The first version of this case removed the FLAG's own reduced-motion override
+# and caught nothing, which was the correct answer to a badly aimed question:
+# egybi.css already carries a global `* { animation: none !important }` under
+# reduce, so the per-component override is redundant for stopping motion and
+# earns its place only by setting the resting pose. Mutating a redundant rule
+# tests nothing. The global rule is what actually enforces the promise, so the
+# global rule is what gets broken here.
+case("animation still running under reduced motion", "reduced.js", ["site/assets/egybi.css"],
+     lambda: edit("site/assets/egybi.css",
+                  "  * { animation: none !important; transition: none !important; }",
+                  "  /* removed by mutation test */"),
+     lambda o: "still animating" in o,
+     REDUCED1.format(p="index.html"))
+
+# ---- 13c. CC BY 4.0: geometry rendered with the credit stripped ------------
+# index.html carries no map, and draws geoBoundaries-derived geometry on the
+# flag. The old rule keyed on .leaflet-container and could not see this page at
+# all, so this case is what stops that regression coming back.
+case("geoBoundaries credit stripped from a page with no map", "all-pages.js",
+     ["site/index.html"],
+     lambda: edit("site/index.html",
+                  'href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>',
+                  'href="https://example.invalid/" rel="noopener">a source</a>'),
+     lambda o: "no visible credit" in o,
+     SWEEP1.format(p="index.html"))
 
 COVERAGE = f"python3 {HERE}/coverage.py"
 

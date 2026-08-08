@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Egypt is building — investment sites on one map | EgyBI</title>
+<meta name="description" content="Egypt's megaprojects, renewable plants, hydrogen deals, ports and headline investment agreements — where they are, what was published about them, and who published it. Information and education only, not investment advice.">
+<link rel="canonical" href="https://egybi.com/invest.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="Where Egypt is building — investment sites on one map">
+<meta property="og:description" content="Megaprojects, renewable plants, ports and headline agreements — each with the figure that was published and the source that published it.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://egybi.com/invest.html">
+<meta property="og:image" content="https://egybi.com/og-image.png?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+<link href="assets/vendor/aos.css" rel="stylesheet">
+<link href="assets/vendor/leaflet.css" rel="stylesheet">
+<link href="assets/egybi.css?v=30" rel="stylesheet">
+<style>
+  /* Page-local because nothing else on the site needs them. Anything that a
+     second page ever wants moves into egybi.css instead of being copied. */
+  #investMap { height: 580px; border-radius: var(--radius); background: var(--papyrus-2); }
+  @media (max-width: 720px) { #investMap { height: 420px; } }
+  .iv-chips { display:flex; flex-wrap:wrap; gap:9px; margin:18px 0 14px; }
+  .iv-chip { padding:7px 14px; font:600 0.82rem/1 'Inter',system-ui,sans-serif; cursor:pointer;
+             color:var(--ink-soft); background:var(--papyrus-2); border:1px solid var(--line-light);
+             border-radius:999px; transition:background .15s ease, color .15s ease, border-color .15s ease; }
+  .iv-chip.on { background:var(--blue-deep); color:#fff; border-color:var(--blue-deep); }
+  .iv-chip:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce) { .iv-chip { transition:none; } }
+  .iv-legend { display:flex; flex-wrap:wrap; gap:18px; margin-top:14px; font-size:0.82rem; color:var(--ink-soft); }
+  .iv-legend b { color:var(--ink); font-weight:600; }
+  .iv-key { display:inline-block; width:14px; height:14px; border-radius:50%; vertical-align:-2px; margin-right:7px; }
+  .iv-key.gov { border-radius:50%; background:transparent; border:2.5px dashed var(--gold-ink); }
+  .iv-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+  .iv-table caption { text-align:left; font-size:0.8rem; color:var(--ink-soft); padding-bottom:10px; }
+  .iv-table th { text-align:left; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em;
+                 color:var(--ink-soft); border-bottom:2px solid var(--line-light); padding:8px 10px; }
+  .iv-table th[scope="row"] { min-width:15ch; }
+  .iv-table td { padding:9px 10px; border-bottom:1px solid var(--line-light); vertical-align:top; }
+  .iv-table tbody tr:hover { background:var(--papyrus-2); }
+  .iv-fig { font-family:'Cinzel',serif; font-size:1.02rem; white-space:nowrap; }
+  .iv-status { display:inline-block; padding:2px 9px; border-radius:999px; font-size:0.72rem; font-weight:600;
+               background:var(--gold-soft); color:var(--gold-ink); white-space:nowrap; }
+  .iv-status.target { background:rgba(23,64,139,0.10); color:var(--blue-deep); }
+  .iv-wrap { overflow-x:auto; }
+  .iv-note { background:var(--papyrus-2); border:1px solid var(--line-light);
+             border-left:4px solid var(--gold); border-radius:var(--radius); padding:18px 22px; margin-top:20px; }
+  .iv-note p:last-child { margin-bottom:0; }
+  .iv-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:22px 0 6px; }
+  .iv-stat { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:16px 18px; }
+  .iv-stat b { display:block; font-family:'Cinzel',serif; font-size:1.9rem; line-height:1; color:var(--blue-deep); }
+  .iv-stat span { display:block; font-size:0.78rem; color:var(--ink-soft); margin-top:7px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="visit.html">Visit</a>
+      <a href="explore.html">Explore</a>
+      <a href="prices.html">Prices</a>
+      <a href="stocks.html">Stocks</a>
+      <a href="geospatial.html">Atlas</a>
+      <a href="places.html" class="active">Places</a>
+      <a href="stories.html">Stories</a>
+      <a href="streets.html">Streets</a>
+      <a href="blog.html">Blog</a>
+      <a href="community.html">Community</a>
+      <a href="about.html">About</a>
+      <a class="nav-only-mobile" href="/index.html#newsletter">Newsletter</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="cta" href="/index.html#newsletter">Newsletter</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="surface-hero" style="padding-top:64px;padding-bottom:52px;">
+  <div class="wrap center">
+    <div class="kicker" style="justify-content:center;"><span data-glyph="was"></span>Where Egypt is building</div>
+    <h1>The projects, and where they actually are.</h1>
+    <p class="page-intro lead" style="margin:0 auto;color:#f3ead4;">Egypt&rsquo;s megaprojects, renewable plants, hydrogen agreements, ports and headline investment deals &mdash; each with the figure that was published about it and a link to whoever published it. <strong>Information and education only, not investment advice.</strong></p>
+  </div>
+</section>
+
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
+
+<section class="surface-light" id="map" data-nav="Map">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Tile-free, like every map here</div>
+    <h2 data-aos="fade-up">Filter, then open a project.</h2>
+    <p class="lead" data-aos="fade-up" id="ivMeta">Loading the projects&hellip;</p>
+    <div class="atlas-note" id="ivEmpty" hidden></div>
+
+    <div class="iv-chips" id="ivChips"></div>
+    <div id="investMap"></div>
+    <div class="iv-legend">
+      <span><span class="iv-key" style="background:#17408B"></span><b>Site</b> &mdash; the project&rsquo;s own location field names this place</span>
+      <span><span class="iv-key gov"></span><b>Governorate</b> &mdash; the location is known only to governorate, so this marks the governorate, not the project</span>
+    </div>
+    <div id="ivDetail" hidden></div>
+  </div>
+</section>
+
+<section class="surface-light-2" id="placement" data-nav="How it is placed">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>What the map can and cannot say</div>
+    <h2 data-aos="fade-up">Most of these projects are not on the map, and that is the honest answer.</h2>
+    <div class="iv-stats" id="ivStats"></div>
+    <div class="iv-note">
+      <p>The knowledge base holds every one of these projects with a source and a published figure. What it does <strong>not</strong> hold is a coordinate. So each project is put on the map only when it can be placed from data already in this repository &mdash; the OpenStreetMap gazetteer and the governorate outlines &mdash; using one of three rules, each recorded on the project itself:</p>
+      <ul>
+        <li>its location field names a <strong>governorate</strong> exactly, and it is drawn as that governorate rather than as a point;</li>
+        <li>its location field names a <strong>place</strong> exactly;</li>
+        <li>its own name <em>is</em> a place in the gazetteer &mdash; which is true of exactly one project, the New Administrative Capital.</li>
+      </ul>
+      <p>A looser rule was written first and thrown away. Matching any place name found <em>inside</em> a project&rsquo;s text placed twenty-two of the forty, and several were wrong in the particular way a map hides: three wind farms whose location reads &ldquo;Gulf of Suez&rdquo; landed in the city of Suez, 250&nbsp;km from the water they stand in. A middle version matching only the <em>start</em> of a name was no better &mdash; it put the Abydos&nbsp;1 solar plant on the archaeological site it is named after, 300&nbsp;km from Kom Ombo where the plant is, with a working citation attached. Six correct pins were not worth five wrong ones.</p>
+      <p>Which is why the projects that could not be placed are listed below in full rather than quietly left off. A map that hides what it could not locate invites you to read it as complete.</p>
+    </div>
+  </div>
+</section>
+
+<section class="surface-light" id="projects" data-nav="Every project">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>All of them, placed or not</div>
+    <h2 data-aos="fade-up">Every project, with its published figure and its source.</h2>
+    <p class="lead" data-aos="fade-up">Status travels with every number, because several of these are stated national targets for 2030 rather than things that exist. Figures are as published by the source on that row &mdash; nothing here is computed, projected or ranked by EgyBI.</p>
+    <div class="iv-wrap"><table class="iv-table" id="ivTable">
+      <caption id="ivTableCap">Loading&hellip;</caption>
+      <thead><tr><th scope="col">Project</th><th scope="col">Kind</th><th scope="col">Published figure</th><th scope="col">Status</th><th scope="col">On the map</th><th scope="col">Source</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="surface-light-2" id="unplaced" data-nav="Not on the map">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="eye"></span>The gap, published</div>
+    <h2 data-aos="fade-up">What could not be located, and the text that could not be matched.</h2>
+    <p class="lead" data-aos="fade-up">Each of these carries a location in the knowledge base that names something the gazetteer has no coordinate for &mdash; a gulf, an economic zone, a village OpenStreetMap has not recorded as a town. Closing this gap needs a sourced coordinate per project, which is a data task rather than a mapping one.</p>
+    <div class="iv-wrap"><table class="iv-table" id="ivUnresolved">
+      <thead><tr><th scope="col">Project</th><th scope="col">Location as recorded</th><th scope="col">Why it is not on the map</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="surface-dark" id="compliance" data-nav="Sources &amp; compliance">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="maat"></span>Read this before using any figure here</div>
+    <h2>Sources, and what this page is not.</h2>
+    <p class="lead"><strong>Nothing on this page is investment advice, a recommendation, a valuation or an offer.</strong> EgyBI is not licensed by Egypt&rsquo;s Financial Regulatory Authority (FRA), does not provide investment advice and does not manage money. This page lists locations and figures that other people published, with a link to each one, so that you can go and read the source yourself.</p>
+    <p class="lead">Announced project costs and deal values are frequently revised, disputed, or expressed on bases that are not comparable to one another. A figure appearing here means a named source published it, not that it is settled, and not that EgyBI has verified the amount independently. Where a row&rsquo;s status says <em>Target</em>, the number is a stated government objective for a future year and has not happened.</p>
+    <p class="lead" id="ivSources">Project rows come from the EgyBI knowledge base. Coordinates come from <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap contributors</a> (ODbL) and <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a> (<a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC BY 4.0</a>).</p>
+  </div>
+</section>
+
+<section class="surface-light-2 next-steps center" id="next" data-nav="Where next">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
+    <h2>Keep going.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;"><a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt in charts &rarr;</h3><p>Economy, trade, energy and population &mdash; every series with its source and date.</p></a><a class="ns-card" href="geospatial.html"><span class="ns-k">Atlas</span><h3>The 27 governorates &rarr;</h3><p>Population, density, health facilities and heritage sites, layer by layer.</p></a><a class="ns-card" href="stocks.html"><span class="ns-k">Stocks</span><h3>The EGX &rarr;</h3><p>Charts and a screener for Egypt&rsquo;s listed companies. Also not investment advice.</p></a></div>
+  </div>
+</section>
+
+</main>
+
+</main>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">An encyclopaedia of Egypt told through maps and cited open data.</p></div>
+    <div><h2 class="foot-h">Egypt</h2><a href="visit.html">Plan a Visit</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="invest.html">Where Egypt is building</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="explore.html">Egypt Data</a></div>
+    <div><h2 class="foot-h">More</h2><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
+    <div><h2 class="foot-h">Data sources</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Information and education only &mdash; never investment advice. Every figure is as published by the source cited beside it.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+</footer>
+
+<script src="assets/vendor/aos.js"></script>
+<script src="assets/vendor/leaflet.js"></script>
+<script src="assets/vendor/leaflet.markercluster.js"></script>
+<script src="assets/mapkit.js?v=5"></script>
+<script src="assets/egypt-geo.js?v=2"></script>
+<script src="assets/egybi.js?v=1"></script>
+<script src="assets/glyphs.js?v=3"></script>
+<script src="assets/wayfinding.js?v=1"></script>
+<script src="assets/invest.js?v=1"></script>
+<script src="assets/vendor/motion.min.js"></script>
+<script src="assets/motion.js?v=2"></script>
+<script src="assets/analytics.js"></script>
+</body>
+</html>

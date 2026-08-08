@@ -88,6 +88,15 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .surface-dark .lead { color: var(--on-dark-soft); }
 .kicker { color: var(--gold-ink); font-weight: 800; text-transform: uppercase; font-size: 0.76rem; letter-spacing: 0.14em; margin-bottom: 10px; font-family: 'Inter', sans-serif; }
 .surface-dark .kicker, .surface-hero .kicker { color: var(--gold-bright); }
+/* Prose links on a dark surface. There was no rule for this at all, because
+   until the investor page put its source links in a dark section, no dark
+   section carried an inline link — so every such link inherited the light-
+   surface blue and measured 1.92:1 on near-black. --gold-bright is the token
+   that exists for gold text on dark, and it is what the kickers above already
+   use. Scoped to prose so buttons, cards, the brand and the nav keep the
+   colours they set for themselves. */
+.surface-dark p a, .surface-dark li a, .surface-dark dd a,
+.surface-hero p a, .surface-hero li a { color: var(--gold-bright); }
 .center { text-align: center; }
 .center .lead { margin-left: auto; margin-right: auto; }
 
