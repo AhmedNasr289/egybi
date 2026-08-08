@@ -30,6 +30,7 @@ concurrency:
 jobs:
   send:
     runs-on: ubuntu-latest
+    timeout-minutes: 10       # one request to the send endpoint.
     steps:
       - name: Preview or send the issue
         env:
