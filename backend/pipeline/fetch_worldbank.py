@@ -28,6 +28,8 @@ import argparse
 import json
 import os
 import sys
+import time
+import urllib.error
 import urllib.request
 
 def _force_utf8_output() -> None:
@@ -107,8 +109,32 @@ def fetch(code, offline):
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     url = API.format(code=code)
-    with urllib.request.urlopen(url, timeout=30) as r:
-        return json.loads(r.read().decode("utf-8"))
+    # Eleven requests go out back to back, and the API rate-limits. Two runs on
+    # 2026-08-08 showed the difference clearly: FP.CPI.TOTL.ZG timed out once and
+    # succeeded on the retry, while NY.GDP.PCAP.CD returned the SAME HTTPError
+    # both times. One retry separates a busy minute from a real problem, and
+    # only for the statuses where retrying is the right answer — a 404 means the
+    # indicator is gone and hammering it will not bring it back.
+    RETRY_ON = {408, 429, 500, 502, 503, 504}
+    last = None
+    for attempt in (1, 2):
+        try:
+            with urllib.request.urlopen(url, timeout=30) as r:
+                return json.loads(r.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            # Carry the status code out with the error. The failure line used to
+            # read only "HTTPError", which cannot tell a rate limit apart from a
+            # retired indicator — the single most useful fact about the failure
+            # was the one thing the operator never saw.
+            last = urllib.error.HTTPError(e.url, e.code, "HTTP %d" % e.code, e.hdrs, None)
+            if e.code not in RETRY_ON or attempt == 2:
+                raise last
+        except Exception as e:  # noqa: BLE001 - timeouts and transport errors
+            last = e
+            if attempt == 2:
+                raise
+        time.sleep(2)
+    raise last
 
 
 def transform(src, payload):
@@ -244,8 +270,8 @@ def main():
         try:
             payload = fetch(src["code"], args.offline)
         except Exception as e:  # noqa: BLE001 - report, then refuse below
-            print("  ! %s fetch failed: %s" % (src["code"], type(e).__name__))
-            failed.append("%s (%s)" % (src["code"], type(e).__name__))
+            print("  ! %s fetch failed: %s %s" % (src["code"], type(e).__name__, e))
+            failed.append("%s (%s %s)" % (src["code"], type(e).__name__, e))
             continue
         if payload is None:
             print("  . %s skipped (no fixture)" % src["code"])
