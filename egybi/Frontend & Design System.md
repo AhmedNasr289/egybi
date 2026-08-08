@@ -98,3 +98,43 @@ Any new page gets the whole system for the cost of: a `.page-intro` line, `id` +
 - [[Backend & Knowledge Base]] — the data + API these pages surface
 - [[Brand & Creative Identity]] — the research the palette and mascot are drawn from
 - [[Improvement Roadmap]] — where this sits (frontend + architecture areas advanced)
+
+## Accessibility baseline (2026-08-08)
+
+Everything below is checked by `backend/verify/a11y2.js` and measured in a real
+browser rather than asserted. Each item is here because it was found missing.
+
+- **`<main id="main">` on every page.** There was none anywhere, so a screen
+  reader's "jump to main content" did nothing on all 152 pages. Added to the
+  shared shell and to `build_static_pages.py`, so generated pages carry it too.
+- **A skip link as the first focusable element.** Without it a keyboard user
+  tabbed through thirteen navigation links on every page before reaching the
+  text. Off-screen at `left:-9999px` until focused — the standard idiom, and the
+  reason the overflow checker has to exempt it.
+- **`aria-label="Main"` on the primary nav**, which previously announced itself
+  as an unnamed "navigation", indistinguishable from the on-this-page bar
+  beneath it that always had a label.
+- **Heading levels never skip.** Footer column headings were `<h5>` immediately
+  after content ending at `<h3>`; they are `<h2>` with a `.foot-h` class
+  carrying the size, because a tag should not lie about the outline to get a
+  font size.
+- **Every interactive control changes visibly on focus.** Three did not — the
+  active sub-nav chip and the active map and metric toggles — because their
+  focus rule set `outline:none` plus a border colour the active state had
+  already set, and the active rule won on declaration order. The fix is an
+  explicit ring that survives the active state.
+- **A print stylesheet.** Chrome, hero backgrounds and ad slots are dropped, and
+  link targets are spelled out in the printed text.
+
+### Two things that will trip up the next person measuring this
+
+**`:focus-visible` does not match a programmatic `.focus()`.** Diffing computed
+style after `el.focus()` reports "no focus ring" on every control that uses it,
+which is all of them. Drive real `Tab` presses.
+
+**These focus styles transition over 150 ms.** Reading the computed style
+immediately after `Tab` catches the start of the transition, when every property
+still holds its resting value — the same class of mistake as scrolling faster
+than AOS's throttled handler, or reading a CountUp mid-animation. Wait for the
+transition before you read.
+
