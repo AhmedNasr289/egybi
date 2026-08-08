@@ -57,3 +57,11 @@ jobs:
               owner: context.repo.owner, repo: context.repo.repo, title, body,
             });
             core.notice(`Opened reminder #${created.number}`);
+
+      # A newsletter that silently fails to send looks identical to a quiet
+      # week. Every pipeline that commits data already opens an issue on
+      # failure; the two workflows whose whole job is to make something happen
+      # on a schedule were the ones with no way to tell you it did not.
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure

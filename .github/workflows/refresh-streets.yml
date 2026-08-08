@@ -16,6 +16,14 @@ name: Refresh street report card
 # pip is cached so a re-run does not rebuild the whole geospatial stack.
 
 on:
+  # QUARTERLY. Same argument as the Atlas layers — the street network is
+  # OpenStreetMap and volunteers keep mapping it — but this job builds drive and
+  # walk graphs for ten districts and is bounded at two hours, so monthly would
+  # spend real Actions minutes to move figures that shift slowly at district
+  # scale. Quarterly stops the report card aging silently without pretending the
+  # underlying geometry changes weekly.
+  schedule:
+    - cron: '47 2 5 1,4,7,10 *'   # 02:47 UTC on the 5th of Jan, Apr, Jul, Oct
   workflow_dispatch:
     inputs:
       planner_notes:

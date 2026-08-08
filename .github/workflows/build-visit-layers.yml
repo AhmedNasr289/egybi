@@ -14,6 +14,22 @@ name: Build visitor layers
 # empty page — and still exits non-zero so the failure is visible.
 
 on:
+  # DELIBERATELY MANUAL, and this is the reasoning rather than an oversight.
+  # Every other data pipeline here now has a schedule; this one should not,
+  # because all three of its sources are fixed rather than slow-moving:
+  #
+  #   * SRTM is a survey flown by the Shuttle in February 2000. It is finished.
+  #     The elevation of the Giza plateau will not be remeasured.
+  #   * POWER's normals are computed over a CLOSED window, 2001-2020, declared
+  #     in this repo as NORM_START/NORM_END. Refetching returns the same twenty
+  #     years averaged the same way until somebody edits those constants.
+  #   * WMO station normals move on a decadal timescale, when a national weather
+  #     service publishes a new reference period.
+  #
+  # A cron here would re-download roughly the same bytes forever and put a
+  # standing load on two free public services in exchange for nothing. Run it
+  # when the site list changes, when the normal window moves, or when the
+  # reference check needs re-running against a newer yardstick.
   workflow_dispatch: {}        # manual "Run workflow" button
 
 permissions:
