@@ -569,3 +569,34 @@ does the check report" but "would anyone else ever see it report anything".
   conservative, and right as a cheap filter — which left one permanent flag on
   hero text that is fine where it actually sits. Anything it flags is now
   screenshot and measured against the ground genuinely painted behind it.
+
+## 2026-08-08 (fifth pass) — One workflow was red, and the reason mattered
+Asked to confirm every GitHub Actions run was green. Eleven of twelve workflows
+were; **Refresh Egypt data** had been failing since 2026-08-03 and would have
+stayed red without anyone looking, because its next scheduled run is weekly.
+
+- **The failure was the guardrail doing its job.** Eight of the eleven World Bank
+  indicators failed that morning. `fetch_worldbank.py` caught each one, printed
+  a line, carried on, and **returned 0** — it only refuses when *nothing at all*
+  is fetched. It wrote a `seed_auto.sql` carrying three indicators where the
+  committed file carries eleven. A coarse backstop in the workflow — refuse if
+  the file has fewer than 20 INSERT lines — caught it at three and opened
+  issue #42.
+- **What the backstop could not see.** `seed_auto.sql` is idempotent by deleting
+  the indicator codes it owns and re-inserting them, so a short file does not
+  merely add less — it **deletes** the missing indicators' cited history. The
+  backstop counts INSERT *statements* against a fixed floor of 20, so a run that
+  lost two indicators instead of eight would have sailed through and quietly
+  removed two indicators' worth of figures from the site, with a green tick.
+- **A partial fetch is now a refusal.** The pipeline names which indicators
+  failed and exits non-zero without writing, leaving the committed file as
+  last-good — the same keep-last-good rule every other pipeline here follows.
+  Verified by driving `main()` with a stubbed fetch: eight-of-eleven refuses,
+  one-of-eleven now refuses too (it used to publish), all-eleven proceeds, and
+  `seed_auto.sql` was untouched by the test. No fixtures were written.
+- **The backstop learned to compare.** It now also refuses when the new file has
+  fewer INSERT statements than the committed one, because an absolute floor
+  cannot tell 76 from 40 when both clear 20.
+- **Two open alert issues** — #42 (this failure) and #35, "Refresh daily prices"
+  from 2026-07-23, whose workflow has been green through 19 runs since. The
+  alert action's own instruction is to close them once resolved.

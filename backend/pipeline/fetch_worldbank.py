@@ -237,13 +237,15 @@ def main():
     args = ap.parse_args()
 
     fetched = {}
+    failed = []
     print("Fetching %d World Bank indicators for Egypt%s...\n"
           % (len(SOURCES), " (offline fixtures)" if args.offline else ""))
     for src in SOURCES:
         try:
             payload = fetch(src["code"], args.offline)
-        except Exception as e:  # noqa: BLE001 - report and continue
+        except Exception as e:  # noqa: BLE001 - report, then refuse below
             print("  ! %s fetch failed: %s" % (src["code"], type(e).__name__))
+            failed.append("%s (%s)" % (src["code"], type(e).__name__))
             continue
         if payload is None:
             print("  . %s skipped (no fixture)" % src["code"])
@@ -254,6 +256,26 @@ def main():
 
     if not fetched:
         print("\nNothing fetched. In offline mode add fixtures under pipeline/fixtures/.")
+        return 1
+
+    # A PARTIAL fetch is a refusal, not a smaller answer. This file is
+    # idempotent by deleting the indicator codes it owns and re-inserting them,
+    # so publishing a run that lost three indicators to a flaky API deletes
+    # three indicators' worth of cited history from the site. Nothing announces
+    # that: the run is green, the diff is "smaller", and the figures are simply
+    # gone.
+    #
+    # On 2026-08-03 eight of eleven indicators failed and this function still
+    # returned 0. Only a coarse backstop in refresh-data.yml — refuse if the
+    # emitted SQL has fewer than 20 INSERT lines — stopped it, and that backstop
+    # counts statements, so it would have waved through a run that lost two.
+    # Keep-last-good is the house rule everywhere else in this pipeline; it
+    # belongs here too.
+    if failed and not args.offline:
+        print("\n%d of %d indicators failed: %s" % (len(failed), len(SOURCES), ", ".join(failed)))
+        print("Refusing to write seed_auto.sql — publishing it would delete the "
+              "failed indicators' rows and leave no trace that they were lost. "
+              "The committed file stays as last-good; re-run when the API is healthy.")
         return 1
 
     print("\n--- Review diff vs current DB ---")

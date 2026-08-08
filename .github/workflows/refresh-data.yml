@@ -53,10 +53,24 @@ jobs:
       - name: Guard against an empty or broken fetch
         if: steps.check.outputs.changed == 'true'
         run: |
+          # Counts INSERT *statements*, not rows — the name below says "rows" and
+          # it never did. Kept as an absolute floor, but it is a backstop now,
+          # not the control: fetch_worldbank.py refuses a partial fetch outright,
+          # because seed_auto.sql deletes the indicator codes it owns before
+          # re-inserting, so a run that lost indicators deletes their history.
           inserts=$(grep -c "INSERT" backend/sql/seed_auto.sql || true)
-          echo "seed_auto.sql INSERT rows: $inserts"
+          echo "seed_auto.sql INSERT statements: $inserts"
           if [ "${inserts:-0}" -lt 20 ]; then
-            echo "::error::Refusing to publish — only $inserts inserts (likely a failed/empty fetch)."
+            echo "::error::Refusing to publish — only $inserts INSERT statements (likely a failed/empty fetch)."
+            exit 1
+          fi
+          # An absolute floor cannot see a file that shrank from 76 to 40: both
+          # clear 20. Compare against the committed last-good instead, which is
+          # the only number that knows what "smaller than before" means.
+          prev=$(git show HEAD:backend/sql/seed_auto.sql 2>/dev/null | grep -c "INSERT" || echo 0)
+          echo "previous committed: $prev"
+          if [ "${prev:-0}" -gt 0 ] && [ "$inserts" -lt "$prev" ]; then
+            echo "::error::Refusing to publish — $inserts INSERT statements against $prev committed. The World Bank dropped indicators; publishing would delete their rows."
             exit 1
           fi
 
