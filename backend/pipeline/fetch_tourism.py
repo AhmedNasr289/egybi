@@ -45,11 +45,13 @@ TWO ENDPOINTS, BECAUSE ONE OF THEM DOES NOT MEAN WHAT IT LOOKS LIKE.
     when a typical afternoon is nearer 35. They are kept, because "how bad can
     it get" is a real question, but they are named t_record_max / t_record_min.
 
-  * temporal/MONTHLY gives, for each individual year and month, the mean of
-    that month's daily maxima. Averaging those across twenty years is the
-    climatological MEAN DAILY MAXIMUM — the figure a visitor deciding between
-    February and August actually wants, and the one the climatology endpoint
-    cannot provide. Published as t_daily_max / t_daily_min.
+  * temporal/DAILY gives one maximum and one minimum per calendar day.
+    Averaging every January day across twenty years is the climatological MEAN
+    DAILY MAXIMUM — the figure a visitor deciding between February and August
+    actually wants, and the one neither of the other endpoints can provide.
+    Published as t_daily_max / t_daily_min. (temporal/MONTHLY was tried in
+    between and is also wrong: its T2M_MAX is that single month's hottest hour,
+    so averaging twenty of them averages twenty annual peaks.)
 
 So the page can now say all three honestly: what a month averages, what a
 normal afternoon reaches, and what the record holds. That needed a better use
@@ -246,60 +248,296 @@ def true_daily_means(lat: float, lon: float) -> dict[int, dict] | None:
     return out or None
 
 
-# ---------------------------------------------------------------- reference --
-# Published mean daily maxima, in °C, for cells this pipeline computes. Sourced
-# from standard station climate normals rather than from POWER, which is the
-# point: an independent yardstick cannot be fooled by the same misreading that
-# produced the number under test.
+# --------------------------------------------------------------- yardstick --
+# The mean daily maximum was got wrong TWICE here, the same way both times: a
+# POWER parameter was assumed to mean what its name suggests instead of being
+# checked against something known. The climatology endpoint's T2M_MAX put
+# Cairo's August at 45 °C; the monthly endpoint's, averaged, put it at 41. A
+# normal August afternoon in Cairo is about 35. Both shipped under the words
+# "mean daily maximum" before a human caught them.
 #
-# This exists because the mean daily maximum was got wrong TWICE, in the same
-# way both times — a POWER parameter was assumed to mean what its name suggests
-# instead of being checked against something known. The climatology endpoint's
-# T2M_MAX put Cairo's August at 45 °C; the monthly endpoint's, averaged, put it
-# at 41. A normal August afternoon in Cairo is about 35. Both were published
-# under the words "mean daily maximum" before the error was caught by hand.
+# So the pipeline now checks itself against an INDEPENDENT source — one that
+# cannot be fooled by the same misreading, because it is not POWER.
 #
-# So the pipeline now checks itself. If the computed value drifts more than
-# TOLERANCE from the published normal the layer is REFUSED, because a figure
-# that fails its own reference check is not a figure worth publishing, and
-# noticing by hand is not a control.
-REFERENCE_DAILY_MAX = {
-    ("giza", 1): 19.0,   ("giza", 8): 35.0,
-    ("alexandria", 1): 18.0, ("alexandria", 8): 30.0,
-    ("karnak", 7): 41.0,
-    ("abu-simbel", 7): 42.0,
-}
-TOLERANCE = 3.5   # generous: a reanalysis grid cell is not a station, and Giza
-                  # is not central Cairo. Wide enough for real modelling
-                  # difference, far too tight for a 6-degree category error.
+# THE THIRD MISTAKE THIS AVOIDS. The first version of this guard hardcoded a
+# handful of published normals written down from memory. That is the same sin
+# in a smaller font: an unsourced number used to validate a sourced one. If the
+# remembered figure is wrong, the guard either passes bad data or blocks good
+# data, and there is no way to tell which. So the yardstick is FETCHED and
+# CITED like everything else on this site.
+#
+# The source is the World Meteorological Organization's World Weather
+# Information Service, which publishes official climatological normals supplied
+# by each country's own national weather service — for Egypt, the Egyptian
+# Meteorological Authority. Its maxTemp / minTemp fields are explicitly the mean
+# daily maximum and minimum, which is exactly the quantity under test. No key,
+# no account, free to fetch, and every figure attributable to a named authority
+# with a stated normal period.
+#
+# It is fetched at build time and cached into the repo, so a later run whose
+# network cannot reach WWIS still validates against real fetched data rather
+# than against nothing. The cache records where each number came from.
+WWIS_LIST = "https://worldweather.wmo.int/en/json/full_city_list.txt"
+WWIS_CITY = "https://worldweather.wmo.int/en/json/{cid}_en.json"
+STATION_FILE = "visit-station-normals.json"
+
+# How far a station may sit from a site and still be a fair yardstick for it.
+# Egypt's climate changes fast with distance from the coast and slowly along the
+# valley, so this is deliberately tight: Alexandria's normals describe Giza
+# badly, and that is the point of a distance cap rather than a nearest-match.
+MAX_STATION_KM = 120.0
+
+# --- the two gates, and why they are shaped like this ------------------------
+#
+# A single per-cell tolerance cannot do this job, because it conflates two
+# completely different things:
+#
+#   * READING THE WRONG VARIABLE — which is what happened, twice. It biases
+#     EVERY cell, in the SAME direction, by a large amount. The climatology
+#     mistake ran about +10 °C across the board; the monthly one +2 to +7.6.
+#   * A REANALYSIS DISAGREEING WITH A STATION — which is not an error at all.
+#     MERRA-2 resolves roughly half a degree of latitude, so one cell can cover
+#     coast and desert together, and it carries no irrigation, so over the
+#     watered Delta in summer it runs warm. Those residuals are real, signed
+#     both ways, and must not be smoothed away or silently absorbed.
+#
+# So the gates test for the SHAPE of the first, not the SIZE of the second:
+#
+#   Gate A — mean signed bias. A wrong variable shifts the whole set one way.
+#            A model-versus-station difference does not: it goes both ways and
+#            largely cancels. Set at 2.0, comfortably under both observed
+#            mistakes and comfortably over published reanalysis-vs-station
+#            residuals for 2 m temperature.
+#   Gate B — hit rate. A wrong variable misses almost every cell. The right one
+#            lands most of them close. Requiring a third of pairs within 2 °C
+#            catches a mistake that happens to average out by cancelling.
+#
+# Neither number was chosen to make a particular run pass; both are stated in
+# terms of the failure they exclude, and the run prints every pair either way so
+# the judgement is auditable rather than a verdict.
+MAX_MEAN_BIAS = 2.0
+NEAR_C = 2.0
+MIN_NEAR_SHARE = 0.33
 
 
-def reference_check(rows: list) -> tuple[bool, list]:
-    """Compare computed mean daily maxima against published normals.
+def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    from math import asin, cos, radians, sin, sqrt
+    dlat, dlon = radians(lat2 - lat1), radians(lon2 - lon1)
+    a = (sin(dlat / 2) ** 2
+         + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) ** 2)
+    return 2 * 6371.0088 * asin(sqrt(a))
 
-    Returns (ok, notes). Cells with no computed value are reported but do not
-    fail the check, because a missing normal is already handled elsewhere; only
-    a value that is present AND wrong fails.
+
+def _num(v):
+    """WWIS reports temperatures as strings, and uses an empty string for a
+    month it has no normal for. Anything that is not a number is absent."""
+    try:
+        f = float(str(v).strip())
+    except (TypeError, ValueError):
+        return None
+    return None if f < -90 or f > 70 else round(f, 1)
+
+
+def _find_climate_months(payload) -> list | None:
+    """WWIS nests the monthly normals a couple of levels down and has moved
+    them before. Walk the structure for the first list whose members carry a
+    month and a maxTemp, rather than hardcoding a path that can shift."""
+    stack = [payload]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, dict):
+            stack.extend(node.values())
+        elif isinstance(node, list):
+            if node and isinstance(node[0], dict) and "month" in node[0] \
+                    and any(k in node[0] for k in ("maxTemp", "maxTempF")):
+                return node
+            stack.extend(node)
+    return None
+
+
+def fetch_station_normals() -> dict | None:
+    """Egypt's published station normals from WMO/WWIS, or None if unreachable.
+
+    Returns {"fetched_at":…, "source":…, "stations":[{name, lat, lon, period,
+    months:{1..12:{max,min}}}]}. Only stations with at least six months of mean
+    daily maxima are kept; a station with two months is not a normal.
     """
-    by_key = {r["key"]: r for r in rows}
-    notes, bad = [], 0
-    for (key, mon), published in sorted(REFERENCE_DAILY_MAX.items()):
-        site = by_key.get(key)
-        if not site:
-            notes.append(f"{key} {mon:02d}: site absent from this build")
+    raw = None
+    for attempt in range(1, 4):
+        try:
+            req = urllib.request.Request(WWIS_LIST, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=60) as r:
+                raw = r.read().decode("utf-8", errors="replace")
+            break
+        except Exception as e:  # noqa: BLE001
+            log(f"    WWIS city list attempt {attempt}: {type(e).__name__}")
+            if attempt < 3:
+                time.sleep(5 * attempt)
+    if not raw:
+        return None
+
+    egypt = []
+    for line in raw.splitlines():
+        parts = [p.strip() for p in line.split(";")]
+        if len(parts) < 5 or parts[0].lower() != "egypt":
             continue
-        m = next((x for x in site["months"] if x["month"] == mon), None)
-        got = (m or {}).get("t_daily_max")
-        if got is None:
-            notes.append(f"{key} {mon:02d}: no daily normal computed")
+        try:
+            egypt.append({"name": parts[1], "cid": parts[2],
+                          "lat": float(parts[3]), "lon": float(parts[4])})
+        except ValueError:
             continue
-        delta = got - published
-        flag = "" if abs(delta) <= TOLERANCE else "  <-- OUT OF TOLERANCE"
-        notes.append(f"{key} {mon:02d}: computed {got:.1f} vs published {published:.1f} "
-                     f"({delta:+.1f}){flag}")
-        if abs(delta) > TOLERANCE:
-            bad += 1
-    return bad == 0, notes
+    if not egypt:
+        log("    WWIS city list carried no Egyptian stations — shape changed?")
+        return None
+    log(f"    WWIS lists {len(egypt)} Egyptian stations")
+
+    stations = []
+    for st in egypt:
+        d = get(WWIS_CITY.format(cid=st["cid"]), tries=2, pause=3.0)
+        if not d:
+            continue
+        months = _find_climate_months(d)
+        if not months:
+            continue
+        got = {}
+        for m in months:
+            try:
+                mm = int(str(m.get("month")).strip())
+            except (TypeError, ValueError):
+                continue
+            if not 1 <= mm <= 12:
+                continue
+            hi, lo = _num(m.get("maxTemp")), _num(m.get("minTemp"))
+            if hi is not None:
+                got[mm] = {"max": hi, "min": lo}
+        if len(got) < 6:
+            continue
+        # The normal period is stated in the payload; carry it, because "the
+        # 1961–1990 normal" and "the 1991–2020 normal" are different numbers
+        # and a comparison that hides which one it used is not a citation.
+        period = ""
+        for k in ("climateFrom", "climate_from", "from"):
+            v = _walk_first(d, k)
+            if v:
+                period = str(v)
+                break
+        for k in ("climateTo", "climate_to", "to"):
+            v = _walk_first(d, k)
+            if v:
+                period = f"{period}–{v}" if period else str(v)
+                break
+        stations.append({"name": st["name"], "lat": st["lat"], "lon": st["lon"],
+                         "period": period,
+                         "months": {str(k): v for k, v in sorted(got.items())}})
+        log(f"    {st['name']}: {len(got)} monthly normals"
+            + (f" ({period})" if period else ""))
+
+    if not stations:
+        return None
+    return {
+        "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "source": ("World Meteorological Organization — World Weather Information "
+                   "Service; normals supplied by the Egyptian Meteorological "
+                   "Authority"),
+        "source_url": "https://worldweather.wmo.int/",
+        "quantity": "Mean daily maximum and minimum temperature, °C",
+        "stations": stations,
+    }
+
+
+def _walk_first(payload, key):
+    stack = [payload]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, dict):
+            if key in node and node[key] not in (None, ""):
+                return node[key]
+            stack.extend(node.values())
+        elif isinstance(node, list):
+            stack.extend(node)
+    return None
+
+
+def load_station_normals() -> tuple[dict | None, str]:
+    """Fetch the yardstick, falling back to the copy committed in this repo.
+
+    The fallback is real fetched data from an earlier run, not a remembered
+    number, so validating against it is honest. Which one was used is returned
+    and printed, because "checked against a cached yardstick" and "checked
+    against a live one" are different claims.
+    """
+    live = fetch_station_normals()
+    if live:
+        write(STATION_FILE, live)
+        return live, "fetched live"
+    cached = OUT_DIR / STATION_FILE
+    if cached.exists():
+        try:
+            d = json.loads(cached.read_text(encoding="utf-8"))
+            if d.get("stations"):
+                return d, f"cached copy fetched {d.get('fetched_at', 'unknown')}"
+        except Exception:  # noqa: BLE001
+            pass
+    return None, "unavailable"
+
+
+def reference_check(rows: list, normals: dict) -> tuple[bool, list, list]:
+    """Compare every computed mean daily maximum against the nearest published
+    station normal within MAX_STATION_KM.
+
+    Returns (ok, notes, pairs). `pairs` is the full comparison, which is written
+    into the published JSON: a validation the reader cannot see is a validation
+    they have to take on trust, and this project does not ask for that.
+    """
+    stations = normals["stations"]
+    pairs, notes = [], []
+
+    for r in rows:
+        near = [(haversine_km(r["lat"], r["lon"], s["lat"], s["lon"]), s)
+                for s in stations]
+        near.sort(key=lambda t: t[0])
+        if not near or near[0][0] > MAX_STATION_KM:
+            continue
+        km, st = near[0]
+        for m in r["months"]:
+            got = m.get("t_daily_max")
+            ref = (st["months"].get(str(m["month"])) or {}).get("max")
+            if got is None or ref is None:
+                continue
+            pairs.append({"site": r["key"], "month": m["month"],
+                          "station": st["name"], "station_km": round(km, 1),
+                          "period": st.get("period", ""),
+                          "model_c": got, "station_c": ref,
+                          "delta_c": round(got - ref, 1)})
+
+    if not pairs:
+        notes.append("no site fell within "
+                     f"{MAX_STATION_KM:.0f} km of a published station — "
+                     "nothing could be checked")
+        return False, notes, pairs
+
+    deltas = [p["delta_c"] for p in pairs]
+    mean_bias = sum(deltas) / len(deltas)
+    near_n = sum(1 for d in deltas if abs(d) <= NEAR_C)
+    near_share = near_n / len(deltas)
+
+    by_site: dict[str, list] = {}
+    for p in pairs:
+        by_site.setdefault(f'{p["site"]} vs {p["station"]} ({p["station_km"]:.0f} km)',
+                           []).append(p["delta_c"])
+    for label, ds in sorted(by_site.items()):
+        notes.append(f"{label}: mean {sum(ds)/len(ds):+.1f} °C over {len(ds)} months "
+                     f"(worst {max(ds, key=abs):+.1f})")
+
+    ok_a = abs(mean_bias) <= MAX_MEAN_BIAS
+    ok_b = near_share >= MIN_NEAR_SHARE
+    notes.append(f"GATE A  mean signed bias {mean_bias:+.2f} °C over {len(pairs)} "
+                 f"site-months (limit ±{MAX_MEAN_BIAS}) — "
+                 + ("pass" if ok_a else "FAIL"))
+    notes.append(f"GATE B  within {NEAR_C:.0f} °C: {near_n}/{len(pairs)} = "
+                 f"{near_share*100:.0f}% (floor {MIN_NEAR_SHARE*100:.0f}%) — "
+                 + ("pass" if ok_b else "FAIL"))
+    return ok_a and ok_b, notes, pairs
 
 
 def build_climate() -> bool:
@@ -354,7 +592,7 @@ def build_climate() -> bool:
                 "t_record_max": val("T2M_MAX"),
                 "t_record_min": val("T2M_MIN"),
                 "rain_mm_day": val("PRECTOTCORR"),
-                # From the monthly endpoint, averaged across the normal window.
+                # From the DAILY endpoint, averaged across the normal window.
                 # Null rather than absent-key so the page can tell "we have no
                 # normal for this month" from "this field does not exist".
                 "t_daily_max": (daily or {}).get(i, {}).get("t_daily_max"),
@@ -380,14 +618,25 @@ def build_climate() -> bool:
             f"(<{MIN_CLIMATE_SITES}) — keeping last-good")
         return False
 
-    log("\n  reference check — computed mean daily max vs published normals:")
-    ok, notes = reference_check(rows)
+    log("\n  yardstick — published station normals (WMO / World Weather "
+        "Information Service):")
+    normals, provenance = load_station_normals()
+    if not normals:
+        log("  SKIP climate: no independent yardstick could be fetched or "
+            "loaded, so the computed normals cannot be checked. Publishing an "
+            "unchecked figure is exactly how this went wrong twice. "
+            "Keeping last-good.")
+        return False
+    log(f"    using {len(normals['stations'])} stations ({provenance})")
+
+    log("\n  reference check — computed mean daily max vs station normals:")
+    ok, notes, pairs = reference_check(rows, normals)
     for n in notes:
         log(f"    {n}")
     if not ok:
-        log("  SKIP climate: the computed daily normals disagree with published "
-            "station normals beyond tolerance. This is what a wrong POWER "
-            "parameter looks like, and it has happened twice. Keeping last-good.")
+        log("  SKIP climate: the computed daily normals fail their own "
+            "reference check. That is the signature of a wrong POWER "
+            "parameter, and it has happened twice. Keeping last-good.")
         return False
     log("  reference check passed")
 
@@ -405,7 +654,7 @@ def build_climate() -> bool:
                  "Three temperature figures per month, and they answer three "
                  "different questions. t_daily_max and t_daily_min are the "
                  f"CLIMATOLOGICAL MEAN DAILY high and low, averaged over {NORM_START}"
-                 f"\u2013{NORM_END} from POWER's monthly series — what a normal "
+                 f"\u2013{NORM_END} from POWER's daily series — what a normal "
                  "afternoon and night actually reach, and the figures to quote to a "
                  "visitor. t_mean is the long-run mean across the whole day. "
                  "t_record_max and t_record_min are the EXTREMES across the entire "
@@ -414,6 +663,31 @@ def build_climate() -> bool:
                  "normal day like'. Temperatures are °C; rainfall is the mean "
                  "millimetres per day for that month."),
         "normal_window": f"{NORM_START}-{NORM_END}",
+        # The validation, published rather than merely performed. Every pair the
+        # gate looked at is here — including the ones where the model and the
+        # station disagree most — so a reader can judge the figures instead of
+        # trusting them. Smoothing these away would be the dishonest move.
+        "validation": {
+            "method": ("Every computed mean daily maximum is compared against the "
+                       "nearest published station normal within "
+                       f"{MAX_STATION_KM:.0f} km. The build is refused if the mean "
+                       f"signed bias exceeds ±{MAX_MEAN_BIAS} °C, or if fewer than "
+                       f"{MIN_NEAR_SHARE * 100:.0f}% of site-months land within "
+                       f"{NEAR_C:.0f} °C. Those two gates test for a wrongly-read "
+                       "variable, which shifts every cell the same way; they are "
+                       "not a claim that the model equals the station."),
+            "reference_source": normals.get("source"),
+            "reference_source_url": normals.get("source_url"),
+            "reference_provenance": provenance,
+            "known_divergence": ("MERRA-2, which POWER derives these from, resolves "
+                                 "about half a degree of latitude and carries no "
+                                 "irrigation. Over the watered Delta in summer it "
+                                 "therefore runs warmer than a coastal or city "
+                                 "station — the residuals below are largest exactly "
+                                 "there, and smallest over the desert reaches where "
+                                 "the model's dry land matches the real one."),
+            "pairs": pairs,
+        },
         "missing": missing,
         "sites": rows,
     })

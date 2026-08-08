@@ -52,7 +52,8 @@ jobs:
           # Stage only files that exist: `git add` on a missing path is a hard
           # error (exit 128) that would abort this step under `bash -e`.
           FILES=""
-          for f in site/data/visit-climate.json site/data/visit-terrain.json; do
+          for f in site/data/visit-climate.json site/data/visit-terrain.json \
+                   site/data/visit-station-normals.json; do
             [ -f "$f" ] && FILES="$FILES $f"
           done
           if [ -z "$FILES" ]; then

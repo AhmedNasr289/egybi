@@ -320,6 +320,97 @@
     });
   }
 
+  /* ----------------------------------------------------------- the self-check
+     The build compares every modelled mean daily maximum against the nearest
+     published station normal and refuses to publish if the comparison fails.
+     That check is worth nothing to a reader who cannot see it, so the whole
+     comparison is carried in the JSON and printed here — including the site-
+     months where the model and the station disagree most. Hiding those would
+     turn a validation into a reassurance. */
+  function paintCheck() {
+    var host = $('checkResult'), tbl = $('checkTable'), body = $('checkBody');
+    if (!host) return;
+    var v = S.climate && S.climate.validation;
+    if (!v || !v.pairs || !v.pairs.length) { showEmpty(['checkEmpty']); return; }
+
+    var pairs = v.pairs;
+    var deltas = pairs.map(function (p) { return p.delta_c; });
+    var mean = deltas.reduce(function (a, b) { return a + b; }, 0) / deltas.length;
+    var near = deltas.filter(function (d) { return Math.abs(d) <= 2; }).length;
+
+    host.innerHTML =
+      '<div class="v-gate">' +
+        '<div><strong>Average gap, model vs station</strong>' +
+          '<b>' + (mean >= 0 ? '+' : '') + mean.toFixed(2) + ' &deg;C</b>' +
+          '<em>Across ' + pairs.length + ' site-months. A pipeline reading the wrong ' +
+          'variable pushes every figure the same way; a model differing from a ' +
+          'station does not, and largely cancels. This is the number that caught ' +
+          'the two earlier mistakes on this page.</em></div>' +
+        '<div><strong>Within 2 &deg;C of the station</strong>' +
+          '<b>' + near + ' of ' + pairs.length + '</b>' +
+          '<em>' + Math.round(near / pairs.length * 100) + '% land close. The gaps that ' +
+          'remain are not noise &mdash; they cluster, and the reason is below.</em></div>' +
+      '</div>';
+
+    // One row per site: twelve rows per site would be a data dump, and the
+    // per-month numbers are already in the JSON for anyone who wants them.
+    var bySite = {};
+    pairs.forEach(function (p) {
+      var k = p.site;
+      if (!bySite[k]) bySite[k] = { station: p.station, km: p.station_km,
+                                    period: p.period, d: [] };
+      bySite[k].d.push(p.delta_c);
+    });
+    var names = {};
+    if (S.climate.sites) S.climate.sites.forEach(function (s) { names[s.key] = s.name; });
+
+    var keys = Object.keys(bySite).sort(function (a, b) {
+      return Math.abs(avg(bySite[b].d)) - Math.abs(avg(bySite[a].d));
+    });
+    if (body) {
+      body.innerHTML = keys.map(function (k) {
+        var r = bySite[k], m = avg(r.d);
+        var worst = r.d.reduce(function (a, b) {
+          return Math.abs(b) > Math.abs(a) ? b : a; }, 0);
+        var big = Math.abs(worst) > 3;
+        return '<tr><td>' + esc(names[k] || k) + '</td>' +
+          '<td>' + esc(r.station) + (r.period ? '<span class="v-gov">normals ' +
+             esc(r.period) + '</span>' : '') + '</td>' +
+          '<td class="num">' + fmt(r.km, 0) + ' km</td>' +
+          '<td class="num">' + r.d.length + '</td>' +
+          '<td class="num">' + (m >= 0 ? '+' : '') + m.toFixed(1) + '</td>' +
+          '<td class="num' + (big ? ' v-far' : '') + '">' +
+             (worst >= 0 ? '+' : '') + worst.toFixed(1) + '</td></tr>';
+      }).join('');
+      if (tbl) tbl.hidden = false;
+    }
+
+    var cap = $('checkCap');
+    if (cap) {
+      cap.innerHTML = 'Gaps are in &deg;C, modelled mean daily maximum minus the published ' +
+        'station normal. Positive means the model runs warmer than the station. ' +
+        'Source of the yardstick: ' + esc(v.reference_source || 'published station normals') +
+        (v.reference_source_url ? ' (<a href="' + esc(v.reference_source_url) +
+           '" target="_blank" rel="noopener">worldweather.wmo.int</a>)' : '') + '.';
+    }
+
+    var why = $('checkWhy');
+    if (why && v.known_divergence) {
+      why.hidden = false;
+      why.innerHTML =
+        '<p style="margin:0 0 10px;"><strong>Where the two disagree, and why we are not ' +
+        'hiding it.</strong> ' + esc(v.known_divergence) + '</p>' +
+        '<p style="margin:0;"><strong>What this check is and is not.</strong> ' +
+        esc(v.method || '') + ' It does not certify the model is right. It certifies the ' +
+        'pipeline is reading the quantity it claims to be reading &mdash; which is the ' +
+        'specific thing that went wrong here twice before it was caught.</p>';
+    }
+  }
+
+  function avg(a) {
+    return a.reduce(function (x, y) { return x + y; }, 0) / (a.length || 1);
+  }
+
   /* --------------------------------------------------------------- sources */
   function paintMeta() {
     var el = $('visitMeta');
@@ -386,6 +477,7 @@
         showEmpty(['climateEmpty']);
       }
       if (S.terrain) paintTerrain(); else showEmpty(['terrainEmpty']);
+      if (S.climate) paintCheck(); else showEmpty(['checkEmpty']);
       paintMeta();
 
       if (window.EGYBI_SCROLLY && S.map) wireStory();

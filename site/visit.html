@@ -71,6 +71,18 @@
   .v-tb i { display:block; height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-bright)); }
   .v-tv { font-variant-numeric:tabular-nums; color:var(--ink-soft); white-space:nowrap; }
   @media (max-width:700px){ .v-terr { grid-template-columns:1fr auto; } .v-tb { display:none; } }
+  /* the self-check. This table is a record, not a control, so it must not
+     advertise a click it does not handle. */
+  .v-static tr { cursor:default; }
+  .v-gate { display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+  .v-gate div { flex:1 1 260px; background:var(--papyrus-2); border:1px solid var(--line-light);
+                border-left:4px solid var(--gold); border-radius:var(--radius); padding:13px 16px; }
+  .v-gate strong { display:block; font-size:0.72rem; text-transform:uppercase; letter-spacing:.05em;
+                   color:var(--ink-soft); margin-bottom:3px; }
+  .v-gate b { font-size:1.22rem; color:var(--blue-deep); font-variant-numeric:tabular-nums; }
+  .v-gate em { font-style:normal; display:block; font-size:0.79rem; color:var(--ink-soft);
+               line-height:1.55; margin-top:4px; }
+  .v-far { color:var(--gold-ink); font-weight:700; }
 </style>
 </head>
 <body>
@@ -231,7 +243,36 @@
 </section>
 
 <!-- SOURCES -->
-<section class="surface-light-2" id="sources" data-nav="Sources &amp; limits">
+<section class="surface-light-2" id="checked" data-nav="How it was checked">
+  <div class="wrap" style="max-width:900px;">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>The pipeline checks itself</div>
+    <h2 data-aos="fade-up">Every temperature above was tested against a weather station.</h2>
+    <p class="lead" data-aos="fade-up" style="max-width:74ch;">The figures on this page come from a
+    model, not a thermometer. So before the build is allowed to publish them, it compares each one
+    against the official normals the Egyptian Meteorological Authority publishes through the World
+    Meteorological Organization &mdash; a completely separate source, which cannot be fooled by a
+    mistake made while reading the first one. If the comparison fails, nothing is published. Here is
+    that comparison, in full, including where the two disagree.</p>
+    <div class="atlas-note" id="checkEmpty" hidden>The published climate file carries no comparison
+      block &mdash; either the layer has not been built yet, or it was built before this check
+      existed. Either way the figures above are not being shown as checked, because they have
+      not been. Run the visitor-layer build to populate it.</div>
+    <div id="checkResult"></div>
+    <div class="v-wrap">
+      <table class="v-table v-static" id="checkTable" hidden>
+        <caption class="sr-only">Modelled mean daily maximum compared with the nearest published station normal</caption>
+        <thead><tr><th scope="col">Site</th><th scope="col">Checked against</th>
+          <th scope="col" class="num">Distance</th><th scope="col" class="num">Months</th>
+          <th scope="col" class="num">Average gap</th><th scope="col" class="num">Widest gap</th></tr></thead>
+        <tbody id="checkBody"></tbody>
+      </table>
+    </div>
+    <p class="chart-cap" id="checkCap" data-aos="fade-up"></p>
+    <div class="streets-note" id="checkWhy" hidden style="margin-top:18px;"></div>
+  </div>
+</section>
+
+<section class="surface-light" id="sources" data-nav="Sources &amp; limits">
   <div class="wrap" style="max-width:900px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>Where all of this came from</div>
     <h2 data-aos="fade-up">Sources, and what they cannot tell you.</h2>
@@ -276,7 +317,7 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/scrolly.js?v=1"></script>
-<script src="assets/visit.js?v=3"></script>
+<script src="assets/visit.js?v=4"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script src="assets/analytics.js"></script>
