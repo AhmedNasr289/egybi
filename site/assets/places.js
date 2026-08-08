@@ -34,6 +34,12 @@
     antiquity:  { label: 'Ancient sites',  colour: '#B23A0F', r: 3.5 }
   };
 
+  var CLUSTER_CLASS = {
+    settlement: 'marker-cluster-settlement',
+    airport: 'marker-cluster-airport',
+    antiquity: 'marker-cluster-antiquity'
+  };
+
   var S = { map: null, data: null, layers: {}, active: { settlement: true, airport: true, antiquity: false }, sel: null };
 
   function $(id) { return document.getElementById(id); }
@@ -95,7 +101,11 @@
         var n = c.getChildCount();
         return L.divIcon({
           html: '<div><span>' + n + '</span></div>',
-          className: 'marker-cluster marker-cluster-' + kind,
+          // Written out rather than built by concatenation. A class name
+          // assembled at runtime exists nowhere in the source, so no grep and
+          // no orphaned-CSS check can see it — the rule for it looks dead and
+          // gets deleted by the next person tidying up.
+          className: 'marker-cluster ' + CLUSTER_CLASS[kind],
           iconSize: L.point(n > 99 ? 42 : 34, n > 99 ? 42 : 34)
         });
       }

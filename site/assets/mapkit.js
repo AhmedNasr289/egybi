@@ -144,7 +144,7 @@
      fifteen lines, and it has not had a release in years; a dependency that
      needs watching should buy more than this one would. */
   function addFullscreen(map, container) {
-    var target = container.closest('.mk-wrap') || container;
+    var target = container;
     if (!(target.requestFullscreen || target.webkitRequestFullscreen)) return;
     var btn = button('Show the map full screen', '⛶', function () {
       var doc = document.fullscreenElement || document.webkitFullscreenElement;
@@ -202,30 +202,6 @@
     });
     L.DomEvent.on(el, 'focus', function () { layer.fire('mouseover'); });
     L.DomEvent.on(el, 'blur', function () { layer.fire('mouseout'); });
-  }
-
-  /* ---------------------------------------------------------- detail panel --
-     Announced with aria-live so a keyboard user hears the figures when a
-     feature is activated; without it the panel updates silently and the
-     interaction is invisible to anyone not looking at it. */
-  function panel(container) {
-    var el = L.DomUtil.create('div', 'mk-panel', container);
-    el.setAttribute('role', 'status');
-    el.setAttribute('aria-live', 'polite');
-    el.hidden = true;
-    var api = {
-      el: el,
-      show: function (html) {
-        el.innerHTML = html;
-        el.hidden = false;
-        if (!RM() && window.Motion && window.Motion.animate) {
-          window.Motion.animate(el, { opacity: [0, 1], transform: ['translateY(6px)', 'none'] },
-                                { duration: 0.22, easing: 'ease-out' });
-        }
-      },
-      hide: function () { el.hidden = true; }
-    };
-    return api;
   }
 
   /* ------------------------------------------------------------ the map --- */
@@ -308,7 +284,6 @@
     setHome: setHome,
     flyTo: flyTo,
     makeFocusable: makeFocusable,
-    panel: panel,
     button: button,
     barControl: barControl,
     reduceMotion: RM,

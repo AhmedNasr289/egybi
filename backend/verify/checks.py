@@ -27,6 +27,15 @@ def orphans():
             used.update(a.split())
         used.update(re.findall(r"classList\.\w+\(\s*['\"]([\w-]+)", t))
         used.update(re.findall(r"['\"]([a-z][\w-]+)['\"]", t))  # + not {2,}: ".ok" is two characters and was reported orphaned
+        # A string literal holding SEVERAL classes is still a use of each of
+        # them. This matched only single-token literals, so
+        # L.DomUtil.create('div', 'mk-bar leaflet-bar') and
+        # className: 'marker-cluster marker-cluster-' + kind both counted as
+        # nobody using .mk-bar or .marker-cluster, and two live classes were
+        # reported dead. Split on whitespace before deciding.
+        for lit in re.findall(r"['\"]([a-z][\w -]{2,})['\"]", t):
+            if " " in lit:
+                used.update(w for w in lit.split() if re.fullmatch(r"[a-z][\w-]*", w))
     orph = sorted(c for c in defined - used
                   if not c.startswith(("aos", "leaflet", "cm-", "js-")))
     print(f"CSS classes defined: {len(defined)}   orphaned: {len(orph)}")
