@@ -40,6 +40,7 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
       h1: document.querySelectorAll('h1').length,
       title: (document.title || '').length,
       canonical: !!document.querySelector('link[rel=canonical]'),
+      noindex: !!document.querySelector('meta[name=robots][content*=noindex]'),
       maps: document.querySelectorAll('.leaflet-container').length,
       emptyNav: document.querySelectorAll('.nav-links a').length,
       // Chips are GENERATED from section[id][data-nav] by wayfinding.js, so a
@@ -71,7 +72,11 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
     if (m.stuck) problems.push('stuck on Loading x' + m.stuck);
     if (m.h1 !== 1) problems.push('h1 count ' + m.h1);
     if (!m.title) problems.push('no <title>');
-    if (!m.canonical) problems.push('no canonical');
+    // A noindex page must NOT claim a canonical: it is a status, not a
+    // document, and a canonical would invite the crawler it is refusing.
+    // Any page that is not noindex still has to have one.
+    if (!m.canonical && !m.noindex) problems.push('no canonical');
+    if (m.canonical && m.noindex) problems.push('noindex page also claims a canonical');
     if (m.emptyNav === 0) problems.push('no nav links');
     if (m.orphanChips) problems.push('orphan sub-nav chips: ' + m.orphanChips);
     if (m.navNoId) problems.push('section[data-nav] with no id (silently gets no chip): ' + m.navNoId);
