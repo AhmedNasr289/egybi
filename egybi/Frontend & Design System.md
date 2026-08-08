@@ -152,3 +152,58 @@ still holds its resting value — the same class of mistake as scrolling faster
 than AOS's throttled handler, or reading a CountUp mid-animation. Wait for the
 transition before you read.
 
+
+## The map kit (`assets/mapkit.js`)
+
+Six map surfaces lived in five files, each constructing its own Leaflet instance
+with its own options. That is not a tidiness complaint: it is why three of them
+were pannable by mouse and by nothing else while two were fine, and why fixing
+one never fixed the others. `mapkit.js` owns the parts that should never differ.
+
+**Controls are real buttons.** Leaflet's own zoom control is `<a href="#">`,
+which a screen reader announces as a link to nowhere. Every control the kit adds
+is a `<button>` with an `aria-label`, in the tab order, firing on Enter and
+Space without extra handling. Each map gets zoom in/out, reset-to-extent,
+fullscreen, and a scale bar.
+
+**Features are focus stops.** Leaflet paths are SVG and are not tabbable, so
+every choropleth on this site could be read with a mouse and by no other means.
+Each governorate and district is now `tabindex="0"` with `role="button"` and its
+name, and Enter runs the same handler a click does — deliberately the same
+function, so the keyboard path and the mouse path cannot drift apart.
+
+**The locator is drawn, not fetched.** A minimap normally means a second tile
+layer, which would put a provider call back into the one site whose whole point
+is not making one. The inset draws the country outline once into an SVG from the
+GeoJSON the page already holds and moves a rectangle over it. It hides itself
+when the viewport already shows the whole country, and it is `aria-hidden`
+because it repeats what the main map already says.
+
+**Flying has a still twin.** `flyTo` becomes `setView`, `flyToBounds` becomes
+`fitBounds`, and the destination is identical. Reduced motion removes the
+travel, never the arrival. Leaflet's `inertia` goes too — a map that keeps
+gliding after the pointer stops is motion nobody asked for.
+
+### Chosen and rejected
+
+| Wanted | Chosen | Why not the obvious plugin |
+|---|---|---|
+| Clustering | Leaflet.markercluster 1.5.3, MIT | Nothing rejected — Places draws 757 points and the Delta is unreadable without it. |
+| Fullscreen | Native Fullscreen API, ~15 lines | Leaflet.fullscreen is ~4 KB and years without a release to wrap an API this small. |
+| Minimap | Hand-drawn SVG inset | Leaflet-MiniMap expects a second tile layer. |
+| Animation | Motion One, already vendored | Nothing new to add. |
+| Faster vectors | Not needed | Leaflet.VectorGrid earns its place at tile scale; 27 governorates do not justify it. |
+
+**Places clusters; the Atlas health layer does not.** 757 named places collide
+badly — at country zoom a dozen Delta towns render as one dot with eleven
+unclickable underneath. The Atlas's 963 health facilities look like the same
+problem and are not: that layer is a canvas renderer whose radii, halo weights
+and fill opacities were tuned against every choropleth bin beneath it, and
+clustering would throw that away to solve a problem it does not have. It stays
+canvas.
+
+**The Stories maps stay inert, on purpose.** They illustrate a sentence that
+already states every figure they encode. Interactivity there would add a focus
+stop per paragraph for a reader who gains nothing by landing on it, and would
+invite panning an illustration off its subject. The reasoning is written into
+`stories.js` so the next person changes it deliberately or not at all.

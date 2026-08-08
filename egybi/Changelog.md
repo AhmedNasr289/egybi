@@ -600,3 +600,65 @@ stayed red without anyone looking, because its next scheduled run is weekly.
 - **Two open alert issues** — #42 (this failure) and #35, "Refresh daily prices"
   from 2026-07-23, whose workflow has been green through 19 runs since. The
   alert action's own instruction is to close them once resolved.
+
+## 2026-08-08 (fifth pass) — Maps that behave like maps
+The ask was for the maps to feel real and interactive rather than flat shapes on
+a page. The obstacle was not ambition, it was that six map surfaces lived in five
+files and each built its own Leaflet instance, so every improvement had to be
+made five times and never was.
+
+- **One kit, `assets/mapkit.js`.** It owns the control set, the keyboard
+  contract, the reduced-motion behaviour and the flying. Every map now has real
+  `<button>` zoom, reset and fullscreen controls in the tab order with
+  accessible names, a scale bar, a locator inset, and an animated fly-to when a
+  feature is opened. Leaflet's own controls are `<a href="#">` — a link to
+  nowhere, as far as a screen reader is concerned.
+- **Choropleths are keyboard-readable.** Leaflet paths are SVG and are not
+  tabbable, so every choropleth here could be read with a mouse and by no other
+  means. Each governorate and district is now a focus stop that announces its
+  name, and Enter runs the same function a click does.
+- **Places clusters, the Atlas health layer does not.** 757 named places collide
+  badly in the Delta, where a dozen towns render as one dot with eleven
+  unclickable underneath; Leaflet.markercluster (MIT, 34 KB) counts them and
+  spiderfies the last few apart. The Atlas's 963 health facilities look like the
+  same problem and are not — that layer is a canvas renderer whose radii and
+  halos were tuned against every choropleth bin beneath it, and clustering would
+  discard that to fix something it does not suffer from.
+- **The locator inset is drawn, not fetched.** Leaflet-MiniMap wants a second
+  tile layer, which would put a provider call back into the one site whose whole
+  point is not making one. It draws the outline from the GeoJSON already loaded.
+  Fullscreen is fifteen lines of the native API rather than a 4 KB plugin that
+  has not shipped a release in years.
+- **The Stories maps stay inert deliberately**, with the reasoning written into
+  `stories.js`: they illustrate a sentence that already states every figure, so
+  a focus stop per paragraph costs a keyboard reader something and returns
+  nothing.
+
+### Three failures worth keeping
+- **`egybi.js` was wiping the namespace.** It assigned `window.EGYBI = {...}`
+  rather than merging, so any module registering before it vanished. mapkit
+  registered, `egybi.js` loaded one tag later, and four maps died on "Cannot read
+  properties of undefined (reading 'create')".
+- **The mutation harness could not revert an untracked file.** `git checkout --`
+  does nothing for a file git has never seen, so the first two cases aimed at the
+  brand-new `mapkit.js` stripped its aria-labels and its keyboard focus and left
+  them stripped — the harness reported FAILS TO CATCH and moved on while the
+  defect sat in the working tree. And for a *tracked* file with uncommitted
+  changes it restores HEAD, which silently discarded every uncommitted edit
+  wiring `geospatial.js` to the kit. It now snapshots bytes, restores bytes, and
+  verifies the restore landed.
+- **A checker reported "no findings" for an interaction it never performed.**
+  After the pan and three zooms, every feature sat outside the viewport, so the
+  click step skipped all twelve candidates and returned false in silence — an
+  injected off-origin fetch behind that click went unseen. It now resets the view
+  first and reports a skipped interaction as a finding, because a skipped
+  interaction is not a pass.
+
+### And the World Bank fix earned itself on its first real run
+The refresh triggered manually today fetched **9 of 11 indicators**; GDP per
+capita returned an HTTPError and CPI inflation timed out. Under the old code that
+run would have written a file of roughly 62 INSERT statements, cleared the
+"fewer than 20" floor comfortably, committed, and deleted two indicators' worth
+of cited history from the site under a green tick. It refused instead, naming
+both. The workflow stays red until the API is healthy, which is the correct
+state, not a broken one.
