@@ -181,30 +181,6 @@
     else if (target) map.flyTo(target, opts.zoom || map.getZoom(), { duration: 0.75 });
   }
 
-  /* ------------------------------------------------------- keyboard focus --
-     Leaflet paths are SVG elements and are not in the tab order, so every
-     choropleth on this site could be read by a mouse and by nothing else. This
-     makes each feature a real focus stop with a role and a name, and routes
-     Enter/Space to the same handler a click uses, so the keyboard path and the
-     mouse path cannot drift apart. */
-  function makeFocusable(layer, name, onActivate) {
-    var el = layer.getElement && layer.getElement();
-    if (!el) return;
-
-    el.setAttribute('tabindex', '0');
-    el.setAttribute('role', 'button');
-    el.setAttribute('aria-label', name);
-    L.DomEvent.on(el, 'keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-        L.DomEvent.stop(e);
-        onActivate(layer);
-      }
-    });
-    L.DomEvent.on(el, 'focus', function () { layer.fire('mouseover'); });
-    L.DomEvent.on(el, 'blur', function () { layer.fire('mouseout'); });
-  }
-
-
   /* ------------------------------------------------------------- credit --
      geoBoundaries is CC BY 4.0. Attribution is a LICENCE CONDITION, not a
      courtesy, and the required form is the citation plus links to both the
@@ -242,7 +218,6 @@
     container.insertAdjacentElement('afterend', el);
     return el;
   }
-
 
   /* --------------------------------------------------------- choropleth --
      The toolkit's §4a, adapted rather than pasted: it patches an
@@ -486,7 +461,6 @@
     create: create,
     setHome: setHome,
     flyTo: flyTo,
-    makeFocusable: makeFocusable,
     button: button,
     barControl: barControl,
     choropleth: choropleth,

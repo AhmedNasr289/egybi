@@ -147,11 +147,26 @@ async function session(browser, page, width, reduced) {
     if (ctl.count !== ctl.tabbable) add('map control not in the tab order', tag);
     if (ctl.anchors) add('leaflet anchor-to-# control still present', `${tag} — ${ctl.anchors}`);
 
-    // Focusable features: the choropleths must be keyboard-readable.
-    const foc = await p.evaluate((id) =>
-      document.querySelectorAll(`#${id} path[tabindex="0"]`).length, page.map);
-    if (page.path === 'geospatial.html' && foc < 20) {
-      add('governorates not keyboard-focusable', `${tag} — ${foc}`);
+    // Focusable features. This counted paths with tabindex="0" and wanted 20+,
+    // which was right when every polygon was its own tab stop. The choropleths
+    // now use a roving tabindex — one stop into the map, arrow keys to move
+    // geographically — so exactly one path carries 0 and the rest carry -1, and
+    // the old rule reported the improvement as a regression.
+    //
+    // What actually matters: every governorate is reachable and named, and
+    // precisely one of them is the way in.
+    const foc = await p.evaluate((id) => ({
+      entry: document.querySelectorAll(`#${id} path[tabindex="0"]`).length,
+      reachable: document.querySelectorAll(`#${id} path[tabindex]`).length,
+      named: [...document.querySelectorAll(`#${id} path[tabindex]`)]
+        .filter(e => (e.getAttribute('aria-label') || '').trim()).length,
+    }), page.map);
+    if (page.path === 'geospatial.html' || page.path === 'explore.html') {
+      if (foc.reachable < 20) add('governorates not keyboard-reachable', `${tag} — ${foc.reachable}`);
+      else if (foc.entry !== 1) add('roving tabindex broken: entry points', `${tag} — ${foc.entry}`);
+      else if (foc.named !== foc.reachable) {
+        add('governorate reachable but unnamed', `${tag} — ${foc.reachable - foc.named}`);
+      }
     }
 
     // Reduced motion must remove the movement, not the function: the same

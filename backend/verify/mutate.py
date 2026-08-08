@@ -265,10 +265,15 @@ case("map control loses its accessible name", "map-interaction.js",
      lambda o: "map control with no accessible name" in o, MAPINT)
 
 # ---- 22. a choropleth that only a mouse can read --------------------------
-case("governorates stop being keyboard-focusable", "map-interaction.js",
+# The anchor moved when makeFocusable was deleted: the Atlas was its only caller
+# and now uses choropleth(). A case aimed at a deleted line does not fail — it
+# reports COULD NOT MUTATE, which is coverage lost rather than coverage passing,
+# and only because that verdict was added earlier.
+case("governorates stop being keyboard-reachable", "map-interaction.js",
      ["site/assets/mapkit.js"],
-     lambda: edit("site/assets/mapkit.js", "    el.setAttribute('tabindex', '0');", ""),
-     lambda o: "governorates not keyboard-focusable" in o, MAPINT)
+     lambda: edit("site/assets/mapkit.js",
+                  "      e.setAttribute('tabindex', n === 0 ? '0' : '-1');", ""),
+     lambda o: "governorates not keyboard-reachable" in o, MAPINT)
 
 
 # ---- 17. page sweep: a nav container that renders with nothing in it --------
