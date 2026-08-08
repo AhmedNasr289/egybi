@@ -456,6 +456,11 @@ def fetch_station_normals() -> dict | None:
             if v:
                 period = f"{period}–{v}" if period else str(v)
                 break
+        if not period:
+            # Never invent one. WWIS does not state the normal period in every
+            # payload, and "1961-1990" written in by hand would be a fabricated
+            # citation attached to a real number — worse than no citation.
+            period = ""
         stations.append({"name": st["name"], "lat": st["lat"], "lon": st["lon"],
                          "period": period,
                          "months": {str(k): v for k, v in sorted(got.items())}})
@@ -531,15 +536,24 @@ def load_station_normals() -> tuple[dict | None, str]:
     return None, "unavailable"
 
 
-def reference_check(rows: list, normals: dict) -> tuple[bool, list, list]:
+def reference_check(rows: list, normals: dict,
+                    elevations: dict | None = None) -> tuple[bool, list, list]:
     """Compare every computed mean daily maximum against the nearest published
     station normal within MAX_STATION_KM.
 
     Returns (ok, notes, pairs). `pairs` is the full comparison, which is written
     into the published JSON: a validation the reader cannot see is a validation
     they have to take on trust, and this project does not ask for that.
+
+    Site elevation travels with each pair because temperature falls with height
+    at roughly 6.5 °C per kilometre, so a mountain site checked against a
+    sea-level station is testing altitude, not the pipeline. Saint Catherine
+    sits above 1500 m and its nearest published station is on the coast; that
+    pair is kept and LABELLED rather than dropped, because quietly removing the
+    comparison that disagrees most is how a check becomes a formality.
     """
     stations = normals["stations"]
+    elevations = elevations or {}
     pairs, notes = [], []
 
     for r in rows:
@@ -557,6 +571,7 @@ def reference_check(rows: list, normals: dict) -> tuple[bool, list, list]:
             pairs.append({"site": r["key"], "month": m["month"],
                           "station": st["name"], "station_km": round(km, 1),
                           "period": st.get("period", ""),
+                          "site_elev_m": elevations.get(r["key"]),
                           "model_c": got, "station_c": ref,
                           "delta_c": round(got - ref, 1)})
 
@@ -679,8 +694,17 @@ def build_climate() -> bool:
         return False
     log(f"    using {len(normals['stations'])} stations ({provenance})")
 
+    elevations = {}
+    tf = OUT_DIR / "visit-terrain.json"
+    if tf.exists():
+        try:
+            for s in json.loads(tf.read_text(encoding="utf-8")).get("sites", []):
+                elevations[s["key"]] = s.get("elevation_m")
+        except Exception:  # noqa: BLE001
+            pass
+
     log("\n  reference check — computed mean daily max vs station normals:")
-    ok, notes, pairs = reference_check(rows, normals)
+    ok, notes, pairs = reference_check(rows, normals, elevations)
     for n in notes:
         log(f"    {n}")
     if not ok:
@@ -1016,9 +1040,13 @@ def build_relief() -> bool:
 
 def main() -> None:
     log(f"EgyBI visitor layer — {len(SITES)} sites, {len(TRANSECTS)} transects\n")
-    ok_climate = build_climate()
-    log("")
+    # Terrain first: its elevations label the climate comparison, where a site
+    # 1500 m up checked against a coastal station is measuring altitude rather
+    # than the pipeline. A failed terrain layer does not block climate — the
+    # labels are then simply absent, which the page says.
     ok_terrain = build_terrain()
+    log("")
+    ok_climate = build_climate()
     log("")
     ok_relief = build_relief()
 

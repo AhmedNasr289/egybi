@@ -515,7 +515,8 @@
         '<div><strong>Within 2 &deg;C of the station</strong>' +
           '<b>' + near + ' of ' + pairs.length + '</b>' +
           '<em>' + Math.round(near / pairs.length * 100) + '% land close. The gaps that ' +
-          'remain are not noise &mdash; they cluster, and the reason is below.</em></div>' +
+          'remain are not noise &mdash; they cluster over Lower Egypt in summer, and ' +
+          'the reason is below.</em></div>' +
       '</div>';
 
     // One row per site: twelve rows per site would be a data dump, and the
@@ -524,7 +525,7 @@
     pairs.forEach(function (p) {
       var k = p.site;
       if (!bySite[k]) bySite[k] = { station: p.station, km: p.station_km,
-                                    period: p.period, d: [] };
+                                    period: p.period, elev: p.site_elev_m, d: [] };
       bySite[k].d.push(p.delta_c);
     });
     var names = {};
@@ -539,9 +540,17 @@
         var worst = r.d.reduce(function (a, b) {
           return Math.abs(b) > Math.abs(a) ? b : a; }, 0);
         var big = Math.abs(worst) > 3;
-        return '<tr><td>' + esc(names[k] || k) + '</td>' +
-          '<td>' + esc(r.station) + (r.period ? '<span class="v-gov">normals ' +
-             esc(r.period) + '</span>' : '') + '</td>' +
+        // Temperature falls about 6.5 °C per kilometre of height, so a site
+        // well above its nearest station is being compared across an altitude
+        // difference as much as across a model. Saying so beside the number is
+        // the difference between a caveat and an excuse made later.
+        var alt = r.elev != null && r.elev > 600
+          ? '<span class="v-gov">site sits at ' + fmt(r.elev, 0) +
+            ' m; the station is near sea level</span>' : '';
+        return '<tr><td>' + esc(names[k] || k) + alt + '</td>' +
+          '<td>' + esc(r.station) +
+             (r.period ? '<span class="v-gov">normals ' + esc(r.period) + '</span>' : '') +
+             '</td>' +
           '<td class="num">' + fmt(r.km, 0) + ' km</td>' +
           '<td class="num">' + r.d.length + '</td>' +
           '<td class="num">' + (m >= 0 ? '+' : '') + m.toFixed(1) + '</td>' +
@@ -553,11 +562,16 @@
 
     var cap = $('checkCap');
     if (cap) {
+      var anyPeriod = pairs.some(function (p) { return p.period; });
       cap.innerHTML = 'Gaps are in &deg;C, modelled mean daily maximum minus the published ' +
         'station normal. Positive means the model runs warmer than the station. ' +
         'Source of the yardstick: ' + esc(v.reference_source || 'published station normals') +
         (v.reference_source_url ? ' (<a href="' + esc(v.reference_source_url) +
-           '" target="_blank" rel="noopener">worldweather.wmo.int</a>)' : '') + '.';
+           '" target="_blank" rel="noopener">worldweather.wmo.int</a>)' : '') + '. ' +
+        (anyPeriod ? ''
+                   : 'The source does not state which years its normals average, so the ' +
+                     'comparison is against an undated published normal &mdash; noted rather ' +
+                     'than filled in with a plausible-looking range.');
     }
 
     var why = $('checkWhy');
