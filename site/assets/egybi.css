@@ -63,7 +63,7 @@ body {
      is deliberately NOT repeated: hidden makes body a scroll container, which
      silently kills the position:sticky header. Do not add it back. */
 }
-h1, h2, h3, h4, .display, .brand { font-family: 'Cinzel', Georgia, serif; letter-spacing: 0.01em; line-height: 1.15; }
+h1, h2, h3, h4, .brand { font-family: 'Cinzel', Georgia, serif; letter-spacing: 0.01em; line-height: 1.15; }
 a { color: var(--blue); }
 code, .mono { font-family: "SF Mono", Menlo, Consolas, monospace; }
 img { max-width: 100%; }
@@ -122,7 +122,6 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .grid { display: grid; gap: 22px; }
 .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-.grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 26px; transition: transform .25s, box-shadow .25s; }
 .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-light); }
 .card h3 { margin: 0 0 8px; font-size: 1.1rem; color: var(--blue-deep); }
@@ -166,7 +165,6 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .surface-dark .card p { color: var(--on-dark-soft); }
 
 /* ---------- pills ---------- */
-.pills { display: flex; flex-wrap: wrap; gap: 12px; }
 .pill { background: var(--papyrus-2); border: 1px solid var(--line-light); color: var(--blue-deep); padding: 10px 18px; border-radius: 999px; font-size: 0.9rem; font-weight: 600; transition: transform .2s, background .2s; text-decoration: none; }
 .pill:hover { transform: translateY(-3px); background: #fff; }
 
@@ -215,18 +213,11 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .chart-cap a { color: var(--blue); }
 
 /* ---------- SQL sandbox ---------- */
-.sandbox { background: linear-gradient(160deg, #1b160e, var(--kemet)); border-radius: 16px; padding: 28px; color: var(--on-dark); box-shadow: var(--shadow-dark); border: 1px solid var(--line-dark); }
-.sandbox label { display: block; font-size: 0.85rem; color: var(--gold-bright); font-weight: 700; margin-bottom: 10px; }
-.sandbox textarea { width: 100%; min-height: 108px; border-radius: 10px; border: 1.5px solid var(--line-dark); background: #262019; color: var(--on-dark); padding: 14px 16px; font-size: 0.95rem; resize: vertical; line-height: 1.5; }
-.sandbox textarea:focus-visible { outline: 2px solid var(--gold); border-color: var(--gold); }
-.sandbox .row { display: flex; gap: 14px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
 .result-wrap { margin-top: 20px; overflow-x: auto; background: #fff; border-radius: 10px; }
 .result-table { border-collapse: collapse; width: 100%; font-size: 0.88rem; color: var(--ink); }
 .result-table th, .result-table td { padding: 10px 15px; border-bottom: 1px solid var(--line-light); text-align: left; white-space: nowrap; }
 .result-table th { background: var(--papyrus); color: var(--blue-deep); font-family: 'Inter', sans-serif; }
 .sql-empty { color: var(--danger); padding: 15px; margin: 0; font-size: 0.9rem; }
-.hint { font-size: 0.82rem; color: var(--on-dark-soft); margin-top: 16px; }
-.hint a { color: var(--gold-bright); }
 
 /* ---------- timeline ---------- */
 .timeline { position: relative; margin-top: 30px; padding-left: 26px; border-left: 2px solid var(--gold-soft); }
@@ -253,9 +244,6 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .callout .src { display: block; margin-top: 11px; font-size: 0.8rem; color: var(--ink-soft); }
 
 /* ---------- forms / newsletter ---------- */
-.form-inline { max-width: 480px; margin: 24px auto 0; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-.form-inline input[type=email] { flex: 1 1 260px; padding: 15px 17px; border-radius: 10px; border: 1.5px solid var(--line-light); font-size: 1rem; font-family: inherit; }
-.form-inline input[type=email]:focus-visible { outline: 2px solid var(--blue); }
 .form-note { font-size: 0.9rem; margin-top: 15px; min-height: 1.4em; }
 .form-note.ok { color: var(--success); font-weight: 600; }
 .form-note.error { color: var(--danger); font-weight: 600; }
@@ -285,6 +273,19 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .hero-particles { position: absolute; inset: 0; z-index: 0; }
 .hero-inner { position: relative; z-index: 1; }
 
+/* The crawlable index lists on the blog, Places and every generated story.
+   The class has existed on three pages and in the generator since those indexes
+   were written, with no rule behind it, so "plain-list" rendered as a default
+   bulleted list — the one thing its name says it is not. Caught by CSSOM
+   inspection of the live DOM; grep cannot see a class that has no rule. */
+.plain-list { list-style: none; padding-left: 0; margin: 14px 0 0; }
+.plain-list li { padding: 7px 0; border-bottom: 1px solid var(--line-light); }
+.plain-list li:last-child { border-bottom: none; }
+.plain-list a { color: var(--blue-deep); text-decoration: none; }
+.plain-list a:hover, .plain-list a:focus-visible { color: var(--gold-ink); text-decoration: underline; }
+.surface-dark .plain-list li { border-bottom-color: var(--line-dark); }
+.surface-dark .plain-list a { color: var(--on-dark); }
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 560px) {
@@ -313,10 +314,10 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 }
 
 /* ---------- motion micro-interactions (disabled under reduced-motion above) ---------- */
-.card, .track, .chart-card, .concept, .layer, .role, .phase, .post-card {
+.card, .chart-card, .role, .post-card {
   transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, border-color .2s ease;
 }
-.card:hover, .track:hover, .chart-card:hover, .concept:hover, .layer:hover, .role:hover, .phase:hover, .post-card:hover {
+.card:hover, .chart-card:hover, .role:hover, .post-card:hover {
   transform: translateY(-4px);
 }
 .btn-primary { position: relative; overflow: hidden; }
@@ -336,13 +337,16 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .brand:hover svg { transform: rotate(-8deg) scale(1.08); }
 @media (prefers-reduced-motion: reduce) {
   .card:hover, .track:hover, .chart-card:hover, .concept:hover, .layer:hover,
-  .role:hover, .phase:hover, .post-card:hover, .brand:hover svg { transform: none !important; }
+  .role:hover, .post-card:hover, .brand:hover svg { transform: none !important; }
 }
 
 /* ---------- hero v2: playable cartouche ---------------------------------- */
-/* The fold now contains a working SQL engine, so the background moves from a
-   blue gradient to near-black kemet with a blue glow: code needs contrast, and
-   near-black + gold reads as EgyBI rather than as generic SaaS. */
+/* Near-black kemet with a blue glow rather than a plain blue gradient. This was
+   originally chosen because the fold held a live SQL console and code needs
+   contrast; the console is gone and the ground stays, because near-black and
+   gold is what reads as EgyBI rather than as generic SaaS. Recording the real
+   reason matters — the old comment justified a colour by a feature a reader
+   would look for and not find. */
 .surface-hero.hero-v2 {
   background:
     radial-gradient(ellipse 120% 90% at 30% -10%, #1d4694 0%, rgba(14,42,94,0.55) 32%, var(--kemet) 72%),
