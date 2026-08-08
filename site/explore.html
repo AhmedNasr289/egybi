@@ -152,6 +152,21 @@
         <h3>Tourism — arrivals &amp; revenue</h3>
         <div class="chart-box"><canvas id="tourismChart"></canvas></div>
         <p class="chart-cap">Source: Ministry of Tourism &amp; Antiquities, CBE, UNWTO. 2025's ~19M is officially confirmed (SIS/Minister). 2021 revenue is blank — sources disagree.</p>
+        <div class="sr-only">
+          <table>
+            <caption>Egyptian tourism, 2019 to 2025 — the same figures the chart shows</caption>
+            <thead><tr><th scope="col">Year</th><th scope="col">Arrivals (millions)</th><th scope="col">Revenue (US$ billion)</th><th scope="col">Note</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">2019</th><td>not recorded here</td><td>13.03</td><td>Pre-pandemic revenue peak</td></tr>
+              <tr><th scope="row">2020</th><td>not recorded here</td><td>4.40</td><td>Pandemic collapse, a fall of roughly two thirds</td></tr>
+              <tr><th scope="row">2021</th><td>not recorded here</td><td>disputed</td><td>The Tourism Ministry stated more than $13 billion; independent trackers put it near $3 to $4 billion. The two have not been reconciled.</td></tr>
+              <tr><th scope="row">2022</th><td>not recorded here</td><td>10.70</td><td>Reported between $10.7 and $14.1 billion depending on whether receipts or expenditure are counted</td></tr>
+              <tr><th scope="row">2023</th><td>14.9</td><td>13.60</td><td>Back to pre-pandemic revenue</td></tr>
+              <tr><th scope="row">2024</th><td>15.7</td><td>15.30</td><td>Figures converge across sources</td></tr>
+              <tr><th scope="row">2025</th><td>19.0</td><td>16.70</td><td>Confirmed by the State Information Service and the tourism minister</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -568,8 +583,42 @@ ORDER BY year_inscribed;"
     options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{position:'right'}, tooltip:{callbacks:{label:function(c){return c.label+': '+c.parsed+'% of exports';}}}} }
   });
 
+  /* 2021 is a hole in this chart, and the hole is the story. The Tourism
+     Ministry stated revenue above $13bn; independent trackers put it nearer
+     $3-4bn. Both are on the record, the gap between them is three to four
+     times, and nobody has reconciled them — most likely a fiscal-versus-
+     calendar year or a receipts-versus-expenditure definition.
+
+     spanGaps:false already refuses to draw a line THROUGH the year, which is
+     the honest default. But an unexplained break reads as "we had no data",
+     which is a different and untrue claim. This shades the year and names it,
+     so the reader sees a dispute rather than a rendering glitch. */
+  var disputedYear = {
+    id: 'disputedYear',
+    beforeDatasetsDraw: function (chart) {
+      var x = chart.scales.x, area = chart.chartArea, ctx = chart.ctx;
+      var i = chart.data.labels.indexOf(2021);
+      if (i < 0 || !x || !area) return;
+      var half = (x.getPixelForTick(1) - x.getPixelForTick(0)) / 2;
+      var cx = x.getPixelForTick(i);
+      ctx.save();
+      ctx.fillStyle = 'rgba(178, 58, 15, 0.10)';
+      ctx.fillRect(cx - half, area.top, half * 2, area.bottom - area.top);
+      ctx.strokeStyle = 'rgba(178, 58, 15, 0.45)';
+      ctx.setLineDash([4, 3]);
+      ctx.strokeRect(cx - half, area.top, half * 2, area.bottom - area.top);
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#8A3410';
+      ctx.font = '600 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('2021 disputed', cx, area.top + 14);
+      ctx.restore();
+    }
+  };
+
   // Tourism combo
   new Chart(document.getElementById('tourismChart'), {
+    plugins: [disputedYear],
     data:{ labels:[2019,2020,2021,2022,2023,2024,2025], datasets:[
       { type:'bar', label:'Arrivals (M)', data:[null,null,null,null,14.9,15.7,19.0], backgroundColor:'rgba(23,64,139,0.75)', yAxisID:'yA', borderRadius:4 },
       { type:'line', label:'Revenue ($B)', data:[13.03,4.40,null,10.70,13.6,15.3,16.7], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.15)', yAxisID:'yR', tension:0.3, spanGaps:false, pointRadius:4, pointBackgroundColor:'#C9A227', fill:true }
