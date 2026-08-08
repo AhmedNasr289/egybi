@@ -113,8 +113,19 @@ async function session(browser, page, width, reduced) {
       }
       return false;
     };
-    await clickFirstVisible('path.leaflet-interactive');
+    // Reset first. After the pan and three zooms above, every feature can sit
+    // outside the viewport — which is exactly what happened: clickFirstVisible
+    // skipped all twelve candidates, returned false, and said nothing, so the
+    // checker reported "no findings" for a click it never performed. An
+    // injected off-origin fetch behind that click went unseen.
+    const reset2 = p.locator(`#${page.map} button[aria-label="Reset the view"]`).first();
+    if (await reset2.count()) { await reset2.click(); await p.waitForTimeout(950); }
+
+    const clickedFeature = await clickFirstVisible('path.leaflet-interactive');
     await clickFirstVisible('.marker-cluster');
+    // A skipped interaction is not a pass. Say so, or the run silently covers
+    // less than it claims.
+    if (!clickedFeature) add('could not click any map feature — interaction NOT exercised', tag);
 
     const long = await p.evaluate(() => window.__long);
     if (long > 12) add('long tasks during interaction', `${tag} — ${long}`);

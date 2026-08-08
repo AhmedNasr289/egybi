@@ -61,6 +61,7 @@
       }
     }).addTo(S.map);
     S.map.fitBounds(S.base.getBounds(), { padding: [6, 6] });
+    window.EGYBI.mapkit.setHome(S.map, S.base.getBounds());
     setTimeout(function () {
       S.map.invalidateSize();
       S.map.fitBounds(S.base.getBounds(), { padding: [6, 6] });

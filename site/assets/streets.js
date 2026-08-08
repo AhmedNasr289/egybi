@@ -138,6 +138,7 @@
       }
     }).addTo(S.map);
     S.map.fitBounds(S.layer.getBounds(), { padding: [12, 12] });
+    window.EGYBI.mapkit.setHome(S.map, S.layer.getBounds());
     paintLegend();
   }
 

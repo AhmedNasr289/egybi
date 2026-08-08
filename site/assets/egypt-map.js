@@ -92,6 +92,7 @@
     window.EGYBI_MAP.layer = layer;
 
     map.fitBounds(layer.getBounds(), { padding: [6, 6] });
+    window.EGYBI.mapkit.setHome(map, layer.getBounds());
     buildLegend(document.getElementById(legendId), 'population', window.EGYBI_MAP.breaks,
                 feats.map(function (f) { return f.properties.population; }));
 

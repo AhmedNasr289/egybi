@@ -328,6 +328,7 @@
     }).addTo(S.map);
     S.home = S.layer.getBounds();
     S.map.fitBounds(S.home, { padding: [6, 6] });
+    window.EGYBI.mapkit.setHome(S.map, S.home);
     buildLegend('population', feats.map(function (f) { return f.properties.population; }));
     buildTable();
 

@@ -289,9 +289,23 @@
     return map;
   }
 
+  /* The reset control needs the map's natural extent, which every caller only
+     knows AFTER it has built its layers and fitted to them. So it is registered
+     here rather than passed to create(). */
+  function setHome(map, bounds, onReset) {
+    if (!map || !bounds) return;
+    map._mkHome = bounds;
+    map.addControl(barControl('topright', [button('Reset the view', '\u27F2', function () {
+      if (RM()) map.fitBounds(map._mkHome, { padding: [10, 10], animate: false });
+      else map.flyToBounds(map._mkHome, { padding: [10, 10], duration: 0.6 });
+      if (onReset) onReset();
+    })]));
+  }
+
   window.EGYBI = window.EGYBI || {};
   window.EGYBI.mapkit = {
     create: create,
+    setHome: setHome,
     flyTo: flyTo,
     makeFocusable: makeFocusable,
     panel: panel,
