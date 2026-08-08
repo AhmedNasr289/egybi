@@ -130,6 +130,38 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .card .tag { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-ink); background: var(--gold-soft); padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
 .surface-dark .card .tag { color: var(--gold-bright); background: rgba(201,162,39,0.16); }
 .surface-dark .card { background: var(--kemet-2); border-color: var(--line-dark); }
+
+/* SHARED DATA-PAGE COMPONENTS.
+   .atlas-note and .streets-note were each defined only inside one page's own
+   <style> block, so visit.html used both and got neither — its two empty-state
+   notices and its sources panel rendered with no styling at all. They are the
+   same component under two names; both are kept because both pages reference
+   them, and they now live here where any page can use them.
+   .card-link is the anchor variant of .card, added when the homepage's
+   "what's inside" grid was built out of <a class="card card-link"> and shipped
+   with no rule — six cards rendering as default underlined links inside a card
+   box. Extends .card rather than repeating it. */
+.atlas-note, .streets-note {
+  background: var(--papyrus-2); border: 1px solid var(--line-light);
+  border-left: 4px solid var(--gold); border-radius: var(--radius);
+  padding: 13px 16px; margin: 15px 0 0; font-size: 0.86rem;
+  color: var(--ink-soft); line-height: 1.62;
+}
+.card-link { display: block; text-decoration: none; color: inherit; }
+.card-link:hover, .card-link:focus-visible {
+  border-color: var(--gold); box-shadow: var(--shadow-light); outline: none;
+}
+.card-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* The colophon wordmark. This class has wrapped "EgyBI" in every page's footer
+   since launch with no rule behind it anywhere — the name declared an intent
+   the stylesheet never delivered, so it rendered as plain body text. Found by
+   reading the CSSOM in the browser rather than grepping, which is the only way
+   to catch a class that is used everywhere and styled nowhere. */
+.colo-brand { font-family: 'Cinzel', serif; font-weight: 600; color: var(--gold-bright); letter-spacing: 0.02em; }
+
+.surface-dark .card-link:hover, .surface-dark .card-link:focus-visible { border-color: var(--gold-bright); }
+
 .surface-dark .card h3 { color: var(--gold-bright); }
 .surface-dark .card p { color: var(--on-dark-soft); }
 
