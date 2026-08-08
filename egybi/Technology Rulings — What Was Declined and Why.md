@@ -2,6 +2,37 @@
 
 > A standing record of every tool proposed for EgyBI and the verdict against the project's constraints, so the same argument is not had twice. Written **2026-08-07**. Back to [[Home]]. Related: [[Places & Data Stories]], [[The Visitor Layer]], [[Egypt Atlas — Geospatial Service]], [[IP & Content Rules]].
 
+## What was actually built from this list
+
+Updated **2026-08-08**. A refusal table is not an answer, so this is the part that shipped. Each row is live capability on egybi.com, not an assessment.
+
+| Capability | Built with | Where it runs | What it does that nothing did before |
+|---|---|---|---|
+| **Mean daily maximum, per site, per month** | NASA POWER `temporal/daily` | `fetch_tourism.py` → `visit-climate.json` | The figure a visitor choosing between February and August actually wants. Neither of the other two POWER endpoints can produce it, and both were mistaken for it before this. |
+| **A pipeline that refuses its own bad output** | WMO World Weather Information Service | `reference_check()` in the same file | Every computed normal is compared against Egypt's published station normals — a source that cannot be fooled by a misreading of the first one. Two gates, both shaped like the failure they exclude. On a failed check the layer is not published. |
+| **The check, published** | — | `visit.html` § *How it was checked* | 168 site-month comparisons, both gate results, the per-site agreement and the reason the largest gaps cluster. A validation a reader cannot see is one they have to take on trust. |
+| **Terrain cross-sections** | NASA SRTM 30 m via Open-Topo-Data | `build_relief()` → `visit-relief.json` | Five measured lines across Egypt at up to 300 points each. The Luxor line shows the floodplain as a flat 78–80 m run between desert on both sides; the Nile line runs 1 040 km at a median of 76 m. |
+| **A traverse along real ground** | Hand-written SVG + tile-free Leaflet | `visit.js` `paintRelief()` | The honest version of the requested flyover. A slider moves along the profile and a marker moves along the line on the map; every point is a radar reading with a latitude and a longitude. |
+
+### The flyover, answered properly
+
+The ask was a cinematic drone flight over Egypt. Every route to a literal one fails a constraint: imagery good enough to fly through is licensed rather than open; a 3D render from open elevation needs a GPU pipeline GitHub Actions does not have and would commit hundreds of megabytes of frames to a repo a static host serves; generative video needs a vendor account and a key at build time.
+
+What is open, cheap and citable is the ground itself. So the page flies the *terrain* instead of the *pixels* — and a measured profile of the Nile valley tells a reader more about Egypt than a flythrough of invented ones. Nine elevation requests per build, well inside the public instance's daily allowance, one per second as its policy asks.
+
+### What the cross-sections found
+
+- **The valley at Luxor is about 6 km of floodplain.** West desert at 155 m, the Theban hills at 258 m, then a flat run at 76–80 m across the river, then the eastern desert climbing again. The strip Egypt lives on is the flat part, and this is how narrow it is.
+- **The pyramids stand on ground their builders chose.** The Giza line rises from 11 m on the floodplain to 119 m on the limestone scarp in 14 km. The plateau was not raised; it was selected.
+- **Egypt's west falls below the sea.** The Siwa line reaches −82 m, with a median of −17 m over 198 km.
+- **The Nile barely moves.** 1 040 km from Cairo to Abu Simbel, median 76 m. Straight legs between river waypoints still clip the terrace where the river meanders hardest, so every transect publishes its quartiles alongside its extremes — a min and a max describe the two most unusual points on a line and nothing about the rest of it.
+
+### Three mistakes this record exists to prevent
+
+1. **A parameter's name is not its meaning.** `T2M_MAX` means three different things across POWER's three endpoints. Two of them were published as "mean daily maximum" before a human caught it.
+2. **An unsourced yardstick is not a check.** The first version of the guard used published normals written down from memory — an unsourced number validating a sourced one, with no way to tell which was wrong when they disagreed. The yardstick is now fetched and cited like everything else.
+3. **A diagnostic that says nothing costs a run.** The station list did not parse and the log said *"shape changed?"* with no evidence. Printing the actual bytes found the real format — three columns, no coordinates — on the very next run.
+
 ## The four constraints every tool is judged against
 
 Nothing here is a matter of taste. Each verdict traces to one of these, and if a tool fails one it is out regardless of how good it is:
