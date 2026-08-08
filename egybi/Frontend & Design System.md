@@ -125,6 +125,20 @@ browser rather than asserted. Each item is here because it was found missing.
   explicit ring that survives the active state.
 - **A print stylesheet.** Chrome, hero backgrounds and ad slots are dropped, and
   link targets are spelled out in the printed text.
+- **The maps can be operated without a mouse.** The Atlas, the Street Report
+  Card and the Explore choropleth were each created with Leaflet's
+  `keyboard: false`, so they could be panned and zoomed by mouse and by nothing
+  else — on a site where the map *is* the content. Leaflet binds arrow-key pan
+  and `+`/`-` zoom only while the map holds focus, so enabling it does not
+  hijack page scrolling; `scrollWheelZoom: false` is what guards that, and it
+  stays off. The Stories map keeps `keyboard: false` because it also has
+  `dragging: false` — it is a static illustration with nothing to operate.
+- **Six interactive maps were marked `role="img"`.** That makes an element a
+  *leaf* in the accessibility tree: every zoom button and region inside it was
+  invisible to a screen reader, and the whole map announced as one picture.
+  They are `role="region"` with their existing labels now. The elevation
+  profile, the Ibi portrait and the price sparklines keep `role="img"` — those
+  genuinely are single graphics.
 
 ### Two things that will trip up the next person measuring this
 

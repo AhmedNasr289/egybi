@@ -483,3 +483,89 @@ The brief this time was to audit the verification tools themselves. Several had 
 - **Four checker artifacts, recorded because they are the useful part.** The honeypot flagged as an unlabelled control when it is correctly `aria-hidden` with `tabindex="-1"`. Every class-less anchor reported as having no focus ring, because the checker keyed controls by tag plus first class and collided them. Every control on the site reported as having no focus ring, because these styles transition over 150 ms and the checker read the computed style at the *start* of that transition — the third timing artifact of the day, after the AOS scroll speed and the CountUp mid-animation read. And the skip link flagged as horizontal overflow, because it sits at `left:-9999px` until focused.
 - **Numbers.** 152 pages driven; 5 404 internal links and 156 same-page anchors resolved; 723 distinct text styles measured with a lowest passing ratio of 4.55:1 and one residual flag that pixel measurement puts at 5.11:1; 138 generated files byte-identical across consecutive runs; zero orphaned CSS classes; zero secrets; zero advice-shaped phrases across 177 files; zero content clipped off-screen at 375 px; zero content lost under reduced motion.
 
+
+## 2026-08-08 (fourth pass) — Auditing the auditors, and what that turned up
+The previous pass mutation-tested the checkers and found three that could not
+fail. This pass turned the same question on the rest of the tooling: not "what
+does the check report" but "would anyone else ever see it report anything".
+
+- **Every committed verification tool ran in exactly one sandbox and nowhere
+  else.** All six browser checkers hardcoded absolute paths from a throwaway
+  container — a scratch `node_modules` for `playwright-core`, a pinned
+  `/opt/pw-browsers/chromium-1194`, a scratch progress log — and `mutate.py`,
+  the harness that audits the others, resolved its siblings through that same
+  dead path. Cloned anywhere else the whole suite dies on `MODULE_NOT_FOUND`
+  pointing at a directory that never existed on that machine. `backend/verify/env.js`
+  resolves the browser, the driver, the preview server and the log directory
+  from the environment and names the knob when one is genuinely missing. The
+  chromium build number is discovered rather than pinned, because pinning
+  `chromium-1194` rots silently at the next bump.
+- **"Every data file is dated" tested for a KEY, not a date.** `streets-notes.json`
+  carries `"generated": false` — a boolean that happens to share a name with a
+  date field — and satisfied the rule while carrying no date at all. Testing the
+  *value* immediately surfaced that one real file. It now carries
+  `"as_of": "2026-08-07"`, the day the placeholder was actually committed per
+  `git log`, and says in the file that it dates its own refusal rather than any
+  data, because no planner's note has ever been generated.
+- **The chrome-drift check reported eleven footer "variants", all of them
+  requirements working correctly.** Each page names the sources it actually
+  shows; `prices.html` cites the price portal, `stocks.html` cites EGX, and the
+  stocks colophon carries the FRA line in place of the general cited-data
+  sentence. Eleven false alarms is how a check becomes something you scroll
+  past. It now compares the navigable link sets — the failure it exists to catch
+  is a nav link present on some pages and absent on others — and leaves
+  editorial wording alone. `404.html`'s root-absolute hrefs are normalised as
+  the deliberate thing they are, and given their own rule that they must *stay*
+  root-absolute: the same file answers `/deep/path/nonsense.html`, where a
+  relative href sends an already-lost reader deeper into a directory that does
+  not exist.
+- **`a11y2.js` claimed in its own header to check "keyboard operability of the
+  map and slider" and contained no such code.** A stated coverage claim with
+  nothing behind it is worse than a missing check, because it stops anyone
+  looking. Written now — and it found that three of the maps could not be used
+  without a mouse.
+- **Three maps were mouse-only.** The Atlas, the Street Report Card and the
+  Explore choropleth were each created with Leaflet's `keyboard: false` while
+  remaining draggable and zoomable, on a site where the map *is* the content.
+  Leaflet binds arrow-key pan and `+`/`-` zoom only while the map holds focus,
+  so enabling it does not hijack page scrolling — `scrollWheelZoom: false` is
+  what guards that, and it stays off. The Stories map keeps `keyboard: false`
+  because it is also `dragging: false`: a static illustration with nothing to
+  operate.
+- **Six interactive maps announced themselves as a single picture.** `role="img"`
+  makes an element a *leaf* in the accessibility tree, so every zoom button and
+  region inside was never exposed. They are `role="region"` now, keeping their
+  labels. The elevation profile, the Ibi portrait and the price sparklines keep
+  `role="img"` — those genuinely are single graphics.
+- **`egybi.js` shipped on every page with no cache version**, against a
+  stylesheet that is versioned and therefore always fresh — precisely the
+  mismatch the rule about bumping CSS and JS together exists to prevent. It and
+  `egypt-map.js` are versioned now, in the pages and in the generator.
+- **Two retired-product signals.** `practice.html` and `tracks.html` each sent
+  search engines `noindex` *and* a canonical naming `explore.html` — contradictory
+  on its face, and false on the facts, since "this section has closed" is not a
+  duplicate of the country data page. Canonical dropped, `noindex,follow` kept,
+  matching how `404.html` is handled.
+- **Three maps could not be operated without a mouse, and six announced
+  themselves as one picture.** `role="img"` makes an element a *leaf* in the
+  accessibility tree, so every zoom button inside was never exposed; they are
+  `role="region"` now, keeping their labels. The Stories map keeps both
+  `role`-less `aria-hidden` and `keyboard: false` — it is `dragging: false` too,
+  a static illustration that repeats the prose, and the first version of the new
+  check wrongly demanded a tab stop from it.
+- **The retired-section notices carried twelve nav links no phone could reach.**
+  The stylesheet hides `.nav-links` below 1024 px and opens it with a toggle that
+  those two pages do not have, and they load no JavaScript that could work one.
+  Since a tombstone's job is to point onward — the body already offers Explore
+  and the Atlas — the nav is gone rather than made openable.
+- **Two classes promised styling and delivered none**: `.cs-body` on the home
+  page's featured-case grid and `.post-body-static` on every generated story.
+  Both removed at source. The same check's other eight reports were seven
+  genuine selector hooks and three TradingView classes, so it now reads the
+  site's own scripts and separates hooks from dead names instead of listing all
+  ten flat.
+- **The contrast check now measures pixels, not an approximation.** It had been
+  scoring text against the brightest stop of a gradient — deliberately
+  conservative, and right as a cheap filter — which left one permanent flag on
+  hero text that is fine where it actually sits. Anything it flags is now
+  screenshot and measured against the ground genuinely painted behind it.
