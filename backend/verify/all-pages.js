@@ -18,7 +18,7 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
 (async () => {
   const b = await chromium.launch({ executablePath });
   const p = await b.newPage({ viewport: { width: 1280, height: 900 } });
-  const bad = [];
+  const bad = [], noSiteNav = [];
   let n = 0, mapPages = 0;
   const t0 = Date.now();
 
@@ -41,7 +41,18 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
       canonical: !!document.querySelector('link[rel=canonical]'),
       noindex: !!document.querySelector('meta[name=robots][content*=noindex]'),
       maps: document.querySelectorAll('.leaflet-container').length,
-      emptyNav: document.querySelectorAll('.nav-links a').length,
+      // This asked "does .nav-links contain links", which is not the failure
+      // that matters — the failure is a reader who cannot get anywhere from
+      // here. The retired-section notices carry no site nav on purpose and
+      // still offer four ways onward, and the old rule called that a problem.
+      // So: an empty .nav-links container IS an authoring bug wherever one
+      // exists, and separately every page must offer some onward link at all.
+      hasNavEl: !!document.querySelector('.nav-links'),
+      navLinks: document.querySelectorAll('.nav-links a').length,
+      onward: new Set([...document.querySelectorAll('a[href]')]
+        .map(a => a.getAttribute('href'))
+        .filter(h => h && !/^(#|mailto:|tel:|javascript:)/.test(h) &&
+                     !/^https?:/.test(h))).size,
       // Chips are GENERATED from section[id][data-nav] by wayfinding.js, so a
       // chip's target always exists by construction and "orphaned chip" was a
       // check that could never fire. These are the authoring mistakes that can:
@@ -76,7 +87,9 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
     // Any page that is not noindex still has to have one.
     if (!m.canonical && !m.noindex) problems.push('no canonical');
     if (m.canonical && m.noindex) problems.push('noindex page also claims a canonical');
-    if (m.emptyNav === 0) problems.push('no nav links');
+    if (m.hasNavEl && m.navLinks === 0) problems.push('a .nav-links container with no links in it');
+    if (m.onward === 0) problems.push('dead end: no link to any other page');
+    if (!m.hasNavEl) noSiteNav.push(path);
     if (m.orphanChips) problems.push('orphan sub-nav chips: ' + m.orphanChips);
     if (m.navNoId) problems.push('section[data-nav] with no id (silently gets no chip): ' + m.navNoId);
     if (m.navBlankLabel) problems.push('section[data-nav] with a blank label: ' + m.navBlankLabel);
@@ -93,6 +106,10 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
   console.log(`  stories       : ${pap.length}`);
   console.log(`  (404.html is inside the top-level set)`);
   console.log(`pages with maps : ${mapPages} (tile-free — any provider call would show as external)`);
+  // Reported as a number, not a fault: a page may legitimately carry no site
+  // nav, but a jump from two to twenty means the shell stopped rendering
+  // somewhere and nobody would see it if this were silent.
+  console.log(`pages with no site nav : ${noSiteNav.length}${noSiteNav.length ? ' (' + noSiteNav.join(', ') + ')' : ''}`);
   console.log(`\nproblems        : ${bad.length}`);
   bad.forEach(x => console.log('  ' + x));
   await b.close();

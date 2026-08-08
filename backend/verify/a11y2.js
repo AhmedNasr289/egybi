@@ -5,8 +5,11 @@
 const { chromium, executablePath, BASE, LOGDIR } = require('./env');
 const fs = require('fs');
 const B = BASE;
-const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
+const ALL = fs.readdirSync('site').filter(f => f.endsWith('.html'))
   .concat(['practice/your-first-select.html', 'papyrus/nineteen-million.html']);
+// ONLY drives a subset, so the mutation harness can prove one rule against one
+// page instead of paying for nineteen. Same code path, same assertions.
+const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
 
 (async () => {
   const b = await chromium.launch({ executablePath });
@@ -138,8 +141,13 @@ const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
                hasLabel: !!t.getAttribute('aria-label'),
                controls: t.getAttribute('aria-controls') };
     });
-    if (!mob.toggle && mob.needed) add('nav links hidden at 375px with no toggle to open them', name);
-    else {
+    // Guard on the toggle EXISTING, not on whether it was needed. Written as
+    // `if (!mob.toggle && mob.needed) … else …` this fell through to the else
+    // for a page with no nav at all and audited the aria of a button that is
+    // not there, reporting three faults per tombstone.
+    if (!mob.toggle) {
+      if (mob.needed) add('nav links hidden at 375px with no toggle to open them', name);
+    } else {
       if (mob.hiddenBefore === false) add('mobile nav already open before the toggle', name);
       if (mob.shownAfter === false) add('mobile nav toggle does not reveal the links', name);
       if (mob.expanded !== 'true') add('toggle does not report aria-expanded=true', `${name} (${mob.expanded})`);

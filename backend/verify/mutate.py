@@ -216,6 +216,44 @@ case("date field holding a boolean", "static-audit.py", ["site/data/visit-terrai
      date_field_not_a_date,
      lambda o: "data files with no date on them" in o, PY_AUDIT)
 
+
+# ---- 17. page sweep: a nav container that renders with nothing in it --------
+def empty_the_nav():
+    p = Path("site/places.html")
+    t = p.read_text(encoding="utf-8")
+    m = re.search(r'(<nav class="nav-links"[^>]*>)(.*?)(</nav>)', t, re.S)
+    assert m, "no .nav-links container in places.html"
+    p.write_text(t[:m.start()] + m.group(1) + m.group(3) + t[m.end():], encoding="utf-8")
+
+
+case("nav container rendered with no links", "all-pages.js", ["site/places.html"],
+     empty_the_nav, lambda o: "container with no links in it" in o,
+     SWEEP1.format(p="places.html"))
+
+
+# ---- 18. page sweep: a page a reader cannot leave ---------------------------
+def make_dead_end():
+    """The tombstones carry no site nav on purpose, so the rule that matters is
+    not 'has a nav' but 'offers any way onward at all'. Neutralise every
+    relative link and the page becomes a genuine dead end."""
+    p = Path("site/practice.html")
+    t = p.read_text(encoding="utf-8")
+    new = re.sub(r'href="(?!https?:|#|mailto:)', 'data-was-href="', t)
+    assert new != t, "no relative links to neutralise"
+    p.write_text(new, encoding="utf-8")
+
+
+case("a page with no way onward", "all-pages.js", ["site/practice.html"],
+     make_dead_end, lambda o: "dead end" in o, SWEEP1.format(p="practice.html"))
+
+A11Y1 = "ONLY={p} node " + str(HERE) + "/a11y2.js"
+
+# ---- 19. a11y: a map that can only be panned with a mouse ------------------
+case("map with keyboard control disabled", "a11y2.js", ["site/assets/geospatial.js"],
+     lambda: edit("site/assets/geospatial.js", "      keyboard: true,", "      keyboard: false,"),
+     lambda o: "map cannot be focused by keyboard" in o,
+     A11Y1.format(p="geospatial.html"))
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")
