@@ -101,7 +101,12 @@
     var rm = window.EGYBI ? window.EGYBI.reduceMotion : false;
     S.map = L.map('streetsMap', {
       zoomControl: true, attributionControl: false, scrollWheelZoom: false,
-      doubleClickZoom: false, dragging: true, keyboard: false,
+      doubleClickZoom: false, dragging: true,
+      // Leaflet binds arrow-key pan and +/- zoom only while the map has
+      // focus, so this does not hijack page scrolling — scrollWheelZoom
+      // above is what guards that. With keyboard:false the map could be
+      // panned with a mouse and by no other means.
+      keyboard: true,
       fadeAnimation: !rm, zoomAnimation: !rm
     });
     paintMap();

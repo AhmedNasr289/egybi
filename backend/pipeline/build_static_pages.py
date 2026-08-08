@@ -193,7 +193,7 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 </main>
 
 {foot if foot is not None else FOOT}
-<script src="{prefix}assets/egybi.js"></script>
+<script src="{prefix}assets/egybi.js?v=1"></script>
 <script src="{prefix}assets/glyphs.js?v=3"></script>
 <script src="{prefix}assets/wayfinding.js?v=1"></script>
 <script src="{prefix}assets/ads.js"></script>
@@ -312,7 +312,7 @@ def build_posts(posts):
 </section>
 
 <section class="surface-light">
-  <div class="wrap post-body-static" style="max-width:720px;">
+  <div class="wrap" style="max-width:720px;">
     {p['body']}
     <hr style="margin:34px 0;border:none;border-top:1px solid var(--line-light);">
     <p style="font-size:0.9rem;color:var(--ink-soft);">Every figure here is real and cited, and where sources disagree we say so. You can see the same data yourself &mdash; <a href="../explore.html">explore the datasets</a> or <a href="../geospatial.html">open the Atlas</a>.</p>
