@@ -12,15 +12,16 @@ control.
 | `contrast.js` | WCAG AA against the background actually painted behind each text node. |
 | `cssom.js` | Classes in the live DOM with no CSS rule behind them. |
 | `reduced.js` | Content and animation compared with and without `prefers-reduced-motion`. |
-| `a11y2.js` | Landmarks, heading order, focus visibility, accessible names, the mobile nav. |
+| `a11y2.js` | Landmarks, heading order, focus visibility, accessible names, the mobile nav, and keyboard operation of the maps and the relief slider. |
 | `coverage.py` | Titles, descriptions, alt text, JSON-LD, drift between duplicated chrome, data older than its pipeline's cadence. |
 | `env.js` | Not a check — resolves Chromium, `playwright-core`, the preview server and the log directory for the browser checkers. |
 | `checks.py` | `orphans`, `workflows`, `secrets`, `fra`. |
 
 ## mutate.py — the check on the checks
 
-A check that has never been observed failing is not evidence. `mutate.py` injects
-one real defect per checker, asserts the checker reports it, reverts through
+A check that has never been observed failing is not evidence. `mutate.py` runs
+sixteen cases, each injecting one real defect a checker exists to catch,
+asserts the checker reports it, reverts through
 `git checkout --` so a mutation cannot survive a crash, and asserts the checker
 goes quiet again.
 
@@ -43,7 +44,7 @@ reporting "clean" while being incapable of detecting anything:
   chip), a blank label, and a mount with nothing to list.
 
 `CASE=<substring>` runs a single case, so a repaired case can be re-proven
-without paying for the other fourteen. Run the cases one at a time or let the
+without paying for the other fifteen. Run the cases one at a time or let the
 whole suite run alone — a case reverts through `git checkout --`, which will
 pull files out from under any other checker reading them concurrently.
 
