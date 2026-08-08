@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=19" rel="stylesheet">
+<link href="assets/egybi.css?v=21" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 <style>
   #visitMap { height:clamp(340px,56vw,540px); border-radius:var(--radius); overflow:hidden; }
@@ -44,7 +44,12 @@
   .v-table td.num, .v-table th.num { text-align:right; font-variant-numeric:tabular-nums; }
   .v-table tr { cursor:pointer; } .v-table tr:hover td { background:var(--papyrus-2); }
   .v-gov { display:block; font-size:0.72rem; color:var(--ink-soft); }
-  .v-chip { display:inline-block; min-width:46px; padding:3px 9px; border-radius:999px; color:#fff;
+  /* No colour here on purpose. visit.js sets both the band background and a
+     text colour computed from that band's luminance, because white clears AA on
+     the blue and red bands and fails it on the teal, gold and orange ones. A
+     colour declared here would contradict that and invite someone to "tidy" the
+     inline style away. */
+  .v-chip { display:inline-block; min-width:46px; padding:3px 9px; border-radius:999px;
             font-weight:700; font-variant-numeric:tabular-nums; }
   .v-un { font-size:0.68rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
           color:var(--gold-ink); background:var(--gold-soft); border-radius:999px; padding:3px 9px; white-space:nowrap; }
@@ -369,7 +374,7 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/scrolly.js?v=1"></script>
-<script src="assets/visit.js?v=5"></script>
+<script src="assets/visit.js?v=6"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script src="assets/analytics.js"></script>

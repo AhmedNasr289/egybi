@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=19" rel="stylesheet">
+<link href="assets/egybi.css?v=21" rel="stylesheet">
 <link rel="preload" as="script" href="assets/vendor/sql-wasm.js">
 <link rel="preload" as="fetch" type="application/wasm" href="assets/vendor/sql-wasm.wasm">
 <style>
@@ -50,6 +50,12 @@
 
   /* case closed */
   .closed { background:linear-gradient(160deg,var(--blue-deep),#123a72); color:#f3ead4; border-radius:var(--radius); padding:34px 30px; text-align:center; }
+  /* This panel is dark but sits inside a light section, so the site-wide
+     light-surface ghost-button treatment would colour its button blue-deep on
+     blue-deep — 1:1, invisible. The dark treatment is restored here rather than
+     in egybi.css, because .closed is a component of this page. */
+  .closed .btn-ghost { color:#fff; border-color:rgba(255,255,255,0.5); }
+  .closed .btn-ghost:hover, .closed .btn-ghost:focus-visible { color:var(--gold-bright); border-color:var(--gold-bright); }
   .closed .kicker { color:var(--gold-bright); justify-content:center; }
   .closed h2 { color:#fff; margin:6px 0 14px; }
   .closed .verdict { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:22px 0 18px; }

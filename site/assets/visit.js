@@ -76,6 +76,23 @@
      bands are stated on the page in °C rather than as "good"/"bad" — 38 °C is
      unbearable to one visitor and unremarkable to another, and the data cannot
      tell which one is reading. */
+  /* The chip carries a temperature, so it is content and has to clear WCAG AA
+     against whatever band colour it lands on. White does not: measured against
+     the band colours below it is 5.27:1 on the blue, 2.95:1 on the teal,
+     2.42:1 on the gold, 3.08:1 on the orange and 5.99:1 on the red. Dark ink is
+     the mirror image. So the text colour is COMPUTED from the band's own
+     luminance rather than fixed, which means a future palette change cannot
+     quietly put white back on gold. */
+  function readableOn(hex) {
+    var c = [1, 3, 5].map(function (i) { return parseInt(hex.substr(i, 2), 16) / 255; })
+      .map(function (v) { return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    var L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    var white = 1.05 / (L + 0.05);
+    var inkL = 0.0273;                       // relative luminance of --ink #292420
+    var ink = (Math.max(L, inkL) + 0.05) / (Math.min(L, inkL) + 0.05);
+    return white >= ink ? '#fff' : '#292420';
+  }
+
   function heatColour(t) {
     // Bands are for the MEAN DAILY MAXIMUM — how hot a normal afternoon gets,
     // which is the question the colour is answering. Egypt runs roughly 19 °C
@@ -178,7 +195,8 @@
     tb.innerHTML = rows.map(function (r) {
       return '<tr data-key="' + esc(r.s.key) + '">' +
         '<td>' + esc(r.s.name) + '<span class="v-gov">' + esc(r.s.gov) + '</span></td>' +
-        '<td class="num"><span class="v-chip" style="background:' + heatColour(r.t) + '">' +
+        '<td class="num"><span class="v-chip" style="background:' + heatColour(r.t) +
+          ';color:' + readableOn(heatColour(r.t)) + '">' +
           (r.t == null ? '—' : fmt(r.t, 0) + '°') + '</span></td>' +
         '<td class="num">' + (r.night == null ? '—' : fmt(r.night, 0) + '°') + '</td>' +
         '<td class="num">' + (r.rain == null ? '—' : fmt(r.rain, 1)) + '</td>' +
