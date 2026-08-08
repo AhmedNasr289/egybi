@@ -210,7 +210,10 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .map-box { position: relative; height: clamp(300px, 52vw, 480px); }
 .map-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 4px 0 14px; }
 .map-toggle { font-size: 0.82rem; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-light); background: var(--papyrus-2); color: var(--ink-soft); cursor: pointer; transition: all .15s; }
-.map-toggle:hover, .map-toggle:focus-visible { border-color: var(--gold); outline: none; }
+.map-toggle:hover { border-color: var(--gold); }
+/* An explicit ring rather than outline:none plus a border tweak: when the toggle
+   is already .on, that border is blue and the "focus" change is invisible. */
+.map-toggle:focus-visible { border-color: var(--gold); outline: 2px solid var(--gold-bright); outline-offset: 2px; }
 .map-toggle.on { background: var(--blue); color: #fff; border-color: var(--blue); }
 .map-legend { margin-top: 12px; }
 .map-legend-title { font-size: 0.78rem; font-weight: 700; color: var(--blue-deep); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
@@ -239,7 +242,8 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .surface-dark .tl-item::before { border-color: var(--kemet); }
 .tl-year { font-family: 'Cinzel', serif; font-weight: 700; color: var(--blue); font-size: 1.05rem; }
 .surface-dark .tl-year { color: var(--gold-bright); }
-.tl-item h4 { margin: 2px 0 4px; font-size: 1rem; }
+/* h3, not h4: these follow an h2 and h4 skipped a level. */
+.tl-item h3 { margin: 2px 0 4px; font-size: 1rem; }
 .tl-item p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
 .surface-dark .tl-item p { color: var(--on-dark-soft); }
 
@@ -271,7 +275,11 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 /* ---------- footer ---------- */
 .site-footer { background: var(--kemet); color: var(--on-dark-soft); padding: 48px 6vw 40px; }
 .site-footer .cols { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 28px; }
-.site-footer h5 { color: var(--gold-bright); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 12px; font-family: 'Inter', sans-serif; }
+/* Was h5, which landed straight after page content ending at h3 and skipped a
+   level on every page. These are top-level headings inside the contentinfo
+   landmark, so h2 is both correct and no longer a skip; .foot-h keeps the size
+   the design wants without the tag having to lie about the outline. */
+.site-footer .foot-h { color: var(--gold-bright); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 12px; font-family: 'Inter', sans-serif; font-weight: 700; }
 .site-footer a { color: var(--on-dark); text-decoration: none; display: block; padding: 4px 0; font-size: 0.9rem; opacity: 0.85; }
 .site-footer a:hover { color: var(--gold-bright); opacity: 1; }
 .site-footer .brand { margin-bottom: 12px; }
@@ -298,6 +306,39 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .plain-list a:hover, .plain-list a:focus-visible { color: var(--gold-ink); text-decoration: underline; }
 .surface-dark .plain-list li { border-bottom-color: var(--line-dark); }
 .surface-dark .plain-list a { color: var(--on-dark); }
+
+/* Skip link. Off-screen until focused, then the first thing a keyboard user
+   sees. Without it every page made them tab through thirteen nav links before
+   reaching the content. */
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--gold-bright); color: var(--kemet); padding: 10px 18px;
+  font-weight: 700; border-radius: 0 0 var(--radius) 0; text-decoration: none; }
+.skip-link:focus { left: 0; }
+main:focus { outline: none; }
+
+/* The ACTIVE sub-nav chip had no focus state a reader could see: the shared
+   :focus-visible rule sets the same gold border .current already has, and
+   .current is declared after it, so it won an equal-specificity tie. A keyboard
+   user tabbing along the chips lost track of where they were exactly when they
+   reached the one they were on. */
+.on-this-page a.current:focus-visible {
+  outline: 2px solid var(--kemet); outline-offset: 2px;
+}
+
+/* Printing. An encyclopaedia gets printed, and without this a page arrives with
+   a dark hero, a nav bar and a footer full of links that cannot be clicked on
+   paper. Link targets are spelled out because a printed href is otherwise lost. */
+@media print {
+  .site-header, .site-footer, .on-this-page, .skip-link, .cta-row,
+  #hero-particles, .adsbygoogle, .nav-toggle { display: none !important; }
+  html, body { background: #fff !important; color: #000 !important; }
+  section, .surface-hero, .surface-dark, .surface-light, .surface-light-2 {
+    background: #fff !important; color: #000 !important; padding: 12px 0 !important; }
+  h1, h2, h3, .kicker { color: #000 !important; page-break-after: avoid; }
+  a { color: #000 !important; text-decoration: underline; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.75em; word-break: break-all; }
+  table, figure, .card { page-break-inside: avoid; }
+}
 
 /* ---------- responsive ---------- */
 

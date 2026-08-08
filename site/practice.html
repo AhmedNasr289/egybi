@@ -13,17 +13,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="assets/egybi.css?v=21" rel="stylesheet">
+<link href="assets/egybi.css?v=24" rel="stylesheet">
 <!-- .htaccess 301s this URL to explore.html, so this file is normally never
      served. It exists as the safety net: if mod_rewrite is ever unavailable,
      the URL still returns a real page instead of a 404. -->
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
+
 
 <header class="site-header">
   <div class="bar">
     <a class="brand" href="index.html">EgyBI</a>
-    <nav class="nav-links" id="navLinks">
+    <nav class="nav-links" id="navLinks" aria-label="Main">
       <a href="index.html">Home</a>
       <a href="visit.html">Visit</a>
       <a href="explore.html">Explore</a>
@@ -39,6 +41,8 @@
     </nav>
   </div>
 </header>
+
+<main id="main">
 
 <section class="surface-hero" style="padding-top:72px;padding-bottom:52px;">
   <div class="wrap" style="max-width:720px;">
@@ -59,6 +63,8 @@
     </div>
   </div>
 </section>
+
+</main>
 
 <footer class="site-footer">
   <div class="wrap"><p>&copy; EgyBI &middot; <a href="privacy.html">Privacy</a></p></div>

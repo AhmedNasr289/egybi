@@ -47,9 +47,14 @@ const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
         .filter(el => {
           const cs = getComputedStyle(el);
           if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+          if (el.getAttribute('aria-hidden') === 'true' && el.tabIndex < 0) return false;
           const txt = (el.innerText || el.value || '').trim();
-          return !txt && !el.getAttribute('aria-label') && !el.getAttribute('aria-labelledby')
-                 && !el.getAttribute('title') && !el.querySelector('img[alt]:not([alt=""])');
+          const labelled = el.closest('label') ||
+            (el.id && document.querySelector(`label[for="${CSS.escape(el.id)}"]`));
+          return !txt && !labelled && !el.getAttribute('aria-label')
+                 && !el.getAttribute('aria-labelledby') && !el.getAttribute('title')
+                 && !el.getAttribute('placeholder')
+                 && !el.querySelector('img[alt]:not([alt=""])');
         }).map(el => el.tagName.toLowerCase() + (el.className && typeof el.className === 'string'
                 ? '.' + String(el.className).split(' ')[0] : '')).slice(0, 5);
       return out;
@@ -70,27 +75,44 @@ const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
     // Focus ring: tab through the first 20 controls and check something visibly
     // changes. A control you can reach but cannot see focused is unusable by
     // keyboard even though it is technically operable.
-    const noRing = await p.evaluate(async () => {
-      const els = [...document.querySelectorAll('a[href], button, input, select, textarea')]
-        .filter(e => { const cs = getComputedStyle(e);
-          return cs.display !== 'none' && cs.visibility !== 'hidden' && e.offsetParent !== null; })
-        .slice(0, 20);
-      const bad = [];
-      for (const e of els) {
-        const before = getComputedStyle(e);
-        const b = [before.outlineStyle, before.outlineWidth, before.boxShadow,
-                   before.borderColor, before.backgroundColor, before.textDecorationLine].join('|');
-        e.focus();
-        const after = getComputedStyle(e);
-        const a = [after.outlineStyle, after.outlineWidth, after.boxShadow,
-                   after.borderColor, after.backgroundColor, after.textDecorationLine].join('|');
-        if (a === b) bad.push(e.tagName.toLowerCase() +
-          (typeof e.className === 'string' && e.className ? '.' + e.className.split(' ')[0] : ''));
-      }
-      document.activeElement && document.activeElement.blur();
-      return [...new Set(bad)].slice(0, 6);
+    const snap = () => p.evaluate(() => {
+      const e = document.activeElement;
+      if (!e || e === document.body) return null;
+      const cs = getComputedStyle(e);
+      const same = window.__rest && window.__rest[e.dataset.fk] ===
+        [cs.outlineStyle, cs.outlineWidth, cs.outlineColor, cs.boxShadow,
+         cs.borderColor, cs.backgroundColor, cs.color, cs.textDecorationLine].join('|');
+      return { id: e.tagName.toLowerCase() +
+                 (typeof e.className === 'string' && e.className ? '.' + e.className.split(' ')[0] : ''),
+               same };
     });
-    if (noRing.length) add('controls with no visible focus change', `${name}: ${noRing.join(', ')}`);
+    // Real Tab presses, because :focus-visible deliberately does not match a
+    // programmatic .focus() — diffing after el.focus() reports "no ring" for
+    // every control that uses it, which is all of them.
+    // Key by a UNIQUE index, not by tag+class: every class-less <a> hashed to
+    // the same bucket, so a focused anchor was compared against some unrelated
+    // anchor's resting style and reported as having no focus ring.
+    await p.evaluate(() => {
+      window.__rest = {};
+      [...document.querySelectorAll('a[href], button, input, select, textarea')]
+        .forEach((e, i) => { e.dataset.fk = 'k' + i; const cs = getComputedStyle(e);
+          window.__rest['k' + i] = [cs.outlineStyle, cs.outlineWidth, cs.outlineColor,
+            cs.boxShadow, cs.borderColor, cs.backgroundColor, cs.color,
+            cs.textDecorationLine].join('|'); });
+    });
+    const noRing = [];
+    for (let i = 0; i < 24; i++) {
+      await p.keyboard.press('Tab');
+      // The focus styles here transition over 150ms. Reading the computed style
+      // immediately after Tab catches the START of that transition, when every
+      // property still holds its resting value — which reported "no focus ring"
+      // for every control on the site. Wait for the transition to land.
+      await p.waitForTimeout(240);
+      const s = await snap();
+      if (!s) break;
+      if (s.same) noRing.push(s.id);
+    }
+    if (noRing.length) add('controls with no visible focus change', `${name}: ${[...new Set(noRing)].slice(0,6).join(', ')}`);
 
     // Mobile nav at 375px: the toggle must exist, be reachable, and reveal links.
     await p.setViewportSize({ width: 375, height: 800 });
