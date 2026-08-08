@@ -1,6 +1,9 @@
 /* EgyBI — shared site behavior (loaded on every page).
    Handles: mobile nav toggle, active-link highlighting, AOS init, hero particles.
-   Page-specific widgets (Typed, CountUp, Chart, sql.js) live inline per page. */
+   Page-specific widgets live inline per page: CountUp on the home, About and
+   Explore pages, Chart on Explore, Prices and the home page. The SQL engine is
+   no longer among them — it loads on demand from query.js where a table is
+   marked queryable, and from a script tag on the case study. */
 (function () {
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   window.EGYBI = { reduceMotion: reduceMotion };

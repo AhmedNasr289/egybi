@@ -9,7 +9,26 @@ name: Build Atlas geo layers
 # unreachable or a result looks broken, so a bad run never wipes good data.
 
 on:
-  workflow_dispatch: {}        # manual "Run workflow" button
+  # MONTHLY, not manual-only. The original reasoning was that these layers
+  # "change slowly", and that is true of the shape of Egypt but not of
+  # OpenStreetMap: hospitals, schools and places are mapped by volunteers every
+  # day, so a layer built once and never refetched drifts away from its own
+  # as-of date while still printing it. That is a cited-data-honesty problem
+  # rather than a convenience one — the page keeps claiming a date the data no
+  # longer represents. Monthly is the slowest cadence at which the claim stays
+  # true, and four Overpass queries twelve times a year is a polite load on a
+  # free public service.
+  #
+  # UNESCO's list is the other reason for monthly rather than yearly: new
+  # inscriptions land at the World Heritage Committee session each summer, and
+  # a site added in July should not wait until the next time somebody remembers
+  # this button exists.
+  schedule:
+    - cron: '31 4 3 * *'       # 04:31 UTC on the 3rd of each month.
+                               # Off the hour and off the 1st: both are heavily
+                               # contended on GitHub's shared scheduler, and a
+                               # skipped run is a silent one.
+  workflow_dispatch: {}        # and still runnable by hand
 
 permissions:
   contents: write

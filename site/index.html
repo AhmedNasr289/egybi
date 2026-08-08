@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=17" rel="stylesheet">
+<link href="assets/egybi.css?v=21" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -116,21 +116,8 @@
   <div class="hero-inner wrap" data-mo-hero>
     <p class="hero-eyebrow"><span data-glyph="reed"></span> Real data &middot; Every figure sourced &middot; No signup <span data-glyph="scroll"></span></p>
     <h1 class="hero-h1">Egypt, in maps and cited data.</h1>
-    <p class="lead hero-lead">An encyclopaedia of Egypt built on open data &mdash; its 27 governorates, its heritage sites, its streets and its prices. Every figure carries the source and date it came from, and you can query any of it yourself.</p>
+    <p class="lead hero-lead">An encyclopaedia of Egypt built on open data &mdash; its 27 governorates, its heritage sites, its streets and its prices. Every figure carries the source and date it came from, and links back to the dataset it was taken out of.</p>
 
-    <div class="sandbox hero-sandbox">
-      <label for="sqlInput">Table: <code>pharaohs(name, dynasty, reign_start, reign_end)</code> &mdash; years are signed, so BCE is negative</label>
-      <textarea id="sqlInput" class="mono" spellcheck="false">SELECT name, reign_end - reign_start AS years
-FROM pharaohs
-ORDER BY years DESC
-LIMIT 5;</textarea>
-      <div class="row">
-        <button type="button" class="btn btn-primary" id="runQueryBtn" disabled>Run it &rarr;</button>
-        <span id="sqlStatus" class="sql-status" role="status" aria-live="polite">Warming up the SQL engine&hellip;</span>
-      </div>
-      <div id="sqlOutput" class="result-wrap" aria-live="polite"></div>
-      <p class="hint hero-hint">Pepi II&rsquo;s 94 years is the traditional figure &mdash; and disputed. Many Egyptologists read about 64. We record the dispute rather than pick a side.</p>
-    </div>
 
     <div class="cta-row hero-cta">
       <a href="geospatial.html" class="btn btn-primary" data-ev="hero_open_atlas">Open the Atlas &rarr;</a>
@@ -348,7 +335,6 @@ LIMIT 5;</textarea>
 <script src="assets/vendor/countUp.umd.js"></script>
 <script src="assets/vendor/chart.umd.js"></script>
 <script src="assets/egybi.js"></script>
-<script src="assets/query.js?v=1"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/egx-symbols.js?v=2"></script>
@@ -390,42 +376,6 @@ LIMIT 5;</textarea>
 
   // Newsletter ("The Papyrus") is wired by assets/newsletter.js
 
-  // sql.js demo
-  var sqlDb=null, runBtn=document.getElementById('runQueryBtn'), statusEl=document.getElementById('sqlStatus'), outputEl=document.getElementById('sqlOutput'), inputEl=document.getElementById('sqlInput');
-  function runQuery(){ if(!sqlDb)return; try{ var res=sqlDb.exec(inputEl.value); if(!res.length){outputEl.innerHTML='<p class="sql-empty">Query ran fine but returned no rows.</p>';return;} var c=res[0].columns,v=res[0].values,h='<table class="result-table"><thead><tr>'+c.map(function(x){return '<th>'+EGYBI.escapeHtml(x)+'</th>';}).join('')+'</tr></thead><tbody>'; v.forEach(function(r){h+='<tr>'+r.map(function(x){return '<td>'+EGYBI.escapeHtml(x)+'</td>';}).join('')+'</tr>';}); outputEl.innerHTML=h+'</tbody></table>'; }catch(err){ outputEl.innerHTML='<p class="sql-error">SQL error: '+EGYBI.escapeHtml(err.message)+'</p>'; } }
-  // The engine is 655 KB of WebAssembly. EgyBI is an encyclopaedia of Egypt
-  // now, so most people arriving here want to read about a place and will
-  // never touch this box — loading it eagerly would tax every one of them for
-  // a feature they did not ask for. It loads on the first Run instead.
-  var enginePromise=null;
-  function ensureEngine(){
-    if(enginePromise) return enginePromise;
-    statusEl.textContent='Starting the SQL engine…'; statusEl.className='sql-status';
-    enginePromise=new Promise(function(resolve,reject){
-      var s=document.createElement('script');
-      s.src='assets/vendor/sql-wasm.js';
-      s.onload=resolve; s.onerror=function(){ reject(new Error('script blocked')); };
-      document.head.appendChild(s);
-    }).then(function(){ return initSqlJs({ locateFile: function(f){ return 'assets/vendor/'+f; } }); });
-    return enginePromise;
-  }
-  ensureEngine.boot=function(SQL){
-    sqlDb=new SQL.Database();
-    sqlDb.run('CREATE TABLE pharaohs (name TEXT, dynasty TEXT, reign_start INTEGER, reign_end INTEGER);');
-    sqlDb.run("INSERT INTO pharaohs VALUES ('Narmer','I',-3100,-3080),('Djoser','III',-2670,-2650),('Sneferu','IV',-2613,-2589),('Khufu','IV',-2589,-2566),('Khafre','IV',-2558,-2532),('Menkaure','IV',-2532,-2503),('Unas','V',-2375,-2345),('Pepi II','VI',-2278,-2184),('Mentuhotep II','XI',-2061,-2010),('Senusret III','XII',-1878,-1839),('Sobekneferu','XII',-1806,-1802),('Ahmose I','XVIII',-1550,-1525),('Hatshepsut','XVIII',-1479,-1458),('Thutmose III','XVIII',-1479,-1425),('Amenhotep III','XVIII',-1388,-1351),('Akhenaten','XVIII',-1353,-1336),('Tutankhamun','XVIII',-1332,-1323),('Seti I','XIX',-1290,-1279),('Ramesses II','XIX',-1279,-1213),('Merneptah','XIX',-1213,-1203),('Ramesses III','XX',-1184,-1153),('Taharqa','XXV',-690,-664),('Psamtik I','XXVI',-664,-610),('Nectanebo II','XXX',-360,-343),('Ptolemy I Soter','Ptolemaic',-305,-282),('Cleopatra VII','Ptolemaic',-51,-30);");
-    statusEl.textContent='Ready — this is a real SQL engine running in your browser.'; statusEl.className='sql-status ready';
-  };
-  statusEl.textContent='Press Run to start the SQL engine.'; statusEl.className='sql-status'; runBtn.disabled=false;
-  runBtn.addEventListener('click', function(){
-    if(window.EGYBI_TRACK) EGYBI_TRACK('hero_run_clicked');
-    if(sqlDb) return runQuery();
-    runBtn.disabled=true;
-    ensureEngine().then(function(SQL){ ensureEngine.boot(SQL); runBtn.disabled=false; runQuery(); })
-      .catch(function(err){
-        statusEl.textContent='The SQL engine could not load ('+err.message+'). Everything else on this page works.';
-        statusEl.className='sql-status error'; runBtn.disabled=false;
-      });
-  });
 </script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>

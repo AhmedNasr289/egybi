@@ -41,3 +41,27 @@ The through-line: **the failure that matters is the one that looks like success.
 ## What is *not* automated (by design)
 - **Newsletter sending** stays manual — a deliberate FRA/consent choice; the reminder automates only the nudge, not the send.
 - **The deferred EGX EOD dataset** (`fetch_stocks.py`) isn't built — gated on confirming a free vendor covers EGX. See [[Stock Market Page & EGX Data]].
+
+## Schedules, as of 2026-08-08
+
+Every workflow is bounded, every one that commits carries the same six guards
+(bound, concurrency group, push to the dispatched ref, rebase, retry, alert),
+and the question that mattered was not "does it have guardrails" but "does
+anything refresh this page's figures".
+
+| Workflow | Trigger | Bound | Why that cadence |
+|---|---|---|---|
+| `refresh-prices` | daily 07:17 UTC | 25 m | Prices move daily. |
+| `refresh-fx` | daily 07:23 UTC | 15 m | Rates move daily. |
+| `refresh-data` | weekly, Mon 03:41 | 30 m | World Bank indicators publish on a slow cycle. |
+| `build-geo-assets` | **monthly, 3rd 04:31** | 45 m | OpenStreetMap changes every day, and UNESCO inscribes new sites each summer. Was manual-only; a layer built once and never refetched drifts from its own as-of date while still printing it. |
+| `refresh-streets` | **quarterly, 5th of Jan/Apr/Jul/Oct** | 120 m | Same source, far heavier job — drive and walk graphs for ten districts. Monthly would spend real Actions minutes to move figures that shift slowly at district scale. |
+| `build-visit-layers` | **manual, deliberately** | 30 m | SRTM was flown in February 2000 and is finished. POWER's normals average a closed 2001–2020 window declared as constants in this repo. WMO station normals move on a decadal timescale. A cron would re-download the same bytes forever and put a standing load on two free public services for nothing. |
+| `build-pages` | manual + push | 15 m | Pure generation from files already in the repo. |
+| `send-newsletter`, `papyrus-reminder` | manual / monthly | 10 m | Both now alert on failure: a send that silently does not happen looks exactly like a quiet week. |
+| `probe-geocodes`, `probe-idsc` | manual | 15 m | Diagnostics a human runs and watches; no alert on purpose. |
+
+Cron minutes are deliberately odd and days deliberately avoid the 1st: GitHub's
+shared scheduler is contended on the hour and at month boundaries, and a skipped
+run is a silent one.
+

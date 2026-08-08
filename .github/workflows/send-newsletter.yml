@@ -27,6 +27,10 @@ concurrency:
   group: papyrus-send
   cancel-in-progress: false
 
+permissions:
+  contents: read
+  issues: write             # the failure notifier opens/comments on an issue
+
 jobs:
   send:
     runs-on: ubuntu-latest
@@ -72,3 +76,11 @@ jobs:
             fi
             sleep 20   # be gentle on the shared-host hourly send cap
           done
+
+      # A newsletter that silently fails to send looks identical to a quiet
+      # week. Every pipeline that commits data already opens an issue on
+      # failure; the two workflows whose whole job is to make something happen
+      # on a schedule were the ones with no way to tell you it did not.
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
