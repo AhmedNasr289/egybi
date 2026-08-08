@@ -351,8 +351,16 @@ case("a page with no way onward", "all-pages.js", ["site/practice.html"],
 A11Y1 = "ONLY={p} node " + str(HERE) + "/a11y2.js"
 
 # ---- 19. a11y: a map that can only be panned with a mouse ------------------
-case("map with keyboard control disabled", "a11y2.js", ["site/assets/geospatial.js"],
-     lambda: edit("site/assets/geospatial.js", "      keyboard: true,", "      keyboard: false,"),
+# The anchor lived in geospatial.js until mapkit.js took over creating every
+# map, and moved with it. The case did not go red when that happened — it went
+# COULD NOT MUTATE, which is at least loud, and is the reason that verdict
+# exists as something separate from a pass. It had been proving nothing for as
+# long as mapkit has existed.
+#
+# Targeting mapkit is also strictly better: one mutation now covers the
+# keyboard contract for all six maps rather than for the Atlas alone.
+case("map with keyboard control disabled", "a11y2.js", ["site/assets/mapkit.js"],
+     lambda: edit("site/assets/mapkit.js", "      keyboard: true,", "      keyboard: false,"),
      lambda o: "map cannot be focused by keyboard" in o,
      A11Y1.format(p="geospatial.html"))
 
