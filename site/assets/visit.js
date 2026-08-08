@@ -37,8 +37,8 @@
   var SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  var S = { climate: null, terrain: null, heritage: null, map: null,
-            layer: null, month: null, selected: null };
+  var S = { climate: null, terrain: null, heritage: null, relief: null,
+            map: null, layer: null, month: null, selected: null };
 
   function $(id) { return document.getElementById(id); }
   function esc(s) {
@@ -99,7 +99,7 @@
   function recMin(m) { return m && (m.t_record_min != null ? m.t_record_min : m.t_min); }
 
   /* The headline figure. t_daily_max is the climatological MEAN DAILY maximum,
-     averaged from POWER's monthly series — what a normal afternoon reaches, and
+     averaged from POWER's daily series — what a normal afternoon reaches, and
      what a visitor is actually asking about. It is what the page leads with.
      Older published data has no such field, so this falls back to the all-day
      mean and reports which one it returned, because a page showing an all-day
@@ -320,6 +320,172 @@
     });
   }
 
+  /* --------------------------------------------------------- cross-sections
+     The honest version of "fly over Egypt". Imagery good enough to fly through
+     is licensed rather than open, and a 3D render would mean a GPU pipeline and
+     a repo full of frames. What IS open is the ground itself, so the page draws
+     the land's own profile from measured elevation and lets the reader travel
+     along it. Every point on the curve is a radar reading with a latitude and a
+     longitude, and the map beside it shows exactly where that point is.
+
+     The slider is the control, not the animation. A moving dot is precisely
+     what prefers-reduced-motion exists to suppress, so there is no autoplay to
+     suppress: dragging works identically either way, and the profile itself
+     already shows the whole line at once. Reduced motion loses nothing here. */
+  var R = { t: null, i: 0, line: null, dot: null, map: null };
+
+  function reliefPath(t, w, h) {
+    var pad = { l: 42, r: 10, t: 12, b: 26 };
+    var known = t.samples.filter(function (s) { return s.m != null; });
+    var lo = Math.min(0, t.min_m), hi = t.max_m;
+    var span = (hi - lo) || 1;
+    var x = function (km) { return pad.l + (km / t.length_km) * (w - pad.l - pad.r); };
+    var y = function (m) { return pad.t + (1 - (m - lo) / span) * (h - pad.t - pad.b); };
+
+    // Nulls break the line rather than being drawn as sea level: an unknown
+    // elevation is not a flat shelf, and joining across one would invent ground.
+    var segs = [], cur = [];
+    t.samples.forEach(function (s) {
+      if (s.m == null) { if (cur.length) segs.push(cur); cur = []; }
+      else cur.push(s);
+    });
+    if (cur.length) segs.push(cur);
+
+    var stroke = segs.map(function (seg) {
+      return seg.map(function (s, i) {
+        return (i ? 'L' : 'M') + x(s.km).toFixed(1) + ' ' + y(s.m).toFixed(1);
+      }).join(' ');
+    }).join(' ');
+    var fill = segs.map(function (seg) {
+      return 'M' + x(seg[0].km).toFixed(1) + ' ' + y(lo).toFixed(1) + ' ' +
+        seg.map(function (s) { return 'L' + x(s.km).toFixed(1) + ' ' + y(s.m).toFixed(1); }).join(' ') +
+        ' L' + x(seg[seg.length - 1].km).toFixed(1) + ' ' + y(lo).toFixed(1) + ' Z';
+    }).join(' ');
+
+    var ticks = [];
+    [hi, lo < 0 ? 0 : null, lo].forEach(function (m) {
+      if (m == null || ticks.indexOf(m) > -1) return;
+      ticks.push(m);
+    });
+    return { x: x, y: y, lo: lo, hi: hi, stroke: stroke, fill: fill, pad: pad,
+             ticks: ticks, known: known };
+  }
+
+  function paintRelief() {
+    var host = $('reliefChart'), pick = $('reliefPicker');
+    if (!host || !S.relief) return;
+    var list = S.relief.transects;
+
+    pick.innerHTML = list.map(function (t, i) {
+      return '<button type="button" class="mo-btn' + (i === 0 ? ' on' : '') +
+        '" data-i="' + i + '" aria-pressed="' + (i === 0) + '">' + esc(t.name) + '</button>';
+    }).join('');
+    pick.querySelectorAll('.mo-btn').forEach(function (b) {
+      b.addEventListener('click', function () { selectTransect(+b.dataset.i); });
+    });
+
+    var cap = $('reliefCap');
+    if (cap) {
+      cap.innerHTML = 'Elevation in metres above sea level against distance along the line, from ' +
+        esc(S.relief.source) + '. ' + esc(S.relief.license) + '. Built ' + esc(S.relief.as_of) +
+        '. Gaps in a curve are points the model has no value for, drawn as gaps rather than as zero.';
+    }
+    selectTransect(0);
+  }
+
+  function selectTransect(i) {
+    var list = S.relief.transects, t = list[i];
+    if (!t) return;
+    R.t = t; R.i = i;
+    $('reliefPicker').querySelectorAll('.mo-btn').forEach(function (b) {
+      var on = +b.dataset.i === i;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    var why = $('reliefWhy');
+    if (why) why.textContent = t.why;
+
+    var w = 720, h = 300, g = reliefPath(t, w, h);
+    $('reliefChart').innerHTML =
+      '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true">' +
+        '<defs><linearGradient id="rgrad" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="' + GOLD + '" stop-opacity=".75"/>' +
+          '<stop offset="1" stop-color="' + GOLD + '" stop-opacity=".08"/>' +
+        '</linearGradient></defs>' +
+        g.ticks.map(function (m) {
+          return '<line x1="' + g.pad.l + '" y1="' + g.y(m).toFixed(1) + '" x2="' + (w - g.pad.r) +
+            '" y2="' + g.y(m).toFixed(1) + '" stroke="' + (m === 0 ? '#4FA3A5' : 'rgba(255,255,255,.16)') +
+            '" stroke-width="1"/>' +
+            '<text x="' + (g.pad.l - 6) + '" y="' + (g.y(m) + 4).toFixed(1) +
+            '" text-anchor="end" font-size="11" fill="rgba(255,255,255,.6)">' +
+            fmt(m, 0) + '</text>';
+        }).join('') +
+        '<path d="' + g.fill + '" fill="url(#rgrad)"/>' +
+        '<path d="' + g.stroke + '" fill="none" stroke="' + GOLD +
+          '" stroke-width="2" stroke-linejoin="round"/>' +
+        '<line id="reliefCursor" x1="0" y1="' + g.pad.t + '" x2="0" y2="' + (h - g.pad.b) +
+          '" stroke="#fff" stroke-width="1.5" opacity=".85"/>' +
+        '<circle id="reliefKnob" r="4.5" cx="0" cy="0" fill="#fff"/>' +
+        '<text x="' + g.pad.l + '" y="' + (h - 8) + '" font-size="11" fill="rgba(255,255,255,.6)">0 km</text>' +
+        '<text x="' + (w - g.pad.r) + '" y="' + (h - 8) + '" text-anchor="end" font-size="11" ' +
+          'fill="rgba(255,255,255,.6)">' + fmt(t.length_km, 0) + ' km</text>' +
+      '</svg>';
+
+    // Accessible summary of the curve for anyone not looking at it.
+    $('reliefChart').setAttribute('aria-label',
+      t.name + ': ' + t.length_km + ' kilometres, from ' + fmt(t.min_m, 0) +
+      ' to ' + fmt(t.max_m, 0) + ' metres above sea level.');
+
+    var scrub = $('reliefScrub');
+    if (scrub) {
+      scrub.max = String(t.samples.length - 1);
+      scrub.value = '0';
+      scrub.setAttribute('aria-label', 'Position along ' + t.name);
+    }
+    drawLine(t);
+    moveTo(0);
+  }
+
+  function drawLine(t) {
+    if (!R.map || !window.L) return;
+    if (R.line) { R.map.removeLayer(R.line); R.line = null; }
+    if (R.dot) { R.map.removeLayer(R.dot); R.dot = null; }
+    var pts = t.samples.map(function (s) { return [s.lat, s.lon]; });
+    R.line = L.polyline(pts, { color: GOLD, weight: 3, opacity: 0.95 }).addTo(R.map);
+    R.dot = L.circleMarker(pts[0], { radius: 6, color: '#fff', weight: 2,
+      fillColor: GOLD, fillOpacity: 1 }).addTo(R.map);
+    R.map.fitBounds(R.line.getBounds(), { padding: [26, 26] });
+  }
+
+  function moveTo(idx) {
+    var t = R.t;
+    if (!t) return;
+    var s = t.samples[Math.min(Math.max(idx, 0), t.samples.length - 1)];
+    if (!s) return;
+    var svg = $('reliefChart').querySelector('svg');
+    if (svg) {
+      var g = reliefPath(t, 720, 300);
+      var cx = g.x(s.km);
+      var cur = svg.querySelector('#reliefCursor'), knob = svg.querySelector('#reliefKnob');
+      if (cur) { cur.setAttribute('x1', cx.toFixed(1)); cur.setAttribute('x2', cx.toFixed(1)); }
+      if (knob) {
+        knob.setAttribute('cx', cx.toFixed(1));
+        knob.setAttribute('cy', (s.m == null ? -20 : g.y(s.m)).toFixed(1));
+      }
+    }
+    if (R.dot) R.dot.setLatLng([s.lat, s.lon]);
+    var out = $('reliefReadout');
+    if (out) {
+      out.innerHTML = '<b>' + fmt(s.km, 1) + ' km</b> along the line &middot; ' +
+        (s.m == null ? '<b>no elevation</b> at this point &mdash; the model has no value here, ' +
+                       'so nothing is drawn'
+                     : 'ground at <b>' + fmt(s.m, 0) + ' m</b>' +
+                       (s.m < 0 ? ' &mdash; below sea level' : '')) +
+        '<br><span style="opacity:.7">' + s.lat.toFixed(4) + '&deg;N, ' +
+        s.lon.toFixed(4) + '&deg;E</span>';
+    }
+  }
+
   /* ----------------------------------------------------------- the self-check
      The build compares every modelled mean daily maximum against the nearest
      published station normal and refuses to publish if the comparison fails.
@@ -453,11 +619,21 @@
 
     var box = $('visitMap');
     if (box) S.map = baseMap('visitMap');
+    if ($('reliefMap')) R.map = baseMap('reliefMap');
+
+    var scrub = $('reliefScrub');
+    if (scrub) {
+      // 'input' rather than 'change' so the map dot tracks the drag. This is
+      // the reader moving the control, never the page moving on its own, so it
+      // is correct under prefers-reduced-motion without a special case.
+      scrub.addEventListener('input', function () { moveTo(+scrub.value); });
+    }
 
     Promise.allSettled([
       load('data/visit-climate.json'),
       load('data/visit-terrain.json'),
-      load('data/geo-heritage.json')
+      load('data/geo-heritage.json'),
+      load('data/visit-relief.json')
     ]).then(function (r) {
       // A layer file always exists so the page never 404s, but an
       // ungenerated one carries generated:false and an empty sites array.
@@ -469,6 +645,11 @@
       if (r[0].status === 'fulfilled') S.climate = usable(r[0].value);
       if (r[1].status === 'fulfilled') S.terrain = usable(r[1].value);
       if (r[2].status === 'fulfilled') S.heritage = r[2].value;
+      if (r[3].status === 'fulfilled') {
+        var v = r[3].value;
+        S.relief = v && v.generated !== false && Array.isArray(v.transects) &&
+                   v.transects.length ? v : null;
+      }
 
       if (S.climate) {
         paintMonthPicker(); paintMap(); paintMonthTable();
@@ -478,6 +659,7 @@
       }
       if (S.terrain) paintTerrain(); else showEmpty(['terrainEmpty']);
       if (S.climate) paintCheck(); else showEmpty(['checkEmpty']);
+      if (S.relief) paintRelief(); else showEmpty(['reliefEmpty']);
       paintMeta();
 
       if (window.EGYBI_SCROLLY && S.map) wireStory();

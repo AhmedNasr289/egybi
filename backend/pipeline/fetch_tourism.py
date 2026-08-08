@@ -376,55 +376,59 @@ def fetch_station_normals() -> dict | None:
     if not raw:
         return None
 
-    # The list is a delimited text file, but "which delimiter and which column"
-    # is a property of someone else's export, not a contract. So try the
-    # plausible separators and identify the columns by what they contain — the
-    # country cell is the one that says Egypt, the coordinates are the numeric
-    # pair, the id is the remaining integer. Guessing an index is how a working
-    # parser silently returns nothing after an upstream tweak.
+    # The list is `"Country";"City";"CityId"` and NOTHING else — no coordinates.
+    # The first version of this parser assumed a five-column export with a
+    # latitude and a longitude in it, found no row that matched, and reported
+    # "shape changed?" with no evidence, which cost a whole run to diagnose.
+    # It now prints the actual bytes when it fails, which is how the real shape
+    # was found in one run instead of three.
+    #
+    # Columns are still identified by content rather than by index: the cell
+    # that says Egypt, the integer id, and the remaining text as the name. An
+    # index is a guess about someone else's export; content is a fact about it.
     egypt = []
     for line in raw.splitlines():
         if "egypt" not in line.lower():
             continue
         for sep in (";", "\t", "|", ","):
             parts = [p.strip().strip('"') for p in line.split(sep)]
-            if len(parts) < 4:
+            if len(parts) < 3:
                 continue
-            nums, ints, name = [], [], None
-            for i, p in enumerate(parts):
-                if p.lower() == "egypt":
-                    continue
-                if p.lstrip("-").replace(".", "", 1).isdigit():
-                    (ints if p.lstrip("-").isdigit() else nums).append((i, p))
-                elif name is None and p:
-                    name = p
-            # Latitude 22..32, longitude 24..37 for anywhere in Egypt. An id
-            # that happens to be an integer cannot masquerade as a coordinate.
-            coords = [(i, float(p)) for i, p in nums + ints]
-            lat = next((v for _, v in coords if 21.5 <= v <= 32.5), None)
-            lon = next((v for _, v in coords if 24.0 <= v <= 37.5 and v != lat), None)
-            ident = next((p for _, p in ints
-                          if float(p) != lat and float(p) != lon), None)
-            if name and lat is not None and lon is not None and ident:
-                egypt.append({"name": name, "cid": ident, "lat": lat, "lon": lon})
+            country = any(p.lower() == "egypt" for p in parts)
+            ident = next((p for p in parts if p.isdigit()), None)
+            name = next((p for p in parts
+                         if p and p.lower() != "egypt" and not p.isdigit()), None)
+            if country and ident and name:
+                egypt.append({"name": name, "cid": ident})
                 break
     if not egypt:
         # Print what actually came back. "Shape changed?" with no evidence is a
         # dead end that costs another run to diagnose.
-        head = "\n".join(raw.splitlines()[:3])[:300].replace("\n", " ⏎ ")
+        head = "\n".join(raw.splitlines()[:3])[:300].replace("\n", " \u23ce ")
         log(f"    WWIS city list carried no Egyptian stations. "
             f"{len(raw)} bytes, first lines: {head!r}")
         return None
     log(f"    WWIS lists {len(egypt)} Egyptian stations")
 
-    stations = []
+    stations, no_coords, no_months = [], 0, 0
     for st in egypt:
         d = get(WWIS_CITY.format(cid=st["cid"]), tries=2, pause=3.0)
         if not d:
             continue
         months = _find_climate_months(d)
         if not months:
+            no_months += 1
             continue
+        # The city list carries no coordinates, so they come from the city
+        # payload. Without them a station cannot be matched to a site and is
+        # useless as a yardstick, however good its normals are.
+        lat = _first_num(d, ("cityLatitude", "latitude", "lat"))
+        lon = _first_num(d, ("cityLongitude", "longitude", "lon", "lng"))
+        if lat is None or lon is None or not (21.0 <= lat <= 33.0
+                                              and 24.0 <= lon <= 38.0):
+            no_coords += 1
+            continue
+        st["lat"], st["lon"] = lat, lon
         got = {}
         for m in months:
             try:
@@ -458,7 +462,12 @@ def fetch_station_normals() -> dict | None:
         log(f"    {st['name']}: {len(got)} monthly normals"
             + (f" ({period})" if period else ""))
 
+    if no_coords or no_months:
+        log(f"    skipped {no_coords} station(s) with no usable coordinates and "
+            f"{no_months} with no monthly normals")
     if not stations:
+        log("    no Egyptian station carried both coordinates and normals — "
+            f"checked {len(egypt)} cities")
         return None
     return {
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -481,6 +490,21 @@ def _walk_first(payload, key):
             stack.extend(node.values())
         elif isinstance(node, list):
             stack.extend(node)
+    return None
+
+
+def _first_num(payload, keys):
+    """The first of these keys anywhere in the payload whose value parses as a
+    number. WWIS spells coordinates differently in different exports and nests
+    them at different depths, so the search is by name, not by path."""
+    for k in keys:
+        v = _walk_first(payload, k)
+        if v is None:
+            continue
+        try:
+            return float(str(v).strip())
+        except (TypeError, ValueError):
+            continue
     return None
 
 
@@ -849,13 +873,30 @@ TRANSECTS = [
         "why": ("Following the river rather than a straight line, because a "
                 "straight line from Cairo to Abu Simbel crosses the Eastern "
                 "Desert and would read as a mountain range. About a thousand "
-                "kilometres of river, and the ground barely rises."),
-        # Waypoints on the river itself, north to south.
-        "path": [(30.0500, 31.2300), (29.0700, 31.0900), (28.1000, 30.7500),
-                 (27.1800, 31.1800), (26.5600, 31.7000), (26.1600, 32.7200),
-                 (25.6900, 32.6400), (24.9800, 32.8700), (24.0900, 32.9000),
-                 (23.3000, 31.9000), (22.3400, 31.6300)],
-        "n": 200,
+                "kilometres, and the ground barely rises: the median along this "
+                "line is the floodplain, and the whole fall from Cairo to the "
+                "First Cataract is less than the height of the Great Pyramid. "
+                "The legs between waypoints are straight, so where the river "
+                "meanders hardest the line clips the terrace above it and a few "
+                "samples spike — those are real desert readings on a line that "
+                "left the water, not errors, and the median below is the "
+                "honest summary of the profile."),
+        # Waypoints on the river itself, north to south: Cairo, Beni Suef,
+        # Maghagha, Minya, Mallawi, Asyut, Tahta, Sohag, Nag Hammadi, then the
+        # Qena bend where the Nile swings north-east before turning south again,
+        # Qift, Qus, Luxor, Armant, Esna, Edfu, Kom Ombo, Aswan, the High Dam,
+        # three points down Lake Nasser, and Abu Simbel. The bend is why a
+        # coarser waypoint list put four hundred metres of Eastern Desert in the
+        # middle of a river profile.
+        "path": [(30.0500, 31.2300), (29.0700, 31.1000), (28.6500, 30.8400),
+                 (28.1000, 30.7500), (27.7300, 30.8400), (27.1800, 31.1800),
+                 (26.7700, 31.5000), (26.5600, 31.7000), (26.0500, 32.2400),
+                 (26.1600, 32.7200), (25.9900, 32.8100), (25.9200, 32.7600),
+                 (25.7000, 32.6400), (25.6200, 32.5300), (25.2900, 32.5500),
+                 (24.9800, 32.8700), (24.4700, 32.9400), (24.0900, 32.9000),
+                 (23.9700, 32.8800), (23.6000, 32.7000), (23.1000, 32.3500),
+                 (22.7000, 31.9000), (22.3400, 31.6300)],
+        "n": 300,
     },
 ]
 
@@ -926,12 +967,22 @@ def build_relief() -> bool:
                 "returned an elevation — treated as a failed transect")
             continue
 
+        # Min and max alone describe the two most unusual points on a line and
+        # nothing about the rest of it. A profile that is flat for nine hundred
+        # kilometres and spikes twice has the same min and max as one that
+        # climbs steadily, so the quartiles are published too — they are what
+        # actually says "most of this line is down on the floodplain".
+        srt = sorted(known)
+        def q(f):
+            return srt[min(int(len(srt) * f), len(srt) - 1)]
         rows.append({"key": t["key"], "name": t["name"], "why": t["why"],
                      "length_km": round(samples[-1]["km"], 1),
                      "min_m": min(known), "max_m": max(known),
+                     "p25_m": q(0.25), "median_m": q(0.5), "p75_m": q(0.75),
                      "samples": samples})
         log(f"  {t['name']}: {len(known)} points over "
-            f"{samples[-1]['km']:.0f} km, {min(known):.0f} to {max(known):.0f} m")
+            f"{samples[-1]['km']:.0f} km, {min(known):.0f} to {max(known):.0f} m "
+            f"(median {q(0.5):.0f} m)")
 
     # Every transect is hand-chosen and known-good, so a miss is the endpoint
     # failing rather than the ground being absent. Publishing three of five
