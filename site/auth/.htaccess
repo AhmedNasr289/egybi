@@ -21,3 +21,11 @@
 <FilesMatch "^(lib|mailer|google_verify)\.php$">
     Require all denied
 </FilesMatch>
+
+# The header above said sample configs were not downloadable and nothing
+# actually stopped them. They hold no secrets, but they do publish the exact
+# environment-variable names and table layout this module expects, and a comment
+# that describes protection which is not there is worse than no comment.
+<FilesMatch "\.(sample|example|dist)\.php$">
+    Require all denied
+</FilesMatch>
