@@ -61,6 +61,7 @@
   function baseMap(id) {
     var m = window.EGYBI.mapkit.create(id, {
       locator: window.EGYBI_EGYPT_GEO || null,
+      credit: ['geoboundaries', 'srtm', 'power'],
       label: id === 'reliefMap'
         ? 'Map of Egypt showing where the selected elevation line runs'
         : 'Map of Egypt showing the major visitor sites'

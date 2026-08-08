@@ -46,6 +46,9 @@
     // The map repeats what the prose says, so it is hidden from screen readers
     // rather than made to narrate itself.
     var c = m.getContainer(); c.setAttribute('aria-hidden', 'true');
+    // These maps skip mapkit, so they skip its credit too — and CC BY 4.0 does
+    // not care how the geometry got onto the page. Added explicitly here.
+    if (window.EGYBI && window.EGYBI.mapkit) window.EGYBI.mapkit.addCredit(c, ['geoboundaries']);
     return m;
   }
 

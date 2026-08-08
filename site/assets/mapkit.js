@@ -204,6 +204,45 @@
     L.DomEvent.on(el, 'blur', function () { layer.fire('mouseout'); });
   }
 
+
+  /* ------------------------------------------------------------- credit --
+     geoBoundaries is CC BY 4.0. Attribution is a LICENCE CONDITION, not a
+     courtesy, and the required form is the citation plus links to both the
+     project and the deed.
+
+     Every map here is built with attributionControl:false, because Leaflet's
+     own control is an <a href="#"> that a screen reader announces as a link to
+     nowhere. That flag suppressed the credit along with the control, so the
+     site shipped out of compliance — on explore.html with no credit at all.
+
+     So the credit is rendered as ordinary page content immediately after the
+     map, OUTSIDE Leaflet entirely. Turning the attribution control off, or
+     restyling it, or removing it, cannot take the credit with it. */
+  var SOURCES = {
+    geoboundaries: 'Boundaries: <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a> '
+      + '(Runfola et al., 2020), <a href="https://creativecommons.org/licenses/by/4.0/" '
+      + 'rel="license noopener">CC BY 4.0</a>',
+    capmas: 'Population and census figures: CAPMAS',
+    osm: 'Places and facilities: &copy; <a href="https://www.openstreetmap.org/copyright" '
+      + 'rel="noopener">OpenStreetMap contributors</a>, ODbL',
+    srtm: 'Elevation: NASA SRTM via OpenTopoData',
+    power: 'Climate normals: NASA POWER'
+  };
+
+  function addCredit(container, keys) {
+    if (!keys || !keys.length) return null;
+    // One credit per map, even if create() is ever called twice on a container.
+    var prev = container.parentNode
+      && container.parentNode.querySelector('.map-credit[data-for="' + container.id + '"]');
+    if (prev) return prev;
+    var el = document.createElement('p');
+    el.className = 'map-credit';
+    if (container.id) el.setAttribute('data-for', container.id);
+    el.innerHTML = keys.map(function (k) { return SOURCES[k] || k; }).join(' &middot; ') + '.';
+    container.insertAdjacentElement('afterend', el);
+    return el;
+  }
+
   /* ------------------------------------------------------------ the map --- */
   function create(id, opts) {
     opts = opts || {};
@@ -270,6 +309,12 @@
     el.setAttribute('role', 'region');
     if (opts.label) el.setAttribute('aria-label', opts.label);
 
+    // Default to the boundary credit, because every map here draws the
+    // geoBoundaries outline unless a caller says otherwise. Opting OUT has to
+    // be deliberate and visible in the call, rather than opting in being
+    // something a new map can simply forget.
+    addCredit(el, opts.credit || ['geoboundaries']);
+
     return map;
   }
 
@@ -299,6 +344,8 @@
     makeFocusable: makeFocusable,
     button: button,
     barControl: barControl,
+    addCredit: addCredit,
+    sources: SOURCES,
     reduceMotion: RM,
     esc: esc
   };

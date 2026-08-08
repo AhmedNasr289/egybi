@@ -287,6 +287,7 @@
     S.map = window.EGYBI.mapkit.create('atlasMap', {
       doubleClickZoom: false,
       locator: window.EGYBI_EGYPT_GEO,
+      credit: ['geoboundaries', 'capmas', 'osm'],
       label: 'Interactive map of Egypt\u2019s 27 governorates. '
            + 'Tab to a governorate and press Enter for its figures.'
     });

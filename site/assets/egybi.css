@@ -1035,3 +1035,14 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 @media (prefers-reduced-motion: reduce) {
   .mk-locator, .mk-btn { transition: none !important; }
 }
+
+/* Licence credit under every map. geoBoundaries is CC BY 4.0 and attribution
+   is a condition of use, so this must stay legible rather than becoming
+   decorative grey-on-grey — it is held to the same AA contrast as body text. */
+.map-credit {
+  margin: 8px 0 0; font-size: 0.76rem; line-height: 1.5; color: var(--ink-soft);
+}
+.map-credit a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
+.map-credit a:hover, .map-credit a:focus-visible { color: var(--blue-deep); }
+.surface-dark .map-credit, .surface-hero .map-credit { color: var(--on-dark-soft); }
+.surface-dark .map-credit a, .surface-hero .map-credit a { color: var(--gold-bright); }

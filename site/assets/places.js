@@ -51,6 +51,7 @@
     if (!window.L || !window.EGYBI_EGYPT_GEO) return false;
     S.map = window.EGYBI.mapkit.create('placesMap', {
       locator: window.EGYBI_EGYPT_GEO,
+      credit: ['geoboundaries', 'osm'],
       label: 'Map of Egypt showing mapped places. '
            + 'Nearby places group into a cluster; open a cluster to see them.'
     });

@@ -102,6 +102,7 @@
     S.map = window.EGYBI.mapkit.create('streetsMap', {
       doubleClickZoom: false,
       locator: window.EGYBI_EGYPT_GEO || null,
+      credit: ['geoboundaries', 'osm'],
       label: 'Map of the measured Egyptian districts, shaded by the selected '
            + 'street-network metric. Tab to a district and press Enter for its figures.'
     });

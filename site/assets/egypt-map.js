@@ -73,6 +73,7 @@
     var map = window.EGYBI.mapkit.create(mapId, {
       doubleClickZoom: false,
       locator: window.EGYBI_EGYPT_GEO || null,
+      credit: ['geoboundaries', 'capmas'],
       label: 'Choropleth map of Egypt’s 27 governorates coloured by the '
            + 'selected metric. Tab to a governorate for its value.'
     });

@@ -40,13 +40,27 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
       title: (document.title || '').length,
       canonical: !!document.querySelector('link[rel=canonical]'),
       noindex: !!document.querySelector('meta[name=robots][content*=noindex]'),
-      maps: document.querySelectorAll('.leaflet-container').length,
       // This asked "does .nav-links contain links", which is not the failure
       // that matters — the failure is a reader who cannot get anywhere from
       // here. The retired-section notices carry no site nav on purpose and
       // still offer four ways onward, and the old rule called that a problem.
       // So: an empty .nav-links container IS an authoring bug wherever one
       // exists, and separately every page must offer some onward link at all.
+      // geoBoundaries is CC BY 4.0: the citation and a link to the deed are a
+      // condition of using the geometry, and they must be visible on the page
+      // carrying the map without any interaction. This is the one rule here
+      // that is a legal obligation rather than a quality bar, which is exactly
+      // why it belongs in the build and not in anyone's memory.
+      maps: document.querySelectorAll('.leaflet-container').length,
+      creditVisible: [...document.querySelectorAll('.map-credit, .site-footer')]
+        .filter(function (el) {
+          var s = getComputedStyle(el);
+          return s.display !== 'none' && s.visibility !== 'hidden';
+        })
+        .some(function (el) {
+          return /geoboundaries\.org/i.test(el.innerHTML);
+        }),
+      deedLinked: !!document.querySelector('a[href*="creativecommons.org/licenses/by/4.0"]'),
       hasNavEl: !!document.querySelector('.nav-links'),
       navLinks: document.querySelectorAll('.nav-links a').length,
       onward: new Set([...document.querySelectorAll('a[href]')]
@@ -87,6 +101,8 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
     // Any page that is not noindex still has to have one.
     if (!m.canonical && !m.noindex) problems.push('no canonical');
     if (m.canonical && m.noindex) problems.push('noindex page also claims a canonical');
+    if (m.maps && !m.creditVisible) problems.push('map with no visible geoBoundaries credit (CC BY 4.0 breach)');
+    if (m.maps && !m.deedLinked) problems.push('map credit does not link the CC BY 4.0 deed');
     if (m.hasNavEl && m.navLinks === 0) problems.push('a .nav-links container with no links in it');
     if (m.onward === 0) problems.push('dead end: no link to any other page');
     if (!m.hasNavEl) noSiteNav.push(path);
