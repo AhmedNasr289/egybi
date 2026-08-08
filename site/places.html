@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Places of Egypt — a gazetteer on one map | EgyBI</title>
-<meta name="description" content="Every city, town, airport and ancient site in Egypt as OpenStreetMap records them, on a tile-free map. Search by name, filter by governorate, and open any place for what the open data actually says.">
+<meta name="description" content="Every city, town, airport and ancient site in Egypt as OpenStreetMap records them, on a tile-free map. Search by name, filter by governorate, and open any place for what the open data actually says — plus live searches for photographs, video and places to stay nearby.">
 <link rel="canonical" href="https://egybi.com/places.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -51,6 +51,13 @@
             border-bottom:1px solid var(--line-light); font-size:0.88rem; }
   .pd-row span { color:var(--ink-soft); }
   .pd-note { font-size:0.78rem; color:var(--ink-soft); line-height:1.6; margin:8px 0 0; }
+  .pd-going { margin-top:20px; padding-top:18px; border-top:1px solid var(--line-light); }
+  .pd-going h4 { margin:0 0 12px; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.07em;
+                 color:var(--gold-ink); font-family:'Inter',system-ui,sans-serif; }
+  .pd-links { list-style:none; margin:14px 0 0; padding:0; display:grid; gap:11px; }
+  .pd-links li { display:grid; gap:2px; }
+  .pd-links a { font-weight:600; font-size:0.9rem; }
+  .pd-links span { font-size:0.76rem; color:var(--ink-soft); line-height:1.5; }
   .pl-legend { display:flex; gap:18px; flex-wrap:wrap; font-size:0.8rem; color:var(--ink-soft); margin-top:12px; }
   .pl-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
 </style>
@@ -92,7 +99,7 @@
     <h1 style="font-size:clamp(1.7rem,5vw,2.7rem);margin:0 0 14px;">Every place in Egypt, on one map.</h1>
     <p class="lead" style="margin:0;max-width:70ch;color:#e9dfc8;">Cities, towns, airports and ancient
     sites, exactly as the OpenStreetMap community has recorded them. Search by name, narrow to a
-    governorate, and open any place for what the open data actually says &mdash; and does not say.</p>
+    governorate, and open any place for what the open data actually says &mdash; and does not say. Every place also carries a <strong>Going there</strong> block: the OpenStreetMap record, photographs, video and places to stay, each as a live search rather than a quoted price or opening time that would be stale before you read it.</p>
   </div>
 </section>
 
@@ -199,7 +206,7 @@
 <script src="assets/egybi.js?v=1"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
-<script src="assets/places.js?v=3"></script>
+<script src="assets/places.js?v=4"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script src="assets/analytics.js"></script>
