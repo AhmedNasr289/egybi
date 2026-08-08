@@ -1,0 +1,175 @@
+"""Mutation-test every verification tool on this project.
+
+A check that has never been observed failing is not evidence. For each checker,
+this injects one specific defect that checker exists to catch, runs it, asserts
+it reports the defect, reverts via git, and asserts it goes quiet again.
+
+Reverting through `git checkout --` rather than by re-editing means a mutation
+cannot survive a crash: the file goes back to exactly what is committed.
+"""
+import json
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+SCRATCH = "/tmp/claude-0/-home-user-egybi/88e1f418-6292-5215-8c2f-e114945c6b86/scratchpad"
+results = []
+
+
+def sh(cmd, timeout=900):
+    r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
+    return r.returncode, (r.stdout or "") + (r.stderr or "")
+
+
+def revert(*paths):
+    for p in paths:
+        subprocess.run(["git", "checkout", "--", p], check=False)
+
+
+def edit(path, old, new):
+    p = Path(path)
+    t = p.read_text(encoding="utf-8")
+    assert t.count(old) >= 1, f"anchor not found in {path}: {old[:60]!r}"
+    p.write_text(t.replace(old, new, 1), encoding="utf-8")
+
+
+def case(name, tool, files, mutate, detects, cmd, timeout=900):
+    """detects(output) -> bool : did the tool report THIS defect?"""
+    # 1. quiet before
+    rc0, out0 = sh(cmd, timeout)
+    before_clean = not detects(out0)
+    # 2. inject
+    try:
+        mutate()
+    except Exception as e:  # noqa: BLE001
+        results.append((name, tool, "COULD NOT MUTATE", str(e)[:70]))
+        revert(*files)
+        return
+    # 3. does it catch it?
+    rc1, out1 = sh(cmd, timeout)
+    caught = detects(out1)
+    # 4. revert
+    revert(*files)
+    # 5. quiet after
+    rc2, out2 = sh(cmd, timeout)
+    after_clean = not detects(out2)
+    verdict = ("PASS" if (caught and before_clean and after_clean)
+               else "FAILS TO CATCH" if not caught
+               else "NOISY" if not (before_clean and after_clean) else "?")
+    results.append((name, tool, verdict,
+                    f"quiet-before={before_clean} caught={caught} quiet-after={after_clean}"))
+    print(f"  {verdict:16} {name}")
+
+
+PY_AUDIT = f"python3 {SCRATCH}/static-audit.py"
+SWEEP1 = "ONLY={p} node " + SCRATCH + "/all-pages.js"
+
+print("mutation tests — each injects a defect the checker exists to catch\n")
+
+# ---- 1. static audit: a link that does not resolve --------------------------
+case("broken internal link", "static-audit.py", ["site/about.html"],
+     lambda: edit("site/about.html", "</footer>", '<a href="no-such-page.html">x</a></footer>'),
+     lambda o: "internal links that do not resolve" in o, PY_AUDIT)
+
+# ---- 2. static audit: an anchor whose id is not there -----------------------
+case("anchor to a missing id", "static-audit.py", ["site/about.html"],
+     lambda: edit("site/about.html", "</footer>", '<a href="#no-such-anchor">x</a></footer>'),
+     lambda o: "anchors pointing at an id that is not there" in o, PY_AUDIT)
+
+# ---- 3. static audit: one page left on an older asset build -----------------
+case("asset version drift", "static-audit.py", ["site/about.html"],
+     lambda: edit("site/about.html", "egybi.css?v=21", "egybi.css?v=20"),
+     lambda o: "shared assets requested at different versions" in o, PY_AUDIT)
+
+# ---- 4. static audit: a field a page reads that the data stopped writing ----
+def drop_median():
+    p = Path("site/data/visit-relief.json")
+    d = json.loads(p.read_text(encoding="utf-8"))
+    d["transects"][0].pop("median_m")
+    p.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+
+case("data field a page reads is gone", "static-audit.py", ["site/data/visit-relief.json"],
+     drop_median, lambda o: "median_m" in o and "no longer has" in o, PY_AUDIT)
+
+# ---- 5. static audit: the climate layer failing its own published gate ------
+def break_gate():
+    p = Path("site/data/visit-climate.json")
+    d = json.loads(p.read_text(encoding="utf-8"))
+    for pair in d["validation"]["pairs"]:
+        pair["delta_c"] = round(pair["delta_c"] + 5.0, 1)
+    p.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+
+case("published climate fails gate A", "static-audit.py", ["site/data/visit-climate.json"],
+     break_gate, lambda o: "gate A" in o, PY_AUDIT)
+
+# ---- 6. static audit: a data file with no date on it -----------------------
+def strip_date():
+    p = Path("site/data/visit-terrain.json")
+    d = json.loads(p.read_text(encoding="utf-8"))
+    for k in ("as_of", "fetched_at", "generated_at", "generated", "updated"):
+        d.pop(k, None)
+    p.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+
+case("data file with no date", "static-audit.py", ["site/data/visit-terrain.json"],
+     strip_date, lambda o: "data files with no date on them" in o, PY_AUDIT)
+
+# ---- 7. page sweep: a script that throws ------------------------------------
+case("console error on a page", "all-pages.js", ["site/places.html"],
+     lambda: edit("site/places.html", "</body>",
+                  "<script>window.__boom.x = 1;</script></body>"),
+     lambda o: "console:" in o, SWEEP1.format(p="places.html"))
+
+# ---- 8. page sweep: horizontal overflow at 375px ----------------------------
+case("content clipped off-screen at 375px", "overflow.js", ["site/places.html"],
+     lambda: edit("site/places.html", "</body>",
+                  '<section><div style="width:900px;height:8px">wide</div></section></body>'),
+     lambda o: "clipped off-screen: 1" in o, f"node {SCRATCH}/overflow.js")
+
+# ---- 9. page sweep: a sub-nav chip pointing at a section that is gone -------
+case("section[data-nav] with no id", "all-pages.js", ["site/visit.html"],
+     lambda: edit("site/visit.html", '<section class="surface-light" id="terrain" data-nav=',
+                  '<section class="surface-light" data-nav='),
+     lambda o: "with no id" in o, SWEEP1.format(p="visit.html"))
+
+# ---- 10. page sweep: an off-origin request ---------------------------------
+case("off-origin request", "all-pages.js", ["site/places.html"],
+     lambda: edit("site/places.html", "</body>",
+                  '<img src="https://example.com/a.png" alt=""></body>'),
+     lambda o: "external:" in o, SWEEP1.format(p="places.html"))
+
+# ---- 11. CSSOM: a class in the DOM with no rule behind it -------------------
+case("class in DOM with no CSS rule", "cssom.js", ["site/places.html"],
+     lambda: edit("site/places.html", "</body>",
+                  '<p class="zz-no-rule-here">x</p></body>'),
+     lambda o: "zz-no-rule-here" in o, f"node {SCRATCH}/cssom.js"),
+
+# ---- 12. contrast: text below AA against its painted ground ----------------
+case("sub-AA contrast", "contrast.js", ["site/places.html"],
+     lambda: edit("site/places.html", "</body>",
+                  '<p style="color:#d8d2c4;background:#f6eedc;font-size:14px">'
+                  'deliberately faint</p></body>'),
+     lambda o: "deliberately faint" in o, f"node {SCRATCH}/contrast.js"),
+
+# ---- 13. reduced motion: content hidden when animation is suppressed -------
+case("content hidden under reduced motion", "reduced.js", ["site/assets/egybi.css"],
+     lambda: edit("site/assets/egybi.css",
+                  "  [data-aos] { opacity: 1 !important; transform: none !important; }",
+                  "  /* removed by mutation test */"),
+     lambda o: re.search(r"lost content or hid a reveal: [1-9]", o) is not None,
+     f"node {SCRATCH}/reduced.js"),
+
+print()
+w = max(len(r[0]) for r in results)
+print(f"{'defect injected':<{w}}  {'checker':<18} verdict")
+print("-" * (w + 60))
+for name, tool, verdict, detail in results:
+    print(f"{name:<{w}}  {tool:<18} {verdict:16} {detail}")
+
+bad = [r for r in results if r[2] != "PASS"]
+print(f"\n{len(results) - len(bad)}/{len(results)} checkers demonstrably catch what they claim to")
+if bad:
+    print("NOT PROVEN:")
+    for r in bad:
+        print("   ", r[0], "->", r[2], r[3])
