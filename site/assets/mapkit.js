@@ -243,6 +243,151 @@
     return el;
   }
 
+
+  /* --------------------------------------------------------- choropleth --
+     The toolkit's §4a, adapted rather than pasted: it patches an
+     initEgyptMap signature that has since changed, and the site now has three
+     choropleths rather than one.
+
+     Four things, and the last two matter most.
+
+     A COLOUR TWEEN. Leaflet's SVG renderer draws GeoJSON as <path>, and fill
+     is CSS-animatable, so one rule turns an instant setStyle repaint into a
+     550ms tween. The tween is the information: it shows WHICH governorates
+     moved when you switch metric, which an instant repaint hides. This works
+     only on the SVG renderer — passing renderer: L.canvas() silently kills it
+     with no error, which is exactly what someone optimising this later will
+     reach for.
+
+     A SOUTH-TO-NORTH REVEAL, so the map fills the way the Nile runs.
+
+     ONE TAB STOP, NOT TWENTY-SEVEN. Every path was focusable, so a keyboard
+     reader tabbed through 27 shapes in FILE order to reach the rest of the
+     page. This is the standard roving-tabindex pattern: one stop enters the
+     map, then arrow keys move GEOGRAPHICALLY — left goes to the nearest
+     governorate to the west, not the previous line of GeoJSON.
+
+     A TABLE OF THE SAME NUMBERS. Colour-encoded geometry cannot be read by a
+     screen reader however much ARIA is layered on it. The honest answer is to
+     publish the figures as a table and hide it visually, so a screen reader
+     gets the data instead of a shape. */
+  function choropleth(map, layer, spec) {
+    if (!map || !layer || !spec) return;
+    var el = map.getContainer();
+    var feats = [];
+    layer.eachLayer(function (l) { if (l.feature) feats.push(l); });
+    if (!feats.length) return;
+
+    var live = document.createElement('p');
+    live.className = 'sr-only';
+    live.setAttribute('role', 'status');
+    live.setAttribute('aria-live', 'polite');
+    el.insertAdjacentElement('afterend', live);
+
+    if (spec.table) {
+      var box = document.createElement('div');
+      box.className = 'sr-only';
+      box.innerHTML = spec.table();
+      el.insertAdjacentElement('afterend', box);
+    }
+
+    var centre = function (l) { return l.getBounds().getCenter(); };
+    var current = 0;
+
+    /* Everything below touches l.getElement(), and Leaflet does not create a
+       path's SVG element until the map has a view — the renderer has nothing
+       to draw into before then. Callers here fit their bounds AFTER building
+       the layer, so wiring immediately set tabindex on nothing at all and the
+       map kept 27 unreachable shapes while reporting a live region and a
+       table that both worked. Wait for the view. */
+    map.whenReady(function () { requestAnimationFrame(wire); });
+
+    function wire() {
+
+    function focusIndex(i, announce) {
+      if (i < 0 || i >= feats.length) return;
+      current = i;
+      feats.forEach(function (l, n) {
+        var e = l.getElement && l.getElement();
+        if (!e) return;
+        e.setAttribute('tabindex', n === i ? '0' : '-1');
+      });
+      var e = feats[i].getElement && feats[i].getElement();
+      if (e) e.focus();
+      if (announce !== false) live.textContent = spec.describe(feats[i].feature);
+    }
+
+    // Nearest feature in a compass direction, so the keyboard follows the map
+    // rather than the order the file happened to be written in.
+    function step(dx, dy) {
+      var from = centre(feats[current]);
+      var best = -1, bestScore = Infinity;
+      feats.forEach(function (l, n) {
+        if (n === current) return;
+        var c = centre(l);
+        var ex = (c.lng - from.lng), ey = (c.lat - from.lat);
+        var along = ex * dx + ey * dy;
+        if (along <= 0) return;                       // wrong side entirely
+        var across = Math.abs(ex * dy - ey * dx);     // perpendicular drift
+        // Nearest in that direction, weighted to prefer straight ahead over a
+        // diagonal. Written as `across * 2 - along` this REWARDED distance, so
+        // pressing west from North Sinai jumped the length of the country to
+        // Matrouh instead of stepping into the eastern Delta — a keyboard that
+        // moves geographically, but wrongly, is worse than one that does not
+        // claim to.
+        var score = along + across * 2;
+        if (score < bestScore) { bestScore = score; best = n; }
+      });
+      if (best >= 0) focusIndex(best);
+    }
+
+    feats.forEach(function (l, n) {
+      var e = l.getElement && l.getElement();
+      if (!e) return;
+      e.setAttribute('role', 'button');
+      e.setAttribute('tabindex', n === 0 ? '0' : '-1');
+      e.setAttribute('aria-label', spec.describe(l.feature));
+      L.DomEvent.on(e, 'focus', function () { current = n; });
+      L.DomEvent.on(e, 'keydown', function (ev) {
+        var k = ev.key;
+        if (k === 'ArrowLeft')  { L.DomEvent.stop(ev); step(-1, 0); }
+        else if (k === 'ArrowRight') { L.DomEvent.stop(ev); step(1, 0); }
+        else if (k === 'ArrowUp')    { L.DomEvent.stop(ev); step(0, 1); }
+        else if (k === 'ArrowDown')  { L.DomEvent.stop(ev); step(0, -1); }
+        else if (k === 'Home')  { L.DomEvent.stop(ev); focusIndex(0); }
+        else if (k === 'Enter' || k === ' ' || k === 'Spacebar') {
+          L.DomEvent.stop(ev);
+          if (spec.activate) spec.activate(feats[current]);
+          live.textContent = spec.describe(feats[current].feature);
+        }
+      });
+    });
+
+    // South to north. Under reduced motion every shape is simply present —
+    // the meaningful final state, never a blank frame.
+    if (!RM()) {
+      var order = feats.slice().sort(function (a, b) {
+        return centre(a).lat - centre(b).lat;
+      });
+      order.forEach(function (l, i) {
+        var e = l.getElement && l.getElement();
+        if (!e) return;
+        e.style.opacity = '0';
+        e.style.transition = 'opacity .45s ease ' + Math.round(i * 22) + 'ms';
+      });
+      requestAnimationFrame(function () {
+        order.forEach(function (l) {
+          var e = l.getElement && l.getElement();
+          if (e) e.style.opacity = '';
+        });
+      });
+    }
+
+    }
+
+    return { announce: function (msg) { live.textContent = msg; } };
+  }
+
   /* ------------------------------------------------------------ the map --- */
   function create(id, opts) {
     opts = opts || {};
@@ -344,6 +489,7 @@
     makeFocusable: makeFocusable,
     button: button,
     barControl: barControl,
+    choropleth: choropleth,
     addCredit: addCredit,
     sources: SOURCES,
     reduceMotion: RM,

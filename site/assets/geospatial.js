@@ -318,15 +318,33 @@
           mouseout: function (e) { S.layer.resetStyle(e.target); },
           click: function () { activate(lyr, feature); }
         });
-        // A choropleth only a mouse can read is half a map. Each governorate
-        // becomes a real tab stop announcing its name, and Enter runs the same
-        // handler the click does, so the two paths cannot drift apart.
-        lyr.once('add', function () {
-          window.EGYBI.mapkit.makeFocusable(lyr, feature.properties.name + ' governorate',
-            function () { activate(lyr, feature); });
-        });
       }
     }).addTo(S.map);
+    // One tab stop into the map, then arrow keys move geographically. This
+    // replaces 27 individual tab stops in GeoJSON file order.
+    window.EGYBI.mapkit.choropleth(S.map, S.layer, {
+      describe: function (f) {
+        var p = f.properties, j = S.joined[p.name] || {};
+        return p.name + ': ' + METRICS[S.metric].label + ' ' +
+               METRICS[S.metric].fmt(metricValue(p, S.metric));
+      },
+      activate: function (lyr) { activate(lyr, lyr.feature); },
+      table: function () {
+        var rows = window.EGYBI_EGYPT_GEO.features.map(function (f) {
+          var p = f.properties;
+          return '<tr><th scope="row">' + p.name + '</th><td>' +
+            (p.population / 1e6).toFixed(2) + ' M</td><td>' + Math.round(p.density) +
+            '</td><td>' + p.urban_pct.toFixed(1) + '%</td><td>' +
+            (p.growth >= 0 ? '+' : '') + p.growth.toFixed(1) + '%</td><td>' +
+            Math.round(p.area_km2) + '</td></tr>';
+        }).join('');
+        return '<table><caption>Egypt governorate indicators — the same data the map shows'
+          + '</caption><thead><tr><th scope="col">Governorate</th>'
+          + '<th scope="col">Population 2023</th><th scope="col">Density /km²</th>'
+          + '<th scope="col">Urban %</th><th scope="col">Growth 2017–2023</th>'
+          + '<th scope="col">Area km²</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      }
+    });
     S.home = S.layer.getBounds();
     S.map.fitBounds(S.home, { padding: [6, 6] });
     window.EGYBI.mapkit.setHome(S.map, S.home);

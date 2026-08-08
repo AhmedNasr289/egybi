@@ -93,6 +93,32 @@
     window.EGYBI_MAP.layer = layer;
 
     map.fitBounds(layer.getBounds(), { padding: [6, 6] });
+
+    /* The choropleth §4a was written for. One tab stop into the map, arrow keys
+       move geographically, selections are announced, and the same numbers are
+       published as a table so a screen reader gets data rather than colour. */
+    var current = 'population';
+    window.EGYBI.mapkit.choropleth(map, layer, {
+      describe: function (f) {
+        var pr = f.properties;
+        return pr.name + ': ' + METRICS[current].label + ' ' + METRICS[current].fmt(pr[current]);
+      },
+      table: function () {
+        var cols = Object.keys(METRICS);
+        var head = cols.map(function (k) {
+          return '<th scope="col">' + METRICS[k].label + '</th>';
+        }).join('');
+        var rows = geo.features.map(function (f) {
+          var pr = f.properties;
+          return '<tr><th scope="row">' + pr.name + '</th>' + cols.map(function (k) {
+            return '<td>' + METRICS[k].fmt(pr[k]) + '</td>';
+          }).join('') + '</tr>';
+        }).join('');
+        return '<table><caption>Egypt governorate indicators — the same data the map shows'
+          + '</caption><thead><tr><th scope="col">Governorate</th>' + head
+          + '</tr></thead><tbody>' + rows + '</tbody></table>';
+      }
+    });
     window.EGYBI.mapkit.setHome(map, layer.getBounds());
     buildLegend(document.getElementById(legendId), 'population', window.EGYBI_MAP.breaks,
                 feats.map(function (f) { return f.properties.population; }));
