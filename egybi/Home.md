@@ -37,6 +37,7 @@ The knowledge base and plan for **EgyBI** — a gamified skills-practice platfor
 - [[The Visitor Layer]] — `visit.html`: the tourism entry point, from NASA POWER climate normals and SRTM elevation; what it deliberately refuses to describe, and why there is no flythrough
 - [[Places & Data Stories]] — the 757-place gazetteer and the scrollytelling engine behind `stories.html`
 - [[Technology Rulings — What Was Declined and Why]] — every tool proposed for the project and the verdict against the four constraints, so the argument is not had twice
+- [[Map Toolkit — Decisions and Handover]] — what was acted on from the map/dataviz toolkit document, what was declined and why (ECharts measured at three times its stated weight; the capitals timeline the data cannot carry), and the traps confirmed against the repo
 - [[Automation & CI Pipelines]] — every automated job: the 8 GitHub Actions, their schedules & guardrails, and the monthly send-reminder
 - [[Product Format & Architecture]] — in-browser sandbox strategy, execution security, gamification mechanics
 - [[Security Posture & Audit Log]] — the 2026-07-20 review: what was fixed, what was already right, and which reported findings were wrong
