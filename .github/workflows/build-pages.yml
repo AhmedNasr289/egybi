@@ -27,6 +27,9 @@ concurrency:
 jobs:
   pages:
     runs-on: ubuntu-latest
+    timeout-minutes: 15       # pure generation from files already in the repo — no network.
+                               # Without a bound a hung request runs for
+                               # GitHub's default six hours.
     steps:
       - uses: actions/checkout@v4
 

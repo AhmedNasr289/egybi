@@ -132,8 +132,12 @@ def chrome():
     head = src[src.index('<header'):src.index('</header>') + len('</header>')]
     foot = src[src.index('<footer'):src.index('</footer>') + len('</footer>')]
     def up(frag):
-        frag = re.sub(r'href="(?!https?:|#|\.\./|mailto:)', 'href="../', frag)
-        frag = re.sub(r'src="(?!https?:|\.\./|data:)', 'src="../', frag)
+        # The leading / matters: a root-relative href already resolves from any
+        # depth, and prefixing ../ to it produces a link that works from no
+        # depth at all. Same reason the site-root price link had to become
+        # root-relative in the first place.
+        frag = re.sub(r'href="(?!https?:|#|/|\.\./|mailto:)', 'href="../', frag)
+        frag = re.sub(r'src="(?!https?:|/|\.\./|data:)', 'src="../', frag)
         return frag
     return up(head), up(foot)
 
