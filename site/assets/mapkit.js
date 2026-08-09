@@ -523,36 +523,129 @@
     // the label went away — two features fighting over one slot, and the
     // hover card lost. Labels live in their own pane instead: the geometry
     // keeps its tooltip, its click handler and its focus behaviour untouched.
-    var pane = map.createPane('mkLabels');
+    // createPane returns the existing pane if this name is already taken,
+    // which is what makes calling addLabels more than once on a map safe.
+    var pane = map.getPane('mkLabels') || map.createPane('mkLabels');
     pane.style.zIndex = 660;
     pane.style.pointerEvents = 'none';     // paint, never a click target
     pane.setAttribute('aria-hidden', 'true');   // the name is already on the feature
 
     var group = L.layerGroup([], { pane: 'mkLabels' }).addTo(map);
 
+    // POINTS ARE GATED BY ZOOM, AREAS BY PIXEL SIZE, and the difference is not
+    // arbitrary. A polygon can be measured — either the shape is wide enough
+    // on screen to hold its name or it is not. A point has no size, so the
+    // only honest question is whether the reader has zoomed in far enough that
+    // naming things is useful rather than a wall of text: 873 gazetteer places
+    // named at country zoom is not a map, it is a smear.
+    //
+    // For a clustered layer the threshold should match the zoom at which
+    // clustering hands over to individual markers, so counts become names at
+    // exactly the point the dots stop being counts.
+    var minZoom = opts.minZoom || 0;
+    var maxLabels = opts.maxLabels || 120;   // a hard ceiling on a dense view
+
+    /* COLLISION AVOIDANCE. Without it the labels are an improvement everywhere
+       Egypt is empty and a disaster everywhere it is not: around Cairo and
+       Giza, settlements, museums and airports all name themselves at once and
+       overprint into a grey smear where "Grand Egyptian Museum", "Museum of
+       Civilization" and "New Cairo City" occupy the same forty pixels. A map
+       that is unreadable exactly where the reader looks first is worse than
+       one with no names at all.
+
+       So labels are placed greedily and anything that would overlap something
+       already placed is dropped. Greedy, not optimal — proper label placement
+       is a solved-but-heavy problem and this runs on every pan. Iteration
+       order decides who wins, which is stable rather than fair, and the reader
+       can always zoom to give a dropped name room.
+
+       The box is ESTIMATED from character count rather than measured, because
+       measuring means inserting the element, reading its rect and removing it
+       again for every candidate — hundreds of forced reflows per pan. 6.2px
+       per character at 11px Inter semibold is close enough to reserve the
+       right space. */
+    // Registered once per map and always before any refresh, so the shared
+    // registry is empty when the first layer starts placing.
+    if (!map._mkPlacedReset) {
+      map._mkPlacedReset = true;
+      map.on('moveend', function () { map._mkPlaced = []; });
+    }
+
     function refresh() {
       group.clearLayers();
       var view = map.getBounds();
+      var zoom = map.getZoom();
+      var drawn = 0;
+      // THE REGISTRY IS SHARED ACROSS EVERY LABEL LAYER ON THIS MAP. Places
+      // calls addLabels once per kind, so a per-layer registry would let
+      // settlements collide-check against settlements and museums against
+      // museums while the two happily overprinted each other — which is
+      // precisely the pile this exists to prevent. It is reset once per move by
+      // the handler registered below, before any layer's refresh runs.
+      var placed = map._mkPlaced || (map._mkPlaced = []);
+      function fits(pt, text) {
+        var w = text.length * 6.2 + 10, h = 15;
+        var x0 = pt.x - w / 2, y0 = pt.y - h / 2;
+        for (var i = 0; i < placed.length; i += 1) {
+          var q = placed[i];
+          if (x0 < q.x1 && x0 + w > q.x0 && y0 < q.y1 && y0 + h > q.y0) return false;
+        }
+        placed.push({ x0: x0, y0: y0, x1: x0 + w, y1: y0 + h });
+        return true;
+      }
       layer.eachLayer(function (l) {
-        if (!l.getBounds) return;                 // points label themselves
-        var b = l.getBounds();
-        if (!view.intersects(b)) return;          // offscreen: nothing to draw
-        var nw = map.latLngToLayerPoint(b.getNorthWest());
-        var se = map.latLngToLayerPoint(b.getSouthEast());
-        if (Math.abs(se.x - nw.x) < minPx || Math.abs(se.y - nw.y) < 16) return;
-        var text = textFn(l.feature ? l.feature.properties : {}, l);
+        if (drawn >= maxLabels) return;
+        var at, text;
+        if (l.getBounds) {
+          var b = l.getBounds();
+          if (!view.intersects(b)) return;         // offscreen: nothing to draw
+          var nw = map.latLngToLayerPoint(b.getNorthWest());
+          var se = map.latLngToLayerPoint(b.getSouthEast());
+          if (Math.abs(se.x - nw.x) < minPx || Math.abs(se.y - nw.y) < 16) return;
+          at = labelPoint(l, b);
+        } else if (l.getLatLng) {
+          if (zoom < minZoom) return;
+          at = l.getLatLng();
+          if (!view.contains(at)) return;
+        } else {
+          return;
+        }
+        text = textFn(l.feature ? l.feature.properties : (l.options || {}), l);
         if (!text) return;
-        L.marker(labelPoint(l, b), {
+        if (!fits(map.latLngToContainerPoint(at), String(text))) return;
+        drawn += 1;
+        L.marker(at, {
           pane: 'mkLabels',
           interactive: false,
           keyboard: false,
-          icon: L.divIcon({ className: cls, html: esc(text), iconSize: null })
+          icon: L.divIcon({
+            className: cls + (l.getLatLng && !l.getBounds ? ' mk-label-pt' : ''),
+            html: esc(text), iconSize: null
+          })
         }).addTo(group);
       });
     }
 
-    map.on('zoomend moveend', refresh);
-    map.whenReady(function () { requestAnimationFrame(refresh); });
+    // moveend ONLY, not 'zoomend moveend'. Leaflet fires zoomend and then
+    // moveend for a single zoom, so listening to both ran the whole pass twice
+    // per step — measured at 480 layers per pass across three kinds on Places,
+    // so nearly 3,000 wasted iterations for every click of the zoom button.
+    map.on('moveend', refresh);
+    map.whenReady(function () {
+      requestAnimationFrame(function () { map._mkPlaced = []; refresh(); });
+    });
+
+    // CLEAN UP WHEN THE LAYER GOES. Places rebuilds its marker group every time
+    // a filter chip is toggled, so without this every toggle would leave
+    // another live zoomend/moveend handler behind, all of them iterating a
+    // layer that is no longer on the map. Four kinds and a few clicks and the
+    // map is doing that work a dozen times a frame for nothing.
+    map.on('layerremove', function (e) {
+      if (e.layer !== layer) return;
+      map.off('moveend', refresh);
+      group.clearLayers();
+      map.removeLayer(group);
+    });
     return refresh;
   }
 

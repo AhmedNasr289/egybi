@@ -146,6 +146,10 @@
           iconSize: [d, d], iconAnchor: [d / 2, d / 2]
         })
       });
+      // The label layer reads this. The hover tooltip's HTML is not reusable —
+      // it carries markup and the governorate — so the plain name travels
+      // separately rather than being parsed back out of a string.
+      m._plName = p.name;
       m.bindTooltip('<strong>' + esc(p.name) + '</strong>' +
         (p.gov ? '<br>' + esc(p.gov) : ''), { direction: 'top' });
       m.on('click', function () { select(p); });
@@ -158,6 +162,16 @@
     });
     group.addTo(S.map);
     S.layers[kind] = group;
+    // Place names, once the reader has zoomed in far enough for names to be
+    // useful. The threshold is deliberately the same zoom at which
+    // MarkerClusterGroup stops clustering (disableClusteringAtZoom above), so
+    // a bubble showing "44" becomes forty-four named dots at exactly the point
+    // it stops being a count. Naming all 873 at country zoom would not be a
+    // map, it would be a smear — which is why this is gated rather than always
+    // on, and why there is a ceiling on how many draw at once.
+    window.EGYBI.mapkit.addLabels(S.map, group, function (props, l) {
+      return l && l._plName;
+    }, { minZoom: 9, maxLabels: 90, className: 'mk-label-sm' });
   }
 
   /* --------------------------------------------------------- going there
@@ -311,7 +325,12 @@
       'them, so nothing here quotes a price, an opening time or a room that may ' +
       'no longer exist.</p>';
     el.hidden = false;
-    S.map.setView([p.lat, p.lon], Math.max(S.map.getZoom(), 8));
+    // Zoom 9, not 8, and the number is not arbitrary: 9 is
+    // disableClusteringAtZoom, which is also where the name layer engages.
+    // At 8 a reader who opened a place landed one step short of both — still
+    // inside a cluster bubble, still with no names on the map — which made the
+    // labels look broken when they were simply gated one level further in.
+    S.map.setView([p.lat, p.lon], Math.max(S.map.getZoom(), 9));
     el.scrollIntoView({ behavior: (window.EGYBI && EGYBI.reduceMotion) ? 'auto' : 'smooth', block: 'nearest' });
   }
 

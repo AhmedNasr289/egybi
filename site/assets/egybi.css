@@ -1191,6 +1191,9 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 }
 .mk-label::before { display: none; }        /* the tooltip's pointer arrow */
 .mk-label-sm { font-size: 10px; font-weight: 600; }
+/* A point's name sits beside its dot, not on top of it — centred would put the
+   text over the marker it is naming. */
+.mk-label-pt { transform: translate(9px, -50%); }
 @media (max-width: 720px) { .mk-label { font-size: 10px; } }
 
 @media (prefers-reduced-motion: reduce) {
