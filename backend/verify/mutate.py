@@ -136,6 +136,18 @@ case("asset version drift", "static-audit.py", ["site/about.html"],
      drift_version,
      lambda o: "shared assets requested at different versions" in o, PY_AUDIT)
 
+# ---- 3b. static audit: a committed asset its generator no longer reproduces --
+# build_flag.py is deliberately in no workflow — its input is a static committed
+# GeoJSON, and a monthly cron re-deriving an unchanged file is noise. That
+# leaves drift as the real risk: re-simplify the boundary file and the flag
+# keeps the old outline, correct-looking and wrong. The audit runs the generator
+# as an assertion instead of scheduling it, and this is what proves it works.
+case("committed asset its generator no longer reproduces", "static-audit.py",
+     ["site/assets/egypt-silhouette.svg"],
+     lambda: edit("site/assets/egypt-silhouette.svg", "<title>Egypt</title>",
+                  "<title>Egypt</title><!-- hand-edited -->"),
+     lambda o: "no longer reproduces" in o, PY_AUDIT)
+
 # ---- 4. static audit: a field a page reads that the data stopped writing ----
 def drop_median():
     p = Path("site/data/visit-relief.json")
