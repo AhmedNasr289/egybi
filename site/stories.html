@@ -21,7 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=28" rel="stylesheet">
+<link href="assets/egybi.css?v=31" rel="stylesheet">
 <script>document.documentElement.classList.remove('no-js');</script>
 </head>
 <body>
@@ -39,6 +39,7 @@
       <a href="stocks.html">Stocks</a>
       <a href="geospatial.html">Atlas</a>
       <a href="places.html">Places</a>
+      <a href="invest.html">Invest</a>
       <a href="stories.html" class="active">Stories</a>
       <a href="streets.html">Streets</a>
       <a href="blog.html">Blog</a>
@@ -236,6 +237,65 @@
 </section>
 
 
+<section class="surface-light" id="dug" data-nav="Where we have dug">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>A map of attention</div>
+    <h2 data-aos="fade-up">This is not a map of ancient Egypt.</h2>
+    <p class="lead" data-aos="fade-up" style="max-width:70ch;">It is a map of where ancient Egypt
+    has been recorded. Those are different countries, and the difference is the story.</p>
+  <div class="scrolly" data-scrolly data-graphic="mapDug">
+    <div class="scrolly-graphic"><div id="mapDug"></div></div>
+    <div class="scrolly-steps">
+      <section class="scrolly-step is-active" data-step="sites" tabindex="0">
+        <h3><strong id="dgTotal">—</strong> sites, and the shape they make</h3>
+        <p>Every dot is an archaeological site with a name and a position in OpenStreetMap, as of
+        <strong id="dgAsOf">—</strong>. They fall where you would expect: along the river, around
+        the Delta, out to the oases and down the Red Sea coast.</p>
+        <p>Read as a map of antiquity that is unremarkable. Read as a map of <em>survey effort</em>
+        it is the most interesting thing in this gazetteer.</p>
+      </section>
+      <section class="scrolly-step" data-step="luxor" tabindex="0">
+        <h3>Luxor: <strong id="dgLxN">—</strong> sites in <strong id="dgLxArea">—</strong> km²</h3>
+        <p>Egypt's smallest governorate carries more mapped ancient sites than any other &mdash;
+        <strong id="dgLxDens">—</strong> per thousand square kilometres. Thebes was a capital, so
+        there is genuinely a great deal there.</p>
+        <p>There is also a century and a half of excavation, a tourism economy that depends on
+        knowing exactly what is where, and more people writing it into OpenStreetMap than anywhere
+        else in the country. All three produce dots. The map cannot separate them.</p>
+      </section>
+      <section class="scrolly-step" data-step="newvalley" tabindex="0">
+        <h3>New Valley: <strong id="dgNvN">—</strong> sites, on <strong id="dgNvShare">—</strong> of Egypt</h3>
+        <p>The Western Desert governorate is <strong id="dgRatio">—</strong> times the size of Luxor
+        and has almost as many recorded sites &mdash; <strong id="dgNvDens">—</strong> per thousand
+        square kilometres, against Luxor's <strong id="dgLxDens2">—</strong>.</p>
+        <p>That ratio is not a statement about how much is buried in the desert. Nobody knows that
+        number. It is a statement about how much of the desert anyone has walked over with a GPS.</p>
+      </section>
+      <section class="scrolly-step" data-step="gharbia" tabindex="0">
+        <h3><strong id="dgZeroName">—</strong>: <strong id="dgZeroPop">—</strong> people, zero sites</h3>
+        <p>In the middle of the Delta, on land farmed and settled continuously for thousands of
+        years, this gazetteer records no archaeological site at all.</p>
+        <p>That is not a claim about the Delta. It is a claim about the map &mdash; and the dataset
+        makes it about itself, in its own words: <em id="dgNote">—</em></p>
+        <p>Delta sites sit under farmland, canals and modern cities. They are harder to see, harder
+        to survey and harder to tag than a temple standing in the open at Luxor. A dot means someone
+        recorded something. No dot means nobody has.</p>
+      </section>
+    </div>
+  </div>
+    <p class="src" style="font-size:0.8rem;color:var(--ink-soft);margin-top:24px;">
+    <strong>Sources.</strong> Archaeological sites: OpenStreetMap via Overpass
+    (<code>historic=archaeological_site</code> with a name), fetched
+    <strong id="dgAsOf2">—</strong>, ODbL. Governorate boundaries, areas and populations:
+    geoBoundaries EGY ADM1 (CC BY 4.0) with CAPMAS attributes. Every count, density and ratio on
+    this page is computed in the browser from those two files.
+    <strong>What this cannot tell you:</strong> anything about how much archaeology exists. A site
+    is counted here only if someone has recorded it in OpenStreetMap with a name, so the entire
+    story is about recording. Assigning a site to a governorate uses the simplified boundaries, so
+    a site near a border may be counted on the wrong side.</p>
+  </div>
+</section>
+
 <section class="surface-light-2 next-steps center" id="next" data-nav="Where next">
   <div class="wrap">
     <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
@@ -249,7 +309,7 @@
 <footer class="site-footer">
   <div class="cols">
     <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">An encyclopaedia of Egypt told through maps and cited open data.</p></div>
-    <div><h2 class="foot-h">Egypt</h2><a href="visit.html">Plan a Visit</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="explore.html">Egypt Data</a></div>
+    <div><h2 class="foot-h">Egypt</h2><a href="visit.html">Plan a Visit</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="invest.html">Where Egypt is building</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="explore.html">Egypt Data</a></div>
     <div><h2 class="foot-h">More</h2><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h2 class="foot-h">Data sources</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
   </div>
@@ -264,7 +324,7 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/scrolly.js?v=1"></script>
-<script src="assets/stories.js?v=2"></script>
+<script src="assets/stories.js?v=3"></script>
 <script src="assets/analytics.js"></script>
 </body>
 </html>

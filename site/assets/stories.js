@@ -1,4 +1,4 @@
-/* EgyBI — the three data stories on stories.html.
+/* EgyBI — the four data stories on stories.html.
    ---------------------------------------------------------------------------
    Each story is a tile-free Leaflet map driven by EGYBI_SCROLLY. The prose in
    the HTML is the story; these functions only move the map to match it, so a
@@ -6,7 +6,8 @@
 
    Every figure shown here is computed IN THE BROWSER from data already in the
    repository — the bundled governorate boundaries with their CAPMAS
-   attributes, geo-health.json, and streets-districts.json. Nothing is typed in
+   attributes, geo-health.json, geo-places.json and streets-districts.json.
+   Nothing is typed in
    as a literal, which means these numbers cannot drift away from their source.
 */
 (function () {
@@ -240,5 +241,142 @@
     }).catch(function () {
       put('stNote', 'The street report card could not be loaded, so this story shows the map without it.');
     });
+  })();
+  /* ---------------------------------------------------- 4. WHERE WE HAVE DUG
+     Thesis: the antiquity layer measures SURVEY EFFORT, not antiquity.
+
+     A sibling of story 2, and the pairing is deliberate: the health layer and
+     the archaeology layer fail in the same direction for different reasons, and
+     a reader who has seen it once in hospitals recognises it instantly in
+     temples. The numbers that carry it — Luxor at roughly 180 sites per
+     thousand square kilometres against New Valley at 0.15, and a Delta
+     governorate of five and a half million people with none at all — are
+     computed here rather than written down, so they cannot drift away from the
+     gazetteer they come from.
+
+     The closing quotation is the gazetteer's own `note` field, read out of the
+     file at runtime. Paraphrasing it would have made it EgyBI's claim about
+     OpenStreetMap; quoting it makes it OpenStreetMap's claim about itself, and
+     it is the strongest sentence in the story. */
+  (function dug() {
+    var el = document.getElementById('mapDug'); if (!el) return;
+    var m = baseMap('mapDug');
+    var layer = L.geoJSON(GEO, { style: function () {
+      return { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.9 };
+    } }).addTo(m);
+    m.fitBounds(layer.getBounds(), { padding: [8, 8] });
+    setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
+
+    fetch('data/geo-places.json', { cache: 'no-cache' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data) { put('dgNote', 'The gazetteer has not been built yet, so this story shows the map without it.'); return; }
+        var sites = data.places.filter(function (p) { return p.kind === 'antiquity'; });
+        var byGov = {};
+        sites.forEach(function (p) { if (p.gov) byGov[p.gov] = (byGov[p.gov] || 0) + 1; });
+
+        var area = {}, pop = {};
+        props.forEach(function (p) { area[p.name] = p.area_km2; pop[p.name] = p.population; });
+
+        // Densest and largest are FOUND, not named. If OSM coverage shifts
+        // enough to change which governorate leads, the prose follows it.
+        var ranked = Object.keys(area).map(function (g) {
+          return { g: g, n: byGov[g] || 0, a: area[g], d: area[g] ? (byGov[g] || 0) / area[g] * 1000 : 0 };
+        });
+        var densest = ranked.slice().sort(function (a, b) { return b.d - a.d; })[0];
+        var biggest = ranked.slice().sort(function (a, b) { return b.a - a.a; })[0];
+        // The emptiest: no sites at all, and among those the most populous —
+        // because "nobody lives there" is the answer the reader will reach for,
+        // and picking the most populous is what closes it off.
+        var zero = ranked.filter(function (r) { return r.n === 0; })
+                         .sort(function (a, b) { return (pop[b.g] || 0) - (pop[a.g] || 0); })[0];
+
+        var totArea = ranked.reduce(function (a, r) { return a + r.a; }, 0);
+
+        put('dgTotal', fmt(sites.length));
+        put('dgAsOf', data.as_of); put('dgAsOf2', data.as_of);
+        put('dgLxN', fmt(densest.n)); put('dgLxArea', fmt(densest.a));
+        put('dgLxDens', fmt(densest.d)); put('dgLxDens2', fmt(densest.d));
+        put('dgNvN', fmt(biggest.n));
+        put('dgNvShare', fmt(biggest.a / totArea * 100, 1) + '%');
+        put('dgNvDens', fmt(biggest.d, 2));
+        put('dgRatio', fmt(biggest.a / densest.a));
+        if (zero) {
+          put('dgZeroName', zero.g);
+          put('dgZeroPop', fmt(pop[zero.g]));
+        }
+        put('dgNote', '“' + (data.note || '') + '”');
+
+        // Named so the headings stay true if the leaders ever change.
+        var h3 = document.querySelectorAll('#dug .scrolly-step h3');
+        if (h3[1]) h3[1].firstChild.nodeValue = densest.g + ': ';
+        if (h3[2]) h3[2].firstChild.nodeValue = biggest.g + ': ';
+
+        // The same red Places uses for ancient sites, so a reader who has seen
+        // the gazetteer recognises the dots here. It is also NOT gold, which
+        // matters: the Luxor step fills that governorate in gold, and gold dots
+        // on a gold polygon made the highlight almost invisible — the step's
+        // whole point is that one small shape holds most of the dots.
+        var dots = L.layerGroup(sites.map(function (p) {
+          return L.circleMarker([p.lat, p.lon], {
+            radius: 2.4, stroke: false, fillColor: '#B23A0F', fillOpacity: 0.8, interactive: false
+          });
+        }));
+
+        function shade(pick) {
+          layer.setStyle(function (f) {
+            return pick(f.properties.name);
+          });
+        }
+        var PLAIN = { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.9 };
+        function highlight(name, colour) {
+          return function (g) {
+            return g === name
+              ? { color: GOLD_INK, weight: 2.2, fillColor: colour, fillOpacity: 0.9 }
+              : { color: '#fff', weight: 0.8, fillColor: '#E9ECF1', fillOpacity: 0.55 };
+          };
+        }
+        function centreOf(name) {
+          var f = GEO.features.filter(function (x) { return x.properties.name === name; })[0];
+          return f ? L.geoJSON(f).getBounds().getCenter() : null;
+        }
+
+        SCROLLY.register('mapDug', {
+          sites: function () {
+            shade(function () { return PLAIN; });
+            dots.addTo(m);
+            SCROLLY.goTo(m, [26.8, 30.0], 5);
+          },
+          luxor: function () {
+            shade(highlight(densest.g, GOLD));
+            dots.addTo(m);
+            // Zoom 7, not 8. The claim on this step is comparative — this
+            // governorate holds more than any other — so the view has to
+            // include the others. At 8 the reader saw one small gold shape
+            // with a handful of dots and no way to tell it was the leader.
+            var c = centreOf(densest.g);
+            if (c) SCROLLY.goTo(m, [c.lat, c.lng], 7);
+          },
+          newvalley: function () {
+            shade(highlight(biggest.g, '#C9D6EA'));
+            dots.addTo(m);
+            var c = centreOf(biggest.g);
+            if (c) SCROLLY.goTo(m, [c.lat, c.lng], 6);
+          },
+          gharbia: function () {
+            shade(highlight(zero ? zero.g : '', BLUE));
+            // The dots come OFF for this step. The argument is an absence, and
+            // an absence is only visible when nothing else is competing for the
+            // eye — with 393 gold dots on screen the empty governorate reads as
+            // just another quiet patch.
+            m.removeLayer(dots);
+            var c = zero && centreOf(zero.g);
+            if (c) SCROLLY.goTo(m, [c.lat, c.lng], 8);
+          }
+        }, m);
+      })
+      .catch(function () {
+        put('dgNote', 'The gazetteer could not be loaded, so this story shows the map without it.');
+      });
   })();
 })();

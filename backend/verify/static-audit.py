@@ -6,6 +6,7 @@ the pipeline stopped writing, a version query that drifted between pages).
 """
 import json
 import re
+import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -196,6 +197,49 @@ hard = re.findall(r"(\d[\d,]*(?:\.\d+)?)\s*(?:&deg;|°)\s*C", body)
 hard += re.findall(r"(?<![\w-])(\d{2,4})\s*(?:&nbsp;)?m\b(?!ap|ean|onth|etre)", body)
 if hard:
     fails["figures typed into visit.html rather than rendered from data"] = sorted(set(hard))
+
+# -------------------------------------------------- generated assets stale ----
+# A committed file produced by a script drifts silently from its source. There
+# is no schedule that would catch it: build_flag.py is deliberately NOT in a
+# workflow, because its input is a static committed GeoJSON and a cron that
+# re-derives an unchanged file every month is noise. The risk that leaves is
+# real though — re-simplify the boundary file and the flag keeps the old
+# outline, correct-looking and wrong, with nothing to say so.
+#
+# So instead of scheduling the build, the build is used as an assertion: run it
+# to a temporary path and compare bytes. Deterministic generators can be
+# checked this way for free; the ones that need a database or a network cannot,
+# which is exactly why this list is short and explicit rather than a glob.
+GENERATED = [
+    ("backend/pipeline/build_flag.py", SITE / "assets" / "egypt-silhouette.svg"),
+]
+for script, out in GENERATED:
+    if not Path(script).exists() or not out.exists():
+        fails["a generated asset or its generator is missing"].append(f"{script} -> {out}")
+        continue
+    before = out.read_bytes()
+    try:
+        r = subprocess.run([sys.executable, script], capture_output=True, text=True, timeout=120)
+        after = out.read_bytes()
+        if r.returncode != 0:
+            fails["a generator that no longer runs"].append(
+                f"{script}: exit {r.returncode} — {(r.stderr or '').strip()[:120]}")
+        elif after != before:
+            # `out` is already a repo-relative path. The first version prettified
+            # it with .relative_to(Path.cwd()), which raises on a relative path
+            # against an absolute cwd — so this check crashed the whole audit at
+            # exactly the moment it had something to report, and ran clean
+            # whenever it did not. Silent in the failure case, green in the
+            # success case: the same shape as the .get() bug above, which is why
+            # that comment is fifty lines up and this one is here.
+            fails["a committed asset that its generator no longer reproduces"].append(
+                f"{out}: rerunning {script} changes it "
+                f"({len(before)} -> {len(after)} bytes). Commit the regenerated file.")
+    finally:
+        # Restore whatever was committed. This check must not be the thing that
+        # edits the working tree — it only reports.
+        if out.read_bytes() != before:
+            out.write_bytes(before)
 
 print(f"\npages    : {len(pages)}  ({len(list(SITE.glob('*.html')))} top-level, "
       f"{len(list((SITE/'practice').glob('*.html')))} challenge, "

@@ -7,11 +7,11 @@ control.
 | Tool | Answers |
 |---|---|
 | `static-audit.py` | Every internal link and anchor resolves; every shared asset is on one version; every data file is dated and internally consistent; every field a page reads is present. |
-| `all-pages.js` | Drives every page: status, console errors, 404 subresources, off-origin requests, heading structure, sub-nav authoring mistakes. `ONLY=a.html,b.html` runs a subset. |
+| `all-pages.js` | Drives every page: status, console errors, 404 subresources, off-origin requests, heading structure, sub-nav authoring mistakes, and the CC BY 4.0 attribution any page rendering geoBoundaries-derived geometry owes. `ONLY=a.html,b.html` runs a subset. |
 | `overflow.js` | Content clipped off-screen at 375px. |
 | `contrast.js` | WCAG AA against the background actually painted behind each text node. |
 | `cssom.js` | Classes in the live DOM with no CSS rule behind them. |
-| `reduced.js` | Content and animation compared with and without `prefers-reduced-motion`. |
+| `reduced.js` | Content and animation compared with and without `prefers-reduced-motion`. Fails on lost content, a reveal left invisible, **or** an animation still running under reduce. `ONLY=a.html` runs a subset. |
 | `a11y2.js` | Landmarks, heading order, focus visibility, accessible names, the mobile nav, and keyboard operation of the maps and the relief slider. |
 | `coverage.py` | Titles, descriptions, alt text, JSON-LD, drift between duplicated chrome, data older than its pipeline's cadence. |
 | `env.js` | Not a check — resolves Chromium, `playwright-core`, the preview server and the log directory for the browser checkers. |
@@ -105,3 +105,21 @@ a path that only existed on one machine:
 These were hardcoded absolute paths until 2026-08-08 — the committed tools ran
 in exactly one sandbox and nowhere else, which is the same failure as a check
 that cannot fire.
+
+## Two things this directory learned the hard way
+
+**A checker can measure the machine instead of the site.** `all-pages.js` used to
+let third-party requests run. Behind a filtering proxy they hang rather than
+fail, every page load took about 13 seconds against a 15-second timeout, and
+which pages "failed" was decided by load. They are now recorded and then
+aborted — the off-origin host is captured from the *attempt*, so the check it
+exists for is unchanged, and the sweep went from ~35 minutes to 71 seconds.
+
+**A mutation case can go vacuous without failing.** Two ways, both seen here:
+anchoring the detector on a summary line that later gets reworded, and aiming
+the mutation at a page where the defect cannot manifest. Neither turns the case
+red — it keeps passing while testing nothing. So: anchor on a specific printed
+marker rather than a sentence, and when a case reports FAILS TO CATCH, check
+whether the mutation was observable at all before concluding the checker is
+broken. Twice now the checker was right and the test was pointed at the wrong
+thing.

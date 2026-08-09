@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Places of Egypt — a gazetteer on one map | EgyBI</title>
-<meta name="description" content="Every city, town, airport and ancient site in Egypt as OpenStreetMap records them, on a tile-free map. Search by name, filter by governorate, and open any place for what the open data actually says.">
+<meta name="description" content="Every city, town, airport and ancient site in Egypt as OpenStreetMap records them, on a tile-free map. Search by name, filter by governorate, and open any place for what the open data actually says — plus live searches for photographs, video and places to stay nearby.">
 <link rel="canonical" href="https://egybi.com/places.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -21,7 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=28" rel="stylesheet">
+<link href="assets/egybi.css?v=31" rel="stylesheet">
 <style>
   #placesMap { height: 560px; border-radius: var(--radius); background: var(--papyrus-2); }
   @media (max-width: 720px) { #placesMap { height: 400px; } }
@@ -51,6 +51,13 @@
             border-bottom:1px solid var(--line-light); font-size:0.88rem; }
   .pd-row span { color:var(--ink-soft); }
   .pd-note { font-size:0.78rem; color:var(--ink-soft); line-height:1.6; margin:8px 0 0; }
+  .pd-going { margin-top:20px; padding-top:18px; border-top:1px solid var(--line-light); }
+  .pd-going h4 { margin:0 0 12px; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.07em;
+                 color:var(--gold-ink); font-family:'Inter',system-ui,sans-serif; }
+  .pd-links { list-style:none; margin:14px 0 0; padding:0; display:grid; gap:11px; }
+  .pd-links li { display:grid; gap:2px; }
+  .pd-links a { font-weight:600; font-size:0.9rem; }
+  .pd-links span { font-size:0.76rem; color:var(--ink-soft); line-height:1.5; }
   .pl-legend { display:flex; gap:18px; flex-wrap:wrap; font-size:0.8rem; color:var(--ink-soft); margin-top:12px; }
   .pl-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
 </style>
@@ -92,7 +99,7 @@
     <h1 style="font-size:clamp(1.7rem,5vw,2.7rem);margin:0 0 14px;">Every place in Egypt, on one map.</h1>
     <p class="lead" style="margin:0;max-width:70ch;color:#e9dfc8;">Cities, towns, airports and ancient
     sites, exactly as the OpenStreetMap community has recorded them. Search by name, narrow to a
-    governorate, and open any place for what the open data actually says &mdash; and does not say.</p>
+    governorate, and open any place for what the open data actually says &mdash; and does not say. Every place also carries a <strong>Going there</strong> block: the OpenStreetMap record, photographs, video and places to stay, each as a live search rather than a quoted price or opening time that would be stale before you read it.</p>
   </div>
 </section>
 
@@ -183,7 +190,8 @@
 <footer class="site-footer">
   <div class="cols">
     <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">An encyclopaedia of Egypt told through maps and cited open data.</p></div>
-    <div><h2 class="foot-h">Egypt</h2><a href="visit.html">Plan a Visit</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="explore.html">Egypt Data</a></div>
+    <div><h2 class="foot-h">Egypt</h2><a href="visit.html">Plan a Visit</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a>
+      <a href="invest.html">Invest</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="explore.html">Egypt Data</a></div>
     <div><h2 class="foot-h">More</h2><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h2 class="foot-h">Data sources</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
   </div>
@@ -198,7 +206,7 @@
 <script src="assets/egybi.js?v=1"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
-<script src="assets/places.js?v=3"></script>
+<script src="assets/places.js?v=4"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script src="assets/analytics.js"></script>

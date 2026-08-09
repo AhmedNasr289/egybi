@@ -142,6 +142,111 @@
     S.layers[kind] = group;
   }
 
+  /* --------------------------------------------------------- going there
+     Every link below is a QUERY, not a claim.
+
+     A reference page for visitors is where a beautiful site starts lying.
+     Opening hours, ticket prices and hotel availability all rot, and none of
+     them announce it — a page that quotes "EGP 200, open 08:00-17:00" is
+     wrong within a season and a reader will have budgeted against it. Quoting
+     a specific YouTube video is the same failure more slowly: videos are
+     deleted and this build cannot check.
+
+     So nothing here asserts a fact about a place. Each link is a search
+     constructed from the place's name and its coordinates, which cannot go
+     stale because it resolves against the destination's own live index at the
+     moment a reader clicks it. Booking and Airbnb are searches near the
+     coordinates with no price and no availability shown. Wikipedia and
+     Commons are searches unless OpenStreetMap carries the exact article, in
+     which case the article is linked directly.
+
+     Anything OSM DOES record — an official website, opening hours, step-free
+     access — is shown as what OSM recorded on a stated date, with the caution
+     attached, never as a statement about when the place is open. Those fields
+     arrive when fetch_geo_layers.py next runs; until then this block simply
+     shows fewer rows, which is why every one of them is guarded. */
+  function refLinks(p) {
+    var q = encodeURIComponent(p.name + ' Egypt');
+    var lat = p.lat.toFixed(5), lon = p.lon.toFixed(5);
+    var links = [];
+
+    links.push(['Open in OpenStreetMap',
+      'https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lon + '#map=15/' + lat + '/' + lon,
+      'The record this page is built from, at these coordinates.']);
+
+    if (p.wikipedia_title && p.wikipedia_lang) {
+      links.push(['Read on Wikipedia',
+        'https://' + encodeURIComponent(p.wikipedia_lang) + '.wikipedia.org/wiki/'
+          + encodeURIComponent(p.wikipedia_title.replace(/ /g, '_')),
+        'The article OpenStreetMap links to for this place.']);
+    } else {
+      links.push(['Search Wikipedia',
+        'https://en.wikipedia.org/w/index.php?search=' + q,
+        'OpenStreetMap carries no article link for this place, so this is a search.']);
+    }
+
+    if (p.commons) {
+      links.push(['Photographs on Wikimedia Commons',
+        'https://commons.wikimedia.org/wiki/' + encodeURIComponent(p.commons),
+        'The openly licensed category OpenStreetMap links to.']);
+    } else {
+      links.push(['Search Wikimedia Commons',
+        'https://commons.wikimedia.org/w/index.php?search=' + q + '&title=Special:MediaSearch&type=image',
+        'Openly licensed photographs, searched by name.']);
+    }
+
+    links.push(['Search YouTube',
+      'https://www.youtube.com/results?search_query=' + q,
+      'A search rather than a chosen video — a link to one video is a link that '
+      + 'eventually goes nowhere.']);
+
+    links.push(['Find stays on Booking.com',
+      'https://www.booking.com/searchresults.html?ss=' + q
+        + '&latitude=' + lat + '&longitude=' + lon,
+      'A search near these coordinates. No price or availability is shown here, '
+      + 'because either would be out of date before you read it.']);
+
+    links.push(['Find stays on Airbnb',
+      'https://www.airbnb.com/s/' + encodeURIComponent(p.name + ', Egypt') + '/homes',
+      'A search by place name, for the same reason.']);
+
+    if (p.website) {
+      links.push(['Official website', p.website,
+        'The website OpenStreetMap records for this place.']);
+    }
+    return links;
+  }
+
+  function goingThere(p) {
+    var out = [];
+    var osmDate = esc(S.data.as_of);
+
+    // Only rendered when OSM actually has the tag. The date and the caution
+    // travel with it every single time — an opening time without them is a
+    // promise this site cannot keep.
+    if (p.opening_hours) {
+      out.push('<div class="pd-row"><span>Opening hours</span><strong>'
+        + esc(p.opening_hours) + '</strong></div>'
+        + '<p class="pd-note">As recorded in OpenStreetMap on ' + osmDate
+        + ', in OSM’s own notation. Community-maintained and changed without '
+        + 'notice — confirm before you travel.</p>');
+    }
+    if (p.wheelchair) {
+      out.push('<div class="pd-row"><span>Step-free access</span><strong>'
+        + esc(p.wheelchair) + '</strong></div>'
+        + '<p class="pd-note">OpenStreetMap’s <code>wheelchair</code> tag as of '
+        + osmDate + '. &ldquo;limited&rdquo; means partly accessible; an absent tag '
+        + 'means nobody has surveyed it, not that access is poor.</p>');
+    }
+
+    var links = refLinks(p);
+    out.push('<ul class="pd-links">' + links.map(function (l) {
+      return '<li><a href="' + esc(l[1]) + '" target="_blank" rel="noopener">'
+        + esc(l[0]) + '</a><span>' + l[2] + '</span></li>';
+    }).join('') + '</ul>');
+    return '<div class="pd-going"><h4>Going there</h4>' + out.join('') + '</div>';
+  }
+
   function select(p) {
     S.sel = p;
     var el = $('placeDetail'); if (!el) return;
@@ -181,8 +286,12 @@
 
     el.innerHTML = '<h3>' + esc(p.name) + (p.name_ar ? ' <span class="pd-ar">' + esc(p.name_ar) + '</span>' : '') + '</h3>' +
       '<div class="pd-grid">' + bits.join('') + '</div>' +
+      goingThere(p) +
       '<p class="pd-note">Source: OpenStreetMap, as of ' + esc(S.data.as_of) +
-      '. Governorate computed by point-in-polygon against the bundled boundaries.</p>';
+      '. Governorate computed by point-in-polygon against the bundled boundaries. ' +
+      'The links above are searches run against each destination when you click ' +
+      'them, so nothing here quotes a price, an opening time or a room that may ' +
+      'no longer exist.</p>';
     el.hidden = false;
     S.map.setView([p.lat, p.lon], Math.max(S.map.getZoom(), 8));
     el.scrollIntoView({ behavior: (window.EGYBI && EGYBI.reduceMotion) ? 'auto' : 'smooth', block: 'nearest' });

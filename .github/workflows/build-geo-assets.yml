@@ -56,6 +56,16 @@ jobs:
       - name: Fetch Atlas layers (stdlib only, no pip)
         run: python backend/pipeline/fetch_geo_layers.py
 
+      # The investor map is a pure join over files already in the repo, so it
+      # never needs the network — but it DOES need to re-run after the fetch,
+      # because geo-industry.json is what lets a project match a power plant or
+      # a port by name. Run it even when a layer failed: the join reads
+      # whatever exists and reports how many rows it could place, so a skipped
+      # layer costs pins rather than breaking the step.
+      - name: Rebuild the investor map from whatever layers exist
+        if: '!cancelled()'
+        run: python backend/pipeline/build_invest_map.py
+
       # Runs even when the fetch step failed. The script's guardrails are
       # PER LAYER — a broken source skips only its own file and leaves the
       # others correctly written — but it still exits non-zero so the run
@@ -69,9 +79,15 @@ jobs:
           # is a hard error (exit 128) that would abort this step under `bash
           # -e` — which is exactly how run 2 discarded two good layers because
           # a third was skipped.
+          # This list is the real output contract of the run. A layer the
+          # script writes but this loop does not name is built on every run and
+          # then thrown away, which is silent and looks exactly like the layer
+          # never being generated at all — geo-industry.json was added to the
+          # fetcher and spent its first commit in that state.
           FILES=""
           for f in site/data/geo-health.json site/data/geo-schools.json \
-                   site/data/geo-heritage.json site/data/geo-places.json; do
+                   site/data/geo-heritage.json site/data/geo-places.json \
+                   site/data/geo-industry.json site/data/invest-projects.json; do
             [ -f "$f" ] && FILES="$FILES $f"
           done
           if [ -z "$FILES" ]; then
