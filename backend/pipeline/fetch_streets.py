@@ -743,7 +743,25 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
             + (f", unanswered: {', '.join(unanswered)}" if unanswered else "") + ")")
 
     if len(rows) < MIN_DISTRICTS_OK:
-        log(f"  SKIP access: only {len(rows)} districts produced results (<{MIN_DISTRICTS_OK})")
+        # PRINT WHY, not just how many. Every district that dropped out recorded
+        # its reason in `failures` — and this early return discarded all of them,
+        # so the guardrail reported "only 3 districts produced results" and threw
+        # away the only information that could explain it. On the SUCCESS path
+        # those same reasons are published in the file as `skipped`; on the
+        # failure path, where they actually matter, they vanished.
+        #
+        # Three consecutive runs failed this way on 2026-08-07 and the logs say
+        # nothing about which districts fell over or how. They do now.
+        log(f"  SKIP access: only {len(rows)} districts produced results "
+            f"(<{MIN_DISTRICTS_OK})")
+        if failures:
+            log("  why each district dropped out:")
+            for f in failures:
+                log(f"    - {f}")
+        else:
+            log("    no per-district reason was recorded, which means they were "
+                "still running when the job ended rather than failing — treat "
+                "this as a timeout, not a data problem.")
         return False
 
     out = {
