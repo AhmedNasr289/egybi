@@ -423,10 +423,23 @@
       .then(function (d) {
         S.data = d;
         var c = d.counts || {};
+        // Built from the counts the file actually carries, not from three
+        // hardcoded kinds. When museums arrived the map drew 116 of them and
+        // this line went on summarising the gazetteer as cities, airports and
+        // ancient sites — a page silently under-reporting its own contents.
+        // Anything the pipeline starts counting now appears here by itself.
+        var LABELS = { settlement: 'cities and towns', airport: 'airports',
+                       antiquity: 'ancient sites', museum: 'museums' };
+        var parts = Object.keys(LABELS)
+          .filter(function (k) { return c[k]; })
+          .map(function (k) { return fmt(c[k]) + ' ' + LABELS[k]; });
+        // A kind the data has but this list does not name still gets counted,
+        // under its own key, rather than being dropped for want of a phrasing.
+        Object.keys(c).forEach(function (k) {
+          if (!LABELS[k] && c[k]) parts.push(fmt(c[k]) + ' ' + k);
+        });
         $('placesMeta').innerHTML =
-          'OpenStreetMap, as of ' + esc(d.as_of) + ' · ' +
-          fmt(c.settlement) + ' cities and towns · ' + fmt(c.airport) + ' airports · ' +
-          fmt(c.antiquity) + ' ancient sites';
+          'OpenStreetMap, as of ' + esc(d.as_of) + ' · ' + parts.join(' · ');
         $('placesNote').textContent = d.note || '';
         // Coverage gap, stated where a reader will see it. The pipeline checks
         // a fixed list of major Egyptian cities on every build and ships the
