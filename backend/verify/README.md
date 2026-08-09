@@ -106,7 +106,7 @@ These were hardcoded absolute paths until 2026-08-08 — the committed tools ran
 in exactly one sandbox and nowhere else, which is the same failure as a check
 that cannot fire.
 
-## Two things this directory learned the hard way
+## Three things this directory learned the hard way
 
 **A checker can measure the machine instead of the site.** `all-pages.js` used to
 let third-party requests run. Behind a filtering proxy they hang rather than
@@ -123,3 +123,23 @@ marker rather than a sentence, and when a case reports FAILS TO CATCH, check
 whether the mutation was observable at all before concluding the checker is
 broken. Twice now the checker was right and the test was pointed at the wrong
 thing.
+
+**A metric can be wrong in the same direction three times.** A script measuring
+how much of its box each map fills unioned *every* SVG path in the container and
+compared that to the container — including the base country outline, which on a
+map fitted to ten districts is meant to extend past the viewport. It reported
+streets at 117–121% and that was carried for two rounds as a possible clipping
+bug. The same script had already been wrong twice before, once measuring the
+container before layout settled and once measuring Leaflet's oversized pan pane
+instead of the geometry. A number from a tool you wrote five minutes ago is not
+evidence; a picture is.
+
+**What counts as "content" is a decision, not a given.** `reduced.js` compared
+`body.innerText` between the two runs. Once maps carried labels — `divIcon`
+markers inside an `aria-hidden` pane, whose count depends on the map view —
+stories.html reported LOST CONTENT with an 87-character delta and nothing
+actually lost. It now measures a clone with `aria-hidden` subtrees removed,
+which relaxes the check for anything wrongly marked `aria-hidden`. That is a
+real cost, accepted deliberately: content a screen reader is told to ignore is
+not content whose disappearance this file should police.
+
