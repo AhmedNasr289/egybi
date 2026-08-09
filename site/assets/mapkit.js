@@ -385,6 +385,12 @@
       // in a .catch that reports "the layer has not been generated yet", the
       // Places map showed a plausible, wrong explanation instead of the bug.
       maxZoom: opts.maxZoom || 18,
+      // Leaflet snaps to whole zoom levels by default, so fitBounds picks the
+      // largest INTEGER zoom that fits. When the ideal is just under a whole
+      // level the map drops a full step and the country renders at ~70% of the
+      // box — measured on the Atlas at 375px, where it left the country a
+      // thumbnail in a mostly empty frame. Quarter steps let it actually fill.
+      zoomSnap: 0.25,
       fadeAnimation: !rm,
       zoomAnimation: !rm,
       markerZoomAnimation: !rm,
@@ -438,6 +444,118 @@
     return map;
   }
 
+  /* ---------------------------------------------------------------- labels
+     PLACE NAMES ON THE MAP, which every map here went without.
+
+     These are tile-free maps: there is no basemap underneath carrying the
+     names a reader expects, so an unlabelled polygon layer is a silhouette
+     quiz. You could hover each shape for a tooltip, which is no help on a
+     phone and no help at a glance, and it is the difference between a modern
+     digital map and an outline printed in a paper atlas.
+
+     WHY THIS IS ZOOM-GATED RATHER THAN ALWAYS ON. Egypt has 27 governorates
+     and the Delta ones are small and tightly packed: drawn at country zoom,
+     Cairo, Qalyubia, Gharbia, Monufia and Damietta overlap into an unreadable
+     smear, and the labels make the map WORSE than no labels. So a label is
+     drawn only when its own shape is big enough on screen to hold it —
+     measured per feature, per zoom, in pixels — which means the big desert
+     governorates are named immediately and the Delta names appear as you zoom
+     into the Delta. That is the trade-off, and it is why this is not simply
+     `permanent: true` on every tooltip.
+
+     Labels are aria-hidden. They repeat the accessible name already on the
+     feature, and a screen reader that reads every governorate twice is worse
+     off than one that reads it once. */
+  /* Where a name sits inside a shape.
+
+     NOT the bounding-box centre: that is a point in a rectangle, and for a
+     long coastal governorate the rectangle is mostly sea — the Red Sea label
+     rendered out in the water beside the country rather than on it.
+
+     NOT Leaflet's polygon getCenter() either, which was the obvious fix and
+     throws "Must add layer to map before using getCenter()". It needs the map's
+     projection, and labels are first drawn from whenReady, before every
+     sub-layer is attached — it took the whole Atlas down to zero rendered
+     paths. So the centroid is computed here from the ring's own coordinates,
+     which needs no map and cannot throw.
+
+     Area-weighted over the largest ring, then sanity-checked: if the centroid
+     falls outside the ring (possible for a crescent), fall back to the bounds
+     centre rather than shipping a label somewhere arbitrary. */
+  function labelPoint(layer, bounds) {
+    var rings;
+    try { rings = layer.getLatLngs(); } catch (e) { return bounds.getCenter(); }
+    if (!rings || !rings.length) return bounds.getCenter();
+    // Polygon -> [ring]; MultiPolygon -> [[ring]]. Take the ring with the most
+    // points, which for these shapes is the mainland rather than an islet.
+    var flat = [];
+    (function walk(a) {
+      if (!a || !a.length) return;
+      if (a[0] && typeof a[0].lat === 'number') { flat.push(a); return; }
+      for (var i = 0; i < a.length; i += 1) walk(a[i]);
+    }(rings));
+    if (!flat.length) return bounds.getCenter();
+    var ring = flat[0];
+    for (var i = 1; i < flat.length; i += 1) {
+      if (flat[i].length > ring.length) ring = flat[i];
+    }
+    var a2 = 0, cx = 0, cy = 0;
+    for (var j = 0; j < ring.length; j += 1) {
+      var p1 = ring[j], p2 = ring[(j + 1) % ring.length];
+      var cross = p1.lng * p2.lat - p2.lng * p1.lat;
+      a2 += cross;
+      cx += (p1.lng + p2.lng) * cross;
+      cy += (p1.lat + p2.lat) * cross;
+    }
+    if (!a2) return bounds.getCenter();
+    var lng = cx / (3 * a2), lat = cy / (3 * a2);
+    return bounds.contains([lat, lng]) ? L.latLng(lat, lng) : bounds.getCenter();
+  }
+
+  function addLabels(map, layer, textFn, opts) {
+    opts = opts || {};
+    var minPx = opts.minPx || 54;          // a shape narrower than this cannot hold a name
+    var cls = 'mk-label' + (opts.className ? ' ' + opts.className : '');
+
+    // A SEPARATE PANE OF MARKERS, not tooltips on the features. The first
+    // version bound a permanent tooltip to each polygon, which meant unbinding
+    // the rich hover tooltip the Atlas already had and rebinding it whenever
+    // the label went away — two features fighting over one slot, and the
+    // hover card lost. Labels live in their own pane instead: the geometry
+    // keeps its tooltip, its click handler and its focus behaviour untouched.
+    var pane = map.createPane('mkLabels');
+    pane.style.zIndex = 660;
+    pane.style.pointerEvents = 'none';     // paint, never a click target
+    pane.setAttribute('aria-hidden', 'true');   // the name is already on the feature
+
+    var group = L.layerGroup([], { pane: 'mkLabels' }).addTo(map);
+
+    function refresh() {
+      group.clearLayers();
+      var view = map.getBounds();
+      layer.eachLayer(function (l) {
+        if (!l.getBounds) return;                 // points label themselves
+        var b = l.getBounds();
+        if (!view.intersects(b)) return;          // offscreen: nothing to draw
+        var nw = map.latLngToLayerPoint(b.getNorthWest());
+        var se = map.latLngToLayerPoint(b.getSouthEast());
+        if (Math.abs(se.x - nw.x) < minPx || Math.abs(se.y - nw.y) < 16) return;
+        var text = textFn(l.feature ? l.feature.properties : {}, l);
+        if (!text) return;
+        L.marker(labelPoint(l, b), {
+          pane: 'mkLabels',
+          interactive: false,
+          keyboard: false,
+          icon: L.divIcon({ className: cls, html: esc(text), iconSize: null })
+        }).addTo(group);
+      });
+    }
+
+    map.on('zoomend moveend', refresh);
+    map.whenReady(function () { requestAnimationFrame(refresh); });
+    return refresh;
+  }
+
   /* The reset control needs the map's natural extent, which every caller only
      knows AFTER it has built its layers and fitted to them. So it is registered
      here rather than passed to create(). */
@@ -465,6 +583,7 @@
     barControl: barControl,
     choropleth: choropleth,
     addCredit: addCredit,
+    addLabels: addLabels,
     sources: SOURCES,
     reduceMotion: RM,
     esc: esc

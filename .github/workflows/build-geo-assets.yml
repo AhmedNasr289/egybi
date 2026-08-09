@@ -62,6 +62,22 @@ jobs:
       # a port by name. Run it even when a layer failed: the join reads
       # whatever exists and reports how many rows it could place, so a skipped
       # layer costs pins rather than breaking the step.
+      # build_invest_map.py reads the knowledge base out of
+      # backend/test/egybi_test.sqlite, and .gitignore excludes
+      # backend/test/*.sqlite — so that file exists on a developer's machine
+      # and has never existed on a runner. The step below ran once, died on
+      # "Missing .../egybi_test.sqlite", and turned the run red while every
+      # layer it depended on had fetched perfectly. A dependency that is
+      # satisfied only by an untracked local artefact is not a dependency the
+      # workflow has.
+      #
+      # The DB is rebuilt from the committed schema and seed files instead,
+      # which is where the data actually lives. It is deterministic, takes a
+      # second, and means the join runs against exactly the rows in the repo.
+      - name: Build the knowledge-base mirror the investor join reads
+        if: '!cancelled()'
+        run: python backend/test/build_test_db.py
+
       - name: Rebuild the investor map from whatever layers exist
         if: '!cancelled()'
         run: python backend/pipeline/build_invest_map.py

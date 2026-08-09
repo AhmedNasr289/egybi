@@ -1174,6 +1174,25 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 .marker-cluster-museum { background: rgba(107, 63, 160, 0.25); }
 .marker-cluster-museum div { background: #6B3FA0; }
 
+/* Map labels — place names drawn on the map itself.
+   No box, no background: a filled tooltip bubble per governorate turns the map
+   into a wall of chips. The name is set straight on the geometry and made
+   legible by a halo, so it reads over a pale desert fill, a saturated
+   choropleth step and the cream page alike without owning a rectangle.
+   text-shadow rather than -webkit-text-stroke because the stroke thins the
+   glyphs at small sizes and the halo does not. */
+.mk-label, .mk-label.leaflet-tooltip {
+  background: none; border: 0; box-shadow: none; padding: 0;
+  font: 700 11px/1.15 'Inter', system-ui, sans-serif;
+  letter-spacing: 0.01em; color: var(--kemet); white-space: nowrap;
+  text-shadow:
+    0 0 3px var(--papyrus-2), 0 0 3px var(--papyrus-2),
+    0 0 6px var(--papyrus-2), 1px 1px 0 rgba(255,255,255,0.9);
+}
+.mk-label::before { display: none; }        /* the tooltip's pointer arrow */
+.mk-label-sm { font-size: 10px; font-weight: 600; }
+@media (max-width: 720px) { .mk-label { font-size: 10px; } }
+
 @media (prefers-reduced-motion: reduce) {
   .mk-locator, .mk-btn { transition: none !important; }
 }

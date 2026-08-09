@@ -320,6 +320,13 @@
         });
       }
     }).addTo(S.map);
+    // Governorate names, drawn on the map itself. Without them this is a
+    // silhouette quiz: a reader cannot tell Qena from Sohag without hovering,
+    // and on a phone there is no hover at all. Names come from the bundled
+    // geometry's own properties, so they cost no request and cannot drift from
+    // the shapes they sit on. Small Delta governorates stay unlabelled until
+    // the reader zooms far enough in for the name to fit — see addLabels.
+    window.EGYBI.mapkit.addLabels(S.map, S.layer, function (p) { return p.name; });
     // One tab stop into the map, then arrow keys move geographically. This
     // replaces 27 individual tab stops in GeoJSON file order.
     window.EGYBI.mapkit.choropleth(S.map, S.layer, {
