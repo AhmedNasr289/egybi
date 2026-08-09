@@ -53,6 +53,24 @@
     return m;
   }
 
+  /* Governorate names on a story map.
+
+     These maps are inert illustrations and the prose beside them states every
+     FIGURE the shape encodes — but a name is not a figure, it is orientation.
+     "Half of Egypt lives in the blue" is a sentence a reader can only follow if
+     they can tell which governorates are blue, and on an unlabelled silhouette
+     they cannot. The zoom-gated label layer keeps this in proportion: at
+     country zoom only the large governorates are named, so the illustration
+     gains orientation without becoming a reference map competing with the Atlas.
+
+     minPx is higher than the Atlas uses because these maps are half the width,
+     so the same shape has fewer pixels to hold a name in. */
+  function nameGovernorates(map, layer) {
+    if (!window.EGYBI || !window.EGYBI.mapkit || !window.EGYBI.mapkit.addLabels) return;
+    window.EGYBI.mapkit.addLabels(map, layer, function (p) { return p && p.name; },
+                                  { minPx: 68, maxLabels: 12, className: 'mk-label-sm' });
+  }
+
   /* ------------------------------------------------------------------ 1. THE RIBBON
      Thesis: half of Egypt's people live on 2.4% of its land. */
   (function ribbon() {
@@ -63,6 +81,7 @@
     } }).addTo(m);
     m.fitBounds(layer.getBounds(), { padding: [8, 8] });
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
+    nameGovernorates(m, layer);
 
     // Densest-first, accumulating until half the population is covered.
     var byDens = props.slice().sort(function (a, b) { return b.density - a.density; });
@@ -127,6 +146,7 @@
     } }).addTo(m);
     m.fitBounds(layer.getBounds(), { padding: [8, 8] });
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
+    nameGovernorates(m, layer);
 
     fetch('data/geo-health.json', { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })
@@ -197,6 +217,7 @@
     } }).addTo(m);
     m.fitBounds(layer.getBounds(), { padding: [8, 8] });
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
+    nameGovernorates(m, layer);
 
     Promise.all([
       fetch('data/streets-districts.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }),
@@ -266,6 +287,7 @@
     } }).addTo(m);
     m.fitBounds(layer.getBounds(), { padding: [8, 8] });
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
+    nameGovernorates(m, layer);
 
     fetch('data/geo-places.json', { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })

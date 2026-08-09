@@ -166,6 +166,13 @@
     });
     var groups = groupByLocation(shown);
     S.layer = L.layerGroup(groups.map(markerFor)).addTo(S.map);
+    // Name what is on the map. There are never more than a dozen markers here,
+    // and an unlabelled dot on a country outline is a project the reader has to
+    // click to identify — which on a page whose whole argument is WHERE things
+    // are is the one thing the map should not make them do.
+    window.EGYBI.mapkit.addLabels(S.map, S.layer, function (props, l) {
+      return l && l._label;
+    }, { maxLabels: 24 });
     // Leaflet builds the SVG paths only once the layer is on a map with a
     // view, so the accessibility wiring has to wait for the frame after that
     // — setting tabindex before the elements exist silently sets it on

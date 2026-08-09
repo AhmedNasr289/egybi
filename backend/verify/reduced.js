@@ -46,7 +46,22 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
       // Anything still transparent after load is content a reader cannot see.
       const invisibleAos = [...document.querySelectorAll('[data-aos]')]
         .filter(e => +getComputedStyle(e).opacity < 0.05).length;
-      return { text: document.body.innerText.replace(/\s+/g,' ').trim().length,
+      // Text a READER gets, which is not the same as every character in the
+      // DOM. Map labels are divIcon markers inside an aria-hidden pane, so
+      // their text lands in body.innerText while being, by construction, hidden
+      // from assistive technology. How many of them draw depends on the map
+      // view, so the count differed harmlessly between the two runs and
+      // stories.html reported LOST CONTENT with a delta of 87 characters and
+      // nothing actually lost.
+      //
+      // Measuring on a clone with aria-hidden subtrees removed asks the
+      // question this file means to ask. It does relax the check for anything
+      // wrongly marked aria-hidden — that is the cost, and it is the right
+      // trade: content a screen reader is told to ignore is not content whose
+      // disappearance this checker should be policing.
+      var _c = document.body.cloneNode(true);
+      _c.querySelectorAll('[aria-hidden="true"]').forEach(function (e) { e.remove(); });
+      return { text: _c.textContent.replace(/\s+/g,' ').trim().length,
                links: document.querySelectorAll('a[href]').length,
                buttons: document.querySelectorAll('button, input, select').length,
                visible: vis.length, animated, invisibleAos,

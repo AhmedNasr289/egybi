@@ -175,12 +175,21 @@
       pin.bindTooltip('<strong>' + esc(d.name) + '</strong><br>' + m.label +
                       ': <strong>' + m.fmt(d[S.metric]) + '</strong>',
                       { direction: 'top', className: 'egypt-map-tip' });
+      pin._dName = d.name;          // read by the label layer
       pin.on('click', function () { select(d.key); });
       pin.on('mouseover', function () { pin.setStyle({ radius: 8, color: GOLD }); });
       pin.on('mouseout', function () { pin.setStyle({ radius: 6, color: GOLD_INK }); });
       S.pins.addLayer(pin);
     });
     S.pins.addTo(S.map);
+    // Name the districts. fitBounds spans all ten, which reach from Matrouh to
+    // the Red Sea, so the map sits at nearly country scale and the pins are ten
+    // near-identical dots crowded around Cairo — a picture that tells a reader
+    // nothing about which district is which. Ten labels is a small enough set
+    // to show at every zoom rather than gating them.
+    window.EGYBI.mapkit.addLabels(S.map, S.pins, function (props, l) {
+      return l && l._dName;
+    }, { maxLabels: 20 });
     S.map.fitBounds(S.layer.getBounds(), { padding: [12, 12] });
     window.EGYBI.mapkit.setHome(S.map, S.layer.getBounds());
     paintLegend();
