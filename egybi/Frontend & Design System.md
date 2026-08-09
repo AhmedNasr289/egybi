@@ -243,6 +243,44 @@ Two different problems, two answers:
 
 Cost of the whole round: **+3,667 bytes gzipped** across the six map files.
 
+### The checker that should have existed first (`backend/verify/map-contrast.js`)
+
+Twenty-five mutation-tested checkers ran green through all of the above. That is
+worth sitting with: `contrast.js` walks **text** nodes, an SVG stroke is not
+text, and so nothing on this site ever looked at the one colour pair that
+decides whether a tile-free map is a map at all. A defect found by eye that no
+tool can catch comes back.
+
+The rule is deliberately narrow: **every page that draws Egypt must paint a
+country-wide stroke clearing 3:1 against its map container's own background.**
+Not every stroke — a hairline between two filled governorates is legitimately
+light, because the fills either side already differ. The coast has no fill on
+its far side and has to carry itself.
+
+Two things the first version got wrong, both caught by running it:
+
+- **"Country-wide" is load-bearing.** Asking for *some* stroke over 3:1 let
+  Streets pass on the 1.5px gold ring around one selected district while its
+  coastline sat at 1.15:1. Only strokes covering 15+ of the 27 governorates are
+  eligible; accents are printed as context, never counted as evidence.
+- **Opacity is measured, not assumed.** The halo is drawn at `stroke-opacity`
+  0.62, so its raw colour is not what a reader sees. Compositing over the
+  container background first is the difference between testing the CSS and
+  testing the picture.
+
+Running it found two maps the eye had missed: **`visit.html`** (best
+country-wide stroke 1.63:1 — the outline was never added there) and
+**`streets.html`** (still white at 1.15:1, passing only on that gold accent).
+Both fixed. All eight surfaces now measure 3.22–9.29:1.
+
+Its two mutation cases are worth reading together, because the first one failed
+at first and the checker was right. Whitening the halo on **Places** proves
+nothing: Places draws two country-wide boundaries, so the map still has an
+edge. The case only reproduces the shipped defect on **Explore**, whose
+choropleth strokes its governorates in near-white `#FCF8EC` at 1.09:1 — the
+ramp fills carry the internal borders there, so the halo is the only thing
+drawing its coast.
+
 ### Two things that will trip up the next person measuring this
 
 **`:focus-visible` does not match a programmatic `.focus()`.** Diffing computed

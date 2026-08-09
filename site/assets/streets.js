@@ -119,6 +119,12 @@
        country" instead of "some marks". It also gives the locator inset an
        outline to draw, which it silently had none of before. */
     if (window.EGYBI_EGYPT_GEO) {
+      // Paler than the districts on purpose — but "paler" had become "absent".
+      // Its white boundary measured 1.15:1 against the page, so the country
+      // that is meant to say "ten districts, HERE" had no outline of its own.
+      // The halo restores the coast without darkening the internal borders,
+      // which would have put the base back into competition with the districts.
+      window.EGYBI.mapkit.outline(S.map, window.EGYBI_EGYPT_GEO);
       S.base = L.geoJSON(window.EGYBI_EGYPT_GEO, {
         interactive: false,          // context, not a target — never steal a click
         // Deliberately flatter and paler than the districts. The first version

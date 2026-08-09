@@ -67,6 +67,14 @@
         : 'Map of Egypt showing the major visitor sites'
     });
     if (!m) return null;
+    // The visitor map keeps its warm sand palette rather than the blue-grey
+    // the data maps use — this page is about places, not about a metric, and
+    // the sites drawn on top are the ink. But #C7BCA1 on the cream page is
+    // 1.63:1, so the country had no edge here either. The coastline halo does
+    // that job underneath without touching the fill above it. On the relief map
+    // the ground is dark and #C7BCA1 already measures 9.29:1, so the halo is
+    // only needed on the light one.
+    if (id !== 'reliefMap') window.EGYBI.mapkit.outline(m, window.EGYBI_EGYPT_GEO);
     L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: function () {
         return { color: '#C7BCA1', weight: 1, fillColor: '#EFE7D4', fillOpacity: 1 };

@@ -376,6 +376,53 @@ case("map with keyboard control disabled", "a11y2.js", ["site/assets/mapkit.js"]
      lambda o: "map cannot be focused by keyboard" in o,
      A11Y1.format(p="geospatial.html"))
 
+MAPC = "ONLY={p} node " + str(HERE) + "/map-contrast.js"
+
+# ---- 20. the country with no edge -----------------------------------------
+# The defect this covers shipped, sat on every map page, and ran green through
+# all nineteen cases above it. The boundary of Egypt was white on a cream
+# background — 1.15:1, which is not a faint line but the absence of one — and
+# nothing here looked at it, because contrast.js walks TEXT nodes and an SVG
+# stroke is not text. On a tile-free site there is no basemap underneath to
+# carry the shape, so that one colour pair decides whether a map is a map.
+#
+# Mutating the shared coastline colour to white reproduces exactly the state
+# the site was in, which is the only reason to trust that the new checker would
+# have caught it.
+case("country outline with no contrast against the page", "map-contrast.js",
+     ["site/assets/mapkit.js"],
+     lambda: edit("site/assets/mapkit.js",
+                  "return { fill: false, color: opts.color || '#0E2A5E',",
+                  "return { fill: false, color: opts.color || '#FFFFFF',"),
+     lambda o: "NO VISIBLE BOUNDARY" in o,
+     # Aimed at Explore, not Places, and the difference is the whole case.
+     # Places draws TWO country-wide boundaries — the halo and its own
+     # #6E86A8 internal stroke at 3.51:1 — so whitening the halo there leaves a
+     # map that still, correctly, has an edge, and the case reported FAILS TO
+     # CATCH for a checker that was behaving perfectly. Explore's choropleth
+     # strokes its governorates in near-white #FCF8EC at 1.09:1 because the
+     # ramp fills either side carry the internal borders, so the halo is the
+     # only thing drawing its coast. Whitening it there reproduces exactly the
+     # state the whole site shipped in.
+     MAPC.format(p="explore.html"))
+
+
+# ---- 21. an outline that is only an accent ---------------------------------
+# The first version of map-contrast.js asked for SOME stroke over 3:1, and
+# Streets passed it on the gold ring around one selected district while its
+# coastline sat at 1.15:1 — a rule satisfied by an accent that says nothing
+# about whether the country has an edge. Deleting the country-wide outline
+# entirely leaves those accents in place, so this case fails if the MIN_PATHS
+# floor is ever relaxed back to "any stroke will do".
+case("country outline removed, leaving only per-feature accents",
+     "map-contrast.js", ["site/assets/mapkit.js"],
+     lambda: edit("site/assets/mapkit.js",
+                  "    if (!map || !geo || !window.L) return null;",
+                  "    if (!map || !geo || !window.L) return null;\n    return null;"),
+     lambda o: "NO VISIBLE BOUNDARY" in o or "NO COUNTRY OUTLINE" in o,
+     MAPC.format(p="streets.html"))
+
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")
