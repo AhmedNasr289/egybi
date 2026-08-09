@@ -1,8 +1,10 @@
 /* EgyBI — Places: an Egypt-wide gazetteer on a tile-free map.
    ---------------------------------------------------------------------------
    Reads site/data/geo-places.json, built by backend/pipeline/fetch_geo_layers.py
-   from OpenStreetMap. Four kinds: cities, towns, airports with an IATA code,
-   and archaeological sites.
+   from OpenStreetMap: cities and towns, airports with an IATA code,
+   archaeological sites and museums. A kind is offered as a filter chip only
+   when the committed file actually contains one, so the page never advertises
+   a layer it cannot draw.
 
    TILE-FREE, like every other map here. The governorate outlines come from the
    bundled EGYBI_EGYPT_GEO, and the places come from a JSON file in this repo.
@@ -29,18 +31,34 @@
   // One colour per kind, chosen to stay distinguishable on the pale governorate
   // fill and to survive the site's dark/light surface alternation.
   var KIND = {
-    settlement: { label: 'Cities & towns', colour: BLUE,    r: 4 },
+    settlement: { label: 'Cities & towns', colour: BLUE,      r: 4 },
     airport:    { label: 'Airports',       colour: '#0F7B6C', r: 5 },
-    antiquity:  { label: 'Ancient sites',  colour: '#B23A0F', r: 3.5 }
+    antiquity:  { label: 'Ancient sites',  colour: '#B23A0F', r: 3.5 },
+    museum:     { label: 'Museums',        colour: '#6B3FA0', r: 4 }
   };
 
   var CLUSTER_CLASS = {
     settlement: 'marker-cluster-settlement',
     airport: 'marker-cluster-airport',
-    antiquity: 'marker-cluster-antiquity'
+    antiquity: 'marker-cluster-antiquity',
+    museum: 'marker-cluster-museum'
   };
 
-  var S = { map: null, data: null, layers: {}, active: { settlement: true, airport: true, antiquity: false }, sel: null };
+  // MUSEUMS WERE ADDED TO THE PIPELINE BEFORE THEY WERE ADDED HERE, and this
+  // table is why that would have been silent. `S.active` is consulted before a
+  // marker is ever drawn, and an absent key is falsy — so a fourth kind
+  // arriving in geo-places.json would have been fetched, committed, deployed
+  // and then filtered out of the map with nothing anywhere saying so. A kind
+  // the data can produce must exist here, in CLUSTER_CLASS, as a chip in
+  // places.html and as a cluster colour in egybi.css, or it does not exist to
+  // a reader.
+  //
+  // On by default, unlike ancient sites: there are a few dozen museums and 393
+  // antiquities, so museums do not swamp the map and are the single most
+  // useful layer for someone planning a visit.
+  var S = { map: null, data: null, layers: {},
+            active: { settlement: true, airport: true, antiquity: false, museum: true },
+            sel: null };
 
   function $(id) { return document.getElementById(id); }
   function esc(s) { return (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml(s) : String(s == null ? '' : s); }
@@ -325,9 +343,23 @@
   }
 
   function wireControls() {
+    // Count what the data actually has, so a chip is only offered for a kind a
+    // reader can be shown. Museums are in the pipeline before they are in the
+    // committed file: without this, the Museums chip would sit there between
+    // deploy and the next Overpass run, toggling a layer with nothing in it and
+    // reporting "0 places" as though that were a fact about Egypt.
+    var have = {};
+    (S.data && S.data.places ? S.data.places : []).forEach(function (p) {
+      have[p.kind] = (have[p.kind] || 0) + 1;
+    });
     Object.keys(KIND).forEach(function (kind) {
       var btn = document.querySelector('[data-kind="' + kind + '"]');
       if (!btn) return;
+      if (!have[kind]) {
+        btn.hidden = true;
+        S.active[kind] = false;
+        return;
+      }
       btn.classList.toggle('on', !!S.active[kind]);
       btn.setAttribute('aria-pressed', String(!!S.active[kind]));
       btn.addEventListener('click', function () {

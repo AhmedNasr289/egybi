@@ -1171,6 +1171,8 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 .marker-cluster-antiquity div { background: #B23A0F; }
 .marker-cluster-airport { background: rgba(15, 123, 108, 0.25); }
 .marker-cluster-airport div { background: #0F7B6C; }
+.marker-cluster-museum { background: rgba(107, 63, 160, 0.25); }
+.marker-cluster-museum div { background: #6B3FA0; }
 
 @media (prefers-reduced-motion: reduce) {
   .mk-locator, .mk-btn { transition: none !important; }
