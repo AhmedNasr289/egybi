@@ -5,17 +5,37 @@ description: >
   built-in GITHUB_TOKEN — no external secret or service. Dedupes by title, so a
   repeatedly-failing job appends comments to one thread instead of spamming new
   issues. Requires the calling job to grant `issues: write`.
+
+  Takes an optional `reason`: the lines the failing script already printed
+  explaining itself. Without it every alert this action writes is the same
+  sentence and a link, so the diagnosis exists only inside a log somebody has
+  to go and open — and "Build Atlas geo layers" failed twice in one day with
+  four of five layers refreshing perfectly, which the issue thread had no way
+  of saying. A guardrail that skips a layer already knows which layer and why.
+  Carry it.
+inputs:
+  reason:
+    description: >
+      Short diagnostic text to include in the issue — typically the SKIP or
+      FAILED lines grepped out of the failing step's own output. Truncated to
+      keep one bad run from posting a whole log.
+    required: false
+    default: ''
 runs:
   using: composite
   steps:
     - uses: actions/github-script@v7
+      env:
+        REASON: ${{ inputs.reason }}
       with:
         script: |
           const title = `⚠️ CI failure: ${context.workflow}`;
           const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          const reason = (process.env.REASON || '').trim().slice(0, 4000);
           const body = [
             `The **${context.workflow}** workflow failed (run #${context.runNumber}, attempt ${process.env.GITHUB_RUN_ATTEMPT || '1'}).`,
             ``,
+            ...(reason ? ['What the run said about itself:', '', '```', reason, '```', ''] : []),
             `Run log: ${runUrl}`,
             ``,
             `_Automated alert. Close this issue once resolved — the next failure re-opens the thread._`,

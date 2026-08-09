@@ -101,14 +101,18 @@
     });
     if (!S.map) return false;
     S.map.createPane('proj').style.zIndex = 640;
+    EGYBI.mapkit.outline(S.map, window.EGYBI_EGYPT_GEO);
     S.base = L.geoJSON(window.EGYBI_EGYPT_GEO, {
-      style: function () {
-        return { color: '#FFFFFF', weight: 1, fillColor: '#DDE3EC', fillOpacity: 0.85 };
-      },
+      style: EGYBI.mapkit.landStyle,
       onEachFeature: function (f, lyr) {
         lyr.bindTooltip(esc(f.properties.name), { sticky: true });
       }
     }).addTo(S.map);
+    // Which governorate a project sits in is most of what an investor wants
+    // from this map, and it was the one thing the map did not say.
+    EGYBI.mapkit.addLabels(S.map, S.base, function (p) { return p && p.name; },
+                           { minPx: 62, maxZoom: 8, maxLabels: 16, priority: 0,
+                             className: 'mk-label-sm' });
     S.map.fitBounds(S.base.getBounds(), { padding: [6, 6] });
     EGYBI.mapkit.setHome(S.map, S.base.getBounds());
     return true;
@@ -172,7 +176,9 @@
     // are is the one thing the map should not make them do.
     window.EGYBI.mapkit.addLabels(S.map, S.layer, function (props, l) {
       return l && l._label;
-    }, { maxLabels: 24 });
+    // Above the governorate names, which are context: the name of the project
+    // is the reason this map exists.
+    }, { maxLabels: 24, priority: 10 });
     // Leaflet builds the SVG paths only once the layer is on a map with a
     // view, so the accessibility wiring has to wait for the frame after that
     // — setting tabindex before the elements exist silently sets it on

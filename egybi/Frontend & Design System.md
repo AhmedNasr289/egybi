@@ -179,6 +179,70 @@ Also from that round: Leaflet snaps to whole zoom levels, so `fitBounds` drops a
 full step when the ideal zoom sits just under an integer. The Atlas at 375px
 filled 70% of its box. `zoomSnap: 0.25` took it to 86%, measured.
 
+Three more, added 2026-08-09 after looking at the maps again and finding the
+labels were the second problem, not the first:
+
+- **A ceiling as well as a floor (`maxZoom`).** Two label layers on one map have
+  to hand over to each other. Governorates are enormous polygons, so they always
+  clear `minPx` and — being placed first — win every collision; without a
+  ceiling, zooming in for street-level names got "Giza" holding the middle of
+  the screen instead. Places names governorates to zoom 8 and gazetteer places
+  from zoom 9, so the two never compete.
+- **Priority, because the winner of a contested forty pixels is an editorial
+  decision.** It was being decided by the order the JavaScript happened to run
+  in. The investor map builds its base before it fetches its projects, so the
+  governorates placed first and the map answered "Red Sea" where the reader had
+  asked "which project". `priority` states the ranking so it survives someone
+  reordering the setup.
+- **One pass over every layer, never a layer on its own.** Each layer used to
+  reset the shared registry and refresh itself on creation, which meant the last
+  layer built placed its labels against an empty registry. Two labels in the
+  same pixels on first paint, tidying themselves up only if the reader panned.
+  The map now owns the list of label layers and one pass replays all of them in
+  priority order — on add, on move, and on remove.
+
+And one measurement bug worth remembering: the collision box was computed
+**centred** while a point's label renders **offset to the right of its dot**
+(`.mk-label-pt`'s `translate(9px, -50%)`). At 30 characters the reserved
+rectangle and the drawn one overlapped by about a third, so the registry was
+carefully keeping two labels apart in a place neither of them was.
+
+### The coastline (`mapkit.outline`, `mapkit.landStyle`)
+
+The labels were not why the maps were hard to see. **Nothing was drawing the
+coast.** Measured against the map background (`--papyrus` `#F6EEDC`):
+
+| what | colour | contrast |
+|---|---|---|
+| the country outline | `#FFFFFF` | **1.15:1** |
+| base land fill, Places/Invest | `#DDE3EC` | 1.12:1 |
+| base land fill, Stories | `#E4E8EF` | 1.06:1 |
+| lightest choropleth step | `#E3EAF5` | 1.05:1 |
+
+A white boundary at 1.15:1 is not a faint line, it is the absence of one, so the
+only thing separating Egypt from the sea was a 1.12:1 fill edge. The country
+read as a pale slab with cluster numbers floating on it.
+
+Two different problems, two answers:
+
+- **Internal borders** — `#6E86A8`, one colour for every base-land layer,
+  replacing four drifted copies of the same style object. 3.22:1 against the
+  page and 3.73:1 against `#0E2A5E`, the darkest choropleth step, so it carries
+  over any fill this site puts under it and clears WCAG 1.4.11's 3:1. Both
+  numbers are the constraint: darker wins against the page and vanishes into the
+  deep-blue end of the ramp.
+- **The exterior** — no single stroke can do this on a choropleth. Against the
+  six ramp steps `#6E86A8` runs 3.08, 2.22, 1.50, **1.05**, 1.83, 3.73. So the
+  coast is a halo *under* the fills: the same geometry, unfilled, thick, in a
+  pane below the overlay pane. The internal borders of that copy are covered by
+  the opaque fills above; only the outside edge survives. No dissolved ring, no
+  second geometry file, no build step, so it cannot fall out of sync with the
+  boundaries it traces. The cost is that below full fill opacity the covered
+  internal borders show faintly — at the 0.9–0.95 this site uses, a hairline at
+  a tenth strength.
+
+Cost of the whole round: **+3,667 bytes gzipped** across the six map files.
+
 ### Two things that will trip up the next person measuring this
 
 **`:focus-visible` does not match a programmatic `.focus()`.** Diffing computed

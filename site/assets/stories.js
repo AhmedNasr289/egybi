@@ -14,6 +14,17 @@
   'use strict';
 
   var GOLD = '#C9A227', GOLD_INK = '#8A6D1E', BLUE = '#17408B';
+  /* Two stroke colours, and which one applies depends on what is underneath.
+     White reads on the saturated blue and gold a highlighted governorate gets,
+     and doubles as the signal that it IS highlighted. On the pale unhighlighted
+     fill white measures 1.15:1 against the page and draws nothing at all, so
+     the rest of the country dissolved into the background exactly when a step
+     was asking the reader to compare the highlighted part against it. */
+  var LINE = (window.EGYBI.mapkit && window.EGYBI.mapkit.landLine) || '#6E86A8';
+  function pale(fill, op) {
+    return { color: LINE, weight: 0.8, fillColor: fill || '#E4E8EF',
+             fillOpacity: op == null ? 0.9 : op };
+  }
   var SCROLLY = window.EGYBI_SCROLLY;
   if (!window.L || !window.EGYBI_EGYPT_GEO || !SCROLLY) return;
 
@@ -76,8 +87,9 @@
   (function ribbon() {
     var el = document.getElementById('mapRibbon'); if (!el) return;
     var m = baseMap('mapRibbon');
+    if (window.EGYBI.mapkit.outline) window.EGYBI.mapkit.outline(m, GEO);
     var layer = L.geoJSON(GEO, { style: function () {
-      return { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.9 };
+      return pale();
     } }).addTo(m);
     m.fitBounds(layer.getBounds(), { padding: [8, 8] });
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
@@ -106,14 +118,14 @@
     }
     SCROLLY.register('mapRibbon', {
       whole: function () {
-        paint(function () { return { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.9 }; });
+        paint(function () { return pale(); });
         SCROLLY.goTo(m, [26.8, 30.0], 5);
       },
       dense: function () {
         paint(function (p) {
           return half.indexOf(p.name) > -1
             ? { color: '#fff', weight: 1, fillColor: BLUE, fillOpacity: 0.92 }
-            : { color: '#fff', weight: 0.8, fillColor: '#E9ECF1', fillOpacity: 0.65 };
+            : pale('#E9ECF1', 0.65);
         });
         SCROLLY.goTo(m, [29.8, 31.1], 6);
       },
@@ -121,7 +133,7 @@
         paint(function (p) {
           return p.density < 25
             ? { color: '#fff', weight: 1, fillColor: GOLD, fillOpacity: 0.85 }
-            : { color: '#fff', weight: 0.8, fillColor: '#E9ECF1', fillOpacity: 0.6 };
+            : pale('#E9ECF1', 0.6);
         });
         SCROLLY.goTo(m, [26.5, 30.0], 5);
       },
@@ -129,7 +141,7 @@
         paint(function (p) {
           if (half.indexOf(p.name) > -1) return { color: '#fff', weight: 1, fillColor: BLUE, fillOpacity: 0.92 };
           if (p.density < 25) return { color: '#fff', weight: 1, fillColor: GOLD, fillOpacity: 0.8 };
-          return { color: '#fff', weight: 0.8, fillColor: '#E9ECF1', fillOpacity: 0.7 };
+          return pale('#E9ECF1', 0.7);
         });
         SCROLLY.goTo(m, [26.8, 30.0], 5);
       }
@@ -141,8 +153,9 @@
   (function mapped() {
     var el = document.getElementById('mapHealth'); if (!el) return;
     var m = baseMap('mapHealth');
+    if (window.EGYBI.mapkit.outline) window.EGYBI.mapkit.outline(m, GEO);
     var layer = L.geoJSON(GEO, { style: function () {
-      return { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.9 };
+      return pale();
     } }).addTo(m);
     m.fitBounds(layer.getBounds(), { padding: [8, 8] });
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
@@ -177,12 +190,12 @@
         }
         SCROLLY.register('mapHealth', {
           flat: function () {
-            layer.setStyle(function () { return { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.9 }; });
+            layer.setStyle(function () { return pale(); });
             SCROLLY.goTo(m, [26.8, 30.0], 5);
           },
           rate: function () {
             layer.setStyle(function (f) {
-              return { color: '#fff', weight: 0.8, fillColor: ramp(rate[f.properties.name]), fillOpacity: 0.95 };
+              return { color: LINE, weight: 0.8, fillColor: ramp(rate[f.properties.name]), fillOpacity: 0.95 };
             });
             SCROLLY.goTo(m, [26.8, 30.0], 5);
           },
@@ -212,8 +225,9 @@
   (function streets() {
     var el = document.getElementById('mapStreets'); if (!el) return;
     var m = baseMap('mapStreets');
+    if (window.EGYBI.mapkit.outline) window.EGYBI.mapkit.outline(m, GEO);
     var layer = L.geoJSON(GEO, { style: function () {
-      return { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.85 };
+      return pale('#E4E8EF', 0.85);
     } }).addTo(m);
     m.fitBounds(layer.getBounds(), { padding: [8, 8] });
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
@@ -282,8 +296,9 @@
   (function dug() {
     var el = document.getElementById('mapDug'); if (!el) return;
     var m = baseMap('mapDug');
+    if (window.EGYBI.mapkit.outline) window.EGYBI.mapkit.outline(m, GEO);
     var layer = L.geoJSON(GEO, { style: function () {
-      return { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.9 };
+      return pale();
     } }).addTo(m);
     m.fitBounds(layer.getBounds(), { padding: [8, 8] });
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
@@ -350,12 +365,12 @@
             return pick(f.properties.name);
           });
         }
-        var PLAIN = { color: '#fff', weight: 0.8, fillColor: '#E4E8EF', fillOpacity: 0.9 };
+        var PLAIN = pale();
         function highlight(name, colour) {
           return function (g) {
             return g === name
               ? { color: GOLD_INK, weight: 2.2, fillColor: colour, fillOpacity: 0.9 }
-              : { color: '#fff', weight: 0.8, fillColor: '#E9ECF1', fillOpacity: 0.55 };
+              : pale('#E9ECF1', 0.55);
           };
         }
         function centreOf(name) {

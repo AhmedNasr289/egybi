@@ -75,8 +75,31 @@ jobs:
           # cache is keyed on are the versions actually installed.
           pip install -r backend/pipeline/requirements-streets.txt
 
+      # Tee'd for the same reason build-geo-assets is: fetch_streets.py names
+      # the district and the reason whenever a guardrail keeps last-good data,
+      # and that sentence was reaching nothing but the run log. This workflow
+      # failed three times in a row on main while its failure issue said only
+      # that it had failed.
       - name: Build the report card and access layers
-        run: python backend/pipeline/fetch_streets.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python backend/pipeline/fetch_streets.py 2>&1 | tee /tmp/streets-fetch.log
+
+      - name: Collect the reasons any district was skipped
+        if: '!cancelled()'
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<STREETS_EOF'
+            # Matches the vocabulary fetch_streets.py actually uses: the SKIP
+            # header, the per-district '    - <name>: <reason>' lines it prints
+            # underneath, and the note it emits on the success path.
+            grep -E '(SKIP|FAILED|why each district|no per-district reason|^ +- .+: |note: [0-9]+ district)' \
+              /tmp/streets-fetch.log | head -30 || true
+            echo 'STREETS_EOF'
+          } >> "$GITHUB_OUTPUT"
 
       - name: Generate the planner's notes
         if: ${{ inputs.planner_notes == 'yes' }}
@@ -129,3 +152,5 @@ jobs:
       - name: Alert on failure
         if: failure()
         uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}

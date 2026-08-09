@@ -53,8 +53,33 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Tee'd, so the reasons the script prints survive the step that failed.
+      # fetch_geo_layers.py is careful to say WHICH layer it skipped and why
+      # ("SKIP health: only 118 facilities (<400)", "SKIP health: Overpass
+      # unreachable"), and that sentence is the whole diagnosis — but it lived
+      # only in the run log, so the failure issue said nothing more than "the
+      # workflow failed" and the layer that broke could not be named without
+      # opening the log by hand. pipefail is what makes the step still fail:
+      # without it the pipe's exit status is tee's, which is always 0, and the
+      # run would go green while a layer was being skipped.
       - name: Fetch Atlas layers (stdlib only, no pip)
-        run: python backend/pipeline/fetch_geo_layers.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python backend/pipeline/fetch_geo_layers.py 2>&1 | tee /tmp/atlas-fetch.log
+
+      # Runs whatever happened above, because its whole job is to describe a
+      # step that has already failed.
+      - name: Collect the reasons any layer was skipped
+        if: '!cancelled()'
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<ATLAS_EOF'
+            grep -E '(SKIP|FAILED) ' /tmp/atlas-fetch.log | head -20 || true
+            echo 'ATLAS_EOF'
+          } >> "$GITHUB_OUTPUT"
 
       # The investor map is a pure join over files already in the repo, so it
       # never needs the network — but it DOES need to re-run after the fetch,
@@ -136,3 +161,5 @@ jobs:
       - name: Alert on failure
         if: failure()
         uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}

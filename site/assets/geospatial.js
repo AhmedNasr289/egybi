@@ -299,6 +299,7 @@
     // 963 facility dots.
     S.map.createPane('ptsHealth').style.zIndex = 640;
     S.map.createPane('ptsHeritage').style.zIndex = 650;
+    window.EGYBI.mapkit.outline(S.map, window.EGYBI_EGYPT_GEO);
     S.layer = L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: baseStyle,
       onEachFeature: function (feature, lyr) {

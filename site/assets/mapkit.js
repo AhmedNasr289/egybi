@@ -31,6 +31,77 @@
       ? window.EGYBI.escapeHtml(s) : String(s == null ? '' : s);
   };
 
+  /* ------------------------------------------------------- the base land --
+     Every map that is not itself a choropleth draws the same thing underneath
+     its data: the 27 governorates as a plain backdrop. Places, Invest and the
+     four Stories maps each carried their own copy of that style object, and
+     the copies had already drifted — two on #DDE3EC at 0.85 opacity, the rest
+     on #E4E8EF at 0.9, for no reason anyone could have stated.
+
+     All of them stroked it white, and that is the defect worth naming. The map
+     background is --papyrus #F6EEDC, so a white boundary measures 1.15:1
+     against it. That is not a faint line; it is the absence of one. With no
+     line, the only thing separating Egypt from the sea was the fill's own
+     1.12:1 edge — which is why the country read as a pale slab with cluster
+     numbers floating on it rather than as a coastline, and why the honest
+     answer to "I can't see the maps well" was that there was very little to
+     see.
+
+     #6E86A8 measures 3.22:1 against the page and 3.73:1 against #0E2A5E, the
+     darkest choropleth step. One stroke colour therefore carries the boundary
+     over every fill this site puts beneath it, rather than needing a per-fill
+     rule, and it clears the 3:1 that WCAG 1.4.11 asks of a non-text boundary.
+     Both numbers are the constraint: darken it further and it wins against the
+     page but disappears into the deep-blue end of the ramp. */
+  var LAND_FILL = '#DDE3EC';
+  var LAND_LINE = '#6E86A8';
+  function landStyle() {
+    return { color: LAND_LINE, weight: 1, fillColor: LAND_FILL, fillOpacity: 0.9 };
+  }
+
+  /* --------------------------------------------------------- the coastline --
+     One stroke colour cannot do this job on a choropleth, and the measurements
+     say so plainly. Against the six ramp steps #6E86A8 runs 3.08, 2.22, 1.50,
+     1.05, 1.83, 3.73 — it disappears completely into step four. The existing
+     near-white #FCF8EC has the opposite failure: 13.08 against the darkest step
+     and 1.09 against the page, so the internal borders were fine and the
+     COASTLINE was not there at all.
+
+     The two problems are different and want different answers. Between two
+     filled governorates the fills already differ, so a light hairline is
+     enough. Between the country and the page there is nothing but the line,
+     and that line has one job: separate land from not-land. Judged against the
+     page alone, --kemet measures 12:1.
+
+     So the exterior is drawn as a halo UNDER the fills rather than as a stroke
+     on them: the same geometry, unfilled, in a pane below the overlay pane,
+     stroked thick. Every internal border of that copy is covered by the opaque
+     fill of the layer above it, and the only part that survives is the outside
+     edge — which is precisely the edge that was missing. It needs no dissolved
+     ring, no second geometry file and no build step, so it cannot fall out of
+     sync with the boundaries it is tracing.
+
+     The cost is honest: where a caller draws fills at less than full opacity
+     the covered internal borders show faintly through. At the 0.9-0.95 this
+     site uses that is a hairline at a tenth strength, which reads as a soft
+     seam rather than a line. */
+  function outline(map, geo, opts) {
+    if (!map || !geo || !window.L) return null;
+    opts = opts || {};
+    var pane = map.getPane('mkOutline') || map.createPane('mkOutline');
+    pane.style.zIndex = 390;               // below Leaflet's overlayPane (400)
+    pane.style.pointerEvents = 'none';
+    return L.geoJSON(geo, {
+      pane: 'mkOutline',
+      interactive: false,
+      style: function () {
+        return { fill: false, color: opts.color || '#0E2A5E',
+                 weight: opts.weight || 3, opacity: opts.opacity || 0.62,
+                 lineJoin: 'round' };
+      }
+    }).addTo(map);
+  }
+
   /* ------------------------------------------------------------ controls --
      Leaflet's own controls are <a href="#"> elements. That is a real problem
      beyond style: a screen reader announces them as links to nowhere, and on
@@ -543,6 +614,15 @@
     // clustering hands over to individual markers, so counts become names at
     // exactly the point the dots stop being counts.
     var minZoom = opts.minZoom || 0;
+    // A CEILING AS WELL AS A FLOOR, because two label layers on one map have to
+    // hand over to each other. Places names its 27 governorates while the view
+    // is the whole country and its 873 gazetteer places once you are close
+    // enough for that to mean something. Without a ceiling the governorate
+    // names never leave: they are enormous polygons, so they always clear minPx,
+    // and being placed first they win every collision — the reader zooms in
+    // hoping for street-level names and gets "Giza" holding the middle of the
+    // screen against them.
+    var maxZoom = opts.maxZoom == null ? Infinity : opts.maxZoom;
     var maxLabels = opts.maxLabels || 120;   // a hard ceiling on a dense view
 
     /* COLLISION AVOIDANCE. Without it the labels are an improvement everywhere
@@ -564,12 +644,43 @@
        again for every candidate — hundreds of forced reflows per pan. 6.2px
        per character at 11px Inter semibold is close enough to reserve the
        right space. */
-    // Registered once per map and always before any refresh, so the shared
-    // registry is empty when the first layer starts placing.
-    if (!map._mkPlacedReset) {
-      map._mkPlacedReset = true;
-      map.on('moveend', function () { map._mkPlaced = []; });
+    /* ONE PASS OVER EVERY LAYER, NEVER A LAYER ON ITS OWN.
+
+       A shared collision registry only works if every layer is placed against
+       the same generation of it. The first version reset the registry on
+       moveend and let each layer additionally reset-and-refresh itself when it
+       was created — which is exactly the case that breaks. On the investor map
+       the governorate names place first and register their boxes; the project
+       layer is built a moment later, empties the registry on the way in, and
+       places its own labels against nothing. Neither pass is wrong on its own
+       and the result is still two labels in the same pixels: "2 projects at
+       Benban Solar Park" printed through "Red Sea" on first paint, and only
+       tidied itself up if the reader happened to pan.
+
+       So the registry and the refreshes move together. The map owns the list of
+       label layers, and a single placement pass empties the registry and then
+       replays every layer in the order they were added. Adding a layer runs the
+       pass; moving the map runs the pass; removing a layer runs the pass, which
+       also reclaims the space its labels were holding. There is no path that
+       places one layer while the others are stale. */
+    if (!map._mkPass) {
+      map._mkRefreshers = [];
+      map._mkPass = function () {
+        map._mkPlaced = [];
+        for (var i = 0; i < map._mkRefreshers.length; i += 1) map._mkRefreshers[i].fn();
+      };
+      map.on('moveend', map._mkPass);
     }
+
+    /* WHICH LABEL WINS A CONTESTED FORTY PIXELS IS AN EDITORIAL DECISION, and
+       until this existed it was decided by the order the JavaScript happened to
+       run in. The investor map builds its base layer before it fetches its
+       projects, so the governorates placed first and won every collision, and
+       the map answered "Red Sea" where the reader had asked "which project".
+       The name of a wind farm is the entire reason that page has a map; the
+       governorate under it is context. Priority says so explicitly, highest
+       placed first, so the ranking survives someone reordering the setup. */
+    var priority = opts.priority || 0;
 
     function refresh() {
       group.clearLayers();
@@ -583,9 +694,19 @@
       // precisely the pile this exists to prevent. It is reset once per move by
       // the handler registered below, before any layer's refresh runs.
       var placed = map._mkPlaced || (map._mkPlaced = []);
-      function fits(pt, text) {
+      // isPoint is not a detail. An area's name is centred on its shape, but a
+      // point's name is pushed clear of the dot it belongs to — that is what
+      // .mk-label-pt's translate(9px, -50%) does. Reserving a CENTRED box for
+      // a label that renders to the RIGHT of its anchor misses by half the
+      // label's width, and the wider the text the worse it gets: at 30
+      // characters the reserved rectangle and the drawn one overlap by barely
+      // a third. So the registry was politely keeping two labels apart in a
+      // place neither of them was, and on the investor map "2 projects at
+      // Benban Solar Park" printed straight through "Red Sea". Reserve the box
+      // where the browser will actually draw it.
+      function fits(pt, text, isPoint) {
         var w = text.length * 6.2 + 10, h = 15;
-        var x0 = pt.x - w / 2, y0 = pt.y - h / 2;
+        var x0 = isPoint ? pt.x + 9 : pt.x - w / 2, y0 = pt.y - h / 2;
         for (var i = 0; i < placed.length; i += 1) {
           var q = placed[i];
           if (x0 < q.x1 && x0 + w > q.x0 && y0 < q.y1 && y0 + h > q.y0) return false;
@@ -595,7 +716,12 @@
       }
       layer.eachLayer(function (l) {
         if (drawn >= maxLabels) return;
+        if (zoom > maxZoom) return;
         var at, text;
+        // Decided once, then used by BOTH the collision box and the class that
+        // offsets the rendering — the two must agree or the registry reserves
+        // space the label never occupies.
+        var isPoint = !!(l.getLatLng && !l.getBounds);
         if (l.getBounds) {
           var b = l.getBounds();
           if (!view.intersects(b)) return;         // offscreen: nothing to draw
@@ -612,28 +738,29 @@
         }
         text = textFn(l.feature ? l.feature.properties : (l.options || {}), l);
         if (!text) return;
-        if (!fits(map.latLngToContainerPoint(at), String(text))) return;
+        if (!fits(map.latLngToContainerPoint(at), String(text), isPoint)) return;
         drawn += 1;
         L.marker(at, {
           pane: 'mkLabels',
           interactive: false,
           keyboard: false,
           icon: L.divIcon({
-            className: cls + (l.getLatLng && !l.getBounds ? ' mk-label-pt' : ''),
+            className: cls + (isPoint ? ' mk-label-pt' : ''),
             html: esc(text), iconSize: null
           })
         }).addTo(group);
       });
     }
 
-    // moveend ONLY, not 'zoomend moveend'. Leaflet fires zoomend and then
-    // moveend for a single zoom, so listening to both ran the whole pass twice
-    // per step — measured at 480 layers per pass across three kinds on Places,
-    // so nearly 3,000 wasted iterations for every click of the zoom button.
-    map.on('moveend', refresh);
-    map.whenReady(function () {
-      requestAnimationFrame(function () { map._mkPlaced = []; refresh(); });
-    });
+    // The pass is driven by moveend ONLY, not 'zoomend moveend'. Leaflet fires
+    // zoomend and then moveend for a single zoom, so listening to both ran the
+    // whole thing twice per step — measured at 480 layers per pass across three
+    // kinds on Places, so nearly 3,000 wasted iterations for every click of the
+    // zoom button. That listener lives on the pass, registered once per map;
+    // a layer only joins the list.
+    map._mkRefreshers.push({ fn: refresh, priority: priority });
+    map._mkRefreshers.sort(function (x, y) { return y.priority - x.priority; });
+    map.whenReady(function () { requestAnimationFrame(map._mkPass); });
 
     // CLEAN UP WHEN THE LAYER GOES. Places rebuilds its marker group every time
     // a filter chip is toggled, so without this every toggle would leave
@@ -642,9 +769,15 @@
     // map is doing that work a dozen times a frame for nothing.
     map.on('layerremove', function (e) {
       if (e.layer !== layer) return;
-      map.off('moveend', refresh);
+      for (var i = map._mkRefreshers.length - 1; i >= 0; i -= 1) {
+        if (map._mkRefreshers[i].fn === refresh) map._mkRefreshers.splice(i, 1);
+      }
       group.clearLayers();
       map.removeLayer(group);
+      // Re-place what is left. The departing layer's boxes were still holding
+      // space in the registry, so without this a name it had crowded out stays
+      // crowded out by a layer that is no longer on the map.
+      map._mkPass();
     });
     return refresh;
   }
@@ -677,6 +810,9 @@
     choropleth: choropleth,
     addCredit: addCredit,
     addLabels: addLabels,
+    landStyle: landStyle,
+    landLine: LAND_LINE,
+    outline: outline,
     sources: SOURCES,
     reduceMotion: RM,
     esc: esc

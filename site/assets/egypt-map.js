@@ -80,6 +80,7 @@
     if (!map) return;
     window.EGYBI_MAP.map = map;
 
+    window.EGYBI.mapkit.outline(map, geo);
     var layer = L.geoJSON(geo, {
       style: baseStyle,
       onEachFeature: function (feature, lyr) {
@@ -91,6 +92,15 @@
       }
     }).addTo(map);
     window.EGYBI_MAP.layer = layer;
+
+    // The last unlabelled map on the site. Every other surface got names on
+    // 2026-08-09 and this one was missed, which mattered more here than
+    // anywhere else: a choropleth's entire claim is that SOME governorates are
+    // darker than others, and a reader who cannot tell which shape is which has
+    // been shown a pattern with no way to name what is in it. The hover card
+    // said so, and only to a mouse.
+    window.EGYBI.mapkit.addLabels(map, layer, function (p) { return p && p.name; },
+                                  { minPx: 62, maxLabels: 16, className: 'mk-label-sm' });
 
     map.fitBounds(layer.getBounds(), { padding: [6, 6] });
 

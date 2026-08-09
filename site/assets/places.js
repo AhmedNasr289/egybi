@@ -77,14 +77,21 @@
     // Points must sit above the governorate polygons even while one is hovered
     // and brought to front, which is what these panes are for.
     S.map.createPane('pts').style.zIndex = 640;
+    window.EGYBI.mapkit.outline(S.map, window.EGYBI_EGYPT_GEO);
     S.base = L.geoJSON(window.EGYBI_EGYPT_GEO, {
-      style: function () {
-        return { color: '#FFFFFF', weight: 1, fillColor: '#DDE3EC', fillOpacity: 0.85 };
-      },
+      style: window.EGYBI.mapkit.landStyle,
       onEachFeature: function (f, lyr) {
         lyr.bindTooltip(esc(f.properties.name), { sticky: true });
       }
     }).addTo(S.map);
+    // The governorate names, drawn while the view is the whole country. Before
+    // this the opening view carried no text at all — a pale outline with
+    // cluster counts on it, so "88" sat in the Delta with nothing to say which
+    // part of the Delta. Place names begin at zoom 9, so the ceiling here is 8
+    // and the two layers hand over without ever competing.
+    window.EGYBI.mapkit.addLabels(S.map, S.base, function (p) { return p && p.name; },
+                                  { minPx: 62, maxZoom: 8, maxLabels: 16, priority: 0,
+                                    className: 'mk-label-sm' });
     S.map.fitBounds(S.base.getBounds(), { padding: [6, 6] });
     window.EGYBI.mapkit.setHome(S.map, S.base.getBounds());
     setTimeout(function () {
