@@ -140,6 +140,45 @@ browser rather than asserted. Each item is here because it was found missing.
   profile, the Ibi portrait and the price sparklines keep `role="img"` — those
   genuinely are single graphics.
 
+### Names on the maps (`mapkit.addLabels`)
+
+Every map on the site was an unlabelled silhouette until 2026-08-09. These maps
+are tile-free, so there is no basemap underneath carrying the names a reader
+expects — the only way to learn which shape was Qena was to hover it, which is
+no help at a glance and none at all on a phone. Reported plainly as "I can't see
+the maps well", and correct.
+
+Labels are one shared layer in `mapkit.js`, used by the Atlas, Places, Invest,
+Streets and all four Stories maps. Four decisions inside it are worth knowing
+before changing anything:
+
+- **Gated per feature, not globally.** A polygon is named when its own shape is
+  wide enough *on screen* to hold the text; a point is named once the reader has
+  zoomed past the level where clustering hands over. Drawn at country zoom the
+  packed Delta governorates overlap into a smear and the labels make the map
+  worse than none — so Matrouh and New Valley are named immediately and
+  Qalyubia appears when you zoom into the Delta. On Places the point threshold
+  is deliberately the same number as `disableClusteringAtZoom`, so a bubble
+  reading "44" becomes forty-four names at exactly the point it stops being a
+  count.
+- **Their own pane, not tooltips on the features.** The first version bound
+  permanent tooltips, which meant unbinding the rich hover card the Atlas
+  already had and rebinding it whenever the label went away. Two things
+  fighting over one slot; the hover card lost.
+- **Greedy collision avoidance, with the registry shared across every label
+  layer on a map.** Around Cairo, settlements + museums + airports produced 154
+  labels overprinting into a grey smear. A per-layer registry would have let
+  settlements check against settlements while the categories overprinted each
+  other freely, which is the same pile in a different arrangement.
+- **Position is a centroid computed from the ring's coordinates.** A
+  bounding-box centre puts a coastal governorate's name out in the sea, and
+  Leaflet's `getCenter()` — the obvious fix — throws before sub-layers attach
+  and took the whole Atlas to zero rendered paths.
+
+Also from that round: Leaflet snaps to whole zoom levels, so `fitBounds` drops a
+full step when the ideal zoom sits just under an integer. The Atlas at 375px
+filled 70% of its box. `zoomSnap: 0.25` took it to 86%, measured.
+
 ### Two things that will trip up the next person measuring this
 
 **`:focus-visible` does not match a programmatic `.focus()`.** Diffing computed
