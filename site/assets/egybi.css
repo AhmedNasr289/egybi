@@ -1216,10 +1216,26 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
     0 0 6px var(--papyrus-2), 1px 1px 0 rgba(255,255,255,0.9);
 }
 .mk-label::before { display: none; }        /* the tooltip's pointer arrow */
+/* THE OFFSET LIVES ON THE INNER ELEMENT, and it has to.
+
+   Leaflet positions a marker icon by writing transform: translate3d(x, y, 0)
+   INLINE on the icon root, and an inline transform beats a stylesheet rule. So
+   a transform written on .mk-label never applies — which means the offset that
+   was supposed to sit a point's name beside its dot has never once run, and
+   every area's name sat half its own width to the RIGHT of the centroid it was
+   marking. Meanwhile mapkit's collision test reserved a centred box, so the
+   registry was clearing space where the label was not: on Places at 390px
+   "North Sinai" drew at x 251..316 while its reservation said 212..290, and
+   was cleared to sit under the zoom bar at x 299. The reader got "North Si".
+
+   Leaflet does not touch the icon's children, so the offset applies here and
+   the drawn rectangle is finally the one the collision machinery reserved. */
+.mk-label > i { display: block; font-style: normal; transform: translate(-50%, -50%); }
+.mk-label-pt > i { transform: translate(9px, -50%); }
 .mk-label-sm { font-size: 10px; font-weight: 600; }
 /* A point's name sits beside its dot, not on top of it — centred would put the
-   text over the marker it is naming. */
-.mk-label-pt { transform: translate(9px, -50%); }
+   text over the marker it is naming. The rule is on the inner element above;
+   this selector is left only as the place someone will look for it. */
 @media (max-width: 720px) { .mk-label { font-size: 10px; } }
 
 @media (prefers-reduced-motion: reduce) {

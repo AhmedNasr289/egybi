@@ -83,11 +83,30 @@
   // places.html and as a cluster colour in egybi.css, or it does not exist to
   // a reader.
   //
-  // On by default, unlike ancient sites: there are a few dozen museums and 393
-  // antiquities, so museums do not swamp the map and are the single most
-  // useful layer for someone planning a visit.
+  // ALL FOUR KINDS ON BY DEFAULT, changed 2026-08-10 at the owner's decision.
+  //
+  // Ancient sites were the one kind held back, on the reasoning that 393 of
+  // them would swamp a map that also carries 335 settlements. What that
+  // reasoning missed is who opens this page: on an encyclopaedia of Egypt,
+  // the archaeological layer is not clutter competing with the gazetteer, it
+  // is a large part of why a reader came — and a category switched off by
+  // default reads as a category that does not exist. It was the largest layer
+  // on the page and the only one a visitor had to discover.
+  //
+  // Measured with it on, and the first number written here was wrong — worth
+  // saying, in a file whose whole argument is that figures do not drift. The
+  // opening view goes from 480 places to all 873. Because they arrive as
+  // clusters rather than 393 loose dots, the icons actually on screen go from
+  // 68 to 94 at 1280px (44 single markers plus 50 clusters holding 829), and
+  // to 47 at 390px (16 single plus 31 clusters holding 857). Governorate
+  // labels are unchanged at 12 and 8, because that layer is gated by zoom and
+  // collision, not by how many markers sit beneath it.
+  //
+  // So the swamping this default was guarding against does not happen:
+  // clustering absorbs the extra 393 into 19 more icons, not 393 more. That is
+  // the measurement the original reasoning never took.
   var S = { map: null, data: null, layers: {},
-            active: { settlement: true, airport: true, antiquity: false, museum: true },
+            active: { settlement: true, airport: true, antiquity: true, museum: true },
             sel: null };
 
   function $(id) { return document.getElementById(id); }

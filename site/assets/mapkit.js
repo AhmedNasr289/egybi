@@ -665,8 +665,43 @@
        places one layer while the others are stale. */
     if (!map._mkPass) {
       map._mkRefreshers = [];
+      /* THE CONTROLS OCCUPY SPACE TOO, and until now nothing said so.
+
+         Labels are placed against each other and against nothing else, so on
+         Places at 390px "North Sinai" was laid down at x 251..316 and the zoom
+         bar sits at x 299..333 — the last seventeen pixels of the name ran
+         underneath an opaque button and the reader got "North Si". "South
+         Sinai" lost twenty. A truncated name is worse than a missing one,
+         because it reads as a different place.
+
+         I first attributed that to the container edge and added a test for it.
+         The measurement says otherwise: no label on that map passes the right
+         edge at all, the widest reaching 319 of 343. The edge test is kept
+         because a label past the frame genuinely would be clipped, but it is
+         not what was happening here and it fixed nothing visible.
+
+         Seeding the registry with the control rectangles is the actual fix, and
+         it belongs in the pass rather than in any one layer: the controls are a
+         property of the map, every label layer has to respect them, and doing
+         it here means a new control or a new label layer is covered without
+         either knowing about the other. */
+      map._mkSeed = function () {
+        var seeded = [];
+        var box = map.getContainer();
+        var br = box.getBoundingClientRect();
+        var nodes = box.querySelectorAll('.leaflet-control');
+        for (var i = 0; i < nodes.length; i += 1) {
+          var q = nodes[i].getBoundingClientRect();
+          if (!q.width || !q.height) continue;
+          // A little breathing room, so a name does not sit flush against a
+          // button and read as part of it.
+          seeded.push({ x0: q.left - br.left - 4, y0: q.top - br.top - 4,
+                        x1: q.right - br.left + 4, y1: q.bottom - br.top + 4 });
+        }
+        return seeded;
+      };
       map._mkPass = function () {
-        map._mkPlaced = [];
+        map._mkPlaced = map._mkSeed();
         for (var i = 0; i < map._mkRefreshers.length; i += 1) map._mkRefreshers[i].fn();
       };
       map.on('moveend', map._mkPass);
@@ -693,7 +728,7 @@
       // museums while the two happily overprinted each other — which is
       // precisely the pile this exists to prevent. It is reset once per move by
       // the handler registered below, before any layer's refresh runs.
-      var placed = map._mkPlaced || (map._mkPlaced = []);
+      var placed = map._mkPlaced || (map._mkPlaced = map._mkSeed());
       // isPoint is not a detail. An area's name is centred on its shape, but a
       // point's name is pushed clear of the dot it belongs to — that is what
       // .mk-label-pt's translate(9px, -50%) does. Reserving a CENTRED box for
@@ -704,9 +739,24 @@
       // place neither of them was, and on the investor map "2 projects at
       // Benban Solar Park" printed straight through "Red Sea". Reserve the box
       // where the browser will actually draw it.
+      /* The map's own edges are a collision too, and they were not being
+         checked. A label whose box runs past the container is clipped by it
+         mid-word, so Places at 390px offered "North Si" and "South Sh" — worse
+         than no name at all, because a truncated name reads as a different
+         place. This tested every label against every other label and against
+         nothing else, which is why the failure only showed up in a screenshot.
+
+         A name that will not fit inside the frame is simply not drawn. The
+         reader loses nothing they had: they had half a word. */
+      var frame = map.getSize();
       function fits(pt, text, isPoint) {
         var w = text.length * 6.2 + 10, h = 15;
         var x0 = isPoint ? pt.x + 9 : pt.x - w / 2, y0 = pt.y - h / 2;
+        // Kept: a label whose box leaves the frame really is clipped by it.
+        // It was not what truncated "North Sinai" — no label on that map came
+        // within 24px of the right edge — but it is a real constraint and the
+        // measurement that disproved it is recorded in the pass above.
+        if (x0 < 2 || y0 < 2 || x0 + w > frame.x - 2 || y0 + h > frame.y - 2) return false;
         for (var i = 0; i < placed.length; i += 1) {
           var q = placed[i];
           if (x0 < q.x1 && x0 + w > q.x0 && y0 < q.y1 && y0 + h > q.y0) return false;
@@ -746,7 +796,15 @@
           keyboard: false,
           icon: L.divIcon({
             className: cls + (isPoint ? ' mk-label-pt' : ''),
-            html: esc(text), iconSize: null
+            // The text sits in an inner element ON PURPOSE. Leaflet positions a
+            // marker icon by writing transform: translate3d(...) inline on the
+            // icon root, and an inline transform beats any stylesheet rule — so
+            // .mk-label-pt's translate(9px, -50%) had never once applied, and a
+            // centring rule added to .mk-label did nothing either. Both were
+            // dead CSS silently agreed with by a collision box that assumed
+            // they worked. Leaflet leaves children alone, so the offset applies
+            // here and the drawn rectangle finally matches the reserved one.
+            html: '<i>' + esc(text) + '</i>', iconSize: null
           })
         }).addTo(group);
       });
