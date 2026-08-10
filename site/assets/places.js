@@ -172,15 +172,30 @@
     }) : L.layerGroup([], { pane: 'pts' }));
 
     S.data.places.filter(function (p) { return p.kind === kind; }).forEach(function (p) {
+      /* THE DOT A READER SEES AND THE AREA A FINGER HITS ARE NOT THE SAME BOX.
+
+         The icon used to be sized to the dot: 8x8 for a city, 7x7 for an
+         ancient site. Measured on a 390px viewport that is a third of the
+         24x24 WCAG 2.5.8 asks of a touch target and well under half the ~44px
+         a fingertip actually covers, so on a phone the gazetteer was a map of
+         things you could see and could not open. Thirteen of them on the
+         opening view alone.
+
+         The dot keeps its size — it has to, or the Delta becomes a blob — and
+         the icon around it grows to 30px of transparent space with the dot
+         centred in it. iconAnchor stays at the centre, so the marker still
+         sits exactly on its coordinates, clustering is unaffected, and the
+         name labels (which anchor to the same point) do not move. */
       var d = spec.r * 2;
+      var HIT = 30;
       var m = L.marker([p.lat, p.lon], {
         keyboard: true,
         title: p.name,
         alt: p.name + (p.gov ? ', ' + p.gov : ''),
         icon: L.divIcon({
-          className: 'pl-dot',
+          className: 'mk-pin',
           html: '<i style="width:' + d + 'px;height:' + d + 'px;background:' + spec.colour + '"></i>',
-          iconSize: [d, d], iconAnchor: [d / 2, d / 2]
+          iconSize: [HIT, HIT], iconAnchor: [HIT / 2, HIT / 2]
         })
       });
       // The label layer reads this. The hover tooltip's HTML is not reusable —

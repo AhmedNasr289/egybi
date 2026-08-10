@@ -1174,6 +1174,18 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 .marker-cluster-museum { background: rgba(107, 63, 160, 0.25); }
 .marker-cluster-museum div { background: #6B3FA0; }
 
+/* A gazetteer pin: a small visible dot inside a target a finger can hit.
+   The icon box is 30px of transparent space and the dot inside it keeps the
+   4-5px radius the map needs — enlarging the dot instead would turn the Delta
+   into a single smear, which is the reason it was small in the first place.
+   Measured before this existed: 8x8 on a 390px viewport, a third of the 24x24
+   WCAG 2.5.8 asks for. */
+.mk-pin { background: none; border: 0; display: flex; align-items: center; justify-content: center; }
+.mk-pin i {
+  display: block; border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.95);
+}
+
 /* Map labels — place names drawn on the map itself.
    No box, no background: a filled tooltip bubble per governorate turns the map
    into a wall of chips. The name is set straight on the geometry and made
