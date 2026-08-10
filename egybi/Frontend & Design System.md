@@ -243,6 +243,39 @@ Two different problems, two answers:
 
 Cost of the whole round: **+3,667 bytes gzipped** across the six map files.
 
+### When the repository is right and the site is broken (`backend/verify/map-render.js`)
+
+The Atlas went blank on the live site while every checker here stayed green,
+and the reason is worth stating precisely: **they all test this repository,
+where the files are in sync by construction.** The defect existed only in the
+combination of files the host was serving — a mapkit.js older than the page
+modules calling into it. One unguarded call to a function that older file did
+not define threw during `init()`, and because the throw happened before any
+`fetch`, three data layers were never even requested. A decorative coastline
+halo took down an entire page.
+
+Two things came out of it.
+
+**Optional means tested, not asserted.** Every page module resolves optional
+mapkit helpers at the moment of use, so an absent enhancement stands down
+instead of throwing. Resolved per call, never snapshotted at parse time — a
+module cannot assume mapkit has finished loading when its own body runs.
+Deliberately duplicated into all seven files rather than factored out: a shared
+guard is exactly as capable of being stale as the thing it guards.
+
+**`map-render.js` asks what nothing else did.** Did the map draw any geometry,
+and is a loading placeholder still on screen after the page settled? Rendering
+zero paths is not an error, it is an absence, so `all-pages.js`, `contrast.js`
+and `map-interaction.js` were all correct to stay quiet. With `SKEW_MAPKIT` set
+it serves an older mapkit.js while everything else stays current — a partial
+deploy, reproduced — and asserts the pages still render. That is the only check
+in this directory that can see this class of bug at all.
+
+Note for whoever writes the next degradation path: the first version of the
+Atlas fallback refused to draw into an already-initialised container. That is
+precisely the state a failed `init()` leaves behind, so it bailed out exactly
+when it was needed. Reuse the map that is already there.
+
 ### The checker that should have existed first (`backend/verify/map-contrast.js`)
 
 Twenty-five mutation-tested checkers ran green through all of the above. That is

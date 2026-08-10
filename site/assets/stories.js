@@ -13,6 +13,19 @@
 (function () {
   'use strict';
 
+  /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
+     See the identical note in geospatial.js: on 2026-08-10 a call to a mapkit
+     function the deployed mapkit.js did not yet define threw during init and
+     blanked an entire map page. An enhancement is looked up when it is called
+     and stands down quietly when it is absent, and the copy lives here rather
+     than in a shared file because a shared file can be exactly as stale as the
+     one that caused this. */
+  function mkx(name) {
+    var mk = window.EGYBI && window.EGYBI.mapkit;
+    var fn = mk && mk[name];
+    return typeof fn === 'function' ? fn : function () { return null; };
+  }
+
   var GOLD = '#C9A227', GOLD_INK = '#8A6D1E', BLUE = '#17408B';
   /* Two stroke colours, and which one applies depends on what is underneath.
      White reads on the saturated blue and gold a highlighted governorate gets,
@@ -78,7 +91,7 @@
      so the same shape has fewer pixels to hold a name in. */
   function nameGovernorates(map, layer) {
     if (!window.EGYBI || !window.EGYBI.mapkit || !window.EGYBI.mapkit.addLabels) return;
-    window.EGYBI.mapkit.addLabels(map, layer, function (p) { return p && p.name; },
+    mkx('addLabels')(map, layer, function (p) { return p && p.name; },
                                   { minPx: 68, maxLabels: 12, className: 'mk-label-sm' });
   }
 
@@ -87,7 +100,7 @@
   (function ribbon() {
     var el = document.getElementById('mapRibbon'); if (!el) return;
     var m = baseMap('mapRibbon');
-    if (window.EGYBI.mapkit.outline) window.EGYBI.mapkit.outline(m, GEO);
+    mkx('outline')(m, GEO);
     var layer = L.geoJSON(GEO, { style: function () {
       return pale();
     } }).addTo(m);
@@ -153,7 +166,7 @@
   (function mapped() {
     var el = document.getElementById('mapHealth'); if (!el) return;
     var m = baseMap('mapHealth');
-    if (window.EGYBI.mapkit.outline) window.EGYBI.mapkit.outline(m, GEO);
+    mkx('outline')(m, GEO);
     var layer = L.geoJSON(GEO, { style: function () {
       return pale();
     } }).addTo(m);
@@ -225,7 +238,7 @@
   (function streets() {
     var el = document.getElementById('mapStreets'); if (!el) return;
     var m = baseMap('mapStreets');
-    if (window.EGYBI.mapkit.outline) window.EGYBI.mapkit.outline(m, GEO);
+    mkx('outline')(m, GEO);
     var layer = L.geoJSON(GEO, { style: function () {
       return pale('#E4E8EF', 0.85);
     } }).addTo(m);
@@ -296,7 +309,7 @@
   (function dug() {
     var el = document.getElementById('mapDug'); if (!el) return;
     var m = baseMap('mapDug');
-    if (window.EGYBI.mapkit.outline) window.EGYBI.mapkit.outline(m, GEO);
+    mkx('outline')(m, GEO);
     var layer = L.geoJSON(GEO, { style: function () {
       return pale();
     } }).addTo(m);

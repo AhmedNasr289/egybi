@@ -26,6 +26,36 @@
 (function () {
   'use strict';
 
+  /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
+
+     On 2026-08-10 the Atlas was a blank white rectangle on the live site with
+     "Loading layers…" frozen under it, and the cause was one line:
+
+       window.EGYBI.mapkit.outline is not a function
+         at init (assets/geospatial.js:302)
+
+     The host was serving a mapkit.js older than the page module calling into
+     it. A coastline halo is decoration — the map is complete and readable
+     without it — but calling a function that does not exist throws, the throw
+     aborted init before it had fetched a single layer, and a missing ornament
+     took down the entire page. Three data files were never even requested.
+
+     So an enhancement is looked up when it is called and stands down quietly
+     when it is absent. Resolved per call, not once at parse time, because a
+     module cannot assume mapkit has finished loading when its own body runs;
+     snapshotting at the top would silently disable labels on a page where they
+     were available all along.
+
+     Deliberately NOT factored into a shared file. Every shared file is exactly
+     as capable of being stale as mapkit was, so a shared guard would need a
+     guard. A copy that ships in the same file as its caller cannot be older
+     than its caller. */
+  function mkx(name) {
+    var mk = window.EGYBI && window.EGYBI.mapkit;
+    var fn = mk && mk[name];
+    return typeof fn === 'function' ? fn : function () { return null; };
+  }
+
   var GOLD = '#C9A227', GOLD_INK = '#8A6D1E', BLUE = '#17408B', INK = '#1C1C1C';
 
   // One colour per kind, chosen to stay distinguishable on the pale governorate
@@ -77,7 +107,7 @@
     // Points must sit above the governorate polygons even while one is hovered
     // and brought to front, which is what these panes are for.
     S.map.createPane('pts').style.zIndex = 640;
-    window.EGYBI.mapkit.outline(S.map, window.EGYBI_EGYPT_GEO);
+    mkx('outline')(S.map, window.EGYBI_EGYPT_GEO);
     S.base = L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: window.EGYBI.mapkit.landStyle,
       onEachFeature: function (f, lyr) {
@@ -89,7 +119,7 @@
     // cluster counts on it, so "88" sat in the Delta with nothing to say which
     // part of the Delta. Place names begin at zoom 9, so the ceiling here is 8
     // and the two layers hand over without ever competing.
-    window.EGYBI.mapkit.addLabels(S.map, S.base, function (p) { return p && p.name; },
+    mkx('addLabels')(S.map, S.base, function (p) { return p && p.name; },
                                   { minPx: 62, maxZoom: 8, maxLabels: 16, priority: 0,
                                     className: 'mk-label-sm' });
     S.map.fitBounds(S.base.getBounds(), { padding: [6, 6] });
@@ -176,7 +206,7 @@
     // it stops being a count. Naming all 873 at country zoom would not be a
     // map, it would be a smear — which is why this is gated rather than always
     // on, and why there is a ceiling on how many draw at once.
-    window.EGYBI.mapkit.addLabels(S.map, group, function (props, l) {
+    mkx('addLabels')(S.map, group, function (props, l) {
       return l && l._plName;
     }, { minZoom: 9, maxLabels: 90, className: 'mk-label-sm' });
   }

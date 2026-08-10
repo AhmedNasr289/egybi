@@ -8,6 +8,19 @@
 (function () {
   window.EGYBI_MAP = { map: null, layer: null, metric: 'population', breaks: null };
 
+  /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
+     See the identical note in geospatial.js: on 2026-08-10 a call to a mapkit
+     function the deployed mapkit.js did not yet define threw during init and
+     blanked an entire map page. An enhancement is looked up when it is called
+     and stands down quietly when it is absent, and the copy lives here rather
+     than in a shared file because a shared file can be exactly as stale as the
+     one that caused this. */
+  function mkx(name) {
+    var mk = window.EGYBI && window.EGYBI.mapkit;
+    var fn = mk && mk[name];
+    return typeof fn === 'function' ? fn : function () { return null; };
+  }
+
   var METRICS = {
     population: { label: 'Population (2023)', fmt: function (v) { return (v / 1e6).toFixed(2) + ' M'; } },
     density:    { label: 'Density', fmt: function (v) { return Math.round(v).toLocaleString() + ' /km²'; } },
@@ -80,7 +93,7 @@
     if (!map) return;
     window.EGYBI_MAP.map = map;
 
-    window.EGYBI.mapkit.outline(map, geo);
+    mkx('outline')(map, geo);
     var layer = L.geoJSON(geo, {
       style: baseStyle,
       onEachFeature: function (feature, lyr) {
@@ -99,7 +112,7 @@
     // darker than others, and a reader who cannot tell which shape is which has
     // been shown a pattern with no way to name what is in it. The hover card
     // said so, and only to a mouse.
-    window.EGYBI.mapkit.addLabels(map, layer, function (p) { return p && p.name; },
+    mkx('addLabels')(map, layer, function (p) { return p && p.name; },
                                   { minPx: 62, maxLabels: 16, className: 'mk-label-sm' });
 
     map.fitBounds(layer.getBounds(), { padding: [6, 6] });

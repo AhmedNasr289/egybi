@@ -31,6 +31,36 @@
 (function () {
   'use strict';
 
+  /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
+
+     On 2026-08-10 the Atlas was a blank white rectangle on the live site with
+     "Loading layers…" frozen under it, and the cause was one line:
+
+       window.EGYBI.mapkit.outline is not a function
+         at init (assets/geospatial.js:302)
+
+     The host was serving a mapkit.js older than the page module calling into
+     it. A coastline halo is decoration — the map is complete and readable
+     without it — but calling a function that does not exist throws, the throw
+     aborted init before it had fetched a single layer, and a missing ornament
+     took down the entire page. Three data files were never even requested.
+
+     So an enhancement is looked up when it is called and stands down quietly
+     when it is absent. Resolved per call, not once at parse time, because a
+     module cannot assume mapkit has finished loading when its own body runs;
+     snapshotting at the top would silently disable labels on a page where they
+     were available all along.
+
+     Deliberately NOT factored into a shared file. Every shared file is exactly
+     as capable of being stale as mapkit was, so a shared guard would need a
+     guard. A copy that ships in the same file as its caller cannot be older
+     than its caller. */
+  function mkx(name) {
+    var mk = window.EGYBI && window.EGYBI.mapkit;
+    var fn = mk && mk[name];
+    return typeof fn === 'function' ? fn : function () { return null; };
+  }
+
   var GOLD = '#C9A227', GOLD_INK = '#8A6D1E', BLUE = '#17408B', INK = '#1C1C1C';
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
                 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -74,7 +104,7 @@
     // that job underneath without touching the fill above it. On the relief map
     // the ground is dark and #C7BCA1 already measures 9.29:1, so the halo is
     // only needed on the light one.
-    if (id !== 'reliefMap') window.EGYBI.mapkit.outline(m, window.EGYBI_EGYPT_GEO);
+    if (id !== 'reliefMap') mkx('outline')(m, window.EGYBI_EGYPT_GEO);
     L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: function () {
         return { color: '#C7BCA1', weight: 1, fillColor: '#EFE7D4', fillOpacity: 1 };

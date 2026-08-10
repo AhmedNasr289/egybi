@@ -11,6 +11,36 @@
 (function () {
   'use strict';
 
+  /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
+
+     On 2026-08-10 the Atlas was a blank white rectangle on the live site with
+     "Loading layers…" frozen under it, and the cause was one line:
+
+       window.EGYBI.mapkit.outline is not a function
+         at init (assets/geospatial.js:302)
+
+     The host was serving a mapkit.js older than the page module calling into
+     it. A coastline halo is decoration — the map is complete and readable
+     without it — but calling a function that does not exist throws, the throw
+     aborted init before it had fetched a single layer, and a missing ornament
+     took down the entire page. Three data files were never even requested.
+
+     So an enhancement is looked up when it is called and stands down quietly
+     when it is absent. Resolved per call, not once at parse time, because a
+     module cannot assume mapkit has finished loading when its own body runs;
+     snapshotting at the top would silently disable labels on a page where they
+     were available all along.
+
+     Deliberately NOT factored into a shared file. Every shared file is exactly
+     as capable of being stale as mapkit was, so a shared guard would need a
+     guard. A copy that ships in the same file as its caller cannot be older
+     than its caller. */
+  function mkx(name) {
+    var mk = window.EGYBI && window.EGYBI.mapkit;
+    var fn = mk && mk[name];
+    return typeof fn === 'function' ? fn : function () { return null; };
+  }
+
   var RAMP = ['#E3EAF5', '#B9C9E4', '#8AA6D0', '#5B82BC', '#2E5AA0', '#0E2A5E'];
   var GOLD = '#C9A227', GOLD_INK = '#7A5E10';
   // Point overlays must read against ANY choropleth bin beneath them, from the
@@ -299,7 +329,7 @@
     // 963 facility dots.
     S.map.createPane('ptsHealth').style.zIndex = 640;
     S.map.createPane('ptsHeritage').style.zIndex = 650;
-    window.EGYBI.mapkit.outline(S.map, window.EGYBI_EGYPT_GEO);
+    mkx('outline')(S.map, window.EGYBI_EGYPT_GEO);
     S.layer = L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: baseStyle,
       onEachFeature: function (feature, lyr) {
@@ -327,7 +357,7 @@
     // geometry's own properties, so they cost no request and cannot drift from
     // the shapes they sit on. Small Delta governorates stay unlabelled until
     // the reader zooms far enough in for the name to fit — see addLabels.
-    window.EGYBI.mapkit.addLabels(S.map, S.layer, function (p) { return p.name; });
+    mkx('addLabels')(S.map, S.layer, function (p) { return p.name; });
     // One tab stop into the map, then arrow keys move geographically. This
     // replaces 27 individual tab stops in GeoJSON file order.
     window.EGYBI.mapkit.choropleth(S.map, S.layer, {
@@ -420,6 +450,70 @@
     setTimeout(function () { S.map.invalidateSize(); S.map.fitBounds(S.layer.getBounds(), { padding: [6, 6] }); }, 250);
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  /* NO EXCEPTION IN HERE MAY LEAVE A BLANK RECTANGLE AND THE WORD "LOADING".
+
+     The guards above stop the specific failure that happened. This stops the
+     shape of it. Whatever throws — a stale helper, a data file that changed
+     shape, a Leaflet upgrade — the reader must end up with the country drawn
+     and a sentence saying which part is missing, never a white box under a
+     heading promising a map and a status line that says "Loading layers…"
+     forever. A page frozen mid-load is worse than a page that admits a fault,
+     because the reader cannot tell the difference between broken and slow.
+
+     The fallback deliberately uses nothing but bundled geometry and plain
+     Leaflet: no mapkit, no fetched layer, nothing that could be implicated in
+     whatever just failed. If even that is impossible, the note still gets
+     written, because the sentence matters more than the picture. */
+  function degrade(err) {
+    if (window.console && console.error) console.error('Atlas init failed:', err);
+    var note = $('layerNote');
+    if (note) {
+      note.textContent = 'This map could not finish loading, so the layers above '
+        + 'are unavailable. The governorate outline below is drawn from data '
+        + 'bundled with the page. Please report this — the fault is ours.';
+    }
+    // The joined-metric and overlay chips are the ones that depend on a fetched
+    // layer. They ship disabled and are enabled on arrival, so after a failure
+    // they are already in the right state — but a failure PART WAY through
+    // could have enabled some of them, and a chip that cannot do anything is
+    // worse than a chip that says it cannot.
+    var chips = document.querySelectorAll('[data-metric="health"], [data-metric="schools"], .ov-toggle');
+    for (var i = 0; i < chips.length; i += 1) {
+      chips[i].disabled = true;
+      chips[i].title = 'Unavailable — this layer failed to load';
+    }
+    try {
+      var box = $('atlasMap');
+      if (!box || !window.L || !window.EGYBI_EGYPT_GEO) return;
+      /* REUSE THE MAP IF ONE ALREADY EXISTS, and this is the part I got wrong
+         first time. init() usually gets as far as creating the Leaflet
+         instance before it dies, which stamps _leaflet_id on the container —
+         so a fallback that refuses to touch an already-initialised container
+         bails out exactly when it is needed and leaves the blank rectangle it
+         was written to prevent. What is actually true is that the container
+         may hold a map with no layers in it; the answer is to put the country
+         into that map, and only build a new one if there is genuinely none. */
+      var m = S.map;
+      if (!m) {
+        if (box._leaflet_id) return;
+        m = L.map('atlasMap', { attributionControl: false });
+      }
+      var l = L.geoJSON(window.EGYBI_EGYPT_GEO, {
+        style: function () {
+          return { color: '#6E86A8', weight: 1, fillColor: '#DDE3EC', fillOpacity: 0.9 };
+        }
+      }).addTo(m);
+      m.fitBounds(l.getBounds(), { padding: [6, 6] });
+      m.invalidateSize();
+    } catch (e2) {
+      if (window.console && console.error) console.error('Atlas fallback failed too:', e2);
+    }
+  }
+
+  function boot() {
+    try { init(); } catch (err) { degrade(err); }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();

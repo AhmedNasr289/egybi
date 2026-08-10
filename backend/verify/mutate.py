@@ -11,6 +11,7 @@ the working tree and reported only that the checker had failed to catch it.
 """
 import json
 import os
+import tempfile
 import re
 import subprocess
 import sys
@@ -421,6 +422,75 @@ case("country outline removed, leaving only per-feature accents",
                   "    if (!map || !geo || !window.L) return null;\n    return null;"),
      lambda o: "NO VISIBLE BOUNDARY" in o or "NO COUNTRY OUTLINE" in o,
      MAPC.format(p="streets.html"))
+
+
+# A mapkit.js with `outline` removed from its exported surface — byte-identical
+# to the current file otherwise. That is exactly the state the live host was in
+# on 2026-08-10: an older shared module that does not carry a function the page
+# modules call. Synthesised from the CURRENT file rather than pulled from a
+# historical commit, because a case pinned to a specific old ref quietly stops
+# reproducing anything the moment that ref ages out of relevance.
+STALE_MAPKIT = Path(tempfile.gettempdir()) / "egybi-stale-mapkit.js"
+_mk = (HERE.parent.parent / "site" / "assets" / "mapkit.js").read_text(encoding="utf-8")
+assert "outline: outline," in _mk, "mapkit no longer exports outline — update this fixture"
+STALE_MAPKIT.write_text(_mk.replace("outline: outline,", ""), encoding="utf-8")
+
+RENDER = "ONLY={p} node " + str(HERE) + "/map-render.js"
+RENDER_SKEW = (f"SKEW_MAPKIT={STALE_MAPKIT} ONLY={{p}} node " + str(HERE) + "/map-render.js")
+
+
+# ---- 22. a map that finishes loading and draws nothing ----------------------
+# The failure that reached a reader: a blank white rectangle where the map
+# should be. Nothing asserted this. Rendering zero paths is not an error, it is
+# an absence, so all-pages.js, contrast.js and map-interaction.js were all
+# correct to stay quiet while the Atlas showed the reader nothing at all.
+#
+# Aimed at a Stories map because those deliberately have no degradation net —
+# they are inert illustrations beside prose that already states every figure,
+# so there is nothing there to catch a throw and hide it from this case.
+case("a map that finishes loading having drawn nothing", "map-render.js",
+     ["site/assets/stories.js"],
+     lambda: edit("site/assets/stories.js",
+                  "    var el = document.getElementById('mapRibbon'); if (!el) return;",
+                  "    var el = document.getElementById('mapRibbon'); if (!el) return;\n"
+                  "    el.remove();"),
+     lambda o: "MAP DREW NOTHING" in o or "container not found" in o,
+     RENDER.format(p="stories.html"))
+
+
+# ---- 23. a loading placeholder that never goes away ------------------------
+# The other half of the screenshot, and a distinct failure: the map can be
+# perfectly fine while the page still tells the reader it is loading. A reader
+# cannot tell a frozen page from a slow one, which is why "Loading…" left on
+# screen is a defect in its own right rather than cosmetic.
+case("a loading placeholder still on screen after the page settles",
+     "map-render.js", ["site/assets/geospatial.js"],
+     lambda: edit("site/assets/geospatial.js",
+                  "  function setLayerNote() {\n    var el = $('layerNote');",
+                  "  function setLayerNote() {\n    return;\n    var el = $('layerNote');"),
+     lambda o: "STUCK LOADING" in o,
+     RENDER.format(p="geospatial.html"))
+
+
+# ---- 24. an optional helper called as if it were guaranteed -----------------
+# THE ACTUAL OUTAGE, reproduced end to end. Twenty-seven checkers ran green
+# through it because every one of them tests this repository, where the files
+# are in sync by construction — and the defect existed only in the combination
+# of files the HOST was serving.
+#
+# So this case does what none of the others can: it serves a mapkit.js without
+# `outline` while everything else stays current, then removes the guard. That
+# is a partial deploy, and the page dies exactly as it died live. With the
+# guard in place the same skew is a non-event, which is the whole claim being
+# tested — "optional" is not a comment, it is something a page either survives
+# or does not.
+case("optional mapkit helper called unguarded, against an older mapkit",
+     "map-render.js", ["site/assets/stories.js"],
+     lambda: edit("site/assets/stories.js",
+                  "    mkx('outline')(m, GEO);",
+                  "    window.EGYBI.mapkit.outline(m, GEO);"),
+     lambda o: "MAP DREW NOTHING" in o or "UNCAUGHT" in o,
+     RENDER_SKEW.format(p="stories.html"))
 
 
 print()

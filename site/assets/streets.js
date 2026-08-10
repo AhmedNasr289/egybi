@@ -14,6 +14,36 @@
 (function () {
   'use strict';
 
+  /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
+
+     On 2026-08-10 the Atlas was a blank white rectangle on the live site with
+     "Loading layers…" frozen under it, and the cause was one line:
+
+       window.EGYBI.mapkit.outline is not a function
+         at init (assets/geospatial.js:302)
+
+     The host was serving a mapkit.js older than the page module calling into
+     it. A coastline halo is decoration — the map is complete and readable
+     without it — but calling a function that does not exist throws, the throw
+     aborted init before it had fetched a single layer, and a missing ornament
+     took down the entire page. Three data files were never even requested.
+
+     So an enhancement is looked up when it is called and stands down quietly
+     when it is absent. Resolved per call, not once at parse time, because a
+     module cannot assume mapkit has finished loading when its own body runs;
+     snapshotting at the top would silently disable labels on a page where they
+     were available all along.
+
+     Deliberately NOT factored into a shared file. Every shared file is exactly
+     as capable of being stale as mapkit was, so a shared guard would need a
+     guard. A copy that ships in the same file as its caller cannot be older
+     than its caller. */
+  function mkx(name) {
+    var mk = window.EGYBI && window.EGYBI.mapkit;
+    var fn = mk && mk[name];
+    return typeof fn === 'function' ? fn : function () { return null; };
+  }
+
   var RAMP = ['#E3EAF5', '#B9C9E4', '#8AA6D0', '#5B82BC', '#2E5AA0', '#0E2A5E'];
   var GOLD = '#C9A227', GOLD_INK = '#7A5E10', HALO = '#FFFFFF';
 
@@ -124,7 +154,7 @@
       // that is meant to say "ten districts, HERE" had no outline of its own.
       // The halo restores the coast without darkening the internal borders,
       // which would have put the base back into competition with the districts.
-      window.EGYBI.mapkit.outline(S.map, window.EGYBI_EGYPT_GEO);
+      mkx('outline')(S.map, window.EGYBI_EGYPT_GEO);
       S.base = L.geoJSON(window.EGYBI_EGYPT_GEO, {
         interactive: false,          // context, not a target — never steal a click
         // Deliberately flatter and paler than the districts. The first version
@@ -193,7 +223,7 @@
     // near-identical dots crowded around Cairo — a picture that tells a reader
     // nothing about which district is which. Ten labels is a small enough set
     // to show at every zoom rather than gating them.
-    window.EGYBI.mapkit.addLabels(S.map, S.pins, function (props, l) {
+    mkx('addLabels')(S.map, S.pins, function (props, l) {
       return l && l._dName;
     }, { maxLabels: 20 });
     S.map.fitBounds(S.layer.getBounds(), { padding: [12, 12] });
