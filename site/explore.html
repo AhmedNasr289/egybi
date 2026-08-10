@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=35" rel="stylesheet">
+<link href="assets/egybi.css?v=37" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -99,6 +99,14 @@
         <button type="button" class="map-toggle" data-metric="area_km2">Area (km²)</button>
       </div>
       <div class="map-box" id="egyptMap" role="region" aria-label="Choropleth map of Egypt's 27 governorates coloured by the selected metric"></div>
+      <!-- The same non-map route the Atlas has, for the same measured reason:
+           fourteen governorates render under 24px on a 390px screen, so half
+           the country cannot be tapped and the shapes cannot be made bigger. -->
+      <div class="map-toolbar" role="group" aria-label="Read a governorate's value from a list">
+        <label for="egyptMapPick" style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Or pick one:</label>
+        <select id="egyptMapPick" class="gov-pick"><option value="">Choose a governorate…</option></select>
+        <span id="egyptMapPickOut" class="gov-pick-out" role="status" aria-live="polite"></span>
+      </div>
       <div class="map-legend" id="egyptMapLegend"></div>
       <p class="chart-cap">Boundaries: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), simplified &amp; bundled offline. Metrics: population, density &amp; area from the EgyBI knowledge base (CAPMAS, Nov 2023); <strong>growth</strong> compares that against the <strong>2017 CAPMAS census</strong> (via citypopulation.de) — see the desert frontier governorates (South Sinai +43%, Matrouh +36%) outpace the crowded Delta; <strong>urban %</strong> is the urban share (Wikipedia governorates table, CAPMAS ~2016 — a proxy, ±1–2 points) and lights up the fully-urban city governorates (Cairo, Port Said, Suez). Colours are <strong>quantile bins</strong> (six equal-count groups) so extreme skew — Cairo's ~10.5M vs South Sinai's ~146k — stays readable. Every figure is queryable on the page.</p>
     </div>
@@ -543,7 +551,7 @@ ORDER BY year_inscribed;"
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/egypt-geo.js?v=2"></script>
-<script src="assets/egypt-map.js?v=6"></script>
+<script src="assets/egypt-map.js?v=7"></script>
 <script>
   var rm = window.EGYBI.reduceMotion;
   var anim = rm ? false : { duration: 1000 };

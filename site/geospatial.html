@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=35" rel="stylesheet">
+<link href="assets/egybi.css?v=37" rel="stylesheet">
 <style>
   /* atlas map card */
   .atlas-box { position: relative; height: clamp(340px, 56vw, 540px); border-radius: var(--radius); overflow: hidden; }
@@ -135,6 +135,18 @@
         <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="Appears after the first layer build">World Heritage sites</button>
       </div>
       <div class="atlas-box" id="atlasMap" role="region" aria-label="Interactive map of Egypt's 27 governorates with selectable data layers"></div>
+      <!-- A way in that is not the map. Fourteen of the twenty-seven
+           governorates render under 24px wide on a 390px screen — Gharbia is
+           11x14 — so on a phone half the country cannot reliably be tapped, and
+           no amount of styling changes that: the shapes are the real shapes.
+           WCAG 2.5.8 allows a small target where an equivalent full-size
+           control does the same job on the same page. This is that control,
+           and it is visible rather than screen-reader-only, because the reader
+           who cannot hit Gharbia with a thumb is looking right at it. -->
+      <div class="map-toolbar" role="group" aria-label="Open a governorate from a list">
+        <label for="govPick" style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Or pick one:</label>
+        <select id="govPick" class="gov-pick"><option value="">Choose a governorate…</option></select>
+      </div>
       <div class="map-legend" id="atlasLegend"></div>
       <div class="map-legend marker-key" id="atlasKey" hidden></div>
       <div class="gov-detail" id="govDetail" hidden></div>
@@ -231,7 +243,7 @@ ORDER BY population_millions DESC;"
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/egypt-geo.js?v=2"></script>
-<script src="assets/geospatial.js?v=8"></script>
+<script src="assets/geospatial.js?v=9"></script>
 <script src="assets/vendor/motion.min.js"></script>
 <script src="assets/motion.js?v=2"></script>
 <script>window.EGYBI_AUTH = { base: 'auth/' };</script>

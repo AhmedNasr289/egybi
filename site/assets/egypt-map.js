@@ -142,6 +142,47 @@
           + '</tr></thead><tbody>' + rows + '</tbody></table>';
       }
     });
+    /* A GOVERNORATE YOU CAN REACH WITHOUT HITTING IT.
+
+       Fourteen of the twenty-seven measure under 24px wide at 390px — Gharbia
+       is 11x14 — and the shapes are the real shapes of the country, so no
+       styling makes them bigger. WCAG 2.5.8 permits a small target where an
+       equivalent full-size control does the same job on the same page.
+
+       What tapping a governorate GIVES a sighted reader here is its value, so
+       that is what this returns: pick a name, read the number, and the shape
+       is focused on the map so the two stay tied together. The sr-only table
+       mapkit publishes is the same data, but a table only a screen reader can
+       reach is no help at all to the person holding the phone.
+
+       Deliberately a near-copy of the Atlas picker rather than a shared
+       helper: the two do different things on selection — the Atlas flies and
+       opens a detail panel, this reads out a value — and folding them together
+       would mean a parameterised abstraction over two call sites, which is
+       more coupling than either page is asking for. */
+    (function buildPicker() {
+      var sel = document.getElementById('egyptMapPick');
+      var out = document.getElementById('egyptMapPickOut');
+      if (!sel) return;
+      var entries = [];
+      layer.eachLayer(function (l) { entries.push({ name: l.feature.properties.name, layer: l }); });
+      entries.sort(function (a, b) { return a.name.localeCompare(b.name); });
+      entries.forEach(function (e, i) {
+        var o = document.createElement('option');
+        o.value = String(i); o.textContent = e.name;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', function () {
+        var e = entries[+sel.value];
+        if (!e) { if (out) out.textContent = ''; return; }
+        var m = window.EGYBI_MAP.metric;
+        var pr = e.layer.feature.properties;
+        if (out) out.textContent = METRICS[m].label + ': ' + METRICS[m].fmt(pr[m]);
+        var el = e.layer.getElement && e.layer.getElement();
+        if (el) el.focus();
+      });
+    }());
+
     window.EGYBI.mapkit.setHome(map, layer.getBounds());
     buildLegend(document.getElementById(legendId), 'population', window.EGYBI_MAP.breaks,
                 feats.map(function (f) { return f.properties.population; }));

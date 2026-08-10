@@ -493,6 +493,36 @@ case("optional mapkit helper called unguarded, against an older mapkit",
      RENDER_SKEW.format(p="stories.html"))
 
 
+TAP = "ONLY={p} node " + str(HERE) + "/tap-targets.js"
+
+# ---- 25. a target too small for a finger ----------------------------------
+# The gazetteer shipped its pins at 8x8 and nothing here objected, because a
+# small button is not an error: it renders, it responds, it throws nothing.
+# Only a measurement finds it. Shrinking the icon back to the dot restores
+# exactly the state a reader hit on a phone.
+case("a tap target smaller than a finger", "tap-targets.js",
+     ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "      var HIT = 30;", "      var HIT = 8;"),
+     lambda o: "UNDER-24px" in o,
+     TAP.format(p="places.html"))
+
+
+# ---- 26. the exception that stopped being earned ---------------------------
+# Fourteen governorates are under 24px and cannot be enlarged, so the checker
+# forgives them ONLY while a full-size control reaches the same features. That
+# is a licence with a condition attached, and a condition nobody verifies is
+# not a condition. Removing the picker must turn the forgiveness back into a
+# failure — otherwise the exception is just a permanent exemption wearing a
+# justification.
+case("the equivalent full-size control removed from a map page",
+     "tap-targets.js", ["site/geospatial.html"],
+     lambda: edit("site/geospatial.html",
+                  '<select id="govPick" class="gov-pick">',
+                  '<select id="govPickDisabled" class="gov-pick">'),
+     lambda o: "EQUIVALENT CONTROL MISSING" in o or "UNDER-24px" in o,
+     TAP.format(p="geospatial.html"))
+
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")

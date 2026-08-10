@@ -1174,6 +1174,20 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 .marker-cluster-museum { background: rgba(107, 63, 160, 0.25); }
 .marker-cluster-museum div { background: #6B3FA0; }
 
+/* The Atlas governorate picker — the non-map route to the fourteen
+   governorates that render under 24px on a phone. Sized to the toolbar chips
+   beside it so it reads as one control row rather than a bolted-on form. */
+.gov-pick {
+  font: 600 0.82rem 'Inter', system-ui, sans-serif;
+  color: var(--blue-deep); background: var(--papyrus-2);
+  border: 1px solid var(--line-light); border-radius: 999px;
+  padding: 7px 12px; min-height: 34px; cursor: pointer;
+}
+.gov-pick:focus-visible { outline: 2px solid var(--gold-ink); outline-offset: 2px; }
+/* The value the picker reads out on Explore. A live region, so choosing a
+   name announces the figure as well as showing it. */
+.gov-pick-out { font: 600 0.82rem 'Inter', system-ui, sans-serif; color: var(--blue-deep); }
+
 /* A gazetteer pin: a small visible dot inside a target a finger can hit.
    The icon box is 30px of transparent space and the dot inside it keeps the
    4-5px radius the map needs — enlarging the dot instead would turn the Delta

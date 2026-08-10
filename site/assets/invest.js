@@ -74,7 +74,7 @@
     investment_deals:    { label: 'Headline deals' }
   };
 
-  var S = { map: null, data: null, layer: null, active: {}, sel: null };
+  var S = { map: null, data: null, layer: null, hits: null, active: {}, sel: null };
 
   function $(id) { return document.getElementById(id); }
   function esc(s) {
@@ -164,6 +164,45 @@
     return order.map(function (k) { return byKey[k]; });
   }
 
+  function labelOf(group) {
+    var p = group[0];
+    return group.length === 1 ? p.name
+      : group.length + ' projects at ' + (p.matched || p.location_text);
+  }
+
+  /* THE PIN A READER SEES AND THE AREA A FINGER HITS ARE NOT THE SAME CIRCLE.
+
+     A site pin is 12px across and a stacked one up to 18px. Measured on a
+     390px viewport that is half the 24x24 WCAG 2.5.8 asks of a touch target,
+     so seven of the twelve located projects were visible and awkward to open
+     on a phone. Growing the pin is not the answer — at country zoom the four
+     around Ain Sokhna and Zafarana already nearly touch, and tap-sized pins
+     would merge into one blob and lose the thing the map is for.
+
+     So the pin keeps its size and an invisible circle three times wider sits
+     underneath it carrying the same tooltip and the same click.
+
+     fillOpacity 0.01 rather than 0, and that is not a rounding error. An SVG
+     path is hit-tested where it is PAINTED, so a fully transparent circle is
+     not hit at all and this would silently do nothing. One percent of white
+     over the pale land is imperceptible and is painted. weight 0 keeps it out
+     of map-contrast.js, which measures strokes.
+
+     These are not tab stops: the visible markers already carry tabindex, role
+     and an accessible name, and a second focus stop per project would make the
+     keyboard worse to fix the touch target. */
+  function hitFor(group) {
+    var p = group[0];
+    var h = L.circleMarker([p.lat, p.lon], {
+      pane: 'proj', radius: 15, weight: 0,
+      fillColor: '#FFFFFF', fillOpacity: 0.01,
+      className: 'iv-hit'
+    });
+    h.bindTooltip(esc(labelOf(group)), { direction: 'top' });
+    h.on('click', function () { select(group); });
+    return h;
+  }
+
   function markerFor(group) {
     var p = group[0];
     var gov = p.resolution === 'governorate';
@@ -183,8 +222,7 @@
       fillColor: gov ? 'transparent' : BLUE,
       fillOpacity: gov ? 0 : 0.92
     });
-    var label = group.length === 1 ? p.name
-      : group.length + ' projects at ' + (p.matched || p.location_text);
+    var label = labelOf(group);
     m.bindTooltip(esc(label), { direction: 'top' });
     m.on('click', function () { select(group); });
     m._group = group;
@@ -195,10 +233,14 @@
   function drawMarkers() {
     if (!S.map) return;
     if (S.layer) S.map.removeLayer(S.layer);
+    if (S.hits) S.map.removeLayer(S.hits);
     var shown = S.data.projects.filter(function (p) {
       return typeof p.lat === 'number' && S.active[p.table];
     });
     var groups = groupByLocation(shown);
+    // Hit targets first, so they sit UNDER the pins they belong to rather
+    // than over them — same pane means SVG paints in insertion order.
+    S.hits = L.layerGroup(groups.map(hitFor)).addTo(S.map);
     S.layer = L.layerGroup(groups.map(markerFor)).addTo(S.map);
     // Name what is on the map. There are never more than a dozen markers here,
     // and an unlabelled dot on a country outline is a project the reader has to

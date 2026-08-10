@@ -447,6 +447,42 @@
       buildHeritageCards();
     });
 
+    /* THE SAME DOOR, IN A SIZE A THUMB CAN OPEN.
+
+       Fourteen of the twenty-seven governorates render under 24px wide at
+       390px — Gharbia is 11x14 — and that cannot be styled away, because the
+       shapes are the real shapes of the country. The keyboard route already
+       existed (one tab stop into the map, then arrow keys moving
+       geographically) and the sr-only table already published the figures, but
+       neither helps the person holding a phone who can see Gharbia and cannot
+       hit it.
+
+       So this runs the exact same activate() the map runs — same fly, same
+       detail panel, same selected state — rather than a parallel path that
+       could drift out of step with it. Populated from the geometry rather than
+       a typed list, so a boundary file with different governorates in it
+       cannot leave this menu quietly wrong. */
+    (function buildPicker() {
+      var sel = $('govPick');
+      if (!sel) return;
+      var entries = [];
+      S.layer.eachLayer(function (l) {
+        entries.push({ name: l.feature.properties.name, layer: l });
+      });
+      entries.sort(function (a, b) { return a.name.localeCompare(b.name); });
+      entries.forEach(function (e, i) {
+        var o = document.createElement('option');
+        o.value = String(i);
+        o.textContent = e.name;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', function () {
+        var e = entries[+sel.value];
+        if (!e) return;
+        activate(e.layer, e.layer.feature);
+      });
+    }());
+
     setTimeout(function () { S.map.invalidateSize(); S.map.fitBounds(S.layer.getBounds(), { padding: [6, 6] }); }, 250);
   }
 
