@@ -105,12 +105,21 @@
     // the ground is dark and #C7BCA1 already measures 9.29:1, so the halo is
     // only needed on the light one.
     if (id !== 'reliefMap') mkx('outline')(m, window.EGYBI_EGYPT_GEO);
-    L.geoJSON(window.EGYBI_EGYPT_GEO, {
+    var land = L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: function () {
         return { color: '#C7BCA1', weight: 1, fillColor: '#EFE7D4', fillOpacity: 1 };
       },
       interactive: false
     }).addTo(m);
+    /* NAMES. Both visitor maps had none — measured at 0 labels at every zoom,
+       at 1280 and at 390. Every other map on the site was given governorate
+       names on 2026-08-09 and these two were missed, which matters more here
+       than anywhere else: this is the page a visitor opens to decide WHERE to
+       go, and it showed them an unlabelled silhouette with dots on it. The
+       relief map gets them too — its whole subject is where a transect runs,
+       and a line across an anonymous country says nothing about where. */
+    mkx('addLabels')(m, land, function (p) { return p && p.name; },
+                     { minPx: 62, maxLabels: 14, className: 'mk-label-sm' });
     m.fitBounds([[22.0, 24.7], [31.7, 36.9]], { padding: [10, 10] });
     // Both visitor maps get the same reset control every other map has. The
     // relief map re-fits to each transect as you pick one, so "put it back"

@@ -66,7 +66,37 @@
        Places, Streets, Explore and Visit are where a reader goes to explore;
        this is where they go to read. If a story ever carries a figure the
        prose does NOT state, this decision should be revisited for that map. */
+    /* zoomSnap, and it is not cosmetic here.
+
+       Leaflet snaps to whole zoom levels by default, so fitBounds drops a
+       FULL level whenever the ideal zoom lands just under an integer. mapkit
+       sets zoomSnap: 0.25 for exactly that reason and every map built through
+       it lands on a fraction — Streets opens at 6.75. These four are built
+       with plain L.map because they are inert illustrations that deliberately
+       skip mapkit's controls and keyboard handling, and skipping mapkit meant
+       skipping this too.
+
+       Measured before the change: all four opened at integer zoom 5 with the
+       country covering 52% of the box's width and 40% of its height — Egypt as
+       a small picture adrift in a tall empty frame, beside prose asking the
+       reader to compare governorates they can barely see.
+
+       0.1 rather than mapkit's 0.25, and the difference was measured rather
+       than assumed. fitBounds computes the ideal zoom and then floors it onto
+       the snap grid, so a coarser grid throws away more, and it throws away
+       most when the box is portrait and the country nearly square — which is
+       exactly the shape of these four. At 538x618:
+
+           integer zoom (before)   52% x 40% of the box,   5 names drawn
+           zoomSnap 0.25           87% x 67%,             10 names
+           zoomSnap 0.1            96% x 74%,             11 names
+
+       and at 390px the last step is 81x57 to 93x65. mapkit keeps 0.25 because
+       its maps sit in boxes closer to the country's own proportions, where
+       they already open at 96% of the width and the finer grid buys nothing
+       worth a change across eight surfaces. */
     var m = L.map(id, { zoomControl: false, attributionControl: false,
+                        zoomSnap: 0.1,
                         scrollWheelZoom: false, dragging: false, keyboard: false });
     // The map repeats what the prose says, so it is hidden from screen readers
     // rather than made to narrate itself.
