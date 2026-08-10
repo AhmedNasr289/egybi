@@ -54,6 +54,35 @@ site 300 km away, with a working citation attached. Six correct pins were not
 worth five wrong ones, so the rule is gone rather than patched — every patch
 would have been a new list of words to distrust.
 
+THE ALIAS TABLE THAT WAS INVESTIGATED AND NOT BUILT (2026-08-10). Eight rows
+are unresolved, and the obvious next move is to ask whether the gazetteer holds
+those places under a different spelling. It does, for two of them:
+
+    location 'Kom Ombo'    -> gazetteer has "Kawm Ombo" and "Koum Ombo City",
+                              both settlements, both computed into Aswan
+    location 'Ras Ghareb'  -> gazetteer has "Gharib Cape" in Red Sea
+                              ("Ras" is Arabic for cape, so this is a
+                              translation, not just a transliteration)
+
+The other six cannot be placed by any spelling, and that is the more useful
+half of the finding: 'Gulf of Suez' (three rows) is a body of water touching
+Suez, Red Sea and South Sinai; 'SCZONE' and 'SCZONE + North Coast' span several
+governorates by definition; 'West Bakr' and 'Gabal El Zeit' are absent from
+OSM's place=city|town set entirely. No alias reaches them.
+
+So an alias table buys one row confidently and a second by translating a word,
+out of forty. Set against that: it is the same shape as the two rules already
+removed from this file for putting projects in the wrong place, and it is worse
+in one specific way — a rule is a rule you can reason about, while a list of
+hand-written equivalences is a place where a future guess looks exactly like a
+verified fact. The Abydos row is the warning: it was WRONG about a location
+that also had a plausible-looking string match.
+
+Written down rather than acted on, so the next person spends the ten minutes on
+something else. If this is revisited, the constraint that makes it safe is that
+an alias may resolve to GOVERNORATE only, never to a site: a wrong governorate
+ring is a coarse answer, a wrong pin is a false one.
+
 Everything else is published as unresolved, with the location text that could
 not be matched, so the gap is visible on the page instead of being quietly
 absent from the map. A row with no location field at all — the IMF facilities,
@@ -323,6 +352,13 @@ def main():
         {(r["name"], r["location_text"]) for r in rows if r["resolution"] == "unresolved"})
 
     out = {
+        # THE DAY THIS JOIN RAN, and nothing more. No row in the knowledge
+        # base carries a date of its own, so there is no better date to give —
+        # but this one re-stamps itself on every rebuild whether or not a
+        # figure changed, which is exactly how the page came to tell readers
+        # the investment data was refreshed today when it was not. The page
+        # labels it as a rebuild date for that reason; do not relabel it as a
+        # data date without first giving the rows real dates to draw on.
         "as_of": date.today().isoformat(),
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "generated_by": "backend/pipeline/build_invest_map.py",

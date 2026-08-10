@@ -18,11 +18,18 @@
    published it, with its status attached so a stated 2030 target can never be
    read as a thing that exists.
 
-   THE MAP IS DELIBERATELY SPARSE. Seven of forty projects can be placed from
-   committed data. The other thirty-three are listed in full underneath, with
-   the location text that could not be matched. See build_invest_map.py for the
-   two matching rules that were tried and removed for putting projects in the
-   wrong place — the failure a map makes invisible.
+   THE MAP IS DELIBERATELY SPARSE, and this comment no longer says by how much.
+   It used to read "seven of forty" and the answer had become twelve — a figure
+   in a comment drifting away from the data while sitting in a file whose whole
+   argument is that figures do not drift. The split lives in
+   invest-projects.json, the page computes it from there, and repeating it here
+   only creates a second copy to go stale.
+
+   Every row that cannot be placed is listed in full underneath with the
+   location text that failed, so the gap is visible rather than absent. See
+   build_invest_map.py for the two matching rules that were tried and removed
+   for putting projects in the wrong place — the failure a map makes
+   invisible.
 
    Degrades honestly: if the data file is missing, the map still draws Egypt
    and the page says the layer has not been built, rather than rendering an
@@ -377,8 +384,26 @@
       }).join('');
     }
     if (cap) {
-      cap.innerHTML = 'All ' + S.data.projects.length + ' projects in the knowledge base, as of '
-        + esc(S.data.as_of) + '. Figures are as published by the source on each row.';
+      /* WHAT THE DATE ACTUALLY MEANS, said plainly.
+
+         This read "as of <date>", which a reader takes as "these figures were
+         checked on that day". They were not. No row in this file carries a
+         date of its own — the knowledge base has none to give — so the only
+         date available is the day the join last ran, and the join re-runs
+         whether or not a single figure changed. Rebuilding the file on a
+         Tuesday moved that date to Tuesday and told every reader the
+         investment data had been refreshed.
+
+         On a page a reader might use to think about money, a date that
+         overstates its own freshness is not a wording problem. The rebuild
+         date is still worth showing — it says when the map was last derived —
+         but it has to be labelled as what it is, with the reader pointed at
+         the per-row source for the age of the figure itself. */
+      cap.innerHTML = 'All ' + S.data.projects.length + ' projects in the knowledge base. '
+        + 'This list was last rebuilt on ' + esc(S.data.as_of)
+        + '; that is when the join ran, not when the figures were verified. '
+        + 'Every figure is as published by the source linked on its own row, '
+        + 'which may be considerably older.';
     }
 
     var ub = document.querySelector('#ivUnresolved tbody');
