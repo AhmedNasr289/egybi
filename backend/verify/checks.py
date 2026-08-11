@@ -9,6 +9,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Windows consoles default to cp1252; printing any non-latin-1 character then
+# raises UnicodeEncodeError and takes the whole report with it.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 
 def orphans():
     """CSS classes with a rule and no markup. Whole-token matching, because a

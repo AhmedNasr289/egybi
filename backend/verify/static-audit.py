@@ -10,6 +10,14 @@ import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
+
+# Windows consoles default to cp1252, so printing the arrow in the relief lines
+# raised UnicodeEncodeError and killed the whole run mid-report — every finding
+# after that point lost. Same failure class as the checker that crashed on the
+# defect it had just found: a report must survive its own output.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 from urllib.parse import urlparse, unquote
 
 SITE = Path("site")

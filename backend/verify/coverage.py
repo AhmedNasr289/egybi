@@ -4,12 +4,20 @@ Titles and descriptions, alt coverage, structured-data validity, drift between
 hand-duplicated header/footer copies, and whether any page's stated as-of date
 has outrun the cadence of the pipeline that writes it.
 """
+import sys
 import datetime
 import glob
 import json
 import re
 from collections import defaultdict
 from pathlib import Path
+
+# Windows consoles default to cp1252; printing any non-latin-1 character then
+# raises UnicodeEncodeError and takes the whole report with it.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 
 TODAY = datetime.date(2026, 8, 8)
 findings = defaultdict(list)

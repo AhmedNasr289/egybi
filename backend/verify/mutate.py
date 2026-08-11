@@ -17,6 +17,12 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Windows consoles default to cp1252; the em dashes in this harness's own
+# headings printed as mojibake and any non-latin-1 output would abort the run.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 # The checkers live next to this file. Pointing at one container's scratch
 # directory meant the committed harness only ever ran in the sandbox that wrote
 # it; resolve siblings relative to this file so it runs from any checkout.
@@ -106,7 +112,11 @@ def case(name, tool, files, mutate, detects, cmd, timeout=900):
     print(f"  {verdict:16} {name}")
 
 
-PY_AUDIT = f"python3 {HERE}/static-audit.py"
+# sys.executable, not "python3": on Windows `python3` resolves to a Store
+# execution-alias stub that exits 0 with no output, so every Python-based case
+# reported FAILS TO CATCH while testing nothing at all. A harness that cannot
+# invoke its checkers reports the same thing as a checker that cannot fire.
+PY_AUDIT = f'"{sys.executable}" {HERE}/static-audit.py'
 SWEEP1 = "ONLY={p} node " + str(HERE) + "/all-pages.js"
 
 print("mutation tests — each injects a defect the checker exists to catch\n")
@@ -269,7 +279,7 @@ case("geoBoundaries credit stripped from a page with no map", "all-pages.js",
      lambda o: "no visible credit" in o,
      SWEEP1.format(p="index.html"))
 
-COVERAGE = f"python3 {HERE}/coverage.py"
+COVERAGE = f'"{sys.executable}" {HERE}/coverage.py'
 
 # ---- 14. chrome drift: a footer nav link that exists on every page but one --
 case("footer nav link dropped from one page", "coverage.py", ["site/about.html"],
