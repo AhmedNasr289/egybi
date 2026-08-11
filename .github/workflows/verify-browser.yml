@@ -146,7 +146,13 @@ jobs:
       # the argument backend/verify/README.md makes, and it is why an earlier
       # "0/32 checkers work" turned out to be a dead python3 alias rather than
       # sixteen broken checks.
+      # if: always() because whether the checkers can fire is independent of
+      # whether the site passes. A site finding suppressing this one is
+      # backwards — a red sweep is exactly when you most need to know the
+      # checkers are trustworthy. map-interaction.js failing has already
+      # skipped this step once, leaving the question unanswered.
       - name: mutate.py — the check on the checks
+        if: always()
         run: python3 backend/verify/mutate.py
 
       - name: Upload logs
