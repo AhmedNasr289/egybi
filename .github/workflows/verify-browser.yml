@@ -19,6 +19,10 @@ on:
   pull_request:
     paths:
       - 'site/**'
+      # the workflow itself, so a change to it can be tested on a branch:
+      # workflow_dispatch only works from the default branch, so a PR is the
+      # only way to exercise this before it lands on main.
+      - '.github/workflows/verify-browser.yml'
   workflow_dispatch: {}
 
 # A second push while a sweep is running should supersede it rather than queue:
