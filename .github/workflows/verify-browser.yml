@@ -54,6 +54,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      # checks.py's `workflows` subcommand imports yaml. The workstation has
+      # PyYAML installed, so this only shows up on a clean runner — which is
+      # the point of running here rather than only where it happens to pass.
+      - name: Python dependencies
+        run: python3 -m pip install --quiet pyyaml
+
       # env.js resolves playwright-core from node_modules or PLAYWRIGHT_CORE.
       # This repo has no package.json, so install into a scratch directory and
       # name the path explicitly rather than relying on module resolution.
