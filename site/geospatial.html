@@ -134,7 +134,7 @@
         <button type="button" class="ov-toggle" data-overlay="health" disabled title="Appears after the first layer build">Hospitals &amp; clinics</button>
         <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="Appears after the first layer build">World Heritage sites</button>
       </div>
-      <div class="atlas-box" id="atlasMap" role="region" aria-label="Interactive map of Egypt's 27 governorates with selectable data layers"></div>
+      <section class="atlas-box" id="atlasMap" aria-label="Interactive map of Egypt's 27 governorates with selectable data layers"></section>
       <!-- A way in that is not the map. Fourteen of the twenty-seven
            governorates render under 24px wide on a 390px screen — Gharbia is
            11x14 — so on a phone half the country cannot reliably be tapped, and
@@ -172,7 +172,7 @@ ORDER BY population_millions DESC;"
              data-query-source="CAPMAS population estimates + governorate areas"
              data-query-asof="2024"
              data-query-json="data/geo-health.json">
-        <thead><tr><th>Governorate</th><th>Population</th><th>Density /km²</th><th>Health facilities (OSM)</th><th>Schools (OSM)</th></tr></thead>
+        <thead><tr><th scope="col">Governorate</th><th scope="col">Population</th><th scope="col">Density /km²</th><th scope="col">Health facilities (OSM)</th><th scope="col">Schools (OSM)</th></tr></thead>
         <tbody id="govTableBody"><tr><td colspan="5">Loading…</td></tr></tbody>
       </table>
     </div>

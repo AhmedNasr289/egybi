@@ -171,7 +171,7 @@
 
     <div class="scrolly" data-scrolly data-graphic="visitMap">
       <div class="scrolly-graphic">
-        <div id="visitMap" role="region" aria-label="Map of Egypt showing the major visitor sites"></div>
+        <section id="visitMap" aria-label="Map of Egypt showing the major visitor sites"></section>
         <div class="v-scale" aria-hidden="true">
           <span><i class="v-sw" style="background:#2C6FAD"></i>under 22&nbsp;°C</span>
           <span><i class="v-sw" style="background:#4FA3A5"></i>22&ndash;28</span>
@@ -294,13 +294,13 @@
     <div class="v-profile-grid">
       <div>
         <div id="reliefChart" role="img" aria-label="Elevation profile along the selected line"></div>
-        <label class="v-scrub" for="reliefScrub">
+        <label class="v-scrub">
           <span>Move along the line</span>
           <input type="range" id="reliefScrub" min="0" max="100" value="0" step="1">
         </label>
         <p class="v-readout" id="reliefReadout"></p>
       </div>
-      <div id="reliefMap" role="region" aria-label="Map of Egypt showing where the selected line runs"></div>
+      <section id="reliefMap" aria-label="Map of Egypt showing where the selected line runs"></section>
     </div>
     <p class="chart-cap" id="reliefCap"></p>
   </div>
