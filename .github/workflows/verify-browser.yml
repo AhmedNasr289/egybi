@@ -114,6 +114,16 @@ jobs:
             python3 backend/verify/checks.py "$c"
           done
 
+      # seo.py judges the CORPUS, which is the one thing none of the others
+      # look at. 123 retired pages sat live and indexable against 27 real ones
+      # for months — 82% of everything crawlable — and Google read the domain's
+      # identity off them. Every single one of those pages passed a per-page
+      # audit, so no page-level checker could ever have found it. It runs here
+      # with the other static checks because it needs no browser.
+      - name: seo.py
+        if: always()
+        run: python3 backend/verify/seo.py
+
       # Each browser checker is its own step so the summary names which one
       # failed, rather than one red block covering nine tools.
       #

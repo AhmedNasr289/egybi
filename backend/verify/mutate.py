@@ -533,6 +533,41 @@ case("the equivalent full-size control removed from a map page",
      TAP.format(p="geospatial.html"))
 
 
+# ---- 20-23. seo.py: the defects that decided the domain's identity ---------
+# These four are the ones that actually happened. For months every page audited
+# clean while Google showed the site under a name it had abandoned, because the
+# defect was in the corpus rather than in any page — so the first case below is
+# the one this checker exists for.
+PY_SEO = f'"{sys.executable}" {HERE}/seo.py'
+
+case("retired page silently indexable again", "seo.py",
+     ["site/practice/your-first-select.html"],
+     lambda: edit("site/practice/your-first-select.html",
+                  '<meta name="robots" content="noindex,follow">', ""),
+     lambda o: "retired page still indexable" in o, PY_SEO)
+
+# Blocking a noindex page reads as reinforcement and does the exact opposite:
+# Google cannot fetch the page, so it never reads the noindex, so the page
+# stays indexed forever. The checker has to catch the well-meaning version.
+case("robots.txt blocks the noindex it depends on", "seo.py", ["robots.txt"],
+     lambda: edit("robots.txt", "Disallow: /api/",
+                  "Disallow: /api/\nDisallow: /practice/"),
+     lambda o: "robots.txt blocks a noindex directory" in o, PY_SEO)
+
+case("two pages claiming one canonical", "seo.py", ["site/places.html"],
+     lambda: edit("site/places.html",
+                  '<link rel="canonical" href="https://egybi.com/places.html">',
+                  '<link rel="canonical" href="https://egybi.com/visit.html">'),
+     lambda o: "duplicate canonical" in o, PY_SEO)
+
+# Invalid JSON-LD is worse than none: it is discarded in silence, so the page
+# looks marked up in the source and earns nothing.
+case("structured data that no longer parses", "seo.py", ["site/streets.html"],
+     lambda: edit("site/streets.html", '"@context": "https://schema.org"',
+                  '"@context": "https://schema.org",,'),
+     lambda o: "JSON-LD does not parse" in o, PY_SEO)
+
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")
