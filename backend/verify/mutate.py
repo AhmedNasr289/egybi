@@ -568,6 +568,24 @@ case("structured data that no longer parses", "seo.py", ["site/streets.html"],
      lambda o: "JSON-LD does not parse" in o, PY_SEO)
 
 
+# ---- 24. map-completeness: a map that draws but explains nothing ------------
+# The defect this checker was written for. stories.html rendered its districts
+# correctly and named none of them; every checker that judged that page was
+# judging whether it drew.
+PY_MAPS = f'"{sys.executable}" {HERE}/map-completeness.py'
+
+case("map legend stripped from a story", "map-completeness.py",
+     ["site/assets/stories.js"],
+     lambda: edit("site/assets/stories.js", "class=\"st-legend\"", "class=\"st-nolegend\""),
+     # Match the GAP LINE, not the table. The first predicate here was
+     # `"legend" in o and "stories.html" in o`, which the checker's own
+     # PASSING output satisfies — "legend" is a column header and
+     # "stories.html" is a row — so it reported caught while nothing was
+     # wrong. A detector that matches the report's furniture instead of its
+     # findings is always true.
+     lambda o: "stories.html: legend" in o, PY_MAPS)
+
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")

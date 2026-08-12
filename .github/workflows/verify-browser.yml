@@ -124,6 +124,15 @@ jobs:
         if: always()
         run: python3 backend/verify/seo.py
 
+      # map-completeness.py asks whether a map EXPLAINS, which every other
+      # checker here takes for granted. "A century of plans" rendered
+      # perfectly, passed contrast, passed interaction, and was still three
+      # unlabelled gold shapes on a pale field. Rendering and explaining fail
+      # differently and only one of them shows up in a screenshot.
+      - name: map-completeness.py
+        if: always()
+        run: python3 backend/verify/map-completeness.py
+
       # Each browser checker is its own step so the summary names which one
       # failed, rather than one red block covering nine tools.
       #
