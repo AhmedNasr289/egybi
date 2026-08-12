@@ -54,7 +54,13 @@ async function session(browser, page, width, reduced) {
   p.on('request', r => {
     const u = r.url();
     if (!u.startsWith(BASE) && !u.startsWith('data:') && !u.startsWith('blob:') && !ALLOWED.test(u)) {
-      external.push(new URL(u).host);
+      // host + pathname, not host alone: the allowlist is tested against the
+      // full URL but only the host was reported, so a finding named a host
+      // without the path needed to write a rule for it. `pagead` was already
+      // allowed and www.google.com was still flagged, which proved the path
+      // was something else — and nothing in the report could say what.
+      const url = new URL(u);
+      external.push(url.host + url.pathname);
     }
   });
 
