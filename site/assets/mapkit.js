@@ -22,6 +22,12 @@
    Nothing is gated behind a transition, so nothing becomes unreachable. */
 (function () {
   'use strict';
+  // TEMPORARY instrumentation. Ten hypotheses about why this file loads
+  // (43,524 bytes decoded, unblocked, valid, cache-fresh) yet never defines
+  // EGYBI.mapkit on desktop have all been wrong. These two lines measure it
+  // instead of guessing: whether the IIFE is entered, and whether it reaches
+  // the export. Remove both once the cause is known.
+  console.log('mapkit: IIFE entered');
 
   var RM = function () {
     return !!(window.EGYBI && window.EGYBI.reduceMotion);
@@ -858,6 +864,7 @@
     })]));
   }
 
+  console.log('mapkit: reached export');
   window.EGYBI = window.EGYBI || {};
   window.EGYBI.mapkit = {
     create: create,
