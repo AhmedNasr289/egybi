@@ -37,7 +37,11 @@ permissions:
 jobs:
   browser-checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # 35, not 25: run 31515324032 ended `cancelled` on the timeout even
+    # though every step had reported, which reads as an infrastructure
+    # problem rather than the site finding it actually was. mutate.py
+    # alone drives sixteen cases, several through a browser.
+    timeout-minutes: 35
 
     env:
       BASE: http://localhost:8793
