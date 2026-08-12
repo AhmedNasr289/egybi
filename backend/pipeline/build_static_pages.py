@@ -47,6 +47,7 @@ precisely what the encyclopaedia is built on.
 
 Run:  python backend/pipeline/build_static_pages.py
 """
+import datetime as _dt
 import io, json, os, re, subprocess, sys, html
 
 def _force_utf8_output() -> None:
@@ -72,7 +73,10 @@ _force_utf8_output()
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = os.path.join(ROOT, 'site')
 SITE_URL = 'https://egybi.com'
-TODAY = '2026-08-07'
+# Computed, not frozen. This was the literal '2026-08-07', so every sitemap
+# <lastmod> kept claiming that date however often the generator ran — telling
+# crawlers nothing had changed while the site was being repositioned.
+TODAY = _dt.date.today().isoformat()
 
 # Where a retired challenge sends its reader, keyed by the challenge's own
 # `sector`. Every destination below is a section that EXISTS today — verified
@@ -271,7 +275,7 @@ def build_challenges(chs, docs):
   </div>
 </section>
 """
-        io.open(os.path.join(outdir, sl + '.html'), 'w', encoding='utf-8').write(
+        io.open(os.path.join(outdir, sl + '.html'), 'w', encoding='utf-8', newline='\n').write(
             page(title, desc, url, body, ld))
     return []
 
@@ -320,7 +324,7 @@ def build_posts(posts):
   </div>
 </section>
 """
-        io.open(os.path.join(outdir, sl + '.html'), 'w', encoding='utf-8').write(
+        io.open(os.path.join(outdir, sl + '.html'), 'w', encoding='utf-8', newline='\n').write(
             page(title, desc, url, body, ld))
         urls.append((url, '0.7'))
     return urls
@@ -338,7 +342,7 @@ def build_sitemap(extra):
     rows += [f"  <url>\n    <loc>{u}</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>{p}</priority>\n  </url>"
              for u, p in extra]
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(rows) + "\n</urlset>\n"
-    io.open(os.path.join(SITE, 'sitemap.xml'), 'w', encoding='utf-8').write(xml)
+    io.open(os.path.join(SITE, 'sitemap.xml'), 'w', encoding='utf-8', newline='\n').write(xml)
     return len(rows)
 
 
@@ -372,7 +376,7 @@ def build_feed(posts):
            '  <description>Egypt, told through its data — a monthly letter of real, cited stories from EgyBI.</description>\n'
            '  <language>en</language>\n'
            + "\n".join(items) + "\n</channel>\n</rss>\n")
-    io.open(os.path.join(SITE, 'feed.xml'), 'w', encoding='utf-8').write(xml)
+    io.open(os.path.join(SITE, 'feed.xml'), 'w', encoding='utf-8', newline='\n').write(xml)
     return len(items)
 
 
