@@ -113,7 +113,28 @@ const HIT_HELPERS = ['iv-hit'];
         const box = e.getBoundingClientRect();
         if (box.width < 1 || box.height < 1) { zero.push(label); continue; }
 
-        e.scrollIntoView({ block: 'center' });
+        // behavior: 'instant' is load-bearing, not tidiness. egybi.css sets
+        // `html { scroll-behavior: smooth }`, so this call ANIMATES over a few
+        // hundred milliseconds while the very next line reads the rectangle —
+        // at the pre-scroll position. elementFromPoint then samples stale
+        // coordinates, and what sits at those coordinates is very often
+        // `.site-header`, which is position: sticky at z-index 1100 and
+        // therefore on top of everything near the viewport top.
+        //
+        // That is the whole of the "tap-targets.js fails for unknown reasons"
+        // history: explore.html reported COVERED(18) with the coverer named as
+        // DIV.bar — which is not a chart bar, it is `.site-header .bar` — and
+        // the page was never at fault. It is intermittent because the scroll
+        // animation races the measurement loop, and it shows up on the page
+        // with the most controls because that page rolls the dice most often.
+        //
+        // The corroboration is that reduced.js has never seen it: under
+        // prefers-reduced-motion the stylesheet switches to
+        // `scroll-behavior: auto`, which makes this same call instant.
+        //
+        // 'instant' overrides the CSS for this one call, which restores what
+        // line 116 always meant to do — measure the element where it ends up.
+        e.scrollIntoView({ block: 'center', behavior: 'instant' });
         const b2 = e.getBoundingClientRect();
         const top = document.elementFromPoint(b2.left + b2.width / 2,
                                               b2.top + b2.height / 2);

@@ -79,7 +79,13 @@ const MIN_PATHS = 15;   // a country-wide boundary, not a per-feature accent
     const r = await p.evaluate(({ sel }) => {
       const box = document.querySelector(sel);
       if (!box) return { missing: true };
-      box.scrollIntoView({ block: 'center' });
+      // 'instant' for the same reason as tap-targets.js: egybi.css sets
+      // `html { scroll-behavior: smooth }`, so without it this call animates
+      // while everything after it samples the element mid-flight. Nothing here
+      // reads coordinates, so it has not misfired yet — but it is the same
+      // latent race, and a checker that only sometimes measures what it aimed
+      // at is the failure mode this whole directory exists to avoid.
+      box.scrollIntoView({ block: 'center', behavior: 'instant' });
       const parse = s => (s.match(/[\d.]+/g) || []).map(Number);
       const lum = c => { const [r, g, b] = c.slice(0, 3).map(v => { v /= 255;
         return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
