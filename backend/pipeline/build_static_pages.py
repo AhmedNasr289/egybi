@@ -155,21 +155,36 @@ def chrome(prefix='../'):
 NAV, FOOT = chrome()
 
 def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
-         nav=None, foot=None, og_image=None):
+         nav=None, foot=None, og_image=None, canonical_link=True):
     # Parameterised because the card was hardcoded here at ?v=2, so all 135
     # generated pages would have kept advertising the retired "Practice SQL &
     # BI / 123 challenges" preview even after the file behind that URL was
     # replaced. Social platforms cache preview images by URL indefinitely, so
     # the version has to move with the bytes.
     og_image = og_image or f"{SITE_URL}/og-image.png?v=3"
+    # A noindex page must NOT also claim a canonical. The two contradict each
+    # other: rel=canonical declares "this URL is the preferred version of this
+    # content", which only means anything about a page that is to be indexed,
+    # while noindex says the opposite. Google resolves the conflict however it
+    # likes, and has been known to favour the canonical — which would undo the
+    # de-indexing entirely.
+    #
+    # Nothing is lost by dropping it. Canonicalisation exists to pick a winner
+    # among indexable duplicates, and a noindexed page is not competing.
+    # og:url stays: that is for sharing, not indexing, and a shared link still
+    # needs to know where it points.
+    #
+    # Caught by all-pages.js, which already had the rule. It fired on all 123
+    # pages the moment the noindex landed — the checker was right and the
+    # change was wrong.
+    canonical_tag = f'\n<link rel="canonical" href="{canonical}">' if canonical_link else ''
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(title)}</title>
-<meta name="description" content="{esc(desc)}">
-<link rel="canonical" href="{canonical}">
+<meta name="description" content="{esc(desc)}">{canonical_tag}
 <meta property="og:site_name" content="EgyBI">
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(desc)}">
@@ -307,7 +322,8 @@ def build_challenges(chs, docs):
 """
         io.open(os.path.join(outdir, sl + '.html'), 'w', encoding='utf-8', newline='\n').write(
             page(title, desc, url, body, ld,
-                 extra_head='<meta name="robots" content="noindex,follow">'))
+                 extra_head='<meta name="robots" content="noindex,follow">',
+                 canonical_link=False))
     return []
 
 def build_posts(posts):
