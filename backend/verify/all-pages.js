@@ -4,7 +4,12 @@ const { chromium, executablePath, BASE, LOGDIR } = require('./env');
 const fs = require('fs');
 const LOG = require('path').join(LOGDIR, 'pages.log');
 fs.writeFileSync(LOG, '');
-const ALLOWED_EXTERNAL = /fonts\.g|googlesyndication|pagead|tradingview/;
+// adtrafficquality is AdSense too: Google added it for invalid-traffic
+// detection after this list was written. googlesyndication and pagead were
+// already allowed, so permitting ads was a decision this site had made — the
+// list had simply gone stale. It fires only on interaction, which is why
+// map-interaction.js saw it and the at-rest sweep did not.
+const ALLOWED_EXTERNAL = /fonts\.g|googlesyndication|pagead|adtrafficquality|tradingview/;
 
 const top = fs.readdirSync('site').filter(f => f.endsWith('.html'));
 const prac = fs.readdirSync('site/practice').filter(f => f.endsWith('.html')).map(f => 'practice/' + f);

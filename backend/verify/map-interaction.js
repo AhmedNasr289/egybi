@@ -26,7 +26,12 @@ const PAGES = [
 ];
 // Fonts are the one documented off-origin load on this site and are not a map
 // provider. Everything else during an interaction is a finding.
-const ALLOWED = /fonts\.g|googlesyndication|pagead|tradingview/;
+// adtrafficquality is AdSense too: Google added it for invalid-traffic
+// detection after this list was written. googlesyndication and pagead were
+// already allowed, so permitting ads was a decision this site had made — the
+// list had simply gone stale. It fires only on interaction, which is why
+// map-interaction.js saw it and the at-rest sweep did not.
+const ALLOWED = /fonts\.g|googlesyndication|pagead|adtrafficquality|tradingview/;
 
 // ONLY=<path> drives a single page, and FAST=1 a single viewport with motion
 // on, so the mutation harness can prove one rule in ~20s instead of paying for
