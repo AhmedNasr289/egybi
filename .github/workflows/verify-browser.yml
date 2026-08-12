@@ -33,6 +33,7 @@ concurrency:
 
 permissions:
   contents: read
+  issues: write            # open a failure-alert issue via notify-failure
 
 jobs:
   browser-checks:
@@ -204,3 +205,18 @@ jobs:
           path: ${{ env.VERIFY_LOG_DIR }}
           if-no-files-found: ignore
           retention-days: 14
+
+      # The only workflow standing between an edit and production had no
+      # failure alerting at all, which every scheduled pipeline here already
+      # has. Every push to main is a live Hostinger deploy, so a red sweep on
+      # this workflow is the single most important failure in the repo — and
+      # it was the one nobody was told about. It went unnoticed for six
+      # sessions that tap-targets.js was taking three other checkers down with
+      # it, which is exactly what silence buys.
+      #
+      # Last, so it fires after every checker has reported rather than on the
+      # first one to fail, and if: failure() rather than always() so a green
+      # sweep stays quiet.
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
