@@ -47,6 +47,56 @@
   var totArea = props.reduce(function (a, p) { return a + p.area_km2; }, 0);
 
   function fmt(n, d) { return Number(n).toLocaleString('en-US', { maximumFractionDigits: d || 0 }); }
+  /* Local rather than reaching for mapkit's: every value escaped here comes out
+     of streets-districts.json, and a district name is exactly the kind of field
+     that looks safe until the day someone adds an ampersand to one. */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  /* Injected from here rather than added to egybi.css, which is cache-busted at
+     ?v=39 on every page: a stylesheet edit would force that version to move
+     across thirteen files for one story's chrome, and this project has already
+     paid once for a stale cached asset. Scoped names, one <style>, added once. */
+  (function storyChrome() {
+    if (document.getElementById('st-chrome-css')) return;
+    var s = document.createElement('style');
+    s.id = 'st-chrome-css';
+    s.textContent = [
+      '.st-readout{margin-top:10px;font-size:.84rem;color:var(--ink-soft,#6a6252)}',
+      '.st-legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;',
+      '  padding-bottom:8px;border-bottom:1px solid var(--line-light,#e5ded0)}',
+      '.st-legend span{display:inline-flex;align-items:center;gap:6px}',
+      '.st-legend i{width:14px;height:12px;border-radius:3px;display:inline-block;flex:none}',
+      '.st-legend i.st-line{height:0;border-radius:0;border-top:2px solid #6E86A8;width:18px}',
+      '.st-figures h4{margin:10px 0 2px;font-size:1rem;color:var(--blue-deep,#0E2A5E)}',
+      '.st-figures h4 span{font-weight:400;color:var(--ink-soft,#6a6252);font-size:.9em}',
+      '.st-era{margin:0 0 8px;font-size:.78rem;color:var(--ink-soft,#6a6252)}',
+      '.st-figures dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));',
+      '  gap:8px 14px;margin:0}',
+      '.st-figures dt{font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;',
+      '  color:var(--ink-soft,#6a6252)}',
+      '.st-figures dd{margin:1px 0 0;font-weight:700;color:var(--ink,#292420);',
+      '  font-variant-numeric:tabular-nums}',
+      '.st-figures dd small{font-weight:400;color:var(--ink-soft,#6a6252);font-size:.76em}',
+      /* Gold on gold fails contrast, so the warning sits on papyrus with the
+         gold reserved for the rule down its edge. */
+      '.st-warn{margin:10px 0 0;padding:8px 11px;background:var(--papyrus-2,#F1E7D2);',
+      '  border-left:3px solid var(--gold,#C9A227);border-radius:4px;font-size:.78rem;',
+      '  color:var(--ink,#292420);line-height:1.55}',
+      '.st-src{margin:8px 0 0;font-size:.72rem;color:var(--ink-soft,#6a6252)}',
+      '.st-all{margin:10px 0 0;line-height:1.6}',
+      /* The label rides on the gold fill, so it needs its own plate rather than
+         bare text — #292420 on #C9A227 clears AA, but only over the plate. */
+      '.st-tip{background:rgba(246,238,220,.94);border:1px solid ' + '#8A6D1E' + ';',
+      '  color:#292420;font-weight:700;font-size:.78rem;padding:2px 8px;border-radius:4px;',
+      '  box-shadow:none;white-space:nowrap}',
+      '.st-tip:before{display:none}',
+      '@media (max-width:420px){.st-figures dl{grid-template-columns:repeat(2,1fr)}}'
+    ].join('');
+    document.head.appendChild(s);
+  }());
   function put(id, txt) { var e = document.getElementById(id); if (e) e.textContent = txt; }
 
   function baseMap(id) {
@@ -297,25 +347,124 @@
       var drawn = d.districts.filter(function (r) { return r.boundary_source === 'hand-drawn'; });
       put('stDrawn', drawn.length ? drawn.map(function (r) { return r.name; }).join(', ') : 'none');
 
+      /* ---- the map has to say what it is showing ----------------------------
+         These four steps used to pin an unlabelled gold polygon on a pale field
+         and nothing else: no name, no scale, no legend, no figures. The prose
+         beside them was specific and sourced and the shape carried none of it,
+         so a reader could not tell which district they were looking at, how big
+         it was, or what the thin blue line crossing it was.
+
+         Worse, the shapes invited a comparison the geometry does not support.
+         focus() calls fitBounds per district, so Downtown Cairo at 3.78 km² and
+         6th of October at 551.98 km² — 146 times its area — both filled the
+         frame and appeared the same size. A scale bar is the honest fix rather
+         than a shared zoom: keeping each district legible matters more than
+         drawing them proportionally, but the reader has to be told that the
+         scale moves. It is redrawn by Leaflet on every fitBounds, so the bar
+         reads 500 m on Downtown and several kilometres on 6th of October, which
+         makes the difference visible instead of hiding it.
+
+         Everything printed here is read out of streets-districts.json at render
+         time. A figure on a map is the least-audited thing on a page and the
+         worst place to let a number go stale. */
+      L.control.scale({ imperial: false, position: 'bottomright', maxWidth: 130 }).addTo(m);
+
+      var LEGEND = '<div class="st-legend" aria-hidden="true">' +
+        '<span><i style="background:' + GOLD + ';border:1.6px solid ' + GOLD_INK + '"></i>district in focus</span>' +
+        '<span><i style="background:#B9C4D6;border:1px solid #9AA7BC"></i>the other nine</span>' +
+        '<span><i class="st-line"></i>governorate boundary</span>' +
+        '</div>';
+      var readout = document.createElement('div');
+      readout.className = 'st-readout';
+      el.parentNode.insertBefore(readout, el.nextSibling);
+      readout.insertAdjacentHTML('beforeend', LEGEND);
+      var panel = document.createElement('div');
+      panel.className = 'st-figures';
+      readout.appendChild(panel);
+
+      function num(v, dp) { return v == null ? '—' : fmt(v, dp); }
+
+      function say(r) {
+        if (!r) {
+          panel.innerHTML = '<p class="st-all">All <strong>' + d.districts.length +
+            '</strong> districts, drawn together. Each one is measured on its own ' +
+            'street network; the figures appear as you scroll through them.</p>';
+          return;
+        }
+        /* boundary_source is a field, not a caption written by hand: Downtown
+           Cairo is the one hand-drawn extent because OpenStreetMap has no
+           polygon for it, and the map should admit that as plainly as the prose
+           does rather than let a drawn line pass for a surveyed one. */
+        var drawnNote = r.boundary_source === 'hand-drawn'
+          ? '<p class="st-warn">⚠ This boundary is <strong>hand-drawn</strong>. ' +
+            'OpenStreetMap has no polygon for ' + esc(r.name) + ', so its extent is ' +
+            'an approximation — the street measurements inside it are not.</p>'
+          : '';
+        panel.innerHTML =
+          '<h4>' + esc(r.name) + ' <span lang="ar" dir="rtl">' + esc(r.name_ar || '') + '</span></h4>' +
+          '<p class="st-era">' + esc(r.era || '') + '</p>' +
+          '<dl>' +
+          '<div><dt>Intersections</dt><dd>' + num(r.intersection_density_km2, 0) + ' <small>per km²</small></dd></div>' +
+          '<div><dt>Area</dt><dd>' + num(r.area_km2, 1) + ' <small>km²</small></dd></div>' +
+          '<div><dt>Dead ends</dt><dd>' + num(r.dead_end_share_pct, 1) + '<small>%</small></dd></div>' +
+          '<div><dt>Circuity</dt><dd>' + num(r.circuity_avg, 3) + '</dd></div>' +
+          '<div><dt>Orientation entropy</dt><dd>' + num(r.orientation_entropy, 2) + '</dd></div>' +
+          '<div><dt>Boundary</dt><dd>' + esc(r.boundary_source || '—') + '</dd></div>' +
+          '</dl>' + drawnNote +
+          '<p class="st-src">' + esc(d.source) + ' · ' + esc(d.license) + ' · measured ' + esc(d.as_of) + '</p>';
+      }
+
       function focus(key) {
-        var f = null;
-        polys.eachLayer(function (l) { if (l.feature.properties.key === key) f = l; });
+        var f = null, rec = byKey[key] || null;
+        polys.eachLayer(function (l) {
+          var on = l.feature.properties.key === key;
+          if (on) f = l;
+          /* A permanent tooltip rather than a hover one: these maps are inert
+             by design — no drag, no keyboard, nothing to operate — so a label
+             that only appears on hover would never appear at all for a reader
+             scrolling past, and not at all on a phone. */
+          if (l.getTooltip()) l.unbindTooltip();
+          if (on) {
+            l.bindTooltip(rec ? rec.name : key,
+                          { permanent: true, direction: 'center', className: 'st-tip' }).openTooltip();
+          }
+        });
         polys.setStyle(function (feat) {
           var on = feat.properties.key === key;
           return { color: on ? GOLD_INK : '#9AA7BC', weight: on ? 2.6 : 1,
                    fillColor: on ? GOLD : '#B9C4D6', fillOpacity: on ? 0.6 : 0.18 };
         });
+        say(rec);
         if (f) m.fitBounds(f.getBounds(), { padding: [40, 40], animate: !SCROLLY.reduced() });
       }
+
+      /* Which district each step shows is derived from the data rather than
+         hardcoded, so the map cannot drift away from the sentence beside it.
+         It already had: the step keyed `newest` focused New Alamein while the
+         paragraph beside it quoted 6th of October's 31 intersections per km²,
+         and the step keyed `biggest` — headed "What the geometry cannot tell
+         you" — focused the largest district under a heading about the method's
+         limits. Both now follow the prose: `newest` shows the sparsest network,
+         which is the one the paragraph names, and the caveat step draws all ten
+         because the caveat is about every measurement, not one district. */
+      var sparsest = lo.key, oldest = 'downtown';
       SCROLLY.register('mapStreets', {
         all: function () {
+          polys.eachLayer(function (l) { if (l.getTooltip()) l.unbindTooltip(); });
           polys.setStyle(function () { return { color: GOLD_INK, weight: 1.4, fillColor: GOLD, fillOpacity: 0.35 }; });
+          say(null);
           m.fitBounds(layer.getBounds(), { padding: [8, 8], animate: !SCROLLY.reduced() });
         },
-        oldest: function () { focus('downtown'); },
-        newest: function () { focus(byKey['new-alamein'] ? 'new-alamein' : 'new-cairo'); },
-        biggest: function () { focus('6th-october'); }
+        oldest: function () { focus(oldest); },
+        newest: function () { focus(sparsest); },
+        biggest: function () {
+          polys.eachLayer(function (l) { if (l.getTooltip()) l.unbindTooltip(); });
+          polys.setStyle(function () { return { color: GOLD_INK, weight: 1.4, fillColor: GOLD, fillOpacity: 0.35 }; });
+          say(null);
+          m.fitBounds(layer.getBounds(), { padding: [8, 8], animate: !SCROLLY.reduced() });
+        }
       }, m);
+      say(null);
     }).catch(function () {
       put('stNote', 'The street report card could not be loaded, so this story shows the map without it.');
     });
