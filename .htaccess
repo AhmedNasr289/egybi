@@ -108,6 +108,43 @@ ErrorDocument 404 /site/404.html
     # restricting it would interfere with AdSense.
     Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()"
 
+    # ---------------------------------------------------------------------
+    # Caching. This is the fix for a failure that has now recurred twice: the
+    # map draws blank because the browser is running a stale asset.
+    #
+    # Measured on the live origin before this block existed:
+    #   /assets/mapkit.js?v=14  ->  Cache-Control: public, max-age=604800
+    #   /visit.html             ->  no Cache-Control at all
+    #
+    # Assets being cached hard for a week is CORRECT — every one of them is
+    # versioned with ?v=, so a changed file is a changed URL. The hole is the
+    # HTML. With no policy on it, a browser applies HEURISTIC caching, roughly
+    # a tenth of the age since Last-Modified, and holds the page for hours
+    # without asking. A held page keeps requesting the OLD ?v=, which the
+    # browser then serves out of that same week-long asset cache.
+    #
+    # That is why bumping the cache-buster looked like a fix and did not last.
+    # The bump only reaches a reader who refetches the HTML, and the HTML was
+    # the thing not being refetched. Every "hard-refresh and it works" report
+    # is this: the refresh bypassed the HTML cache, not the asset cache.
+    #
+    # no-cache does NOT mean "do not store". It means "revalidate before use",
+    # so the browser still keeps the page and the server still answers 304 Not
+    # Modified against the ETag already being sent. The cost is one conditional
+    # request per page load; the alternative is readers pinned to a stale build
+    # for a week with no way to know.
+    <FilesMatch "\.(html|xml|txt|json)$">
+        Header always set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    # Versioned static assets: keep the week, and add immutable so a browser
+    # does not even revalidate. Safe precisely BECAUSE the ?v= changes with the
+    # bytes — verified for all twelve of them, content commit and version bump
+    # land in the same commit every time.
+    <FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2)$">
+        Header always set Cache-Control "public, max-age=604800, immutable"
+    </FilesMatch>
+
     # HSTS. Browsers ignore this over plain HTTP, so it is safe to set here.
     # No "preload" directive on purpose - preloading is submitted to a browser
     # list and is genuinely hard to undo.
