@@ -73,6 +73,7 @@ window.EGYBI_POSTS = [
   {
     id: 'one-hundred-sixteen-million',
     title: 'One hundred and sixteen million, mostly on a ribbon of green',
+    seoTitle: '116 million Egyptians, mostly on a ribbon of green',
     date: '2026-07-18',
     tag: 'People',
     excerpt: 'Egypt had about 27 million people in 1960. It now has around 116 million. But the more striking number is how few square kilometres almost all of them actually live on.',
@@ -85,6 +86,7 @@ window.EGYBI_POSTS = [
   {
     id: 'the-canal-that-carries-the-world',
     title: 'The canal that carries the world, and the year it went quiet',
+    seoTitle: 'The canal that carries the world, and the year it stopped',
     date: '2026-07-17',
     tag: 'Economy',
     excerpt: 'The Suez Canal is one of the most important 193 kilometres of water on Earth. In 2023 it earned Egypt a record. In 2024 that record collapsed — and the reason had nothing to do with Egypt.',
@@ -97,6 +99,7 @@ window.EGYBI_POSTS = [
   {
     id: 'a-nile-of-wheat',
     title: 'Egypt grows a Nile of wheat and still buys the most in the world',
+    seoTitle: 'Egypt grows a Nile of wheat and still imports the most',
     date: '2026-07-16',
     tag: 'Everyday',
     excerpt: 'Egypt harvests around nine million tonnes of wheat a year. It is also, in most years, the single largest wheat importer on the planet. Both facts are true, and the gap between them is the story of bread.',
@@ -145,6 +148,7 @@ window.EGYBI_POSTS = [
   {
     id: 'six-sites-one-year',
     title: 'Six sites in a single year: how Egypt filled the heritage list',
+    seoTitle: 'How Egypt filled the heritage list in a single year',
     date: '2026-07-12',
     tag: 'History',
     excerpt: 'Egypt has seven UNESCO World Heritage Sites — and six of them were added in the same year, 1979. The seventh is not a temple at all. A short tour of the country’s official wonders.',

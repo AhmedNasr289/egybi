@@ -155,7 +155,13 @@ def chrome(prefix='../'):
 NAV, FOOT = chrome()
 
 def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
-         nav=None, foot=None):
+         nav=None, foot=None, og_image=None):
+    # Parameterised because the card was hardcoded here at ?v=2, so all 135
+    # generated pages would have kept advertising the retired "Practice SQL &
+    # BI / 123 challenges" preview even after the file behind that URL was
+    # replaced. Social platforms cache preview images by URL indefinitely, so
+    # the version has to move with the bytes.
+    og_image = og_image or f"{SITE_URL}/og-image.png?v=3"
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -169,13 +175,13 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{canonical}">
-<meta property="og:image" content="{SITE_URL}/og-image.png?v=2">
+<meta property="og:image" content="{og_image}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(desc)}">
-<meta name="twitter:image" content="{SITE_URL}/og-image.png?v=2">
+<meta name="twitter:image" content="{og_image}">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -319,7 +325,12 @@ def build_posts(posts):
         # to the title. Four of the twelve are still long; those are editorial
         # headlines and the answer there is a shorter headline, not a shorter
         # brand.
-        title = f"{p['title']} · EgyBI"
+        # seoTitle lets the SERP title differ from the headline. Four of
+        # these run 68-72 characters even after the shorter brand tail, and
+        # the fix for that is not to rewrite an author's headline — the h1,
+        # the blog index and the prev/next links all keep p['title'].
+        # Only what Google prints gets shortened.
+        title = f"{p.get('seoTitle', p['title'])} · EgyBI"
         ex = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', p['excerpt'])).strip()
         # Trim on a word boundary rather than mid-word at 180, which is past
         # Google's snippet cut anyway.
@@ -332,11 +343,11 @@ def build_posts(posts):
         ld = {"@context": "https://schema.org", "@type": "BlogPosting",
               "headline": p['title'], "url": url, "datePublished": p['date'],
               "dateModified": p['date'], "description": desc,
-              "image": SITE_URL + "/og-image.png?v=2",
+              "image": SITE_URL + "/og-blog.png?v=3",
               "articleSection": p.get('tag', ''),
               "author": {"@type": "Organization", "name": "EgyBI"},
               "publisher": {"@type": "Organization", "name": "EgyBI",
-                            "logo": {"@type": "ImageObject", "url": SITE_URL + "/og-image.png?v=2"}}}
+                            "logo": {"@type": "ImageObject", "url": SITE_URL + "/og-image.png?v=3"}}}
         ld = {"@context": "https://schema.org", "@graph": [
             ld, breadcrumb(p['title'], url, "The Papyrus", SITE_URL + "/blog.html")]}
         body = f"""
@@ -358,7 +369,8 @@ def build_posts(posts):
 </section>
 """
         io.open(os.path.join(outdir, sl + '.html'), 'w', encoding='utf-8', newline='\n').write(
-            page(title, desc, url, body, ld))
+            page(title, desc, url, body, ld,
+                 og_image=f"{SITE_URL}/og-blog.png?v=3"))
         urls.append((url, '0.7'))
     return urls
 
