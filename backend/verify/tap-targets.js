@@ -56,6 +56,12 @@ const EQUIVALENT = {
   // pretend otherwise, the table is named as the equivalent route, which is
   // what it already was.
   'invest.html': '#ivTable',
+  // Same argument as invest.html, arrived at from the other direction. The
+  // gazetteer draws 873 places and they cluster: at country zoom a marker's
+  // centre lands on a neighbouring marker's icon, which is a neighbouring
+  // target and not this one. #placeList is every one of them as a full-size
+  // searchable row, which is the route that already worked.
+  'places.html': '#placeList',
 };
 
 /* Classes that ARE a control's tap target without being the control.
@@ -97,7 +103,7 @@ const HIT_HELPERS = ['iv-hit'];
     const r = await p.evaluate(({ MIN, equivalentSel, hitHelpers }) => {
       const hasEquivalent = equivalentSel
         ? !!document.querySelector(equivalentSel) : false;
-      const zero = [], covered = [], small = [], exempt = [], padded = [];
+      const zero = [], covered = [], small = [], exempt = [], padded = [], coveredExempt = [];
       const els = [...document.querySelectorAll(
         'button, select, input[type=checkbox], input[type=radio], [role="button"]')];
       for (const e of els) {
@@ -139,7 +145,31 @@ const HIT_HELPERS = ['iv-hit'];
         const top = document.elementFromPoint(b2.left + b2.width / 2,
                                               b2.top + b2.height / 2);
         if (top && top !== e && !e.contains(top) && !top.contains(e)) {
-          covered.push(`${label} <- ${top.tagName}.${(top.getAttribute('class') || '').split(' ')[0]}`);
+          const entry = `${label} <- ${top.tagName}.${(top.getAttribute('class') || '').split(' ')[0]}`;
+          // Coverage BY ANOTHER MAP FEATURE is the same problem the UNDER-24px
+          // rule already forgives, reached from the other direction, and it
+          // deserves the same answer rather than a new one.
+          //
+          // Egypt's governorates are concave. The centre of Qena's bounding
+          // box is not inside Qena — it is inside Qalyubia — so aiming at the
+          // middle of one hits its neighbour. The 873 gazetteer markers do it
+          // too: at country zoom a pin's centre lands on the pin beside it.
+          // Neither is fixable by making the target bigger, because these are
+          // the real shapes and the real positions of the country. That is
+          // exactly the reasoning already written above for invest.html:
+          // "a neighbouring target is not this target", answered by naming the
+          // full-size route that does the same job.
+          //
+          // So the exemption is the same and so is its price: it applies ONLY
+          // where an equivalent control exists, and this file still fails the
+          // page if that control goes missing. Coverage by anything that is
+          // NOT a map feature — a paragraph, an overlay, a modal — stays a
+          // failure, because nothing about map geometry explains it.
+          const cls = top.getAttribute('class') || '';
+          const isMapFeature = /leaflet-(interactive|marker-icon|shadow|pane)/.test(cls)
+                               || top.namespaceURI === 'http://www.w3.org/2000/svg';
+          if (isMapFeature && hasEquivalent) coveredExempt.push(entry);
+          else covered.push(entry);
         }
         if (b2.width < MIN || b2.height < MIN) {
           const isGeometry = e.namespaceURI === 'http://www.w3.org/2000/svg';
@@ -161,7 +191,7 @@ const HIT_HELPERS = ['iv-hit'];
           else small.push(entry);
         }
       }
-      return { zero, covered, small, exempt, padded, hasEquivalent,
+      return { zero, covered, small, exempt, padded, coveredExempt, hasEquivalent,
                wanted: !!equivalentSel };
     }, { MIN, equivalentSel: EQUIVALENT[page] || null, hitHelpers: HIT_HELPERS });
 
@@ -184,6 +214,7 @@ const HIT_HELPERS = ['iv-hit'];
     else {
       const notes = [];
       if (r.exempt.length) notes.push(`${r.exempt.length} map shape(s) under ${MIN}px, reachable via ${EQUIVALENT[r.page]}`);
+      if (r.coveredExempt.length) notes.push(`${r.coveredExempt.length} map feature(s) overlapped by another, reachable via ${EQUIVALENT[r.page]}`);
       if (r.padded.length) notes.push(`${r.padded.length} small control(s) with a ${MIN}px+ hit area behind them`);
       if (notes.length) console.log(`${r.page.padEnd(17)} ok — ${notes.join('; ')}`);
     }
