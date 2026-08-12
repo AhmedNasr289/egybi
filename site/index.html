@@ -38,21 +38,36 @@
        Add one to the #founder Person node too — a personal LinkedIn profile is
        an already-trusted entity, so linking it is one of the cheapest ways to
        lend that trust to a brand Google has never seen before.
-       Pointing sameAs at nothing is worse than omitting it, so it is absent
-       deliberately rather than by oversight. foundingDate is included because
+       PARTLY DONE 2026-08-12. github.com/AhmedNasr289 is verified public (20
+       public repos, name "Ahmed Nasr") so it is a real profile, not nothing,
+       and it is now on the #founder Person node exactly as prescribed below.
+       The Organization node still has no sameAs, correctly: there is no EgyBI
+       org profile anywhere — the repo is private under a personal account, and
+       a sameAs pointing at a 404 is worse than none.
+       ⚠️ ONE MANUAL STEP MAKES THIS WORK: sameAs is corroboration, and
+       corroboration has to run BOTH ways. Set the GitHub profile's Website
+       field to https://egybi.com — it is currently empty, so the profile
+       does not yet confirm the claim this node makes about it. Until it does,
+       the link is an assertion Google cannot check.
+       Pointing sameAs at nothing is worse than omitting it, so the
+       Organization node's absence is deliberate rather than an oversight.
+       foundingDate is included because
        egabi was founded in 1999 — a different founding year is a small but real
        disambiguation signal. -->
   <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"Organization","@id":"https://egybi.com/#org","name":"EgyBI",
  "alternateName":["egybi","EgyBI.com","Egy BI"],
- "url":"https://egybi.com/","logo":"https://egybi.com/og-image.png?v=2",
+ "url":"https://egybi.com/",
+ "logo":{"@type":"ImageObject","url":"https://egybi.com/icon-512.png","width":512,"height":512},
  "email":"hello@egybi.com","foundingDate":"2026",
  "knowsAbout":["Egypt","Egyptian open data","Geographic information systems","Cartography","Data journalism"],
  "founder":{"@id":"https://egybi.com/#founder"},
  "description":"EgyBI is a free encyclopaedia of Egypt told through maps and cited open data — places, geography, infrastructure and history, with every figure traceable to a named source."},
 {"@type":"Person","@id":"https://egybi.com/#founder","name":"Ahmed Nasr",
  "description":"Civil engineer working in data; sole author of EgyBI.",
+ "url":"https://github.com/AhmedNasr289",
+ "sameAs":["https://github.com/AhmedNasr289"],
  "knowsAbout":["Egypt","Civil engineering","Geographic information systems","Data engineering"]},
 {"@type":"WebSite","@id":"https://egybi.com/#site","url":"https://egybi.com/","name":"EgyBI",
  "publisher":{"@id":"https://egybi.com/#org"},"inLanguage":"en"},
