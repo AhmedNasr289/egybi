@@ -222,9 +222,33 @@ def build_challenges(chs, docs):
 
     Returns [] deliberately: these pages keep resolving so existing links and
     index entries do not break, but a retired page has no business being
-    advertised in the sitemap as fresh content. They stay indexable (no
-    noindex) because dropping them from the index would throw away the exact
-    search presence this whole approach exists to preserve.
+    advertised in the sitemap as fresh content.
+
+    NOINDEX, ADDED 2026-08-12 — reversing the decision recorded above.
+    ---------------------------------------------------------------
+    The original argument was that these 123 URLs are "the site's only real
+    search presence", so de-indexing them throws that presence away. That was
+    true and it was still the wrong trade, because it valued the pages one at a
+    time and their cost lands in aggregate:
+
+      123 retired SQL pages  vs  27 encyclopaedia pages in the sitemap
+
+    82% of everything crawlable here said "SQL practice", so that is the
+    identity Google assigned the domain — the site was searchable, under the
+    wrong name. Every individual page audited clean, which is exactly why this
+    went unnoticed for months; the defect only exists at the level of the
+    corpus.
+
+    "follow" is doing real work and must stay. It keeps every one of these
+    pages passing its accumulated authority down the onward link into the
+    encyclopaedia section, so the equity is redirected rather than discarded —
+    the concern behind the original decision is answered, not overruled.
+
+    These pages MUST also remain crawlable. Adding "Disallow: /practice/" to
+    robots.txt would look like reinforcement and would instead guarantee the
+    opposite: a page Google may not fetch is a page whose noindex Google can
+    never read, so all 123 would sit in the index forever. backend/verify/seo.py
+    fails the build if that Disallow ever appears.
     """
     outdir = os.path.join(SITE, 'practice')
     os.makedirs(outdir, exist_ok=True)
@@ -276,7 +300,8 @@ def build_challenges(chs, docs):
 </section>
 """
         io.open(os.path.join(outdir, sl + '.html'), 'w', encoding='utf-8', newline='\n').write(
-            page(title, desc, url, body, ld))
+            page(title, desc, url, body, ld,
+                 extra_head='<meta name="robots" content="noindex,follow">'))
     return []
 
 def build_posts(posts):
@@ -286,7 +311,15 @@ def build_posts(posts):
     for i, p in enumerate(posts):
         sl = p['id']
         url = f"{SITE_URL}/papyrus/{sl}.html"
-        title = f"{p['title']} | The Papyrus · EgyBI"
+        # " · EgyBI" rather than " | The Papyrus · EgyBI": the old 22-character
+        # tail pushed all twelve of these past the ~65 characters a SERP shows,
+        # so Google truncated the end of the headline — the part carrying the
+        # actual claim — to make room for a publication name that was itself
+        # being cut off. Eight characters keeps the brand and returns fourteen
+        # to the title. Four of the twelve are still long; those are editorial
+        # headlines and the answer there is a shorter headline, not a shorter
+        # brand.
+        title = f"{p['title']} · EgyBI"
         ex = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', p['excerpt'])).strip()
         # Trim on a word boundary rather than mid-word at 180, which is past
         # Google's snippet cut anyway.

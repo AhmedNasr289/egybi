@@ -31,7 +31,18 @@ const PAGES = [
 // already allowed, so permitting ads was a decision this site had made — the
 // list had simply gone stale. It fires only on interaction, which is why
 // map-interaction.js saw it and the at-rest sweep did not.
-const ALLOWED = /fonts\.g|googlesyndication|pagead|adtrafficquality|tradingview/;
+// www.google.com/recaptcha/ is the third AdSense subresource, and the reason
+// the host+pathname change above was worth making: the request is to
+// www.google.com, so allowing it by host would have allowed all of Google
+// Search, Translate and every other product on that hostname. The path is what
+// makes it safe to permit.
+//
+// It fires on explore.html and nowhere else among the seven map pages, which
+// is the whole confirmation: explore.html is also the only map page loading
+// adsbygoogle.js directly. One page loads the ad script, one page makes the
+// request. AdSense pulls reCAPTCHA for the same invalid-traffic detection that
+// put adtrafficquality on this list.
+const ALLOWED = /fonts\.g|googlesyndication|pagead|adtrafficquality|tradingview|www\.google\.com\/recaptcha\//;
 
 // ONLY=<path> drives a single page, and FAST=1 a single viewport with motion
 // on, so the mutation harness can prove one rule in ~20s instead of paying for

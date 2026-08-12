@@ -14,6 +14,15 @@ on:
       - 'site/assets/challenges.js'
       - 'site/assets/blog-posts.js'
       - 'backend/pipeline/build_static_pages.py'
+      # site/blog.html is the fourth input and was missing. The generator lifts
+      # the shared nav and footer out of it at build time (build_static_pages.py
+      # line ~142) precisely so the 135 generated pages cannot drift from the
+      # real site — but with blog.html outside this list, editing the nav
+      # changed the live pages and left all 135 generated ones on the old
+      # markup, which is the exact drift the design was meant to prevent. The
+      # docstring already said "editing blog.html's nav therefore updates all
+      # 135 generated pages"; it just never ran.
+      - 'site/blog.html'
   workflow_dispatch: {}
 
 permissions:
