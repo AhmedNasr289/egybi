@@ -116,34 +116,52 @@ jobs:
 
       # Each browser checker is its own step so the summary names which one
       # failed, rather than one red block covering nine tools.
+      #
+      # if: always() on every one of them, because fail-fast is build semantics
+      # and this is a verification sweep. tap-targets.js failing once skipped
+      # map-render, map-contrast AND map-interaction — including the run whose
+      # entire purpose was to print an off-origin path. One checker's finding
+      # must not hide three others'; a sweep should report everything in one
+      # pass. Setup steps stay fail-fast: if the server or Chromium is missing,
+      # every checker fails for the same uninformative reason.
       - name: all-pages.js
+        if: always()
         run: node backend/verify/all-pages.js
 
       - name: overflow.js
+        if: always()
         run: node backend/verify/overflow.js
 
       - name: contrast.js
+        if: always()
         run: node backend/verify/contrast.js
 
       - name: cssom.js
+        if: always()
         run: node backend/verify/cssom.js
 
       - name: reduced.js
+        if: always()
         run: node backend/verify/reduced.js
 
       - name: a11y2.js
+        if: always()
         run: node backend/verify/a11y2.js
 
       - name: tap-targets.js
+        if: always()
         run: node backend/verify/tap-targets.js
 
       - name: map-render.js
+        if: always()
         run: node backend/verify/map-render.js
 
       - name: map-contrast.js
+        if: always()
         run: node backend/verify/map-contrast.js
 
       - name: map-interaction.js
+        if: always()
         run: node backend/verify/map-interaction.js
 
       # A clean sweep is only evidence if the checkers can still fire. This is
