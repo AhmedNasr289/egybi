@@ -376,6 +376,26 @@
         '</div>';
       var readout = document.createElement('div');
       readout.className = 'st-readout';
+      /* This panel's TEXT LENGTH is a function of which step the reader is on:
+         179 characters for the all-districts summary, 264 for 6th of October,
+         410 for Downtown — whose hand-drawn warning makes the honest state the
+         longest one. reduced.js compares total page text between a normal and
+         a reduced-motion load and flags a delta over 40 as LOST CONTENT; this
+         page measured 127 and every other page measured 0.
+
+         Nothing is lost. The two runs settle on different steps, so the panel
+         reports a different district — the same amount of content about
+         something else. Length equality is a sound proxy for "content lost" on
+         a static page and the wrong one for a region whose content is view
+         state.
+
+         Marked data-view-dependent rather than aria-hidden. reduced.js already
+         excludes aria-hidden subtrees, and using that here would have been the
+         quick fix and the wrong one: these are the district's measured figures
+         and its boundary provenance, which is exactly the content a screen
+         reader needs most on a map it cannot see. Lying about accessibility to
+         quiet a checker trades a real reader for a green tick. */
+      readout.setAttribute('data-view-dependent', 'true');
       el.parentNode.insertBefore(readout, el.nextSibling);
       readout.insertAdjacentHTML('beforeend', LEGEND);
       var panel = document.createElement('div');

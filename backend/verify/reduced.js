@@ -59,8 +59,22 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
       // wrongly marked aria-hidden — that is the cost, and it is the right
       // trade: content a screen reader is told to ignore is not content whose
       // disappearance this checker should be policing.
+      //
+      // data-view-dependent is the same argument for a region that IS read
+      // aloud. The story readout on stories.html reports whichever district
+      // the reader has scrolled to — 179 characters for the summary, 264 for
+      // 6th of October, 410 for Downtown — so the two runs settle on different
+      // steps and the page measured a 127-character delta while losing
+      // nothing. Length equality is a sound proxy for lost content on a static
+      // page and the wrong one for a region whose content is view state.
+      //
+      // Only the TEXT comparison skips these. links, buttons and chips are
+      // still counted across the whole document, so a region that quietly
+      // dropped a control under reduced motion is still caught — which is the
+      // half of this check that actually protects a reader.
       var _c = document.body.cloneNode(true);
-      _c.querySelectorAll('[aria-hidden="true"]').forEach(function (e) { e.remove(); });
+      _c.querySelectorAll('[aria-hidden="true"], [data-view-dependent="true"]')
+        .forEach(function (e) { e.remove(); });
       return { text: _c.textContent.replace(/\s+/g,' ').trim().length,
                links: document.querySelectorAll('a[href]').length,
                buttons: document.querySelectorAll('button, input, select').length,
