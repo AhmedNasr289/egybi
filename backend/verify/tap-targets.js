@@ -165,8 +165,19 @@ const HIT_HELPERS = ['iv-hit'];
           // page if that control goes missing. Coverage by anything that is
           // NOT a map feature — a paragraph, an overlay, a modal — stays a
           // failure, because nothing about map geometry explains it.
-          const cls = top.getAttribute('class') || '';
-          const isMapFeature = /leaflet-(interactive|marker-icon|shadow|pane)/.test(cls)
+          // Ask WHERE the coverer lives, not what it is called. The first
+          // version of this tested the coverer's own class for leaflet-*,
+          // which caught the governorate paths and missed places.html
+          // entirely: its 15 remaining findings are covered by bare <i>,
+          // <span> and <div> elements INSIDE marker icons, and a bare <i> has
+          // no leaflet class of its own. An element inside the map pane is a
+          // map feature whatever its tag, and closest() says so directly.
+          //
+          // Still narrow: .leaflet-pane is the map's own render surface, so
+          // this cannot reach a modal, an overlay or a paragraph sitting above
+          // the page — those keep failing, which is what leaves the four real
+          // layout defects on explore.html and visit.html visible.
+          const isMapFeature = !!top.closest('.leaflet-pane')
                                || top.namespaceURI === 'http://www.w3.org/2000/svg';
           if (isMapFeature && hasEquivalent) coveredExempt.push(entry);
           else covered.push(entry);
