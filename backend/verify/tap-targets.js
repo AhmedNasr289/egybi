@@ -80,11 +80,44 @@ const EQUIVALENT = {
    removes the hit circles to prove the check is not just trusting the name. */
 const HIT_HELPERS = ['iv-hit'];
 
+// With animation disabled the scroll commits synchronously; this is margin for
+// sticky elements re-pinning, not for a transition to finish.
+const SETTLE = 60;
+
 (async () => {
   const b = await chromium.launch({ executablePath });
   const rows = [];
   for (const page of TARGETS) {
-    const p = await b.newPage({ viewport: { width: 390, height: 844 } });
+    /* REDUCED MOTION, and it is the fix rather than a preference.
+
+       Scrolling was never the problem. Measured on explore.html, scrollY is
+       identical (34940) and the button's top identical (403) at every wait from
+       0ms to 1200ms — the scroll commits instantly. What changes is what
+       elementFromPoint finds at that unmoving point:
+
+           0ms    P.                 covered=true
+           80ms   P.                 covered=true
+           300ms  DIV.card           covered=true
+           700ms  BUTTON.query-btn   covered=false
+           1200ms BUTTON.query-btn   covered=false
+
+       Arriving in a new region fires AOS's reveals, and for the ~700ms they
+       animate the topmost element at a fixed point is an ancestor rather than
+       the control. So the checker was hit-testing a page mid-transition and
+       reporting the reveal's own wrapper as a coverer — which is how
+       explore.html's two "Query this yourself" buttons were called COVERED by a
+       <p> and kept CI red from 2026-08-13.
+
+       Waiting 700ms per control would cost roughly two extra minutes on
+       prices.html alone. Removing the animation is both faster and
+       deterministic, and the site already has the mechanism: under
+       prefers-reduced-motion egybi.css switches to `scroll-behavior: auto` and
+       AOS stops animating, which reduced.js independently confirms leaves the
+       content identical — same links, same buttons, same chips, text delta 0.
+       A tap target's size and stacking do not depend on motion, so this
+       measures the same thing on a page that has stopped moving. */
+    const p = await b.newPage({ viewport: { width: 390, height: 844 },
+                                reducedMotion: 'reduce' });
     await p.route('**/*', r => { const u = r.request().url();
       return (u.startsWith(B) || u.startsWith('data:') || u.startsWith('blob:'))
         ? r.continue() : r.abort(); });
@@ -100,95 +133,95 @@ const HIT_HELPERS = ['iv-hit'];
     });
     await p.waitForTimeout(900);
 
-    const r = await p.evaluate(({ MIN, equivalentSel, hitHelpers }) => {
-      const hasEquivalent = equivalentSel
-        ? !!document.querySelector(equivalentSel) : false;
-      const zero = [], covered = [], small = [], exempt = [], padded = [], coveredExempt = [];
+    /* SCROLL, SETTLE, THEN MEASURE — and the settle has to happen in Node.
+
+       The previous fix here was right about the cause and wrong about the cure.
+       egybi.css sets `html { scroll-behavior: smooth }`, so scrollIntoView
+       animates while the next line reads the rectangle; passing
+       behavior: 'instant' was supposed to override that for this one call.
+       Measured, it does not: with the whole loop inside a single evaluate,
+       explore.html still reports its two "Query this yourself" buttons as
+       COVERED by a <p>, at 390px and at 1280px alike. Scroll the same button,
+       wait 1200ms, and elementFromPoint returns BUTTON.query-btn — the button
+       itself. So the page was never at fault and the checker has been failing
+       CI since 2026-08-13 over a defect that is not there.
+
+       A checker that reports a reachable control as unreachable is worse than
+       no checker: it trains everyone to ignore a red build, and this one had
+       already been red often enough that the habit was forming.
+
+       The measurement therefore moves out of one big evaluate into three steps
+       per element — scroll, settle, read — because only Node can wait. The
+       settle is a real timeout rather than a rAF or a promise inside evaluate:
+       a setTimeout returned from page.evaluate is a promise Playwright can
+       garbage-collect, which this project has already hit once. */
+    const hasEquivalent = await p.evaluate(
+      sel => (sel ? !!document.querySelector(sel) : false),
+      EQUIVALENT[page] || null);
+
+    // Tag every candidate once, so the per-element steps can find them again
+    // without re-running the filter and risking a different set each pass.
+    const ids = await p.evaluate(() => {
+      const out = [];
       const els = [...document.querySelectorAll(
         'button, select, input[type=checkbox], input[type=radio], [role="button"]')];
-      for (const e of els) {
-        if (e.disabled) continue;
+      els.forEach((e, i) => {
+        if (e.disabled) return;
         const s = getComputedStyle(e);
-        if (s.display === 'none' || s.visibility === 'hidden') continue;
+        if (s.display === 'none' || s.visibility === 'hidden') return;
         // Inside a container the page has deliberately hidden — a completion
         // state, a closed panel — is not on screen, so it is not a target yet.
-        if (e.closest('[hidden]')) continue;
+        if (e.closest('[hidden]')) return;
+        e.setAttribute('data-tt', String(i));
+        out.push(String(i));
+      });
+      return out;
+    });
 
+    const r = { zero: [], covered: [], small: [], exempt: [], padded: [],
+                coveredExempt: [], hasEquivalent,
+                wanted: !!(EQUIVALENT[page]) };
+
+    for (const id of ids) {
+      await p.evaluate((i) => {
+        const e = document.querySelector('[data-tt="' + i + '"]');
+        if (e) e.scrollIntoView({ block: 'center', behavior: 'instant' });
+      }, id);
+      await p.waitForTimeout(SETTLE);
+      const one = await p.evaluate(({ i, MIN, hitHelpers, hasEquivalent }) => {
+        const e = document.querySelector('[data-tt="' + i + '"]');
+        if (!e) return null;
+        const out = [];
         const label = (e.getAttribute('aria-label') || e.textContent || '')
           .trim().slice(0, 34) || `<${e.tagName.toLowerCase()}>`;
-        const box = e.getBoundingClientRect();
-        if (box.width < 1 || box.height < 1) { zero.push(label); continue; }
-
-        // behavior: 'instant' is load-bearing, not tidiness. egybi.css sets
-        // `html { scroll-behavior: smooth }`, so this call ANIMATES over a few
-        // hundred milliseconds while the very next line reads the rectangle —
-        // at the pre-scroll position. elementFromPoint then samples stale
-        // coordinates, and what sits at those coordinates is very often
-        // `.site-header`, which is position: sticky at z-index 1100 and
-        // therefore on top of everything near the viewport top.
-        //
-        // That is the whole of the "tap-targets.js fails for unknown reasons"
-        // history: explore.html reported COVERED(18) with the coverer named as
-        // DIV.bar — which is not a chart bar, it is `.site-header .bar` — and
-        // the page was never at fault. It is intermittent because the scroll
-        // animation races the measurement loop, and it shows up on the page
-        // with the most controls because that page rolls the dice most often.
-        //
-        // The corroboration is that reduced.js has never seen it: under
-        // prefers-reduced-motion the stylesheet switches to
-        // `scroll-behavior: auto`, which makes this same call instant.
-        //
-        // 'instant' overrides the CSS for this one call, which restores what
-        // line 116 always meant to do — measure the element where it ends up.
-        e.scrollIntoView({ block: 'center', behavior: 'instant' });
         const b2 = e.getBoundingClientRect();
+        if (b2.width < 1 || b2.height < 1) return [['zero', label]];
+
         const top = document.elementFromPoint(b2.left + b2.width / 2,
                                               b2.top + b2.height / 2);
         if (top && top !== e && !e.contains(top) && !top.contains(e)) {
           const entry = `${label} <- ${top.tagName}.${(top.getAttribute('class') || '').split(' ')[0]}`;
           // Coverage BY ANOTHER MAP FEATURE is the same problem the UNDER-24px
-          // rule already forgives, reached from the other direction, and it
-          // deserves the same answer rather than a new one.
-          //
-          // Egypt's governorates are concave. The centre of Qena's bounding
-          // box is not inside Qena — it is inside Qalyubia — so aiming at the
-          // middle of one hits its neighbour. The 873 gazetteer markers do it
-          // too: at country zoom a pin's centre lands on the pin beside it.
-          // Neither is fixable by making the target bigger, because these are
-          // the real shapes and the real positions of the country. That is
-          // exactly the reasoning already written above for invest.html:
-          // "a neighbouring target is not this target", answered by naming the
-          // full-size route that does the same job.
-          //
-          // So the exemption is the same and so is its price: it applies ONLY
-          // where an equivalent control exists, and this file still fails the
-          // page if that control goes missing. Coverage by anything that is
-          // NOT a map feature — a paragraph, an overlay, a modal — stays a
-          // failure, because nothing about map geometry explains it.
-          // Ask WHERE the coverer lives, not what it is called. The first
-          // version of this tested the coverer's own class for leaflet-*,
-          // which caught the governorate paths and missed places.html
-          // entirely: its 15 remaining findings are covered by bare <i>,
-          // <span> and <div> elements INSIDE marker icons, and a bare <i> has
-          // no leaflet class of its own. An element inside the map pane is a
-          // map feature whatever its tag, and closest() says so directly.
-          //
-          // Still narrow: .leaflet-pane is the map's own render surface, so
-          // this cannot reach a modal, an overlay or a paragraph sitting above
-          // the page — those keep failing, which is what leaves the four real
-          // layout defects on explore.html and visit.html visible.
+          // rule already forgives, reached from the other direction. Egypt's
+          // governorates are concave — the centre of Qena's bounding box is
+          // inside Qalyubia — and at country zoom a pin's centre lands on the
+          // pin beside it. Neither is fixable by enlarging the target, because
+          // these are the real shapes and positions of the country. So the
+          // exemption is the same and so is its price: it applies ONLY where an
+          // equivalent full-size control exists. Ask WHERE the coverer lives,
+          // not what it is called — a bare <i> inside a marker icon carries no
+          // leaflet class of its own, but closest() places it in the map pane.
           const isMapFeature = !!top.closest('.leaflet-pane')
                                || top.namespaceURI === 'http://www.w3.org/2000/svg';
-          if (isMapFeature && hasEquivalent) coveredExempt.push(entry);
-          else covered.push(entry);
+          out.push([isMapFeature && hasEquivalent ? 'coveredExempt' : 'covered', entry]);
         }
         if (b2.width < MIN || b2.height < MIN) {
           const isGeometry = e.namespaceURI === 'http://www.w3.org/2000/svg';
           const entry = `${label} ${Math.round(b2.width)}x${Math.round(b2.height)}`;
-          // Does a MIN-sized square centred on this control land on the
-          // control or on something that activates it? Four cardinal points at
-          // the edge of that square: enough to catch a target that is narrow in
-          // one axis, which is the common case.
+          // Does a MIN-sized square centred on this control land on the control
+          // or on something that activates it? Four cardinal points at the edge
+          // of that square: enough to catch a target narrow in one axis, which
+          // is the common case.
           const cx = b2.left + b2.width / 2, cy = b2.top + b2.height / 2;
           const d = MIN / 2 - 1;
           const reaches = [[d, 0], [-d, 0], [0, d], [0, -d]].every(([dx, dy]) => {
@@ -197,14 +230,12 @@ const HIT_HELPERS = ['iv-hit'];
             if (at === e || e.contains(at) || at.contains(e)) return true;
             return hitHelpers.some(c => at.classList && at.classList.contains(c));
           });
-          if (reaches) padded.push(entry);
-          else if (isGeometry && hasEquivalent) exempt.push(entry);
-          else small.push(entry);
+          out.push([reaches ? 'padded' : (isGeometry && hasEquivalent ? 'exempt' : 'small'), entry]);
         }
-      }
-      return { zero, covered, small, exempt, padded, coveredExempt, hasEquivalent,
-               wanted: !!equivalentSel };
-    }, { MIN, equivalentSel: EQUIVALENT[page] || null, hitHelpers: HIT_HELPERS });
+        return out;
+      }, { i: id, MIN, hitHelpers: HIT_HELPERS, hasEquivalent });
+      if (one) for (const [kind, entry] of one) r[kind].push(entry);
+    }
 
     rows.push({ page, ...r });
     await p.close();
