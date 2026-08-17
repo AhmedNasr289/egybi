@@ -1,5 +1,12 @@
 # Business Model & Pricing
 
+> ⚠️ **This note describes a product that no longer exists.** It was written for
+> the SQL-practice platform, before [[The Pivot — From SQL Practice to
+> Encyclopaedia]]. The nine tracks, the certificates and the DataCamp/LeetCode
+> comparison all refer to a business EgyBI stopped being. It is kept because the
+> reasoning about **purchasing-power-adjusted regional pricing** survived the
+> pivot and is reused. For the current plan see **[[SaaS Conversion Plan]]**.
+
 ## Recommendation: freemium, dual-currency
 
 Every real competitor in [[Competitive Landscape]] runs freemium (free core practice, paid premium tracks/certs) — DataCamp $14/mo billed annually ($168/yr) or $35/mo monthly, LeetCode $35/mo or ~$159/yr, DataLemur $15/mo or $60/yr. That model fits here too.

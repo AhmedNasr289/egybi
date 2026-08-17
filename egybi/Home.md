@@ -18,7 +18,8 @@ The knowledge base and plan for **EgyBI** — a free **encyclopaedia of Egypt to
 
 ## 🎯 Strategy
 - [[Competitive Landscape]] — sourced research on HackerRank/LeetCode/SQLZoo/DataCamp and the real gap EgyBI fills
-- [[Business Model & Pricing]] — freemium, dual-currency (EGP/USD)
+- [[SaaS Conversion Plan]] — how EgyBI could take money: the wedge, the ladder, the build order, and the four measured facts that decide it
+- [[Business Model & Pricing]] — ⚠️ pre-pivot, kept for the regional-pricing reasoning only
 - [[Relationship to EGYBi]] — name/domain history (Per Ankh → EgyBI; why the domain is `egybi.com`)
 - [[Risks & Mitigations]]
 
