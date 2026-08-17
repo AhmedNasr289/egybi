@@ -533,6 +533,60 @@ case("the equivalent full-size control removed from a map page",
      TAP.format(p="geospatial.html"))
 
 
+# ---- 27. the checker measuring a page that is still moving -----------------
+# Not a site defect: a defect in the CHECKER, and the one that actually
+# happened. tap-targets.js read elementFromPoint the instant it scrolled, so on
+# explore.html the reveal animation's own wrapper was the topmost element at the
+# button's centre and two working "Query this yourself" buttons were reported
+# COVERED by a <p>. That kept Verify (browser) red from 2026-08-13 through
+# fourteen runs, and a checker that calls a reachable control unreachable is
+# worse than none — it teaches everyone to ignore a red build.
+#
+# The cure has two parts and MEASURING SAYS EITHER ONE ALONE IS ENOUGH, which
+# is not what the fix's own header assumed. Run against explore.html:
+#
+#     reduced motion + 60ms settle    clean      (what ships)
+#     reduced motion + no settle      clean
+#     animation on   + 60ms settle    clean
+#     animation on   + no settle      COVERED(2): Query this yourself <- P.
+#
+# So there is no single line to remove that reproduces the failure, and a
+# one-line mutation here reported the checker as failing to catch a defect that
+# the other guard had already absorbed. Removing both restores exactly the state
+# the file was in while CI was red, and that is the state this asserts against —
+# the pair is load-bearing, and neither half may quietly go without the other
+# being noticed.
+def unsettle_tap_targets():
+    edit("backend/verify/tap-targets.js",
+         "reducedMotion: 'reduce'", "reducedMotion: 'no-preference'")
+    edit("backend/verify/tap-targets.js", "const SETTLE = 60;", "const SETTLE = 0;")
+
+case("the checker hit-testing a page mid-animation", "tap-targets.js",
+     ["backend/verify/tap-targets.js"],
+     unsettle_tap_targets,
+     lambda o: "COVERED" in o,
+     TAP.format(p="explore.html"))
+
+
+# ---- 28. a scheduled workflow that can fail with nobody told ----------------
+# workflow-audit.py is the only thing that reads the whole fleet at once, and
+# for days it printed its findings and exited 0 — so it could report that a
+# pipeline might fail silently forever and still let the build pass. This proves
+# the exit code, not just the print: strip the alert step off a workflow that
+# fires on a cron and the audit has to go red.
+PY_WF = f'"{sys.executable}" {HERE}/workflow-audit.py'
+
+case("a cron workflow left with no failure alerting", "workflow-audit.py",
+     [".github/workflows/papyrus-reminder.yml"],
+     lambda: edit(".github/workflows/papyrus-reminder.yml",
+                  "      - name: Alert on failure\n"
+                  "        if: failure()\n"
+                  "        uses: ./.github/actions/notify-failure",
+                  "      - name: No alerting at all\n"
+                  "        run: 'true'"),
+     lambda o: "papyrus-reminder: fires unattended" in o, PY_WF)
+
+
 # ---- 20-23. seo.py: the defects that decided the domain's identity ---------
 # These four are the ones that actually happened. For months every page audited
 # clean while Google showed the site under a name it had abandoned, because the

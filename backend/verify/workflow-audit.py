@@ -85,12 +85,26 @@ for r in rows:
           f"{r['conc']:<5} {r['writes']:<5} {r['alerts']:<5} {r['cron']}")
 
 print(f"\n{len(rows)} workflow(s).")
+# ALERTING IS REQUIRED OF ANYTHING THAT CAN FIRE UNATTENDED, and only of that.
+#
+# The rule used to ask it of every workflow, which flagged probe-geocodes and
+# probe-idsc — both workflow_dispatch-only. A human presses the button on those
+# and watches the result; an alert would be telling them what they are already
+# looking at. Two findings nobody could act on is how a report becomes
+# background noise, and this one had been printing them for days.
+#
+# A schedule, a push or a pull_request can all fire with nobody watching, and
+# those are exactly the runs whose failure has to reach someone.
+UNATTENDED = ("schedule", "push", "pull_request")
+
 gaps = []
 for r in rows:
     if r["timeout"] == "NONE":
         gaps.append(f"{r['name']}: no timeout — a hung step runs for GitHub's default six hours")
-    if r["alerts"] == "NO":
-        gaps.append(f"{r['name']}: no failure alerting — it can fail silently forever")
+    fires = [t for t in UNATTENDED if t in r["trig"].split(",")]
+    if r["alerts"] == "NO" and fires:
+        gaps.append(f"{r['name']}: fires unattended ({', '.join(fires)}) "
+                    "with no failure alerting — it can fail silently forever")
 if gaps:
     print("\nGaps:")
     for g in gaps:
@@ -99,4 +113,13 @@ if problems:
     print("\nUNPARSEABLE:")
     for p in problems:
         print("  -", p)
+    sys.exit(1)
+
+# A GAP HAS TO FAIL, or naming it changes nothing.
+#
+# This printed its findings and exited 0, so it could report that two workflows
+# might fail silently forever and still let every build pass — a checker whose
+# own verdict is advisory. sys.exit(1) fired only on YAML this file could not
+# parse, which is the one thing that is not a gap in the workflows at all.
+if gaps:
     sys.exit(1)

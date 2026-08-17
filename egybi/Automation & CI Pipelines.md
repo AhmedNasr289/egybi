@@ -60,8 +60,36 @@ anything refresh this page's figures".
 | `build-pages` | manual + push | 15 m | Pure generation from files already in the repo. |
 | `send-newsletter`, `papyrus-reminder` | manual / monthly | 10 m | Both now alert on failure: a send that silently does not happen looks exactly like a quiet week. |
 | `probe-geocodes`, `probe-idsc` | manual | 15 m | Diagnostics a human runs and watches; no alert on purpose. |
+| `verify-browser` | **push to `main` + PR** | 35 m | Every push to `main` is a live Hostinger deploy, so this is the only thing standing between an edit and readers. Runs the whole `backend/verify/` suite in Chromium — seventeen steps, all `if: always()` so one finding cannot hide three others. |
 
 Cron minutes are deliberately odd and days deliberately avoid the 1st: GitHub's
 shared scheduler is contended on the hour and at month boundaries, and a skipped
 run is a silent one.
+
+## An alert that cannot say what broke is barely an alert (2026-08-16)
+
+`Verify (browser)` was red for fourteen runs and every one of its alerts said
+only "the workflow failed" — while `if: always()` on seventeen steps meant
+GitHub's own run summary did not name the failing one either. The diagnosis was
+in a log somebody had to go and open, and nobody did, for three days.
+
+Every checker now runs through **`backend/verify/ci-step.sh`**: it tees the
+checker's output into `$VERIFY_LOG_DIR` and appends the checker's name to a
+`FAILED` file if it exits non-zero. A collect step lifts the tail of each failing
+log into `reason:` for `notify-failure`, which already took that input — it was
+added on 2026-08-10 for exactly this and the new workflow was written without it.
+`set -o pipefail` lives inside that script because the exit status of
+`cmd | tee` is tee's, which is always 0; without it every failing checker turns
+the run green, and this repo has demonstrated that in both directions.
+
+**`workflow-audit.py` is now a step in it, and now exits non-zero.** It reads the
+whole fleet at once — triggers, path filters, timeouts, concurrency, push-back,
+alerting — which is the only reading that can catch a trigger narrower than the
+inputs its generator reads. For days it printed real findings and exited 0, and
+ran in no workflow at all: a checker wired into nothing has never run. Its rule
+was also too broad, asking failure alerting of every workflow including the two
+`workflow_dispatch`-only probes a human presses the button on. Scoped to what can
+fire unattended (`schedule`, `push`, `pull_request`), both findings disappear as
+the false positives they were. Two findings nobody can act on is how a report
+becomes background noise.
 

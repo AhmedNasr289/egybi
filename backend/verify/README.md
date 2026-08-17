@@ -14,16 +14,32 @@ control.
 | `reduced.js` | Content and animation compared with and without `prefers-reduced-motion`. Fails on lost content, a reveal left invisible, **or** an animation still running under reduce. `ONLY=a.html` runs a subset. |
 | `a11y2.js` | Landmarks, heading order, focus visibility, accessible names, the mobile nav, and keyboard operation of the maps and the relief slider. |
 | `coverage.py` | Titles, descriptions, alt text, JSON-LD, drift between duplicated chrome, data older than its pipeline's cadence. |
+| `tap-targets.js` | Whether a thumb can hit it: zero-size controls, controls covered by something else, and anything under 24×24 that has no equivalent full-size control on the same page. Measured at 390px. |
+| `seo.py` | The CORPUS rather than the page: retired pages still indexable, `robots.txt` blocking the noindex it depends on, two pages claiming one canonical, JSON-LD that no longer parses. |
+| `map-render.js` | Whether a map that finished loading actually drew, and whether its loading placeholder is gone once the page settles. |
+| `map-contrast.js` | Whether the country outline and the fills behind it are distinguishable from the page — 3:1 for non-text, WCAG 1.4.11. |
+| `map-interaction.js` | Panning, zooming and keyboard reach on every map, with request interception proving zero runtime calls to any map provider. |
+| `map-completeness.py` | Whether a map EXPLAINS: legend, labels, units, source line. A map can render perfectly and still be unlabelled gold shapes on a pale field. |
+| `workflow-audit.py` | The whole workflow fleet at once — triggers, path filters, timeouts, concurrency, push-back, and whether anything that can fire unattended tells somebody when it breaks. Exits non-zero on a gap. |
 | `env.js` | Not a check — resolves Chromium, `playwright-core`, the preview server and the log directory for the browser checkers. |
+| `ci-step.sh` | Not a check — runs one checker in CI, tees its output into `$VERIFY_LOG_DIR` and records its name in `FAILED` if it failed, so the failure alert can name the checker and quote what it said. |
 | `checks.py` | `orphans`, `workflows`, `secrets`, `fra`. |
 
 ## mutate.py — the check on the checks
 
 A check that has never been observed failing is not evidence. `mutate.py` runs
-sixteen cases, each injecting one real defect a checker exists to catch,
-asserts the checker reports it, reverts through
-`git checkout --` so a mutation cannot survive a crash, and asserts the checker
-goes quiet again.
+thirty-nine cases, each injecting one real defect a checker exists to catch,
+asserts the checker reports it, reverts, and asserts the checker goes quiet
+again.
+
+It reverts by **restoring the exact bytes read before the mutation, and
+verifying the restore landed** — not by `git checkout --`, which was the
+original design and silently does nothing for a file git does not track. The
+first mutation aimed at a then-untracked `mapkit.js` stripped its aria-labels
+and its keyboard focus and left them stripped: the harness reported FAILS TO
+CATCH and moved on with the defect sitting in the working tree. A mutation that
+cannot be applied is coverage lost in silence; one that cannot be reverted is a
+defect shipped in silence, which is worse.
 
 Run it before trusting a clean report. It found three checks that had been
 reporting "clean" while being incapable of detecting anything:
@@ -44,9 +60,9 @@ reporting "clean" while being incapable of detecting anything:
   chip), a blank label, and a mount with nothing to list.
 
 `CASE=<substring>` runs a single case, so a repaired case can be re-proven
-without paying for the other fifteen. Run the cases one at a time or let the
-whole suite run alone — a case reverts through `git checkout --`, which will
-pull files out from under any other checker reading them concurrently.
+without paying for the other thirty-eight. Run the cases one at a time or let
+the whole suite run alone — a case rewrites files in the tree and will pull them
+out from under any other checker reading them concurrently.
 
 A fourth defect, found later, was the harness lying about its own coverage: the
 asset-version case searched for the literal `egybi.css?v=21` and had silently
@@ -106,7 +122,31 @@ These were hardcoded absolute paths until 2026-08-08 — the committed tools ran
 in exactly one sandbox and nowhere else, which is the same failure as a check
 that cannot fire.
 
-## Three things this directory learned the hard way
+### In CI
+
+`.github/workflows/verify-browser.yml` runs all of them on every push to `main`,
+because every push to `main` is a live Hostinger deploy. Each checker goes
+through `ci-step.sh`, which keeps its output and records whether it failed, so
+the failure alert names the checker and quotes what it printed instead of saying
+only that the workflow failed. Seventeen steps carry `if: always()` — a sweep
+should report everything in one pass, and `tap-targets.js` failing once used to
+skip `map-render`, `map-contrast` and `map-interaction` with it.
+
+## What this directory learned the hard way
+
+(The heading used to say "three" and listed four. A count in a heading rots the
+first time anyone adds to the list.)
+
+**A false positive is worse than no checker.** `tap-targets.js` reported two
+working buttons on `explore.html` as covered by a paragraph and kept
+`Verify (browser)` red for fourteen runs — it was hit-testing a page whose
+reveal animations were still running, so `elementFromPoint` returned the
+reveal's wrapper rather than the control under it. A red build that is wrong
+teaches everyone to stop reading red builds, and by the time it was fixed the
+habit had already started. The fix opens the page with `reducedMotion: 'reduce'`
+and settles in Node before measuring; the mutation case for it removes **both**
+guards, because measurement showed either one alone is enough and a one-line
+mutation therefore proved nothing.
 
 **A checker can measure the machine instead of the site.** `all-pages.js` used to
 let third-party requests run. Behind a filtering proxy they hang rather than

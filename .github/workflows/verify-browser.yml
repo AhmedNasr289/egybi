@@ -99,21 +99,31 @@ jobs:
           done
           echo "::error::server never answered on $BASE"; exit 1
 
+      # EVERY checker below runs through backend/verify/ci-step.sh, which tees
+      # its output into $VERIFY_LOG_DIR and records its name if it failed. That
+      # is what lets the failure alert at the bottom say WHICH checker broke and
+      # what it printed: issue #54 carried three days of "the workflow failed"
+      # while the diagnosis sat in a log nobody opened, and with `if: always()`
+      # on seventeen steps the run summary does not name the failing one either.
+      # The script keeps `set -o pipefail`, so a teed checker that fails still
+      # fails the step rather than handing the run tee's exit status of 0.
+      #
       # The static checks first: they are fast, and a broken link or a missing
       # data field explains browser findings that would otherwise look like
       # rendering bugs.
       - name: static-audit.py
-        run: python3 backend/verify/static-audit.py
+        run: backend/verify/ci-step.sh static-audit python3 backend/verify/static-audit.py
 
       - name: coverage.py
-        run: python3 backend/verify/coverage.py
+        run: backend/verify/ci-step.sh coverage python3 backend/verify/coverage.py
 
       - name: checks.py
         run: |
           for c in orphans workflows secrets fra; do
-            echo "--- $c"
-            python3 backend/verify/checks.py "$c"
+            backend/verify/ci-step.sh "checks-$c" \
+              python3 backend/verify/checks.py "$c" || fail=1
           done
+          exit ${fail:-0}
 
       # seo.py judges the CORPUS, which is the one thing none of the others
       # look at. 123 retired pages sat live and indexable against 27 real ones
@@ -123,7 +133,7 @@ jobs:
       # with the other static checks because it needs no browser.
       - name: seo.py
         if: always()
-        run: python3 backend/verify/seo.py
+        run: backend/verify/ci-step.sh seo python3 backend/verify/seo.py
 
       # map-completeness.py asks whether a map EXPLAINS, which every other
       # checker here takes for granted. "A century of plans" rendered
@@ -132,7 +142,16 @@ jobs:
       # differently and only one of them shows up in a screenshot.
       - name: map-completeness.py
         if: always()
-        run: python3 backend/verify/map-completeness.py
+        run: backend/verify/ci-step.sh map-completeness python3 backend/verify/map-completeness.py
+
+      # workflow-audit.py asks about the FLEET rather than the site: does every
+      # workflow that can fire with nobody watching also tell somebody when it
+      # breaks. It existed for days, found two real-looking gaps, printed them
+      # and exited 0 — and ran in no workflow at all, so nothing ever read the
+      # finding. A checker wired into nothing has never run.
+      - name: workflow-audit.py
+        if: always()
+        run: backend/verify/ci-step.sh workflow-audit python3 backend/verify/workflow-audit.py
 
       # Each browser checker is its own step so the summary names which one
       # failed, rather than one red block covering nine tools.
@@ -146,43 +165,43 @@ jobs:
       # every checker fails for the same uninformative reason.
       - name: all-pages.js
         if: always()
-        run: node backend/verify/all-pages.js
+        run: backend/verify/ci-step.sh all-pages node backend/verify/all-pages.js
 
       - name: overflow.js
         if: always()
-        run: node backend/verify/overflow.js
+        run: backend/verify/ci-step.sh overflow node backend/verify/overflow.js
 
       - name: contrast.js
         if: always()
-        run: node backend/verify/contrast.js
+        run: backend/verify/ci-step.sh contrast node backend/verify/contrast.js
 
       - name: cssom.js
         if: always()
-        run: node backend/verify/cssom.js
+        run: backend/verify/ci-step.sh cssom node backend/verify/cssom.js
 
       - name: reduced.js
         if: always()
-        run: node backend/verify/reduced.js
+        run: backend/verify/ci-step.sh reduced node backend/verify/reduced.js
 
       - name: a11y2.js
         if: always()
-        run: node backend/verify/a11y2.js
+        run: backend/verify/ci-step.sh a11y2 node backend/verify/a11y2.js
 
       - name: tap-targets.js
         if: always()
-        run: node backend/verify/tap-targets.js
+        run: backend/verify/ci-step.sh tap-targets node backend/verify/tap-targets.js
 
       - name: map-render.js
         if: always()
-        run: node backend/verify/map-render.js
+        run: backend/verify/ci-step.sh map-render node backend/verify/map-render.js
 
       - name: map-contrast.js
         if: always()
-        run: node backend/verify/map-contrast.js
+        run: backend/verify/ci-step.sh map-contrast node backend/verify/map-contrast.js
 
       - name: map-interaction.js
         if: always()
-        run: node backend/verify/map-interaction.js
+        run: backend/verify/ci-step.sh map-interaction node backend/verify/map-interaction.js
 
       # A clean sweep is only evidence if the checkers can still fire. This is
       # the argument backend/verify/README.md makes, and it is why an earlier
@@ -195,7 +214,7 @@ jobs:
       # skipped this step once, leaving the question unanswered.
       - name: mutate.py — the check on the checks
         if: always()
-        run: python3 backend/verify/mutate.py
+        run: backend/verify/ci-step.sh mutate python3 backend/verify/mutate.py
 
       - name: Upload logs
         if: always()
@@ -205,6 +224,34 @@ jobs:
           path: ${{ env.VERIFY_LOG_DIR }}
           if-no-files-found: ignore
           retention-days: 14
+
+      # What the failing checkers actually said, lifted out of their own logs.
+      # Runs on any outcome because its whole job is to describe steps that have
+      # already reported; on a green sweep FAILED does not exist and this
+      # produces nothing, which is what the alert step below then does not use.
+      #
+      # tail rather than the whole log: every checker in this directory prints
+      # its findings last, after a header and a per-page table, and 4000
+      # characters is all notify-failure will carry anyway.
+      - name: Collect what the failing checkers said
+        if: always()
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<VERIFY_EOF'
+            if [ -s "$VERIFY_LOG_DIR/FAILED" ]; then
+              while read -r n; do
+                echo "--- $n"
+                tail -18 "$VERIFY_LOG_DIR/$n.log" 2>/dev/null || echo "(no output captured)"
+                echo
+              done < "$VERIFY_LOG_DIR/FAILED" | head -110
+            else
+              echo "No checker recorded a failure, so the run broke before or"
+              echo "around them — setup, the preview server, or the job timeout."
+            fi
+            echo 'VERIFY_EOF'
+          } >> "$GITHUB_OUTPUT"
 
       # The only workflow standing between an edit and production had no
       # failure alerting at all, which every scheduled pipeline here already
@@ -217,6 +264,12 @@ jobs:
       # Last, so it fires after every checker has reported rather than on the
       # first one to fail, and if: failure() rather than always() so a green
       # sweep stays quiet.
+      #
+      # `reason:` is what turns the alert from a notification into a diagnosis.
+      # Without it every one of these issues is the same sentence and a link,
+      # and #54 collected three days of exactly that.
       - name: Alert on failure
         if: failure()
         uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}

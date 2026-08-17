@@ -120,6 +120,11 @@ python3 backend/verify/mutate.py                  # ← the one that checks the 
 claims to catch, asserts the checker was quiet before, caught it, and is quiet again after the
 revert. A checker that cannot be shown failing is not evidence. Set `CASE=` to run one case.
 
+All of them also run in GitHub Actions on every push to `main` — `Verify (browser)` — because
+every push to `main` is a live Hostinger deploy, so a regression reaches readers before anyone
+looks. A failing run opens or comments on a failure issue naming the checker that broke and
+quoting what it printed. See `backend/verify/README.md`.
+
 Two rules the tools enforce that are easy to lose by hand:
 
 - **CC BY 4.0 attribution.** Any page rendering geoBoundaries-derived geometry — a Leaflet map,

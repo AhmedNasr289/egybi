@@ -80,8 +80,15 @@ const EQUIVALENT = {
    removes the hit circles to prove the check is not just trusting the name. */
 const HIT_HELPERS = ['iv-hit'];
 
-// With animation disabled the scroll commits synchronously; this is margin for
-// sticky elements re-pinning, not for a transition to finish.
+/* With animation disabled the scroll commits synchronously; this is margin for
+   sticky elements re-pinning, not for a transition to finish.
+
+   It is also the second half of a pair, and the mutation case for this file
+   measured what each half is worth. On explore.html, reduced motion alone is
+   enough, and this settle alone is enough — the false positive only comes back
+   when BOTH are gone. That is not what the reduced-motion note below assumed
+   when it was written, and it is recorded here rather than quietly left, since
+   it means removing either line looks harmless and is not. */
 const SETTLE = 60;
 
 (async () => {
