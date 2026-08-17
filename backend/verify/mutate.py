@@ -658,3 +658,21 @@ if bad:
     print("NOT PROVEN:")
     for r in bad:
         print("   ", r[0], "->", r[2], r[3])
+
+# A CHECKER THAT CANNOT BE SHOWN FAILING IS NOT EVIDENCE — INCLUDING THIS ONE.
+#
+# This file printed NOT PROVEN and exited 0. So the step named "the check on
+# the checks" could report that a checker no longer catches anything it claims
+# to, and still let the build go green — which is precisely the defect
+# workflow-audit.py was fixed for on 2026-08-16, sitting in the one tool whose
+# whole purpose is to be the last line of defence.
+#
+# It was found by refusing to read a green step as a result: `Verify (browser)`
+# run 31981498650 passed this step, and passing proved only that the file ran.
+# Every verdict other than PASS counts — FAILS TO CATCH means a checker has
+# gone blind, NOISY means it reports the defect when the defect is absent, and
+# COULD NOT MUTATE means the case stopped applying and is testing nothing. All
+# three are coverage lost, and coverage lost in silence is how this suite's own
+# asset-version case sat vacuous through four stylesheet bumps.
+if bad:
+    sys.exit(1)
