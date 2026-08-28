@@ -28,7 +28,7 @@ perankh/
 │   ├── visit.html                  Planning a trip: NASA climate normals, SRTM elevation,
 │   │                               five measured terrain cross-sections
 │   ├── geospatial.html             The Atlas — 27 governorates + health, school and UNESCO layers
-│   ├── places.html                 757-place OSM gazetteer, each with a "Going there" block
+│   ├── places.html                 873-place OSM gazetteer, each with a "Going there" block
 │   ├── invest.html                 Where Egypt is building — projects, figures, sources (FRA-safe)
 │   ├── stories.html                Data stories: the map moves as you read
 │   ├── streets.html                Street Report Card — ten districts on seven network metrics
@@ -93,7 +93,7 @@ non-zero so the Actions run shows red instead of publishing a hole.
   PHP/MySQL API, and isolated write-side endpoints for the newsletter and the moderated community
   board. A Phase-2 accounts layer exists and is **dormant** — its backend is deployed but no page
   loads it, because it tracked progress through challenges that no longer exist.
-- **Automation:** eleven GitHub Actions workflows write dated data files. Prices and FX daily,
+- **Automation:** twelve GitHub Actions workflows write dated data files, plus `Verify (browser)` on every push. Prices and FX daily,
   World Bank weekly, Atlas layers monthly, the street report card quarterly. The visitor layers
   are manual by design: SRTM is a completed survey and the climate normals average a closed window.
 

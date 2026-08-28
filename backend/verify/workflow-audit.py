@@ -67,6 +67,21 @@ for f in sorted(WF.glob("*.yml")):
                     if isinstance(j, dict) and j.get("timeout-minutes")), None)
     conc = "yes" if d.get("concurrency") else "NO"
 
+    # Does the alert actually SAY anything? Read the step rather than grepping
+    # the file: "reason" appears in prose comments all over these workflows, and
+    # a rule satisfied by a comment is not a rule.
+    alert_steps, reasoned = 0, 0
+    for j in jobs.values():
+        if not isinstance(j, dict):
+            continue
+        for s in (j.get("steps") or []):
+            if not isinstance(s, dict):
+                continue
+            if "notify-failure" in str(s.get("uses", "")):
+                alert_steps += 1
+                if str(((s.get("with") or {}).get("reason") or "")).strip():
+                    reasoned += 1
+
     raw = f.read_text(encoding="utf-8")
     # `git push` is the honest marker for a workflow that writes back — a
     # commit that is never pushed changes nothing and triggers no deploy.
@@ -75,14 +90,16 @@ for f in sorted(WF.glob("*.yml")):
 
     rows.append(dict(name=f.name.replace(".yml", ""), trig=",".join(sorted(trig)),
                      paths=len(paths), cron=";".join(cron) or "-",
-                     timeout=timeout or "NONE", conc=conc, writes=writes, alerts=alerts))
+                     timeout=timeout or "NONE", conc=conc, writes=writes, alerts=alerts,
+                     alert_steps=alert_steps, reasoned=reasoned))
 
 w = max(len(r["name"]) for r in rows)
-print(f"{'workflow':<{w}}  {'triggers':<34} {'paths':>5} {'timeout':>7}  {'conc':<5} {'push':<5} {'alert':<5} cron")
+print(f"{'workflow':<{w}}  {'triggers':<34} {'paths':>5} {'timeout':>7}  {'conc':<5} {'push':<5} {'alert':<5} {'why':<4} cron")
 print("-" * (w + 88))
 for r in rows:
+    why = "-" if not r["alert_steps"] else ("yes" if r["reasoned"] == r["alert_steps"] else "NO")
     print(f"{r['name']:<{w}}  {r['trig']:<34} {r['paths']:>5} {str(r['timeout']):>7}  "
-          f"{r['conc']:<5} {r['writes']:<5} {r['alerts']:<5} {r['cron']}")
+          f"{r['conc']:<5} {r['writes']:<5} {r['alerts']:<5} {why:<4} {r['cron']}")
 
 print(f"\n{len(rows)} workflow(s).")
 # ALERTING IS REQUIRED OF ANYTHING THAT CAN FIRE UNATTENDED, and only of that.
@@ -105,6 +122,21 @@ for r in rows:
     if r["alerts"] == "NO" and fires:
         gaps.append(f"{r['name']}: fires unattended ({', '.join(fires)}) "
                     "with no failure alerting — it can fail silently forever")
+    # AN ALERT THAT CANNOT SAY WHAT BROKE IS BARELY AN ALERT.
+    #
+    # refresh-data failed on 2026-08-17 because the World Bank returned HTTP 502
+    # for 9 of 11 indicators. fetch_worldbank.py named all nine and explained
+    # that it was refusing to write seed_auto.sql rather than delete their rows.
+    # Issue #42 got "The Refresh Egypt data workflow failed" and a link, because
+    # the alert step was passed no reason — the diagnosis was printed and thrown
+    # away. Alerting had been ticked off as done since 2026-07-21; the half that
+    # makes it useful had not.
+    #
+    # Asked only of workflows that fire unattended, for the same reason the rule
+    # above is: someone watching a run they started can read the log.
+    if fires and r["alert_steps"] and r["reasoned"] < r["alert_steps"]:
+        gaps.append(f"{r['name']}: fires unattended ({', '.join(fires)}) and alerts "
+                    "without a reason — the issue it opens cannot name what broke")
 if gaps:
     print("\nGaps:")
     for g in gaps:

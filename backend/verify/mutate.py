@@ -587,6 +587,25 @@ case("a cron workflow left with no failure alerting", "workflow-audit.py",
      lambda o: "papyrus-reminder: fires unattended" in o, PY_WF)
 
 
+# ---- 40. an unattended workflow whose alert cannot say what broke ----------
+# The other half of the same lesson, and the one that actually cost something.
+# refresh-data DID alert on 2026-08-17 — it just said "the workflow failed",
+# while its own log named nine World Bank indicators returning HTTP 502 and
+# explained that it was refusing to write seed_auto.sql rather than delete their
+# rows. Alerting had been marked done since 2026-07-21; the reason that makes it
+# actionable was missing for six weeks and nothing noticed, because nothing
+# checked. Removing `reason:` from a cron workflow has to turn the audit red.
+case("a cron workflow alerting with no reason", "workflow-audit.py",
+     [".github/workflows/refresh-fx.yml"],
+     lambda: edit(".github/workflows/refresh-fx.yml",
+                  "        uses: ./.github/actions/notify-failure\n"
+                  "        with:\n"
+                  "          reason: ${{ steps.why.outputs.text }}",
+                  "        uses: ./.github/actions/notify-failure"),
+     lambda o: "refresh-fx: fires unattended" in o and "without a reason" in o,
+     PY_WF)
+
+
 # ---- 20-23. seo.py: the defects that decided the domain's identity ---------
 # These four are the ones that actually happened. For months every page audited
 # clean while Google showed the site under a name it had abandoned, because the

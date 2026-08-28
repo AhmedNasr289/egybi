@@ -4,7 +4,14 @@
 
 **How deploy works:** every push to `main` triggers Hostinger's auto-deploy (independent of GitHub Actions — the `[skip ci]` in bot commits only skips *Actions*, not the Hostinger deploy). So a data-refresh commit publishes to egybi.com automatically. Data pipelines run **on GitHub runners** because the dev sandbox can't reach the source (gov/vendor) APIs.
 
-## The ten GitHub Actions
+## The twelve GitHub Actions
+
+> ⚠️ **The table below was verified on 2026-07-21 and parts of it have since gone
+> stale.** `build-geo-assets` and `refresh-streets` are marked "manual only" and
+> both now run on crons (monthly on the 3rd, quarterly on the 5th); `verify-browser`
+> is missing entirely. `backend/verify/workflow-audit.py` reads the truth out of
+> the YAML on every CI run — trust its output over this table, and see the
+> 2026-08-16 and 2026-08-28 sections below.
 
 | Workflow | Trigger (UTC) | Runs → writes | Guardrail / failure behavior | Status |
 |---|---|---|---|---|

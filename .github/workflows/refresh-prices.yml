@@ -39,12 +39,22 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Tee'd for the same reason build-geo-assets is: the script and the
+      # staleness guard both name what went wrong — an unreachable source, or
+      # "IDSC prices are N days stale" — and without this the alert
+      # carries none of it and reads only "the workflow failed". pipefail keeps
+      # a failed fetch failing; without it the pipe's status is tee's, always 0.
       - name: Fetch latest IDSC prices (stdlib only, no pip)
-        run: python backend/pipeline/fetch_prices.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python backend/pipeline/fetch_prices.py 2>&1 | tee /tmp/prices-refresh.log
 
       - name: Fail (→ alert) if the data has gone stale
+        shell: bash
         run: |
-          python - <<'PY'
+          set -o pipefail
+          python - <<'PY' 2>&1 | tee -a /tmp/prices-refresh.log
           import json, datetime, sys
           d = json.load(open("site/data/prices-today.json"))
           as_of = (d.get("retail") or {}).get("as_of") or d.get("fetched_at")
@@ -57,6 +67,25 @@ jobs:
               print(f"::error::Prices are {age} days stale (as_of {as_of}). The IDSC source may have stopped updating.")
               sys.exit(1)
           PY
+
+      # THE ONLY CHANCE TO CHECK THIS DATA IS BEFORE IT IS COMMITTED.
+      #
+      # The bot's commit carries [skip ci], which skips every workflow — so
+      # Verify (browser) never sees a data refresh, even though site/data/*.json
+      # matches its `site/**` path filter. Twenty-two data commits reached
+      # production unchecked between 2026-08-17 and 2026-08-28, and every push
+      # to main is a live Hostinger deploy, so there is nothing between a
+      # malformed data file and a reader.
+      #
+      # static-audit.py is the right check and costs a third of a second: it
+      # validates that every data file is dated and internally consistent and
+      # that every field the pages read is still present. Running it here rather
+      # than after the push means a bad file is never committed at all.
+      - name: Check the data before publishing it
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 backend/verify/static-audit.py 2>&1 | tee -a /tmp/prices-refresh.log
 
       - name: Commit & push if prices changed
         run: |
@@ -86,6 +115,22 @@ jobs:
             echo "No price changes today (or the API guardrail kept last-good data)."
           fi
 
+      # Runs on any outcome, because its whole job is to describe a step that
+      # has already failed.
+      - name: Collect what the run said about itself
+        if: '!cancelled()'
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<PRICES_EOF'
+            grep -E '(SKIP|FAILED|stale|unreachable|Refusing|::error::)' \
+              /tmp/prices-refresh.log 2>/dev/null | head -20 || true
+            echo 'PRICES_EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Alert on failure
         if: failure()
         uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}

@@ -11,7 +11,7 @@ Everything below follows from these. Each was read out of the repository on
 |---|---|---|---|
 | 1 | **The audience is ~37 people.** Visitors 7d = 37, views all-time = 156, at the last recorded reading (2026-07-20 11:59 UTC, pre-launch). No reading has been taken since. | [[Traffic Baseline & Analytics]] | Every self-serve funnel plan — "convert 2% of traffic" — is arithmetic on a number that does not exist yet. Self-serve is not available as a first move. |
 | 2 | **The corpus is ~30 real pages, not 153.** 153 HTML files, of which 123 are `noindex` retired tombstones under `site/practice/` and `site/tracks/`. | `find site -name '*.html'` vs `site/practice/*.html` | An advertising or media business needs a corpus an order of magnitude larger. Media is out as a revenue line for at least 18 months. |
-| 3 | **The only non-re-fetchable asset is 26 days old.** `prices-history.json` holds 132 retail and 105 wholesale commodities, spanning **2026-07-09 → 2026-08-15 — 26 days**. `fx-history.json` holds 10 currencies over the same 26 days. | `site/data/prices-history.json`, `fx-history.json` | This is the whole moat, and it is a month old. It cannot be bought, back-filled or hurried — only waited for. That fact sets the entire timeline. |
+| 3 | **The only non-re-fetchable asset is young and it is not daily.** Re-read 2026-08-28: `prices-history.json` holds **35 observation days across a 49-day span** (2026-07-09 → 2026-08-26, **71.4% dense**) over 132 retail and 105 wholesale commodities. `fx-history.json` holds 10 currencies and 37 points. | `site/data/prices-history.json`, `fx-history.json` | This is the whole moat, and it is seven weeks old with holes in it. It cannot be bought, back-filled or hurried — only waited for. **Correcting an earlier draft of this note, which called it daily.** |
 | 4 | **The two commercially interesting datasets are the two with no declared licence.** Sixteen of eighteen files in `site/data/` declare a source; `geo-*` and `streets-*` declare **ODbL** (share-alike); `visit-*` declare public domain. `prices-today`, `prices-history`, `fx-today` and `fx-history` declare **no licence at all**. | `site/data/*.json` `license` fields | The wedge below depends on a redistribution right nobody has established. This is the single highest-value unknown in the plan and it is answerable this week. |
 
 Fact 4 is the kind of thing this project's own discipline exists to surface:
@@ -35,12 +35,12 @@ Split by whether a competent stranger could reproduce it in a weekend.
 | `geo-heritage` (UNESCO) | Yes — it is a published list | Zero |
 | Knowledge base (~40 tables, ~600 rows, hand-researched, cited) | **No** — it is a year of reading | Moderate. Small but genuinely original |
 | `invest-projects` (the investor join) | **No** — it is the KB joined to geography | Moderate, and legally constrained (§4) |
-| **`prices-history` + `fx-history` daily archive** | **No, and never** — IDSC publishes *today*, not history | **This is the asset.** Compounds daily, cannot be caught up |
+| **`prices-history` + `fx-history` archive** | **No, and never** — IDSC publishes *today*, not history | **This is the asset.** Compounds with every publication, cannot be caught up |
 | The verification suite (39 mutation-tested checkers) | No | Zero as a product. Real as a *sales proof* (§5) |
 | Tile-free zero-call map stack | Mostly | Low. Interesting to engineers, not to buyers |
 
 **The uncomfortable conclusion: most of EgyBI's data is not sellable, because
-it is open data anyone can re-fetch.** What is sellable is (a) the daily archive
+it is open data anyone can re-fetch.** What is sellable is (a) the accumulating archive
 that only exists because someone started collecting it, (b) the editorial layer
 that says what a number means and where it came from, and (c) the founder's
 labour applied to a specific buyer's question.
@@ -74,12 +74,21 @@ customers in C to cite.
 
 ### The wedge, stated precisely
 
-> **Sell the daily Egyptian retail and wholesale price archive, plus EGP FX,
+> **Sell the Egyptian retail and wholesale price archive, plus EGP FX,
 > as a maintained, provenance-carrying time series, to companies that need to
 > know what food costs in Egypt over time.**
 
-Not the maps. Not the atlas. Not the gazetteer. The boring daily table that has
+Not the maps. Not the atlas. Not the gazetteer. The boring table that has
 been quietly accumulating since 2026-07-09.
+
+**And say the density out loud when selling it.** 35 observations over 49
+calendar days is 71.4%, not one point a day. An isolated missing date means IDSC
+published nothing for it — a point is keyed by the source's own `as_of` and a
+duplicate is never appended, which is why the runs on 2026-08-17 and 08-23
+succeeded and added nothing. A *run* of missing dates means the pipeline was
+down; the block from 2026-07-10 to 07-17 is that, and it has issue #35. A buyer
+finds this in the first file they open, so it belongs in the pitch rather than
+in their discovery.
 
 **Confidence: 0.6.** It rests on two unknowns — whether IDSC's terms permit
 redistribution (fact 4), and whether the specific buyers exist in reachable
@@ -87,7 +96,7 @@ numbers. Both are testable within three weeks and §5 says how.
 
 ### Give yourself a specific reason to disagree
 
-The strongest case against this wedge: **26 days of history is not a product,
+The strongest case against this wedge: **seven weeks of 71%-dense history is not a product,
 and by the time it is (12+ months), a competitor with capital could have started
 their own collector and be only 12 months behind — while you would have spent a
 year not building an audience.** If you believe the archive's value is linear
@@ -198,7 +207,7 @@ foreign entity only past roughly $50k/yr.**
 
 ### Pricing in a devaluing currency
 
-`fx-history.json` shows EGP/USD moving from 51.09 to 50.27 across 26 days — a
+`fx-history.json` shows EGP/USD moving from 51.09 to 50.23 across 37 points — a
 1.6% swing in under a month, and the multi-year direction has been one way.
 Therefore:
 
@@ -263,7 +272,7 @@ practice; economists at development agencies and embassies' commercial sections.
 LinkedIn and company sites give you names in a week.
 
 The email is short and leads with the artefact, not the pitch: *"I've been
-recording Egypt's daily retail and wholesale food prices since July — 132 retail
+recording Egypt's retail and wholesale food prices since July — 132 retail
 and 105 wholesale commodities, every figure carrying its source and the date it
 was read. Here's a sample CSV. Is this a thing you'd use?"*
 

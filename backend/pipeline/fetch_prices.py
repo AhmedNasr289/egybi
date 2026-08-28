@@ -273,6 +273,48 @@ def main():
                 n += 1
         added[v] = n
     hist["updated"] = datetime.date.today().isoformat()
+
+    # WHAT THIS SERIES ACTUALLY COVERS, stated in the file rather than inferred.
+    #
+    # It is easy to read this archive as daily. It is not: on 2026-08-28 it held
+    # 35 observation days across a 49-day span. A reader — or a buyer — who
+    # assumes one point per day will be wrong about a seventh of the series, and
+    # the only honest place to correct that is the file itself.
+    #
+    # The gaps have two different causes and they should not be conflated:
+    #
+    #   * A point is keyed by the SOURCE's as_of, and a duplicate as_of is never
+    #     appended. So a missing calendar date normally means IDSC published
+    #     nothing dated that day — the runs on 2026-08-17 and 2026-08-23 both
+    #     succeeded and added no point, which is this case, not a failure.
+    #   * A run of consecutive missing days means the pipeline was down. The
+    #     block from 2026-07-10 to 2026-07-17 is that, and it has an issue (#35).
+    #
+    # This cannot tell the two apart by itself, and it does not pretend to: it
+    # reports the dates and says what the two explanations are.
+    obs = sorted({p["as_of"] for v in ("retail", "wholesale")
+                  for pts in hist.get(v, {}).get("series", {}).values()
+                  for p in pts})
+    if obs:
+        first = datetime.date.fromisoformat(obs[0])
+        last = datetime.date.fromisoformat(obs[-1])
+        span = (last - first).days + 1
+        have = {datetime.date.fromisoformat(d) for d in obs}
+        missing = [str(first + datetime.timedelta(days=i))
+                   for i in range(span) if (first + datetime.timedelta(days=i)) not in have]
+        hist["coverage"] = {
+            "observations": len(obs),
+            "span": [obs[0], obs[-1]],
+            "calendar_days": span,
+            "density_pct": round(100.0 * len(obs) / span, 1),
+            "missing_days": missing,
+            "note": ("Observation days, not calendar days — this series is not daily. "
+                     "A point is keyed by IDSC's own as_of and a duplicate is never "
+                     "appended, so an isolated missing date means the source published "
+                     "nothing for it. A run of consecutive missing dates means this "
+                     "pipeline was down instead."),
+        }
+
     with open(hist_path, "w", encoding="utf-8") as f:
         json.dump(hist, f, ensure_ascii=False, indent=1)
 

@@ -50,8 +50,15 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Tee'd so the alert can name what the generator objected to. This one
+      # owns 135+ pages and fires on every push to main, which Hostinger deploys
+      # straight to production — so its failures are unattended in every sense
+      # that matters, and "the workflow failed" is not a diagnosis.
       - name: Regenerate per-challenge and per-post pages
-        run: python backend/pipeline/build_static_pages.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python backend/pipeline/build_static_pages.py 2>&1 | tee /tmp/build-pages.log
 
       - name: Commit if anything changed
         run: |
@@ -81,6 +88,20 @@ jobs:
             echo "Static pages already up to date."
           fi
 
+      - name: Collect what the run said about itself
+        if: '!cancelled()'
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<PAGES_EOF'
+            grep -E '(Traceback|Error|error:|WARN|SKIP|::error::)' \
+              /tmp/build-pages.log 2>/dev/null | head -20 || true
+            echo 'PAGES_EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Alert on failure
         if: failure()
         uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}

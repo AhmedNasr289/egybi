@@ -81,9 +81,9 @@ is the product.
 **Most likely failure.** Print, shipping and framing logistics eat the margin and the founder's time.
 
 ### ⑧ The F&B Cost Brief
-**Mechanism.** The daily price archive pointed at hospitality: what a buffet's inputs actually cost, month over month, per commodity, with sources and dates.
+**Mechanism.** The price archive pointed at hospitality: what a buffet's inputs actually cost, month over month, per commodity, with sources and dates.
 **Buyer & price.** Hotel F&B directors, restaurant groups, catering companies. **$300/mo** (EGP 15,000) per group.
-**Unfair advantage.** 132 retail and 105 wholesale commodities, appended daily since 2026-07-09, and no back-fill is possible for anyone starting later. **This is the bridge between the two plans** — the same archive, sold to a buyer who is already in the tourism conversation.
+**Unfair advantage.** 132 retail and 105 wholesale commodities since 2026-07-09 — **35 observation days across 49, 71.4% dense, not daily** (re-read 2026-08-28) — and no back-fill is possible for anyone starting later. **This is the bridge between the two plans** — the same archive, sold to a buyer who is already in the tourism conversation.
 **Website needs.** A sample month as a public page.
 **3-week test.** Send last month's brief, free, to ten Cairo hotel F&B directors.
 **Most likely failure.** Procurement already has supplier quotes and considers this decoration.
@@ -311,7 +311,7 @@ property the ceiling is roughly what one person can build — call it 40 maps a
 year, $70k, at 100% utilisation with no time left for the pipelines, the
 verification suite, or the encyclopaedia that made any of this credible. Worse,
 services actively destroy the asset: hours spent on a hotel's neighbourhood map
-are hours not spent on the daily price archive, which is the one thing here that
+are hours not spent on the price archive, which is the one thing here that
 grows in value while you sleep and that a later competitor can never catch up
 on. The [[SaaS Conversion Plan]] bets on an asset; this bets on labour. In three
 years the archive is a four-year time series nobody else has, and the services

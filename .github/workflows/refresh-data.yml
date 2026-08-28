@@ -37,8 +37,21 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Tee'd, so the reasons the script prints survive the step that failed.
+      # fetch_worldbank.py is precise about what went wrong — on 2026-08-17 it
+      # printed "9 of 11 indicators failed: NY.GDP.MKTP.CD (HTTP 502), ..." and
+      # "Refusing to write seed_auto.sql — publishing it would delete the failed
+      # indicators' rows" — and issue #42 recorded none of it, because the alert
+      # was given no reason to carry. The diagnosis existed and was thrown away.
+      #
+      # pipefail is what keeps the step failing: without it the pipe's exit
+      # status is tee's, which is always 0, and a refusal to publish would go
+      # green.
       - name: Fetch latest World Bank indicators (stdlib only, no pip)
-        run: python backend/pipeline/fetch_worldbank.py
+        shell: bash
+        run: |
+          set -o pipefail
+          python backend/pipeline/fetch_worldbank.py 2>&1 | tee /tmp/wb-refresh.log
 
       - name: Detect whether anything actually changed
         id: check
@@ -52,7 +65,10 @@ jobs:
 
       - name: Guard against an empty or broken fetch
         if: steps.check.outputs.changed == 'true'
+        shell: bash
         run: |
+          set -o pipefail
+          {
           # Counts INSERT *statements*, not rows — the name below says "rows" and
           # it never did. Kept as an absolute floor, but it is a backstop now,
           # not the control: fetch_worldbank.py refuses a partial fetch outright,
@@ -73,6 +89,7 @@ jobs:
             echo "::error::Refusing to publish — $inserts INSERT statements against $prev committed. The World Bank dropped indicators; publishing would delete their rows."
             exit 1
           fi
+          } 2>&1 | tee -a /tmp/wb-refresh.log
 
       - name: Rebuild + verify the bundled KB database
         if: steps.check.outputs.changed == 'true'
@@ -105,6 +122,22 @@ jobs:
           done
           echo "::error::could not push after 3 attempts"; exit 1
 
+      # Runs on any outcome, because its whole job is to describe a step that
+      # has already failed.
+      - name: Collect what the run said about itself
+        if: '!cancelled()'
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<WB_EOF'
+            grep -E '(fetch failed|indicators failed|Refusing to|::error::)' \
+              /tmp/wb-refresh.log 2>/dev/null | head -20 || true
+            echo 'WB_EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Alert on failure
         if: failure()
         uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}

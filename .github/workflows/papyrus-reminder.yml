@@ -62,6 +62,32 @@ jobs:
       # week. Every pipeline that commits data already opens an issue on
       # failure; the two workflows whose whole job is to make something happen
       # on a schedule were the ones with no way to tell you it did not.
+      # There is no pipeline output to tee here — the one working step is a
+      # github-script call — so the reason is built from what is actually known:
+      # the month it was reminding about and whether an issue file existed for
+      # it. That is thin, and it is still the difference between "the workflow
+      # failed" and "it failed while trying to open the reminder for 2026-09".
+      - name: Collect what the run said about itself
+        if: '!cancelled()'
+        id: why
+        shell: bash
+        run: |
+          ym=$(date -u +%Y-%m)
+          issue=$(ls site/newsletter/issues/${ym}*.json 2>/dev/null | head -1)
+          {
+            echo 'text<<PAPYRUS_EOF'
+            echo "Opening the monthly send reminder for ${ym}."
+            if [ -n "$issue" ]; then
+              echo "Drafted issue found: $(basename "$issue" .json)"
+            else
+              echo "No drafted issue for ${ym} in site/newsletter/issues/ —"
+              echo "the reminder would have said so rather than naming a slug."
+            fi
+            echo 'PAPYRUS_EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Alert on failure
         if: failure()
         uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}
