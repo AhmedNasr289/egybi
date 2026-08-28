@@ -87,6 +87,26 @@ def case(name, tool, files, mutate, detects, cmd, timeout=900):
     snap = snapshot(files)
     # 1. quiet before
     rc0, out0 = sh(cmd, timeout)
+
+    # A CHECKER THAT CANNOT START HAS NOT FAILED TO CATCH ANYTHING.
+    #
+    # env.js exits 2 — distinct from a checker's own 1 — when playwright-core or
+    # Chromium is missing, precisely so "cannot run" is separable from "ran and
+    # found nothing". This harness ignored that and scored it as FAILS TO CATCH,
+    # so a scratch directory losing node_modules printed twenty-three checkers
+    # that had "gone blind" while every one of them was fine. That is the same
+    # false positive tap-targets.js spent six sessions on, in the tool whose job
+    # is to be trustworthy about the others.
+    #
+    # It still counts as a failure — a suite that could not run proves nothing —
+    # but it says which kind of failure it is, so the fix is "install the
+    # browser" rather than a day spent auditing checkers that were never broken.
+    if rc0 == 2:
+        first = next((l for l in out0.splitlines() if l.strip()), "")[:60]
+        results.append((name, tool, "COULD NOT RUN", f"exit 2 before mutating — {first}"))
+        print(f"  {'COULD NOT RUN':16} {name}  ({first})")
+        return
+
     before_clean = not detects(out0)
     # 2. inject
     try:
