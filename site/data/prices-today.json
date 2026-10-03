@@ -6,10 +6,10 @@
   "kind": "retail",
   "cadence": "daily"
  },
- "fetched_at": "2026-10-02",
+ "fetched_at": "2026-10-03",
  "currency": "EGP",
  "retail": {
-  "as_of": "2026-10-02",
+  "as_of": "2026-10-03",
   "count": 132,
   "items": [
    {
@@ -19,9 +19,9 @@
     "category": "building",
     "unit": "طن",
     "min": 3650,
-    "max": 4200,
-    "avg": 4027.27,
-    "change_pct": -2.7
+    "max": 4650,
+    "avg": 4070,
+    "change_pct": 1.1
    },
    {
     "slug": "idsc-8",
@@ -31,8 +31,8 @@
     "unit": "طن",
     "min": 37000,
     "max": 40000,
-    "avg": 38105.26,
-    "change_pct": -0.6
+    "avg": 38088.24,
+    "change_pct": -0.0
    },
    {
     "slug": "idsc-7",
@@ -41,9 +41,9 @@
     "category": "building",
     "unit": "طن",
     "min": 38000,
-    "max": 42000,
-    "avg": 39845.46,
-    "change_pct": -0.4
+    "max": 43000,
+    "avg": 40225,
+    "change_pct": 0.9
    },
    {
     "slug": "idsc-80",
@@ -52,9 +52,9 @@
     "category": "dairy",
     "unit": "كيلو",
     "min": 77,
-    "max": 190,
-    "avg": 142.97,
-    "change_pct": -1.2
+    "max": 200,
+    "avg": 149.93,
+    "change_pct": 4.9
    },
    {
     "slug": "idsc-81",
@@ -64,8 +64,8 @@
     "unit": "كيلو",
     "min": 230,
     "max": 350,
-    "avg": 287.81,
-    "change_pct": 0.5
+    "avg": 296.67,
+    "change_pct": 3.1
    },
    {
     "slug": "idsc-165",
@@ -75,8 +75,8 @@
     "unit": "كيلو",
     "min": 26,
     "max": 40,
-    "avg": 32.86,
-    "change_pct": -1.2
+    "avg": 33.41,
+    "change_pct": 1.7
    },
    {
     "slug": "idsc-79",
@@ -86,8 +86,8 @@
     "unit": "لتر",
     "min": 39,
     "max": 58,
-    "avg": 46.82,
-    "change_pct": 1.3
+    "avg": 48.04,
+    "change_pct": 2.6
    },
    {
     "slug": "idsc-75",
@@ -97,8 +97,8 @@
     "unit": "كيلو",
     "min": 142,
     "max": 450,
-    "avg": 349.92,
-    "change_pct": -1.6
+    "avg": 358.78,
+    "change_pct": 2.5
    },
    {
     "slug": "idsc-74",
@@ -108,8 +108,8 @@
     "unit": "كيلو",
     "min": 45,
     "max": 137,
-    "avg": 117.72,
-    "change_pct": 5.1
+    "avg": 116.15,
+    "change_pct": -1.3
    },
    {
     "slug": "idsc-223",
@@ -119,8 +119,8 @@
     "unit": "كيلو",
     "min": 115,
     "max": 180,
-    "avg": 143.58,
-    "change_pct": -0.7
+    "avg": 149.22,
+    "change_pct": 3.9
    },
    {
     "slug": "idsc-224",
@@ -130,8 +130,8 @@
     "unit": "كيلو",
     "min": 64,
     "max": 200,
-    "avg": 165.11,
-    "change_pct": 1.2
+    "avg": 174.78,
+    "change_pct": 5.9
    },
    {
     "slug": "idsc-225",
@@ -141,8 +141,8 @@
     "unit": "كيلو",
     "min": 90,
     "max": 550,
-    "avg": 415.28,
-    "change_pct": 14.3
+    "avg": 386.74,
+    "change_pct": -6.9
    },
    {
     "slug": "idsc-638",
@@ -152,8 +152,8 @@
     "unit": "كيلو",
     "min": 115,
     "max": 220,
-    "avg": 167.12,
-    "change_pct": -4.1
+    "avg": 187.19,
+    "change_pct": 12.0
    },
    {
     "slug": "idsc-222",
@@ -164,7 +164,7 @@
     "min": 120,
     "max": 125,
     "avg": 123.33,
-    "change_pct": -13.2
+    "change_pct": 0
    },
    {
     "slug": "idsc-107",
@@ -174,8 +174,8 @@
     "unit": "طن",
     "min": 4700,
     "max": 28000,
-    "avg": 20424.68,
-    "change_pct": 12.1
+    "avg": 20385.71,
+    "change_pct": -0.2
    },
    {
     "slug": "idsc-327",
@@ -185,8 +185,8 @@
     "unit": "كيلو",
     "min": 100,
     "max": 400,
-    "avg": 167.5,
-    "change_pct": -4.7
+    "avg": 163.16,
+    "change_pct": -2.6
    },
    {
     "slug": "idsc-277",
@@ -196,8 +196,8 @@
     "unit": "كيلو",
     "min": 90,
     "max": 480,
-    "avg": 240.36,
-    "change_pct": -5.2
+    "avg": 227.62,
+    "change_pct": -5.3
    },
    {
     "slug": "idsc-328",
@@ -207,8 +207,8 @@
     "unit": "كيلو",
     "min": 40,
     "max": 100,
-    "avg": 69,
-    "change_pct": 11.7
+    "avg": 76.55,
+    "change_pct": 10.9
    },
    {
     "slug": "idsc-326",
@@ -216,10 +216,10 @@
     "name_en": "Excellent Tilapia fish",
     "category": "fish",
     "unit": "كيلو",
-    "min": 75,
+    "min": 80,
     "max": 150,
-    "avg": 97.57,
-    "change_pct": 10.6
+    "avg": 107.58,
+    "change_pct": 10.3
    },
    {
     "slug": "idsc-338",
@@ -229,8 +229,8 @@
     "unit": "كيلو",
     "min": 65,
     "max": 160,
-    "avg": 96.73,
-    "change_pct": 29.7
+    "avg": 115,
+    "change_pct": 18.9
    },
    {
     "slug": "idsc-827",
@@ -240,8 +240,8 @@
     "unit": "كيلو",
     "min": 30,
     "max": 750,
-    "avg": 162.66,
-    "change_pct": 3.5
+    "avg": 165.69,
+    "change_pct": 1.9
    },
    {
     "slug": "idsc-337",
@@ -251,8 +251,8 @@
     "unit": "كيلو",
     "min": 200,
     "max": 700,
-    "avg": 289.82,
-    "change_pct": 13.0
+    "avg": 296.25,
+    "change_pct": 2.2
    },
    {
     "slug": "idsc-279",
@@ -262,8 +262,8 @@
     "unit": "كيلو",
     "min": 85,
     "max": 250,
-    "avg": 179.46,
-    "change_pct": 0.5
+    "avg": 179.76,
+    "change_pct": 0.2
    },
    {
     "slug": "idsc-339",
@@ -273,8 +273,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 350,
-    "avg": 183.86,
-    "change_pct": 36.1
+    "avg": 202.14,
+    "change_pct": 9.9
    },
    {
     "slug": "idsc-276",
@@ -284,8 +284,8 @@
     "unit": "كيلو",
     "min": 45,
     "max": 280,
-    "avg": 187.07,
-    "change_pct": 12.7
+    "avg": 197.61,
+    "change_pct": 5.6
    },
    {
     "slug": "idsc-324",
@@ -295,8 +295,8 @@
     "unit": "كيلو",
     "min": 45,
     "max": 250,
-    "avg": 148.39,
-    "change_pct": 4.1
+    "avg": 152.04,
+    "change_pct": 2.5
    },
    {
     "slug": "idsc-274",
@@ -306,8 +306,8 @@
     "unit": "كيلو",
     "min": 90,
     "max": 170,
-    "avg": 124.44,
-    "change_pct": -0.5
+    "avg": 122.31,
+    "change_pct": -1.7
    },
    {
     "slug": "idsc-308",
@@ -317,8 +317,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 120,
-    "avg": 94.23,
-    "change_pct": -2.2
+    "avg": 94.58,
+    "change_pct": 0.4
    },
    {
     "slug": "idsc-325",
@@ -328,8 +328,8 @@
     "unit": "كيلو",
     "min": 100,
     "max": 200,
-    "avg": 168.44,
-    "change_pct": -13.2
+    "avg": 158.2,
+    "change_pct": -6.1
    },
    {
     "slug": "idsc-312",
@@ -339,8 +339,8 @@
     "unit": "كيلو",
     "min": 170,
     "max": 550,
-    "avg": 459.13,
-    "change_pct": -4.3
+    "avg": 409.38,
+    "change_pct": -10.8
    },
    {
     "slug": "idsc-332",
@@ -350,8 +350,8 @@
     "unit": "كيلو",
     "min": 130,
     "max": 400,
-    "avg": 269,
-    "change_pct": 6.1
+    "avg": 290.4,
+    "change_pct": 8.0
    },
    {
     "slug": "idsc-330",
@@ -361,8 +361,8 @@
     "unit": "كيلو",
     "min": 280,
     "max": 750,
-    "avg": 525.5,
-    "change_pct": -9.6
+    "avg": 487.6,
+    "change_pct": -7.2
    },
    {
     "slug": "idsc-331",
@@ -372,8 +372,8 @@
     "unit": "كيلو",
     "min": 240,
     "max": 600,
-    "avg": 429.67,
-    "change_pct": -10.1
+    "avg": 396,
+    "change_pct": -7.8
    },
    {
     "slug": "idsc-278",
@@ -383,8 +383,8 @@
     "unit": "كيلو",
     "min": 400,
     "max": 850,
-    "avg": 647.33,
-    "change_pct": 7.0
+    "avg": 672,
+    "change_pct": 3.8
    },
    {
     "slug": "idsc-318",
@@ -394,8 +394,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 110,
-    "avg": 98.33,
-    "change_pct": 3.5
+    "avg": 96.25,
+    "change_pct": -2.1
    },
    {
     "slug": "idsc-316",
@@ -405,8 +405,8 @@
     "unit": "كيلو",
     "min": 200,
     "max": 500,
-    "avg": 419.29,
-    "change_pct": -11.7
+    "avg": 374.29,
+    "change_pct": -10.7
    },
    {
     "slug": "idsc-335",
@@ -416,8 +416,8 @@
     "unit": "كيلو",
     "min": 130,
     "max": 350,
-    "avg": 254,
-    "change_pct": 12.7
+    "avg": 251.43,
+    "change_pct": -1.0
    },
    {
     "slug": "idsc-309",
@@ -427,8 +427,8 @@
     "unit": "كيلو",
     "min": 120,
     "max": 325,
-    "avg": 205.32,
-    "change_pct": -5.7
+    "avg": 187.96,
+    "change_pct": -8.5
    },
    {
     "slug": "idsc-317",
@@ -438,8 +438,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 250,
-    "avg": 152.5,
-    "change_pct": 18.4
+    "avg": 139.09,
+    "change_pct": -8.8
    },
    {
     "slug": "idsc-310",
@@ -449,8 +449,8 @@
     "unit": "كيلو",
     "min": 100,
     "max": 325,
-    "avg": 185.44,
-    "change_pct": 3.4
+    "avg": 185.8,
+    "change_pct": 0.2
    },
    {
     "slug": "idsc-313",
@@ -460,8 +460,8 @@
     "unit": "كيلو",
     "min": 70,
     "max": 200,
-    "avg": 141.18,
-    "change_pct": 8.9
+    "avg": 135.5,
+    "change_pct": -4.0
    },
    {
     "slug": "idsc-315",
@@ -471,8 +471,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 300,
-    "avg": 165.59,
-    "change_pct": 9.9
+    "avg": 158.4,
+    "change_pct": -4.3
    },
    {
     "slug": "idsc-340",
@@ -482,8 +482,8 @@
     "unit": "كيلو",
     "min": 220,
     "max": 500,
-    "avg": 349.09,
-    "change_pct": 2.6
+    "avg": 335.94,
+    "change_pct": -3.8
    },
    {
     "slug": "idsc-336",
@@ -493,8 +493,8 @@
     "unit": "كيلو",
     "min": 180,
     "max": 700,
-    "avg": 327.27,
-    "change_pct": 3.5
+    "avg": 316.15,
+    "change_pct": -3.4
    },
    {
     "slug": "idsc-273",
@@ -504,8 +504,8 @@
     "unit": "واحدة",
     "min": 60,
     "max": 150,
-    "avg": 127.14,
-    "change_pct": 12.1
+    "avg": 125.71,
+    "change_pct": -1.1
    },
    {
     "slug": "idsc-259",
@@ -515,8 +515,8 @@
     "unit": "كيلو",
     "min": 50,
     "max": 90,
-    "avg": 72.04,
-    "change_pct": 2.2
+    "avg": 73.92,
+    "change_pct": 2.6
    },
    {
     "slug": "idsc-83",
@@ -526,8 +526,8 @@
     "unit": "واحدة",
     "min": 40,
     "max": 100,
-    "avg": 85.53,
-    "change_pct": 6.6
+    "avg": 86.25,
+    "change_pct": 0.8
    },
    {
     "slug": "idsc-830",
@@ -537,8 +537,8 @@
     "unit": "كيلو",
     "min": 60,
     "max": 110,
-    "avg": 90,
-    "change_pct": 2.8
+    "avg": 91.44,
+    "change_pct": 1.6
    },
    {
     "slug": "idsc-227",
@@ -548,8 +548,8 @@
     "unit": "كيلو",
     "min": 50,
     "max": 70,
-    "avg": 62.71,
-    "change_pct": 7.1
+    "avg": 63.52,
+    "change_pct": 1.3
    },
    {
     "slug": "idsc-249",
@@ -559,8 +559,8 @@
     "unit": "كيلو",
     "min": 30,
     "max": 120,
-    "avg": 60,
-    "change_pct": 4.3
+    "avg": 61.46,
+    "change_pct": 2.4
    },
    {
     "slug": "idsc-82",
@@ -570,8 +570,8 @@
     "unit": "كيلو",
     "min": 30,
     "max": 50,
-    "avg": 41.04,
-    "change_pct": 4.2
+    "avg": 41.3,
+    "change_pct": 0.6
    },
    {
     "slug": "idsc-294",
@@ -581,8 +581,8 @@
     "unit": "كيلو",
     "min": 40,
     "max": 80,
-    "avg": 60.42,
-    "change_pct": 7.3
+    "avg": 60.8,
+    "change_pct": 0.6
    },
    {
     "slug": "idsc-292",
@@ -592,8 +592,8 @@
     "unit": "كيلو",
     "min": 60,
     "max": 100,
-    "avg": 81.88,
-    "change_pct": 1.2
+    "avg": 82.2,
+    "change_pct": 0.4
    },
    {
     "slug": "idsc-260",
@@ -602,9 +602,9 @@
     "category": "fruit",
     "unit": "كيلو",
     "min": 35,
-    "max": 70,
-    "avg": 51.43,
-    "change_pct": -5.7
+    "max": 75,
+    "avg": 52.83,
+    "change_pct": 2.7
    },
    {
     "slug": "idsc-287",
@@ -615,7 +615,7 @@
     "min": 15,
     "max": 120,
     "avg": 38.33,
-    "change_pct": 23.6
+    "change_pct": 0
    },
    {
     "slug": "idsc-269",
@@ -625,8 +625,8 @@
     "unit": "كيلو",
     "min": 25,
     "max": 80,
-    "avg": 49,
-    "change_pct": -13.8
+    "avg": 49.33,
+    "change_pct": 0.7
    },
    {
     "slug": "idsc-302",
@@ -636,8 +636,8 @@
     "unit": "واحدة",
     "min": 5,
     "max": 10,
-    "avg": 5.95,
-    "change_pct": -1.2
+    "avg": 5.91,
+    "change_pct": -0.7
    },
    {
     "slug": "idsc-290",
@@ -648,7 +648,7 @@
     "min": 40,
     "max": 100,
     "avg": 62.86,
-    "change_pct": -7.1
+    "change_pct": 0
    },
    {
     "slug": "idsc-252",
@@ -659,7 +659,7 @@
     "min": 40,
     "max": 60,
     "avg": 52.5,
-    "change_pct": -1.3
+    "change_pct": 0
    },
    {
     "slug": "idsc-229",
@@ -669,8 +669,8 @@
     "unit": "كيلو",
     "min": 15,
     "max": 40,
-    "avg": 23.91,
-    "change_pct": -4.8
+    "avg": 25.08,
+    "change_pct": 4.9
    },
    {
     "slug": "idsc-270",
@@ -680,8 +680,8 @@
     "unit": "واحدة",
     "min": 5,
     "max": 15,
-    "avg": 10.83,
-    "change_pct": 5.2
+    "avg": 11,
+    "change_pct": 1.6
    },
    {
     "slug": "idsc-272",
@@ -691,8 +691,8 @@
     "unit": "كرتونة",
     "min": 80,
     "max": 800,
-    "avg": 533.16,
-    "change_pct": 4.6
+    "avg": 525.24,
+    "change_pct": -1.5
    },
    {
     "slug": "idsc-285",
@@ -703,7 +703,7 @@
     "min": 20,
     "max": 25,
     "avg": 21.67,
-    "change_pct": 73.4
+    "change_pct": 0
    },
    {
     "slug": "idsc-282",
@@ -714,7 +714,7 @@
     "min": 15,
     "max": 50,
     "avg": 36.25,
-    "change_pct": -10.1
+    "change_pct": 0
    },
    {
     "slug": "idsc-283",
@@ -724,8 +724,8 @@
     "unit": "كيلو",
     "min": 35,
     "max": 80,
-    "avg": 59.67,
-    "change_pct": 17.8
+    "avg": 60,
+    "change_pct": 0.6
    },
    {
     "slug": "idsc-281",
@@ -736,7 +736,7 @@
     "min": 35,
     "max": 50,
     "avg": 41.88,
-    "change_pct": 2.3
+    "change_pct": 0
    },
    {
     "slug": "idsc-301",
@@ -747,7 +747,7 @@
     "min": 10,
     "max": 80,
     "avg": 46.15,
-    "change_pct": -7.3
+    "change_pct": 0
    },
    {
     "slug": "idsc-64",
@@ -757,8 +757,8 @@
     "unit": "كيلو",
     "min": 22,
     "max": 33,
-    "avg": 27.42,
-    "change_pct": -1.5
+    "avg": 27.94,
+    "change_pct": 1.9
    },
    {
     "slug": "idsc-557",
@@ -768,8 +768,8 @@
     "unit": "طن",
     "min": 2000,
     "max": 20000,
-    "avg": 17077.27,
-    "change_pct": 9.8
+    "avg": 16418.75,
+    "change_pct": -3.9
    },
    {
     "slug": "idsc-556",
@@ -779,8 +779,8 @@
     "unit": "شيكارة",
     "min": 675,
     "max": 1000,
-    "avg": 830.38,
-    "change_pct": 10.6
+    "avg": 832,
+    "change_pct": 0.2
    },
    {
     "slug": "idsc-211",
@@ -790,8 +790,8 @@
     "unit": "كيلو",
     "min": 45,
     "max": 65,
-    "avg": 54.84,
-    "change_pct": 3.4
+    "avg": 54.47,
+    "change_pct": -0.7
    },
    {
     "slug": "idsc-558",
@@ -801,8 +801,8 @@
     "unit": "قنطار",
     "min": 3000,
     "max": 7500,
-    "avg": 5812.5,
-    "change_pct": -3.1
+    "avg": 5333.33,
+    "change_pct": -8.2
    },
    {
     "slug": "idsc-230",
@@ -812,8 +812,8 @@
     "unit": "طن",
     "min": 12500,
     "max": 16000,
-    "avg": 15038.46,
-    "change_pct": 2.6
+    "avg": 14950,
+    "change_pct": -0.6
    },
    {
     "slug": "idsc-616",
@@ -824,7 +824,7 @@
     "min": 135,
     "max": 200,
     "avg": 170,
-    "change_pct": 2.8
+    "change_pct": 0
    },
    {
     "slug": "idsc-560",
@@ -834,8 +834,8 @@
     "unit": "قنطار",
     "min": 3000,
     "max": 6000,
-    "avg": 5357.14,
-    "change_pct": -1.5
+    "avg": 5100,
+    "change_pct": -4.8
    },
    {
     "slug": "idsc-65",
@@ -845,8 +845,8 @@
     "unit": "كيلو",
     "min": 24,
     "max": 45,
-    "avg": 35.06,
-    "change_pct": -0.1
+    "avg": 35.2,
+    "change_pct": 0.4
    },
    {
     "slug": "idsc-187",
@@ -856,8 +856,8 @@
     "unit": "كرتونة",
     "min": 80,
     "max": 145,
-    "avg": 112.74,
-    "change_pct": -3.9
+    "avg": 114.63,
+    "change_pct": 1.7
    },
    {
     "slug": "idsc-188",
@@ -867,8 +867,8 @@
     "unit": "بيضة",
     "min": 3.5,
     "max": 6,
-    "avg": 4.76,
-    "change_pct": 3.9
+    "avg": 4.69,
+    "change_pct": -1.5
    },
    {
     "slug": "idsc-190",
@@ -878,8 +878,8 @@
     "unit": "بيضة",
     "min": 3.5,
     "max": 6,
-    "avg": 4.81,
-    "change_pct": 3.4
+    "avg": 4.78,
+    "change_pct": -0.6
    },
    {
     "slug": "idsc-192",
@@ -889,8 +889,8 @@
     "unit": "بيضة",
     "min": 4,
     "max": 6.5,
-    "avg": 5.45,
-    "change_pct": 3.8
+    "avg": 5.43,
+    "change_pct": -0.4
    },
    {
     "slug": "idsc-191",
@@ -900,8 +900,8 @@
     "unit": "كرتونة",
     "min": 110,
     "max": 160,
-    "avg": 136.3,
-    "change_pct": 1.6
+    "avg": 136.02,
+    "change_pct": -0.2
    },
    {
     "slug": "idsc-61",
@@ -911,8 +911,8 @@
     "unit": "كيلو",
     "min": 18.5,
     "max": 35,
-    "avg": 28.77,
-    "change_pct": 8.1
+    "avg": 28.2,
+    "change_pct": -2.0
    },
    {
     "slug": "idsc-63",
@@ -922,8 +922,8 @@
     "unit": "كيلو",
     "min": 25,
     "max": 45,
-    "avg": 37.4,
-    "change_pct": 5.8
+    "avg": 36.77,
+    "change_pct": -1.7
    },
    {
     "slug": "idsc-829",
@@ -933,8 +933,8 @@
     "unit": "كيلو",
     "min": 210,
     "max": 320,
-    "avg": 254.86,
-    "change_pct": 4.7
+    "avg": 250.4,
+    "change_pct": -1.8
    },
    {
     "slug": "idsc-72",
@@ -944,8 +944,8 @@
     "unit": "كيلو",
     "min": 50,
     "max": 110,
-    "avg": 71.36,
-    "change_pct": 1.7
+    "avg": 70.85,
+    "change_pct": -0.7
    },
    {
     "slug": "idsc-70",
@@ -955,8 +955,8 @@
     "unit": "كيلو",
     "min": 45,
     "max": 95,
-    "avg": 66.84,
-    "change_pct": 5.6
+    "avg": 66.09,
+    "change_pct": -1.1
    },
    {
     "slug": "idsc-71",
@@ -966,8 +966,8 @@
     "unit": "كيلو",
     "min": 55,
     "max": 98,
-    "avg": 69.2,
-    "change_pct": 10.0
+    "avg": 68.04,
+    "change_pct": -1.7
    },
    {
     "slug": "idsc-76",
@@ -977,8 +977,8 @@
     "unit": "كيلو",
     "min": 22,
     "max": 30,
-    "avg": 26.66,
-    "change_pct": -0.1
+    "avg": 26.39,
+    "change_pct": -1.0
    },
    {
     "slug": "idsc-69",
@@ -988,8 +988,8 @@
     "unit": "لتر",
     "min": 90,
     "max": 145,
-    "avg": 123.15,
-    "change_pct": 1.2
+    "avg": 122.58,
+    "change_pct": -0.5
    },
    {
     "slug": "idsc-68",
@@ -999,8 +999,8 @@
     "unit": "لتر",
     "min": 85,
     "max": 120,
-    "avg": 103.79,
-    "change_pct": 2.5
+    "avg": 104.06,
+    "change_pct": 0.3
    },
    {
     "slug": "idsc-197",
@@ -1010,8 +1010,8 @@
     "unit": "عبوة",
     "min": 10,
     "max": 16,
-    "avg": 11.13,
-    "change_pct": -1.0
+    "avg": 11.2,
+    "change_pct": 0.6
    },
    {
     "slug": "idsc-198",
@@ -1021,8 +1021,8 @@
     "unit": "عبوة",
     "min": 11,
     "max": 18,
-    "avg": 12.82,
-    "change_pct": -2.2
+    "avg": 12.91,
+    "change_pct": 0.7
    },
    {
     "slug": "idsc-212",
@@ -1032,8 +1032,8 @@
     "unit": "كيلو",
     "min": 40,
     "max": 90,
-    "avg": 67.16,
-    "change_pct": -3.4
+    "avg": 67.23,
+    "change_pct": 0.1
    },
    {
     "slug": "idsc-77",
@@ -1042,9 +1042,9 @@
     "category": "grocery",
     "unit": "400 جرام",
     "min": 15,
-    "max": 29,
-    "avg": 22.64,
-    "change_pct": -18.7
+    "max": 32,
+    "avg": 23.5,
+    "change_pct": -21.0
    },
    {
     "slug": "idsc-77-2",
@@ -1054,8 +1054,8 @@
     "unit": "كيلو",
     "min": 13,
     "max": 50,
-    "avg": 29.76,
-    "change_pct": 6.9
+    "avg": 29.47,
+    "change_pct": -1.0
    },
    {
     "slug": "idsc-880",
@@ -1064,9 +1064,9 @@
     "category": "meat",
     "unit": "كيلو",
     "min": 70,
-    "max": 145,
-    "avg": 104.4,
-    "change_pct": 4.4
+    "max": 155,
+    "avg": 106.32,
+    "change_pct": 1.8
    },
    {
     "slug": "idsc-877",
@@ -1076,8 +1076,8 @@
     "unit": "كيلو",
     "min": 280,
     "max": 550,
-    "avg": 439.56,
-    "change_pct": 1.9
+    "avg": 441.9,
+    "change_pct": 0.5
    },
    {
     "slug": "idsc-303",
@@ -1087,8 +1087,8 @@
     "unit": "كيلو",
     "min": 10,
     "max": 25,
-    "avg": 15.87,
-    "change_pct": -7.6
+    "avg": 16.4,
+    "change_pct": 3.3
    },
    {
     "slug": "idsc-193",
@@ -1098,8 +1098,8 @@
     "unit": "كيلو",
     "min": 5,
     "max": 25,
-    "avg": 15.15,
-    "change_pct": 0.1
+    "avg": 15.75,
+    "change_pct": 4.0
    },
    {
     "slug": "idsc-234",
@@ -1107,10 +1107,10 @@
     "name_en": "Okra",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 45,
+    "min": 40,
     "max": 80,
-    "avg": 58.33,
-    "change_pct": 2.1
+    "avg": 59.4,
+    "change_pct": 1.8
    },
    {
     "slug": "idsc-824",
@@ -1120,8 +1120,8 @@
     "unit": "كيلو",
     "min": 10,
     "max": 25,
-    "avg": 17.44,
-    "change_pct": 3.6
+    "avg": 17.62,
+    "change_pct": 1.0
    },
    {
     "slug": "idsc-242",
@@ -1131,8 +1131,8 @@
     "unit": "كيلو",
     "min": 7,
     "max": 25,
-    "avg": 13.54,
-    "change_pct": -10.9
+    "avg": 13.85,
+    "change_pct": 2.3
    },
    {
     "slug": "idsc-1",
@@ -1142,8 +1142,8 @@
     "unit": "كيلو",
     "min": 12,
     "max": 40,
-    "avg": 21.45,
-    "change_pct": -6.0
+    "avg": 22.79,
+    "change_pct": 6.2
    },
    {
     "slug": "idsc-2",
@@ -1153,8 +1153,8 @@
     "unit": "كيلو",
     "min": 10,
     "max": 40,
-    "avg": 22.54,
-    "change_pct": -15.2
+    "avg": 24.08,
+    "change_pct": 6.8
    },
    {
     "slug": "idsc-163",
@@ -1164,8 +1164,8 @@
     "unit": "كيلو",
     "min": 20,
     "max": 80,
-    "avg": 40.6,
-    "change_pct": 5.0
+    "avg": 40.81,
+    "change_pct": 0.5
    },
    {
     "slug": "idsc-162",
@@ -1175,8 +1175,8 @@
     "unit": "كيلو",
     "min": 15,
     "max": 40,
-    "avg": 25.83,
-    "change_pct": -1.1
+    "avg": 26.25,
+    "change_pct": 1.6
    },
    {
     "slug": "idsc-164",
@@ -1184,10 +1184,10 @@
     "name_en": "squash",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 20,
+    "min": 15,
     "max": 50,
-    "avg": 31.25,
-    "change_pct": -0.1
+    "avg": 31,
+    "change_pct": -0.8
    },
    {
     "slug": "idsc-304",
@@ -1197,8 +1197,8 @@
     "unit": "كيلو",
     "min": 5,
     "max": 15,
-    "avg": 9.4,
-    "change_pct": 5.9
+    "avg": 9.45,
+    "change_pct": 0.5
    },
    {
     "slug": "idsc-5",
@@ -1208,8 +1208,8 @@
     "unit": "كيلو",
     "min": 20,
     "max": 60,
-    "avg": 39,
-    "change_pct": -2.6
+    "avg": 41.39,
+    "change_pct": 6.1
    },
    {
     "slug": "idsc-240",
@@ -1219,8 +1219,8 @@
     "unit": "كيلو",
     "min": 10,
     "max": 35,
-    "avg": 18.16,
-    "change_pct": 1.4
+    "avg": 19.07,
+    "change_pct": 5.0
    },
    {
     "slug": "idsc-233",
@@ -1230,8 +1230,8 @@
     "unit": "كيلو",
     "min": 8,
     "max": 30,
-    "avg": 17.76,
-    "change_pct": -8.3
+    "avg": 17.95,
+    "change_pct": 1.1
    },
    {
     "slug": "idsc-286",
@@ -1241,8 +1241,8 @@
     "unit": "100 رابطة",
     "min": 200,
     "max": 500,
-    "avg": 341.67,
-    "change_pct": -9.5
+    "avg": 338.46,
+    "change_pct": -0.9
    },
    {
     "slug": "idsc-264",
@@ -1252,8 +1252,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 500,
-    "avg": 284.38,
-    "change_pct": -6.3
+    "avg": 308.04,
+    "change_pct": 8.3
    },
    {
     "slug": "idsc-241",
@@ -1263,8 +1263,8 @@
     "unit": "واحدة",
     "min": 1.5,
     "max": 7,
-    "avg": 3.87,
-    "change_pct": -17.3
+    "avg": 3.96,
+    "change_pct": 2.3
    },
    {
     "slug": "idsc-311",
@@ -1274,8 +1274,8 @@
     "unit": "كيلو",
     "min": 15,
     "max": 40,
-    "avg": 22.95,
-    "change_pct": 3.3
+    "avg": 22.48,
+    "change_pct": -2.0
    },
    {
     "slug": "idsc-263",
@@ -1285,8 +1285,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 500,
-    "avg": 265.62,
-    "change_pct": 2.7
+    "avg": 288.39,
+    "change_pct": 8.6
    },
    {
     "slug": "idsc-341",
@@ -1296,8 +1296,8 @@
     "unit": "كيلو",
     "min": 12,
     "max": 40,
-    "avg": 24.04,
-    "change_pct": -2.7
+    "avg": 25.96,
+    "change_pct": 8.0
    },
    {
     "slug": "idsc-238",
@@ -1307,8 +1307,8 @@
     "unit": "كيلو",
     "min": 10,
     "max": 40,
-    "avg": 15.46,
-    "change_pct": -7.3
+    "avg": 15.43,
+    "change_pct": -0.2
    },
    {
     "slug": "idsc-271",
@@ -1319,7 +1319,7 @@
     "min": 6.5,
     "max": 20,
     "avg": 9.96,
-    "change_pct": -11.7
+    "change_pct": 0
    },
    {
     "slug": "idsc-262",
@@ -1329,8 +1329,8 @@
     "unit": "واحدة",
     "min": 2.5,
     "max": 45,
-    "avg": 19,
-    "change_pct": 2.1
+    "avg": 16.35,
+    "change_pct": -13.9
    },
    {
     "slug": "idsc-236",
@@ -1340,8 +1340,8 @@
     "unit": "كيلو",
     "min": 10,
     "max": 35,
-    "avg": 22.36,
-    "change_pct": -1.0
+    "avg": 23.08,
+    "change_pct": 3.2
    },
    {
     "slug": "idsc-237",
@@ -1351,8 +1351,8 @@
     "unit": "كيلو",
     "min": 15,
     "max": 40,
-    "avg": 24.23,
-    "change_pct": 2.2
+    "avg": 23.9,
+    "change_pct": -1.4
    },
    {
     "slug": "idsc-300",
@@ -1362,8 +1362,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 400,
-    "avg": 302.38,
-    "change_pct": -1.4
+    "avg": 302.27,
+    "change_pct": -0.0
    },
    {
     "slug": "idsc-295",
@@ -1373,8 +1373,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 500,
-    "avg": 291.67,
-    "change_pct": -7.1
+    "avg": 300,
+    "change_pct": 2.9
    },
    {
     "slug": "idsc-239",
@@ -1384,8 +1384,8 @@
     "unit": "كيلو",
     "min": 8,
     "max": 40,
-    "avg": 22.33,
-    "change_pct": -13.1
+    "avg": 23.47,
+    "change_pct": 5.1
    },
    {
     "slug": "idsc-245",
@@ -1395,8 +1395,8 @@
     "unit": "كيلو",
     "min": 10,
     "max": 40,
-    "avg": 22.74,
-    "change_pct": -11.7
+    "avg": 23.34,
+    "change_pct": 2.6
    },
    {
     "slug": "idsc-268",
@@ -1405,9 +1405,9 @@
     "category": "vegetable",
     "unit": "واحدة",
     "min": 15,
-    "max": 35,
-    "avg": 25.71,
-    "change_pct": -5.5
+    "max": 40,
+    "avg": 26.46,
+    "change_pct": 2.9
    },
    {
     "slug": "idsc-265",
@@ -1417,8 +1417,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 300,
-    "avg": 245.46,
-    "change_pct": 4.0
+    "avg": 247.83,
+    "change_pct": 1.0
    },
    {
     "slug": "idsc-289",
@@ -1428,8 +1428,8 @@
     "unit": "100 رابطة",
     "min": 250,
     "max": 500,
-    "avg": 367.65,
-    "change_pct": 5.0
+    "avg": 360.53,
+    "change_pct": -1.9
    },
    {
     "slug": "idsc-267",
@@ -1439,8 +1439,8 @@
     "unit": "واحدة",
     "min": 20,
     "max": 60,
-    "avg": 37.5,
-    "change_pct": 5.0
+    "avg": 37.88,
+    "change_pct": 1.0
    },
    {
     "slug": "idsc-266",
@@ -1450,8 +1450,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 400,
-    "avg": 275,
-    "change_pct": -4.8
+    "avg": 280.77,
+    "change_pct": 2.1
    },
    {
     "slug": "idsc-306",
@@ -1459,10 +1459,10 @@
     "name_en": "Vine Leaves",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 70,
+    "min": 60,
     "max": 170,
-    "avg": 120.83,
-    "change_pct": 27.4
+    "avg": 120,
+    "change_pct": -0.7
    }
   ]
  },
