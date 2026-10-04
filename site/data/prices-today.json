@@ -6,10 +6,10 @@
   "kind": "retail",
   "cadence": "daily"
  },
- "fetched_at": "2026-10-03",
+ "fetched_at": "2026-10-04",
  "currency": "EGP",
  "retail": {
-  "as_of": "2026-10-03",
+  "as_of": "2026-10-04",
   "count": 132,
   "items": [
    {
@@ -18,10 +18,10 @@
     "name_en": "Gray Cement",
     "category": "building",
     "unit": "طن",
-    "min": 3650,
-    "max": 4650,
-    "avg": 4070,
-    "change_pct": 1.1
+    "min": 3000,
+    "max": 4500,
+    "avg": 4035.3,
+    "change_pct": -0.8
    },
    {
     "slug": "idsc-8",
@@ -29,10 +29,10 @@
     "name_en": "Investment Steel",
     "category": "building",
     "unit": "طن",
-    "min": 37000,
-    "max": 40000,
-    "avg": 38088.24,
-    "change_pct": -0.0
+    "min": 34000,
+    "max": 42000,
+    "avg": 38415.56,
+    "change_pct": 0.9
    },
    {
     "slug": "idsc-7",
@@ -40,10 +40,10 @@
     "name_en": "Ezz Steel",
     "category": "building",
     "unit": "طن",
-    "min": 38000,
-    "max": 43000,
-    "avg": 40225,
-    "change_pct": 0.9
+    "min": 36000,
+    "max": 42100,
+    "avg": 40335.34,
+    "change_pct": 0.3
    },
    {
     "slug": "idsc-80",
@@ -52,9 +52,9 @@
     "category": "dairy",
     "unit": "كيلو",
     "min": 77,
-    "max": 200,
-    "avg": 149.93,
-    "change_pct": 4.9
+    "max": 240,
+    "avg": 147.03,
+    "change_pct": -1.9
    },
    {
     "slug": "idsc-81",
@@ -64,8 +64,8 @@
     "unit": "كيلو",
     "min": 230,
     "max": 350,
-    "avg": 296.67,
-    "change_pct": 3.1
+    "avg": 285.45,
+    "change_pct": -3.8
    },
    {
     "slug": "idsc-165",
@@ -73,10 +73,10 @@
     "name_en": "unpacked Fluid Milk",
     "category": "dairy",
     "unit": "كيلو",
-    "min": 26,
+    "min": 15,
     "max": 40,
-    "avg": 33.41,
-    "change_pct": 1.7
+    "avg": 33.54,
+    "change_pct": 0.4
    },
    {
     "slug": "idsc-79",
@@ -84,10 +84,10 @@
     "name_en": "Packed Milk",
     "category": "dairy",
     "unit": "لتر",
-    "min": 39,
+    "min": 33,
     "max": 58,
-    "avg": 48.04,
-    "change_pct": 2.6
+    "avg": 46.69,
+    "change_pct": -2.8
    },
    {
     "slug": "idsc-75",
@@ -95,10 +95,10 @@
     "name_en": "Natural Margarine",
     "category": "dairy",
     "unit": "كيلو",
-    "min": 142,
+    "min": 140,
     "max": 450,
-    "avg": 358.78,
-    "change_pct": 2.5
+    "avg": 344.7,
+    "change_pct": -3.9
    },
    {
     "slug": "idsc-74",
@@ -107,9 +107,9 @@
     "category": "dairy",
     "unit": "كيلو",
     "min": 45,
-    "max": 137,
-    "avg": 116.15,
-    "change_pct": -1.3
+    "max": 150,
+    "avg": 109.99,
+    "change_pct": -5.3
    },
    {
     "slug": "idsc-223",
@@ -117,10 +117,10 @@
     "name_en": "(White Cheese (Talaga",
     "category": "dairy",
     "unit": "كيلو",
-    "min": 115,
-    "max": 180,
-    "avg": 149.22,
-    "change_pct": 3.9
+    "min": 90,
+    "max": 220,
+    "avg": 149.41,
+    "change_pct": 0.1
    },
    {
     "slug": "idsc-224",
@@ -130,8 +130,8 @@
     "unit": "كيلو",
     "min": 64,
     "max": 200,
-    "avg": 174.78,
-    "change_pct": 5.9
+    "avg": 162.35,
+    "change_pct": -7.1
    },
    {
     "slug": "idsc-225",
@@ -141,8 +141,8 @@
     "unit": "كيلو",
     "min": 90,
     "max": 550,
-    "avg": 386.74,
-    "change_pct": -6.9
+    "avg": 381.22,
+    "change_pct": -1.4
    },
    {
     "slug": "idsc-638",
@@ -150,10 +150,10 @@
     "name_en": "butter",
     "category": "dairy",
     "unit": "كيلو",
-    "min": 115,
+    "min": 90,
     "max": 220,
-    "avg": 187.19,
-    "change_pct": 12.0
+    "avg": 176.56,
+    "change_pct": -5.7
    },
    {
     "slug": "idsc-222",
@@ -161,10 +161,10 @@
     "name_en": "Nido Powder Milk400 gm",
     "category": "dairy",
     "unit": "جرام",
-    "min": 120,
-    "max": 125,
-    "avg": 123.33,
-    "change_pct": 0
+    "min": 110,
+    "max": 180,
+    "avg": 141.73,
+    "change_pct": 14.9
    },
    {
     "slug": "idsc-107",
@@ -173,9 +173,9 @@
     "category": "fertiliser",
     "unit": "طن",
     "min": 4700,
-    "max": 28000,
-    "avg": 20385.71,
-    "change_pct": -0.2
+    "max": 31000,
+    "avg": 18569.26,
+    "change_pct": -8.9
    },
    {
     "slug": "idsc-327",
@@ -183,10 +183,10 @@
     "name_en": "barbon fish (medium)",
     "category": "fish",
     "unit": "كيلو",
-    "min": 100,
+    "min": 75,
     "max": 400,
-    "avg": 163.16,
-    "change_pct": -2.6
+    "avg": 168.57,
+    "change_pct": 3.3
    },
    {
     "slug": "idsc-277",
@@ -196,8 +196,8 @@
     "unit": "كيلو",
     "min": 90,
     "max": 480,
-    "avg": 227.62,
-    "change_pct": -5.3
+    "avg": 223.81,
+    "change_pct": -1.7
    },
    {
     "slug": "idsc-328",
@@ -207,8 +207,8 @@
     "unit": "كيلو",
     "min": 40,
     "max": 100,
-    "avg": 76.55,
-    "change_pct": 10.9
+    "avg": 71.14,
+    "change_pct": -7.1
    },
    {
     "slug": "idsc-326",
@@ -218,8 +218,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 150,
-    "avg": 107.58,
-    "change_pct": 10.3
+    "avg": 103.57,
+    "change_pct": -3.7
    },
    {
     "slug": "idsc-338",
@@ -228,9 +228,9 @@
     "category": "fish",
     "unit": "كيلو",
     "min": 65,
-    "max": 160,
-    "avg": 115,
-    "change_pct": 18.9
+    "max": 230,
+    "avg": 116.9,
+    "change_pct": 1.6
    },
    {
     "slug": "idsc-827",
@@ -240,8 +240,8 @@
     "unit": "كيلو",
     "min": 30,
     "max": 750,
-    "avg": 165.69,
-    "change_pct": 1.9
+    "avg": 156.3,
+    "change_pct": -5.7
    },
    {
     "slug": "idsc-337",
@@ -249,10 +249,10 @@
     "name_en": "Seabass fish",
     "category": "fish",
     "unit": "كيلو",
-    "min": 200,
+    "min": 100,
     "max": 700,
-    "avg": 296.25,
-    "change_pct": 2.2
+    "avg": 306.55,
+    "change_pct": 3.5
    },
    {
     "slug": "idsc-279",
@@ -260,10 +260,10 @@
     "name_en": "Crab",
     "category": "fish",
     "unit": "كيلو",
-    "min": 85,
-    "max": 250,
-    "avg": 179.76,
-    "change_pct": 0.2
+    "min": 70,
+    "max": 450,
+    "avg": 165.79,
+    "change_pct": -7.8
    },
    {
     "slug": "idsc-339",
@@ -273,8 +273,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 350,
-    "avg": 202.14,
-    "change_pct": 9.9
+    "avg": 179.38,
+    "change_pct": -11.3
    },
    {
     "slug": "idsc-276",
@@ -284,8 +284,8 @@
     "unit": "كيلو",
     "min": 45,
     "max": 280,
-    "avg": 197.61,
-    "change_pct": 5.6
+    "avg": 188.98,
+    "change_pct": -4.4
    },
    {
     "slug": "idsc-324",
@@ -294,9 +294,9 @@
     "category": "fish",
     "unit": "كيلو",
     "min": 45,
-    "max": 250,
-    "avg": 152.04,
-    "change_pct": 2.5
+    "max": 400,
+    "avg": 155.19,
+    "change_pct": 2.1
    },
    {
     "slug": "idsc-274",
@@ -304,10 +304,10 @@
     "name_en": "Bogue",
     "category": "fish",
     "unit": "كيلو",
-    "min": 90,
-    "max": 170,
-    "avg": 122.31,
-    "change_pct": -1.7
+    "min": 75,
+    "max": 220,
+    "avg": 128.14,
+    "change_pct": 4.8
    },
    {
     "slug": "idsc-308",
@@ -315,10 +315,10 @@
     "name_en": "aswan Tilapia fish",
     "category": "fish",
     "unit": "كيلو",
-    "min": 80,
-    "max": 120,
-    "avg": 94.58,
-    "change_pct": 0.4
+    "min": 60,
+    "max": 130,
+    "avg": 97.5,
+    "change_pct": 3.1
    },
    {
     "slug": "idsc-325",
@@ -328,8 +328,8 @@
     "unit": "كيلو",
     "min": 100,
     "max": 200,
-    "avg": 158.2,
-    "change_pct": -6.1
+    "avg": 166.11,
+    "change_pct": 5
    },
    {
     "slug": "idsc-312",
@@ -337,10 +337,10 @@
     "name_en": "Snake Fish",
     "category": "fish",
     "unit": "كيلو",
-    "min": 170,
-    "max": 550,
-    "avg": 409.38,
-    "change_pct": -10.8
+    "min": 100,
+    "max": 600,
+    "avg": 322.37,
+    "change_pct": -21.2
    },
    {
     "slug": "idsc-332",
@@ -348,10 +348,10 @@
     "name_en": "Shrimp (Small)",
     "category": "fish",
     "unit": "كيلو",
-    "min": 130,
-    "max": 400,
-    "avg": 290.4,
-    "change_pct": 8.0
+    "min": 110,
+    "max": 450,
+    "avg": 280,
+    "change_pct": -3.6
    },
    {
     "slug": "idsc-330",
@@ -359,10 +359,10 @@
     "name_en": "Shrimp (Excellent)",
     "category": "fish",
     "unit": "كيلو",
-    "min": 280,
+    "min": 260,
     "max": 750,
-    "avg": 487.6,
-    "change_pct": -7.2
+    "avg": 504.47,
+    "change_pct": 3.5
    },
    {
     "slug": "idsc-331",
@@ -370,10 +370,10 @@
     "name_en": "Shrimp (Medium)",
     "category": "fish",
     "unit": "كيلو",
-    "min": 240,
+    "min": 160,
     "max": 600,
-    "avg": 396,
-    "change_pct": -7.8
+    "avg": 387.31,
+    "change_pct": -2.2
    },
    {
     "slug": "idsc-278",
@@ -381,10 +381,10 @@
     "name_en": "Jumbo Shrimp",
     "category": "fish",
     "unit": "كيلو",
-    "min": 400,
+    "min": 350,
     "max": 850,
-    "avg": 672,
-    "change_pct": 3.8
+    "avg": 604.68,
+    "change_pct": -10.0
    },
    {
     "slug": "idsc-318",
@@ -392,10 +392,10 @@
     "name_en": "hadady fish",
     "category": "fish",
     "unit": "كيلو",
-    "min": 80,
+    "min": 75,
     "max": 110,
-    "avg": 96.25,
-    "change_pct": -2.1
+    "avg": 93,
+    "change_pct": -3.4
    },
    {
     "slug": "idsc-316",
@@ -403,10 +403,10 @@
     "name_en": "squid fish",
     "category": "fish",
     "unit": "كيلو",
-    "min": 200,
-    "max": 500,
-    "avg": 374.29,
-    "change_pct": -10.7
+    "min": 150,
+    "max": 550,
+    "avg": 348.65,
+    "change_pct": -6.8
    },
    {
     "slug": "idsc-335",
@@ -414,10 +414,10 @@
     "name_en": "Emperor",
     "category": "fish",
     "unit": "كيلو",
-    "min": 130,
+    "min": 80,
     "max": 350,
-    "avg": 251.43,
-    "change_pct": -1.0
+    "avg": 202.27,
+    "change_pct": -19.6
    },
    {
     "slug": "idsc-309",
@@ -425,10 +425,10 @@
     "name_en": "fillet Tilapia fish",
     "category": "fish",
     "unit": "كيلو",
-    "min": 120,
+    "min": 100,
     "max": 325,
-    "avg": 187.96,
-    "change_pct": -8.5
+    "avg": 188.4,
+    "change_pct": 0.2
    },
    {
     "slug": "idsc-317",
@@ -438,8 +438,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 250,
-    "avg": 139.09,
-    "change_pct": -8.8
+    "avg": 120,
+    "change_pct": -13.7
    },
    {
     "slug": "idsc-310",
@@ -449,8 +449,8 @@
     "unit": "كيلو",
     "min": 100,
     "max": 325,
-    "avg": 185.8,
-    "change_pct": 0.2
+    "avg": 177.04,
+    "change_pct": -4.7
    },
    {
     "slug": "idsc-313",
@@ -460,8 +460,8 @@
     "unit": "كيلو",
     "min": 70,
     "max": 200,
-    "avg": 135.5,
-    "change_pct": -4.0
+    "avg": 129.88,
+    "change_pct": -4.2
    },
    {
     "slug": "idsc-315",
@@ -471,8 +471,8 @@
     "unit": "كيلو",
     "min": 80,
     "max": 300,
-    "avg": 158.4,
-    "change_pct": -4.3
+    "avg": 143.77,
+    "change_pct": -9.2
    },
    {
     "slug": "idsc-340",
@@ -480,10 +480,10 @@
     "name_en": "Sole Fish",
     "category": "fish",
     "unit": "كيلو",
-    "min": 220,
+    "min": 80,
     "max": 500,
-    "avg": 335.94,
-    "change_pct": -3.8
+    "avg": 285,
+    "change_pct": -15.2
    },
    {
     "slug": "idsc-336",
@@ -491,10 +491,10 @@
     "name_en": "Grouper",
     "category": "fish",
     "unit": "كيلو",
-    "min": 180,
+    "min": 100,
     "max": 700,
-    "avg": 316.15,
-    "change_pct": -3.4
+    "avg": 333.47,
+    "change_pct": 5.5
    },
    {
     "slug": "idsc-273",
@@ -502,10 +502,10 @@
     "name_en": "Pineapple",
     "category": "fruit",
     "unit": "واحدة",
-    "min": 60,
+    "min": 15,
     "max": 150,
-    "avg": 125.71,
-    "change_pct": -1.1
+    "avg": 113.96,
+    "change_pct": -9.3
    },
    {
     "slug": "idsc-259",
@@ -515,8 +515,8 @@
     "unit": "كيلو",
     "min": 50,
     "max": 90,
-    "avg": 73.92,
-    "change_pct": 2.6
+    "avg": 70.36,
+    "change_pct": -4.8
    },
    {
     "slug": "idsc-83",
@@ -524,10 +524,10 @@
     "name_en": "Watermelon",
     "category": "fruit",
     "unit": "واحدة",
-    "min": 40,
+    "min": 25,
     "max": 100,
-    "avg": 86.25,
-    "change_pct": 0.8
+    "avg": 77.45,
+    "change_pct": -10.2
    },
    {
     "slug": "idsc-830",
@@ -535,10 +535,10 @@
     "name_en": "apple",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 60,
+    "min": 40,
     "max": 110,
-    "avg": 91.44,
-    "change_pct": 1.6
+    "avg": 86.86,
+    "change_pct": -5.0
    },
    {
     "slug": "idsc-227",
@@ -546,10 +546,10 @@
     "name_en": "Local Apples",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 50,
+    "min": 35,
     "max": 70,
-    "avg": 63.52,
-    "change_pct": 1.3
+    "avg": 59.02,
+    "change_pct": -7.1
    },
    {
     "slug": "idsc-249",
@@ -559,8 +559,8 @@
     "unit": "كيلو",
     "min": 30,
     "max": 120,
-    "avg": 61.46,
-    "change_pct": 2.4
+    "avg": 62.32,
+    "change_pct": 1.4
    },
    {
     "slug": "idsc-82",
@@ -568,10 +568,10 @@
     "name_en": "Banana",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 30,
+    "min": 12.5,
     "max": 50,
-    "avg": 41.3,
-    "change_pct": 0.6
+    "avg": 37.99,
+    "change_pct": -8.0
    },
    {
     "slug": "idsc-294",
@@ -579,10 +579,10 @@
     "name_en": "Pressed dates",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 40,
+    "min": 20,
     "max": 80,
-    "avg": 60.8,
-    "change_pct": 0.6
+    "avg": 54.59,
+    "change_pct": -10.2
    },
    {
     "slug": "idsc-292",
@@ -590,10 +590,10 @@
     "name_en": "Golden Apples",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 60,
+    "min": 35,
     "max": 100,
-    "avg": 82.2,
-    "change_pct": 0.4
+    "avg": 81.9,
+    "change_pct": -0.4
    },
    {
     "slug": "idsc-260",
@@ -603,8 +603,8 @@
     "unit": "كيلو",
     "min": 35,
     "max": 75,
-    "avg": 52.83,
-    "change_pct": 2.7
+    "avg": 53.4,
+    "change_pct": 1.1
    },
    {
     "slug": "idsc-287",
@@ -614,8 +614,8 @@
     "unit": "كيلو",
     "min": 15,
     "max": 120,
-    "avg": 38.33,
-    "change_pct": 0
+    "avg": 29.48,
+    "change_pct": -23.1
    },
    {
     "slug": "idsc-269",
@@ -625,8 +625,8 @@
     "unit": "كيلو",
     "min": 25,
     "max": 80,
-    "avg": 49.33,
-    "change_pct": 0.7
+    "avg": 60.86,
+    "change_pct": 23.4
    },
    {
     "slug": "idsc-302",
@@ -634,10 +634,10 @@
     "name_en": "Hyphaene thebaica",
     "category": "fruit",
     "unit": "واحدة",
-    "min": 5,
+    "min": 2,
     "max": 10,
-    "avg": 5.91,
-    "change_pct": -0.7
+    "avg": 6,
+    "change_pct": 1.5
    },
    {
     "slug": "idsc-290",
@@ -646,9 +646,9 @@
     "category": "fruit",
     "unit": "كيلو",
     "min": 40,
-    "max": 100,
-    "avg": 62.86,
-    "change_pct": 0
+    "max": 120,
+    "avg": 67.73,
+    "change_pct": 7.8
    },
    {
     "slug": "idsc-252",
@@ -656,10 +656,10 @@
     "name_en": "Persimmon",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 40,
-    "max": 60,
-    "avg": 52.5,
-    "change_pct": 0
+    "min": 35,
+    "max": 80,
+    "avg": 54.41,
+    "change_pct": 3.6
    },
    {
     "slug": "idsc-229",
@@ -667,10 +667,10 @@
     "name_en": "Cantaloupe",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 15,
+    "min": 8,
     "max": 40,
-    "avg": 25.08,
-    "change_pct": 4.9
+    "avg": 25.49,
+    "change_pct": 1.6
    },
    {
     "slug": "idsc-270",
@@ -678,10 +678,10 @@
     "name_en": "kiwifruit",
     "category": "fruit",
     "unit": "واحدة",
-    "min": 5,
+    "min": 3.5,
     "max": 15,
-    "avg": 11,
-    "change_pct": 1.6
+    "avg": 9.73,
+    "change_pct": -11.6
    },
    {
     "slug": "idsc-272",
@@ -689,10 +689,10 @@
     "name_en": "kiwifruit (cartons)",
     "category": "fruit",
     "unit": "كرتونة",
-    "min": 80,
+    "min": 60,
     "max": 800,
-    "avg": 525.24,
-    "change_pct": -1.5
+    "avg": 459.84,
+    "change_pct": -12.4
    },
    {
     "slug": "idsc-285",
@@ -700,10 +700,10 @@
     "name_en": "Lareng",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 20,
+    "min": 8,
     "max": 25,
-    "avg": 21.67,
-    "change_pct": 0
+    "avg": 13.2,
+    "change_pct": -39.1
    },
    {
     "slug": "idsc-282",
@@ -712,9 +712,9 @@
     "category": "fruit",
     "unit": "كيلو",
     "min": 15,
-    "max": 50,
-    "avg": 36.25,
-    "change_pct": 0
+    "max": 60,
+    "avg": 40.55,
+    "change_pct": 11.9
    },
    {
     "slug": "idsc-283",
@@ -722,10 +722,10 @@
     "name_en": "imported banana",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 35,
+    "min": 20,
     "max": 80,
-    "avg": 60,
-    "change_pct": 0.6
+    "avg": 47.83,
+    "change_pct": -20.3
    },
    {
     "slug": "idsc-281",
@@ -733,10 +733,10 @@
     "name_en": "Moroccon Banana",
     "category": "fruit",
     "unit": "كيلو",
-    "min": 35,
+    "min": 25,
     "max": 50,
-    "avg": 41.88,
-    "change_pct": 0
+    "avg": 38.35,
+    "change_pct": -8.4
    },
    {
     "slug": "idsc-301",
@@ -745,9 +745,9 @@
     "category": "fruit",
     "unit": "كيلو",
     "min": 10,
-    "max": 80,
-    "avg": 46.15,
-    "change_pct": 0
+    "max": 100,
+    "avg": 46.36,
+    "change_pct": 0.5
    },
    {
     "slug": "idsc-64",
@@ -755,10 +755,10 @@
     "name_en": "Unpacked Rice",
     "category": "grain",
     "unit": "كيلو",
-    "min": 22,
-    "max": 33,
-    "avg": 27.94,
-    "change_pct": 1.9
+    "min": 19,
+    "max": 38,
+    "avg": 28.1,
+    "change_pct": 0.6
    },
    {
     "slug": "idsc-557",
@@ -768,8 +768,8 @@
     "unit": "طن",
     "min": 2000,
     "max": 20000,
-    "avg": 16418.75,
-    "change_pct": -3.9
+    "avg": 14888.89,
+    "change_pct": -9.3
    },
    {
     "slug": "idsc-556",
@@ -777,10 +777,10 @@
     "name_en": "Yellow Corn",
     "category": "grain",
     "unit": "شيكارة",
-    "min": 675,
+    "min": 350,
     "max": 1000,
-    "avg": 832,
-    "change_pct": 0.2
+    "avg": 759.23,
+    "change_pct": -8.8
    },
    {
     "slug": "idsc-211",
@@ -788,10 +788,10 @@
     "name_en": "Unpacked beans",
     "category": "grain",
     "unit": "كيلو",
-    "min": 45,
+    "min": 40,
     "max": 65,
-    "avg": 54.47,
-    "change_pct": -0.7
+    "avg": 53.45,
+    "change_pct": -1.9
    },
    {
     "slug": "idsc-558",
@@ -799,10 +799,10 @@
     "name_en": "Cotton (Local)",
     "category": "grain",
     "unit": "قنطار",
-    "min": 3000,
+    "min": 1000,
     "max": 7500,
-    "avg": 5333.33,
-    "change_pct": -8.2
+    "avg": 5230.77,
+    "change_pct": -1.9
    },
    {
     "slug": "idsc-230",
@@ -810,10 +810,10 @@
     "name_en": "Local Wheat",
     "category": "grain",
     "unit": "طن",
-    "min": 12500,
-    "max": 16000,
-    "avg": 14950,
-    "change_pct": -0.6
+    "min": 2900,
+    "max": 17000,
+    "avg": 14119.56,
+    "change_pct": -5.5
    },
    {
     "slug": "idsc-616",
@@ -821,10 +821,10 @@
     "name_en": "Sesame",
     "category": "grain",
     "unit": "كيلو",
-    "min": 135,
-    "max": 200,
-    "avg": 170,
-    "change_pct": 0
+    "min": 60,
+    "max": 220,
+    "avg": 158.89,
+    "change_pct": -6.5
    },
    {
     "slug": "idsc-560",
@@ -832,10 +832,10 @@
     "name_en": "Cotton (upholstery)",
     "category": "grain",
     "unit": "قنطار",
-    "min": 3000,
+    "min": 1700,
     "max": 6000,
-    "avg": 5100,
-    "change_pct": -4.8
+    "avg": 4690,
+    "change_pct": -8.0
    },
    {
     "slug": "idsc-65",
@@ -845,8 +845,8 @@
     "unit": "كيلو",
     "min": 24,
     "max": 45,
-    "avg": 35.2,
-    "change_pct": 0.4
+    "avg": 35.13,
+    "change_pct": -0.2
    },
    {
     "slug": "idsc-187",
@@ -855,9 +855,9 @@
     "category": "grocery",
     "unit": "كرتونة",
     "min": 80,
-    "max": 145,
-    "avg": 114.63,
-    "change_pct": 1.7
+    "max": 172,
+    "avg": 116.41,
+    "change_pct": 1.6
    },
    {
     "slug": "idsc-188",
@@ -865,10 +865,10 @@
     "name_en": "White Egg per one egg",
     "category": "grocery",
     "unit": "بيضة",
-    "min": 3.5,
-    "max": 6,
-    "avg": 4.69,
-    "change_pct": -1.5
+    "min": 3,
+    "max": 7,
+    "avg": 4.6,
+    "change_pct": -1.9
    },
    {
     "slug": "idsc-190",
@@ -876,10 +876,10 @@
     "name_en": "Red Egg Per one egg",
     "category": "grocery",
     "unit": "بيضة",
-    "min": 3.5,
-    "max": 6,
-    "avg": 4.78,
-    "change_pct": -0.6
+    "min": 3,
+    "max": 8,
+    "avg": 4.74,
+    "change_pct": -0.8
    },
    {
     "slug": "idsc-192",
@@ -888,9 +888,9 @@
     "category": "grocery",
     "unit": "بيضة",
     "min": 4,
-    "max": 6.5,
-    "avg": 5.43,
-    "change_pct": -0.4
+    "max": 8,
+    "avg": 5.24,
+    "change_pct": -3.5
    },
    {
     "slug": "idsc-191",
@@ -898,10 +898,10 @@
     "name_en": "Baladi Egg per Carton",
     "category": "grocery",
     "unit": "كرتونة",
-    "min": 110,
+    "min": 90,
     "max": 160,
-    "avg": 136.02,
-    "change_pct": -0.2
+    "avg": 131.07,
+    "change_pct": -3.6
    },
    {
     "slug": "idsc-61",
@@ -909,10 +909,10 @@
     "name_en": "packed wheat",
     "category": "grocery",
     "unit": "كيلو",
-    "min": 18.5,
+    "min": 18,
     "max": 35,
-    "avg": 28.2,
-    "change_pct": -2.0
+    "avg": 26.35,
+    "change_pct": -6.6
    },
    {
     "slug": "idsc-63",
@@ -922,8 +922,8 @@
     "unit": "كيلو",
     "min": 25,
     "max": 45,
-    "avg": 36.77,
-    "change_pct": -1.7
+    "avg": 35.09,
+    "change_pct": -4.6
    },
    {
     "slug": "idsc-829",
@@ -931,10 +931,10 @@
     "name_en": "tea",
     "category": "grocery",
     "unit": "كيلو",
-    "min": 210,
+    "min": 200,
     "max": 320,
-    "avg": 250.4,
-    "change_pct": -1.8
+    "avg": 239.44,
+    "change_pct": -4.4
    },
    {
     "slug": "idsc-72",
@@ -944,8 +944,8 @@
     "unit": "كيلو",
     "min": 50,
     "max": 110,
-    "avg": 70.85,
-    "change_pct": -0.7
+    "avg": 69.67,
+    "change_pct": -1.7
    },
    {
     "slug": "idsc-70",
@@ -953,10 +953,10 @@
     "name_en": "Rough Beans",
     "category": "grocery",
     "unit": "كيلو",
-    "min": 45,
+    "min": 44,
     "max": 95,
-    "avg": 66.09,
-    "change_pct": -1.1
+    "avg": 62.04,
+    "change_pct": -6.1
    },
    {
     "slug": "idsc-71",
@@ -964,10 +964,10 @@
     "name_en": "Beans",
     "category": "grocery",
     "unit": "كيلو",
-    "min": 55,
-    "max": 98,
-    "avg": 68.04,
-    "change_pct": -1.7
+    "min": 40,
+    "max": 110,
+    "avg": 62.61,
+    "change_pct": -8.0
    },
    {
     "slug": "idsc-76",
@@ -977,8 +977,8 @@
     "unit": "كيلو",
     "min": 22,
     "max": 30,
-    "avg": 26.39,
-    "change_pct": -1.0
+    "avg": 25.93,
+    "change_pct": -1.7
    },
    {
     "slug": "idsc-69",
@@ -988,8 +988,8 @@
     "unit": "لتر",
     "min": 90,
     "max": 145,
-    "avg": 122.58,
-    "change_pct": -0.5
+    "avg": 122.14,
+    "change_pct": -0.4
    },
    {
     "slug": "idsc-68",
@@ -997,10 +997,10 @@
     "name_en": "Sun flower oil several varieties",
     "category": "grocery",
     "unit": "لتر",
-    "min": 85,
-    "max": 120,
-    "avg": 104.06,
-    "change_pct": 0.3
+    "min": 60,
+    "max": 125,
+    "avg": 100.94,
+    "change_pct": -3
    },
    {
     "slug": "idsc-197",
@@ -1008,10 +1008,10 @@
     "name_en": "El-Arosa Tea - 40 gm.",
     "category": "grocery",
     "unit": "عبوة",
-    "min": 10,
+    "min": 9,
     "max": 16,
-    "avg": 11.2,
-    "change_pct": 0.6
+    "avg": 10.74,
+    "change_pct": -4.1
    },
    {
     "slug": "idsc-198",
@@ -1020,9 +1020,9 @@
     "category": "grocery",
     "unit": "عبوة",
     "min": 11,
-    "max": 18,
-    "avg": 12.91,
-    "change_pct": 0.7
+    "max": 20,
+    "avg": 12.67,
+    "change_pct": -1.9
    },
    {
     "slug": "idsc-212",
@@ -1031,9 +1031,9 @@
     "category": "grocery",
     "unit": "كيلو",
     "min": 40,
-    "max": 90,
-    "avg": 67.23,
-    "change_pct": 0.1
+    "max": 100,
+    "avg": 69.47,
+    "change_pct": 3.3
    },
    {
     "slug": "idsc-77",
@@ -1041,10 +1041,10 @@
     "name_en": "Macaroni",
     "category": "grocery",
     "unit": "400 جرام",
-    "min": 15,
-    "max": 32,
-    "avg": 23.5,
-    "change_pct": -21.0
+    "min": 14,
+    "max": 50,
+    "avg": 24.43,
+    "change_pct": -17.1
    },
    {
     "slug": "idsc-77-2",
@@ -1052,10 +1052,10 @@
     "name_en": "Macaroni",
     "category": "grocery",
     "unit": "كيلو",
-    "min": 13,
+    "min": 12,
     "max": 50,
-    "avg": 29.47,
-    "change_pct": -1.0
+    "avg": 28.43,
+    "change_pct": -3.5
    },
    {
     "slug": "idsc-880",
@@ -1063,10 +1063,10 @@
     "name_en": "fresh chicken",
     "category": "meat",
     "unit": "كيلو",
-    "min": 70,
+    "min": 63,
     "max": 155,
-    "avg": 106.32,
-    "change_pct": 1.8
+    "avg": 101.6,
+    "change_pct": -4.4
    },
    {
     "slug": "idsc-877",
@@ -1074,10 +1074,10 @@
     "name_en": "fresh meat",
     "category": "meat",
     "unit": "كيلو",
-    "min": 280,
-    "max": 550,
-    "avg": 441.9,
-    "change_pct": 0.5
+    "min": 160,
+    "max": 860,
+    "avg": 427.18,
+    "change_pct": -3.3
    },
    {
     "slug": "idsc-303",
@@ -1086,9 +1086,9 @@
     "category": "vegetable",
     "unit": "كيلو",
     "min": 10,
-    "max": 25,
-    "avg": 16.4,
-    "change_pct": 3.3
+    "max": 35,
+    "avg": 17.38,
+    "change_pct": 6.0
    },
    {
     "slug": "idsc-193",
@@ -1098,8 +1098,8 @@
     "unit": "كيلو",
     "min": 5,
     "max": 25,
-    "avg": 15.75,
-    "change_pct": 4.0
+    "avg": 14.59,
+    "change_pct": -7.4
    },
    {
     "slug": "idsc-234",
@@ -1108,9 +1108,9 @@
     "category": "vegetable",
     "unit": "كيلو",
     "min": 40,
-    "max": 80,
-    "avg": 59.4,
-    "change_pct": 1.8
+    "max": 100,
+    "avg": 55.46,
+    "change_pct": -6.6
    },
    {
     "slug": "idsc-824",
@@ -1118,10 +1118,10 @@
     "name_en": "onions",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 10,
-    "max": 25,
-    "avg": 17.62,
-    "change_pct": 1.0
+    "min": 7.5,
+    "max": 30,
+    "avg": 15.92,
+    "change_pct": -9.7
    },
    {
     "slug": "idsc-242",
@@ -1130,9 +1130,9 @@
     "category": "vegetable",
     "unit": "كيلو",
     "min": 7,
-    "max": 25,
-    "avg": 13.85,
-    "change_pct": 2.3
+    "max": 30,
+    "avg": 15.28,
+    "change_pct": 10.3
    },
    {
     "slug": "idsc-1",
@@ -1140,10 +1140,10 @@
     "name_en": "Potatoes",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 12,
+    "min": 10,
     "max": 40,
-    "avg": 22.79,
-    "change_pct": 6.2
+    "avg": 22.57,
+    "change_pct": -1.0
    },
    {
     "slug": "idsc-2",
@@ -1152,9 +1152,9 @@
     "category": "vegetable",
     "unit": "كيلو",
     "min": 10,
-    "max": 40,
-    "avg": 24.08,
-    "change_pct": 6.8
+    "max": 50,
+    "avg": 27.68,
+    "change_pct": 14.9
    },
    {
     "slug": "idsc-163",
@@ -1164,8 +1164,8 @@
     "unit": "كيلو",
     "min": 20,
     "max": 80,
-    "avg": 40.81,
-    "change_pct": 0.5
+    "avg": 40.67,
+    "change_pct": -0.3
    },
    {
     "slug": "idsc-162",
@@ -1175,8 +1175,8 @@
     "unit": "كيلو",
     "min": 15,
     "max": 40,
-    "avg": 26.25,
-    "change_pct": 1.6
+    "avg": 25.57,
+    "change_pct": -2.6
    },
    {
     "slug": "idsc-164",
@@ -1186,8 +1186,8 @@
     "unit": "كيلو",
     "min": 15,
     "max": 50,
-    "avg": 31,
-    "change_pct": -0.8
+    "avg": 30.43,
+    "change_pct": -1.8
    },
    {
     "slug": "idsc-304",
@@ -1195,10 +1195,10 @@
     "name_en": "Turnip",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 5,
+    "min": 3.5,
     "max": 15,
-    "avg": 9.45,
-    "change_pct": 0.5
+    "avg": 9.09,
+    "change_pct": -3.8
    },
    {
     "slug": "idsc-5",
@@ -1207,9 +1207,9 @@
     "category": "vegetable",
     "unit": "كيلو",
     "min": 20,
-    "max": 60,
-    "avg": 41.39,
-    "change_pct": 6.1
+    "max": 80,
+    "avg": 41.41,
+    "change_pct": 0.1
    },
    {
     "slug": "idsc-240",
@@ -1218,9 +1218,9 @@
     "category": "vegetable",
     "unit": "كيلو",
     "min": 10,
-    "max": 35,
-    "avg": 19.07,
-    "change_pct": 5.0
+    "max": 40,
+    "avg": 17.98,
+    "change_pct": -5.7
    },
    {
     "slug": "idsc-233",
@@ -1230,8 +1230,8 @@
     "unit": "كيلو",
     "min": 8,
     "max": 30,
-    "avg": 17.95,
-    "change_pct": 1.1
+    "avg": 19.2,
+    "change_pct": 7.0
    },
    {
     "slug": "idsc-286",
@@ -1239,10 +1239,10 @@
     "name_en": "Green onions  (pack 100 unit)",
     "category": "vegetable",
     "unit": "100 رابطة",
-    "min": 200,
+    "min": 150,
     "max": 500,
-    "avg": 338.46,
-    "change_pct": -0.9
+    "avg": 380.35,
+    "change_pct": 12.4
    },
    {
     "slug": "idsc-264",
@@ -1252,8 +1252,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 500,
-    "avg": 308.04,
-    "change_pct": 8.3
+    "avg": 288.01,
+    "change_pct": -6.5
    },
    {
     "slug": "idsc-241",
@@ -1263,8 +1263,8 @@
     "unit": "واحدة",
     "min": 1.5,
     "max": 7,
-    "avg": 3.96,
-    "change_pct": 2.3
+    "avg": 4.79,
+    "change_pct": 21.0
    },
    {
     "slug": "idsc-311",
@@ -1272,10 +1272,10 @@
     "name_en": "beets (kg)",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 15,
-    "max": 40,
-    "avg": 22.48,
-    "change_pct": -2.0
+    "min": 10,
+    "max": 50,
+    "avg": 21.22,
+    "change_pct": -5.6
    },
    {
     "slug": "idsc-263",
@@ -1285,8 +1285,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 500,
-    "avg": 288.39,
-    "change_pct": 8.6
+    "avg": 231.5,
+    "change_pct": -19.7
    },
    {
     "slug": "idsc-341",
@@ -1294,10 +1294,10 @@
     "name_en": "Yellow carrot",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 12,
+    "min": 10,
     "max": 40,
-    "avg": 25.96,
-    "change_pct": 8.0
+    "avg": 25.11,
+    "change_pct": -3.3
    },
    {
     "slug": "idsc-238",
@@ -1305,10 +1305,10 @@
     "name_en": "Yellow carrot",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 10,
+    "min": 5,
     "max": 40,
-    "avg": 15.43,
-    "change_pct": -0.2
+    "avg": 19.76,
+    "change_pct": 28.1
    },
    {
     "slug": "idsc-271",
@@ -1318,8 +1318,8 @@
     "unit": "كيلو",
     "min": 6.5,
     "max": 20,
-    "avg": 9.96,
-    "change_pct": 0
+    "avg": 11.69,
+    "change_pct": 17.4
    },
    {
     "slug": "idsc-262",
@@ -1327,10 +1327,10 @@
     "name_en": "Lettuce (pack 8 units)",
     "category": "vegetable",
     "unit": "واحدة",
-    "min": 2.5,
+    "min": 2,
     "max": 45,
-    "avg": 16.35,
-    "change_pct": -13.9
+    "avg": 20.89,
+    "change_pct": 27.8
    },
    {
     "slug": "idsc-236",
@@ -1340,8 +1340,8 @@
     "unit": "كيلو",
     "min": 10,
     "max": 35,
-    "avg": 23.08,
-    "change_pct": 3.2
+    "avg": 22.54,
+    "change_pct": -2.3
    },
    {
     "slug": "idsc-237",
@@ -1349,10 +1349,10 @@
     "name_en": "Spinach",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 15,
+    "min": 5,
     "max": 40,
     "avg": 23.9,
-    "change_pct": -1.4
+    "change_pct": 0
    },
    {
     "slug": "idsc-300",
@@ -1362,8 +1362,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 400,
-    "avg": 302.27,
-    "change_pct": -0.0
+    "avg": 307.69,
+    "change_pct": 1.8
    },
    {
     "slug": "idsc-295",
@@ -1373,8 +1373,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 500,
-    "avg": 300,
-    "change_pct": 2.9
+    "avg": 320,
+    "change_pct": 6.7
    },
    {
     "slug": "idsc-239",
@@ -1383,9 +1383,9 @@
     "category": "vegetable",
     "unit": "كيلو",
     "min": 8,
-    "max": 40,
-    "avg": 23.47,
-    "change_pct": 5.1
+    "max": 50,
+    "avg": 27.58,
+    "change_pct": 17.5
    },
    {
     "slug": "idsc-245",
@@ -1394,9 +1394,9 @@
     "category": "vegetable",
     "unit": "كيلو",
     "min": 10,
-    "max": 40,
-    "avg": 23.34,
-    "change_pct": 2.6
+    "max": 60,
+    "avg": 27.6,
+    "change_pct": 18.2
    },
    {
     "slug": "idsc-268",
@@ -1404,10 +1404,10 @@
     "name_en": "Cauliflower",
     "category": "vegetable",
     "unit": "واحدة",
-    "min": 15,
-    "max": 40,
-    "avg": 26.46,
-    "change_pct": 2.9
+    "min": 10,
+    "max": 50,
+    "avg": 27.85,
+    "change_pct": 5.2
    },
    {
     "slug": "idsc-265",
@@ -1417,8 +1417,8 @@
     "unit": "100 رابطة",
     "min": 100,
     "max": 300,
-    "avg": 247.83,
-    "change_pct": 1.0
+    "avg": 233.45,
+    "change_pct": -5.8
    },
    {
     "slug": "idsc-289",
@@ -1426,10 +1426,10 @@
     "name_en": "Celery (pack 100 unit)",
     "category": "vegetable",
     "unit": "100 رابطة",
-    "min": 250,
+    "min": 200,
     "max": 500,
-    "avg": 360.53,
-    "change_pct": -1.9
+    "avg": 333.61,
+    "change_pct": -7.5
    },
    {
     "slug": "idsc-267",
@@ -1439,8 +1439,8 @@
     "unit": "واحدة",
     "min": 20,
     "max": 60,
-    "avg": 37.88,
-    "change_pct": 1.0
+    "avg": 33.75,
+    "change_pct": -10.9
    },
    {
     "slug": "idsc-266",
@@ -1449,9 +1449,9 @@
     "category": "vegetable",
     "unit": "100 رابطة",
     "min": 100,
-    "max": 400,
-    "avg": 280.77,
-    "change_pct": 2.1
+    "max": 500,
+    "avg": 282.99,
+    "change_pct": 0.8
    },
    {
     "slug": "idsc-306",
@@ -1459,10 +1459,10 @@
     "name_en": "Vine Leaves",
     "category": "vegetable",
     "unit": "كيلو",
-    "min": 60,
-    "max": 170,
-    "avg": 120,
-    "change_pct": -0.7
+    "min": 40,
+    "max": 200,
+    "avg": 81.45,
+    "change_pct": -32.1
    }
   ]
  },
