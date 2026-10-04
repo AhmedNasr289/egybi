@@ -50,6 +50,17 @@
     RewriteRule ^practice\.html$ /explore.html [L,R=301]
     RewriteRule ^tracks\.html$ /explore.html [L,R=301]
 
+    # 2c) The page-view beacon (assets/analytics.js) posts to the page-relative
+    #     'api/hit.php'. From a page one folder down (papyrus/, practice/) that
+    #     resolves to /<folder>/api/hit.php, which does not exist - measured
+    #     2026-10-04: all 12 Papyrus articles 404'd on every view, so no article
+    #     view was ever counted. Route it to the real endpoint. An internal
+    #     rewrite, not a redirect, so the POST and its JSON body arrive intact.
+    #     MUST come before rule 3, which would map it to a missing site/ path.
+    #     Named folders, not a wildcard: a wildcard also matched site/api/hit.php
+    #     (a rewrite onto itself) and the blocked egybi/ folder.
+    RewriteRule ^(papyrus|practice)/api/hit\.php$ site/api/hit.php [L]
+
     # 3) Serve everything else from the site/ web root. Requests already inside
     #    /site/ are left alone so there is no rewrite loop. Anything that isn't
     #    under site/ (README.md, GO-LIVE.md, egy_raw.geojson, etc.) maps to a
@@ -72,6 +83,15 @@
 # stylesheet would 404 in its own right from the wrong depth and the error page
 # would arrive unstyled.
 ErrorDocument 404 /site/404.html
+
+# ---------------------------------------------------------------------------
+# WebAssembly must be served as application/wasm. The host's default was
+# text/plain (measured 2026-10-04), so case.html's sql-wasm.wasm failed
+# streaming compilation with a console error and fell back to the slower
+# ArrayBuffer path. Wrapped so a host without mod_mime cannot 500 the site.
+<IfModule mod_mime.c>
+    AddType application/wasm .wasm
+</IfModule>
 
 # ---------------------------------------------------------------------------
 # Security headers.
