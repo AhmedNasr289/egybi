@@ -100,8 +100,9 @@
 
   /* hero background video - generated once (LTX-Video, open weights) and self-hosted, never
      per visitor. The scrim opacity is MEASURED, not picked: on the brightest of 61 frames the
-     dimmest hero text (#b7ac8e caption) needs >= 0.790 for 4.5:1; 0.82 gives 5.01:1. Re-measure
-     with measure_overlay.py whenever the video file changes. */
+     dimmest hero text (#b7ac8e caption) needs >= 0.788 for 4.5:1; 0.82 gives 5.03:1. Re-measure
+     with measure_overlay.py whenever the video file changes. v3 removed a green lens-flare
+     artefact (green capped to max(R,B)+2, then the fixed 90x90 patch rebuilt by delogo). */
   .hero-video-wrap { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
   .hero-video { width:100%; height:100%; object-fit:cover; display:block; }
   .hero-video-scrim { position:absolute; inset:0; background:rgba(20,17,12,0.82); }
@@ -145,7 +146,7 @@
        prefers-reduced-motion or data saver), so those readers download only the poster. -->
   <div class="hero-video-wrap" aria-hidden="true">
     <video class="hero-video" muted loop playsinline preload="none" width="1248" height="704"
-           poster="assets/video/hero-lighthouse.jpg?v=2" data-src="assets/video/hero-lighthouse.mp4?v=2"></video>
+           poster="assets/video/hero-lighthouse.jpg?v=3" data-src="assets/video/hero-lighthouse.mp4?v=3"></video>
     <div class="hero-video-scrim"></div>
   </div>
   <div id="hero-particles" class="hero-particles" aria-hidden="true" data-parallax="0.12"></div>
