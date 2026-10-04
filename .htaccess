@@ -141,7 +141,7 @@ ErrorDocument 404 /site/404.html
     # does not even revalidate. Safe precisely BECAUSE the ?v= changes with the
     # bytes — verified for all twelve of them, content commit and version bump
     # land in the same commit every time.
-    <FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2)$">
+    <FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|mp4|webm)$">
         Header always set Cache-Control "public, max-age=604800, immutable"
     </FilesMatch>
 
