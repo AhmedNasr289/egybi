@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=40" rel="stylesheet">
+<link href="assets/egybi.css?v=41" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
 <style>
   #visitMap { height:clamp(340px,56vw,540px); border-radius:var(--radius); overflow:hidden; }
@@ -89,17 +89,21 @@
   .v-gate em { font-style:normal; display:block; font-size:0.79rem; color:var(--ink-soft);
                line-height:1.55; margin-top:4px; }
   .v-far { color:var(--gold-ink); font-weight:700; }
-  /* cross-sections. This band is dark, so the shared light-surface controls
-     need their dark counterparts rather than a second set of components. */
+  /* cross-sections. The band around them is papyrus now; the profile chart
+     and its map stay a dark PLATE set into it — visit.js draws the profile in
+     light strokes made for a night ground, and a framed plate reads as an
+     engraving on the scroll rather than a dark stripe across it. */
   .v-profile-grid { display:grid; grid-template-columns:1.55fr 1fr; gap:20px; align-items:start;
-                    margin-top:6px; }
+                    margin-top:6px; background:var(--kemet); color:var(--on-dark);
+                    padding:18px; border-radius:var(--radius); border:2px solid var(--gold-ink);
+                    box-shadow:0 14px 34px rgba(20,17,12,.18); }
+  /* The plate is dark, so the map's licence credit inside it takes the
+     dark-ground inks the shared .map-credit rule no longer carries. */
+  .v-profile-grid .map-credit { color:var(--on-dark-soft); }
+  .v-profile-grid .map-credit a { color:var(--gold-bright); }
   #reliefMap { height:340px; border-radius:var(--radius); overflow:hidden; background:#0F1A28; }
   #reliefChart svg { display:block; width:100%; height:auto; }
-  .surface-dark .mo-btn { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.22);
-                          color:var(--on-dark); }
-  .surface-dark .mo-btn.on { background:var(--gold); border-color:var(--gold); color:#1C1C1C; }
-  .surface-dark .mo-btn:hover,.surface-dark .mo-btn:focus-visible { border-color:var(--gold-bright); }
-  .v-why { max-width:74ch; color:var(--on-dark-soft); font-size:0.92rem; line-height:1.7;
+  .v-why { max-width:74ch; color:var(--ink-soft); font-size:0.92rem; line-height:1.7;
            margin:4px 0 16px; }
   .v-scrub { display:flex; align-items:center; gap:12px; margin-top:12px; font-size:0.78rem;
              color:var(--on-dark-soft); }
@@ -109,8 +113,6 @@
   .v-readout { margin:10px 0 0; color:var(--on-dark); font-size:0.9rem; line-height:1.7;
                font-variant-numeric:tabular-nums; min-height:3.4em; }
   .v-readout b { color:var(--gold-bright); }
-  .surface-dark .chart-cap { color:var(--on-dark-soft); }
-  .surface-dark .atlas-note { background:rgba(255,255,255,.06); color:var(--on-dark); }
   @media (max-width:820px){ .v-profile-grid { grid-template-columns:1fr; }
                             #reliefMap { height:260px; } }
 </style>
@@ -153,7 +155,7 @@
   <div class="wrap">
     <p class="hero-eyebrow"><span data-glyph="reed"></span> For a first visit</p>
     <h1 style="font-size:clamp(1.7rem,5vw,2.7rem);margin:0 0 14px;">Egypt, measured rather than marketed.</h1>
-    <p class="lead" style="margin:0;max-width:72ch;color:#e9dfc8;">Where the great sites actually are,
+    <p class="lead" style="margin:0;max-width:72ch;">Where the great sites actually are,
     how high above the sea they sit, and what each month is really like at each one &mdash; from NASA&rsquo;s
     climate records and a radar survey of the land. No adjectives, no &ldquo;best time to visit&rdquo;: the
     measurements, and your own judgement about the heat.</p>
@@ -290,7 +292,7 @@
 </section>
 
 <!-- SOURCES -->
-<section class="surface-dark" id="relief" data-nav="In cross-section">
+<section class="surface-deep" id="relief" data-nav="In cross-section">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>The ground, measured along a line</div>
     <h2 data-aos="fade-up">Walk the land in cross-section.</h2>

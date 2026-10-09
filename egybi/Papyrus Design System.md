@@ -37,3 +37,48 @@ Ahmed asked for that look on **every page**. It now lives in `site/assets/egybi.
 ## Fixed at the source on the way
 
 **The flag caption on the home hero measured 4.02:1** on the hero's brightest blue stop, below the 4.5:1 that AA requires. The fault was already on `main`. Its colour moved from `#b9ad93` to the hero lead's `#e9dfc8` (about 7:1).
+
+## 2026-10-09, later — Papyrus everywhere
+
+Ahmed asked for **every background** in papyrus, with all four ornaments. The near-black bands and the blue night-sky heroes are gone; the whole site reads as one scroll.
+
+### The surface tiers
+
+| Tier | Where | Ink |
+|---|---|---|
+| `--papyrus`, `--papyrus-2` | light sections, as before | `--ink`, `--ink-soft` |
+| `--papyrus-deep` `#EEE0BF` | the 17 former dark bands, now `.surface-deep` | re-points `--ink-soft` to `#544c3e` and `--gold-ink` to `#64500e` |
+| `--papyrus-aged` `#EBD9B2` | every hero (`.surface-hero`) | re-points `--ink-soft` to `#4a4336` and `--gold-ink` to `#5c450a`; title in `--blue-deep` |
+| `--papyrus-burnt` `#2B1E10` | the footer | the old on-dark inks |
+
+Each darker tier **re-points the ink tokens** rather than adding per-component rules. That is why every lead, caption, kicker and tag inside it keeps AA without any further rule.
+
+### The four ornaments
+
+All four are tokens at the top of `egybi.css`, built as CSS or inline SVG `data:` URIs, so there is **no request** for any of them. All four are pseudo-elements: out of the reading order, and none of them moves.
+
+| Ornament | How it is built |
+|---|---|
+| **Fibre** (`--fibre-light`, `--fibre-dark`) | SVG `feTurbulence` stretched along x and along y, for the horizontal-over-vertical reed strips. The filter region is pinned to the tile (`userSpaceOnUse`, 100%); before that, `stitchTiles` left visible seams every 320 px |
+| **Frieze** (`--frieze`) | Open lotus, lotus bud and papyrus umbel in gold ink, at the foot of every hero and on both edges of every deep band |
+| **Signs** | Ankh, wedjat eye and scarab, as a faint watermark (7.5% alpha) in each hero's corner, from the self-hosted glyph subset |
+| **Burn** | A sepia inset vignette on hero leaves, and a torn, scorched top edge on the footer (`--torn-foot`) |
+
+### Done at the source, not by overriding
+
+- **The dark sections were renamed to a new class.** `surface-dark` → `surface-deep` in 9 pages, and the ~30 dark-only rules were deleted. The light styling is now the default.
+- **`.btn-ghost` defaults to papyrus ink.** The only dark panel left that carries one, `case.html`'s `.closed`, restores the dark treatment locally.
+- **The `.stat` band defaults to papyrus ink.**
+- **The `#e9dfc8` inline hero-lead colour was removed** from every page and from the generator.
+- **Chart axis ticks on Explore** were recoloured from beige to ink.
+- **The home film runs under a papyrus scrim** (at least 0.86 opacity) with a sepia filter.
+- **The relief profile on `visit.html` is a framed dark plate set into the papyrus**, because its chart is drawn in light strokes.
+
+### A mistake caught on the way
+
+The first pass stripped inline dark colours with a text replace, and that replace also reached the pages' `<style>` blocks:
+
+- **`case.html`:** the `.closed` panel lost its light text colours.
+- **`visit.html`:** the relief plate lost its light text colours.
+
+The screenshot review caught both before commit. The plate's tick labels also went pale, and `contrast.js` caught that. The rules were restored by hand. **The lesson:** a text replace aimed at `style=""` attributes must be scoped to attributes, not to whole files.

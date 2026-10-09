@@ -37,14 +37,14 @@
     AOS.init({ duration: 650, easing: 'ease-out-cubic', once: true, offset: 60, disable: reduceMotion });
   }
 
-  // ---- hero particles (subtle gold dust on dark hero) ----
+  // ---- hero particles (subtle sepia dust on the papyrus hero) ----
   var pEl = document.getElementById('hero-particles');
   if (pEl && window.tsParticles && !reduceMotion) {
     tsParticles.load('hero-particles', {
       fpsLimit: 60, detectRetina: true,
       particles: {
         number: { value: 46, density: { enable: true, area: 900 } },
-        color: { value: ['#C9A227', '#E7C64C', '#ffffff'] },
+        color: { value: ['#8a6d14', '#C9A227', '#5c450a'] },   // sepia dust on the papyrus leaf
         opacity: { value: { min: 0.15, max: 0.6 } },
         size: { value: { min: 1, max: 2.6 } },
         move: { enable: true, speed: 0.5, direction: 'top', outModes: { default: 'out' } },

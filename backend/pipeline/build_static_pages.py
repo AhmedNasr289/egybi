@@ -204,7 +204,7 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="{prefix}assets/egybi.css?v=40" rel="stylesheet">
+<link href="{prefix}assets/egybi.css?v=41" rel="stylesheet">
 <script src="{prefix}assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
@@ -301,7 +301,7 @@ def build_challenges(chs, docs):
   <div class="wrap" style="max-width:820px;">
     <p class="hero-eyebrow"><span data-glyph="reed"></span> {esc(c['sector'])} &middot; Retired page</p>
     <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{esc(c['title'])}</h1>
-    <p class="lead" style="margin:0;color:#e9dfc8;">{esc(c['statement'])}</p>
+    <p class="lead" style="margin:0;">{esc(c['statement'])}</p>
   </div>
 </section>
 
@@ -369,9 +369,9 @@ def build_posts(posts):
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:40px;">
   <div class="wrap" style="max-width:760px;">
-    <p class="hero-eyebrow"><span data-glyph="scroll"></span> <a href="../blog.html" style="color:var(--gold-bright);">The Papyrus</a> &middot; {esc(p.get('tag',''))} &middot; {esc(p['date'])}</p>
+    <p class="hero-eyebrow"><span data-glyph="scroll"></span> <a href="../blog.html">The Papyrus</a> &middot; {esc(p.get('tag',''))} &middot; {esc(p['date'])}</p>
     <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{p['title']}</h1>
-    <p class="lead" style="margin:0;color:#e9dfc8;">{p['excerpt']}</p>
+    <p class="lead" style="margin:0;">{p['excerpt']}</p>
   </div>
 </section>
 
@@ -462,9 +462,9 @@ def build_site_months():
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:860px;">
-    <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="../visit.html" style="color:var(--gold-bright);">When to go</a> &middot; {esc(site.get('gov', ''))} &middot; measured, not marketed</p>
+    <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="../visit.html">When to go</a> &middot; {esc(site.get('gov', ''))} &middot; measured, not marketed</p>
     <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{esc(name)}, month by month.</h1>
-    <p class="lead" style="margin:0;color:#e9dfc8;" lang="ar" dir="rtl">{esc(site.get('name_ar', ''))}</p>
+    <p class="lead" style="margin:0;" lang="ar" dir="rtl">{esc(site.get('name_ar', ''))}</p>
   </div>
 </section>
 

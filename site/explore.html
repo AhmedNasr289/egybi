@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=40" rel="stylesheet">
+<link href="assets/egybi.css?v=41" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -74,9 +74,9 @@
 <!-- INTRO -->
 <section class="surface-hero center" style="padding:72px 6vw;">
   <div class="wrap">
-    <div class="kicker" style="color:var(--gold-bright);"><span data-glyph="ra"></span>The Egypt data explorer</div>
+    <div class="kicker"><span data-glyph="ra"></span>The Egypt data explorer</div>
     <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">Real Egyptian data, charted.</h1>
-    <p class="lead" style="margin:0 auto;color:#f3ead4;">Every chart below is drawn from EgyBI's knowledge base — the same cited knowledge base behind every map and story here. Every figure is cited; where sources genuinely disagree, we say so rather than smoothing it over.</p>
+    <p class="lead" style="margin:0 auto;">Every chart below is drawn from EgyBI's knowledge base — the same cited knowledge base behind every map and story here. Every figure is cited; where sources genuinely disagree, we say so rather than smoothing it over.</p>
   </div>
 </section>
 
@@ -134,14 +134,14 @@
 </section>
 
 <!-- SUEZ (dark, dramatic) -->
-<section class="surface-dark">
+<section class="surface-deep">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>A uniquely Egyptian data point</div>
     <h2 data-aos="fade-up">The Suez Canal — and its ongoing collapse.</h2>
     <p class="lead" data-aos="fade-up">One of the world's most important shipping arteries and Egypt's top hard-currency earner — until Red Sea shipping attacks from late 2023 diverted much of the world's fleet around Africa. The hit deepened through fiscal-year 2024/25.</p>
-    <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
+    <div class="chart-card" style="margin-top:26px;" data-aos="zoom-in">
       <div class="chart-box"><canvas id="suezChart"></canvas></div>
-      <p class="chart-cap" style="color:var(--on-dark-soft);">Sources: Suez Canal Authority, Central Bank of Egypt, Egypt's Ministry of Planning (updated 2026). After the 2024 plunge, revenue kept falling: <strong>FY2024/25 dropped ~45.5% to about $3.6bn</strong> (from $6.6bn a year earlier), with overall canal activity down ~52% and transiting ships down to ~12,400. Calendar-2024 revenue is variously reported near $3.9bn — the exact figure differs by window (calendar vs fiscal year), which is why both red bars are flagged as the crisis period.</p>
+      <p class="chart-cap">Sources: Suez Canal Authority, Central Bank of Egypt, Egypt's Ministry of Planning (updated 2026). After the 2024 plunge, revenue kept falling: <strong>FY2024/25 dropped ~45.5% to about $3.6bn</strong> (from $6.6bn a year earlier), with overall canal activity down ~52% and transiting ships down to ~12,400. Calendar-2024 revenue is variously reported near $3.9bn — the exact figure differs by window (calendar vs fiscal year), which is why both red bars are flagged as the crisis period.</p>
     </div>
   </div>
 </section>
@@ -182,7 +182,7 @@
 </section>
 
 <!-- ENRICHED DATA MOUNT (filled by data enrichment: demographics, prices, energy) -->
-<section class="surface-dark cluster-head" id="more-data" data-nav="Society">
+<section class="surface-deep cluster-head" id="more-data" data-nav="Society">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>More of Egypt, in data</div>
     <h2 data-aos="fade-up">Demographics, prices &amp; energy.</h2>
@@ -288,12 +288,12 @@
 </section>
 
 <!-- MEGAPROJECTS -->
-<section class="surface-dark">
+<section class="surface-deep">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Modern Egypt</div>
     <h2 data-aos="fade-up">National megaprojects.</h2>
     <div class="grid grid-3" id="megaprojects" style="margin-top:26px;"></div>
-    <p class="chart-cap" style="color:var(--on-dark-soft);" data-aos="fade-up">2026 status, honestly flagged: the <strong>Grand Egyptian Museum</strong> was fully inaugurated 1 Nov 2025; the <strong>Cairo Monorail</strong> NAC line became operational May 2026 (Africa's longest); the <strong>New Administrative Capital</strong> is occupied but sparsely (~30,000 residents vs a 6.5–7M long-term target); <strong>High-Speed Rail</strong> and <strong>El Dabaa nuclear</strong> remain under construction with no section live yet. Targets are labelled as targets in the data. Sources: SIS, Wikipedia, World Nuclear News, France 24.</p>
+    <p class="chart-cap" data-aos="fade-up">2026 status, honestly flagged: the <strong>Grand Egyptian Museum</strong> was fully inaugurated 1 Nov 2025; the <strong>Cairo Monorail</strong> NAC line became operational May 2026 (Africa's longest); the <strong>New Administrative Capital</strong> is occupied but sparsely (~30,000 residents vs a 6.5–7M long-term target); <strong>High-Speed Rail</strong> and <strong>El Dabaa nuclear</strong> remain under construction with no section live yet. Targets are labelled as targets in the data. Sources: SIS, Wikipedia, World Nuclear News, France 24.</p>
   </div>
 </section>
 
@@ -329,44 +329,44 @@
 </section>
 
 <!-- SPORTS -->
-<section class="surface-dark" id="sports">
+<section class="surface-deep" id="sports">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Sports</div>
     <h2 data-aos="fade-up">The Pharaohs — and a squash superpower.</h2>
     <p class="lead" data-aos="fade-up">Egypt holds a record 7 Africa Cup of Nations titles, Al Ahly a record 12 CAF Champions Leagues, and the country utterly dominates world squash. It was the first African and Arab nation to compete at the Olympics (Stockholm 1912).</p>
-    <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
-      <h3 style="color:#f3ead4;">Title tallies across competitions</h3>
+    <div class="chart-card" style="margin-top:26px;" data-aos="zoom-in">
+      <h3>Title tallies across competitions</h3>
       <div class="chart-box"><canvas id="sportsChart"></canvas></div>
-      <p class="chart-cap" style="color:var(--on-dark-soft);">Sources: CAF, FIFA, PSA, Egyptian Olympic Committee / SIS. Different competitions — compare within a bar's category, not across. Olympic figure is total medals (38); the rest are titles.</p>
+      <p class="chart-cap">Sources: CAF, FIFA, PSA, Egyptian Olympic Committee / SIS. Different competitions — compare within a bar's category, not across. Olympic figure is total medals (38); the rest are titles.</p>
     </div>
     <div class="grid grid-3" id="athletesGrid" style="margin-top:30px;"></div>
 
     <!-- Football depth (v8) -->
     <div class="kicker" style="margin-top:36px;" data-aos="fade-up"><span data-glyph="was"></span>Football</div>
     <div class="grid grid-2" style="margin-top:14px;">
-      <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
-        <h3 style="color:#f3ead4;">Egyptian Premier League titles (top clubs)</h3>
+      <div class="chart-card" data-aos="fade-up">
+        <h3>Egyptian Premier League titles (top clubs)</h3>
         <div class="chart-box"><canvas id="leagueChart"></canvas></div>
-        <p class="chart-cap" style="color:var(--on-dark-soft);">Source: Wikipedia (Egyptian Premier League, since 1948). Only seven clubs have ever won it; <strong>Al Ahly</strong> holds ~68% of all titles. Cairo's Ahly–Zamalek duopoly is among the most lopsided in world football.</p>
+        <p class="chart-cap">Source: Wikipedia (Egyptian Premier League, since 1948). Only seven clubs have ever won it; <strong>Al Ahly</strong> holds ~68% of all titles. Cairo's Ahly–Zamalek duopoly is among the most lopsided in world football.</p>
       </div>
-      <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up" data-aos-delay="100">
-        <h3 style="color:#f3ead4;">Mohamed Salah, for Egypt</h3>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>Mohamed Salah, for Egypt</h3>
         <div class="stat-grid" style="margin-top:8px;">
-          <div class="stat"><div class="num" data-count="121">0</div><div class="label" style="color:#f3ead4;">Caps</div><div class="cap" style="color:var(--on-dark-soft);">All-time appearances</div></div>
-          <div class="stat"><div class="num" data-count="68">0</div><div class="label" style="color:#f3ead4;">Goals</div><div class="cap" style="color:var(--on-dark-soft);">Egypt's all-time top scorer</div></div>
-          <div class="stat"><div class="num" data-count="7">0</div><div class="label" style="color:#f3ead4;">AFCON titles</div><div class="cap" style="color:var(--on-dark-soft);">A record for any nation</div></div>
-          <div class="stat"><div class="num" data-count="2026">0</div><div class="label" style="color:#f3ead4;">World Cup</div><div class="cap" style="color:var(--on-dark-soft);">Qualified undefeated (CAF Group A)</div></div>
+          <div class="stat"><div class="num" data-count="121">0</div><div class="label">Caps</div><div class="cap">All-time appearances</div></div>
+          <div class="stat"><div class="num" data-count="68">0</div><div class="label">Goals</div><div class="cap">Egypt's all-time top scorer</div></div>
+          <div class="stat"><div class="num" data-count="7">0</div><div class="label">AFCON titles</div><div class="cap">A record for any nation</div></div>
+          <div class="stat"><div class="num" data-count="2026">0</div><div class="label">World Cup</div><div class="cap">Qualified undefeated (CAF Group A)</div></div>
         </div>
-        <p class="chart-cap" style="color:var(--on-dark-soft);">Sources: Wikipedia, FIFA, Premier League. Caps/goals are as of July 2026 and grow with his career. Egypt finished 4th at AFCON 2025 in Morocco.</p>
+        <p class="chart-cap">Sources: Wikipedia, FIFA, Premier League. Caps/goals are as of July 2026 and grow with his career. Egypt finished 4th at AFCON 2025 in Morocco.</p>
       </div>
     </div>
 
     <!-- Handball (v8) -->
     <div class="kicker" style="margin-top:36px;" data-aos="fade-up"><span data-glyph="was"></span>Handball</div>
-    <div class="chart-card" style="margin-top:14px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
-      <h3 style="color:#f3ead4;">Handball — Africa's dominant side</h3>
-      <p style="color:var(--on-dark);margin:6px 0 0;line-height:1.7;">Egypt's men are the strongest handball nation outside Europe: a record-tying <strong style="color:var(--gold-bright);">10 African Championships</strong> (beating Tunisia 37–24 in the 2026 final in Rwanda), a <strong style="color:var(--gold-bright);">4th place</strong> at both the 2001 World Championship and the Tokyo 2020 Olympics — the best-ever finishes by a non-European team — and back-to-back youth world titles (U-21 in 1993, U-19 in 2019, the first non-European winners).</p>
-      <p class="chart-cap" style="color:var(--on-dark-soft);">Source: Wikipedia (Egypt men's national handball team); Egypt Independent. Egypt hosted the first 32-team World Championship in 2021 (finished 7th).</p>
+    <div class="chart-card" style="margin-top:14px;" data-aos="fade-up">
+      <h3>Handball — Africa's dominant side</h3>
+      <p style="margin:6px 0 0;line-height:1.7;">Egypt's men are the strongest handball nation outside Europe: a record-tying <strong>10 African Championships</strong> (beating Tunisia 37–24 in the 2026 final in Rwanda), a <strong>4th place</strong> at both the 2001 World Championship and the Tokyo 2020 Olympics — the best-ever finishes by a non-European team — and back-to-back youth world titles (U-21 in 1993, U-19 in 2019, the first non-European winners).</p>
+      <p class="chart-cap">Source: Wikipedia (Egypt men's national handball team); Egypt Independent. Egypt hosted the first 32-team World Championship in 2021 (finished 7th).</p>
     </div>
   </div>
 </section>
@@ -388,21 +388,21 @@
 </section>
 
 <!-- SCIENCE & SPACE -->
-<section class="surface-dark cluster-head" id="science" data-nav="Science">
+<section class="surface-deep cluster-head" id="science" data-nav="Science">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Science, space &amp; research</div>
     <h2 data-aos="fade-up">Satellites, reactors &amp; a world-first in health.</h2>
-    <p class="lead" data-aos="fade-up">Egypt has launched satellites since 2007, hosts the African Space Agency, is building its first nuclear plant (El Dabaa, 4.8 GW), and in 2023 became the <strong style="color:var(--gold-bright);">first country worldwide</strong> awarded WHO "gold tier" on the path to eliminating hepatitis C.</p>
+    <p class="lead" data-aos="fade-up">Egypt has launched satellites since 2007, hosts the African Space Agency, is building its first nuclear plant (El Dabaa, 4.8 GW), and in 2023 became the <strong>first country worldwide</strong> awarded WHO "gold tier" on the path to eliminating hepatitis C.</p>
     <div class="grid grid-2" style="margin-top:26px;">
-      <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up">
-        <h3 style="color:#f3ead4;">Egypt's satellites launched (cumulative)</h3>
+      <div class="chart-card" data-aos="fade-up">
+        <h3>Egypt's satellites launched (cumulative)</h3>
         <div class="chart-box"><canvas id="satChart"></canvas></div>
-        <p class="chart-cap" style="color:var(--on-dark-soft);">Source: Space in Africa, SIS, Wikipedia. Earth-observation and communications satellites, 2007–2024, with partners incl. Russia, China, France and Germany.</p>
+        <p class="chart-cap">Source: Space in Africa, SIS, Wikipedia. Earth-observation and communications satellites, 2007–2024, with partners incl. Russia, China, France and Germany.</p>
       </div>
-      <div class="chart-card" style="background:var(--kemet-2);border-color:var(--line-dark);" data-aos="fade-up" data-aos-delay="100">
-        <h3 style="color:#f3ead4;">Hepatitis C prevalence collapse</h3>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>Hepatitis C prevalence collapse</h3>
         <div class="chart-box"><canvas id="hcvChart"></canvas></div>
-        <p class="chart-cap" style="color:var(--on-dark-soft);">Source: WHO. The "100 Million Seha" campaign cut prevalence from ~10% (2016) to 0.38% (2023) using locally made antivirals — new infections down ~97% in eight years.</p>
+        <p class="chart-cap">Source: WHO. The "100 Million Seha" campaign cut prevalence from ~10% (2016) to 0.38% (2023) using locally made antivirals — new infections down ~97% in eight years.</p>
       </div>
     </div>
     <div class="grid grid-3" id="scientistsGrid" style="margin-top:30px;"></div>
@@ -436,15 +436,15 @@
 </section>
 
 <!-- TRANSPORT & INFRASTRUCTURE -->
-<section class="surface-dark" id="transport">
+<section class="surface-deep" id="transport">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Transport &amp; infrastructure</div>
     <h2 data-aos="fade-up">A country laying 2,000 km of high-speed rail.</h2>
     <p class="lead" data-aos="fade-up">Egypt is building one of the world's largest new transport networks at once — a three-line Siemens high-speed railway, two monorails, new metro lines and an LRT. Most of it is still under construction, so the data flags what's running today versus what's promised.</p>
-    <div class="chart-card" style="margin-top:26px;background:var(--kemet-2);border-color:var(--line-dark);" data-aos="zoom-in">
-      <h3 style="color:#f3ead4;">Major rail projects by length (km)</h3>
+    <div class="chart-card" style="margin-top:26px;" data-aos="zoom-in">
+      <h3>Major rail projects by length (km)</h3>
       <div class="chart-box"><canvas id="transportChart"></canvas></div>
-      <p class="chart-cap" style="color:var(--on-dark-soft);">Sources: Siemens Mobility, Alstom, Vinci, National Authority for Tunnels. The 2,000 km high-speed network and 6th-of-October monorail are under construction; costs are approximate.</p>
+      <p class="chart-cap">Sources: Siemens Mobility, Alstom, Vinci, National Authority for Tunnels. The 2,000 km high-speed network and 6th-of-October monorail are under construction; costs are approximate.</p>
     </div>
     <div class="grid grid-3" id="transportGrid" style="margin-top:30px;"></div>
   </div>
@@ -468,7 +468,7 @@ ORDER BY founded;"
 </section>
 
 <!-- UNESCO HERITAGE -->
-<section class="surface-dark cluster-head" id="heritage" data-nav="Heritage">
+<section class="surface-deep cluster-head" id="heritage" data-nav="Heritage">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>World heritage</div>
     <h2 data-aos="fade-up">Seven UNESCO World Heritage Sites.</h2>
@@ -582,7 +582,7 @@ ORDER BY year_inscribed;"
     type:'bar',
     data:{ labels:['2019','2020','2021','2023','2024','FY24/25'],
       datasets:[{ label:'Revenue (US$ bn)', data:[5.80,5.61,6.30,10.25,3.99,3.60], backgroundColor:['#C9A227','#C9A227','#C9A227','#C9A227','#B7410E','#B7410E'], borderRadius:5 }] },
-    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{ color:'#b7ac8e', callback:function(v){return '$'+v+'B';} }, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#b7ac8e'}, grid:{display:false} } } }
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{ color:'#6a6252', callback:function(v){return '$'+v+'B';} }, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#6a6252'}, grid:{display:false} } } }
   });
 
   // Exports doughnut
@@ -662,7 +662,7 @@ ORDER BY year_inscribed;"
     ['Aswan High Dam','Infrastructure','Soviet-financed','Built 1960–1970; created Lake Nasser; a symbol of the Nasser era.']
   ];
   document.getElementById('megaprojects').innerHTML = mega.map(function(m){
-    return '<div class="card" data-aos="fade-up"><span class="tag">'+m[1]+'</span><h3>'+m[0]+'</h3><p style="margin-bottom:8px;"><strong style="color:var(--gold-bright);">'+m[2]+'</strong></p><p>'+m[3]+'</p></div>';
+    return '<div class="card" data-aos="fade-up"><span class="tag">'+m[1]+'</span><h3>'+m[0]+'</h3><p style="margin-bottom:8px;"><strong>'+m[2]+'</strong></p><p>'+m[3]+'</p></div>';
   }).join('');
 
   // Population (line)
@@ -773,7 +773,7 @@ ORDER BY year_inscribed;"
     type:'bar',
     data:{ labels:['Al Ahly · CAF CL','Egypt squash · Worlds','Egypt · AFCON','Zamalek · CAF CL','Egypt · Olympic medals'],
       datasets:[{ label:'Titles / medals', data:[12,14,7,5,38], backgroundColor:['#C9A227','#1F7A5C','#C9A227','#26619C','#B7410E'], borderRadius:5 }] },
-    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ x:{ beginAtZero:true, ticks:{color:'#b7ac8e'}, grid:{color:'rgba(201,162,39,0.1)'} }, y:{ ticks:{color:'#d8cba6'}, grid:{display:false} } } }
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ x:{ beginAtZero:true, ticks:{color:'#6a6252'}, grid:{color:'rgba(201,162,39,0.1)'} }, y:{ ticks:{color:'#4a4336'}, grid:{display:false} } } }
   });
 
   // Investment deals (horizontal bar, US$ bn)
@@ -807,7 +807,7 @@ ORDER BY year_inscribed;"
     type:'bar',
     data:{ labels:['Al Ahly','Zamalek','Ismaily'],
       datasets:[{ label:'League titles (since 1948)', data:[45,15,3], backgroundColor:['#C9A227','#26619C','#1F7A5C'], borderRadius:6 }] },
-    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#b7ac8e'}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#d8cba6'}, grid:{display:false} } } }
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#6a6252'}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#4a4336'}, grid:{display:false} } } }
   });
 
   // Arms import suppliers, share (doughnut, light surface) — v8
@@ -822,14 +822,14 @@ ORDER BY year_inscribed;"
   new Chart(document.getElementById('satChart'), {
     type:'line',
     data:{ labels:[2007,2014,2019,2022,2023,2024], datasets:[{ label:'Satellites launched (cumulative)', data:[1,2,4,5,6,7], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.15)', fill:true, stepped:true, pointRadius:4, pointBackgroundColor:'#C9A227' }] },
-    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#b7ac8e'}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#b7ac8e'}, grid:{display:false} } } }
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#6a6252'}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#6a6252'}, grid:{display:false} } } }
   });
 
   // Hepatitis C prevalence (bars, dramatic drop)
   new Chart(document.getElementById('hcvChart'), {
     type:'bar',
     data:{ labels:['2016','2023'], datasets:[{ label:'Prevalence (% of population)', data:[10.0,0.38], backgroundColor:['#B7410E','#1F7A5C'], borderRadius:6 }] },
-    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.parsed.y+'% of population';}}}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#b7ac8e', callback:function(v){return v+'%';}}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#d8cba6'}, grid:{display:false} } } }
+    options:{ responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.parsed.y+'% of population';}}}}, scales:{ y:{ beginAtZero:true, ticks:{color:'#6a6252', callback:function(v){return v+'%';}}, grid:{color:'rgba(201,162,39,0.1)'} }, x:{ ticks:{color:'#4a4336'}, grid:{display:false} } } }
   });
 
   // Water usage split (doughnut)
@@ -845,7 +845,7 @@ ORDER BY year_inscribed;"
     type:'bar',
     data:{ labels:['High-speed rail network','HSR Green Line (Line 1)','Cairo Monorail (New Capital)','Cairo Metro Line 1','Cairo Metro Line 3','6th of October Monorail','Cairo LRT'],
       datasets:[{ label:'km', data:[2000,660,54,44.3,41.2,42,70], backgroundColor:['#C9A227','#26619C','#1F7A5C','#17408B','#17408B','#1F7A5C','#26619C'], borderRadius:5 }] },
-    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.parsed.x+' km';}}}}, scales:{ x:{ beginAtZero:true, ticks:{color:'#b7ac8e', callback:function(v){return v+' km';}}, grid:{color:'rgba(201,162,39,0.1)'} }, y:{ ticks:{color:'#d8cba6'}, grid:{display:false} } } }
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, animation:anim, plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.parsed.x+' km';}}}}, scales:{ x:{ beginAtZero:true, ticks:{color:'#6a6252', callback:function(v){return v+' km';}}, grid:{color:'rgba(201,162,39,0.1)'} }, y:{ ticks:{color:'#4a4336'}, grid:{display:false} } } }
   });
 
   // Transport project cards

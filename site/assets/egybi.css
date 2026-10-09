@@ -30,6 +30,15 @@
   --papyrus: #F6EEDC;        /* light surface */
   --papyrus-2: #FCF8EC;      /* light elevated (cards on light) */
 
+  /* papyrus everywhere (2026-10-09): two more surface tiers */
+  --papyrus-deep: #EEE0BF;     /* the band that used to be Kemet: aged papyrus */
+  --papyrus-aged: #EBD9B2;     /* hero banners: the outer leaf of the scroll */
+  --papyrus-burnt: #2B1E10;    /* the footer: the scorched foot of the roll */
+  --fibre-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E %3Cfilter id='h' x='0' y='0' width='100%25' height='100%25' filterUnits='userSpaceOnUse' primitiveUnits='userSpaceOnUse'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.42' numOctaves='3' seed='4' stitchTiles='stitch'/%3E %3CfeColorMatrix values='0 0 0 0 0.47 0 0 0 0 0.36 0 0 0 0 0.14 0 0 0 0.34 -0.143'/%3E%3C/filter%3E %3Cfilter id='v' x='0' y='0' width='100%25' height='100%25' filterUnits='userSpaceOnUse' primitiveUnits='userSpaceOnUse'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42 0.004' numOctaves='3' seed='9' stitchTiles='stitch'/%3E %3CfeColorMatrix values='0 0 0 0 0.47 0 0 0 0 0.36 0 0 0 0 0.14 0 0 0 0.238 -0.102'/%3E%3C/filter%3E %3Crect width='320' height='320' filter='url(%23v)'/%3E%3Crect width='320' height='320' filter='url(%23h)'/%3E%3C/svg%3E");
+  --fibre-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E %3Cfilter id='h' x='0' y='0' width='100%25' height='100%25' filterUnits='userSpaceOnUse' primitiveUnits='userSpaceOnUse'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.004 0.42' numOctaves='3' seed='9' stitchTiles='stitch'/%3E %3CfeColorMatrix values='0 0 0 0 0.86 0 0 0 0 0.72 0 0 0 0 0.42 0 0 0 0.3 -0.126'/%3E%3C/filter%3E %3Cfilter id='v' x='0' y='0' width='100%25' height='100%25' filterUnits='userSpaceOnUse' primitiveUnits='userSpaceOnUse'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42 0.004' numOctaves='3' seed='14' stitchTiles='stitch'/%3E %3CfeColorMatrix values='0 0 0 0 0.86 0 0 0 0 0.72 0 0 0 0 0.42 0 0 0 0.210 -0.090'/%3E%3C/filter%3E %3Crect width='320' height='320' filter='url(%23v)'/%3E%3Crect width='320' height='320' filter='url(%23h)'/%3E%3C/svg%3E");
+  --frieze: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='26' viewBox='0 0 72 26'%3E %3Cg fill='none' stroke='%237A5E10' stroke-width='1.1' stroke-linecap='round'%3E %3Cpath d='M0 1.5H72M0 24.5H72' stroke-width='1.4'/%3E %3Cpath d='M12 23V16M36 23V15M60 23V14'/%3E%3C/g%3E %3Cg fill='%237A5E10'%3E %3Cpath d='M12 16C8 14.5 5.5 10 6.2 5 9 7.5 10.8 11 12 16Z'/%3E%3Cpath d='M12 16C16 14.5 18.5 10 17.8 5 15 7.5 13.2 11 12 16Z'/%3E %3Cpath d='M12 16C10.6 11.5 10.8 7 12 3.2 13.2 7 13.4 11.5 12 16Z'/%3E %3Cpath d='M36 15C33.2 13.4 33.4 8.6 36 5.6 38.6 8.6 38.8 13.4 36 15Z'/%3E %3Cpath d='M60 14L53.5 5.2Q60 1.8 66.5 5.2Z' opacity='.9'/%3E%3C/g%3E %3Cg fill='none' stroke='%23F6EEDC' stroke-width='.7'%3E%3Cpath d='M60 13.5L57 5M60 13.5V4M60 13.5L63 5'/%3E%3C/g%3E%3C/svg%3E");
+  --torn-foot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='16' viewBox='0 0 240 16' preserveAspectRatio='none'%3E %3Cpath fill='%232B1E10' d='M0 16V8L9 10 17 5 26 9 35 6 44 11 52 7 61 9 70 4 79 8 88 6 97 10 106 5 115 9 124 7 133 11 142 6 151 9 160 5 169 8 178 6 187 10 196 6 205 9 214 5 223 8 232 6 240 8V16Z'/%3E%3C/svg%3E");
+
   /* text */
   --ink: #292420;
   --ink-soft: #6a6252;
@@ -55,7 +64,7 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--papyrus);
+  background: var(--fibre-light), var(--papyrus);
   color: var(--ink);
   line-height: 1.65;
   /* NOTE: horizontal overflow is handled by `body { overflow-x: clip }` further
@@ -70,41 +79,46 @@ img { max-width: 100%; }
 .sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
 
 /* ---------- surfaces (the section rhythm) ---------- */
-.surface-light { background: var(--papyrus); color: var(--ink); }
-.surface-light-2 { background: var(--papyrus-2); color: var(--ink); }
-.surface-dark { background: var(--kemet); color: var(--on-dark); }
-.surface-hero {
-  background: radial-gradient(circle at 28% 12%, #1c4aa0 0%, var(--blue-deep) 42%, var(--kemet) 100%);
-  color: #fff;
+.surface-light { background: var(--fibre-light), var(--papyrus); color: var(--ink); }
+.surface-light-2 { background: var(--fibre-light), var(--papyrus-2); color: var(--ink); }
+/* PAPYRUS EVERYWHERE. Every surface a reader scrolls through is now a leaf of
+   the same scroll; the tiers differ in age, not in kind. The two darker leaves
+   re-point --ink-soft and --gold-ink at deeper inks, so every component inside
+   them (leads, captions, kickers, tags) keeps AA without a per-component rule. */
+.surface-deep {
+  background: var(--fibre-light), radial-gradient(ellipse 120% 100% at 50% 50%, #F2E6CA 0%, var(--papyrus-deep) 70%, #E6D3A8 100%);
+  color: var(--ink); position: relative;
+  --ink-soft: #544c3e; --gold-ink: #64500e;
 }
-.surface-dark h1, .surface-dark h2, .surface-dark h3, .surface-hero h1, .surface-hero h2 { color: #fff; }
-.surface-dark p, .surface-hero p { color: var(--on-dark); }
+.surface-hero {
+  background: var(--fibre-light), radial-gradient(ellipse 110% 120% at 32% 30%, #F6EBD0 0%, var(--papyrus-aged) 62%, #DEC596 100%);
+  color: var(--ink); position: relative; overflow: hidden;
+  /* the burnt, aged edge of the outer leaf */
+  box-shadow: inset 0 0 0 1px rgba(122,94,16,.18), inset 0 0 70px rgba(110,72,20,.26), inset 0 -40px 60px -40px rgba(110,72,20,.25);
+  --ink-soft: #4a4336; --gold-ink: #5c450a;
+}
+.surface-hero h1, .surface-hero h2 { color: var(--blue-deep); }
+.surface-hero p { color: var(--ink); }
 
 section { padding: 72px 6vw; }
 .wrap { max-width: var(--maxw); margin: 0 auto; }
 h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue-deep); }
-.surface-dark h2 { color: #fff; }
 .lead { font-size: clamp(1rem, 1.6vw, 1.15rem); max-width: 720px; color: var(--ink-soft); }
-.surface-dark .lead { color: var(--on-dark-soft); }
 .kicker { color: var(--gold-ink); font-weight: 800; text-transform: uppercase; font-size: 0.76rem; letter-spacing: 0.14em; margin-bottom: 10px; font-family: 'Inter', sans-serif; }
-.surface-dark .kicker, .surface-hero .kicker { color: var(--gold-bright); }
-/* Prose links on a dark surface. There was no rule for this at all, because
-   until the investor page put its source links in a dark section, no dark
-   section carried an inline link — so every such link inherited the light-
-   surface blue and measured 1.92:1 on near-black. --gold-bright is the token
-   that exists for gold text on dark, and it is what the kickers above already
-   use. Scoped to prose so buttons, cards, the brand and the nav keep the
-   colours they set for themselves. */
-.surface-dark p a, .surface-dark li a, .surface-dark dd a,
-.surface-hero p a, .surface-hero li a { color: var(--gold-bright); }
+.surface-hero .kicker { color: var(--gold-ink); }
+/* Prose links on the hero leaf: the structural blue, as everywhere else on
+   papyrus. (The gold-bright rule this replaces existed for near-black bands,
+   which are gone.) */
+.surface-hero p a, .surface-hero li a { color: var(--blue); }
 .center { text-align: center; }
 .center .lead { margin-left: auto; margin-right: auto; }
 
 /* ---------- header / nav ---------- */
 .site-header {
-  background: rgba(20, 17, 12, 0.94); backdrop-filter: blur(10px);
+  /* the roll's wooden rod: dark reed fibre over brown, ruled in gold */
+  background: var(--fibre-dark), rgba(30, 21, 11, 0.96); backdrop-filter: blur(10px);
   color: #fff; position: sticky; top: 0; z-index: 1100;
-  border-bottom: 1px solid var(--line-dark);
+  border-bottom: 2px solid var(--gold);
 }
 .site-header .bar { max-width: var(--maxw); margin: 0 auto; padding: 13px 6vw; display: flex; align-items: center; gap: 18px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.25rem; color: #fff; text-decoration: none; flex: 0 0 auto; line-height: 1; }
@@ -120,21 +134,13 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .btn { display: inline-block; padding: 14px 28px; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 1rem; cursor: pointer; border: none; font-family: inherit; transition: transform .18s, box-shadow .18s, background .2s, color .2s; }
 .btn-primary { color: var(--kemet); background: linear-gradient(110deg, var(--gold), var(--gold-bright), var(--gold)); background-size: 200% auto; box-shadow: 0 6px 20px rgba(201,162,39,0.35); }
 .btn-primary:hover, .btn-primary:focus-visible { background-position: right center; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(201,162,39,0.5); }
-.btn-ghost { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.5); }
-.btn-ghost:hover, .btn-ghost:focus-visible { border-color: var(--gold-bright); color: var(--gold-bright); transform: translateY(-2px); }
-/* The ghost button was only ever given a dark-surface treatment: white text on
-   a half-transparent white border. Six of them sit on cream sections — two on
-   the home page, and one each on the case study, the community page and two on
-   the visitor page — where that renders white on cream at 1.06:1. Not "hard to
-   read": invisible. A reader saw an empty gap where the call to action was.
-   Measured against the actual painted pixel, not against the palette. */
-.surface-light .btn-ghost, .surface-light-2 .btn-ghost {
-  color: var(--blue-deep); border-color: rgba(14,42,94,0.45);
-}
-.surface-light .btn-ghost:hover, .surface-light .btn-ghost:focus-visible,
-.surface-light-2 .btn-ghost:hover, .surface-light-2 .btn-ghost:focus-visible {
-  color: var(--gold-ink); border-color: var(--gold-ink);
-}
+.btn-ghost { background: transparent; color: var(--blue-deep); border: 1.5px solid rgba(14,42,94,0.45); }
+.btn-ghost:hover, .btn-ghost:focus-visible { color: var(--gold-ink); border-color: var(--gold-ink); transform: translateY(-2px); }
+/* The ghost button is a papyrus-surface control everywhere: since the papyrus
+   pass there is no dark section left for the old white-on-dark default, and a
+   white ghost on cream measured 1.06:1 — an empty gap where the button was.
+   A component that sits on its own dark panel (case.html's .closed) restores
+   the dark treatment locally. */
 .btn-blue { background: var(--blue); color: #fff; }
 .btn-blue:hover { background: var(--blue-deep); transform: translateY(-2px); }
 .cta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 26px; }
@@ -149,8 +155,6 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .card h3 { margin: 0 0 8px; font-size: 1.1rem; color: var(--blue-deep); }
 .card p { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
 .card .tag { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-ink); background: var(--gold-soft); padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
-.surface-dark .card .tag { color: var(--gold-bright); background: rgba(201,162,39,0.16); }
-.surface-dark .card { background: var(--kemet-2); border-color: var(--line-dark); }
 
 /* SHARED DATA-PAGE COMPONENTS.
    .atlas-note and .streets-note were each defined only inside one page's own
@@ -181,10 +185,7 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
    to catch a class that is used everywhere and styled nowhere. */
 .colo-brand { font-family: 'Cinzel', serif; font-weight: 600; color: var(--gold-bright); letter-spacing: 0.02em; }
 
-.surface-dark .card-link:hover, .surface-dark .card-link:focus-visible { border-color: var(--gold-bright); }
 
-.surface-dark .card h3 { color: var(--gold-bright); }
-.surface-dark .card p { color: var(--on-dark-soft); }
 
 /* ---------- pills ---------- */
 .pill { background: var(--papyrus-2); border: 1px solid var(--line-light); color: var(--blue-deep); padding: 10px 18px; border-radius: 999px; font-size: 0.9rem; font-weight: 600; transition: transform .2s, background .2s; text-decoration: none; }
@@ -193,25 +194,19 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 /* ---------- stat band ---------- */
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 26px; }
 .stat { text-align: center; }
-.stat .num { font-family: 'Cinzel', serif; font-size: clamp(2.1rem, 4.6vw, 3.1rem); font-weight: 700; color: var(--gold-bright); line-height: 1; }
+.stat .num { font-family: 'Cinzel', serif; font-size: clamp(2.1rem, 4.6vw, 3.1rem); font-weight: 700; color: var(--gold-ink); line-height: 1; }
 .stat .label { margin-top: 10px; font-weight: 600; font-size: 0.98rem; }
-.stat .cap { margin-top: 4px; font-size: 0.76rem; color: var(--on-dark-soft); }
-/* stat bands default to dark-surface colours; on LIGHT surfaces use readable ink */
-.surface-light .stat .num, .surface-light-2 .stat .num { color: var(--gold-ink); }
-.surface-light .stat .cap, .surface-light-2 .stat .cap { color: var(--ink-soft); }
-/* card meta ("· b.1992") — dark ink on light cards, light beige on dark cards */
+.stat .cap { margin-top: 4px; font-size: 0.76rem; color: var(--ink-soft); }
+/* card meta ("· b.1992") */
 .card-meta { color: var(--ink-soft); font-weight: 400; font-size: 0.85rem; }
-.surface-dark .card .card-meta { color: var(--on-dark-soft); }
 
 /* ---------- chart card ---------- */
 .chart-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow-light); }
 .chart-card h3 { margin: 0 0 4px; color: var(--blue-deep); font-size: 1.15rem; }
 .chart-box { position: relative; height: 320px; margin-top: 14px; }
 .chart-cap { font-size: 0.8rem; color: var(--ink-soft); margin-top: 14px; }
-/* chart-cards keep a LIGHT background even inside a .surface-dark section, so
-   force their caption text dark — otherwise `.surface-dark p` (higher specificity
-   than `.chart-cap`) turns it light and it washes out on the light card. Genuinely
-   dark chart-cards set their caption colour inline, which still wins. */
+/* A chart-card is a light sheet on any surface, so its caption and title are
+   pinned to the light-sheet inks rather than inherited from the section. */
 .chart-card .chart-cap { color: var(--ink-soft); }
 .chart-card h3 { color: var(--blue-deep); }
 
@@ -256,13 +251,10 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .timeline { position: relative; margin-top: 30px; padding-left: 26px; border-left: 2px solid var(--gold-soft); }
 .tl-item { position: relative; padding: 0 0 26px 22px; }
 .tl-item::before { content: ""; position: absolute; left: -33px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 3px solid var(--papyrus); }
-.surface-dark .tl-item::before { border-color: var(--kemet); }
 .tl-year { font-family: 'Cinzel', serif; font-weight: 700; color: var(--blue); font-size: 1.05rem; }
-.surface-dark .tl-year { color: var(--gold-bright); }
 /* h3, not h4: these follow an h2 and h4 skipped a level. */
 .tl-item h3 { margin: 2px 0 4px; font-size: 1rem; }
 .tl-item p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
-.surface-dark .tl-item p { color: var(--on-dark-soft); }
 
 /* ---------- ranks / badges ---------- */
 /* The .rank-ladder / .rank / .badge-card rules were removed on 2026-08-07
@@ -290,7 +282,10 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .hp-field { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; border: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; opacity: 0; pointer-events: none; }
 
 /* ---------- footer ---------- */
-.site-footer { background: var(--kemet); color: var(--on-dark-soft); padding: 48px 6vw 40px; }
+.site-footer { color: var(--on-dark-soft); padding: 48px 6vw 40px; position: relative;
+  /* the scorched foot of the roll; the torn top edge is ::before, in the ornaments section */
+  background: var(--fibre-dark), radial-gradient(ellipse 120% 140% at 50% 0%, #3a2915 0%, var(--papyrus-burnt) 60%, #1c130a 100%);
+  box-shadow: inset 0 18px 40px -20px rgba(0,0,0,.6); }
 .site-footer .cols { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 1.3fr repeat(4, 1fr); gap: 28px; }
 @media (max-width: 900px) { .site-footer .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 /* Was h5, which landed straight after page content ending at h3 and skipped a
@@ -322,8 +317,6 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 .plain-list li:last-child { border-bottom: none; }
 .plain-list a { color: var(--blue-deep); text-decoration: none; }
 .plain-list a:hover, .plain-list a:focus-visible { color: var(--gold-ink); text-decoration: underline; }
-.surface-dark .plain-list li { border-bottom-color: var(--line-dark); }
-.surface-dark .plain-list a { color: var(--on-dark); }
 
 /* Skip link. Off-screen until focused, then the first thing a keyboard user
    sees. Without it every page made them tab through thirteen nav links before
@@ -350,7 +343,7 @@ main:focus { outline: none; }
   .site-header, .site-footer, .on-this-page, .skip-link, .cta-row,
   #hero-particles, .adsbygoogle, .nav-toggle { display: none !important; }
   html, body { background: #fff !important; color: #000 !important; }
-  section, .surface-hero, .surface-dark, .surface-light, .surface-light-2 {
+  section, .surface-hero, .surface-deep, .surface-light, .surface-light-2 {
     background: #fff !important; color: #000 !important; padding: 12px 0 !important; }
   h1, h2, h3, .kicker { color: #000 !important; page-break-after: avoid; }
   a { color: #000 !important; text-decoration: underline; }
@@ -419,24 +412,19 @@ main:focus { outline: none; }
    gold is what reads as EgyBI rather than as generic SaaS. Recording the real
    reason matters — the old comment justified a colour by a feature a reader
    would look for and not find. */
-.surface-hero.hero-v2 {
-  background:
-    radial-gradient(ellipse 120% 90% at 30% -10%, #1d4694 0%, rgba(14,42,94,0.55) 32%, var(--kemet) 72%),
-    var(--kemet);
-  text-align: left;
-}
+.surface-hero.hero-v2 { text-align: left; }
 .hero-v2 .hero-inner { max-width: 760px; }
 .hero-eyebrow {
   font-family: 'Inter', sans-serif; font-size: 0.74rem; font-weight: 700;
   letter-spacing: 0.13em; text-transform: uppercase;
-  color: var(--gold-bright); margin: 0 0 14px;
+  color: var(--gold-ink); margin: 0 0 14px;
 }
 .hero-v2 .hero-h1 {
   font-size: clamp(1.85rem, 7vw, 3.4rem); line-height: 1.12;
-  margin: 0 0 14px; color: #fff;
+  margin: 0 0 14px; color: var(--blue-deep);
 }
 .hero-v2 .hero-lead {
-  margin: 0 0 26px; color: #e9dfc8; font-size: clamp(0.98rem, 2.4vw, 1.12rem);
+  margin: 0 0 26px; color: var(--ink); font-size: clamp(0.98rem, 2.4vw, 1.12rem);
 }
 
 /* ---------- the flag ------------------------------------------------------
@@ -519,11 +507,9 @@ main:focus { outline: none; }
    otherwise draw a gold line straight through the first line of this text. */
 .eg-flag-cap {
   margin: 18px 0 0; padding-left: 22px; font-size: 0.76rem; line-height: 1.5;
-  /* #b9ad93 measured 4.02:1 on the hero's brightest blue stop [29,70,148];
-     the hero lead's #e9dfc8 clears it at about 7:1. */
-  color: #e9dfc8; max-width: 320px;
+  color: var(--ink-soft); max-width: 320px;
 }
-.eg-flag-cap a { color: var(--gold-bright); }
+.eg-flag-cap a { color: var(--blue); }
 
 /* Reduced motion keeps every band, the device, the pole, the fly-edge curve and
    the shading — all of it. Only the two moving properties stop. The result is a
@@ -662,7 +648,6 @@ body { overflow-x: clip; }
   content: ''; flex: 1; height: 1px;
   background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
 }
-.surface-dark .glyph-rule::before, .surface-dark .glyph-rule::after,
 .surface-hero .glyph-rule::before, .surface-hero .glyph-rule::after {
   background: linear-gradient(90deg, transparent, rgba(201,162,39,.5), transparent);
 }
@@ -763,7 +748,7 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 /* --on-dark-soft here measured 3.67:1 against the brightest stop of the hero
    gradient, rgb(28,74,160) — under AA for body text. --on-dark takes the same
    pair to 6.91:1 and is already the identity's on-dark colour. */
-.surface-hero .page-intro, .surface-dark .page-intro { color: var(--on-dark); }
+.surface-hero .page-intro { color: var(--ink); }
 .center .page-intro { margin-left: auto; margin-right: auto; }
 
 /* the sticky "On this page" sub-nav — reads as an extension of the header, so
@@ -806,10 +791,6 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 .next-steps .ns-card .ns-k { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-ink); }
 .next-steps .ns-card h3 { margin: 6px 0; color: var(--blue-deep); font-size: 1.08rem; }
 .next-steps .ns-card p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
-.surface-dark.next-steps .ns-card { background: var(--kemet-2); border-color: var(--line-dark); }
-.surface-dark.next-steps .ns-card .ns-k { color: var(--gold-bright); }
-.surface-dark.next-steps .ns-card h3 { color: var(--gold-bright); }
-.surface-dark.next-steps .ns-card p { color: var(--on-dark-soft); }
 
 /* a cluster lead-in: the first section of a group of related sections gets a
    slightly larger heading so a long page (Explore) reads as a few groups, not
@@ -1251,8 +1232,7 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 }
 .map-credit a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
 .map-credit a:hover, .map-credit a:focus-visible { color: var(--blue-deep); }
-.surface-dark .map-credit, .surface-hero .map-credit { color: var(--on-dark-soft); }
-.surface-dark .map-credit a, .surface-hero .map-credit a { color: var(--gold-bright); }
+
 
 /* The colour tween the toolkit calls the highest impact per line available.
    Leaflet's SVG renderer draws GeoJSON as <path>, and fill is CSS-animatable,
@@ -1295,19 +1275,12 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
   background-image: var(--fibre), var(--sheet);
   border-radius: var(--sheet-radius);
 }
-.surface-dark .card, .surface-dark .sheet {
-  background-image: var(--fibre), var(--sheet-dark);
-}
 /* the torn top edge, as on the letter */
 .sheet::before, .card::before, .chart-card::before, .callout::before {
   content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 6px;
   background: var(--torn); border-radius: 4px 4px 0 0; opacity: .9; pointer-events: none;
 }
-.surface-dark .card::before, .surface-dark .sheet::before {
-  background: repeating-linear-gradient(90deg, rgba(231,198,76,.28) 0 7px, transparent 7px 15px);
-}
 .sheet { border: 1px solid var(--line-light); padding: 26px; box-shadow: 0 14px 34px rgba(20,17,12,.08); }
-.surface-dark .sheet { border-color: var(--line-dark); color: var(--on-dark); }
 
 /* The wax seal, reusable outside the letter. */
 .seal {
@@ -1328,8 +1301,6 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
   display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: .12em;
   text-transform: uppercase; color: var(--gold-ink); margin-bottom: 6px;
 }
-.surface-dark .specimen { background: rgba(231,198,76,.10); color: var(--on-dark); }
-.surface-dark .specimen-label { color: var(--gold-bright); }
 
 /* The scroll rod: where one light section meets the next, a gold rod with
    rounded caps marks the join, the way a roll is wound on its stick. Pure
@@ -1365,8 +1336,9 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
   .hero-video-wrap, .hero-particles, .ad-slot { display: none !important; }
   body { background: #fff; }
   section { padding: 12px 0; }
-  .surface-hero, .surface-dark { background: #fff !important; color: var(--ink) !important; }
-  .surface-hero h1, .surface-hero p, .surface-dark h2, .surface-dark p { color: var(--ink) !important; }
+  .surface-hero, .surface-deep { background: #fff !important; color: var(--ink) !important; box-shadow: none !important; }
+  .surface-hero::before, .surface-hero::after, .surface-deep::before, .surface-deep::after { display: none !important; }
+  .surface-hero h1, .surface-hero p, .surface-deep h2, .surface-deep p { color: var(--ink) !important; }
   .sheet, .card, .chart-card, .callout { break-inside: avoid; box-shadow: none; }
   .print-break { break-before: page; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .75em; color: var(--ink-soft); word-break: break-all; }
@@ -1392,7 +1364,7 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
   border: 1.5px solid var(--line-light); background: #fff; color: var(--ink); min-height: 46px;
 }
 .trip-form input:focus, .trip-form input:focus-within, .trip-form select:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: var(--gold); }
-.surface-hero .trip-form label { color: var(--gold-bright); }
+.surface-hero .trip-form label { color: var(--gold-ink); }
 
 .brief-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-top: 20px; }
 .brief-site { padding: 16px 18px 14px; }
@@ -1483,3 +1455,54 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 }
 .fp-table th.num { text-align: right; }
 .fp-table tbody th { font-size: 0.92rem; text-transform: none; letter-spacing: 0; color: var(--ink); font-weight: 600; }
+
+/* ======================================================= the ornaments ====
+   PAPYRUS EVERYWHERE, the decoration (2026-10-09). Four ornaments, all CSS
+   and inline SVG data URIs defined as tokens at the top of this file, so the
+   page makes no request for any of them:
+
+     1. FIBRE   --fibre-light / --fibre-dark: SVG fractal noise stretched along
+                x and along y, the horizontal-over-vertical reed strips of real
+                papyrus. On every surface, the header and the footer.
+     2. FRIEZE  --frieze: a band of open lotus, lotus bud and papyrus umbel in
+                gold ink, along the foot of every hero and both edges of every
+                deep band, the way registers are divided on a temple wall.
+     3. SIGNS   three real hieroglyphs (ankh, wedjat eye, scarab) as a faint
+                watermark in each hero's corner, from the self-hosted subset.
+     4. BURN    a sepia inset vignette on the hero leaf, and a torn, scorched
+                top edge on the footer, where the roll ends.
+
+   All four are pseudo-elements: they are not in the reading order, a screen
+   reader never meets them, and none of them moves, so reduced motion has
+   nothing to switch off. Contrast is held by the tier inks above, and
+   contrast.js measures the painted pixel behind every line of text. */
+
+/* 2. the frieze */
+.surface-hero::after, .surface-deep::after, .surface-deep::before {
+  content: ''; position: absolute; left: 0; right: 0; height: 26px; pointer-events: none;
+  background: var(--frieze) repeat-x center / auto 26px; opacity: .78;
+}
+.surface-hero::after { bottom: 6px; }
+.surface-deep::before { top: 6px; }
+.surface-deep::after { bottom: 6px; }
+/* room for the frieze so it never sits under text (heroes all carry 40px+ of
+   bottom padding already; the deep bands get it here) */
+.surface-deep { padding-top: 84px; padding-bottom: 84px; }
+
+/* 3. the signs: ankh, eye, scarab, faint in the hero's far corner */
+.surface-hero::before {
+  content: '\132F9\13080\131A3'; position: absolute; right: -1.5vw; top: 50%;
+  transform: translateY(-50%); z-index: 0; pointer-events: none;
+  font-family: 'EgyBI Glyphs', 'Noto Sans Egyptian Hieroglyphs', serif;
+  font-size: clamp(90px, 15vw, 210px); line-height: 1; letter-spacing: -.05em;
+  color: rgba(92, 69, 10, .075); white-space: nowrap;
+}
+.surface-hero > .wrap, .surface-hero > .hero-inner { position: relative; z-index: 1; }
+@media (max-width: 720px) { .surface-hero::before { font-size: 96px; right: -14px; top: auto; bottom: 30px; transform: none; } }
+
+
+/* 4. the burnt foot of the roll: a torn, scorched top edge where it ends */
+.site-footer::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -15px; height: 16px; pointer-events: none;
+  background: var(--torn-foot) repeat-x left bottom / 240px 16px;
+}

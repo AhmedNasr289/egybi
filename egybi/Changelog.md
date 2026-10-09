@@ -916,3 +916,16 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - ✅ **`contrast.js` scored a legible label against its own ink.** It reported "Luxor" on `visit.html`'s relief map at 1:1, although the label is dark text on light land. The pixel pass takes the most common colour in the crop as the ground. On a small bold label the glyphs are one uniform colour, while the ground is split across halo and antialiasing shades, so the "ground" it elected was the ink itself. Pixels within a small distance of the text colour are now excluded from that vote. If nothing is left, the finding still fails, on the conservative worst-stop figure. A first guess (map animation) was tested and was wrong.
 - ✅ **`coverage.py` had no way to age-check hand-compiled data.** It reported such files as "no workflow writes it". It now has `HAND_CURATED` review intervals: 120 days for the calendar, 90 days for fair prices.
 - ✅ **The trip-form date inputs had no visible focus ring** (found by `a11y2.js`). The ring now applies on `:focus` and `:focus-within`. Tab steps through a date input's day, month and year fields and its calendar button, and `:focus` alone stops matching at the calendar button.
+
+## 2026-10-09, later — Papyrus everywhere
+
+- ✅ **Every background is now papyrus.**
+  - Heroes became aged leaves with ink titles.
+  - The 17 near-black bands became `.surface-deep`.
+  - The footer is the scorched foot of the roll, with a torn edge.
+  - The header became the roll's wooden rod.
+
+  See [[Papyrus Design System]].
+- ✅ **Four ornaments, with no image request:** SVG reed-fibre texture, a lotus-and-papyrus frieze, a faint hieroglyph watermark in each hero, and burnt edges.
+- ✅ **The dark sections were renamed, not overridden.** About 30 dark-only rules were deleted. The ghost button and the stat band now default to papyrus ink.
+- ⚠️ **A text replace that over-reached was caught before commit.** It stripped dark-panel colours from `case.html` and `visit.html`. It was found by screenshot review and `contrast.js`, and fixed by hand.

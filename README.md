@@ -53,7 +53,8 @@ perankh/
 │   ├── api/                        Framework-free read-only PHP/MySQL API, plus the isolated
 │   │                               write-side endpoints (newsletter, moderated community board)
 │   └── assets/
-│       ├── egybi.css               THE design system — one file, every page (incl. the Papyrus look)
+│       ├── egybi.css               THE design system — one file, every page: papyrus on every surface,
+│       │                           SVG fibre, lotus frieze, glyph watermark, burnt edges (no image requests)
 │       ├── trip.js  home.js  plan.js  fair.js  cartouche.js  hieroglyphs.js  ask.js
 │       │                           The trip companion: one localStorage store + the page modules
 │       ├── fonts/                  Self-hosted hieroglyph subset (Noto, SIL OFL 1.1, licence beside it)
