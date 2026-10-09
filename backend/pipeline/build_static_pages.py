@@ -204,7 +204,7 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="{prefix}assets/egybi.css?v=39" rel="stylesheet">
+<link href="{prefix}assets/egybi.css?v=40" rel="stylesheet">
 <script src="{prefix}assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
@@ -376,7 +376,7 @@ def build_posts(posts):
 </section>
 
 <section class="surface-light">
-  <div class="wrap" style="max-width:720px;">
+  <div class="wrap dropcap" style="max-width:720px;">
     {p['body']}
     <hr style="margin:34px 0;border:none;border-top:1px solid var(--line-light);">
     <p style="font-size:0.9rem;color:var(--ink-soft);">Every figure here is real and cited, and where sources disagree we say so. You can see the same data yourself &mdash; <a href="../explore.html">explore the datasets</a> or <a href="../geospatial.html">open the Atlas</a>.</p>
@@ -390,13 +390,124 @@ def build_posts(posts):
         urls.append((url, '0.7'))
     return urls
 
+
+MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+          'August', 'September', 'October', 'November', 'December']
+
+
+def build_site_months():
+    """One page per measured visitor site: its twelve months, as measured.
+
+    Each answers the query a traveller actually types — "<site> weather by
+    month" — from the same NASA POWER file visit.html reads, so the figures
+    cannot disagree with the rest of the site. Measurement only: the page
+    names the coolest and hottest afternoons and stops there, because "the
+    best time to visit" depends on heat tolerance, budget and crowds, none of
+    which is in the data (the ruling visit.html already states).
+
+    Regenerated from data on every build; a site removed from the climate file
+    leaves a stale page behind only until someone deletes it, so the run
+    reports the count it wrote."""
+    cpath = os.path.join(SITE, 'data', 'visit-climate.json')
+    tpath = os.path.join(SITE, 'data', 'visit-terrain.json')
+    if not os.path.isfile(cpath):
+        return []
+    clim = json.load(io.open(cpath, encoding='utf-8'))
+    terr = {}
+    if os.path.isfile(tpath):
+        terr = {x['key']: x for x in json.load(io.open(tpath, encoding='utf-8')).get('sites', [])}
+    outdir = os.path.join(SITE, 'visit')
+    os.makedirs(outdir, exist_ok=True)
+    urls = []
+    sites = clim.get('sites', [])
+    for site in sites:
+        key = site['key']
+        ms = sorted([m for m in site.get('months', []) if m.get('t_daily_max') is not None],
+                    key=lambda m: m['month'])
+        if len(ms) != 12:
+            continue
+        url = f"{SITE_URL}/visit/{key}.html"
+        cool = min(ms, key=lambda m: m['t_daily_max'])
+        hot = max(ms, key=lambda m: m['t_daily_max'])
+        under30 = [MONTHS[m['month'] - 1] for m in ms if m['t_daily_max'] < 30]
+        name = site['name']
+        title = f"{name} weather by month · EgyBI"
+        desc = (f"{name}: what a normal afternoon and night reach in each month, from NASA "
+                f"climate normals — about {round(cool['t_daily_max'])} °C in "
+                f"{MONTHS[cool['month'] - 1]}, {round(hot['t_daily_max'])} °C in {MONTHS[hot['month'] - 1]}.")
+        rows = ''.join(
+            f"<tr><th scope=\"row\">{MONTHS[m['month'] - 1]}</th>"
+            f"<td class=\"num\">{m['t_daily_max']:.0f} °C</td><td class=\"num\">{m['t_daily_min']:.0f} °C</td>"
+            f"<td class=\"num\">{m.get('rain_mm_day', 0):.1f}</td>"
+            f"<td class=\"num\">{m['t_record_max']:.0f} °C</td></tr>" for m in ms)
+        el = terr.get(key, {}).get('elevation_m')
+        others = ''.join(f'<a class="chip" href="{x["key"]}.html">{esc(x["name"])}</a>'
+                         for x in sites if x['key'] != key)
+        facts = [f"The coolest afternoons come in <strong>{MONTHS[cool['month'] - 1]}</strong>, at about "
+                 f"{cool['t_daily_max']:.0f} °C; the hottest in <strong>{MONTHS[hot['month'] - 1]}</strong>, at about "
+                 f"{hot['t_daily_max']:.0f} °C."]
+        if under30:
+            facts.append(f"A normal afternoon stays under 30 °C in {len(under30)} month"
+                         f"{'' if len(under30) == 1 else 's'}: {', '.join(under30)}.")
+        else:
+            facts.append("A normal afternoon reaches 30 °C or more in every month of the year.")
+        if el is not None:
+            facts.append(f"The ground at the site's coordinates sits {el:.0f} m above sea level (NASA SRTM).")
+        if site.get('unesco'):
+            facts.append("It is part of a UNESCO World Heritage property.")
+        ld = {"@context": "https://schema.org", "@graph": [
+            {"@type": "WebPage", "name": f"{name} weather by month", "url": url, "description": desc,
+             "isPartOf": {"@id": SITE_URL + "/#site"}},
+            breadcrumb(f"{name} by month", url, "When to go", SITE_URL + "/visit.html")]}
+        body = f"""
+<section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
+  <div class="wrap" style="max-width:860px;">
+    <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="../visit.html" style="color:var(--gold-bright);">When to go</a> &middot; {esc(site.get('gov', ''))} &middot; measured, not marketed</p>
+    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{esc(name)}, month by month.</h1>
+    <p class="lead" style="margin:0;color:#e9dfc8;" lang="ar" dir="rtl">{esc(site.get('name_ar', ''))}</p>
+  </div>
+</section>
+
+<section class="surface-light">
+  <div class="wrap" style="max-width:860px;">
+    <div class="sheet">
+      <span class="seal" aria-hidden="true"><span data-glyph="ankh"></span></span>
+      {''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in facts)}
+      <div class="cta-row" style="margin-top:14px;"><a class="btn btn-primary" href="../plan.html?add={esc(key)}">Add {esc(name)} to my plan &rarr;</a>
+      <a class="btn btn-ghost" href="../fair-prices.html">What things should cost &rarr;</a></div>
+    </div>
+    <div class="sheet" style="margin-top:18px;">
+      <div class="fp-wrap"><table class="fp-table">
+        <caption class="sr-only">{esc(name)}: monthly climate normals</caption>
+        <thead><tr><th scope="col">Month</th><th scope="col" class="num">Afternoon</th><th scope="col" class="num">Night</th>
+        <th scope="col" class="num">Rain, mm/day</th><th scope="col" class="num">Hottest hour on record</th></tr></thead>
+        <tbody>{rows}</tbody></table></div>
+    </div>
+    <p class="chart-cap" style="margin-top:14px;">Afternoon and night are the mean daily maximum and minimum over {esc(clim.get('normal_window', '2001–2020'))}; the record is the hottest hour in that month across the whole series. Source: {esc(clim.get('source', 'NASA POWER'))}, layer dated {esc(clim.get('as_of', ''))}. These are modelled long-run averages checked against published station normals &mdash; not weather-station readings and not a forecast. <a href="../visit.html#checked">How they were checked &rarr;</a></p>
+    <h2 style="font-size:1.2rem;margin-top:30px;">The other measured sites</h2>
+    <div class="chip-row">{others}</div>
+  </div>
+</section>
+"""
+        io.open(os.path.join(outdir, key + '.html'), 'w', encoding='utf-8', newline='\n').write(
+            page(title, desc, url, body, ld, og_image=f"{SITE_URL}/og-visit.png?v=3"))
+        urls.append((url, '0.7'))
+    return urls
+
+
+def _site_name(url):
+    key = url.rsplit('/', 1)[1][:-5]
+    clim = json.load(io.open(os.path.join(SITE, 'data', 'visit-climate.json'), encoding='utf-8'))
+    return next((x['name'] for x in clim.get('sites', []) if x['key'] == key), key)
+
 def build_sitemap(extra):
     # practice.html and tracks.html are retired and 301 away in .htaccess, and
     # the 123 challenge URLs return retirement notices — none of them belong in
     # a sitemap, which is a list of what you want crawled as live content.
     core = [('', '1.0', 'weekly'), ('explore.html', '0.9', 'weekly'), ('case.html', '0.9', 'monthly'), ('streets.html', '0.8', 'monthly'),
             ('blog.html', '0.8', 'weekly'), ('prices.html', '0.7', 'daily'), ('stocks.html', '0.7', 'daily'),
-            ('visit.html', '0.9', 'monthly'), ('geospatial.html', '0.8', 'monthly'), ('places.html', '0.8', 'monthly'), ('invest.html', '0.8', 'monthly'), ('stories.html', '0.9', 'monthly'),
+            ('visit.html', '0.9', 'monthly'), ('plan.html', '0.9', 'monthly'), ('fair-prices.html', '0.9', 'monthly'),
+            ('hieroglyphs.html', '0.8', 'monthly'), ('dossier.html', '0.7', 'monthly'), ('ask.html', '0.7', 'monthly'), ('geospatial.html', '0.8', 'monthly'), ('places.html', '0.8', 'monthly'), ('invest.html', '0.8', 'monthly'), ('stories.html', '0.9', 'monthly'),
             ('about.html', '0.6', 'monthly'), ('community.html', '0.6', 'monthly'), ('privacy.html', '0.3', 'yearly')]
     rows = [f"  <url>\n    <loc>{SITE_URL}/{n}</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>{f}</changefreq>\n    <priority>{p}</priority>\n  </url>"
             for n, p, f in core]
@@ -563,8 +674,16 @@ def main():
     ch, posts, docs = data['c'], data['p'], data.get('docs', {})
     build_challenges(ch, docs)          # returns [] — retired pages stay out of the sitemap
     pu = build_posts(posts)
+    vu = build_site_months()
+    if vu:
+        chips = ''.join(f'<a class="chip" href="visit/{u.rsplit("/", 1)[1]}">' +
+                        esc(_site_name(u)) + '</a>' for u, _ in vu)
+        write_index_block('visit.html', 'SITE-MONTHS',
+            '<section class="surface-light-2" id="by-site" data-nav="Each site, by month">\n'
+            '  <div class="wrap">\n    <div class="kicker"><span data-glyph="ra"></span>One page per site</div>\n'
+            '    <h2>Each site, all twelve months.</h2>\n    <div class="chip-row">' + chips + '</div>\n  </div>\n</section>')
     build_link_indexes(ch, posts)
-    total = build_sitemap(pu)
+    total = build_sitemap(pu + vu)
     nfeed = build_feed(posts)
     build_404()
     # Report the sector split so a mis-mapped sector is visible in the log
@@ -577,6 +696,7 @@ def main():
     for dest in sorted(counts, key=lambda d: -counts[d]):
         print(f"    {counts[dest]:>4} -> {dest}")
     print(f"post pages      : {len(pu)}")
+    print(f"site month pages: {len(vu)}")
     print(f"sitemap URLs    : {total}")
     print(f"RSS feed items  : {nfeed}")
     print("404 page        : written (root-relative, noindex)")

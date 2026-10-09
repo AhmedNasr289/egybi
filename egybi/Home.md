@@ -6,6 +6,8 @@ The knowledge base and plan for **EgyBI** — a free **encyclopaedia of Egypt to
 
 > The site was a **SQL practice platform** until 2026-08-07. That product is retired: the 123 challenge URLs return tombstones, `practice.html` and `tracks.html` 301, and the sql.js engine survives as site infrastructure — any table here can be queried by the reader. See [[The Pivot — From SQL Practice to Encyclopaedia]]. The accounts layer (Argon2id + Google Sign-In, XP/streaks/rank) is **dormant**: its backend is still deployed, but no page loads it, because it tracked progress through challenges that no longer exist.
 
+> 🧭 **2026-10-09 — the site changed job.** egybi.com is now **"Egypt, honestly": a trip companion built on the same cited data**. The home page asks *when are you going?* and answers with measured heat at 18 sites, the holidays inside your dates and today's rate. Around it: a route planner that prints a Papyrus dossier (`plan.html`), sourced fair prices (`fair-prices.html`), a hieroglyph name studio (`hieroglyphs.html`), the dossier (`dossier.html`), a $49 plan check (`ask.html`) and one generated page per measured site (`visit/<site>.html`). The encyclopaedia stays, as **Egypt in data**. Every page now wears the [[Papyrus Design System]]. Why: [[The Pivot — Egypt, Honestly]].
+
 > 📱 **New device?** See [[Using This Vault]] — how to open this vault in Obsidian on your phone or laptop and keep it synced with the repo.
 
 ---
@@ -24,12 +26,17 @@ The knowledge base and plan for **EgyBI** — a free **encyclopaedia of Egypt to
 - [[Relationship to EGYBi]] — name/domain history (Per Ankh → EgyBI; why the domain is `egybi.com`)
 - [[Risks & Mitigations]]
 
+## 💰 Income & the pivot
+- [[The Pivot — Egypt, Honestly]] — **current**: the trip companion, its income model ($49 plan check, $12 dossier, plain affiliate links once a programme confirms Egypt payout) and the stop rules
+- [[Income Plan — Site to 200 a Month]] · [[Income Routes — Any Career]] · [[egybi.com — 300 to 400 a Month]] · [[Income Plan — 1,000 to 2,000 a Month]] · [[Dropshipping — Can It, Should It]] — the earlier plans it replaced, kept as the record of what was weighed
+
 ## 📚 Product & content
 - [[Curriculum & Skill Tracks]] — the 9 skill tracks, book-grounded reading lists, and named exercises
 - [[Historical Data & Challenge Themes]] — real Egyptian datasets mapped into concrete challenges per track
 - [[Brand & Creative Identity]] — the Egyptian mythology/art research behind the mascot, ranks, badges, palette
 
 ## 🛠️ Build & tech
+- [[Papyrus Design System]] — the parchment sheet, torn gold edge, seal and scroll rod on every page; the self-hosted hieroglyph font; the dossier print stylesheet
 - [[Frontend & Design System]] — the colour identity + the 18-page site (`../site/`) + the wayfinding system + the home-page flag
 - [[Backend & Knowledge Base]] — the 61-table KB + PHP/MySQL API (`../backend/`); deploy guide at `../backend/DEPLOY.md`
 - [[Challenge Engine & Data Pipeline]] — the auto-graded SQL problem set + the World Bank refresh pipeline

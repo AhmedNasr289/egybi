@@ -201,6 +201,9 @@ CADENCE = {  # workflow -> max days a file may age before the page is misciting
     "build-geo-assets.yml": 45, "refresh-streets.yml": 120,
     "build-visit-layers.yml": None,   # manual by design; sources are fixed
 }
+# Files compiled by hand from named sources (no workflow writes them), with the
+# number of days before each must be re-read against its sources.
+HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90}
 writers = {}
 for wf in glob.glob(".github/workflows/*.yml"):
     t = Path(wf).read_text(encoding="utf-8")
@@ -229,6 +232,12 @@ for f in sorted(glob.glob("site/data/*.json")):
     age = (TODAY - datetime.date(*map(int, m.groups()))).days
     wf = writers.get(name)
     limit = CADENCE.get(wf, "unknown")
+    # Hand-compiled, cited files have no pipeline, but they are not exempt
+    # from going stale: a tipping range or a holiday forecast has a shelf life.
+    # They get a review interval instead of a cadence, and age past it is a
+    # finding exactly like a pipeline that stopped running.
+    if wf is None and name in HAND_CURATED:
+        wf, limit = "hand review", HAND_CURATED[name]
     if limit is None:
         continue
     if limit == "unknown":

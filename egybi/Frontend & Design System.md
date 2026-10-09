@@ -381,3 +381,41 @@ already states every figure they encode. Interactivity there would add a focus
 stop per paragraph for a reader who gains nothing by landing on it, and would
 invite panning an illustration off its subject. The reasoning is written into
 `stories.js` so the next person changes it deliberately or not at all.
+
+## 2026-10-09 — The trip companion and the Papyrus look
+
+The site's job changed (see [[The Pivot — Egypt, Honestly]]). The full design detail is in [[Papyrus Design System]].
+
+**Navigation is travel-first.** The header now reads Home · Plan · When to go · Fair prices · Hieroglyphs · Dossier · Places · Atlas · Stories · Data · About, and the call to action is **Plan check**. Prices, Stocks, Invest, Streets, Blog and Community moved to the footer, which now has two columns: **Plan a trip** and **Egypt in data**.
+
+**New pages:**
+
+| Page | What it does |
+|---|---|
+| `plan.html` | Route planner on the tile-free map. Prints a dossier through print CSS: no PDF library, no server |
+| `fair-prices.html` | Traveller prices with named sources, beside the IDSC market feed |
+| `hieroglyphs.html` | Name studio |
+| `dossier.html` | The dossier: the free version now, the $12 pack described honestly as in preparation |
+| `ask.html` | The $49 plan check, requested by email |
+| `visit/<site>.html` × 18 | One per measured site, generated from `visit-climate.json` by `build_static_pages.py` and linked from `visit.html` |
+
+**New shared scripts:**
+
+| Script | Job |
+|---|---|
+| `trip.js` | The one store: dates, stops and name in localStorage only, with every read and write wrapped in try/catch. It also holds the date, heat-band, distance, holiday and rate helpers |
+| `home.js` | The home-page briefing |
+| `plan.js` | The planner and the dossier |
+| `fair.js` | The fair-prices page |
+| `cartouche.js` | Spelling a name in Gardiner's uniliteral signs, with honest labelling |
+| `hieroglyphs.js` | The studio page. Its PNG is drawn on a canvas in the browser, so nothing is uploaded |
+| `ask.js` | Pre-fills the plan-check email from the saved plan |
+
+**New data.** Both files are hand-compiled and cited row by row:
+
+| File | Review interval (enforced by `coverage.py`'s `HAND_CURATED`) |
+|---|---|
+| `site/data/calendar.json` | 120 days |
+| `site/data/fair-prices.json` | 90 days |
+
+The EGX ticker (TradingView) left the home page, which now loads one fewer third-party widget. It remains on `stocks.html`.

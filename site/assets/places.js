@@ -343,6 +343,13 @@
     }
 
     var links = refLinks(p);
+    // Into the trip planner: the place travels in the URL, and the planner
+    // adds it as a stop in this browser's saved plan. Same tab, because it is
+    // a step in this site rather than a reference elsewhere.
+    var planHref = 'plan.html?place=' + encodeURIComponent(p.name) + '&lat=' + p.lat.toFixed(5) +
+      '&lon=' + p.lon.toFixed(5) + (p.gov ? '&gov=' + encodeURIComponent(p.gov) : '') +
+      (p.kind ? '&kind=' + encodeURIComponent(p.kind) : '');
+    out.push('<p style="margin:0 0 10px;"><a class="btn btn-blue btn-small" href="' + esc(planHref) + '">+ Add to my trip plan</a></p>');
     out.push('<ul class="pd-links">' + links.map(function (l) {
       return '<li><a href="' + esc(l[1]) + '" target="_blank" rel="noopener">'
         + esc(l[0]) + '</a><span>' + l[2] + '</span></li>';

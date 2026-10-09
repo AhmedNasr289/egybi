@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EgyBI — Egypt in Maps and Cited Data</title>
+<title>EgyBI — Plan Egypt Honestly: Real Heat, Holidays and Prices</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="description" content="An encyclopaedia of Egypt told through maps and open data: governorates, heritage, street networks, prices and history. Every figure carries its source.">
+<meta name="description" content="Pick your dates: measured heat at Egypt's major sites, the holidays in your trip, today's rate and fair prices — every figure sourced.">
 <meta property="og:title" content="EgyBI — Egypt in Maps and Cited Data">
 <meta property="og:description" content="An encyclopaedia of Egypt told through maps and open data. Every figure carries its source and date.">
 <meta property="og:type" content="website">
@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=39" rel="stylesheet">
+<link href="assets/egybi.css?v=40" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -117,22 +117,21 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
     <nav class="nav-links" id="navLinks" aria-label="Main">
       <a href="index.html" class="active">Home</a>
-      <a href="visit.html">Visit</a>
-      <a href="explore.html">Explore</a>
-      <a href="prices.html">Prices</a>
-      <a href="stocks.html">Stocks</a>
-      <a href="geospatial.html">Atlas</a>
+      <a href="plan.html">Plan</a>
+      <a href="visit.html">When to go</a>
+      <a href="fair-prices.html">Fair prices</a>
+      <a href="hieroglyphs.html">Hieroglyphs</a>
+      <a href="dossier.html">Dossier</a>
       <a href="places.html">Places</a>
-      <a href="invest.html">Invest</a>
+      <a href="geospatial.html">Atlas</a>
       <a href="stories.html">Stories</a>
-      <a href="streets.html">Streets</a>
-      <a href="blog.html">Blog</a>
-      <a href="community.html">Community</a>
+      <a href="explore.html">Data</a>
       <a href="about.html">About</a>
+      <a class="nav-only-mobile" href="ask.html">Plan check</a>
       <a class="nav-only-mobile" href="#newsletter">Newsletter</a>
     </nav>
     <div class="nav-actions">
-      <a class="cta" href="#newsletter">Newsletter</a>
+      <a class="cta" href="ask.html">Plan check</a>
     </div>
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
   </div>
@@ -153,15 +152,16 @@
   <div class="hero-inner wrap" data-mo-hero>
    <div class="hero-layout">
     <div>
-    <p class="hero-eyebrow"><span data-glyph="reed"></span> Real data &middot; Every figure sourced &middot; No signup <span data-glyph="scroll"></span></p>
-    <h1 class="hero-h1">Egypt, in maps and cited data.</h1>
-    <p class="lead hero-lead">An encyclopaedia of Egypt built on open data &mdash; its 27 governorates, its heritage sites, its streets and its prices. Every figure carries the source and date it came from, and links back to the dataset it was taken out of.</p>
+    <p class="hero-eyebrow"><span data-glyph="reed"></span> Egypt, honestly &middot; Every figure sourced &middot; No signup <span data-glyph="scroll"></span></p>
+    <h1 class="hero-h1">When are you going to Egypt?</h1>
+    <p class="lead hero-lead">Pick your dates. You get what a normal afternoon is measured to reach at each of eighteen major sites, which holidays fall inside your trip, today&rsquo;s rate and what things should cost &mdash; each figure with the source and date it came from.</p>
 
-
-    <div class="cta-row hero-cta">
-      <a href="geospatial.html" class="btn btn-primary" data-ev="hero_open_atlas">Open the Atlas &rarr;</a>
-      <a href="#newsletter" class="btn btn-ghost">Get The Papyrus</a>
-    </div>
+    <form class="trip-form" id="tripForm" novalidate>
+      <label>Arriving<input type="date" id="tripStart" name="start" required></label>
+      <label>Leaving<input type="date" id="tripEnd" name="end" required></label>
+      <button type="submit" class="btn btn-primary" data-ev="home_brief">Show my briefing &rarr;</button>
+    </form>
+    <p class="form-note" id="tripNote" role="status" aria-live="polite"></p>
     </div>
 
     <!-- role="img" makes this a single leaf in the accessibility tree, which is
@@ -182,7 +182,70 @@
   </div>
 </section>
 
-<!-- STATS -->
+<nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
+
+<!-- THE BRIEFING — rendered by assets/home.js from visit-climate.json,
+     calendar.json and fx-today.json. No figure is typed into this markup. -->
+<section class="surface-light" id="briefing" data-nav="Your briefing">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="ra"></span>Your briefing</div>
+    <h2 id="briefTitle">The heat, site by site.</h2>
+    <p class="lead" id="briefLead">Loading the climate record&hellip;</p>
+    <div class="heat-legend" id="heatLegend" aria-hidden="true"></div>
+    <div class="brief-grid" id="briefGrid"></div>
+    <p class="chart-cap" id="briefCap"></p>
+  </div>
+</section>
+
+<section class="surface-light-2" id="when" data-nav="Holidays &amp; the rate">
+  <div class="wrap">
+    <div class="grid grid-2">
+      <div class="sheet">
+        <div class="kicker"><span data-glyph="scroll"></span>Inside your dates</div>
+        <h3 style="margin:0 0 6px;color:var(--blue-deep);">Holidays and closures to know about</h3>
+        <ul class="event-list" id="eventList"></ul>
+        <p class="chart-cap" id="eventCap"></p>
+      </div>
+      <div class="sheet">
+        <div class="kicker"><span data-glyph="maat"></span>Today&rsquo;s rate</div>
+        <h3 style="margin:0 0 6px;color:var(--blue-deep);">What your money is worth in pounds</h3>
+        <div id="rateBox"><p class="chart-cap">Loading the rate&hellip;</p></div>
+        <p style="margin-top:16px;"><a class="btn btn-blue btn-small" href="fair-prices.html" data-ev="home_to_prices">What things should cost &rarr;</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="surface-dark" id="tools" data-nav="The tools">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="was"></span>Four tools, one trip</div>
+    <h2>Plan it with the same data.</h2>
+    <p class="lead">Everything below reads the same cited files as the briefing above, and remembers your dates on this device only &mdash; nothing is sent anywhere, and there is nothing to sign up for.</p>
+    <div class="grid grid-2" style="margin-top:28px;">
+      <a class="card card-link" href="plan.html" data-ev="home_to_plan">
+        <span class="tag">Route planner</span>
+        <h3>Put your stops on the map.</h3>
+        <p>Choose from 18 major sites and 897 mapped places, set the days at each, and see the measured heat and the straight-line distances. Print it as a Papyrus dossier.</p>
+      </a>
+      <a class="card card-link" href="fair-prices.html" data-ev="home_to_fair">
+        <span class="tag">Fair prices</span>
+        <h3>What should it cost?</h3>
+        <p>Tips, entry and rides as published by named guides, converted at today&rsquo;s rate &mdash; and where two sources disagree, both are shown.</p>
+      </a>
+      <a class="card card-link" href="hieroglyphs.html" data-ev="home_to_glyphs">
+        <span class="tag">Name studio</span>
+        <h3>Your name in hieroglyphs.</h3>
+        <p>Spelled sign by sign from Gardiner&rsquo;s list, in a cartouche you can save &mdash; and honest that it is a transliteration, not a translation.</p>
+      </a>
+      <a class="card card-link" href="ask.html" data-ev="home_to_ask">
+        <span class="tag">Plan check</span>
+        <h3>Have your plan read by someone in Cairo.</h3>
+        <p>Send your draft itinerary; get a written check of heat, distances, holidays and prices against the data, within 48 hours.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- FEATURED CASE -->
 <section class="surface-light-2" id="featured-case">
   <div class="wrap">
@@ -227,9 +290,9 @@
      have been worth it either. Where a count genuinely earns its place, it is
      computed on the page that owns the data — see the entropy spread and the
      dead-end finding on streets.html. -->
-<section class="surface-dark" id="inside">
+<section class="surface-light-2" id="inside" data-nav="Egypt in data">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>What&rsquo;s inside</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Egypt in data</div>
     <h2 data-aos="fade-up">Six ways into the country.</h2>
     <p class="lead" data-aos="fade-up">Egypt is a large subject and there is no single right door. Each of these answers a different question, and they all draw on the same cited data underneath.</p>
     <div class="grid grid-3" style="margin-top:32px;">
@@ -264,7 +327,7 @@
         <p>Intersection density, dead ends and circuity across districts spanning the 1860s to the desert new towns &mdash; measured, not asserted.</p>
       </a>
     </div>
-    <div class="cta-row" data-aos="fade-up"><a href="visit.html" class="btn btn-primary">Plan a visit to Egypt →</a></div>
+    <div class="cta-row" data-aos="fade-up"><a href="plan.html" class="btn btn-primary">Plan your route &rarr;</a></div>
   </div>
 </section>
 
@@ -278,21 +341,6 @@
       <h3>Egypt tourism — arrivals &amp; revenue</h3>
       <div class="chart-box"><canvas id="tourismChart"></canvas></div>
       <p class="chart-cap">Source: Ministry of Tourism &amp; Antiquities, Central Bank of Egypt, UNWTO/World Bank. 2021 revenue is left blank because sources genuinely disagree. <a href="explore.html">See the full data explorer →</a></p>
-    </div>
-  </div>
-</section>
-
-<!-- LIVE EGX TICKER — built from the shared egx-symbols.js company list -->
-<section class="surface-light-2">
-  <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Live markets</div>
-    <h2 data-aos="fade-up">The Egyptian Exchange, live.</h2>
-    <p class="lead" data-aos="fade-up">A running ticker of major EGX names — live data belongs on a data platform. <strong>Information only, not investment advice.</strong></p>
-    <div style="margin-top:22px;background:var(--papyrus-2);border:1px solid var(--line-light);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow-light);">
-      <div class="tradingview-widget-container" id="home-ticker"></div>
-    </div>
-    <div class="cta-row" data-aos="fade-up" style="margin-top:20px;">
-      <a href="stocks.html" class="btn btn-primary">Explore the stock market &rarr;</a>
     </div>
   </div>
 </section>
@@ -351,9 +399,9 @@
   <div class="wrap" style="max-width:720px;">
     <div class="papyrus-letter" data-mo>
       <div class="pl-seal" aria-hidden="true"><span class="pl-seal-glyph" data-glyph="ankh"></span></div>
-      <p class="kicker" style="margin-bottom:6px;"><span data-glyph="scroll"></span> The Papyrus &middot; medu netjer, in data</p>
-      <h2 style="font-size:clamp(1.5rem,4vw,2.1rem);margin:0 0 12px;">One letter a month. Always a number you did not know.</h2>
-      <p class="lead" style="margin:0 0 18px;">Each issue carries the datasets and challenges added that month, and one short story pulled straight from the database &mdash; the kind of fact that changes how a place looks to you.</p>
+      <p class="kicker" style="margin-bottom:6px;"><span data-glyph="scroll"></span> The Papyrus &middot; before you go</p>
+      <h2 style="font-size:clamp(1.5rem,4vw,2.1rem);margin:0 0 12px;">One letter a month, for anyone planning Egypt.</h2>
+      <p class="lead" style="margin:0 0 18px;">The coming month measured: the heat at the sites, the holidays ahead, how the pound has moved &mdash; and one short story from the data that changes how a place looks to you.</p>
 
       <blockquote class="pl-specimen">
         <span class="pl-specimen-label"><span data-glyph="scarab"></span> From the last issue</span>
@@ -379,10 +427,11 @@
   <div class="cols">
     <div>
       <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
-      <p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">An encyclopaedia of Egypt told through maps and cited open data — every figure carries its source and its date.</p>
+      <p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — real heat, holidays and prices, every figure with its source and its date.</p>
     </div>
-    <div><h2 class="foot-h">Egypt</h2><a href="visit.html">Plan a Visit</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="invest.html">Where Egypt is building</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="explore.html">Egypt Data</a></div>
-    <div><h2 class="foot-h">More</h2><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="#newsletter">Newsletter</a></div>
+    <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
+    <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
+    <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="#newsletter">Newsletter</a></div>
     <div><h2 class="foot-h">Data sources</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="explore.html">Full source list</a></div>
   </div>
   <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
@@ -395,8 +444,8 @@
 <script src="assets/egybi.js?v=2"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
-<script src="assets/egx-symbols.js?v=2"></script>
-<script>if (window.EGYBI_EGX) EGYBI_EGX.tickerTape('home-ticker');</script>
+<script src="assets/trip.js?v=1"></script>
+<script src="assets/home.js?v=1"></script>
 <script>window.EGYBI_NEWSLETTER = { endpoint: 'api/newsletter.php' };</script>
 <script src="assets/newsletter.js"></script>
 <script>

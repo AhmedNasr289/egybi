@@ -79,7 +79,15 @@ const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
       if (x.mark) {
         try {
           const shot = await p.locator(`[data-ctr-flag="${x.mark}"]`).screenshot({ timeout: 8000 });
-          real = await p.evaluate(async (dataUrl) => {
+          // The ground is the most common colour in the crop that is NOT the
+          // text's own ink. On a small bold label the glyphs are one uniform
+          // colour while the ground behind them is split across several shades
+          // (a halo, antialiasing, a map fill), so a plain mode can elect the
+          // ink itself and score the text against itself at 1:1 — which is
+          // how a legible "Luxor" on visit.html's relief map, dark on light
+          // land, was reported as failing. Pixels within a small distance of
+          // the foreground colour are glyph, not ground, and are left out.
+          real = await p.evaluate(async ([dataUrl, fg]) => {
             const img = new Image(); img.src = dataUrl; await img.decode();
             const cv = document.createElement('canvas');
             cv.width = img.width; cv.height = img.height;
@@ -87,13 +95,14 @@ const PAGES = fs.readdirSync('site').filter(f => f.endsWith('.html'))
             const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
             const hist = new Map();
             for (let i = 0; i < d.length; i += 4) {
+              if (Math.abs(d[i]-fg[0]) + Math.abs(d[i+1]-fg[1]) + Math.abs(d[i+2]-fg[2]) < 48) continue;
               const k = `${d[i]},${d[i+1]},${d[i+2]}`;
               hist.set(k, (hist.get(k) || 0) + 1);
             }
             let best = null, n = -1;
             for (const [k, v] of hist) if (v > n) { n = v; best = k; }
-            return best.split(',').map(Number);
-          }, 'data:image/png;base64,' + shot.toString('base64'));
+            return best ? best.split(',').map(Number) : null;
+          }, ['data:image/png;base64,' + shot.toString('base64'), x.fg]);
         } catch (e) { real = null; }
       }
       if (real) {

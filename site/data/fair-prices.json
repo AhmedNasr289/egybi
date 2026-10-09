@@ -1,0 +1,50 @@
+{
+  "as_of": "2026-10-09",
+  "fetched_at": "2026-10-09",
+  "source": "Hand-compiled from the sources named on each row; read 2026-10-09",
+  "note": "What travellers are told things should cost in Egypt. These are NOT official prices: almost none exist for taxis, rides or tips, and every figure below comes from a named travel guide or tour operator, which is the best published evidence there is and is weaker than this site's usual sources. So every row carries who said it and when, a range rather than a single number, and — where two sources disagree — both. Where no source gives a figure we could check, the row says so instead of guessing. EGP amounts are converted at the day's market rate on the page; the conversion moves daily, the underlying quote does not.",
+  "groups": [
+    {
+      "key": "tips", "title": "Tipping",
+      "rows": [
+        { "key": "tip-camel", "item": "Camel or horse handler, after the ride", "low": 50, "high": 100, "currency": "EGP", "unit": "per ride",
+          "note": "On top of the ride price, not part of it.",
+          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator" },
+        { "key": "tip-felucca", "item": "Felucca captain", "low": 100, "high": 200, "currency": "EGP", "unit": "per one-hour sail, total (not per person)",
+          "note": "The same guide suggests more for longer sunset sails.",
+          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator" },
+        { "key": "tip-housekeeping", "item": "Hotel housekeeping", "low": 50, "high": 100, "currency": "EGP", "unit": "per room per day",
+          "note": "Left daily, because the person who cleaned the room on Tuesday may not be working on Thursday.",
+          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator" },
+        { "key": "tip-cruise", "item": "Nile cruise crew (pooled envelope)", "low": 10, "high": 15, "currency": "USD", "unit": "per person per night",
+          "conflict": "The same operator's own Egypt travel guide says $25–40 in total for the whole trip — for a four-night cruise the nightly figure comes to $40–60, well above that. Ask the cruise operator.",
+          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator" },
+        { "key": "tip-guide-flat", "item": "Tour guide, standard tour", "low": 100, "high": 200, "currency": "EGP", "unit": "per tour, by length",
+          "conflict": "The same guide also gives 10% of a half-day tour's price and 20% of a full-day or private one; Mara House Luxor suggests US$25 or more per day on multi-day tours. The three rules give very different answers — the flat figure is the lowest.",
+          "source": "Travelling King — Tipping guide for Egypt", "source_url": "https://www.travellingking.com/tipping-guide-for-egypt/", "published": "undated", "kind": "travel blog" },
+        { "key": "tip-guide-day", "item": "Tour guide, multi-day tour", "low": 25, "high": null, "currency": "USD", "unit": "per day, or more",
+          "source": "Mara House Luxor — Tipping in Egypt", "source_url": "https://marahouseluxor.com/tipping-in-egypt/", "published": "undated", "kind": "tour operator" }
+      ]
+    },
+    {
+      "key": "entry", "title": "Entry",
+      "rows": [
+        { "key": "giza-entry", "item": "Giza Plateau entry, adult foreign visitor", "low": 700, "high": 700, "currency": "EGP", "unit": "per person",
+          "note": "Students with an international student card pay half (350 EGP). Entering the Great Pyramid itself is a separate ticket. Ticket prices change without notice — the Ministry's own ticketing site is the authority.",
+          "official_url": "https://egymonuments.gov.eg/",
+          "source": "trvlogue — Giza Pyramids guide 2026 (Japanese edition), prices as of March 2026", "source_url": "https://www.trvlogue.com/ja/giza-pyramids-guide", "published": "2026-03", "kind": "travel guide" }
+      ]
+    },
+    {
+      "key": "rides", "title": "Rides and transport",
+      "rows": [
+        { "key": "camel-ride", "item": "Camel ride at Giza", "low": null, "high": null, "currency": "EGP", "unit": "per ride",
+          "note": "No source we could check publishes a reliable figure, and no official price list turned up. What every guide agrees on: agree the TOTAL, the duration and the return leg before you get on.",
+          "source": "Searched 2026-10-09: no verifiable published price", "source_url": null, "published": null, "kind": "none" },
+        { "key": "app-ride", "item": "A ride across a city by taxi or ride-hailing app", "low": 1, "high": 3, "currency": "USD", "unit": "per ride, typical",
+          "note": "A broad comparison figure, not a fare table. The honest anchor for any street taxi is the fare the Uber or Careem app quotes for the same trip — open it before you agree a price, even if you then take a street taxi. Aswan has a documented airport-taxi overcharging pattern.",
+          "source": "tabiji — Morocco vs Egypt (2026 comparison) and Aswan scam guide", "source_url": "https://tabiji.ai/compare/morocco-vs-egypt/", "published": "2026", "kind": "travel guide" }
+      ]
+    }
+  ]
+}

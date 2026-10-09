@@ -1,9 +1,15 @@
 # EgyBI — Project Root
 
-**EgyBI** is a free **encyclopaedia of Egypt told through maps and cited open data** — its
-27 governorates, its heritage, its streets, its prices and its history. Every figure carries
-the source and the date it came from, and where sources genuinely disagree the page says so
-rather than picking the tidier number. It deploys to **egybi.com** (Hostinger) on `git push`.
+**EgyBI** is **"Egypt, honestly"** — a trip companion built on cited open data. Pick your
+dates and it answers what a normal afternoon reaches at each major site, which holidays fall
+inside the trip, what your money is worth today and what things should cost; then it plans the
+route on a tile-free map and prints it as a Papyrus dossier. Underneath sits the original
+**encyclopaedia of Egypt** — governorates, heritage, streets, prices and history — now the
+**Egypt in data** section. Every figure carries the source and the date it came from, and where
+sources disagree the page says so. It deploys to **egybi.com** (Hostinger) on `git push`.
+
+> **2026-10-09 — the pivot to a trip companion.** Why, and the income model:
+> `egybi/The Pivot — Egypt, Honestly.md`. The look on every page: `egybi/Papyrus Design System.md`.
 
 > The site was a **SQL practice platform** until 2026-08-07. That product is retired: the 123
 > challenge URLs return retirement notices, `practice.html` and `tracks.html` 301 away, and the
@@ -23,7 +29,12 @@ perankh/
 ├── egy_adm1_simplified.geojson  geoBoundaries EGY ADM1, mapshaper-simplified (CC BY 4.0)
 │
 ├── site/                        ← the FRONTEND (static, deploys to egybi.com root)
-│   ├── index.html                  Home — the flag, the pitch, The Papyrus signup
+│   ├── index.html                  Home — "When are you going?": heat, holidays and the rate for your dates
+│   ├── plan.html                   Route planner on the tile-free map; prints a Papyrus dossier
+│   ├── fair-prices.html            Tips, entry and rides from named sources + the IDSC market feed
+│   ├── hieroglyphs.html            Name studio — Gardiner uniliteral signs, a transliteration
+│   ├── dossier.html  ask.html      The dossier (free now, $12 pack in preparation); the $49 plan check
+│   ├── visit/                      18 generated pages — each measured site, month by month
 │   ├── explore.html                Egypt in charts, clustered into seven themes
 │   ├── visit.html                  Planning a trip: NASA climate normals, SRTM elevation,
 │   │                               five measured terrain cross-sections
@@ -37,12 +48,15 @@ perankh/
 │   ├── stocks.html                 EGX charts and screener (information only, not advice)
 │   ├── blog.html / community.html / about.html / privacy.html / 404.html
 │   ├── practice.html, tracks.html  Tombstones — 301 away, kept so old links land somewhere
-│   ├── practice/  papyrus/         135+ generated pages (retirement notices + newsletter issues)
+│   ├── practice/  papyrus/         135 generated pages (retirement notices + newsletter issues)
 │   ├── data/                       Every dated JSON the pipelines write (see below)
 │   ├── api/                        Framework-free read-only PHP/MySQL API, plus the isolated
 │   │                               write-side endpoints (newsletter, moderated community board)
 │   └── assets/
-│       ├── egybi.css               THE design system — one file, every page
+│       ├── egybi.css               THE design system — one file, every page (incl. the Papyrus look)
+│       ├── trip.js  home.js  plan.js  fair.js  cartouche.js  hieroglyphs.js  ask.js
+│       │                           The trip companion: one localStorage store + the page modules
+│       ├── fonts/                  Self-hosted hieroglyph subset (Noto, SIL OFL 1.1, licence beside it)
 │       ├── egybi.js                Shared behaviour (nav, reduced-motion flag, escaping)
 │       ├── mapkit.js               Shared map behaviour: controls, locator, credit, choropleth
 │       ├── egypt-geo.js            Bundled governorate geometry + KB figures (generated)
@@ -77,7 +91,8 @@ perankh/
 | `build_egypt_map.py` | `site/assets/egypt-geo.js` | no |
 | `build_flag.py` | `site/assets/egypt-silhouette.svg` | no |
 | `build_invest_map.py` | `site/data/invest-projects.json` | no |
-| `build_static_pages.py` | 135+ pages, `sitemap.xml`, `feed.xml`, `404.html` | no |
+| `build_static_pages.py` | 153 pages (incl. `visit/<site>.html`), `sitemap.xml`, `feed.xml`, `404.html` | no |
+| *(by hand, cited row by row)* | `site/data/calendar.json` (re-read every 120 d), `fair-prices.json` (every 90 d) | — |
 | `build_og_image.py`, `build_favicons.py`, `build_planner_notes.py` | image and note assets | no |
 
 Every network pipeline keeps its last-good file per layer when a source fails, and exits
@@ -85,7 +100,7 @@ non-zero so the Actions run shows red instead of publishing a hole.
 
 ## 🚀 Current status (live at egybi.com)
 
-- **Frontend:** 18 top-level pages plus 12 data stories and 123 retirement notices — 153 in all. Hand-written
+- **Frontend:** 23 top-level pages, 18 generated site pages, 12 data stories and 123 retirement notices — 176 in all. Hand-written
   HTML, CSS and vanilla JS — **no framework and no build step**; deployment is `git push`. Every
   map is tile-free vector Leaflet with **zero runtime requests to any map provider**, measured
   with request interception during real panning and zooming rather than assumed.

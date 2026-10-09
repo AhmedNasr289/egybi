@@ -876,3 +876,43 @@ state, not a broken one.
 - ⭐ **The price archive is 71.4% dense, and both business plans called it daily.** Re-read on 2026-08-28: **35 observation days across a 49-day span** (2026-07-09 → 2026-08-26), 132 retail and 105 wholesale commodities. **The code settles why**: a point is keyed by IDSC's own `as_of` and a duplicate is never appended, so an isolated missing date means the source published nothing for it — the runs on 08-17 and 08-23 succeeded and added no point. A *run* of missing dates is pipeline downtime instead, which is what 07-10 → 07-17 is, and it has issue #35. `fetch_prices.py` now writes a `coverage` block saying all of this in the file (**~650 bytes** on a 320 KB file), and [[SaaS Conversion Plan]] and [[Tourism Services Plan]] are corrected.
 - ⚠️ **The working tree was on the wrong branch for the whole audit.** `HEAD` sat on the stale `claude/project-artifacts-memory-review-0tgzxz` at an eleven-day-old commit missing four `site/data` files, and the first freshness table produced described that tree. It was discarded and everything re-read from `origin/main`. Nothing was lost — `97995f8` is an ancestor of `origin/main` — but a commit from there would have landed on the wrong branch, and **the first number a stale checkout gives you looks exactly like a real one**.
 - **Corrected while checking:** the gazetteer is **873** places, not 757 (`README.md` still said 757 after [[Home]] was fixed), and there are **twelve** workflows, not eleven. The table in [[Automation & CI Pipelines]] is flagged as verified 2026-07-21 and since drifted — it calls `build-geo-assets` and `refresh-streets` manual-only when both now run on crons, and omits `verify-browser` entirely. `workflow-audit.py` reads the truth from the YAML on every CI run; trust it over the table.
+
+## 2026-10-09 — The pivot: "Egypt, honestly", a trip companion dressed in Papyrus
+
+Ahmed rejected four income plans in a row and asked for an idea that changes the site entirely. The chosen concept and the four rejected alternatives are in [[The Pivot — Egypt, Honestly]]; the earlier plans are saved as [[Income Plan — Site to 200 a Month]], [[Income Routes — Any Career]], [[egybi.com — 300 to 400 a Month]], [[Income Plan — 1,000 to 2,000 a Month]] and [[Dropshipping — Can It, Should It]].
+
+### What was built
+- ✅ **The home page asks "When are you going?"** For the reader's own dates it answers with three things:
+  - the measured afternoon and night at all 18 sites (NASA POWER, 2001–2020 normals);
+  - the holidays inside the trip, with lunar ones marked *expected*;
+  - today's rate.
+
+  Every figure is printed with its source and date. The animated flag stays.
+- ✅ **New pages:**
+
+  | Page | What it does |
+  |---|---|
+  | `plan.html` | Route planner on the tile-free map. Heat comes from the nearest measured site, and only if one is within 60 km |
+  | `fair-prices.html` | Traveller prices from named guides, with disagreements shown. A camel ride at Giza shows *no checkable figure* rather than a guess |
+  | `hieroglyphs.html` | Gardiner uniliteral signs, labelled as a transliteration, not a translation |
+  | `dossier.html` | The free version now; the $12 pack described honestly as not on sale |
+  | `ask.html` | The $49 plan check, requested by email; payment only after we confirm |
+  | `visit/<site>.html` × 18 | Generated, measurement only, no "best time" claim |
+
+- ✅ **The printable dossier.** The planner prints a cover (with the traveller's name in a cartouche), one sheet per stop, the holidays and the sources, using print CSS only.
+- ✅ **[[Papyrus Design System]] on every page**, made through the shared classes, so every page changed with no per-page markup.
+- ✅ **Navigation:**
+  - The header is now travel-first, with **Plan check** as the call to action.
+  - A new **Egypt in data** footer column holds the encyclopaedia.
+  - The EGX ticker left the home page.
+
+### What is deliberately not there yet
+- ⚠️ **No affiliate link of any kind.** None of the programmes (Awin/GetYourGuide, Impact/Airalo, SafetyWing, CJ/Booking) has yet confirmed in its dashboard that it pays an Egypt-resident publisher. Airbnb has no open cash programme in 2026.
+- ⚠️ **No buy button for the $12 pack.** No Payhip or Lemon Squeezy listing exists yet.
+- ⚠️ **The $49 offer is live on this branch, but it is paid outside work.** The employment-contract check in the plan comes **before** merging to `main`.
+
+### Fixed at the source on the way
+- ✅ **The home hero's flag caption measured 4.02:1**, below the 4.5:1 that AA requires. The fault was already on `main`, and it is now fixed.
+- ✅ **`contrast.js` scored a legible label against its own ink.** It reported "Luxor" on `visit.html`'s relief map at 1:1, although the label is dark text on light land. The pixel pass takes the most common colour in the crop as the ground. On a small bold label the glyphs are one uniform colour, while the ground is split across halo and antialiasing shades, so the "ground" it elected was the ink itself. Pixels within a small distance of the text colour are now excluded from that vote. If nothing is left, the finding still fails, on the conservative worst-stop figure. A first guess (map animation) was tested and was wrong.
+- ✅ **`coverage.py` had no way to age-check hand-compiled data.** It reported such files as "no workflow writes it". It now has `HAND_CURATED` review intervals: 120 days for the calendar, 90 days for fair prices.
+- ✅ **The trip-form date inputs had no visible focus ring** (found by `a11y2.js`). The ring now applies on `:focus` and `:focus-within`. Tab steps through a date input's day, month and year fields and its calendar button, and `:focus` alone stops matching at the calendar button.
