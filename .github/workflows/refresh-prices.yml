@@ -87,19 +87,28 @@ jobs:
           set -o pipefail
           python3 backend/verify/static-audit.py 2>&1 | tee -a /tmp/prices-refresh.log
 
-      # prices.html is byte-identical day to day — its prices come from the JSON
-      # above — so only this step can tell crawlers the page changed. It moves
-      # that one URL's <lastmod> to the data's own date and touches nothing else.
-      # No node, no page regeneration; a shallow clone is fine (data dates only).
-      - name: Move the sitemap date of the prices page
+      # The static "today's biggest moves" summary in prices.html, and the
+      # Arabic page prices-ar.html derived from it. Fails (-> alert) rather than
+      # writing a half-translated page if prices.html changed shape.
+      - name: Rebuild the static price summaries and the Arabic page
+        shell: bash
+        run: |
+          set -o pipefail
+          python backend/pipeline/build_prices_pages.py 2>&1 | tee -a /tmp/prices-refresh.log
+
+      # The prices pages' cards come from the JSON above, so only this step can
+      # tell crawlers the pages changed. It moves those URLs' <lastmod> to the
+      # data's own date and touches nothing else. No node; a shallow clone is
+      # fine (data dates only).
+      - name: Move the sitemap date of the prices pages
         run: python backend/pipeline/sitemap_lastmod.py --changed-out /tmp/changed-urls.txt
 
       - name: Commit & push if prices changed
         run: |
-          if [ -n "$(git status --porcelain -- site/data/prices-today.json site/data/prices-history.json site/sitemap.xml)" ]; then
+          if [ -n "$(git status --porcelain -- site/data/prices-today.json site/data/prices-history.json site/prices.html site/prices-ar.html site/sitemap.xml)" ]; then
             git config user.name  "egybi-data-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add site/data/prices-today.json site/data/prices-history.json site/sitemap.xml
+            git add site/data/prices-today.json site/data/prices-history.json site/prices.html site/prices-ar.html site/sitemap.xml
             git commit -m "Automated daily price refresh — IDSC [skip ci]"
             # main can move while this job runs (a manual push, or a sibling
             # workflow). Without a rebase the push is rejected as non-fast-forward
