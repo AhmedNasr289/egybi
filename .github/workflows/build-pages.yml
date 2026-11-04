@@ -71,18 +71,21 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
+          # First, so an edit to prices.html reaches prices-ar.html (derived
+          # from it) before the sitemap dates are worked out.
+          python backend/pipeline/build_prices_pages.py 2>&1 | tee /tmp/build-pages.log
           SITEMAP_CHANGED_OUT=/tmp/changed-urls.txt \
-            python backend/pipeline/build_static_pages.py 2>&1 | tee /tmp/build-pages.log
+            python backend/pipeline/build_static_pages.py 2>&1 | tee -a /tmp/build-pages.log
 
       - name: Commit if anything changed
         run: |
           # site/visit and visit.html are written by the same generator (one
           # page per measured site, and the index block that links them) and
           # were never in this list, so a CI rebuild of them was thrown away.
-          if [ -n "$(git status --porcelain -- site/practice site/papyrus site/visit site/visit.html site/sitemap.xml)" ]; then
+          if [ -n "$(git status --porcelain -- site/practice site/papyrus site/visit site/visit.html site/prices.html site/prices-ar.html site/sitemap.xml)" ]; then
             git config user.name  "egybi-data-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add site/practice site/papyrus site/visit site/visit.html site/sitemap.xml
+            git add site/practice site/papyrus site/visit site/visit.html site/prices.html site/prices-ar.html site/sitemap.xml
             git commit -m "Regenerate static challenge and post pages [skip ci]"
             # main can move while this job runs (a manual push, or a sibling
             # workflow). Without a rebase the push is rejected as non-fast-forward
