@@ -13,6 +13,7 @@ The knowledge base and plan for **EgyBI** — a free **encyclopaedia of Egypt to
 ---
 
 ## 🧭 The plan
+- [[Growth Plan — Traffic and the Photo Layer]] — **current delivery plan (2026-11-04)**: what is live, the one metric and its dated checks, SEO/Arabic/distribution workstreams with owners, the gated photo layer, deferred agents with triggers, and the next eight weeks
 - [[Build Plan]] — the phased plan (Phase 0 validation → Phase 1 MVP → Phase 2 growth)
 - [[Improvement Roadmap]] — concrete, prioritized next actions (curriculum, architecture, brand, pricing, GTM, timeline)
 - [[Magical Roadmap]] — the product-experience plan (auto-grading, Python/pandas sandbox, gamification, AI tutor)
