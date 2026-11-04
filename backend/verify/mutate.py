@@ -626,6 +626,26 @@ case("a cron workflow alerting with no reason", "workflow-audit.py",
      PY_WF)
 
 
+# ---- 41. a committing workflow whose push guards moved into a script -------
+# On 2026-11-04 build-pages and refresh-prices began committing through
+# .github/scripts/push-with-regenerate.sh, after a sitemap.xml rebase conflict
+# lost a day's prices. checks.py keyed its push guards on the literal
+# `git commit` in the workflow, so moving the commit into the script would
+# have skipped both workflows and passed them on nothing. It now reads the
+# workflow and the helper together; strip the retry loop from the helper and
+# both workflows have to come back GAP.
+PY_CHECKS_WF = f'"{sys.executable}" {HERE}/checks.py workflows'
+
+case("push helper loses its retry loop", "checks.py",
+     [".github/scripts/push-with-regenerate.sh"],
+     lambda: edit(".github/scripts/push-with-regenerate.sh",
+                  'for attempt in $(seq 1 "$attempts"); do',
+                  'while false; do'),
+     lambda o: ("build-pages.yml" in o and "refresh-prices.yml" in o
+                and o.count("missing: retries the push") >= 2),
+     PY_CHECKS_WF)
+
+
 # ---- 20-23. seo.py: the defects that decided the domain's identity ---------
 # These four are the ones that actually happened. For months every page audited
 # clean while Google showed the site under a name it had abandoned, because the

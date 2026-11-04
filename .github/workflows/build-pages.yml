@@ -77,36 +77,20 @@ jobs:
           SITEMAP_CHANGED_OUT=/tmp/changed-urls.txt \
             python backend/pipeline/build_static_pages.py 2>&1 | tee -a /tmp/build-pages.log
 
+      # Everything this job commits is GENERATED, so nothing is rebased: each
+      # push attempt rebuilds on top of the latest main (refresh-prices edits
+      # sitemap.xml and the prices pages too, and a rebase of generated files
+      # across that is a conflict - see .github/scripts/push-with-regenerate.sh).
+      # site/visit and visit.html are written by the same generator (one page
+      # per measured site, and the index block that links them) and were once
+      # missing from this list, so a CI rebuild of them was thrown away.
       - name: Commit if anything changed
         run: |
-          # site/visit and visit.html are written by the same generator (one
-          # page per measured site, and the index block that links them) and
-          # were never in this list, so a CI rebuild of them was thrown away.
-          if [ -n "$(git status --porcelain -- site/practice site/papyrus site/visit site/visit.html site/prices.html site/prices-ar.html site/sitemap.xml)" ]; then
-            git config user.name  "egybi-data-bot"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add site/practice site/papyrus site/visit site/visit.html site/prices.html site/prices-ar.html site/sitemap.xml
-            git commit -m "Regenerate static challenge and post pages [skip ci]"
-            # main can move while this job runs (a manual push, or a sibling
-            # workflow). Without a rebase the push is rejected as non-fast-forward
-            # and the refresh silently stops happening. Retry a few times.
-            for attempt in 1 2 3; do
-            # Rebase against the ref this run was dispatched on rather than a
-            # hardcoded main. These are cron-or-push on main in normal use, but
-            # all four accept workflow_dispatch, so any of them CAN be aimed at a
-            # branch — and there the rebase onto main rewrites the branch history
-            # and the push is rejected as a non-fast-forward, discarding the work.
-            # refresh-streets hit exactly this. On main the behaviour is identical.
-              if git pull --rebase --autostash origin "$GITHUB_REF_NAME" \
-                 && git push origin "HEAD:$GITHUB_REF_NAME"; then
-                echo "pushed on attempt $attempt"; exit 0
-              fi
-              echo "push attempt $attempt failed; retrying in 5s"; sleep 5
-            done
-            echo "::error::could not push after 3 attempts"; exit 1
-          else
-            echo "Static pages already up to date."
-          fi
+          bash .github/scripts/push-with-regenerate.sh \
+            "Regenerate static challenge and post pages [skip ci]" \
+            "" \
+            "site/practice site/papyrus site/visit site/visit.html site/prices.html site/prices-ar.html site/sitemap.xml" \
+            "python backend/pipeline/build_prices_pages.py && SITEMAP_CHANGED_OUT=/tmp/changed-urls.txt python backend/pipeline/build_static_pages.py"
 
       # Runs only after the push above succeeded (or there was nothing to
       # push). Never fails the job: see indexnow_ping.py.

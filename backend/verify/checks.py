@@ -54,6 +54,14 @@ def orphans():
 def workflows():
     """Every workflow bounded; every one that commits carries the six guards."""
     bad = 0
+    # build-pages and refresh-prices commit through this shared script
+    # (2026-11-04). Their workflow text then holds no `git commit`, and this
+    # check used to key on that string - so moving the commit into the script
+    # would have skipped both workflows and passed them on nothing. A workflow
+    # that calls the helper is a committing workflow, and the push guards are
+    # read from the workflow AND the helper together.
+    helper = Path(".github/scripts/push-with-regenerate.sh")
+    helper_t = helper.read_text(encoding="utf-8") if helper.exists() else ""
     for f in sorted(glob.glob(".github/workflows/*.yml")):
         import yaml
         t = Path(f).read_text(encoding="utf-8")
@@ -63,12 +71,16 @@ def workflows():
         problems = []
         if job.get("timeout-minutes") is None:
             problems.append("no timeout-minutes")
-        if "git commit" in t:
+        uses_helper = helper.name in t
+        if uses_helper and not helper_t:
+            problems.append(f"calls {helper} but it does not exist")
+        src = t + ("\n" + helper_t if uses_helper else "")
+        if "git commit" in src:
             for label, ok in (("concurrency group", "concurrency:" in t),
                               ("pushes to the dispatched ref",
-                               "GITHUB_REF_NAME" in t or "github.ref_name" in t),
-                              ("rebases first", "pull --rebase" in t),
-                              ("retries the push", "for attempt in" in t),
+                               "GITHUB_REF_NAME" in src or "github.ref_name" in src),
+                              ("rebases first", "pull --rebase" in src or "git rebase" in src),
+                              ("retries the push", "for attempt in" in src),
                               ("alerts on failure", "notify-failure" in t)):
                 if not ok:
                     problems.append(f"missing: {label}")
