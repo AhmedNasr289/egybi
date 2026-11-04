@@ -103,33 +103,21 @@ jobs:
       - name: Move the sitemap date of the prices pages
         run: python backend/pipeline/sitemap_lastmod.py --changed-out /tmp/changed-urls.txt
 
+      # The price JSON is DATA and is rebased; the prices pages and the sitemap
+      # are GENERATED and are rebuilt on top of the latest main on every push
+      # attempt, never merged. On 2026-11-04 the old `git pull --rebase` hit a
+      # conflict in sitemap.xml with a merge that landed 14 s earlier, could not
+      # recover (a stopped rebase fails every later pull) and the day's prices
+      # were never committed. See .github/scripts/push-with-regenerate.sh.
+      # Rebases onto $GITHUB_REF_NAME, never a hardcoded main (refresh-streets
+      # once lost work rebasing a branch dispatch onto main).
       - name: Commit & push if prices changed
         run: |
-          if [ -n "$(git status --porcelain -- site/data/prices-today.json site/data/prices-history.json site/prices.html site/prices-ar.html site/sitemap.xml)" ]; then
-            git config user.name  "egybi-data-bot"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add site/data/prices-today.json site/data/prices-history.json site/prices.html site/prices-ar.html site/sitemap.xml
-            git commit -m "Automated daily price refresh — IDSC [skip ci]"
-            # main can move while this job runs (a manual push, or a sibling
-            # workflow). Without a rebase the push is rejected as non-fast-forward
-            # and the refresh silently stops happening. Retry a few times.
-            for attempt in 1 2 3; do
-            # Rebase against the ref this run was dispatched on rather than a
-            # hardcoded main. These are cron-or-push on main in normal use, but
-            # all four accept workflow_dispatch, so any of them CAN be aimed at a
-            # branch — and there the rebase onto main rewrites the branch history
-            # and the push is rejected as a non-fast-forward, discarding the work.
-            # refresh-streets hit exactly this. On main the behaviour is identical.
-              if git pull --rebase --autostash origin "$GITHUB_REF_NAME" \
-                 && git push origin "HEAD:$GITHUB_REF_NAME"; then
-                echo "pushed on attempt $attempt"; exit 0
-              fi
-              echo "push attempt $attempt failed; retrying in 5s"; sleep 5
-            done
-            echo "::error::could not push after 3 attempts"; exit 1
-          else
-            echo "No price changes today (or the API guardrail kept last-good data)."
-          fi
+          bash .github/scripts/push-with-regenerate.sh \
+            "Automated daily price refresh — IDSC [skip ci]" \
+            "site/data/prices-today.json site/data/prices-history.json" \
+            "site/prices.html site/prices-ar.html site/sitemap.xml" \
+            "python backend/pipeline/build_prices_pages.py && python backend/pipeline/sitemap_lastmod.py --changed-out /tmp/changed-urls.txt"
 
       # Only reached when the push succeeded or there was nothing to push.
       # Never fails the job: see indexnow_ping.py.

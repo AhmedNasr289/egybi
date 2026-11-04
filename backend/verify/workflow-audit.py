@@ -85,7 +85,9 @@ for f in sorted(WF.glob("*.yml")):
     raw = f.read_text(encoding="utf-8")
     # `git push` is the honest marker for a workflow that writes back — a
     # commit that is never pushed changes nothing and triggers no deploy.
-    writes = "yes" if re.search(r"git push", raw) else "no"
+    # The shared helper (.github/scripts/push-with-regenerate.sh) does the
+    # push for build-pages and refresh-prices, so naming it counts too.
+    writes = "yes" if re.search(r"git push|push-with-regenerate\.sh", raw) else "no"
     alerts = "yes" if re.search(r"notify-failure|if:\s*failure\(\)", raw) else "NO"
 
     rows.append(dict(name=f.name.replace(".yml", ""), trig=",".join(sorted(trig)),
