@@ -70,13 +70,17 @@ def _force_utf8_output() -> None:
 _force_utf8_output()
 
 
+# Import the sibling module by path, so this works however the script is run
+# (python -I / -P does not put the script's own folder on sys.path).
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import sitemap_lastmod  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = os.path.join(ROOT, 'site')
 SITE_URL = 'https://egybi.com'
-# Computed, not frozen. This was the literal '2026-08-07', so every sitemap
-# <lastmod> kept claiming that date however often the generator ran — telling
-# crawlers nothing had changed while the site was being repositioned.
-TODAY = _dt.date.today().isoformat()
+# Sitemap <lastmod> dates are per page now — see sitemap_lastmod.py. The
+# history: a literal '2026-08-07' froze every date; replacing it with the run
+# date then stamped all 50 URLs with whichever day the generator last ran.
 
 # Where a retired challenge sends its reader, keyed by the challenge's own
 # `sector`. Every destination below is a section that EXISTS today — verified
@@ -455,9 +459,25 @@ def build_site_months():
             facts.append(f"The ground at the site's coordinates sits {el:.0f} m above sea level (NASA SRTM).")
         if site.get('unesco'):
             facts.append("It is part of a UNESCO World Heritage property.")
+        # The page is ABOUT a real place, and saying so is what lets a search
+        # engine connect it to the attraction rather than read it as a loose
+        # table of temperatures. Only fields this file actually holds are
+        # stated: name, Arabic name, coordinates and governorate. Opening
+        # hours, prices and "free entry" are deliberately absent — none of
+        # them is in the data, and a wrong one in structured data is worse
+        # than none.
+        place_id = url + "#place"
+        attraction = {"@type": "TouristAttraction", "@id": place_id, "name": name, "url": url,
+                      "geo": {"@type": "GeoCoordinates", "latitude": site['lat'], "longitude": site['lon']},
+                      "containedInPlace": {"@type": "AdministrativeArea",
+                                           "name": f"{site.get('gov', '')} Governorate",
+                                           "containedInPlace": {"@type": "Country", "name": "Egypt"}}}
+        if site.get('name_ar'):
+            attraction["alternateName"] = site['name_ar']
         ld = {"@context": "https://schema.org", "@graph": [
             {"@type": "WebPage", "name": f"{name} weather by month", "url": url, "description": desc,
-             "isPartOf": {"@id": SITE_URL + "/#site"}},
+             "isPartOf": {"@id": SITE_URL + "/#site"}, "about": {"@id": place_id}},
+            attraction,
             breadcrumb(f"{name} by month", url, "When to go", SITE_URL + "/visit.html")]}
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
@@ -509,13 +529,14 @@ def build_sitemap(extra):
             ('visit.html', '0.9', 'monthly'), ('plan.html', '0.9', 'monthly'), ('fair-prices.html', '0.9', 'monthly'),
             ('hieroglyphs.html', '0.8', 'monthly'), ('dossier.html', '0.7', 'monthly'), ('ask.html', '0.7', 'monthly'), ('geospatial.html', '0.8', 'monthly'), ('places.html', '0.8', 'monthly'), ('invest.html', '0.8', 'monthly'), ('stories.html', '0.9', 'monthly'),
             ('about.html', '0.6', 'monthly'), ('community.html', '0.6', 'monthly'), ('privacy.html', '0.3', 'yearly')]
-    rows = [f"  <url>\n    <loc>{SITE_URL}/{n}</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>{f}</changefreq>\n    <priority>{p}</priority>\n  </url>"
-            for n, p, f in core]
-    rows += [f"  <url>\n    <loc>{u}</loc>\n    <lastmod>{TODAY}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>{p}</priority>\n  </url>"
-             for u, p in extra]
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(rows) + "\n</urlset>\n"
-    io.open(os.path.join(SITE, 'sitemap.xml'), 'w', encoding='utf-8', newline='\n').write(xml)
-    return len(rows)
+    # Each URL carries the date ITS content last changed (sitemap_lastmod.py),
+    # not the day this script ran: the run date made all 50 URLs claim one day
+    # while prices.html changed daily and most pages had not changed for weeks.
+    entries = [(f"{SITE_URL}/{n}", f, p) for n, p, f in core]
+    entries += [(u, 'monthly', p) for u, p in extra]
+    total, changed = sitemap_lastmod.write_sitemap(entries, os.path.join(SITE, 'sitemap.xml'))
+    sitemap_lastmod.write_changed(changed, os.environ.get('SITEMAP_CHANGED_OUT'))
+    return total
 
 
 def build_feed(posts):

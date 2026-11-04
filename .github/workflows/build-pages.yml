@@ -23,6 +23,13 @@ on:
       # docstring already said "editing blog.html's nav therefore updates all
       # 135 generated pages"; it just never ran.
       - 'site/blog.html'
+      # Any hand-edited page. Its sitemap <lastmod> is now the date its own
+      # content last changed (sitemap_lastmod.py), so an edit has to rebuild
+      # the sitemap to show up there — and to be announced via IndexNow.
+      - 'site/*.html'
+      - 'site/data/visit-climate.json'
+      - 'site/data/visit-terrain.json'
+      - 'backend/pipeline/sitemap_lastmod.py'
   workflow_dispatch: {}
 
 permissions:
@@ -41,6 +48,12 @@ jobs:
                                # GitHub's default six hours.
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: each page's sitemap <lastmod> is the date of the last
+          # commit that touched it. In a depth-1 clone every file appears to
+          # come from the one grafted commit, so sitemap_lastmod.py refuses to
+          # use git dates at all there and would fall back to data dates only.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -58,14 +71,18 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          python backend/pipeline/build_static_pages.py 2>&1 | tee /tmp/build-pages.log
+          SITEMAP_CHANGED_OUT=/tmp/changed-urls.txt \
+            python backend/pipeline/build_static_pages.py 2>&1 | tee /tmp/build-pages.log
 
       - name: Commit if anything changed
         run: |
-          if [ -n "$(git status --porcelain -- site/practice site/papyrus site/sitemap.xml)" ]; then
+          # site/visit and visit.html are written by the same generator (one
+          # page per measured site, and the index block that links them) and
+          # were never in this list, so a CI rebuild of them was thrown away.
+          if [ -n "$(git status --porcelain -- site/practice site/papyrus site/visit site/visit.html site/sitemap.xml)" ]; then
             git config user.name  "egybi-data-bot"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add site/practice site/papyrus site/sitemap.xml
+            git add site/practice site/papyrus site/visit site/visit.html site/sitemap.xml
             git commit -m "Regenerate static challenge and post pages [skip ci]"
             # main can move while this job runs (a manual push, or a sibling
             # workflow). Without a rebase the push is rejected as non-fast-forward
@@ -87,6 +104,11 @@ jobs:
           else
             echo "Static pages already up to date."
           fi
+
+      # Runs only after the push above succeeded (or there was nothing to
+      # push). Never fails the job: see indexnow_ping.py.
+      - name: Announce changed URLs (IndexNow)
+        run: python backend/pipeline/indexnow_ping.py /tmp/changed-urls.txt
 
       - name: Collect what the run said about itself
         if: '!cancelled()'
