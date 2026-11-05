@@ -74,6 +74,7 @@ _force_utf8_output()
 # (python -I / -P does not put the script's own folder on sys.path).
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sitemap_lastmod  # noqa: E402
+import sun_times  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = os.path.join(ROOT, 'site')
@@ -399,6 +400,40 @@ MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
           'August', 'September', 'October', 'November', 'December']
 
 
+def light_section(site, name):
+    """'Light for photographs': sunrise, golden light and sunset per month.
+
+    Computed from the site's own coordinates (sun_times.py: NOAA solar
+    equations, Egypt time from the IANA database, so summer time is the
+    database's rule, not one hand-coded here). Checked on 2026-11-04 against
+    the independent `astral` package over all 18 sites x 12 months: worst
+    difference 1.6 min for sunrise/sunset, 2.4 min for the 6-degree edges.
+    The year is the build year, and the page says which year it is."""
+    year = _dt.date.today().year
+    days = sun_times.monthly(year, site['lat'], site['lon'])
+    hm = lambda t: t.strftime('%H:%M')
+    rows = ''.join(
+        f"<tr><th scope=\"row\">{MONTHS[d.date.month - 1]}</th>"
+        f"<td class=\"num\">{hm(d.sunrise)}</td><td class=\"num\">{hm(d.golden_morning_end)}</td>"
+        f"<td class=\"num\">{hm(d.golden_evening_start)}</td><td class=\"num\">{hm(d.sunset)}</td></tr>"
+        for d in days)
+    lengths = [m for d in days for m in (d.golden_morning_minutes, d.golden_evening_minutes)]
+    summer = [MONTHS[d.date.month - 1] for d in days if d.utc_offset_hours == 3]
+    clock = (f"Egypt time: UTC+2, and UTC+3 in {summer[0]}&ndash;{summer[-1]} (summer time)"
+             if summer else "Egypt time (UTC+2)")
+    return f"""    <h2 style="font-size:1.2rem;margin-top:30px;" id="light">Light for photographs</h2>
+    <p style="margin:0 0 10px;">Golden light, the warm low sun photographers wait for, lasts about {min(lengths)}&ndash;{max(lengths)} minutes after sunrise and before sunset here, depending on the month.</p>
+    <div class="sheet">
+      <div class="fp-wrap"><table class="fp-table">
+        <caption class="sr-only">{esc(name)}: sunrise, golden light and sunset on the 15th of each month, {year}</caption>
+        <thead><tr><th scope="col">15th of</th><th scope="col" class="num">Sunrise</th><th scope="col" class="num">Golden light until</th>
+        <th scope="col" class="num">Golden light from</th><th scope="col" class="num">Sunset</th></tr></thead>
+        <tbody>{rows}</tbody></table></div>
+    </div>
+    <p class="chart-cap" style="margin-top:14px;">Computed for the 15th of each month of {year} from this site's coordinates ({site['lat']:.4f}, {site['lon']:.4f}) with the NOAA Global Monitoring Laboratory solar position equations. {clock}, from the IANA time-zone database (Africa/Cairo). Golden light here means the sun less than 6&deg; above the horizon, a photographers' convention. Checked against an independent solar library to within about 3 minutes. Cliffs, dunes and temple walls are not modelled: they can hide a low sun well before these times.</p>
+"""
+
+
 def build_site_months():
     """One page per measured visitor site: its twelve months, as measured.
 
@@ -459,6 +494,7 @@ def build_site_months():
             facts.append(f"The ground at the site's coordinates sits {el:.0f} m above sea level (NASA SRTM).")
         if site.get('unesco'):
             facts.append("It is part of a UNESCO World Heritage property.")
+        light_html = light_section(site, name)
         # The page is ABOUT a real place, and saying so is what lets a search
         # engine connect it to the attraction rather than read it as a loose
         # table of temperatures. Only fields this file actually holds are
@@ -504,6 +540,7 @@ def build_site_months():
         <tbody>{rows}</tbody></table></div>
     </div>
     <p class="chart-cap" style="margin-top:14px;">Afternoon and night are the mean daily maximum and minimum over {esc(clim.get('normal_window', '2001–2020'))}; the record is the hottest hour in that month across the whole series. Source: {esc(clim.get('source', 'NASA POWER'))}, layer dated {esc(clim.get('as_of', ''))}. These are modelled long-run averages checked against published station normals &mdash; not weather-station readings and not a forecast. <a href="../visit.html#checked">How they were checked &rarr;</a></p>
+{light_html}
     <h2 style="font-size:1.2rem;margin-top:30px;">The other measured sites</h2>
     <div class="chip-row">{others}</div>
   </div>
