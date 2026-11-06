@@ -639,6 +639,53 @@ def write_index_block(path, marker, html):
     return 1
 
 
+# The visitor guides were reachable from visit.html alone, so the two pages a
+# traveller is most likely to be browsing — Places (900 points on a map) and
+# the Atlas (the seven World Heritage sites) — passed them no links at all.
+# Both pages draw their place details with JavaScript, which a crawler follows
+# poorly, so the links are written here as plain HTML. Each link carries the
+# guide's coordinates, and places.js / geospatial.js read them back to offer
+# the nearest guide inside a place's detail — one list, not a second copy in
+# the scripts that could drift from the pages that exist.
+GUIDE_PAGES = {
+    'places.html': ('surface-light',
+                    'A place within 5 km of one of these sites opens with a link to its guide.'),
+    'geospatial.html': ('surface-light-2',
+                        'Each World Heritage card above links to the guides within 20 km of it.'),
+}
+
+
+def build_guide_links(urls):
+    """Write the VISIT-GUIDES block into every page in GUIDE_PAGES.
+
+    `urls` is what build_site_months wrote, so a site whose page was skipped
+    (fewer than twelve months of data) is never linked. Returns the number of
+    pages updated; a page without the markers is left alone and not counted."""
+    keys = {u.rsplit('/', 1)[1][:-len('.html')] for u, _ in urls}
+    clim = json.load(io.open(os.path.join(SITE, 'data', 'visit-climate.json'), encoding='utf-8'))
+    sites = sorted((s for s in clim.get('sites', []) if s.get('key') in keys),
+                   key=lambda s: s['name'].removeprefix('The '))
+    if not sites:
+        return 0
+    links = ''.join(
+        f'<a class="chip" href="visit/{esc(s["key"])}.html" data-guide="{esc(s["key"])}" '
+        f'data-lat="{s["lat"]:.4f}" data-lon="{s["lon"]:.4f}">{esc(s["name"])}</a>'
+        for s in sites)
+    n = 0
+    for path, (surface, how) in GUIDE_PAGES.items():
+        n += write_index_block(path, 'VISIT-GUIDES',
+            f'<section class="{surface}" id="guides" data-nav="Visitor guides">\n'
+            '  <div class="wrap">\n'
+            '    <div class="kicker"><span data-glyph="ra"></span>Visitor guides</div>\n'
+            f'    <h2>{len(sites)} sites, each with a month-by-month guide.</h2>\n'
+            '    <p class="lead" style="max-width:68ch;">Afternoon heat, night cold, rain and the hours '
+            'of golden light for every month, measured at the site\'s own coordinates. '
+            f'{how}</p>\n'
+            f'    <div class="chip-row">{links}</div>\n'
+            '  </div>\n</section>')
+    return n
+
+
 def build_link_indexes(chs, posts):
     """Static, crawlable index of The Papyrus.
 
@@ -740,6 +787,7 @@ def main():
             '<section class="surface-light-2" id="by-site" data-nav="Each site, by month">\n'
             '  <div class="wrap">\n    <div class="kicker"><span data-glyph="ra"></span>One page per site</div>\n'
             '    <h2>Each site, all twelve months.</h2>\n    <div class="chip-row">' + chips + '</div>\n  </div>\n</section>')
+    ng = build_guide_links(vu) if vu else 0
     build_link_indexes(ch, posts)
     total = build_sitemap(pu + vu)
     nfeed = build_feed(posts)
@@ -755,6 +803,12 @@ def main():
         print(f"    {counts[dest]:>4} -> {dest}")
     print(f"post pages      : {len(pu)}")
     print(f"site month pages: {len(vu)}")
+    print(f"guide link pages: {ng} of {len(GUIDE_PAGES)}")
+    if vu and ng < len(GUIDE_PAGES):
+        # A page lost its markers: its guide links would silently stop
+        # updating, and the scripts reading them would show no guide at all.
+        print("::warning::VISIT-GUIDES markers missing from "
+              f"{len(GUIDE_PAGES) - ng} page(s) in GUIDE_PAGES")
     print(f"sitemap URLs    : {total}")
     print(f"RSS feed items  : {nfeed}")
     print("404 page        : written (root-relative, noindex)")
