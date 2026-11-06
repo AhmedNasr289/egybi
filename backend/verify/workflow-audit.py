@@ -70,7 +70,12 @@ for f in sorted(WF.glob("*.yml")):
     # Does the alert actually SAY anything? Read the step rather than grepping
     # the file: "reason" appears in prose comments all over these workflows, and
     # a rule satisfied by a comment is not a rule.
-    alert_steps, reasoned = 0, 0
+    alert_steps, reasoned, blind_to_timeout = 0, 0, 0
+    # A workflow that cancels its own superseded runs (cancel-in-progress) sees
+    # routine cancellations; one that never does sees a cancellation only when
+    # a person cancels it or the job hits timeout-minutes.
+    conc_cfg = d.get("concurrency")
+    self_cancels = isinstance(conc_cfg, dict) and conc_cfg.get("cancel-in-progress") is True
     for j in jobs.values():
         if not isinstance(j, dict):
             continue
@@ -81,6 +86,9 @@ for f in sorted(WF.glob("*.yml")):
                 alert_steps += 1
                 if str(((s.get("with") or {}).get("reason") or "")).strip():
                     reasoned += 1
+                cond = str(s.get("if", ""))
+                if not self_cancels and not re.search(r"cancelled\(\)|always\(\)", cond):
+                    blind_to_timeout += 1
 
     raw = f.read_text(encoding="utf-8")
     # `git push` is the honest marker for a workflow that writes back — a
@@ -93,7 +101,7 @@ for f in sorted(WF.glob("*.yml")):
     rows.append(dict(name=f.name.replace(".yml", ""), trig=",".join(sorted(trig)),
                      paths=len(paths), cron=";".join(cron) or "-",
                      timeout=timeout or "NONE", conc=conc, writes=writes, alerts=alerts,
-                     alert_steps=alert_steps, reasoned=reasoned))
+                     alert_steps=alert_steps, reasoned=reasoned, blind_to_timeout=blind_to_timeout))
 
 w = max(len(r["name"]) for r in rows)
 print(f"{'workflow':<{w}}  {'triggers':<34} {'paths':>5} {'timeout':>7}  {'conc':<5} {'push':<5} {'alert':<5} {'why':<4} cron")
@@ -139,6 +147,18 @@ for r in rows:
     if fires and r["alert_steps"] and r["reasoned"] < r["alert_steps"]:
         gaps.append(f"{r['name']}: fires unattended ({', '.join(fires)}) and alerts "
                     "without a reason — the issue it opens cannot name what broke")
+    # A TIMEOUT IS A CANCELLATION, NOT A FAILURE.
+    #
+    # refresh-streets hit its 120-minute limit on 2026-10-05. GitHub records
+    # that as CANCELLED, every alert here ran `if: failure()`, and so the run
+    # that left the street pages on three-month-old data alerted nobody. In a
+    # workflow that never cancels itself, the alert must fire on cancelled()
+    # too; in one that cancels superseded runs it must not, or every new push
+    # would open an issue.
+    if fires and r["blind_to_timeout"]:
+        gaps.append(f"{r['name']}: fires unattended ({', '.join(fires)}) and its alert runs "
+                    "only on failure() — a job killed at timeout-minutes is CANCELLED and "
+                    "would alert nobody (use `if: failure() || cancelled()`)")
 if gaps:
     print("\nGaps:")
     for g in gaps:

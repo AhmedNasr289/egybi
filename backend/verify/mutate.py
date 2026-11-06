@@ -599,10 +599,8 @@ PY_WF = f'"{sys.executable}" {HERE}/workflow-audit.py'
 case("a cron workflow left with no failure alerting", "workflow-audit.py",
      [".github/workflows/papyrus-reminder.yml"],
      lambda: edit(".github/workflows/papyrus-reminder.yml",
-                  "      - name: Alert on failure\n"
-                  "        if: failure()\n"
+                  "        if: failure() || cancelled()\n"
                   "        uses: ./.github/actions/notify-failure",
-                  "      - name: No alerting at all\n"
                   "        run: 'true'"),
      lambda o: "papyrus-reminder: fires unattended" in o, PY_WF)
 
@@ -615,14 +613,29 @@ case("a cron workflow left with no failure alerting", "workflow-audit.py",
 # rows. Alerting had been marked done since 2026-07-21; the reason that makes it
 # actionable was missing for six weeks and nothing noticed, because nothing
 # checked. Removing `reason:` from a cron workflow has to turn the audit red.
+# (The reason line itself became a longer expression on 2026-11-06, when the
+# alerts learned to explain a cancellation; renaming the key drops the reason
+# without leaving half an expression behind.)
 case("a cron workflow alerting with no reason", "workflow-audit.py",
      [".github/workflows/refresh-fx.yml"],
      lambda: edit(".github/workflows/refresh-fx.yml",
-                  "        uses: ./.github/actions/notify-failure\n"
-                  "        with:\n"
-                  "          reason: ${{ steps.why.outputs.text }}",
-                  "        uses: ./.github/actions/notify-failure"),
+                  "        with:\n          reason: ${{ job.status == 'cancelled'",
+                  "        with:\n          not_a_reason: ${{ job.status == 'cancelled'"),
      lambda o: "refresh-fx: fires unattended" in o and "without a reason" in o,
+     PY_WF)
+
+
+# ---- 42. an unattended workflow whose alert cannot see a timeout -------------
+# refresh-streets hit its 120-minute limit on 2026-10-05; GitHub recorded the
+# run as CANCELLED, every alert in the fleet ran `if: failure()`, and the street
+# pages sat on three-month-old data with nobody told. Narrowing the alert back
+# to failure() alone has to turn the audit red.
+case("a cron workflow whose alert misses a timeout", "workflow-audit.py",
+     [".github/workflows/refresh-streets.yml"],
+     lambda: edit(".github/workflows/refresh-streets.yml",
+                  "        if: failure() || cancelled()\n        uses: ./.github/actions/notify-failure",
+                  "        if: failure()\n        uses: ./.github/actions/notify-failure"),
+     lambda o: "refresh-streets: fires unattended" in o and "CANCELLED" in o,
      PY_WF)
 
 

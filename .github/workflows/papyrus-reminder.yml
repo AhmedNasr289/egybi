@@ -87,7 +87,11 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Alert on failure
-        if: failure()
+        # failure() alone misses a TIMEOUT: GitHub records a job killed at
+        # timeout-minutes as CANCELLED, not failed - which is how the 2026-10-05
+        # street refresh ran out of time and told nobody. This workflow never
+        # cancels itself, so a cancellation here is a timeout or a person.
+        if: failure() || cancelled()
         uses: ./.github/actions/notify-failure
         with:
-          reason: ${{ steps.why.outputs.text }}
+          reason: ${{ job.status == 'cancelled' && 'Cancelled, not failed - most often the job hit its timeout-minutes limit, which GitHub records as a cancellation. The last lines of the log show where it stopped.' || steps.why.outputs.text }}
