@@ -95,6 +95,7 @@ perankh/
 | `build_static_pages.py` (code in `pages/`) | 155 pages: 123 retired `practice/` notices, 12 `papyrus/` issues, 18 `visit/<site>.html`, `egypt-weather-by-month.html` (+ `charts/*.svg`), `404.html`; `sitemap.xml`, `feed.xml`; the generated blocks inside `visit.html`, `places.html`, `geospatial.html`, `blog.html` | no |
 | `build_prices_pages.py` | the price summary in `prices.html`, and all of `prices-ar.html` | no |
 | `sitemap_lastmod.py`, `indexnow_ping.py` | sitemap dates; IndexNow announcements after each push | IndexNow only |
+| `dossier_pack.py [--year Y] [--pdf]` | the paid $12 pack: `build/dossier-pack/the-papyrus-egypt-dossier.html` (+ `.pdf` via a local headless Edge/Chrome). Git-ignored and outside `site/`, so it is never deployed | no |
 | *(by hand, cited row by row)* | `site/data/calendar.json` (re-read every 120 d), `fair-prices.json` (every 90 d) | — |
 | `build_og_image.py`, `build_favicons.py`, `build_planner_notes.py` | image and note assets | no |
 
