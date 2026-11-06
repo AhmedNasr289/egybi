@@ -983,3 +983,8 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **[[Owner Steps — Search, Sales and Housekeeping]]**: click-by-click steps for Bing Webmaster Tools, the Search Console baseline, submitting `prices-ar.html`, the contract check, the dossier listing, affiliate applications, closing the stale alerts (#42, #52, #56 and #72, each with the run that proves it recovered) and the hand run of the street refresh.
 - **[[Traffic Baseline & Analytics]]** gained a Search Console readings table for Growth Plan A2.
 - **PR #69 merged and verified live:** `plan.js` sends `plan_stop_added` and `plan_route_built`, and `api/insights.php` answers 403 without its key (it parses and runs).
+
+## 2026-11-06 — A gate against committed merge-conflict markers
+- ⚠️ **What happened:** while keeping three stacked PRs (#77–#79) up to date, my conflict resolver matched only one marker label, found nothing to resolve, and the loop around it committed and pushed the vault Changelog with raw conflict markers on two branches. It was caught by my own check before anything merged: each branch's Changelog must equal the branch below it plus its own section. The resolver now accepts any label and refuses to write if a marker survives.
+- **Why no check caught it:** no workflow runs on a change to the vault alone.
+- **The gate:** `.github/workflows/conflict-markers.yml` runs on every pull request, whatever it touches, and on every push to main. It fails if any tracked file holds a line starting with a conflict marker. A bare `=======` is a Markdown heading underline, so it is not matched. Run locally, the same command passes on main and reports both marker lines on the bad commit (490d4a9).
