@@ -741,7 +741,7 @@
    {
     "slug": "idsc-301",
     "name_ar": "نبق",
-    "name_en": "Heorotbr?r",
+    "name_en": "Christ's-thorn jujube (nabq)",
     "category": "fruit",
     "unit": "كيلو",
     "min": 20,
@@ -1236,7 +1236,7 @@
    {
     "slug": "idsc-286",
     "name_ar": "بصل أخضر (رابطة 100 واحدة)",
-    "name_en": "Green onions  (pack 100 unit)",
+    "name_en": "Green onions (pack 100 unit)",
     "category": "vegetable",
     "unit": "100 رابطة",
     "min": 175,
@@ -1368,7 +1368,7 @@
    {
     "slug": "idsc-295",
     "name_ar": "شبت (رابطة 100 واحدة)",
-    "name_en": "Dill  (pack 100 unit)",
+    "name_en": "Dill (pack 100 unit)",
     "category": "vegetable",
     "unit": "100 رابطة",
     "min": 100,
@@ -1379,7 +1379,7 @@
    {
     "slug": "idsc-239",
     "name_ar": "فلفل (حامي)",
-    "name_en": "Chili pepper‏",
+    "name_en": "Chili pepper",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 10,
@@ -1390,7 +1390,7 @@
    {
     "slug": "idsc-245",
     "name_ar": "فلفل رومي",
-    "name_en": "Bell pepper‏",
+    "name_en": "Bell pepper",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 10,
@@ -2089,7 +2089,7 @@
    {
     "slug": "idsc-301",
     "name_ar": "نبق",
-    "name_en": "Heorotbr?r",
+    "name_en": "Christ's-thorn jujube (nabq)",
     "category": "fruit",
     "unit": "كيلو",
     "min": 15,
@@ -2529,7 +2529,7 @@
    {
     "slug": "idsc-239",
     "name_ar": "فلفل (حامي)",
-    "name_en": "Chili pepper‏",
+    "name_en": "Chili pepper",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 8,
@@ -2540,7 +2540,7 @@
    {
     "slug": "idsc-245",
     "name_ar": "فلفل رومي",
-    "name_en": "Bell pepper‏",
+    "name_en": "Bell pepper",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 9,

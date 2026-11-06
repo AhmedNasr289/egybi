@@ -1044,3 +1044,12 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **Tests:** six run without the network. They cover the target met and not met, "not measured" rather than zero, the paste row's columns, and refusing before any request when the key is missing.
 - **Live check:** a deliberately wrong key returns "HTTP 403" without echoing the key.
 - **CI:** `Test (pipeline)` now lints and tests `backend/ops/` too.
+
+## 2026-11-06 — Price names from the portal, cleaned at the source
+- **Bad names from the portal:** the government price portal's own English feed sends a few broken names, on both the retail and wholesale views:
+  - "Heorotbr?r" for نبق (mangled at the source);
+  - "Chili pepper" and "Bell pepper" ending in an invisible right-to-left mark, which can reorder the text printed after them;
+  - two names with a double space.
+- **The fix, at the source:** `fetch_prices.clean_name_en` strips invisible direction controls, treats a name with a lost character (`?`, U+FFFD) as missing rather than publishing it, and overrides نبق as "Christ's-thorn jujube (nabq)".
+- **Today's file was cleaned with the same function** (8 names), so the fix shows before the next daily refresh.
+- **Tests:** a new test checks the published file carries no such name. It failed on the file before the cleaning and passes after.
