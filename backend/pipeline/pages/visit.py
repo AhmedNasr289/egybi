@@ -16,6 +16,7 @@ import os
 import heat_calendar
 import sun_times
 
+from . import egfmt
 from .common import SITE, SITE_URL, breadcrumb, chrome, esc, page, read_text, write_index_block, write_text
 
 
@@ -50,7 +51,7 @@ def light_section(site, name):
     summer = [MONTHS[d.date.month - 1] for d in days if d.utc_offset_hours == 3]
     clock = (f"Egypt time: UTC+2, and UTC+3 in {summer[0]}&ndash;{summer[-1]} (summer time)"
              if summer else "Egypt time (UTC+2)")
-    return f"""    <h2 style="font-size:1.2rem;margin-top:30px;" id="light">Light for photographs</h2>
+    return f"""    <h2 style="font-size:1.2rem;margin:0 0 12px;" id="light">Light for photographs</h2>
     <p style="margin:0 0 10px;">Golden light, the warm low sun photographers wait for, lasts about {min(lengths)}&ndash;{max(lengths)} minutes after sunrise and before sunset here, depending on the month.</p>
     <div class="sheet">
       <div class="fp-wrap"><table class="fp-table">
@@ -153,6 +154,9 @@ def build_site_months():
   </div>
 </section>
 
+<!-- Four topics, four sections. Until 2026-11-06 all of this was one
+     parchment section about 2,300 px tall; alternating the two light tones
+     lets the Papyrus scroll rod mark each join (egybi.css, "The scroll rod"). -->
 <section class="surface-light">
   <div class="wrap" style="max-width:860px;">
     <div class="sheet">
@@ -161,16 +165,32 @@ def build_site_months():
       <div class="cta-row" style="margin-top:14px;"><a class="btn btn-primary" href="../plan.html?add={esc(key)}">Add {esc(name)} to my plan &rarr;</a>
       <a class="btn btn-ghost" href="../fair-prices.html">What things should cost &rarr;</a></div>
     </div>
-    <div class="sheet" style="margin-top:18px;">
+  </div>
+</section>
+
+<section class="surface-light-2">
+  <div class="wrap" style="max-width:860px;">
+    <h2 style="font-size:1.2rem;margin:0 0 12px;" id="heat">Heat and rain, month by month</h2>
+    <div class="sheet">
       <div class="fp-wrap"><table class="fp-table">
         <caption class="sr-only">{esc(name)}: monthly climate normals</caption>
         <thead><tr><th scope="col">Month</th><th scope="col" class="num">Afternoon</th><th scope="col" class="num">Night</th>
         <th scope="col" class="num">Rain, mm/day</th><th scope="col" class="num">Hottest hour on record</th></tr></thead>
         <tbody>{rows}</tbody></table></div>
     </div>
-    <p class="chart-cap" style="margin-top:14px;">Afternoon and night are the mean daily maximum and minimum over {esc(clim.get('normal_window', '2001–2020'))}; the record is the hottest hour in that month across the whole series. Source: {esc(clim.get('source', 'NASA POWER'))}, layer dated {esc(clim.get('as_of', ''))}. These are modelled long-run averages checked against published station normals &mdash; not weather-station readings and not a forecast. <a href="../visit.html#checked">How they were checked &rarr;</a></p>
+    <p class="chart-cap" style="margin-top:14px;">Afternoon and night are the mean daily maximum and minimum over {esc(clim.get('normal_window', '2001–2020'))}; the record is the hottest hour in that month across the whole series. Source: {esc(clim.get('source', 'NASA POWER'))}, layer dated {egfmt.time_tag(clim['as_of'], 'en', 'prose') if clim.get('as_of') else 'undated'}. These are modelled long-run averages checked against published station normals &mdash; not weather-station readings and not a forecast. <a href="../visit.html#checked">How they were checked &rarr;</a></p>
+  </div>
+</section>
+
+<section class="surface-light">
+  <div class="wrap" style="max-width:860px;">
 {light_html}
-    <h2 style="font-size:1.2rem;margin-top:30px;">The other measured sites</h2>
+  </div>
+</section>
+
+<section class="surface-light-2">
+  <div class="wrap" style="max-width:860px;">
+    <h2 style="font-size:1.2rem;margin:0 0 12px;">The other measured sites</h2>
     <div class="chip-row">{others}</div>
     <p style="margin-top:14px;"><a href="../egypt-weather-by-month.html">Every site, every month, in one table &rarr;</a></p>
   </div>
@@ -263,7 +283,7 @@ def build_weather_by_month(urls):
     n = len(rows)
     window = clim.get('normal_window', '2001-2020').replace('-', '–')
     source_line = (f"Source: {esc(clim.get('source', 'NASA POWER'))}, normals {esc(window)}, layer dated "
-                   f"{esc(clim.get('as_of', ''))}. Modelled long-run averages checked against published "
+                   f"{egfmt.time_tag(clim['as_of'], 'en', 'prose') if clim.get('as_of') else 'undated'}. Modelled long-run averages checked against published "
                    f"station normals &mdash; not weather-station readings and not a forecast.")
     title = f"Egypt weather by month: afternoon heat at {n} sites · EgyBI"
     desc = (f"How hot a normal afternoon gets at {n} Egyptian sites, every month of the year, in one "

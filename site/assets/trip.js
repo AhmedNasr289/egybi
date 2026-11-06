@@ -71,7 +71,11 @@
     var a = parse(start), b = parse(end);
     return a == null || b == null ? null : Math.round((b - a) / 864e5);
   }
+  /* Dates and EGP amounts follow the site's Egyptian rules (EGYBI.fmt,
+     assets/egfmt.js) when it has loaded, and the old local format if not. */
+  function F() { return window.EGYBI && window.EGYBI.fmt; }
   function fmtDate(d) {
+    if (F() && typeof d === 'string' && d) return F().dateOrRaw(d, 'en', 'compact');
     var ms = parse(d);
     if (ms == null) return '';
     var x = new Date(ms);
@@ -163,8 +167,14 @@
     for (var i = 0; i < rs.length; i++) if (rs[i].code === code) return rs[i].egp;
     return null;
   }
+  /* An exchange rate: always two decimals, "EGP 54.77". */
+  function rateText(r) {
+    if (r == null || !isFinite(r)) return '—';
+    return F() ? F().rate(r, 'en') : 'EGP ' + Number(r).toFixed(2);
+  }
   function money(n, cur) {
     if (n == null) return '—';
+    if (cur === 'EGP' && F() && isFinite(n)) return F().money(n, 'en');
     var d = n >= 100 ? 0 : (n >= 10 ? 1 : 2);
     return (cur === 'EGP' ? 'EGP ' : (cur === 'USD' ? '$' : cur === 'EUR' ? '€' : cur === 'GBP' ? '£' : cur + ' ')) +
       Number(n).toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: 0 });
@@ -177,7 +187,7 @@
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow,
     km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM,
-    eventsIn: eventsIn, rate: rate, money: money,
+    eventsIn: eventsIn, rate: rate, rateText: rateText, money: money,
     MONTHS: MONTHS, SHORT: SHORT, esc: esc
   };
 }());

@@ -206,6 +206,37 @@ hard += re.findall(r"(?<![\w-])(\d{2,4})\s*(?:&nbsp;)?m\b(?!ap|ean|onth|etre)", 
 if hard:
     fails["figures typed into visit.html rather than rendered from data"] = sorted(set(hard))
 
+# ------------------------------------------------- Egyptian formatting ----
+# The site's formatting rules live in assets/egfmt.js and pipeline/pages/egfmt.py
+# (docs/superpowers/specs/2026-11-06-egyptian-formatting-and-papyrus-design.md).
+# Two ways a page drifts from them, both found by the 2026-11-06 audit:
+#
+# 1. toLocaleString() with no locale formats with the VISITOR's browser locale:
+#    1.234 in a German browser, ١٬٢٣٤ in an Arabic one, beside figures that
+#    toFixed() always writes with Western digits. Fourteen such calls drew the
+#    atlas and the maps. A locale must be named.
+# 2. A bare ISO date (2026-11-03) in text a reader sees. Dates are written
+#    "3 Nov 2026"; the ISO form belongs only in a <time datetime> attribute,
+#    which the tag strip below removes. <code>/<pre> are skipped, since a SQL
+#    example legitimately quotes '2024-01-01'. JS-drawn text is not visible to
+#    a static pass; the scripts were moved onto EGYBI.fmt instead.
+no_locale = re.compile(r"\.toLocaleString\(\s*\)")
+for f in sorted(list(SITE.rglob("*.js")) + pages):
+    if "vendor" in f.parts:
+        continue
+    for i, line in enumerate(f.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+        if no_locale.search(line):
+            fails["toLocaleString() with no locale (formats by the visitor's browser)"].append(f"{f}:{i}")
+iso_date = re.compile(r"(?<![\w/-])(?:19|20)\d\d-[01]\d-[0-3]\d(?![\w/-])")
+for p in pages:
+    t = p.read_text(encoding="utf-8", errors="replace")
+    for tag in ("script", "style", "code", "pre"):
+        t = re.sub(rf"<{tag}\b.*?</{tag}>", " ", t, flags=re.S | re.I)
+    t = re.sub(r"<!--.*?-->", " ", t, flags=re.S)
+    text = re.sub(r"<[^>]+>", " ", t)
+    for m in sorted(set(iso_date.findall(text))):
+        fails["a bare ISO date in visible text (write it as 3 Nov 2026)"].append(f"{p}: {m}")
+
 # -------------------------------------------------- generated assets stale ----
 # A committed file produced by a script drifts silently from its source. There
 # is no schedule that would catch it: build_flag.py is deliberately NOT in a

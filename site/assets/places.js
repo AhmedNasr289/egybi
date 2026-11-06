@@ -25,6 +25,13 @@
 */
 (function () {
   'use strict';
+  /* A dataset's date, written as the site writes dates ("3 November 2026",
+     EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
+     value as written if egfmt.js did not load. */
+  function asOf(v) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+  }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -361,7 +368,7 @@
 
   function goingThere(p) {
     var out = [];
-    var osmDate = esc(S.data.as_of);
+    var osmDate = esc(asOf(S.data.as_of));
 
     // Only rendered when OSM actually has the tag. The date and the caution
     // travel with it every single time — an opening time without them is a
@@ -445,7 +452,7 @@
     el.innerHTML = '<h3>' + esc(p.name) + (p.name_ar ? ' <span class="pd-ar">' + esc(p.name_ar) + '</span>' : '') + '</h3>' +
       '<div class="pd-grid">' + bits.join('') + '</div>' +
       goingThere(p) +
-      '<p class="pd-note">Source: OpenStreetMap, as of ' + esc(S.data.as_of) +
+      '<p class="pd-note">Source: OpenStreetMap, as of ' + esc(asOf(S.data.as_of)) +
       '. Governorate computed by point-in-polygon against the bundled boundaries. ' +
       'The links above are searches run against each destination when you click ' +
       'them, so nothing here quotes a price, an opening time or a room that may ' +
@@ -565,7 +572,7 @@
           if (!LABELS[k] && c[k]) parts.push(fmt(c[k]) + ' ' + k);
         });
         $('placesMeta').innerHTML =
-          'OpenStreetMap, as of ' + esc(d.as_of) + ' · ' + parts.join(' · ');
+          'OpenStreetMap, as of ' + esc(asOf(d.as_of)) + ' · ' + parts.join(' · ');
         $('placesNote').textContent = d.note || '';
         // Coverage gap, stated where a reader will see it. The pipeline checks
         // a fixed list of major Egyptian cities on every build and ships the

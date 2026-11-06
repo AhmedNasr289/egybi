@@ -11,7 +11,7 @@ const path = require('path');
 const root = path.resolve(__dirname, '..', '..');
 const fmt = require(path.join(root, 'site', 'assets', 'egfmt.js'));
 const { cases } = JSON.parse(fs.readFileSync(path.join(root, 'backend', 'pipeline', 'tests', 'egfmt_cases.json'), 'utf8'));
-const NAMES = { money_range: 'moneyRange' };
+const NAMES = { money_range: 'moneyRange', date_or_raw: 'dateOrRaw' };
 const show = (s) => JSON.stringify(s).replace(/\u2066/g, '<LRI>').replace(/\u2069/g, '<PDI>');
 
 let bad = 0;

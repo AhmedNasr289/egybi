@@ -23,10 +23,10 @@
 
   var METRICS = {
     population: { label: 'Population (2023)', fmt: function (v) { return (v / 1e6).toFixed(2) + ' M'; } },
-    density:    { label: 'Density', fmt: function (v) { return Math.round(v).toLocaleString() + ' /km²'; } },
+    density:    { label: 'Density', fmt: function (v) { return Math.round(v).toLocaleString('en-GB') + ' /km²'; } },
     urban_pct:  { label: 'Urban population', fmt: function (v) { return v.toFixed(1) + '% urban'; } },
     growth:     { label: 'Growth 2017→2023', fmt: function (v) { return (v >= 0 ? '+' : '') + v.toFixed(1) + '%'; } },
-    area_km2:   { label: 'Area', fmt: function (v) { return Math.round(v).toLocaleString() + ' km²'; } }
+    area_km2:   { label: 'Area', fmt: function (v) { return Math.round(v).toLocaleString('en-GB') + ' km²'; } }
   };
   var RAMP = ['#E3EAF5', '#B9C9E4', '#8AA6D0', '#5B82BC', '#2E5AA0', '#0E2A5E']; // light -> --blue-deep
 

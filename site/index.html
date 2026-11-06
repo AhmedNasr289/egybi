@@ -446,8 +446,9 @@
 <script src="assets/egybi.js?v=2"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
-<script src="assets/trip.js?v=1"></script>
-<script src="assets/home.js?v=1"></script>
+<script src="assets/egfmt.js?v=2"></script>
+<script src="assets/trip.js?v=2"></script>
+<script src="assets/home.js?v=2"></script>
 <script>window.EGYBI_NEWSLETTER = { endpoint: 'api/newsletter.php' };</script>
 <script src="assets/newsletter.js"></script>
 <script>
@@ -487,7 +488,7 @@
     function run(el) {
       var end = parseFloat(el.dataset.count);
       var opts = { prefix: el.dataset.prefix||'', suffix: el.dataset.suffix||'', decimalPlaces: parseInt(el.dataset.decimals||'0',10), separator: el.dataset.sep?',':'', duration: 2.2 };
-      if (!CU || reduceMotion) { el.textContent = opts.prefix + (el.dataset.sep?end.toLocaleString():end) + opts.suffix; return; }
+      if (!CU || reduceMotion) { el.textContent = opts.prefix + (el.dataset.sep?end.toLocaleString('en-GB'):end) + opts.suffix; return; }
       new window.countUp.CountUp(el, end, opts).start();
     }
     var nums = document.querySelectorAll('.num[data-count]');

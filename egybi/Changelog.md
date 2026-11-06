@@ -996,3 +996,20 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **Screenshots in CI:** `backend/verify/shots.js` saves full-page screenshots of six layouts at 1280 and 390 px into the uploaded log folder. The workstation cannot render these pages: local servers are blocked, the pane opens local pages without their stylesheet, and headless Edge hangs on the site's pages while it captures a plain one.
 - **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r" (fixed separately in PR #80).
 - ⚠️ **Caught by CI on this PR:** making `prices-ar.html` right-to-left gave it a 9999 px sideways scroll at phone width. `all-pages.js` flagged it. The skip link hid itself with `left:-9999px`, which on an RTL page points into the scrollable direction. A first fix (a logical offset) only moved the link to the other edge, where `overflow.js` still found it 9999 px off-screen. It is now hidden by clipping until it has keyboard focus, the same technique as `.sr-only` and the honeypot, so it takes no space in either direction.
+
+## 2026-11-06 — Egyptian formatting, part 2: every page, two new checks, and the visit pages as sheets
+- **Every browser script that drew a date or a number is on `EGYBI.fmt`:**
+  - **Places, Atlas, Streets, Invest, Stories, Visit:** "as of" dates read "3 November 2026", not raw ISO.
+  - **The trip pages** (home, plan, fair prices, ask, hieroglyphs): dates and EGP amounts follow the rules.
+  - **Exchange rates** always show two decimals (`EGP 48.70`; one page said 48.7 and another 48.71).
+  - **The blog:** its US-order dates ("Nov 6, 2026") now read 6 Nov 2026.
+  - **Community:** comment dates are read in Cairo time (one posted at 01:00 Cairo time used to show the day before).
+  - **The 14 `toLocaleString()` calls with no locale** name `en-GB`.
+  - **Fallbacks:** every helper falls back to the old output if `egfmt.js` has not loaded, so a page cannot stop drawing.
+- **Generated pages:** the 18 visit pages, the weather page and the holidays page no longer print `2026-08-08`. Two dates inside `calendar.json`'s own source text were rewritten as "6 Oct 2026" and "9 Oct 2026".
+- **New `static-audit.py` rules,** each with a `mutate.py` case that passes (quiet before, caught when injected, quiet after):
+  - `toLocaleString()` with no locale;
+  - a bare ISO date in visible page text (`<code>`, `<pre>` and `datetime` attributes are skipped).
+  - On their first run they found exactly the audit's 14 calls and 21 pages. Both are now clean. Total cases: 44.
+- **Visit pages as sheets:** each of the 18 is now four sections in alternating parchment tones (facts, heat and rain, light, other sites), so the scroll rod marks each join. The heat table gains a visible heading.
+- **`egfmt` gains `date_or_raw`** (never throws on a stray field), with five new shared cases: 51 cases in all, matching in both formatters.
