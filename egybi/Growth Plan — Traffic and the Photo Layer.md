@@ -134,7 +134,7 @@ Every agent: fail closed (unreadable output goes to a human, never to "approved"
 | **2026-11-02** | A1–A3 (Bing, Search Console baseline, submit `prices-ar.html`); add the weekly row | B1 best-time-to-photograph on `visit/` (in progress) |
 | **11-09** | §1 blocked items: contract check; Payhip/Lemon Squeezy listing for the dossier; affiliate applications noting Egypt payout | A4 internal links Places/Atlas → `visit/` |
 | **11-16** | Start the distribution table (§3C) | B2 Arabic `visit/` pages, if A3 shows the Arabic page being indexed |
-| **11-20** | **Day-42 check** (§2) | Prepare the readings for it |
+| **11-20** | **Day-42 check** (§2) | Readings prepared 2026-11-06: run `backend/ops/day42_reading.py` with `EGYBI_ANALYTICS_KEY` set. It prints planner uses against 300, the weekly funnel and a row for the readings log; count sales by hand |
 | **11-23** | Distribution | B4 first data story + embeddable chart |
 | **11-30** | Distribution; first "Papyrus: before you go" of the peak season | B3 Arabic fair-price card |
 | **12-07** | Distribution | Fixes from what the readings show |

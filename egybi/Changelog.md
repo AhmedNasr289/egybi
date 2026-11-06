@@ -972,3 +972,13 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **The card's Arabic** lives in the builder, keyed by fair-price row; a row without Arabic stops the build. Prices with no source say "No sourced price" rather than printing a blank or a guess.
 - ⚠️ **Caught before commit:** Arabic ranges displayed as "100–50 جنيه". The en dash is a neutral character, so the right-to-left algorithm reordered the two numbers. Each range is now wrapped in a left-to-right isolate (U+2066/U+2069), confirmed on screen before and after. The pocket card also first spilled onto a second page; each row's note, source and disagreement between sources now sits in numbered notes under a compact card, so nothing was dropped.
 - **Proof:** 12 new tests (63 in total, ResourceWarning as error), pyflakes clean. The PDF was checked page by page: cover, 18 sites, card, holidays.
+
+## 2026-11-06 — The day-42 reading, ready to run
+- **`backend/ops/day42_reading.py`** reads the live dashboard's JSON (`api/insights.php?format=json`) with the key from `EGYBI_ANALYTICS_KEY`, which it never prints. It prints:
+  - planner uses since 2026-11-06 against the 300 target, with the share reached;
+  - the week-by-week funnel;
+  - a row ready to paste into [[Traffic Baseline & Analytics]].
+  It reminds the reader that this covers two weeks of planner events, not six. Sales are not in the dashboard, so it asks for them to be counted by hand.
+- **Tests:** six run without the network. They cover the target met and not met, "not measured" rather than zero, the paste row's columns, and refusing before any request when the key is missing.
+- **Live check:** a deliberately wrong key returns "HTTP 403" without echoing the key.
+- **CI:** `Test (pipeline)` now lints and tests `backend/ops/` too.
