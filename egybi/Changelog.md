@@ -1053,3 +1053,17 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **The fix, at the source:** `fetch_prices.clean_name_en` strips invisible direction controls, treats a name with a lost character (`?`, U+FFFD) as missing rather than publishing it, and overrides نبق as "Christ's-thorn jujube (nabq)".
 - **Today's file was cleaned with the same function** (8 names), so the fix shows before the next daily refresh.
 - **Tests:** a new test checks the published file carries no such name. It failed on the file before the cleaning and passes after.
+
+## 2026-11-06 — Third data story: Egypt's food prices, measured since July
+- **`egypt-food-prices.html`** (`backend/pipeline/pages/foodprices.py`) and an embeddable `charts/egypt-food-prices.svg`.
+  - **What it measures:** every retail food price the government portal published since 18 July (128 items, 92 observation days), how far each category moved, and the pound over the same weeks.
+  - **The finding:** the median food price moved **+1.4%** from the first week to the last, while the dollar went from EGP 51.09 to EGP 53.90 (**+5.5%**). The page says this compares two measured numbers and claims no cause.
+  - **Links:** from both prices pages and the sitemap.
+- ⚠️ **Four defects caught while building it:**
+  1. **One noisy day set the headline.** Single-day readings swing hard, with every item reported (fish 20.4% off its starting level on 18 August, 2.9% the next published day). Comparing one day with another put vegetables at "+6.0%, rose most"; comparing the first week with the last puts them at "−0.4%, rose least". The page now compares weekly medians and says why.
+  2. **The chart and the table disagreed.** The chart said "Fruit 103" and the table "+1.1%", because they were computed two different ways. Both now come from one item-level weekly calculation; a test asserts the chart's last point equals the table's change.
+  3. **A partial last week.** Weeks counted forward from the first day could leave a one-day last week. Weeks are now anchored on the last day, whole weeks only. The new test caught this.
+  4. **Not-food categories.** Building materials and fertiliser were left out of a food story.
+- **Daily rebuild:** the price refresh now rebuilds the page (`build_food_prices.py`, byte-identical to the full generator) and commits it. Without that it would have frozen on the day it was written, because the general page build does not run on price data. Its sitemap date follows the price data.
+- **Colours:** four categorical hues, validated with the dataviz palette script. All checks pass; worst adjacent colour-blind separation ΔE 8.8. The lines have end labels with one decimal, a legend, one axis, and the credit inside the image.
+- **Proof:** 10 new tests, the full suite passing, and `seo.py` clean across 180 pages.

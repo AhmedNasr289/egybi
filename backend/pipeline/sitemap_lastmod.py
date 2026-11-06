@@ -72,6 +72,8 @@ SITE_URL = 'https://egybi.com'
 DATA_PAGES: dict[str, tuple[str, ...]] = {
     'prices.html': ('data/prices-today.json', 'data/fx-today.json'),
     'prices-ar.html': ('data/prices-today.json', 'data/fx-today.json'),
+    # Built from the price and FX histories, refreshed by the same daily job.
+    'egypt-food-prices.html': ('data/prices-today.json', 'data/fx-today.json'),
 }
 
 _ISO = re.compile(r'^\d{4}-\d{2}-\d{2}$')
