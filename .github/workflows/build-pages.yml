@@ -31,6 +31,8 @@ on:
       - 'site/*.html'
       - 'site/data/visit-climate.json'
       - 'site/data/visit-terrain.json'
+      # egypt-public-holidays.html and its chart are built from it.
+      - 'site/data/calendar.json'
       - 'backend/pipeline/sitemap_lastmod.py'
       # The "Light for photographs" tables on visit/<site>.html are computed
       # by this module for the build year, and the page names that year.
@@ -114,7 +116,7 @@ jobs:
           bash .github/scripts/push-with-regenerate.sh \
             "Regenerate static challenge and post pages [skip ci]" \
             "" \
-            "site/practice site/papyrus site/visit site/visit.html site/places.html site/geospatial.html site/blog.html site/feed.xml site/404.html site/egypt-weather-by-month.html site/charts site/prices.html site/prices-ar.html site/sitemap.xml" \
+            "site/practice site/papyrus site/visit site/visit.html site/places.html site/geospatial.html site/blog.html site/feed.xml site/404.html site/egypt-weather-by-month.html site/egypt-public-holidays.html site/charts site/prices.html site/prices-ar.html site/sitemap.xml" \
             "python backend/pipeline/build_prices_pages.py && SITEMAP_CHANGED_OUT=/tmp/changed-urls.txt python backend/pipeline/build_static_pages.py"
 
       # A pull request usually arrives with its pages already rebuilt, so the
