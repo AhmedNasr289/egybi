@@ -347,4 +347,5 @@ def build_visit_index(urls):
         '  <div class="wrap">\n    <div class="kicker"><span data-glyph="ra"></span>One page per site</div>\n'
         '    <h2>Each site, all twelve months.</h2>\n    <div class="chip-row">' + chips + '</div>\n'
         f'    <p style="margin-top:16px;"><a href="{WBM}">All {len(urls)} sites side by side, every month, in one table &rarr;</a></p>\n'
+        '    <p style="margin-top:8px;"><a href="egypt-public-holidays.html">Public holidays, with Ramadan and Eid dates &rarr;</a></p>\n'
         '  </div>\n</section>')
