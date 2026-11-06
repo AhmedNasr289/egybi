@@ -49,6 +49,7 @@ from typing import Optional
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import heat_calendar as hc  # noqa: E402
 import sun_times  # noqa: E402
+from pages import egfmt  # noqa: E402
 from pages import holidays as hol  # noqa: E402
 from pages.common import ROOT, SITE, esc, read_text, write_text  # noqa: E402
 
@@ -190,14 +191,14 @@ def site_sheet(site: dict, elevation: Optional[float], year: int) -> str:
     months = sorted(site['months'], key=lambda m: m['month'])
     if [m['month'] for m in months] != list(range(1, 13)):
         raise ValueError(f"{site['key']}: climate does not cover all twelve months")
-    maxes = [round(float(m['t_daily_max'])) for m in months]
+    maxes = [egfmt.whole(m['t_daily_max']) for m in months]
     rows = []
     for m, tmax in zip(months, maxes):
         fill = hc.BANDS[hc.band(tmax)][1]
         rows.append(
             f'<tr><th scope="row">{MONTHS[m["month"] - 1]}</th>'
             f'<td class="num heat" style="background:{fill};color:{hc.text_colour(fill)}">{tmax}</td>'
-            f'<td class="num">{round(float(m["t_daily_min"]))}</td>'
+            f'<td class="num">{egfmt.whole(m["t_daily_min"])}</td>'
             f'<td class="num">{float(m["rain_mm_day"]):.1f}</td></tr>')
     light = sun_times.monthly(year, site['lat'], site['lon'])
     hm = lambda t: t.strftime('%H:%M')  # noqa: E731
@@ -207,7 +208,7 @@ def site_sheet(site: dict, elevation: Optional[float], year: int) -> str:
         f'<td class="num">{hm(d.sunset)}</td></tr>' for d in light)
     comfy = comfort_months(maxes)
     hottest = MONTHS[maxes.index(max(maxes))]
-    facts = [f'{site.get("gov", "")} governorate', f'{site["lat"]:.4f}, {site["lon"]:.4f}']
+    facts = [f'{egfmt.gov_name(site.get("gov", ""))} governorate', f'{site["lat"]:.4f}, {site["lon"]:.4f}']
     if elevation is not None:
         facts.append(f'{elevation:,.0f} m above sea level')
     if site.get('unesco'):

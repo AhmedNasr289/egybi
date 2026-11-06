@@ -116,7 +116,7 @@
       });
     });
     cap.innerHTML = 'Source: ' + esc(c.source) + ', mean daily maximum and minimum averaged over ' + esc(c.normal_window || '2001–2020') +
-      '; checked against published station normals before publication. Layer dated ' + esc(c.as_of) +
+      '; checked against published station normals before publication. Layer dated ' + esc(T.fmtDate(c.as_of)) +
       '. <a href="visit.html#month">Every month, every site &rarr;</a>';
   }
 
@@ -156,7 +156,7 @@
     var rows = ['USD', 'EUR', 'GBP'].map(function (code) {
       var r = T.rate(fx, code);
       if (r == null) return '';
-      return '<tr><th scope="row">' + code + '</th><td class="num">1 ' + code + ' = ' + T.money(r, 'EGP') + '</td>' +
+      return '<tr><th scope="row">' + code + '</th><td class="num">1 ' + code + ' = ' + T.rateText(r) + '</td>' +
         '<td class="num">EGP 1,000 = ' + T.money(1000 / r, code) + '</td></tr>';
     }).join('');
     var src = fx.source || {};

@@ -12,6 +12,13 @@
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
   function fmt(ts) {
     if (!ts) return '';
+    // The server writes UTC (gmdate('c')); a stored value without an offset
+    // is UTC too. EGYBI.fmt reads it in Cairo time, so a comment posted at
+    // 01:00 Cairo time no longer shows the previous day.
+    var s = String(ts).trim();
+    if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2})?$/.test(s)) s = s.replace(' ', 'T') + 'Z';
+    var F = window.EGYBI && window.EGYBI.fmt;
+    if (F) return F.dateOrRaw(s, 'en', 'compact');
     var m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var d = String(ts).slice(0, 10).split('-');
     if (d.length !== 3) return '';

@@ -25,6 +25,19 @@
 */
 (function () {
   'use strict';
+  /* A governorate's name as the site spells it ("Fayoum"), for DISPLAY
+     only; the data's own spelling stays the join key. */
+  function gv(n) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.govName(n) : (n == null ? '' : String(n));
+  }
+  /* A dataset's date, written as the site writes dates ("3 November 2026",
+     EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
+     value as written if egfmt.js did not load. */
+  function asOf(v) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+  }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -130,7 +143,7 @@
     S.base = L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: window.EGYBI.mapkit.landStyle,
       onEachFeature: function (f, lyr) {
-        lyr.bindTooltip(esc(f.properties.name), { sticky: true });
+        lyr.bindTooltip(esc(gv(f.properties.name)), { sticky: true });
       }
     }).addTo(S.map);
     // The governorate names, drawn while the view is the whole country. Before
@@ -138,7 +151,7 @@
     // cluster counts on it, so "88" sat in the Delta with nothing to say which
     // part of the Delta. Place names begin at zoom 9, so the ceiling here is 8
     // and the two layers hand over without ever competing.
-    mkx('addLabels')(S.map, S.base, function (p) { return p && p.name; },
+    mkx('addLabels')(S.map, S.base, function (p) { return p && gv(p.name); },
                                   { minPx: 62, maxZoom: 8, maxLabels: 16, priority: 0,
                                     className: 'mk-label-sm' });
     S.map.fitBounds(S.base.getBounds(), { padding: [6, 6] });
@@ -210,7 +223,7 @@
       var m = L.marker([p.lat, p.lon], {
         keyboard: true,
         title: p.name,
-        alt: p.name + (p.gov ? ', ' + p.gov : ''),
+        alt: p.name + (p.gov ? ', ' + gv(p.gov) : ''),
         icon: L.divIcon({
           className: 'mk-pin',
           html: '<i style="width:' + d + 'px;height:' + d + 'px;background:' + spec.colour + '"></i>',
@@ -222,7 +235,7 @@
       // separately rather than being parsed back out of a string.
       m._plName = p.name;
       m.bindTooltip('<strong>' + esc(p.name) + '</strong>' +
-        (p.gov ? '<br>' + esc(p.gov) : ''), { direction: 'top' });
+        (p.gov ? '<br>' + esc(gv(p.gov)) : ''), { direction: 'top' });
       m.on('click', function () { select(p); });
       // L.marker is focusable, so Enter must do what a click does or the
       // keyboard path stops at "I can reach it but not open it".
@@ -361,7 +374,7 @@
 
   function goingThere(p) {
     var out = [];
-    var osmDate = esc(S.data.as_of);
+    var osmDate = esc(asOf(S.data.as_of));
 
     // Only rendered when OSM actually has the tag. The date and the caution
     // travel with it every single time — an opening time without them is a
@@ -404,7 +417,7 @@
     bits.push('<div class="pd-row"><span>Kind</span><strong>' +
       esc(spec.label.replace(/s$/, '')) + (p.place ? ' · ' + esc(p.place) : '') + '</strong></div>');
     bits.push('<div class="pd-row"><span>Governorate</span><strong>' +
-      (p.gov ? esc(p.gov) : 'not assigned') + '</strong></div>');
+      (p.gov ? esc(gv(p.gov)) : 'not assigned') + '</strong></div>');
     bits.push('<div class="pd-row"><span>Coordinates</span><strong>' +
       p.lat.toFixed(4) + ', ' + p.lon.toFixed(4) + '</strong></div>');
     if (p.iata) bits.push('<div class="pd-row"><span>IATA code</span><strong>' + esc(p.iata) + '</strong></div>');
@@ -445,7 +458,7 @@
     el.innerHTML = '<h3>' + esc(p.name) + (p.name_ar ? ' <span class="pd-ar">' + esc(p.name_ar) + '</span>' : '') + '</h3>' +
       '<div class="pd-grid">' + bits.join('') + '</div>' +
       goingThere(p) +
-      '<p class="pd-note">Source: OpenStreetMap, as of ' + esc(S.data.as_of) +
+      '<p class="pd-note">Source: OpenStreetMap, as of ' + esc(asOf(S.data.as_of)) +
       '. Governorate computed by point-in-polygon against the bundled boundaries. ' +
       'The links above are searches run against each destination when you click ' +
       'them, so nothing here quotes a price, an opening time or a room that may ' +
@@ -565,7 +578,7 @@
           if (!LABELS[k] && c[k]) parts.push(fmt(c[k]) + ' ' + k);
         });
         $('placesMeta').innerHTML =
-          'OpenStreetMap, as of ' + esc(d.as_of) + ' · ' + parts.join(' · ');
+          'OpenStreetMap, as of ' + esc(asOf(d.as_of)) + ' · ' + parts.join(' · ');
         $('placesNote').textContent = d.note || '';
         // Coverage gap, stated where a reader will see it. The pipeline checks
         // a fixed list of major Egyptian cities on every build and ships the
