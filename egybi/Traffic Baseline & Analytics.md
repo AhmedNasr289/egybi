@@ -77,3 +77,10 @@ Add a row each time. The point is day-over-day comparison against a number recor
 | Date (UTC) | Visitors 7d | Views today | Users | Subs | Note |
 |---|---|---|---|---|---|
 | 2026-07-20 11:59 | 37 | 156 | 1 | 2 | **Pre-launch baseline.** LinkedIn post not yet published. First Google referral appeared. |
+
+## Search Console readings
+
+Added 2026-11-06 for Growth Plan A2. The site's own counter above sees visits; Search Console sees what happens *before* a visit: how often Google showed a page, and for which queries. Take the first reading before any Growth Plan work is judged. Then take one every two weeks, always over the same window (Performance → Search results → Last 3 months, and separately Last 28 days). How to take it: [[Owner Steps — Search, Sales and Housekeeping]] §A2.
+
+| Date | Window | Clicks | Impressions | CTR | Avg position | Indexed | Not indexed | Note |
+|---|---|---|---|---|---|---|---|---|
