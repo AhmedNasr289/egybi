@@ -45,6 +45,9 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pages import egfmt  # noqa: E402  (one set of Egyptian formatting rules)
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = os.path.join(ROOT, 'site')
 EN_PAGE = os.path.join(SITE, 'prices.html')
@@ -54,11 +57,6 @@ SITE_URL = 'https://egybi.com'
 EN_URL = f'{SITE_URL}/prices.html'
 AR_URL = f'{SITE_URL}/prices-ar.html'
 TOP_N = 5
-
-MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-             'August', 'September', 'October', 'November', 'December']
-MONTHS_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو',
-             'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر']
 
 SUMMARY_START, SUMMARY_END = '<!-- PRICE-SUMMARY:start -->', '<!-- PRICE-SUMMARY:end -->'
 HREFLANG_START, HREFLANG_END = '<!-- HREFLANG:start -->', '<!-- HREFLANG:end -->'
@@ -72,19 +70,6 @@ class AnchorError(RuntimeError):
 
 def esc(s) -> str:
     return html.escape(str(s if s is not None else ''), quote=True)
-
-
-def fmt_num(n) -> str:
-    if n is None:
-        return ''
-    if float(n).is_integer():
-        return f"{int(n):,}"
-    return f"{n:,.2f}".rstrip('0').rstrip('.')
-
-
-def fmt_date(iso: str, months: list[str]) -> str:
-    y, m, d = (int(x) for x in iso.split('-'))
-    return f"{d} {months[m - 1]} {y}"
 
 
 def swap(text: str, old: str, new: str, what: str) -> str:
@@ -119,18 +104,28 @@ def movers(items: list[dict]) -> tuple[list[dict], list[dict], int, int]:
     return rose[:TOP_N], fell[:TOP_N], len(rose), len(fell)
 
 
+def price_range(i: dict, lang: str) -> str:
+    lo, hi = i.get('min'), i.get('max')
+    if lo is None and hi is None:
+        return ''
+    return egfmt.money_range(lo if lo is not None else hi, hi if hi is not None else lo, lang)
+
+
 def item_line(i: dict, lang: str) -> str:
+    """One mover. Its unit is Arabic in the source data, so it is marked
+    Arabic on the English page. Every number goes through egfmt, which isolates
+    it inside Arabic text so a sign or a range cannot swap sides."""
     pct = i['change_pct']
-    arrow = '▲ +' if pct > 0 else '▼ '
-    rng = f"{fmt_num(i.get('min'))}–{fmt_num(i.get('max'))}"
+    cls = 'up' if pct > 0 else 'down'
     unit = esc(i.get('unit') or '')
     if lang == 'ar':
-        return (f"<li><strong>{esc(i.get('name_ar'))}</strong>: {rng} جنيه / {unit} "
-                f"<span class=\"chg {'up' if pct > 0 else 'down'}\">{arrow}{pct}%</span></li>")
+        name_ar = esc(egfmt.digits(i.get('name_ar') or '', 'ar'))
+        return (f"<li><strong>{name_ar}</strong>: {price_range(i, 'ar')} / {egfmt.digits(unit, 'ar')} "
+                f"<span class=\"chg {cls}\">{egfmt.pct(pct, 'ar')}</span></li>")
     name = esc(i.get('name_en') or i.get('name_ar'))
     return (f"<li><strong>{name}</strong> <span lang=\"ar\" dir=\"rtl\">{esc(i.get('name_ar'))}</span>: "
-            f"{rng} EGP / <span lang=\"ar\">{unit}</span> "
-            f"<span class=\"chg {'up' if pct > 0 else 'down'}\">{arrow}{pct}%</span></li>")
+            f"{price_range(i, 'en')} / <span lang=\"ar\" dir=\"rtl\">{unit}</span> "
+            f"<span class=\"chg {cls}\">{egfmt.pct(pct, 'en')}</span></li>")
 
 
 def summary_html(data: dict, lang: str) -> str:
@@ -138,16 +133,19 @@ def summary_html(data: dict, lang: str) -> str:
     items, as_of = v['items'], v['as_of']
     top_up, top_down, n_up, n_down = movers(items)
     src = data['source']
+    when = egfmt.time_tag(as_of, lang, 'prose')
     if lang == 'ar':
-        head = f"أكبر تحركات الأسعار اليوم، {fmt_date(as_of, MONTHS_AR)}"
-        lead = (f"في {fmt_date(as_of, MONTHS_AR)} نشرت {esc(src.get('name_ar'))} أسعار التجزئة لـ {len(items)} صنف. "
-                f"غلي سعر {n_up} صنف ورخص سعر {n_down} مقارنةً باليوم اللي قبله. "
+        def n(x):
+            return egfmt.num(x, 'ar')
+        head = f"أكبر تحركات الأسعار اليوم، {when}"
+        lead = (f"في {when} نشرت {esc(src.get('name_ar'))} أسعار التجزئة لـ {n(len(items))} صنف. "
+                f"غلي سعر {n(n_up)} صنف ورخص سعر {n(n_down)} مقارنةً باليوم اللي قبله. "
                 f"كل رقم هو أقل وأعلى سعر في المنافذ، بالجنيه المصري.")
         up_h, down_h = 'غلت أكتر حاجة', 'رخصت أكتر حاجة'
         dir_attr = ' dir="rtl" lang="ar"'
     else:
-        head = f"Today's biggest price moves, {fmt_date(as_of, MONTHS_EN)}"
-        lead = (f"On {fmt_date(as_of, MONTHS_EN)} the official price portal listed retail prices for "
+        head = f"Today&#x27;s biggest price moves, {when}"
+        lead = (f"On {when} the official price portal listed retail prices for "
                 f"{len(items)} items: {n_up} rose and {n_down} fell against the previous day. "
                 f"Each figure is the minimum–maximum range across outlets, in Egyptian pounds.")
         up_h, down_h = 'Rose most', 'Fell most'
@@ -156,7 +154,7 @@ def summary_html(data: dict, lang: str) -> str:
     down_list = ''.join(item_line(i, lang) for i in top_down) or '<li>—</li>'
     return (f'<section class="surface-light" id="today-summary"{dir_attr}>\n'
             f'  <div class="wrap">\n'
-            f'    <h2>{esc(head)}</h2>\n'
+            f'    <h2>{head}</h2>\n'
             f'    <p class="lead">{lead}</p>\n'
             f'    <div class="ns-grid">\n'
             f'      <div><h3>▲ {up_h}</h3><ul class="plain-list">{up_list}</ul></div>\n'
@@ -181,7 +179,13 @@ AR_OG_TITLE = 'أسعار المنتجات اليوم في مصر — EgyBI'
 
 def build_ar(en: str, data: dict) -> str:
     ar = en
-    ar = swap(ar, '<html lang="en" dir="ltr">', '<html lang="ar" dir="ltr">', 'html lang')
+    # Right-to-left from the root. Below the hero, the summary and the currency
+    # band, the page is still the English price dashboard, so each of those
+    # parts is marked English and left-to-right rather than mirrored.
+    ar = swap(ar, '<html lang="en" dir="ltr">', '<html lang="ar" dir="rtl">', 'html lang')
+    for old in ('<header class="site-header">', '<footer class="site-footer">',
+                '<section class="surface-light">\n', '<section class="surface-light-2 next-steps center">'):
+        ar = swap(ar, old, old.replace('>', ' lang="en" dir="ltr">', 1), f'English part {old.strip()!r}')
     ar = swap_re(ar, r'<title>.*?</title>', f'<title>{esc(AR_TITLE)}</title>', 'title')
     ar = swap_re(ar, r'<meta name="description" content="[^"]*">',
                  f'<meta name="description" content="{esc(AR_DESC)}">', 'meta description')

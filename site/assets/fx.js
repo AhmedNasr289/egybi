@@ -5,7 +5,13 @@
    daily run), it shows a short honest "coming after the next update" note rather
    than a broken empty grid. Rising EGP-value of a currency = the pound bought
    less of it = pound weaker, coloured danger (matches the prices page's "up = you
-   pay more" semantics). */
+   pay more" semantics).
+
+   The band is Arabic copy on both prices pages, so its numbers follow the
+   site's Arabic rules (EGYBI.fmt, assets/egfmt.js): Arabic-Indic digits, the
+   rate always to two decimals, the date with the Egyptian month name, and
+   each number in a left-to-right isolate. Each card also carries the rate in
+   English ("EGP 54.77") for readers of the English page. */
 (function () {
   'use strict';
   var grid = document.getElementById('fxGrid');
@@ -14,9 +20,7 @@
 
   var esc = (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml
     : function (s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; };
-  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  function fmtDate(iso) { if (!iso) return ''; var d = iso.split('-'); return parseInt(d[2], 10) + ' ' + MONTHS[parseInt(d[1], 10) - 1] + ' ' + d[0]; }
-  function fmtEGP(n) { return (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  var F = window.EGYBI && EGYBI.fmt;
 
   function spark(pts) {
     var v = pts.map(function (p) { return p.egp; }).filter(function (x) { return x != null; });
@@ -40,20 +44,23 @@
   ]).then(function (res) {
     var data = res[0], hist = (res[1] && res[1].series) || {};
     if (!data.rates || !data.rates.length) throw new Error('empty');
+    if (!F) throw new Error('egfmt.js did not load');
     grid.innerHTML = data.rates.map(function (it) {
       var pts = hist[it.code] || [];
       var c = it.change_pct || 0;
       var cls = c > 0 ? 'up' : (c < 0 ? 'down' : 'flat');
-      var arrow = c > 0 ? '▲ +' : (c < 0 ? '▼ ' : '— ');
+      var chg = c ? F.pct(c, 'ar', 2) : '—';
       return '<div class="fx-card">' +
         '<div class="fx-top"><span class="fx-code">' + esc(it.code) + '</span>' +
         '<span class="fx-name" dir="auto">' + esc(it.name_ar) + '<span class="en">' + esc(it.name_en) + '</span></span></div>' +
-        '<div class="fx-val">' + fmtEGP(it.egp) + ' <span class="cur">ج.م</span></div>' +
-        '<div class="fx-row"><span class="fx-chg ' + cls + '" title="مقارنة بآخر تحديث">' + arrow + (c ? Math.abs(c) + '%' : '') + '</span>' + spark(pts) + '</div>' +
+        '<div class="fx-val">' + F.isolate(F.fixed(it.egp, 'ar', 2)) + ' <span class="cur">جنيه</span></div>' +
+        '<div class="fx-en" lang="en" dir="ltr">' + esc(it.code) + ' 1 = ' + F.rate(it.egp, 'en') + '</div>' +
+        '<div class="fx-row"><span class="fx-chg ' + cls + '" title="مقارنة بآخر تحديث">' + chg + '</span>' + spark(pts) + '</div>' +
         '</div>';
     }).join('');
     var s = data.source || {};
-    note.innerHTML = 'آخر تحديث ' + esc(fmtDate(data.as_of)) + ' · 1 وحدة من كل عملة = كام جنيه · المصدر: ' +
+    note.innerHTML = 'آخر تحديث <time datetime="' + esc(data.as_of) + '">' + esc(F.date(data.as_of, 'ar')) + '</time> · ' +
+      F.digits('1', 'ar') + ' وحدة من كل عملة = كام جنيه · المصدر: ' +
       '<a href="' + esc(s.url || '#') + '" target="_blank" rel="noopener">' + esc(s.name_en || 'ExchangeRate-API') + '</a>. ' +
       esc(s.note_ar || 'أسعار استرشادية من السوق، وليست السعر الرسمي للبنك المركزي.');
   }).catch(function () {
