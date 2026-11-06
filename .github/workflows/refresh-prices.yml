@@ -119,7 +119,7 @@ jobs:
           bash .github/scripts/push-with-regenerate.sh \
             "Automated daily price refresh — IDSC [skip ci]" \
             "site/data/prices-today.json site/data/prices-history.json" \
-            "site/prices.html site/prices-ar.html site/egypt-food-prices.html site/charts/egypt-food-prices.svg site/sitemap.xml" \
+            "site/prices.html site/prices-ar.html site/egypt-food-prices.html site/charts/egypt-food-prices.svg site/charts/egypt-food-prices-narrow.svg site/sitemap.xml" \
             "python backend/pipeline/build_prices_pages.py && python backend/pipeline/build_food_prices.py && python backend/pipeline/sitemap_lastmod.py --changed-out /tmp/changed-urls.txt"
 
       # Only reached when the push succeeded or there was nothing to push.

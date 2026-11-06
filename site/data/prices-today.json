@@ -70,7 +70,7 @@
    {
     "slug": "idsc-165",
     "name_ar": "اللبن السائب",
-    "name_en": "unpacked Fluid Milk",
+    "name_en": "Unpacked Fluid Milk",
     "category": "dairy",
     "unit": "كيلو",
     "min": 28,
@@ -147,7 +147,7 @@
    {
     "slug": "idsc-638",
     "name_ar": "زبدة بقري مزارع",
-    "name_en": "butter",
+    "name_en": "Butter",
     "category": "dairy",
     "unit": "كيلو",
     "min": 110,
@@ -169,7 +169,7 @@
    {
     "slug": "idsc-107",
     "name_ar": "اسمدة",
-    "name_en": "fertilizer",
+    "name_en": "Fertilizer",
     "category": "fertiliser",
     "unit": "طن",
     "min": 4700,
@@ -180,7 +180,7 @@
    {
     "slug": "idsc-327",
     "name_ar": "البربوني (متوسط)",
-    "name_en": "barbon fish (medium)",
+    "name_en": "Barbon fish (medium)",
     "category": "fish",
     "unit": "كيلو",
     "min": 100,
@@ -191,7 +191,7 @@
    {
     "slug": "idsc-277",
     "name_ar": "البربوني (ممتاز)",
-    "name_en": "barbon fish (excellent)",
+    "name_en": "Barbon fish (excellent)",
     "category": "fish",
     "unit": "كيلو",
     "min": 90,
@@ -202,7 +202,7 @@
    {
     "slug": "idsc-328",
     "name_ar": "البلطي (صغير)",
-    "name_en": "small Tilapia fish",
+    "name_en": "Small Tilapia fish",
     "category": "fish",
     "unit": "كيلو",
     "min": 40,
@@ -235,7 +235,7 @@
    {
     "slug": "idsc-827",
     "name_ar": "السمك",
-    "name_en": "fish",
+    "name_en": "Fish",
     "category": "fish",
     "unit": "كيلو",
     "min": 30,
@@ -268,7 +268,7 @@
    {
     "slug": "idsc-339",
     "name_ar": "الماكريل المجمد",
-    "name_en": "frozen Mackerel fish",
+    "name_en": "Frozen Mackerel fish",
     "category": "fish",
     "unit": "كيلو",
     "min": 80,
@@ -312,7 +312,7 @@
    {
     "slug": "idsc-308",
     "name_ar": "بلطي أسواني",
-    "name_en": "aswan Tilapia fish",
+    "name_en": "Aswan Tilapia fish",
     "category": "fish",
     "unit": "كيلو",
     "min": 80,
@@ -389,7 +389,7 @@
    {
     "slug": "idsc-318",
     "name_ar": "حدادي",
-    "name_en": "hadady fish",
+    "name_en": "Hadady fish",
     "category": "fish",
     "unit": "كيلو",
     "min": 55,
@@ -400,7 +400,7 @@
    {
     "slug": "idsc-316",
     "name_ar": "سبيط",
-    "name_en": "squid fish",
+    "name_en": "Squid fish",
     "category": "fish",
     "unit": "كيلو",
     "min": 200,
@@ -422,7 +422,7 @@
    {
     "slug": "idsc-309",
     "name_ar": "فيليه بلطي",
-    "name_en": "fillet Tilapia fish",
+    "name_en": "Fillet Tilapia fish",
     "category": "fish",
     "unit": "كيلو",
     "min": 100,
@@ -532,7 +532,7 @@
    {
     "slug": "idsc-830",
     "name_ar": "التفاح",
-    "name_en": "apple",
+    "name_en": "Apple",
     "category": "fruit",
     "unit": "كيلو",
     "min": 60,
@@ -675,7 +675,7 @@
    {
     "slug": "idsc-270",
     "name_ar": "كيوي",
-    "name_en": "kiwifruit",
+    "name_en": "Kiwifruit",
     "category": "fruit",
     "unit": "واحدة",
     "min": 5,
@@ -686,7 +686,7 @@
    {
     "slug": "idsc-272",
     "name_ar": "كيوي (كرتونة)",
-    "name_en": "kiwifruit (cartons)",
+    "name_en": "Kiwifruit (cartons)",
     "category": "fruit",
     "unit": "كرتونة",
     "min": 110,
@@ -719,7 +719,7 @@
    {
     "slug": "idsc-283",
     "name_ar": "موز مستورد",
-    "name_en": "imported banana",
+    "name_en": "Imported banana",
     "category": "fruit",
     "unit": "كيلو",
     "min": 35,
@@ -906,7 +906,7 @@
    {
     "slug": "idsc-61",
     "name_ar": "الدقيق المعبأ",
-    "name_en": "packed wheat",
+    "name_en": "Packed wheat",
     "category": "grocery",
     "unit": "كيلو",
     "min": 18.5,
@@ -928,7 +928,7 @@
    {
     "slug": "idsc-829",
     "name_ar": "الشاي",
-    "name_en": "tea",
+    "name_en": "Tea",
     "category": "grocery",
     "unit": "كيلو",
     "min": 208,
@@ -1060,7 +1060,7 @@
    {
     "slug": "idsc-880",
     "name_ar": "الدواجن الطازجة",
-    "name_en": "fresh chicken",
+    "name_en": "Fresh chicken",
     "category": "meat",
     "unit": "كيلو",
     "min": 80,
@@ -1071,7 +1071,7 @@
    {
     "slug": "idsc-877",
     "name_ar": "اللحوم  الطازجة",
-    "name_en": "fresh meat",
+    "name_en": "Fresh meat",
     "category": "meat",
     "unit": "كيلو",
     "min": 280,
@@ -1115,7 +1115,7 @@
    {
     "slug": "idsc-824",
     "name_ar": "البصل",
-    "name_en": "onions",
+    "name_en": "Onions",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 8,
@@ -1181,7 +1181,7 @@
    {
     "slug": "idsc-164",
     "name_ar": "الكوسة",
-    "name_en": "squash",
+    "name_en": "Squash",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 15,
@@ -1269,7 +1269,7 @@
    {
     "slug": "idsc-311",
     "name_ar": "بنجر (كيلو)",
-    "name_en": "beets (kg)",
+    "name_en": "Beets (kg)",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 15,
@@ -1539,7 +1539,7 @@
    {
     "slug": "idsc-327",
     "name_ar": "البربوني (متوسط)",
-    "name_en": "barbon fish (medium)",
+    "name_en": "Barbon fish (medium)",
     "category": "fish",
     "unit": "طاولة خشب",
     "min": 600,
@@ -1550,7 +1550,7 @@
    {
     "slug": "idsc-277",
     "name_ar": "البربوني (ممتاز)",
-    "name_en": "barbon fish (excellent)",
+    "name_en": "Barbon fish (excellent)",
     "category": "fish",
     "unit": "طاولة خشب",
     "min": 3600,
@@ -1561,7 +1561,7 @@
    {
     "slug": "idsc-328",
     "name_ar": "البلطي (صغير)",
-    "name_en": "small Tilapia fish",
+    "name_en": "Small Tilapia fish",
     "category": "fish",
     "unit": "طاولة خشب",
     "min": 750,
@@ -1594,7 +1594,7 @@
    {
     "slug": "idsc-827",
     "name_ar": "السمك",
-    "name_en": "fish",
+    "name_en": "Fish",
     "category": "fish",
     "unit": "طاولة خشب",
     "min": 225,
@@ -1627,7 +1627,7 @@
    {
     "slug": "idsc-339",
     "name_ar": "الماكريل المجمد",
-    "name_en": "frozen Mackerel fish",
+    "name_en": "Frozen Mackerel fish",
     "category": "fish",
     "unit": "كرتونة",
     "min": 1750,
@@ -1671,7 +1671,7 @@
    {
     "slug": "idsc-308",
     "name_ar": "بلطي أسواني",
-    "name_en": "aswan Tilapia fish",
+    "name_en": "Aswan Tilapia fish",
     "category": "fish",
     "unit": "طاولة خشب",
     "min": 1500,
@@ -1748,7 +1748,7 @@
    {
     "slug": "idsc-318",
     "name_ar": "حدادي",
-    "name_en": "hadady fish",
+    "name_en": "Hadady fish",
     "category": "fish",
     "unit": "طاولة خشب",
     "min": 450,
@@ -1759,7 +1759,7 @@
    {
     "slug": "idsc-316",
     "name_ar": "سبيط",
-    "name_en": "squid fish",
+    "name_en": "Squid fish",
     "category": "fish",
     "unit": "طاولة خشب",
     "min": 4000,
@@ -1770,7 +1770,7 @@
    {
     "slug": "idsc-309",
     "name_ar": "فيليه بلطي",
-    "name_en": "fillet Tilapia fish",
+    "name_en": "Fillet Tilapia fish",
     "category": "fish",
     "unit": "كرتونة",
     "min": 1250,
@@ -1902,7 +1902,7 @@
    {
     "slug": "idsc-830",
     "name_ar": "التفاح",
-    "name_en": "apple",
+    "name_en": "Apple",
     "category": "fruit",
     "unit": "كيلو",
     "min": 50,
@@ -2034,7 +2034,7 @@
    {
     "slug": "idsc-270",
     "name_ar": "كيوي",
-    "name_en": "kiwifruit",
+    "name_en": "Kiwifruit",
     "category": "fruit",
     "unit": "واحدة",
     "min": 6,
@@ -2045,7 +2045,7 @@
    {
     "slug": "idsc-272",
     "name_ar": "كيوي (كرتونة)",
-    "name_en": "kiwifruit (cartons)",
+    "name_en": "Kiwifruit (cartons)",
     "category": "fruit",
     "unit": "كرتونة",
     "min": 450,
@@ -2078,7 +2078,7 @@
    {
     "slug": "idsc-283",
     "name_ar": "موز مستورد",
-    "name_en": "imported banana",
+    "name_en": "Imported banana",
     "category": "fruit",
     "unit": "كيلو",
     "min": 30,
@@ -2199,7 +2199,7 @@
    {
     "slug": "idsc-880",
     "name_ar": "الدواجن الطازجة",
-    "name_en": "fresh chicken",
+    "name_en": "Fresh chicken",
     "category": "meat",
     "unit": "كيلو",
     "min": 75,
@@ -2243,7 +2243,7 @@
    {
     "slug": "idsc-824",
     "name_ar": "البصل",
-    "name_en": "onions",
+    "name_en": "Onions",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 8,
@@ -2320,7 +2320,7 @@
    {
     "slug": "idsc-164",
     "name_ar": "الكوسة",
-    "name_en": "squash",
+    "name_en": "Squash",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 12,
@@ -2397,7 +2397,7 @@
    {
     "slug": "idsc-311",
     "name_ar": "بنجر (كيلو)",
-    "name_en": "beets (kg)",
+    "name_en": "Beets (kg)",
     "category": "vegetable",
     "unit": "كيلو",
     "min": 13,
