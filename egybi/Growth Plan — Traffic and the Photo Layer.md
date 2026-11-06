@@ -41,7 +41,7 @@ The pivot set the metric, and this plan keeps it: **planner uses per week, and t
 
 | Signal | Where it is read | Why |
 |---|---|---|
-| Planner uses / week | `api/insights.php` (key-gated, see [[Traffic Baseline & Analytics]]) | The pivot's metric |
+| Planner uses / week | `api/insights.php` (key-gated, see [[Traffic Baseline & Analytics]]), section "The trip companion"; `&format=json` for the weekly row | The pivot's metric. **Defined 2026-11-06:** a visit that adds a stop (`plan_stop_added`). Until then nothing recorded it and the dashboard still showed the retired SQL funnel |
 | Search clicks and impressions, split by page, **and by Arabic vs English page** | Search Console | Whether the SEO work is landing; `prices-ar.html` is the first test of the Arabic bet |
 | Referrers | `api/insights.php` | Which distribution channel is earning its hours |
 | Newsletter subscribers | health endpoint | The list the dossier and the review sell to |
@@ -50,7 +50,7 @@ The pivot set the metric, and this plan keeps it: **planner uses per week, and t
 
 | Date | Check | Rule |
 |---|---|---|
-| **2026-11-20** (day 42) | ≥ 300 planner uses in total and ≥ 1 sale | Continue; otherwise work the distribution table harder |
+| **2026-11-20** (day 42) | ≥ 300 planner uses in total and ≥ 1 sale | Continue; otherwise work the distribution table harder. ⚠️ Planner uses are recorded only from 2026-11-06, so this reading covers two weeks, not six; read it beside "planner opened" (plan.html visits since day 0) and say which one the decision rests on |
 | **2027-01-01** (day 84) | Run-rate | ≥ $100 a month → continue into peak season; < $30 → stop building, keep the free tools live |
 
 ⚠️ Day 42 cannot pass on "≥ 1 sale" while nothing can be bought. If the blocked items above are not done by **2026-11-15**, the honest reading on 11-20 is "not tested", not "failed".
