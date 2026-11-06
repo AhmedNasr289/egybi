@@ -36,6 +36,11 @@ class CleanNameEn(unittest.TestCase):
     def test_a_good_name_is_untouched(self):
         self.assertEqual(fp.clean_name_en(5, 'Tomatoes'), 'Tomatoes')
 
+    def test_the_first_letter_is_capitalised_and_nothing_else(self):
+        self.assertEqual(fp.clean_name_en(7, 'onions'), 'Onions')
+        self.assertEqual(fp.clean_name_en(7, 'aswan Tilapia fish'), 'Aswan Tilapia fish')
+        self.assertEqual(fp.clean_name_en(7, 'beets (kg)'), 'Beets (kg)')
+
 
 class PublishedData(unittest.TestCase):
     def test_no_published_name_carries_a_control_or_a_lost_character(self):

@@ -95,6 +95,30 @@ class Chart(unittest.TestCase):
         self.assertIn('Vegetables 97.5', svg)
         self.assertIn('Fruit 103.2', svg)
 
+    def test_the_phone_chart_is_drawn_at_phone_width_and_names_every_line(self):
+        # The wide chart reached a phone at ~276 px, its 12 px labels at ~4 px.
+        import datetime as dt
+        import re
+        lines = [('Vegetables', fp.CHART_COLOURS[0], [(dt.date(2026, 7, 4), 100), (dt.date(2026, 7, 29), 97.5)]),
+                 ('Groceries', fp.CHART_COLOURS[1], [(dt.date(2026, 7, 4), 100), (dt.date(2026, 7, 29), 103.2)])]
+        credit = ('egybi.com/egypt-food-prices.html · IDSC price portal, retail averages, 128 items.',
+                  'Weekly median per category, first week = 100. Not a basket, not inflation.')
+        svg = fp.svg_chart_narrow(lines, dt.date(2026, 7, 1), dt.date(2026, 7, 29), "Egypt's retail food prices since July", credit)
+        root = ET.fromstring(svg)
+        self.assertEqual(root.get('viewBox').split()[2], str(fp.NARROW_W))
+        self.assertIn('Vegetables 97.5', svg)
+        self.assertIn('Groceries 103.2', svg)
+        sizes = [float(s) for s in re.findall(r'font-size="([0-9.]+)"', svg)]
+        self.assertGreaterEqual(min(sizes), 11.5)
+        # Every credit word survives the wrapping, and no wrapped line is wider than the frame allows.
+        credit_lines = [t.text for t in root.iter('{http://www.w3.org/2000/svg}text') if t.get('font-size') == '11.5']
+        self.assertEqual(' '.join(credit_lines).split(), ' '.join(credit).split())
+        self.assertTrue(all(len(t) <= 46 for t in credit_lines), credit_lines)
+
+    def test_a_falling_change_uses_a_true_minus(self):
+        self.assertEqual(fp._pct_signed(-0.004), chr(0x2212) + '0.4%')
+        self.assertEqual(fp._pct_signed(0.028), '+2.8%')
+
     def test_an_overlong_credit_is_refused(self):
         import datetime as dt
         with self.assertRaises(ValueError):

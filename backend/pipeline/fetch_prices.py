@@ -166,7 +166,10 @@ def clean_name_en(ind_id, raw):
     s = " ".join(str(raw).translate(_BIDI_CONTROLS).split())
     if not s or "?" in s or chr(0xFFFD) in s:
         return None
-    return s
+    # The portal capitalises most names but not all: 23 of 132 retail names on
+    # 2026-11-06 began lower case ("onions" beside "Potatoes"). Only the first
+    # letter is raised, so "aswan Tilapia fish" keeps its inner capital.
+    return s[0].upper() + s[1:]
 
 
 def transform(bundle, view):

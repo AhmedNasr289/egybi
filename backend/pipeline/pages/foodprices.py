@@ -40,6 +40,11 @@ from .common import SITE, SITE_URL, breadcrumb, chrome, esc, page, read_text, wr
 
 PAGE = 'egypt-food-prices.html'
 CHART = 'charts/egypt-food-prices.svg'
+# Drawn at phone width, not shrunk: the wide chart is 846 px and a phone
+# shows it at ~276 px, which put its 12 px labels at about 4 px.
+CHART_NARROW = 'charts/egypt-food-prices-narrow.svg'
+NARROW_W = 320
+MINUS = chr(0x2212)
 TOLERANCE_DAYS = 7
 CHART_MIN_ITEMS = 15
 # Fixed order, never cycled (validated as an adjacent sequence in this order).
@@ -188,9 +193,11 @@ def usd_change(fx, d0, d1, tol=TOLERANCE_DAYS):
 
 
 def _pct_signed(x):
-    """+6.0% / -8.8% for prose (a sign reads better than an arrow mid-sentence)."""
+    """+6.0% / −8.8% for prose (a sign reads better than an arrow mid-sentence).
+    The minus is U+2212, not a hyphen: a hyphen is narrower than the plus, so a
+    column of signed changes did not line up, and it can break the line after it."""
     v = egfmt.fixed(abs(x) * 100, 'en', 1)
-    return ('+' if x > 0 else '-' if x < 0 else '') + v + '%'
+    return ('+' if x > 0 else MINUS if x < 0 else '') + v + '%'
 
 
 def findings(rows, stats, usd, d0, d1, n_days, swing=None):
@@ -334,6 +341,89 @@ def svg_chart(lines, d0, d1, title, credit_lines):
     return '\n'.join(out) + '\n'
 
 
+def _wrap(text, width):
+    """Greedy word wrap to at most `width` characters a line."""
+    lines, cur = [], ''
+    for word in text.split():
+        if cur and len(cur) + 1 + len(word) > width:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = f'{cur} {word}' if cur else word
+    if cur:
+        lines.append(cur)
+    return lines
+
+
+def svg_chart_narrow(lines, d0, d1, title, credit_lines):
+    """The same lines as svg_chart, drawn 320 px wide for a phone, where the
+    page shows it at close to its own size. No legend: the end labels name
+    every line, so identity never rests on colour alone. Same scale rules."""
+    W = NARROW_W
+    left, right, top = 34, 104, 112
+    pw, ph = W - left - right, 230
+    vals = [v for _, _, pts in lines for _, v in pts] + [100]
+    lo = 5 * int(min(vals) // 5) - (5 if min(vals) % 5 == 0 else 0)
+    hi = 5 * int(-(-max(vals) // 5))
+    if hi - lo < 10:
+        hi = lo + 10
+    span_days = max(1, (d1 - d0).days)
+
+    def x(d):
+        return left + pw * (d - d0).days / span_days
+
+    def y(v):
+        return top + ph * (hi - v) / (hi - lo)
+
+    credit = [ln for c in credit_lines for ln in _wrap(c, 46)]
+    H = top + ph + 52 + 15 * len(credit)
+    out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" '
+           f'role="img" aria-labelledby="tn dn" font-family="Inter, Segoe UI, Arial, sans-serif">',
+           f'<title id="tn">{esc(title)}</title>',
+           f'<desc id="dn">Median retail price index per category, 100 = first observation, '
+           f'{egfmt.date(d0, "en", "prose")} to {egfmt.date(d1, "en", "prose")}.</desc>',
+           f'<rect width="{W}" height="{H}" fill="{SURFACE}"/>']
+    for i, ln in enumerate(_wrap(title, 30)):
+        out.append(f'<text x="12" y="{28 + i * 22}" font-size="17" font-weight="700" fill="{INK}">{esc(ln)}</text>')
+    for i, ln in enumerate(('Weekly median price per category,', '100 = each item&#8217;s own first-week price')):
+        out.append(f'<text x="12" y="{76 + i * 16}" font-size="12.5" fill="{INK_SOFT}">{ln}</text>')
+    step = 5 if hi - lo <= 40 else 10
+    for v in range(lo, hi + 1, step):
+        yy = y(v)
+        w = '1.5' if v == 100 else '1'
+        col = INK_SOFT if v == 100 else GRID
+        out.append(f'<line x1="{left}" y1="{yy:.1f}" x2="{left + pw}" y2="{yy:.1f}" stroke="{col}" stroke-width="{w}"/>')
+        out.append(f'<text x="{left - 6}" y="{yy + 4:.1f}" font-size="12" text-anchor="end" fill="{INK_SOFT}">{v}</text>')
+    m = _dt.date(d0.year, d0.month, 1)
+    while m <= d1:
+        if m >= d0:
+            xx = x(m)
+            out.append(f'<line x1="{xx:.1f}" y1="{top + ph}" x2="{xx:.1f}" y2="{top + ph + 5}" stroke="{INK_SOFT}"/>')
+            out.append(f'<text x="{xx:.1f}" y="{top + ph + 20}" font-size="12" text-anchor="middle" '
+                       f'fill="{INK_SOFT}">{egfmt.MONTHS_EN_SHORT[m.month - 1]}</text>')
+        m = _dt.date(m.year + (m.month == 12), m.month % 12 + 1, 1)
+    ends = []
+    for name, colour, pts in lines:
+        path = ' '.join(f'{"M" if i == 0 else "L"}{x(d):.1f},{y(v):.1f}' for i, (d, v) in enumerate(pts))
+        out.append(f'<path d="{path}" fill="none" stroke="{colour}" stroke-width="2" '
+                   'stroke-linejoin="round" stroke-linecap="round"/>')
+        d_last, v_last = pts[-1]
+        out.append(f'<circle cx="{x(d_last):.1f}" cy="{y(v_last):.1f}" r="3.5" fill="{colour}" '
+                   f'stroke="{SURFACE}" stroke-width="2"/>')
+        ends.append([y(v_last), name, v_last, colour])
+    ends.sort()
+    for i in range(1, len(ends)):
+        if ends[i][0] - ends[i - 1][0] < 16:
+            ends[i][0] = ends[i - 1][0] + 16
+    for yy, name, v, colour in ends:
+        out.append(f'<text x="{left + pw + 8}" y="{yy + 4:.1f}" font-size="12" font-weight="600" fill="{INK}">'
+                   f'{esc(name)} {egfmt.fixed(v, "en", 1)}</text>')
+    for i, c in enumerate(credit):
+        out.append(f'<text x="12" y="{top + ph + 50 + i * 15}" font-size="11.5" fill="{INK_SOFT}">{esc(c)}</text>')
+    out.append('</svg>')
+    return '\n'.join(out) + '\n'
+
+
 CSS = """
 .fpx-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .fpx-table{border-collapse:collapse;width:100%}
@@ -345,6 +435,7 @@ CSS = """
 .fpx-movers h3{font-size:1rem;margin:0 0 4px}
 .fpx-chg{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .fpx-chart{display:block;width:100%;height:auto;border-radius:10px}
+@media (max-width:600px){.fpx-chart-sheet{padding:8px}}
 .hc-code{white-space:pre-wrap;word-break:break-all;user-select:all;font:500 .82rem/1.5 ui-monospace,Consolas,monospace;background:var(--papyrus);border:1px solid rgba(41,36,32,.25);border-radius:8px;padding:12px 14px;margin:10px 0 0}
 """
 
@@ -376,6 +467,8 @@ def build_food_prices_page():
     credit = (f"egybi.com/{PAGE} · IDSC price portal, retail averages, {len(rows)} items.",
               "Weekly median per category, first week = 100. Not a basket, not inflation.")
     alt = f"{chart_title}: median price index by category (EgyBI)"
+    narrow_svg = svg_chart_narrow(lines, d0, d1, chart_title, credit)
+    narrow_h = int(narrow_svg.split('height="', 1)[1].split('"', 1)[0])
     snippet = (f'<a href="{url}"><img src="{chart_url}" alt="{alt}" width="846" '
                'style="max-width:100%;height:auto" loading="lazy"></a>')
     facts = ''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in findings(rows, stats, usd, d0, d1, n_days, swing))
@@ -399,8 +492,11 @@ def build_food_prices_page():
       <span class="seal" aria-hidden="true"><span data-glyph="ankh"></span></span>
       {facts}
     </div>
-    <div class="sheet" style="margin-top:18px;">
-      <img class="fpx-chart" src="{CHART}" alt="{esc(alt)}" width="846" height="500">
+    <div class="sheet fpx-chart-sheet" style="margin-top:18px;">
+      <picture>
+        <source media="(max-width: 600px)" srcset="{CHART_NARROW}" width="{NARROW_W}" height="{narrow_h}">
+        <img class="fpx-chart" src="{CHART}" alt="{esc(alt)}" width="846" height="500">
+      </picture>
     </div>
     <p class="chart-cap" style="margin-top:14px;">Source: the IDSC local prices portal (Egyptian Cabinet), retail
     averages across outlets, kept daily by EgyBI since July. Each item is compared by the median of its prices in
@@ -442,4 +538,5 @@ def build_food_prices_page():
                     nav=nav, foot=foot, og_image=f"{SITE_URL}/og-visit.png?v=3"))
     os.makedirs(os.path.join(SITE, 'charts'), exist_ok=True)
     write_text(os.path.join(SITE, CHART), svg_chart(lines, d0, d1, chart_title, credit))
+    write_text(os.path.join(SITE, CHART_NARROW), narrow_svg)
     return [(url, '0.8')]
