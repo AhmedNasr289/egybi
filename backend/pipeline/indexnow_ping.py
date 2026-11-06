@@ -51,11 +51,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 def read_urls(path: str) -> list[str]:
     try:
-        lines = io.open(path, encoding='utf-8').read().splitlines()
+        with io.open(path, encoding='utf-8') as f:
+            lines = f.read().splitlines()
     except OSError:
         return []
     seen, out = set(), []
     for u in (l.strip() for l in lines):
+        # SITE_URL ends in "/", so "https://egybi.com.example/x" is refused
+        # here; IndexNow rejects a WHOLE batch (422) that names another host.
         if u.startswith(SITE_URL) and u not in seen:
             seen.add(u)
             out.append(u)
@@ -65,7 +68,8 @@ def read_urls(path: str) -> list[str]:
 def key_file_ok() -> bool:
     """The committed key file must hold exactly the key, or every ping is a 403."""
     try:
-        return io.open(os.path.join(ROOT, 'site', KEY + '.txt'), encoding='utf-8').read().strip() == KEY
+        with io.open(os.path.join(ROOT, 'site', KEY + '.txt'), encoding='utf-8') as f:
+            return f.read().strip() == KEY
     except OSError:
         return False
 

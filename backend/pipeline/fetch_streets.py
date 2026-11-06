@@ -347,7 +347,7 @@ def resolve_boundary(ox, d: dict):
             if not answered:
                 # Distinguish it in the log so a run dropped by a flaky network
                 # is not mistaken for one dropped by missing OSM data.
-                log(f"    (network, not OSM — this candidate was never answered)")
+                log("    (network, not OSM — this candidate was never answered)")
             continue
         try:
             area_km2 = float(gdf.to_crs(gdf.estimate_utm_crs()).area.iloc[0]) / 1e6

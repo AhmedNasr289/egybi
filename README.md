@@ -92,7 +92,9 @@ perankh/
 | `build_egypt_map.py` | `site/assets/egypt-geo.js` | no |
 | `build_flag.py` | `site/assets/egypt-silhouette.svg` | no |
 | `build_invest_map.py` | `site/data/invest-projects.json` | no |
-| `build_static_pages.py` | 153 pages (incl. `visit/<site>.html`), `sitemap.xml`, `feed.xml`, `404.html` | no |
+| `build_static_pages.py` (code in `pages/`) | 155 pages: 123 retired `practice/` notices, 12 `papyrus/` issues, 18 `visit/<site>.html`, `egypt-weather-by-month.html` (+ `charts/*.svg`), `404.html`; `sitemap.xml`, `feed.xml`; the generated blocks inside `visit.html`, `places.html`, `geospatial.html`, `blog.html` | no |
+| `build_prices_pages.py` | the price summary in `prices.html`, and all of `prices-ar.html` | no |
+| `sitemap_lastmod.py`, `indexnow_ping.py` | sitemap dates; IndexNow announcements after each push | IndexNow only |
 | *(by hand, cited row by row)* | `site/data/calendar.json` (re-read every 120 d), `fair-prices.json` (every 90 d) | — |
 | `build_og_image.py`, `build_favicons.py`, `build_planner_notes.py` | image and note assets | no |
 
@@ -130,6 +132,15 @@ node backend/verify/contrast.js                   # WCAG AA against the actually
 node backend/verify/a11y2.js                      # keyboard operation with real key presses
 python3 backend/verify/static-audit.py            # links, anchors, asset-version drift
 python3 backend/verify/mutate.py                  # ← the one that checks the checkers
+```
+
+The Python pipeline has its own unit tests (standard-library `unittest`, no dependencies) and
+lint. `Test (pipeline)` runs them on every pull request that touches `backend/pipeline/`, together
+with the byte-identical-rebuild rule below; `build-pages` runs the tests again before it publishes.
+
+```bash
+python -m unittest discover -s backend/pipeline/tests -v
+python -m pyflakes backend/pipeline/     # pip install pyflakes
 ```
 
 **`mutate.py` is the important one.** It injects, one at a time, the exact defect each checker

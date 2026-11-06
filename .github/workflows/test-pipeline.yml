@@ -1,0 +1,105 @@
+# Unit tests and lint for the Python pipeline, on every pull request that
+# touches it.
+#
+# Until 2026-11-06 a PR that changed only backend/pipeline/ ran NO checks:
+# verify-browser triggers on site/** alone, so a generator change was first
+# exercised by build-pages AFTER it had merged, on a push that Hostinger
+# deploys straight to readers. This is the gate in front of that.
+#
+# Three checks, each cheap (about a minute together):
+#   1. pyflakes over the whole pipeline - undefined names, unused imports.
+#      The page generator was split into modules on 2026-11-06 and pyflakes
+#      is what proved every moved function still resolved its names.
+#   2. the unit tests in backend/pipeline/tests (standard-library unittest,
+#      no dependencies).
+#   3. the README's rule that build_static_pages.py is byte-identical across
+#      two consecutive runs: run it twice and compare every file under site/.
+name: Test (pipeline)
+
+on:
+  pull_request:
+    paths:
+      - 'backend/pipeline/**'
+      - 'site/data/visit-climate.json'
+      - 'site/data/visit-terrain.json'
+      - 'site/assets/blog-posts.js'
+      - 'site/assets/challenges.js'
+      - '.github/workflows/test-pipeline.yml'
+  workflow_dispatch: {}
+
+concurrency:
+  group: test-pipeline-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write            # open a failure-alert issue via notify-failure
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10        # ~1 min measured locally; 10 bounds a hung run
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: sitemap_lastmod dates pages from git, and a depth-1
+          # clone makes every page look like it came from one commit.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Each step tees into one log, so the failure alert can quote what broke.
+      - name: Lint (pyflakes)
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pip install --quiet pyflakes==4.1.0
+          python -m pyflakes backend/pipeline/ 2>&1 | tee -a /tmp/test-pipeline.log
+
+      - name: Unit tests
+        shell: bash
+        run: |
+          set -o pipefail
+          python -W error::ResourceWarning -m unittest discover -s backend/pipeline/tests -v 2>&1 \
+            | tee -a /tmp/test-pipeline.log
+
+      - name: Generator is byte-identical across two runs
+        shell: bash
+        run: |
+          set -euo pipefail
+          snapshot() { find site -type f -print0 | sort -z | xargs -0 sha256sum; }
+          python backend/pipeline/build_prices_pages.py >/dev/null
+          python backend/pipeline/build_static_pages.py >/dev/null
+          snapshot > /tmp/run1.txt
+          python backend/pipeline/build_prices_pages.py >/dev/null
+          python backend/pipeline/build_static_pages.py >/dev/null
+          snapshot > /tmp/run2.txt
+          if ! diff -u /tmp/run1.txt /tmp/run2.txt | tee -a /tmp/test-pipeline.log; then
+            echo "::error::build_static_pages.py wrote different bytes on its second run" | tee -a /tmp/test-pipeline.log
+            exit 1
+          fi
+          echo "byte-identical: $(wc -l < /tmp/run1.txt) files"
+
+      - name: Collect what the run said about itself
+        if: failure()
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<PIPELINE_EOF'
+            grep -E '(FAIL|ERROR|Error|error|undefined name|imported but unused|^[-+][0-9a-f]{64})' \
+              /tmp/test-pipeline.log 2>/dev/null | head -25 || true
+            echo 'PIPELINE_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}

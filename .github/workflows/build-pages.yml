@@ -14,6 +14,8 @@ on:
       - 'site/assets/challenges.js'
       - 'site/assets/blog-posts.js'
       - 'backend/pipeline/build_static_pages.py'
+      # Split into modules on 2026-11-06; an edit to any of them changes pages.
+      - 'backend/pipeline/pages/**'
       # site/blog.html is the fourth input and was missing. The generator lifts
       # the shared nav and footer out of it at build time (build_static_pages.py
       # line ~142) precisely so the 135 generated pages cannot drift from the
@@ -73,6 +75,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      # Before anything is regenerated and pushed to production: a pipeline
+      # whose own tests fail must not publish. test-pipeline.yml runs the same
+      # tests on the PR; this catches a push that reached main without one.
+      - name: Unit tests
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m unittest discover -s backend/pipeline/tests 2>&1 | tee /tmp/build-pages.log
 
       # Tee'd so the alert can name what the generator objected to. This one
       # owns 135+ pages and fires on every push to main, which Hostinger deploys

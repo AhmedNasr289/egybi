@@ -143,9 +143,20 @@ def lastmod_for(rel: str, fallback: Optional[str] = None, data_only: bool = Fals
     return fallback or today()
 
 
+def _read(path: str) -> str:
+    with io.open(path, encoding='utf-8') as f:
+        return f.read()
+
+
+def _write(path: str, text: str) -> None:
+    # LF everywhere, so a Windows build writes the same bytes as the runner.
+    with io.open(path, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(text)
+
+
 def read_lastmods(path: str = SITEMAP) -> dict[str, str]:
     try:
-        xml = io.open(path, encoding='utf-8').read()
+        xml = _read(path)
     except OSError:
         return {}
     return {m.group(2).strip(): m.group(4).strip() for m in _URL_BLOCK.finditer(xml)}
@@ -167,13 +178,13 @@ def write_sitemap(entries: Iterable[tuple[str, str, str]], path: str = SITEMAP) 
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
            + "\n".join(rows) + "\n</urlset>\n")
-    io.open(path, 'w', encoding='utf-8', newline='\n').write(xml)
+    _write(path, xml)
     return len(rows), changed
 
 
 def refresh_data_pages(path: str = SITEMAP) -> list[str]:
     """Move the lastmod of DATA_PAGES inside an existing sitemap; touch nothing else."""
-    xml = io.open(path, encoding='utf-8').read()
+    xml = _read(path)
     changed: list[str] = []
 
     def sub(m: re.Match) -> str:
@@ -190,7 +201,7 @@ def refresh_data_pages(path: str = SITEMAP) -> list[str]:
 
     new = _URL_BLOCK.sub(sub, xml)
     if new != xml:
-        io.open(path, 'w', encoding='utf-8', newline='\n').write(new)
+        _write(path, new)
     return changed
 
 
