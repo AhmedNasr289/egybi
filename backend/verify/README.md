@@ -28,7 +28,7 @@ control.
 ## mutate.py — the check on the checks
 
 A check that has never been observed failing is not evidence. `mutate.py` runs
-thirty-nine cases, each injecting one real defect a checker exists to catch,
+forty-two cases, each injecting one real defect a checker exists to catch,
 asserts the checker reports it, reverts, and asserts the checker goes quiet
 again.
 
