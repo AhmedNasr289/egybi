@@ -997,8 +997,6 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r" (fixed separately in PR #80).
 - ⚠️ **Caught by CI on this PR:** making `prices-ar.html` right-to-left gave it a 9999 px sideways scroll at phone width. `all-pages.js` flagged it. The skip link hid itself with `left:-9999px`, which on an RTL page points into the scrollable direction. It now uses `inset-inline-start`, which is `left` in English and `right` in Arabic, the clipped direction in both.
 
-- **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r".
-
 ## 2026-11-06 — Egyptian formatting, part 2: every page, two new checks, and the visit pages as sheets
 - **Every browser script that drew a date or a number is on `EGYBI.fmt`:**
   - **Places, Atlas, Streets, Invest, Stories, Visit:** "as of" dates read "3 November 2026", not raw ISO.
