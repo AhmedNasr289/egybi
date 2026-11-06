@@ -83,8 +83,12 @@ try {
     // statement is a syntax error -- which the catch below swallowed, leaving
     // $hasEvents false and the funnel section silently absent from the page.
     // Not "no events recorded": the check itself could never succeed.
+    // Ask the CONNECTION which engine it is, not the configuration: when MySQL
+    // is configured but unreachable, durable_db() returns null and this page
+    // falls back to the SQLite file, where SHOW COLUMNS fails, the catch hides
+    // it, and the planner rows would read as dashes during the outage.
     $cols = [];
-    if (function_exists('db_is_mysql') && db_is_mysql()) {
+    if ($db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
         foreach ($db->query('SHOW COLUMNS FROM hits') as $c) { $cols[] = $c['Field']; }
     } else {
         foreach ($db->query('PRAGMA table_info(hits)') as $c) { $cols[] = $c['name']; }
