@@ -38,14 +38,14 @@
 <rect x="466" y="106" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="491" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">27</text>
 <rect x="518" y="106" width="50" height="30" rx="4" fill="#C9A227"/><text x="543" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">29</text>
 <rect x="570" y="106" width="50" height="30" rx="4" fill="#C9A227"/><text x="595" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
-<rect x="622" y="106" width="50" height="30" rx="4" fill="#C9A227"/><text x="647" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">28</text>
+<rect x="622" y="106" width="50" height="30" rx="4" fill="#C9A227"/><text x="647" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">29</text>
 <rect x="674" y="106" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="699" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">26</text>
 <rect x="726" y="106" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="751" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">23</text>
 <rect x="778" y="106" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="803" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">19</text>
 <text x="196" y="158" font-size="13" font-weight="600" text-anchor="end">The Suez Canal at Ismailia</text>
 <rect x="206" y="138" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="231" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">19</text>
 <rect x="258" y="138" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="283" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">21</text>
-<rect x="310" y="138" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="335" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">24</text>
+<rect x="310" y="138" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="335" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
 <rect x="362" y="138" width="50" height="30" rx="4" fill="#C9A227"/><text x="387" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">28</text>
 <rect x="414" y="138" width="50" height="30" rx="4" fill="#C9A227"/><text x="439" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">33</text>
 <rect x="466" y="138" width="50" height="30" rx="4" fill="#D97B2B"/><text x="491" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">36</text>
@@ -54,7 +54,7 @@
 <rect x="622" y="138" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
 <rect x="674" y="138" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="726" y="138" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="751" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
-<rect x="778" y="138" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="803" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">20</text>
+<rect x="778" y="138" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="803" y="158" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">21</text>
 <text x="196" y="190" font-size="13" font-weight="600" text-anchor="end">Historic Cairo</text>
 <rect x="206" y="170" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="231" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">19</text>
 <rect x="258" y="170" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="283" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">21</text>
@@ -113,7 +113,7 @@
 <rect x="310" y="298" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="335" y="318" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">24</text>
 <rect x="362" y="298" width="50" height="30" rx="4" fill="#C9A227"/><text x="387" y="318" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">29</text>
 <rect x="414" y="298" width="50" height="30" rx="4" fill="#C9A227"/><text x="439" y="318" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">33</text>
-<rect x="466" y="298" width="50" height="30" rx="4" fill="#D97B2B"/><text x="491" y="318" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">36</text>
+<rect x="466" y="298" width="50" height="30" rx="4" fill="#D97B2B"/><text x="491" y="318" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
 <rect x="518" y="298" width="50" height="30" rx="4" fill="#D97B2B"/><text x="543" y="318" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">38</text>
 <rect x="570" y="298" width="50" height="30" rx="4" fill="#D97B2B"/><text x="595" y="318" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
 <rect x="622" y="298" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="318" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">35</text>
@@ -143,12 +143,12 @@
 <rect x="518" y="362" width="50" height="30" rx="4" fill="#B23A0F"/><text x="543" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">39</text>
 <rect x="570" y="362" width="50" height="30" rx="4" fill="#B23A0F"/><text x="595" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">39</text>
 <rect x="622" y="362" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
-<rect x="674" y="362" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">32</text>
+<rect x="674" y="362" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">33</text>
 <rect x="726" y="362" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="751" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">26</text>
 <rect x="778" y="362" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="803" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">22</text>
 <text x="196" y="414" font-size="13" font-weight="600" text-anchor="end">Hurghada</text>
 <rect x="206" y="394" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="231" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">21</text>
-<rect x="258" y="394" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="283" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">22</text>
+<rect x="258" y="394" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="283" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">23</text>
 <rect x="310" y="394" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="335" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
 <rect x="362" y="394" width="50" height="30" rx="4" fill="#C9A227"/><text x="387" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">28</text>
 <rect x="414" y="394" width="50" height="30" rx="4" fill="#C9A227"/><text x="439" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">31</text>
@@ -156,7 +156,7 @@
 <rect x="518" y="394" width="50" height="30" rx="4" fill="#D97B2B"/><text x="543" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
 <rect x="570" y="394" width="50" height="30" rx="4" fill="#D97B2B"/><text x="595" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">35</text>
 <rect x="622" y="394" width="50" height="30" rx="4" fill="#C9A227"/><text x="647" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">33</text>
-<rect x="674" y="394" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
+<rect x="674" y="394" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">31</text>
 <rect x="726" y="394" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="751" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">27</text>
 <rect x="778" y="394" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="803" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">23</text>
 <text x="196" y="446" font-size="13" font-weight="600" text-anchor="end">The White Desert</text>
@@ -235,7 +235,7 @@
 <rect x="570" y="586" width="50" height="30" rx="4" fill="#B23A0F"/><text x="595" y="606" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">43</text>
 <rect x="622" y="586" width="50" height="30" rx="4" fill="#B23A0F"/><text x="647" y="606" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">41</text>
 <rect x="674" y="586" width="50" height="30" rx="4" fill="#D97B2B"/><text x="699" y="606" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
-<rect x="726" y="586" width="50" height="30" rx="4" fill="#C9A227"/><text x="751" y="606" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
+<rect x="726" y="586" width="50" height="30" rx="4" fill="#C9A227"/><text x="751" y="606" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">31</text>
 <rect x="778" y="586" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="803" y="606" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">26</text>
 <text x="196" y="638" font-size="13" font-weight="600" text-anchor="end">Abu Simbel</text>
 <rect x="206" y="618" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="231" y="638" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">24</text>

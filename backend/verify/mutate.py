@@ -211,6 +211,21 @@ def strip_date():
 case("data file with no date", "static-audit.py", ["site/data/visit-terrain.json"],
      strip_date, lambda o: "data files with no date on them" in o, PY_AUDIT)
 
+# ---- 6b. Egyptian formatting: a number formatted by the visitor's browser ----
+# toLocaleString() with no locale printed 1.234 in a German browser and ١٬٢٣٤
+# in an Arabic one; fourteen such calls drew the atlas and the maps until
+# 2026-11-06. Putting one back must be caught.
+case("toLocaleString with no locale", "static-audit.py", ["site/assets/egypt-map.js"],
+     lambda: edit("site/assets/egypt-map.js", "toLocaleString('en-GB')", "toLocaleString()"),
+     lambda o: "toLocaleString() with no locale" in o, PY_AUDIT)
+
+# ---- 6c. Egyptian formatting: a raw ISO date a reader can see -----------------
+# Dates are written "3 Nov 2026"; the ISO form belongs only in <time datetime>.
+# The 18 visit pages printed "layer dated 2026-08-08" until 2026-11-06.
+case("bare ISO date in visible text", "static-audit.py", ["site/about.html"],
+     lambda: edit("site/about.html", "</footer>", "<p>Updated 2026-11-06.</p></footer>"),
+     lambda o: "a bare ISO date in visible text" in o, PY_AUDIT)
+
 # ---- 7. page sweep: a script that throws ------------------------------------
 case("console error on a page", "all-pages.js", ["site/places.html"],
      lambda: edit("site/places.html", "</body>",

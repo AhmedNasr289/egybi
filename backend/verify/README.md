@@ -28,7 +28,7 @@ control.
 ## mutate.py — the check on the checks
 
 A check that has never been observed failing is not evidence. `mutate.py` runs
-forty-two cases, each injecting one real defect a checker exists to catch,
+forty-four cases, each injecting one real defect a checker exists to catch,
 asserts the checker reports it, reverts, and asserts the checker goes quiet
 again.
 
@@ -60,7 +60,7 @@ reporting "clean" while being incapable of detecting anything:
   chip), a blank label, and a mount with nothing to list.
 
 `CASE=<substring>` runs a single case, so a repaired case can be re-proven
-without paying for the other thirty-eight. Run the cases one at a time or let
+without paying for the other forty-three. Run the cases one at a time or let
 the whole suite run alone — a case rewrites files in the tree and will pull them
 out from under any other checker reading them concurrently.
 

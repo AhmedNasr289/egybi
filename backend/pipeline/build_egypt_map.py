@@ -18,6 +18,8 @@ import os
 import sqlite3
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 def _force_utf8_output() -> None:
     """Make stdout/stderr safe for non-ASCII on every platform.
 
@@ -67,17 +69,9 @@ DB = os.path.join(HERE, "..", "test", "egybi_test.sqlite")
 OUT = os.path.join(HERE, "..", "..", "site", "assets", "egypt-geo.js")
 PRECISION = 4  # decimal places (~11 m) — plenty for a national choropleth
 
-# geoBoundaries shapeName (suffix stripped) -> KB governorates.name
-ALIASES = {
-    "Al Sharqia": "Sharqia",
-    "Gharbiyya": "Gharbia",
-    "Kafr el-Sheikh": "Kafr El Sheikh",
-}
-
-
-def clean_name(shape_name):
-    n = shape_name.replace(" Governorate", "").replace(" Governate", "").strip()
-    return ALIASES.get(n, n)
+# The geoBoundaries -> knowledge-base alias table is shared with
+# build_invest_map.py from governorates.py (one copy, not two).
+from governorates import kb_name as clean_name  # noqa: E402
 
 
 def round_coords(obj):

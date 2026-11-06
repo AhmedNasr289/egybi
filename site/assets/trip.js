@@ -71,7 +71,11 @@
     var a = parse(start), b = parse(end);
     return a == null || b == null ? null : Math.round((b - a) / 864e5);
   }
+  /* Dates and EGP amounts follow the site's Egyptian rules (EGYBI.fmt,
+     assets/egfmt.js) when it has loaded, and the old local format if not. */
+  function F() { return window.EGYBI && window.EGYBI.fmt; }
   function fmtDate(d) {
+    if (F() && typeof d === 'string' && d) return F().dateOrRaw(d, 'en', 'compact');
     var ms = parse(d);
     if (ms == null) return '';
     var x = new Date(ms);
@@ -99,15 +103,20 @@
   /* ----------------------------------------------------------- the heat --
      The same five bands and the same colours as the visitor page, so a dot
      means the same thing on every map on the site. */
+  /* Banded on the WHOLE degree the reader sees (21.7 shows as 22 and is
+     coloured as 22), with the weather page's integer labels, so "22–27 °C"
+     cannot be misread at its edge the way "22–28" could. */
   var BANDS = [
-    { max: 22, colour: '#2C6FAD', label: 'under 22 °C' },
-    { max: 28, colour: '#4FA3A5', label: '22–28 °C' },
-    { max: 34, colour: '#C9A227', label: '28–34 °C' },
-    { max: 39, colour: '#D97B2B', label: '34–39 °C' },
-    { max: Infinity, colour: '#B23A0F', label: '39 °C and above' }
+    { max: 22, colour: '#2C6FAD', label: '21 °C or less' },
+    { max: 28, colour: '#4FA3A5', label: '22–27 °C' },
+    { max: 34, colour: '#C9A227', label: '28–33 °C' },
+    { max: 39, colour: '#D97B2B', label: '34–38 °C' },
+    { max: Infinity, colour: '#B23A0F', label: '39 °C or more' }
   ];
+  function whole(t) { return F() ? F().whole(t) : Math.round(t); }
   function band(t) {
     if (t == null) return null;
+    t = whole(t);
     for (var i = 0; i < BANDS.length; i++) if (t < BANDS[i].max) return BANDS[i];
     return BANDS[BANDS.length - 1];
   }
@@ -163,8 +172,14 @@
     for (var i = 0; i < rs.length; i++) if (rs[i].code === code) return rs[i].egp;
     return null;
   }
+  /* An exchange rate: always two decimals, "EGP 54.77". */
+  function rateText(r) {
+    if (r == null || !isFinite(r)) return '—';
+    return F() ? F().rate(r, 'en') : 'EGP ' + Number(r).toFixed(2);
+  }
   function money(n, cur) {
     if (n == null) return '—';
+    if (cur === 'EGP' && F() && isFinite(n)) return F().money(n, 'en');
     var d = n >= 100 ? 0 : (n >= 10 ? 1 : 2);
     return (cur === 'EGP' ? 'EGP ' : (cur === 'USD' ? '$' : cur === 'EUR' ? '€' : cur === 'GBP' ? '£' : cur + ' ')) +
       Number(n).toLocaleString('en-US', { maximumFractionDigits: d, minimumFractionDigits: 0 });
@@ -177,7 +192,7 @@
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow,
     km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM,
-    eventsIn: eventsIn, rate: rate, money: money,
+    eventsIn: eventsIn, rate: rate, rateText: rateText, money: money, whole: whole,
     MONTHS: MONTHS, SHORT: SHORT, esc: esc
   };
 }());

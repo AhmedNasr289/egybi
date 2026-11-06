@@ -25,6 +25,7 @@ import datetime as _dt
 import json
 import os
 
+from . import egfmt
 from .common import SITE, SITE_URL, breadcrumb, chrome, esc, page, read_text, write_text
 
 PAGE = 'egypt-public-holidays.html'
@@ -237,7 +238,7 @@ def build_holidays_page():
     snippet = (f'<a href="{url}"><img src="{chart_url}" alt="{alt}" width="846" '
                'style="max-width:100%;height:auto" loading="lazy"></a>')
     facts = ''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in findings(rows))
-    source_line = (f"Compiled by hand from the source named on each row; read {esc(cal.get('as_of', ''))}. "
+    source_line = (f"Compiled by hand from the source named on each row; read {egfmt.time_tag(cal['as_of'], 'en', 'prose') if cal.get('as_of') else 'undated'}. "
                    "Islamic dates are forecasts from astronomical calculation, confirmed only by the official "
                    "moon sighting.")
     ld = {"@context": "https://schema.org", "@graph": [
@@ -286,7 +287,7 @@ def build_holidays_page():
     write_text(os.path.join(SITE, PAGE),
                page(title, desc, url, body, ld, extra_head=f'<style>{CSS}</style>', prefix='',
                     nav=nav, foot=foot, og_image=f"{SITE_URL}/og-visit.png?v=3"))
-    credit = (f"Sources named row by row on egybi.com/{PAGE}; calendar read {cal.get('as_of', '')}.",
+    credit = (f"Sources named row by row on egybi.com/{PAGE}; calendar read {egfmt.date(cal['as_of'], 'en') if cal.get('as_of') else 'undated'}.",
               "Islamic dates are expected until the moon sighting.")
     os.makedirs(os.path.join(SITE, 'charts'), exist_ok=True)
     write_text(os.path.join(SITE, CHART),

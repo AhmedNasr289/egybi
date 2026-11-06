@@ -984,6 +984,52 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **[[Traffic Baseline & Analytics]]** gained a Search Console readings table for Growth Plan A2.
 - **PR #69 merged and verified live:** `plan.js` sends `plan_stop_added` and `plan_route_built`, and `api/insights.php` answers 403 without its key (it parses and runs).
 
+## 2026-11-06 — Egyptian formatting, the Arabic prices page, and the Papyrus issue as a letter
+- **One set of Egyptian formatting rules, in two formatters:** `site/assets/egfmt.js` (browser) and `backend/pipeline/pages/egfmt.py` (generators). Rules: Arabic-Indic digits in Arabic text; `EGP 1,234` / `١٬٢٣٤ جنيه`; rates to two decimals; `6 Nov 2026` / `٦ نوفمبر ٢٠٢٦` in Cairo time; changes as `▲ 13.5%`; every number inside Arabic text in a left-to-right isolate. 46 shared cases, written by hand, run against both, in CI too. A positive control broke one rule in a copy of each formatter: the Python copy failed 12 cases and the JavaScript copy failed 3. Spec: `docs/superpowers/specs/2026-11-06-egyptian-formatting-and-papyrus-design.md`.
+- **The Arabic prices page:**
+  - It is now right-to-left from its root, with the English price dashboard, header and footer marked English rather than mirrored.
+  - The summary used to show `%13.5+` (sign on the wrong side) and Western digits; it now shows `▲ ١٣٫٥٪` and `١٠–١٠٠ جنيه`.
+  - The currency band is marked Arabic and shows Arabic digits and an Arabic date, with each rate also in English (`USD 1 = EGP 54.77`).
+  - The English summary now writes `EGP 10–100` and `▲ 13.5%`.
+- **The Papyrus issues:** each sits on a sheet. Each has a masthead (issue number, date, reading time), a ~66-character measure, ankh-marked headings, a Sources specimen card, older/newer links and three related issues as cards. See [[Papyrus Design System]].
+- ⚠️ **Defect found and fixed at the root:** a stylesheet edit bumps `?v=` on all 178 pages, and the sitemap counted that as a content change. It re-dated 29 URLs (privacy, about, every issue) and would have announced them all to IndexNow. `sitemap_lastmod.py` now ignores asset cache versions, both for dates and for the pushed-pages list. With the fix, only the 12 issues and the two prices pages move. Nine tests run against a throwaway git repo with fixed dates.
+- **Screenshots in CI:** `backend/verify/shots.js` saves full-page screenshots of six layouts at 1280 and 390 px into the uploaded log folder. The workstation cannot render these pages: local servers are blocked, the pane opens local pages without their stylesheet, and headless Edge hangs on the site's pages while it captures a plain one.
+- **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r" (fixed separately in PR #80).
+- ⚠️ **Caught by CI on this PR:** making `prices-ar.html` right-to-left gave it a 9999 px sideways scroll at phone width. `all-pages.js` flagged it. The skip link hid itself with `left:-9999px`, which on an RTL page points into the scrollable direction. A first fix (a logical offset) only moved the link to the other edge, where `overflow.js` still found it 9999 px off-screen. It is now hidden by clipping until it has keyboard focus, the same technique as `.sr-only` and the honeypot, so it takes no space in either direction.
+
+## 2026-11-06 — Egyptian formatting, part 2: every page, two new checks, and the visit pages as sheets
+- **Every browser script that drew a date or a number is on `EGYBI.fmt`:**
+  - **Places, Atlas, Streets, Invest, Stories, Visit:** "as of" dates read "3 November 2026", not raw ISO.
+  - **The trip pages** (home, plan, fair prices, ask, hieroglyphs): dates and EGP amounts follow the rules.
+  - **Exchange rates** always show two decimals (`EGP 48.70`; one page said 48.7 and another 48.71).
+  - **The blog:** its US-order dates ("Nov 6, 2026") now read 6 Nov 2026.
+  - **Community:** comment dates are read in Cairo time (one posted at 01:00 Cairo time used to show the day before).
+  - **The 14 `toLocaleString()` calls with no locale** name `en-GB`.
+  - **Fallbacks:** every helper falls back to the old output if `egfmt.js` has not loaded, so a page cannot stop drawing.
+- **Generated pages:** the 18 visit pages, the weather page and the holidays page no longer print `2026-08-08`. Two dates inside `calendar.json`'s own source text were rewritten as "6 Oct 2026" and "9 Oct 2026".
+- **New `static-audit.py` rules,** each with a `mutate.py` case that passes (quiet before, caught when injected, quiet after):
+  - `toLocaleString()` with no locale;
+  - a bare ISO date in visible page text (`<code>`, `<pre>` and `datetime` attributes are skipped).
+  - On their first run they found exactly the audit's 14 calls and 21 pages. Both are now clean. Total cases: 44.
+- **Visit pages as sheets:** each of the 18 is now four sections in alternating parchment tones (facts, heat and rain, light, other sites), so the scroll rod marks each join. The heat table gains a visible heading.
+- **`egfmt` gains `date_or_raw`** (never throws on a stray field), with five new shared cases: 51 cases in all, matching in both formatters.
+
+## 2026-11-06 — Egyptian formatting, part 3: one rounding rule, Fayoum, the real summer-time dates
+- ⚠️ **Defect found and fixed at the root: the same afternoon read differently on different pages.**
+  - 24 of the 216 site-months sit exactly on a half degree. Python's `round()` rounds halves to even and JavaScript's `Math.round` rounds them up, so 8 of them disagreed. Hurghada in February (22.5 °C) read "22" on the weather page and "23" on the home page.
+  - Every whole-degree figure now goes through `whole()` (half away from zero), in both formatters. Five new shared cases cover it.
+  - On the weather page exactly those 8 cells moved, as predicted. The visit pages also moved their night and record halves, under the same rule.
+- **Heat bands labelled one way:** the trip pages and the visitor map now band the whole degree the reader sees (21.7 shows as 22 and is coloured as 22). They use the weather page's labels: "21 °C or less", "22–27 °C", "28–33 °C", "34–38 °C", "39 °C or more". The old "22–28" was ambiguous at its edge.
+- **Fayoum:**
+  - The site writes the Egyptian government's spelling wherever a governorate name is shown: the Atlas, the Explore map, Places, Visit, the planner, the visit pages and the dossier pack.
+  - The data keeps "Faiyum" as its join key. The boundaries, the four OSM layers and the investment map all join on it, so lookups were deliberately left alone.
+  - `gov_name` / `govName` is in both formatters, with five shared cases (61 in all).
+- **One alias table:** the geoBoundaries-to-knowledge-base aliases, copied into `build_egypt_map.py` and `build_invest_map.py`, now live once in `backend/pipeline/governorates.py`. Rebuilt against a fresh test database: `egypt-geo.js` is byte-identical with all 27 governorates matched; `invest-projects.json` differs only in its build date.
+- **The real summer-time dates:**
+  - The visit pages said "UTC+3 in May–October" because they sampled the 15th of each month. 2026's summer time ran 24 April to 29 October.
+  - `sun_times.summer_time()` reads the IANA database day by day. It is tested on 2026 and 2027 (30 April to 28 October), and on 2020, a year with no summer time.
+- **Workflow comments:** the price and FX refresh comments no longer assume Cairo is UTC+2 all year.
+
 ## 2026-11-06 — A gate against committed merge-conflict markers
 - ⚠️ **What happened:** while keeping three stacked PRs (#77–#79) up to date, my conflict resolver matched only one marker label, found nothing to resolve, and the loop around it committed and pushed the vault Changelog with raw conflict markers on two branches. It was caught by my own check before anything merged: each branch's Changelog must equal the branch below it plus its own section. The resolver now accepts any label and refuses to write if a marker survives.
 - **Why no check caught it:** no workflow runs on a change to the vault alone.

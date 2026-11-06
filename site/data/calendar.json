@@ -1,7 +1,7 @@
 {
   "as_of": "2026-10-09",
   "fetched_at": "2026-10-09",
-  "source": "Hand-compiled from the sources named on each row; read 2026-10-09",
+  "source": "Hand-compiled from the sources named on each row; read 9 Oct 2026",
   "note": "Egypt's public holidays and the lunar dates that move every year. Fixed-date holidays are firm. Every Islamic date is a forecast from astronomical calculation and is confirmed only by the official moon sighting (Dar al-Ifta) — so each lunar row carries a range, not a day, and is marked expected. No official Egyptian government list for 2027 had been published when this was compiled; the rows below come from named secondary calendars, and where they disagree the range covers both.",
   "window": { "from": "2026-11-01", "to": "2027-12-31" },
   "events": [
@@ -12,7 +12,7 @@
       "source": "HolidayDB — Public holidays in 2027 in Egypt", "source_url": "https://holidaydb.com/guides/public-holidays/egypt/2027" },
     { "key": "ramadan", "name": "Ramadan", "name_ar": "شهر رمضان", "start": "2027-02-08", "start_latest": "2027-02-09", "end": "2027-03-08", "end_latest": "2027-03-09", "kind": "lunar", "status": "expected",
       "note": "Gulf News and The National (Oct 2026) give 8 February from astronomical calculation; Egypt-specific holiday calendars (TrueCalendar, Calendarific) list 9 February. 29 or 30 days, set by moon sighting.",
-      "source": "The National, 2026-10-06 — Ramadan 2027 expected dates", "source_url": "https://www.thenationalnews.com/news/uae/2026/10/06/ramadan-2027-uae-dates-eid-al-fitr-holiday/" },
+      "source": "The National, 6 Oct 2026 — Ramadan 2027 expected dates", "source_url": "https://www.thenationalnews.com/news/uae/2026/10/06/ramadan-2027-uae-dates-eid-al-fitr-holiday/" },
     { "key": "eid-fitr", "name": "Eid al-Fitr", "name_ar": "عيد الفطر", "start": "2027-03-09", "start_latest": "2027-03-10", "end": "2027-03-12", "kind": "lunar", "status": "expected",
       "note": "Gulf News forecasts Wednesday 10 March; Egypt listings show 10 March with holidays on 11–12 March, all subject to confirmation.",
       "source": "Gulf News — When is Ramadan 2027", "source_url": "https://gulfnews.com/uae/ramadan/when-is-ramadan-2027-the-expected-date-moon-sighting-and-eid-explained-1.500630523" },

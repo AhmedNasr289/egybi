@@ -12,6 +12,13 @@
 */
 (function () {
   'use strict';
+  /* A dataset's date, written as the site writes dates ("3 November 2026",
+     EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
+     value as written if egfmt.js did not load. */
+  function asOf(v) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+  }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
      See the identical note in geospatial.js: on 2026-08-10 a call to a mapkit
@@ -269,7 +276,7 @@
                          .sort(function (a, b) { return a.r - b.r; });
         var lo = vals[0], hi = vals[vals.length - 1];
         put('hlTotal', fmt(h.total));
-        put('hlAsOf', h.as_of);
+        put('hlAsOf', asOf(h.as_of));
         put('hlHi', hi.g); put('hlHiR', fmt(hi.r, 1));
         put('hlLo', lo.g); put('hlLoR', fmt(lo.r, 1));
         put('hlRatio', fmt(hi.r / lo.r) + '×');
@@ -340,7 +347,7 @@
       var sorted = d.districts.slice().sort(function (a, b2) { return a.intersection_density_km2 - b2.intersection_density_km2; });
       var lo = sorted[0], hi = sorted[sorted.length - 1];
       put('stN', d.districts.length);
-      put('stAsOf', d.as_of);
+      put('stAsOf', asOf(d.as_of));
       put('stHi', hi.name); put('stHiD', fmt(hi.intersection_density_km2, 0));
       put('stLo', lo.name); put('stLoD', fmt(lo.intersection_density_km2, 0));
       put('stRatio', fmt(hi.intersection_density_km2 / lo.intersection_density_km2, 1) + '×');
@@ -431,7 +438,7 @@
           '<div><dt>Orientation entropy</dt><dd>' + num(r.orientation_entropy, 2) + '</dd></div>' +
           '<div><dt>Boundary</dt><dd>' + esc(r.boundary_source || '—') + '</dd></div>' +
           '</dl>' + drawnNote +
-          '<p class="st-src">' + esc(d.source) + ' · ' + esc(d.license) + ' · measured ' + esc(d.as_of) + '</p>';
+          '<p class="st-src">' + esc(d.source) + ' · ' + esc(d.license) + ' · measured ' + esc(asOf(d.as_of)) + '</p>';
       }
 
       function focus(key) {
@@ -543,7 +550,7 @@
         var totArea = ranked.reduce(function (a, r) { return a + r.a; }, 0);
 
         put('dgTotal', fmt(sites.length));
-        put('dgAsOf', data.as_of); put('dgAsOf2', data.as_of);
+        put('dgAsOf', asOf(data.as_of)); put('dgAsOf2', asOf(data.as_of));
         put('dgLxN', fmt(densest.n)); put('dgLxArea', fmt(densest.a));
         put('dgLxDens', fmt(densest.d)); put('dgLxDens2', fmt(densest.d));
         put('dgNvN', fmt(biggest.n));

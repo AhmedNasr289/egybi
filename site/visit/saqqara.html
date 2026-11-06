@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="../assets/egybi.css?v=41" rel="stylesheet">
+<link href="../assets/egybi.css?v=42" rel="stylesheet">
 <script src="../assets/ads-config.js"></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "name": "Saqqara weather by month", "url": "https://egybi.com/visit/saqqara.html", "description": "Saqqara: what a normal afternoon and night reach in each month, from NASA climate normals \u2014 about 19 \u00b0C in January, 39 \u00b0C in July.", "isPartOf": {"@id": "https://egybi.com/#site"}, "about": {"@id": "https://egybi.com/visit/saqqara.html#place"}}, {"@type": "TouristAttraction", "@id": "https://egybi.com/visit/saqqara.html#place", "name": "Saqqara", "url": "https://egybi.com/visit/saqqara.html", "geo": {"@type": "GeoCoordinates", "latitude": 29.8712, "longitude": 31.2165}, "containedInPlace": {"@type": "AdministrativeArea", "name": "Giza Governorate", "containedInPlace": {"@type": "Country", "name": "Egypt"}}, "alternateName": "\u0633\u0642\u0627\u0631\u0629"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "When to go", "item": "https://egybi.com/visit.html"}, {"@type": "ListItem", "position": 3, "name": "Saqqara by month", "item": "https://egybi.com/visit/saqqara.html"}]}]}</script>
 
@@ -67,23 +67,37 @@
   </div>
 </section>
 
+<!-- Four topics, four sections. Until 2026-11-06 all of this was one
+     parchment section about 2,300 px tall; alternating the two light tones
+     lets the Papyrus scroll rod mark each join (egybi.css, "The scroll rod"). -->
 <section class="surface-light">
   <div class="wrap" style="max-width:860px;">
     <div class="sheet">
       <span class="seal" aria-hidden="true"><span data-glyph="ankh"></span></span>
-      <p style="margin:0 0 10px;">The coolest afternoons come in <strong>January</strong>, at about 19 °C; the hottest in <strong>July</strong>, at about 39 °C.</p><p style="margin:0 0 10px;">A normal afternoon stays under 30 °C in 6 months: January, February, March, April, November, December.</p><p style="margin:0 0 10px;">The ground at the site's coordinates sits 67 m above sea level (NASA SRTM).</p><p style="margin:0 0 10px;">It is part of a UNESCO World Heritage property.</p>
+      <p style="margin:0 0 10px;">The coolest afternoons come in <strong>January</strong>, at about 19 °C; the hottest in <strong>July</strong>, at about 39 °C.</p><p style="margin:0 0 10px;">A normal afternoon stays under 30 °C in 5 months: January, February, March, November, December.</p><p style="margin:0 0 10px;">The ground at the site's coordinates sits 67 m above sea level (NASA SRTM).</p><p style="margin:0 0 10px;">It is part of a UNESCO World Heritage property.</p>
       <div class="cta-row" style="margin-top:14px;"><a class="btn btn-primary" href="../plan.html?add=saqqara">Add Saqqara to my plan &rarr;</a>
       <a class="btn btn-ghost" href="../fair-prices.html">What things should cost &rarr;</a></div>
     </div>
-    <div class="sheet" style="margin-top:18px;">
+  </div>
+</section>
+
+<section class="surface-light-2">
+  <div class="wrap" style="max-width:860px;">
+    <h2 style="font-size:1.2rem;margin:0 0 12px;" id="heat">Heat and rain, month by month</h2>
+    <div class="sheet">
       <div class="fp-wrap"><table class="fp-table">
         <caption class="sr-only">Saqqara: monthly climate normals</caption>
         <thead><tr><th scope="col">Month</th><th scope="col" class="num">Afternoon</th><th scope="col" class="num">Night</th>
         <th scope="col" class="num">Rain, mm/day</th><th scope="col" class="num">Hottest hour on record</th></tr></thead>
-        <tbody><tr><th scope="row">January</th><td class="num">19 °C</td><td class="num">7 °C</td><td class="num">0.3</td><td class="num">29 °C</td></tr><tr><th scope="row">February</th><td class="num">21 °C</td><td class="num">8 °C</td><td class="num">0.2</td><td class="num">35 °C</td></tr><tr><th scope="row">March</th><td class="num">26 °C</td><td class="num">10 °C</td><td class="num">0.2</td><td class="num">39 °C</td></tr><tr><th scope="row">April</th><td class="num">30 °C</td><td class="num">13 °C</td><td class="num">0.3</td><td class="num">43 °C</td></tr><tr><th scope="row">May</th><td class="num">34 °C</td><td class="num">17 °C</td><td class="num">0.0</td><td class="num">45 °C</td></tr><tr><th scope="row">June</th><td class="num">37 °C</td><td class="num">20 °C</td><td class="num">0.0</td><td class="num">45 °C</td></tr><tr><th scope="row">July</th><td class="num">39 °C</td><td class="num">22 °C</td><td class="num">0.0</td><td class="num">45 °C</td></tr><tr><th scope="row">August</th><td class="num">38 °C</td><td class="num">22 °C</td><td class="num">0.0</td><td class="num">45 °C</td></tr><tr><th scope="row">September</th><td class="num">36 °C</td><td class="num">20 °C</td><td class="num">0.0</td><td class="num">42 °C</td></tr><tr><th scope="row">October</th><td class="num">31 °C</td><td class="num">18 °C</td><td class="num">0.1</td><td class="num">41 °C</td></tr><tr><th scope="row">November</th><td class="num">26 °C</td><td class="num">13 °C</td><td class="num">0.6</td><td class="num">36 °C</td></tr><tr><th scope="row">December</th><td class="num">21 °C</td><td class="num">9 °C</td><td class="num">0.2</td><td class="num">32 °C</td></tr></tbody></table></div>
+        <tbody><tr><th scope="row">January</th><td class="num">19 °C</td><td class="num">7 °C</td><td class="num">0.3</td><td class="num">29 °C</td></tr><tr><th scope="row">February</th><td class="num">21 °C</td><td class="num">8 °C</td><td class="num">0.2</td><td class="num">35 °C</td></tr><tr><th scope="row">March</th><td class="num">26 °C</td><td class="num">10 °C</td><td class="num">0.2</td><td class="num">39 °C</td></tr><tr><th scope="row">April</th><td class="num">30 °C</td><td class="num">13 °C</td><td class="num">0.3</td><td class="num">43 °C</td></tr><tr><th scope="row">May</th><td class="num">34 °C</td><td class="num">17 °C</td><td class="num">0.0</td><td class="num">45 °C</td></tr><tr><th scope="row">June</th><td class="num">37 °C</td><td class="num">20 °C</td><td class="num">0.0</td><td class="num">45 °C</td></tr><tr><th scope="row">July</th><td class="num">39 °C</td><td class="num">22 °C</td><td class="num">0.0</td><td class="num">45 °C</td></tr><tr><th scope="row">August</th><td class="num">38 °C</td><td class="num">22 °C</td><td class="num">0.0</td><td class="num">45 °C</td></tr><tr><th scope="row">September</th><td class="num">36 °C</td><td class="num">20 °C</td><td class="num">0.0</td><td class="num">42 °C</td></tr><tr><th scope="row">October</th><td class="num">31 °C</td><td class="num">18 °C</td><td class="num">0.1</td><td class="num">41 °C</td></tr><tr><th scope="row">November</th><td class="num">26 °C</td><td class="num">13 °C</td><td class="num">0.6</td><td class="num">36 °C</td></tr><tr><th scope="row">December</th><td class="num">21 °C</td><td class="num">9 °C</td><td class="num">0.2</td><td class="num">33 °C</td></tr></tbody></table></div>
     </div>
-    <p class="chart-cap" style="margin-top:14px;">Afternoon and night are the mean daily maximum and minimum over 2001-2020; the record is the hottest hour in that month across the whole series. Source: NASA POWER climatology (MERRA-2 reanalysis), layer dated 2026-08-08. These are modelled long-run averages checked against published station normals &mdash; not weather-station readings and not a forecast. <a href="../visit.html#checked">How they were checked &rarr;</a></p>
-    <h2 style="font-size:1.2rem;margin-top:30px;" id="light">Light for photographs</h2>
+    <p class="chart-cap" style="margin-top:14px;">Afternoon and night are the mean daily maximum and minimum over 2001-2020; the record is the hottest hour in that month across the whole series. Source: NASA POWER climatology (MERRA-2 reanalysis), layer dated <time datetime="2026-08-08">8 August 2026</time>. These are modelled long-run averages checked against published station normals &mdash; not weather-station readings and not a forecast. <a href="../visit.html#checked">How they were checked &rarr;</a></p>
+  </div>
+</section>
+
+<section class="surface-light">
+  <div class="wrap" style="max-width:860px;">
+    <h2 style="font-size:1.2rem;margin:0 0 12px;" id="light">Light for photographs</h2>
     <p style="margin:0 0 10px;">Golden light, the warm low sun photographers wait for, lasts about 32&ndash;36 minutes after sunrise and before sunset here, depending on the month.</p>
     <div class="sheet">
       <div class="fp-wrap"><table class="fp-table">
@@ -92,9 +106,14 @@
         <th scope="col" class="num">Golden light from</th><th scope="col" class="num">Sunset</th></tr></thead>
         <tbody><tr><th scope="row">January</th><td class="num">06:51</td><td class="num">07:26</td><td class="num">16:41</td><td class="num">17:16</td></tr><tr><th scope="row">February</th><td class="num">06:36</td><td class="num">07:08</td><td class="num">17:10</td><td class="num">17:43</td></tr><tr><th scope="row">March</th><td class="num">06:06</td><td class="num">06:38</td><td class="num">17:31</td><td class="num">18:03</td></tr><tr><th scope="row">April</th><td class="num">05:29</td><td class="num">06:01</td><td class="num">17:49</td><td class="num">18:21</td></tr><tr><th scope="row">May</th><td class="num">06:02</td><td class="num">06:36</td><td class="num">19:06</td><td class="num">19:40</td></tr><tr><th scope="row">June</th><td class="num">05:53</td><td class="num">06:28</td><td class="num">19:21</td><td class="num">19:56</td></tr><tr><th scope="row">July</th><td class="num">06:03</td><td class="num">06:38</td><td class="num">19:23</td><td class="num">19:57</td></tr><tr><th scope="row">August</th><td class="num">06:22</td><td class="num">06:54</td><td class="num">19:04</td><td class="num">19:37</td></tr><tr><th scope="row">September</th><td class="num">06:38</td><td class="num">07:10</td><td class="num">18:30</td><td class="num">19:01</td></tr><tr><th scope="row">October</th><td class="num">06:55</td><td class="num">07:27</td><td class="num">17:53</td><td class="num">18:25</td></tr><tr><th scope="row">November</th><td class="num">06:19</td><td class="num">06:53</td><td class="num">16:26</td><td class="num">17:00</td></tr><tr><th scope="row">December</th><td class="num">06:42</td><td class="num">07:18</td><td class="num">16:21</td><td class="num">16:57</td></tr></tbody></table></div>
     </div>
-    <p class="chart-cap" style="margin-top:14px;">Computed for the 15th of each month of 2026 from this site's coordinates (29.8712, 31.2165) with the NOAA Global Monitoring Laboratory solar position equations. Egypt time: UTC+2, and UTC+3 in May&ndash;October (summer time), from the IANA time-zone database (Africa/Cairo). Golden light here means the sun less than 6&deg; above the horizon, a photographers' convention. Checked against an independent solar library to within about 3 minutes. Cliffs, dunes and temple walls are not modelled: they can hide a low sun well before these times.</p>
+    <p class="chart-cap" style="margin-top:14px;">Computed for the 15th of each month of 2026 from this site's coordinates (29.8712, 31.2165) with the NOAA Global Monitoring Laboratory solar position equations. Egypt time: UTC+2, and UTC+3 from 24 April to 29 October 2026 (summer time), from the IANA time-zone database (Africa/Cairo). Golden light here means the sun less than 6&deg; above the horizon, a photographers' convention. Checked against an independent solar library to within about 3 minutes. Cliffs, dunes and temple walls are not modelled: they can hide a low sun well before these times.</p>
 
-    <h2 style="font-size:1.2rem;margin-top:30px;">The other measured sites</h2>
+  </div>
+</section>
+
+<section class="surface-light-2">
+  <div class="wrap" style="max-width:860px;">
+    <h2 style="font-size:1.2rem;margin:0 0 12px;">The other measured sites</h2>
     <div class="chip-row"><a class="chip" href="giza.html">The Giza Pyramids</a><a class="chip" href="karnak.html">Karnak Temple</a><a class="chip" href="valley-kings.html">Valley of the Kings</a><a class="chip" href="abu-simbel.html">Abu Simbel</a><a class="chip" href="philae.html">Philae Temple</a><a class="chip" href="abydos.html">Abydos</a><a class="chip" href="dendera.html">Dendera Temple</a><a class="chip" href="islamic-cairo.html">Historic Cairo</a><a class="chip" href="alexandria.html">Alexandria</a><a class="chip" href="siwa.html">Siwa Oasis</a><a class="chip" href="white-desert.html">The White Desert</a><a class="chip" href="st-catherine.html">Saint Catherine&#x27;s Monastery</a><a class="chip" href="dahab.html">Dahab</a><a class="chip" href="hurghada.html">Hurghada</a><a class="chip" href="wadi-al-hitan.html">Wadi al-Hitan</a><a class="chip" href="abu-mena.html">Abu Mena</a><a class="chip" href="suez-canal.html">The Suez Canal at Ismailia</a></div>
     <p style="margin-top:14px;"><a href="../egypt-weather-by-month.html">Every site, every month, in one table &rarr;</a></p>
   </div>

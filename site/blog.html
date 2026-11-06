@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=41" rel="stylesheet">
+<link href="assets/egybi.css?v=42" rel="stylesheet">
 <style>
   .post-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 24px 26px; margin-bottom: 18px; transition: box-shadow .2s, border-color .2s; }
   .post-card:hover { border-color: var(--gold); box-shadow: var(--shadow-light); }
@@ -161,12 +161,14 @@
 <script src="assets/egybi.js?v=2"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
+<script src="assets/egfmt.js?v=4"></script>
 <script src="assets/blog-posts.js"></script>
 <script>
 (function(){
   var posts = window.EGYBI_POSTS || [];
   var filter = 'All';
-  function fmtDate(iso){ var d = iso.split('-'); var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return m[parseInt(d[1],10)-1]+' '+parseInt(d[2],10)+', '+d[0]; }
+  // Day-month-year, as everywhere else on the site (was the US 'Nov 6, 2026').
+  function fmtDate(iso){ var F = window.EGYBI && EGYBI.fmt; if (F) return F.dateOrRaw(iso, 'en', 'compact'); var d = iso.split('-'); var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return parseInt(d[2],10)+' '+m[parseInt(d[1],10)-1]+' '+d[0]; }
 
   function renderFilters(){
     var tags = ['All'].concat(posts.map(function(p){return p.tag;}).filter(function(v,i,a){return a.indexOf(v)===i;}));

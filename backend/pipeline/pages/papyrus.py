@@ -1,8 +1,61 @@
-"""The Papyrus: one page per issue, the RSS feed, and blog.html's story index."""
+"""The Papyrus: one page per issue, the RSS feed, and blog.html's story index.
+
+Each issue is laid out as a letter on a sheet of papyrus (the Papyrus design
+section of egybi.css): a masthead with the issue number, date and reading time;
+the body on a .sheet with the torn gold edge; the sources as a .specimen card;
+the previous and next issues; and three related issues as sheet cards.
+"""
+import math
 import os
 import re
 
+from . import egfmt
 from .common import SITE, SITE_URL, breadcrumb, esc, page, write_index_block, write_text
+
+WORDS_PER_MINUTE = 220
+
+
+def issue_number(posts, i):
+    """Issues are listed newest first; No. 1 is the oldest."""
+    return len(posts) - i
+
+
+def reading_minutes(html):
+    words = len(re.sub(r'<[^>]+>', ' ', html).split())
+    return max(1, math.ceil(words / WORDS_PER_MINUTE))
+
+
+def related(posts, i, n=3):
+    """Up to n other issues: the same tag first, then the nearest in time.
+    The older and newer issues are left out: issue_nav already links them
+    just above, and the first version repeated two of them as cards.
+    Deterministic, so a rebuild writes the same bytes."""
+    tag = posts[i].get('tag')
+    others = [j for j in range(len(posts)) if j not in (i - 1, i, i + 1)]
+    others.sort(key=lambda j: (posts[j].get('tag') != tag, abs(j - i), j))
+    return [posts[j] for j in others[:n]]
+
+
+def issue_card(posts, x):
+    j = posts.index(x)
+    return (f'<a class="card issue-card" href="{x["id"]}.html">'
+            f'<span class="kicker">No. {issue_number(posts, j)} &middot; {esc(x.get("tag", ""))}</span>'
+            f'<strong>{esc(x["title"])}</strong>'
+            f'<span class="card-meta">{egfmt.time_tag(x["date"], "en", "prose")}</span></a>')
+
+
+def issue_nav(posts, i):
+    """Older issue on the left, newer on the right, as on a shelf."""
+    older = posts[i + 1] if i + 1 < len(posts) else None
+    newer = posts[i - 1] if i > 0 else None
+    parts = []
+    if older:
+        parts.append(f'<a class="issue-prev" rel="prev" href="{older["id"]}.html">'
+                     f'<span class="issue-dir">&larr; No. {issue_number(posts, i + 1)}</span>{esc(older["title"])}</a>')
+    if newer:
+        parts.append(f'<a class="issue-next" rel="next" href="{newer["id"]}.html">'
+                     f'<span class="issue-dir">No. {issue_number(posts, i - 1)} &rarr;</span>{esc(newer["title"])}</a>')
+    return f'<nav class="issue-nav" aria-label="Other issues">{"".join(parts)}</nav>' if parts else ''
 
 
 def build_posts(posts):
@@ -30,11 +83,8 @@ def build_posts(posts):
         # Trim on a word boundary rather than mid-word at 180, which is past
         # Google's snippet cut anyway.
         desc = ex if len(ex) <= 155 else ex[:152].rsplit(' ', 1)[0] + '...' 
-        nxt = posts[i + 1] if i + 1 < len(posts) else None
-        prv = posts[i - 1] if i > 0 else None
-        more = ''.join(
-            f'<li><a href="{x["id"]}.html">{esc(x["title"])}</a></li>'
-            for x in [prv, nxt] if x)
+        no, minutes = issue_number(posts, i), reading_minutes(p['body'])
+        cards = ''.join(issue_card(posts, x) for x in related(posts, i))
         ld = {"@context": "https://schema.org", "@type": "BlogPosting",
               "headline": p['title'], "url": url, "datePublished": p['date'],
               "dateModified": p['date'], "description": desc,
@@ -48,18 +98,22 @@ def build_posts(posts):
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:40px;">
   <div class="wrap" style="max-width:760px;">
-    <p class="hero-eyebrow"><span data-glyph="scroll"></span> <a href="../blog.html">The Papyrus</a> &middot; {esc(p.get('tag',''))} &middot; {esc(p['date'])}</p>
+    <p class="hero-eyebrow issue-masthead"><span data-glyph="scroll"></span> <a href="../blog.html">The Papyrus</a> &middot; No.&nbsp;{no} &middot; {esc(p.get('tag',''))} &middot; {egfmt.time_tag(p['date'], 'en', 'prose')} &middot; {minutes}&nbsp;min read</p>
     <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{p['title']}</h1>
     <p class="lead" style="margin:0;">{p['excerpt']}</p>
   </div>
 </section>
 
 <section class="surface-light">
-  <div class="wrap dropcap" style="max-width:720px;">
+  <div class="wrap issue-wrap">
+    <article class="sheet issue-sheet">
+      <div class="issue-body dropcap">
     {p['body']}
-    <hr style="margin:34px 0;border:none;border-top:1px solid var(--line-light);">
-    <p style="font-size:0.9rem;color:var(--ink-soft);">Every figure here is real and cited, and where sources disagree we say so. You can see the same data yourself &mdash; <a href="../explore.html">explore the datasets</a> or <a href="../geospatial.html">open the Atlas</a>.</p>
-    {f'<h2 style="font-size:1.2rem;margin-top:28px;">More from The Papyrus</h2><ul class="plain-list">{more}</ul>' if more else ''}
+      </div>
+      <aside class="specimen issue-sources"><span class="specimen-label">Sources</span>Every figure here is real and cited, and where sources disagree we say so. You can see the same data yourself &mdash; <a href="../explore.html">explore the datasets</a> or <a href="../geospatial.html">open the Atlas</a>.</aside>
+      {issue_nav(posts, i)}
+    </article>
+    {f'<h2 class="issue-more-title">More from The Papyrus</h2><div class="issue-more">{cards}</div>' if cards else ''}
   </div>
 </section>
 """
