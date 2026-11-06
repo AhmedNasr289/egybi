@@ -201,13 +201,51 @@ def write_changed(urls: list[str], out: Optional[str]) -> None:
                 f.write(u + '\n')
 
 
+_SHA = re.compile(r'^[0-9a-f]{40}$')
+
+
+def pushed_urls(before: str, after: str, path: str = SITEMAP) -> Optional[list[str]]:
+    """Sitemap URLs whose page file changed between two commits.
+
+    The build only announces what IT changed, so a pull request that ships
+    pages already regenerated (the normal case: CI rebuilds them on the
+    branch) reached main with nothing for the build to change, and nothing was
+    announced — the 18 visit pages on 2026-11-05 were sent by hand. Diffing
+    the push itself catches those. Only URLs already in the sitemap are
+    returned, so a retired or noindex page is never announced.
+
+    None when the range cannot be read (a new branch has an all-zero
+    `before`; a force push can leave `before` outside the history)."""
+    if not (_SHA.match(before) and _SHA.match(after)) or set(before) == {'0'}:
+        return None
+    out = _git('diff', '--name-only', f'{before}..{after}', '--', 'site')
+    if out is None:
+        return None
+    files = {f[len('site/'):] for f in out.splitlines() if f.startswith('site/')}
+    return [u for u in read_lastmods(path) if url_to_rel(u) in files]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     ap.add_argument('--changed-out', help='append the URLs whose lastmod moved to this file')
+    ap.add_argument('--pushed', nargs=2, metavar=('BEFORE', 'AFTER'),
+                    help='instead of refreshing dates, list the sitemap URLs whose page '
+                         'changed between these two commits')
     args = ap.parse_args()
     if not os.path.isfile(SITEMAP):
         print(f"::error::{SITEMAP} not found", file=sys.stderr)
         return 1
+    if args.pushed:
+        urls = pushed_urls(*args.pushed)
+        if urls is None:
+            # Not an error: the build's own changes are still announced.
+            print(f"::notice::push range {args.pushed[0][:7]}..{args.pushed[1][:7]} "
+                  "not readable; announcing only what the build changed")
+            return 0
+        write_changed(urls, args.changed_out)
+        print(f"pages changed by the push: {len(urls)}"
+              + (': ' + ', '.join(urls) if urls else ''))
+        return 0
     changed = refresh_data_pages()
     write_changed(changed, args.changed_out)
     print(f"data pages refreshed: {len(changed)} lastmod change(s)"

@@ -269,6 +269,38 @@
     }).join('');
   }
 
+  /* ---------------------------------------------------------- visitor guides
+     The guides are read back from the generator-written VISIT-GUIDES links on
+     this page (each carries its coordinates), so no list lives in this file.
+     A World Heritage entry is a single point standing for a whole inscribed
+     area — Memphis's point lies 4.6 km from Saqqara and 18.4 km from Giza,
+     both inside the inscription — so the radius is wider than on Places, and
+     at most the two nearest are named, with their straight-line distance. */
+  var GUIDE_KM = 20, GUIDE_MAX = 2;
+
+  function escHtml(v) {
+    return String(v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function km(aLat, aLon, bLat, bLon) {
+    var r = Math.PI / 180;
+    var h = Math.pow(Math.sin((bLat - aLat) * r / 2), 2) +
+      Math.cos(aLat * r) * Math.cos(bLat * r) * Math.pow(Math.sin((bLon - aLon) * r / 2), 2);
+    return 12742 * Math.asin(Math.sqrt(h));
+  }
+
+  function guidesNear(s) {
+    return Array.prototype.map.call(document.querySelectorAll('a[data-guide]'), function (a) {
+      var g = { href: a.getAttribute('href'), name: a.textContent,
+                lat: parseFloat(a.getAttribute('data-lat')), lon: parseFloat(a.getAttribute('data-lon')) };
+      return { g: g, d: km(s.lat, s.lon, g.lat, g.lon) };
+    }).filter(function (n) { return isFinite(n.d) && n.d <= GUIDE_KM; })
+      .sort(function (a, b) { return a.d - b.d; })
+      .slice(0, GUIDE_MAX);
+  }
+
   /* ---------------------------------------------------------- heritage cards */
   function buildHeritageCards() {
     var wrap = $('heritageCards');
@@ -278,9 +310,14 @@
       return;
     }
     wrap.innerHTML = S.heritage.sites.map(function (s) {
+      var near = guidesNear(s);
       return '<div class="wh-card"><div class="wh-year">' + s.year + ' · ' + s.category + '</div>' +
              '<h3>' + s.name + '</h3>' +
-             '<p class="wh-coords">' + s.lat.toFixed(2) + '°N, ' + s.lon.toFixed(2) + '°E</p></div>';
+             '<p class="wh-coords">' + s.lat.toFixed(2) + '°N, ' + s.lon.toFixed(2) + '°E</p>' +
+             (near.length ? '<p class="wh-coords">Visitor guide: ' + near.map(function (n) {
+               return '<a href="' + escHtml(n.g.href) + '">' + escHtml(n.g.name) + '</a> · ' + n.d.toFixed(1) + ' km';
+             }).join('; ') + '</p>' : '') +
+             '</div>';
     }).join('');
     var meta = $('heritageMeta');
     if (meta) meta.textContent = 'Source: ' + S.heritage.source + ' — as of ' + S.heritage.as_of + '.';

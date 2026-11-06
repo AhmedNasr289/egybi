@@ -320,6 +320,45 @@
     return links;
   }
 
+  /* --------------------------------------------------------- visitor guides
+     The month-by-month guides are listed once, as plain links the generator
+     writes into this page (the VISIT-GUIDES block), each carrying the site's
+     coordinates. Reading them back from the page means this script holds no
+     second list that could name a guide that does not exist.
+
+     5 km, measured rather than chosen: it reaches the monuments of each
+     complex (69 OSM points around the Valley of the Kings, 20 at Saqqara)
+     without handing a guide to a town that merely shares a governorate.
+     The distance is printed with the link, because the guide describes the
+     site's own coordinates, not this point. */
+  var GUIDE_KM = 5;
+
+  function km(aLat, aLon, bLat, bLon) {
+    var r = Math.PI / 180;
+    var h = Math.pow(Math.sin((bLat - aLat) * r / 2), 2) +
+      Math.cos(aLat * r) * Math.cos(bLat * r) * Math.pow(Math.sin((bLon - aLon) * r / 2), 2);
+    return 12742 * Math.asin(Math.sqrt(h));
+  }
+
+  function guides() {
+    if (!S.guides) {
+      S.guides = Array.prototype.map.call(document.querySelectorAll('a[data-guide]'), function (a) {
+        return { href: a.getAttribute('href'), name: a.textContent,
+                 lat: parseFloat(a.getAttribute('data-lat')), lon: parseFloat(a.getAttribute('data-lon')) };
+      }).filter(function (g) { return isFinite(g.lat) && isFinite(g.lon); });
+    }
+    return S.guides;
+  }
+
+  function nearestGuide(p) {
+    var best = null;
+    guides().forEach(function (g) {
+      var d = km(p.lat, p.lon, g.lat, g.lon);
+      if (d <= GUIDE_KM && (!best || d < best.d)) best = { g: g, d: d };
+    });
+    return best;
+  }
+
   function goingThere(p) {
     var out = [];
     var osmDate = esc(S.data.as_of);
@@ -392,6 +431,15 @@
           esc(best.h.name.split('–')[0].trim()) + ' · ' + Math.round(best.d) + ' km</strong></div>' +
           '<p class="pd-note">Straight-line distance, not travel distance.</p>');
       }
+    }
+
+    var near = nearestGuide(p);
+    if (near) {
+      bits.push('<div class="pd-row"><span>Visitor guide</span><strong><a href="' + esc(near.g.href) + '">' +
+        esc(near.g.name) + ' by month &rarr;</a></strong></div>' +
+        '<p class="pd-note">' + (near.d < 0.1 ? 'Measured at this point' :
+          'Measured at the site ' + near.d.toFixed(1) + ' km from this point') +
+        ': afternoon heat, rain and the hours of golden light for each month.</p>');
     }
 
     el.innerHTML = '<h3>' + esc(p.name) + (p.name_ar ? ' <span class="pd-ar">' + esc(p.name_ar) + '</span>' : '') + '</h3>' +

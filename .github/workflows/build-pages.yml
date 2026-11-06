@@ -101,6 +101,17 @@ jobs:
             "site/practice site/papyrus site/visit site/visit.html site/prices.html site/prices-ar.html site/sitemap.xml" \
             "python backend/pipeline/build_prices_pages.py && SITEMAP_CHANGED_OUT=/tmp/changed-urls.txt python backend/pipeline/build_static_pages.py"
 
+      # A pull request usually arrives with its pages already rebuilt, so the
+      # step above finds nothing to change and nothing to announce. Add the
+      # pages the push itself changed. The SHAs go through env, never pasted
+      # into the script; an unreadable range is a notice, not a failure.
+      - name: Add pages the push changed
+        if: github.event_name == 'push'
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: python backend/pipeline/sitemap_lastmod.py --pushed "$BEFORE" "$AFTER" --changed-out /tmp/changed-urls.txt
+
       # Runs only after the push above succeeded (or there was nothing to
       # push). Never fails the job: see indexnow_ping.py.
       - name: Announce changed URLs (IndexNow)
