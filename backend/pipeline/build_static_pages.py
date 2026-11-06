@@ -58,6 +58,7 @@ own module under pages/ (split 2026-11-06):
                        block on places.html and geospatial.html,
                        egypt-weather-by-month.html and its chart
     pages/sitemap.py   sitemap.xml
+    pages/holidays.py  egypt-public-holidays.html and its chart
     pages/notfound.py  404.html
 
 The split moved code verbatim and was checked byte for byte: every file under
@@ -91,6 +92,7 @@ _force_utf8_output()
 # (python -I / -P does not put the script's own folder on sys.path).
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pages.common import load_js  # noqa: E402
+from pages.holidays import build_holidays_page  # noqa: E402
 from pages.notfound import build_404  # noqa: E402
 from pages.papyrus import build_feed, build_link_indexes, build_posts  # noqa: E402
 from pages.retired import DEFAULT_DESTINATION, SECTOR_DESTINATION, build_challenges  # noqa: E402
@@ -109,8 +111,9 @@ def main():
         build_visit_index(vu)
     ng = build_guide_links(vu) if vu else 0
     wu = build_weather_by_month(vu) if vu else []
+    hu = build_holidays_page()
     build_link_indexes(ch, posts)
-    total = build_sitemap(pu + vu + wu)
+    total = build_sitemap(pu + vu + wu + hu)
     nfeed = build_feed(posts)
     build_404()
     # Report the sector split so a mis-mapped sector is visible in the log
@@ -130,6 +133,7 @@ def main():
         # updating, and the scripts reading them would show no guide at all.
         print("::warning::VISIT-GUIDES markers missing from "
               f"{len(GUIDE_PAGES) - ng} page(s) in GUIDE_PAGES")
+    print(f"holidays page   : {'written' if hu else 'skipped (no calendar data)'}")
     print(f"sitemap URLs    : {total}")
     print(f"RSS feed items  : {nfeed}")
     print("404 page        : written (root-relative, noindex)")
