@@ -42,7 +42,19 @@ const PAGES = [
 // adsbygoogle.js directly. One page loads the ad script, one page makes the
 // request. AdSense pulls reCAPTCHA for the same invalid-traffic detection that
 // put adtrafficquality on this list.
-const ALLOWED = /fonts\.g|googlesyndication|pagead|adtrafficquality|tradingview|www\.google\.com\/recaptcha\//;
+//
+// csp.withgoogle.com/csp/ is the fourth (2026-11-06, main at 86abf6c, alert
+// #75): explore.html @375 reduced sent csp.withgoogle.com/csp/frame-ancestors/
+// 38fac9d5b82543fc4729580d18ff2d3d. That report id is the one reCAPTCHA's own
+// frames name in their Reporting-Endpoints header (checked against
+// www.google.com/recaptcha/api2/anchor, aframe and bframe), so this is the
+// reCAPTCHA frame above refusing to be framed by the CI origin
+// (http://localhost:8793) and reporting it. It is a policy report: it carries
+// no content and loads nothing, so no map provider can hide behind it. Only the
+// /csp/ report path is allowed, not the host. It is intermittent because
+// AdSense decides per load whether to run its invalid-traffic check, which is
+// why the same commit passed on its pull request and failed on main.
+const ALLOWED = /fonts\.g|googlesyndication|pagead|adtrafficquality|tradingview|www\.google\.com\/recaptcha\/|csp\.withgoogle\.com\/csp\//;
 
 // ONLY=<path> drives a single page, and FAST=1 a single viewport with motion
 // on, so the mutation harness can prove one rule in ~20s instead of paying for
