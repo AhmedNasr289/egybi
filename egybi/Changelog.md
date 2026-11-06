@@ -994,8 +994,8 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **The Papyrus issues:** each sits on a sheet. Each has a masthead (issue number, date, reading time), a ~66-character measure, ankh-marked headings, a Sources specimen card, older/newer links and three related issues as cards. See [[Papyrus Design System]].
 - ⚠️ **Defect found and fixed at the root:** a stylesheet edit bumps `?v=` on all 178 pages, and the sitemap counted that as a content change. It re-dated 29 URLs (privacy, about, every issue) and would have announced them all to IndexNow. `sitemap_lastmod.py` now ignores asset cache versions, both for dates and for the pushed-pages list. With the fix, only the 12 issues and the two prices pages move. Nine tests run against a throwaway git repo with fixed dates.
 - **Screenshots in CI:** `backend/verify/shots.js` saves full-page screenshots of six layouts at 1280 and 390 px into the uploaded log folder. The workstation cannot render these pages: local servers are blocked, the pane opens local pages without their stylesheet, and headless Edge hangs on the site's pages while it captures a plain one.
-<<<<<<< HEAD
-- **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r".
+- **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r" (fixed separately in PR #80).
+- ⚠️ **Caught by CI on this PR:** making `prices-ar.html` right-to-left gave it a 9999 px sideways scroll at phone width. `all-pages.js` flagged it. The skip link hid itself with `left:-9999px`, which on an RTL page points into the scrollable direction. It now uses `inset-inline-start`, which is `left` in English and `right` in Arabic, the clipped direction in both.
 
 ## 2026-11-06 — Egyptian formatting, part 2: every page, two new checks, and the visit pages as sheets
 - **Every browser script that drew a date or a number is on `EGYBI.fmt`:**
@@ -1013,7 +1013,6 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
   - On their first run they found exactly the audit's 14 calls and 21 pages. Both are now clean. Total cases: 44.
 - **Visit pages as sheets:** each of the 18 is now four sections in alternating parchment tones (facts, heat and rain, light, other sites), so the scroll rod marks each join. The heat table gains a visible heading.
 - **`egfmt` gains `date_or_raw`** (never throws on a stray field), with five new shared cases: 51 cases in all, matching in both formatters.
-<<<<<<< HEAD
 
 ## 2026-11-06 — Egyptian formatting, part 3: one rounding rule, Fayoum, the real summer-time dates
 - ⚠️ **Defect found and fixed at the root: the same afternoon read differently on different pages.**
@@ -1030,9 +1029,3 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
   - The visit pages said "UTC+3 in May–October" because they sampled the 15th of each month. 2026's summer time ran 24 April to 29 October.
   - `sun_times.summer_time()` reads the IANA database day by day. It is tested on 2026 and 2027 (30 April to 28 October), and on 2020, a year with no summer time.
 - **Workflow comments:** the price and FX refresh comments no longer assume Cairo is UTC+2 all year.
-=======
-=======
-- **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r" (fixed separately in PR #80).
-- ⚠️ **Caught by CI on this PR:** making `prices-ar.html` right-to-left gave it a 9999 px sideways scroll at phone width. `all-pages.js` flagged it. The skip link hid itself with `left:-9999px`, which on an RTL page points into the scrollable direction. It now uses `inset-inline-start`, which is `left` in English and `right` in Arabic, the clipped direction in both.
->>>>>>> feat/egyptian-formatting
->>>>>>> feat/egyptian-formatting-2
