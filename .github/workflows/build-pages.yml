@@ -33,6 +33,8 @@ on:
       # The "Light for photographs" tables on visit/<site>.html are computed
       # by this module for the build year, and the page names that year.
       - 'backend/pipeline/sun_times.py'
+      # The all-sites table and its embeddable SVG.
+      - 'backend/pipeline/heat_calendar.py'
   schedule:
     # Once a year, so each visit page's light table moves to the new year
     # (and to whatever summer-time rule the IANA database then carries)
@@ -92,13 +94,16 @@ jobs:
       # across that is a conflict - see .github/scripts/push-with-regenerate.sh).
       # site/visit and visit.html are written by the same generator (one page
       # per measured site, and the index block that links them) and were once
-      # missing from this list, so a CI rebuild of them was thrown away.
+      # missing from this list, so a CI rebuild of them was thrown away. The
+      # same was true of places.html and geospatial.html (VISIT-GUIDES block)
+      # and of blog.html (STORY-INDEX), feed.xml and 404.html: every file
+      # build_static_pages.py writes belongs here.
       - name: Commit if anything changed
         run: |
           bash .github/scripts/push-with-regenerate.sh \
             "Regenerate static challenge and post pages [skip ci]" \
             "" \
-            "site/practice site/papyrus site/visit site/visit.html site/prices.html site/prices-ar.html site/sitemap.xml" \
+            "site/practice site/papyrus site/visit site/visit.html site/places.html site/geospatial.html site/blog.html site/feed.xml site/404.html site/egypt-weather-by-month.html site/charts site/prices.html site/prices-ar.html site/sitemap.xml" \
             "python backend/pipeline/build_prices_pages.py && SITEMAP_CHANGED_OUT=/tmp/changed-urls.txt python backend/pipeline/build_static_pages.py"
 
       # A pull request usually arrives with its pages already rebuilt, so the
