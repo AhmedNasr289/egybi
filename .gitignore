@@ -45,3 +45,7 @@ Thumbs.db
 # === Temp/preview scratch ===
 site/_*.svg
 *.log
+
+# The paid dossier pack (backend/pipeline/dossier_pack.py). Outside site/ and
+# never committed: it is the product, sold through the shop, not published.
+/build/
