@@ -119,6 +119,24 @@ jobs:
       # The static checks first: they are fast, and a broken link or a missing
       # data field explains browser findings that would otherwise look like
       # rendering bugs.
+      # Every PHP file under site/ (the API, sign-in, the analytics dashboard)
+      # goes live on the next push, and nothing parsed it first: there is no
+      # PHP on the authoring workstation either. `php -l` is a syntax check
+      # only - it cannot see a runtime error - but one parse error takes a
+      # whole endpoint down, and this is the only place it can be caught.
+      - name: php-lint
+        run: |
+          backend/verify/ci-step.sh php-lint bash -c '
+            set -o pipefail
+            php --version | head -1
+            n=0; bad=0
+            while IFS= read -r -d "" f; do
+              n=$((n+1))
+              out=$(php -l "$f" 2>&1) || { echo "$out"; bad=$((bad+1)); }
+            done < <(find site -name "*.php" -print0)
+            echo "php -l: $n files, $bad with syntax errors"
+            [ "$n" -gt 0 ] && [ "$bad" -eq 0 ]'
+
       - name: static-audit.py
         run: backend/verify/ci-step.sh static-audit python3 backend/verify/static-audit.py
 

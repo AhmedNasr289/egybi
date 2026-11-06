@@ -111,6 +111,15 @@
   }
 
   /* ---------------------------------------------------------------- stops */
+  /* A "planner use" - the pivot's one metric - is a visit that adds a stop.
+     Every way in (the chips, the search, a link from Places or a visit page)
+     goes through addStop, so the event is sent here and only here.
+     EGYBI_TRACK (analytics.js) sends each event at most once per page load and
+     carries no identity; if analytics did not load, or the reader has
+     Do-Not-Track on, nothing is sent and nothing breaks. */
+  function track(event) {
+    if (typeof window.EGYBI_TRACK === 'function') window.EGYBI_TRACK(event);
+  }
   function addStop(st) {
     if (S.trip.stops.some(function (x) { return x.id === st.id; })) {
       announce(st.name + ' is already in your plan.'); return;
@@ -118,6 +127,8 @@
     st.days = st.days || 1;
     S.trip.stops.push(st); save(); renderAll();
     announce(st.name + ' added as stop ' + S.trip.stops.length + '.');
+    track('plan_stop_added');
+    if (S.trip.stops.length >= 2) track('plan_route_built');
   }
   function addSite(key) {
     var site = ((D.climate && D.climate.sites) || []).filter(function (s) { return s.key === key; })[0];
