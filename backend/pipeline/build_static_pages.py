@@ -75,6 +75,7 @@ _force_utf8_output()
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sitemap_lastmod  # noqa: E402
 import sun_times  # noqa: E402
+import heat_calendar  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = os.path.join(ROOT, 'site')
@@ -543,6 +544,7 @@ def build_site_months():
 {light_html}
     <h2 style="font-size:1.2rem;margin-top:30px;">The other measured sites</h2>
     <div class="chip-row">{others}</div>
+    <p style="margin-top:14px;"><a href="../egypt-weather-by-month.html">Every site, every month, in one table &rarr;</a></p>
   </div>
 </section>
 """
@@ -686,6 +688,109 @@ def build_guide_links(urls):
     return n
 
 
+WBM = 'egypt-weather-by-month.html'
+
+
+def build_weather_by_month(urls):
+    """egypt-weather-by-month.html, and charts/egypt-weather-by-month.svg.
+
+    The page: every measured site by every month in one table (heat_calendar),
+    with sentences computed from the same rows. The chart: the same table as
+    an SVG image, offered as an embed snippet that wraps it in a link back to
+    the page — the return on giving it away.
+
+    An image rather than an iframe on purpose: every response carries
+    anti-framing headers that protect the sign-in UI, and an iframe embed
+    would need a folder exempted from them. Images are not framed, so the
+    embed needs no exception to any security header.
+
+    `urls` is what build_site_months wrote, so a row never links to a page
+    that was skipped. Returns sitemap entries for the page only."""
+    keys = {u.rsplit('/', 1)[1][:-len('.html')] for u, _ in urls}
+    clim = json.load(io.open(os.path.join(SITE, 'data', 'visit-climate.json'), encoding='utf-8'))
+    rows = heat_calendar.rows_from_climate(clim, keys)
+    if len(rows) < 2:
+        return []
+    url = f"{SITE_URL}/{WBM}"
+    chart_rel = 'charts/' + WBM[:-len('.html')] + '.svg'
+    chart_url = f"{SITE_URL}/{chart_rel}"
+    n = len(rows)
+    window = clim.get('normal_window', '2001-2020').replace('-', '–')
+    source_line = (f"Source: {esc(clim.get('source', 'NASA POWER'))}, normals {esc(window)}, layer dated "
+                   f"{esc(clim.get('as_of', ''))}. Modelled long-run averages checked against published "
+                   f"station normals &mdash; not weather-station readings and not a forecast.")
+    title = f"Egypt weather by month: afternoon heat at {n} sites · EgyBI"
+    desc = (f"How hot a normal afternoon gets at {n} Egyptian sites, every month of the year, in one "
+            f"table from NASA climate normals. Free to embed.")
+    facts = ''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in heat_calendar.findings(rows))
+    alt = f"Egypt weather by month: normal afternoon temperature at {n} sites, every month (EgyBI, NASA data)"
+    snippet = (f'<a href="{url}"><img src="{chart_url}" alt="{alt}" '
+               f'width="960" style="max-width:100%;height:auto" loading="lazy"></a>')
+    css = f"<style>{heat_calendar.CSS}.hc-code{{white-space:pre-wrap;word-break:break-all;" \
+          "user-select:all;font:500 .82rem/1.5 ui-monospace,Consolas,monospace;background:var(--papyrus);" \
+          "border:1px solid rgba(41,36,32,.25);border-radius:8px;padding:12px 14px;margin:10px 0 0}</style>"
+    ld = {"@context": "https://schema.org", "@graph": [
+        {"@type": "WebPage", "name": f"Egypt weather by month, {n} sites", "url": url, "description": desc,
+         "isPartOf": {"@id": SITE_URL + "/#site"}},
+        {"@type": "Dataset", "name": f"Mean daily maximum temperature by month at {n} Egyptian visitor sites",
+         "description": desc, "url": url, "isBasedOn": clim.get('source_url', 'https://power.larc.nasa.gov/'),
+         "temporalCoverage": clim.get('normal_window', '2001-2020').replace('-', '/'),
+         "spatialCoverage": {"@type": "Place", "name": "Egypt"},
+         "creator": {"@type": "Organization", "name": "EgyBI", "url": SITE_URL + "/"}},
+        breadcrumb("Egypt weather by month", url, "When to go", SITE_URL + "/visit.html")]}
+    body = f"""
+<section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
+  <div class="wrap" style="max-width:960px;">
+    <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="visit.html">When to go</a> &middot; {n} sites &middot; measured, not marketed</p>
+    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">Egypt&rsquo;s weather, month by month, at {n} sites.</h1>
+    <p class="lead" style="margin:0;max-width:68ch;">How hot a normal afternoon gets at each site in each month. Heat is
+    most of the planning problem in Egypt, and it depends on where as much as on when.</p>
+  </div>
+</section>
+
+<section class="surface-light" id="table" data-nav="The table">
+  <div class="wrap" style="max-width:960px;">
+    <div class="sheet">
+      <span class="seal" aria-hidden="true"><span data-glyph="ankh"></span></span>
+      {facts}
+    </div>
+    <div class="sheet" style="margin-top:18px;">
+      {heat_calendar.legend_html()}
+      {heat_calendar.table_html(rows)}
+    </div>
+    <p class="chart-cap" style="margin-top:14px;">{source_line} Each site name opens its own page, with nights,
+    rain and the hours of golden light. <a href="visit.html#checked">How the figures were checked &rarr;</a></p>
+    <div class="cta-row" style="margin-top:18px;"><a class="btn btn-primary" href="plan.html">Plan a route &rarr;</a>
+    <a class="btn btn-ghost" href="visit.html">Pick a month on the map &rarr;</a></div>
+  </div>
+</section>
+
+<section class="surface-light-2" id="embed" data-nav="Use this chart">
+  <div class="wrap" style="max-width:960px;">
+    <div class="kicker"><span data-glyph="scroll"></span>Free to use</div>
+    <h2>Put this chart on your own site.</h2>
+    <p class="lead" style="max-width:68ch;">Paste this where the chart should appear. It is an image, so it works in
+    any blog or forum that allows HTML, and it links back here. When the data is refreshed, copies on other sites
+    follow within a week, as browsers re-check the image. The underlying
+    data is NASA&rsquo;s, in the public domain; please keep the credit line inside the image.</p>
+    <pre class="hc-code"><code>{esc(snippet)}</code></pre>
+    <p class="chart-cap" style="margin-top:12px;">Or <a href="{chart_rel}">open the chart on its own</a> to save it.</p>
+  </div>
+</section>
+"""
+    nav, foot = chrome('')
+    io.open(os.path.join(SITE, WBM), 'w', encoding='utf-8', newline='\n').write(
+        page(title, desc, url, body, ld, extra_head=css, prefix='', nav=nav, foot=foot,
+             og_image=f"{SITE_URL}/og-visit.png?v=3"))
+
+    credit = (f"Source: {clim.get('source', 'NASA POWER')}, normals {window}. Modelled averages, not a forecast.",
+              f"Chart: egybi.com/{WBM}")
+    os.makedirs(os.path.join(SITE, 'charts'), exist_ok=True)
+    io.open(os.path.join(SITE, chart_rel), 'w', encoding='utf-8', newline='\n').write(
+        heat_calendar.svg_chart(rows, f"Egypt’s weather, month by month, at {n} sites", credit))
+    return [(url, '0.9')]
+
+
 def build_link_indexes(chs, posts):
     """Static, crawlable index of The Papyrus.
 
@@ -786,10 +891,13 @@ def main():
         write_index_block('visit.html', 'SITE-MONTHS',
             '<section class="surface-light-2" id="by-site" data-nav="Each site, by month">\n'
             '  <div class="wrap">\n    <div class="kicker"><span data-glyph="ra"></span>One page per site</div>\n'
-            '    <h2>Each site, all twelve months.</h2>\n    <div class="chip-row">' + chips + '</div>\n  </div>\n</section>')
+            '    <h2>Each site, all twelve months.</h2>\n    <div class="chip-row">' + chips + '</div>\n'
+            f'    <p style="margin-top:16px;"><a href="{WBM}">All {len(vu)} sites side by side, every month, in one table &rarr;</a></p>\n'
+            '  </div>\n</section>')
     ng = build_guide_links(vu) if vu else 0
+    wu = build_weather_by_month(vu) if vu else []
     build_link_indexes(ch, posts)
-    total = build_sitemap(pu + vu)
+    total = build_sitemap(pu + vu + wu)
     nfeed = build_feed(posts)
     build_404()
     # Report the sector split so a mis-mapped sector is visible in the log
