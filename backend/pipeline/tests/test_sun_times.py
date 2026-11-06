@@ -46,6 +46,15 @@ class EgyptClock(unittest.TestCase):
         self.assertEqual(sun_times.day_light(dt.date(2026, 7, 15), *GIZA).utc_offset_hours, 3)
 
 
+class SummerTime(unittest.TestCase):
+    def test_the_real_change_dates_not_the_15th_of_a_month(self):
+        self.assertEqual(sun_times.summer_time(2026), (dt.date(2026, 4, 24), dt.date(2026, 10, 29)))
+        self.assertEqual(sun_times.summer_time(2027), (dt.date(2027, 4, 30), dt.date(2027, 10, 28)))
+
+    def test_a_year_without_summer_time(self):
+        self.assertIsNone(sun_times.summer_time(2020))   # Egypt kept no summer time 2015-2022
+
+
 class KnownValues(unittest.TestCase):
     def test_giza_matches_the_values_checked_against_astral(self):
         # Published on visit/giza.html on 2026-11-05 after the astral check.

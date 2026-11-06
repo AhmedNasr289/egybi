@@ -12,6 +12,12 @@
    browser's localStorage only (see trip.js). */
 (function () {
   'use strict';
+  /* A governorate's name as the site spells it ("Fayoum"), for DISPLAY
+     only; the data's own spelling stays the join key. */
+  function gv(n) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.govName(n) : (n == null ? '' : String(n));
+  }
   var T = window.EGYBI && window.EGYBI.trip;
   if (!T) return;
   var esc = T.esc;
@@ -154,7 +160,7 @@
     if (!dl || !D.places) return;
     var seen = {};
     dl.innerHTML = D.places.places.map(function (p) {
-      var label = p.name + ' — ' + (KIND[p.kind] || p.kind) + (p.gov ? ', ' + p.gov : '');
+      var label = p.name + ' — ' + (KIND[p.kind] || p.kind) + (p.gov ? ', ' + gv(p.gov) : '');
       if (seen[label]) return '';
       seen[label] = 1; S.byLabel[label] = p;
       return '<option value="' + esc(label) + '"></option>';
@@ -261,7 +267,7 @@
       return '<div class="sheet" style="margin-top:16px;"><p class="kicker">Stop ' + (i + 1) + ' &middot; ' + (x.days || 1) + ' day' + ((x.days || 1) === 1 ? '' : 's') + '</p>' +
         '<h3 style="margin:0 0 8px;color:var(--blue-deep);">' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
         '<p style="margin:0 0 6px;">' + leg + esc(h.text) + (el != null ? ' Ground elevation ' + Math.round(el) + ' m (SRTM).' : '') + '</p>' +
-        '<p class="chart-cap" style="margin:0;">' + x.lat.toFixed(4) + ', ' + x.lon.toFixed(4) + (x.gov ? ' &middot; ' + esc(x.gov) : '') + '</p></div>';
+        '<p class="chart-cap" style="margin:0;">' + x.lat.toFixed(4) + ', ' + x.lon.toFixed(4) + (x.gov ? ' &middot; ' + esc(gv(x.gov)) : '') + '</p></div>';
     }).join('');
     var events = ev.length ? '<div class="sheet" style="margin-top:16px;"><p class="kicker">Inside your dates</p><ul class="event-list">' +
       ev.map(function (e) {

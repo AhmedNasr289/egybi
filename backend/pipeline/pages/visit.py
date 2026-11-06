@@ -48,8 +48,9 @@ def light_section(site, name):
         f"<td class=\"num\">{hm(d.golden_evening_start)}</td><td class=\"num\">{hm(d.sunset)}</td></tr>"
         for d in days)
     lengths = [m for d in days for m in (d.golden_morning_minutes, d.golden_evening_minutes)]
-    summer = [MONTHS[d.date.month - 1] for d in days if d.utc_offset_hours == 3]
-    clock = (f"Egypt time: UTC+2, and UTC+3 in {summer[0]}&ndash;{summer[-1]} (summer time)"
+    summer = sun_times.summer_time(year)
+    clock = (f"Egypt time: UTC+2, and UTC+3 from {summer[0].day} {MONTHS[summer[0].month - 1]} "
+             f"to {egfmt.date(summer[1], 'en', 'prose')} (summer time)"
              if summer else "Egypt time (UTC+2)")
     return f"""    <h2 style="font-size:1.2rem;margin:0 0 12px;" id="light">Light for photographs</h2>
     <p style="margin:0 0 10px;">Golden light, the warm low sun photographers wait for, lasts about {min(lengths)}&ndash;{max(lengths)} minutes after sunrise and before sunset here, depending on the month.</p>
@@ -98,23 +99,23 @@ def build_site_months():
         url = f"{SITE_URL}/visit/{key}.html"
         cool = min(ms, key=lambda m: m['t_daily_max'])
         hot = max(ms, key=lambda m: m['t_daily_max'])
-        under30 = [MONTHS[m['month'] - 1] for m in ms if m['t_daily_max'] < 30]
+        under30 = [MONTHS[m['month'] - 1] for m in ms if egfmt.whole(m['t_daily_max']) < 30]
         name = site['name']
         title = f"{name} weather by month · EgyBI"
         desc = (f"{name}: what a normal afternoon and night reach in each month, from NASA "
-                f"climate normals — about {round(cool['t_daily_max'])} °C in "
-                f"{MONTHS[cool['month'] - 1]}, {round(hot['t_daily_max'])} °C in {MONTHS[hot['month'] - 1]}.")
+                f"climate normals — about {egfmt.whole(cool['t_daily_max'])} °C in "
+                f"{MONTHS[cool['month'] - 1]}, {egfmt.whole(hot['t_daily_max'])} °C in {MONTHS[hot['month'] - 1]}.")
         rows = ''.join(
             f"<tr><th scope=\"row\">{MONTHS[m['month'] - 1]}</th>"
-            f"<td class=\"num\">{m['t_daily_max']:.0f} °C</td><td class=\"num\">{m['t_daily_min']:.0f} °C</td>"
+            f"<td class=\"num\">{egfmt.whole(m['t_daily_max'])} °C</td><td class=\"num\">{egfmt.whole(m['t_daily_min'])} °C</td>"
             f"<td class=\"num\">{m.get('rain_mm_day', 0):.1f}</td>"
-            f"<td class=\"num\">{m['t_record_max']:.0f} °C</td></tr>" for m in ms)
+            f"<td class=\"num\">{egfmt.whole(m['t_record_max'])} °C</td></tr>" for m in ms)
         el = terr.get(key, {}).get('elevation_m')
         others = ''.join(f'<a class="chip" href="{x["key"]}.html">{esc(x["name"])}</a>'
                          for x in sites if x['key'] != key)
         facts = [f"The coolest afternoons come in <strong>{MONTHS[cool['month'] - 1]}</strong>, at about "
-                 f"{cool['t_daily_max']:.0f} °C; the hottest in <strong>{MONTHS[hot['month'] - 1]}</strong>, at about "
-                 f"{hot['t_daily_max']:.0f} °C."]
+                 f"{egfmt.whole(cool['t_daily_max'])} °C; the hottest in <strong>{MONTHS[hot['month'] - 1]}</strong>, at about "
+                 f"{egfmt.whole(hot['t_daily_max'])} °C."]
         if under30:
             facts.append(f"A normal afternoon stays under 30 °C in {len(under30)} month"
                          f"{'' if len(under30) == 1 else 's'}: {', '.join(under30)}.")
@@ -136,7 +137,7 @@ def build_site_months():
         attraction = {"@type": "TouristAttraction", "@id": place_id, "name": name, "url": url,
                       "geo": {"@type": "GeoCoordinates", "latitude": site['lat'], "longitude": site['lon']},
                       "containedInPlace": {"@type": "AdministrativeArea",
-                                           "name": f"{site.get('gov', '')} Governorate",
+                                           "name": f"{egfmt.gov_name(site.get('gov', ''))} Governorate",
                                            "containedInPlace": {"@type": "Country", "name": "Egypt"}}}
         if site.get('name_ar'):
             attraction["alternateName"] = site['name_ar']
@@ -148,7 +149,7 @@ def build_site_months():
         body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:860px;">
-    <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="../visit.html">When to go</a> &middot; {esc(site.get('gov', ''))} &middot; measured, not marketed</p>
+    <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="../visit.html">When to go</a> &middot; {esc(egfmt.gov_name(site.get('gov', '')))} &middot; measured, not marketed</p>
     <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{esc(name)}, month by month.</h1>
     <p class="lead" style="margin:0;" lang="ar" dir="rtl">{esc(site.get('name_ar', ''))}</p>
   </div>

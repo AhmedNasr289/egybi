@@ -6,6 +6,12 @@
    way Power BI / Tableau bin skewed geodata. Hover highlights a governorate gold
    and shows its real value; a custom HTML legend lists each bin's value range. */
 (function () {
+  /* A governorate's name as the site spells it ("Fayoum"), for DISPLAY
+     only; the data's own spelling stays the join key. */
+  function gv(n) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.govName(n) : (n == null ? '' : String(n));
+  }
   window.EGYBI_MAP = { map: null, layer: null, metric: 'population', breaks: null };
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
@@ -61,7 +67,7 @@
   }
 
   function tipHtml(p, metric) {
-    return '<strong>' + p.name + '</strong><br>' + METRICS[metric].label + ': ' + METRICS[metric].fmt(p[metric]);
+    return '<strong>' + gv(p.name) + '</strong><br>' + METRICS[metric].label + ': ' + METRICS[metric].fmt(p[metric]);
   }
 
   function setMetric(metric, legendId) {
@@ -112,7 +118,7 @@
     // darker than others, and a reader who cannot tell which shape is which has
     // been shown a pattern with no way to name what is in it. The hover card
     // said so, and only to a mouse.
-    mkx('addLabels')(map, layer, function (p) { return p && p.name; },
+    mkx('addLabels')(map, layer, function (p) { return p && gv(p.name); },
                                   { minPx: 62, maxLabels: 16, className: 'mk-label-sm' });
 
     map.fitBounds(layer.getBounds(), { padding: [6, 6] });
@@ -165,7 +171,7 @@
       var out = document.getElementById('egyptMapPickOut');
       if (!sel) return;
       var entries = [];
-      layer.eachLayer(function (l) { entries.push({ name: l.feature.properties.name, layer: l }); });
+      layer.eachLayer(function (l) { entries.push({ name: gv(l.feature.properties.name), layer: l }); });
       entries.sort(function (a, b) { return a.name.localeCompare(b.name); });
       entries.forEach(function (e, i) {
         var o = document.createElement('option');

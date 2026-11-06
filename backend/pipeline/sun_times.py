@@ -113,6 +113,23 @@ def day_light(day: dt.date, lat: float, lon: float) -> DayLight:
     return DayLight(date=day, utc_offset_hours=offset.total_seconds() / 3600, **local)
 
 
+def summer_time(year: int) -> Optional[tuple[dt.date, dt.date]]:
+    """The first and last day of the year on which Egypt keeps summer time
+    (UTC+3), from the IANA database; None in a year without it.
+
+    The visit pages used to sample the 15th of each month and so said "UTC+3
+    in May–October" for 2026, when summer time ran from 24 April to 29
+    October: a week of April missing and most of October overstated. Read at
+    noon local time, clear of the midnight change."""
+    days = []
+    d = dt.date(year, 1, 1)
+    while d.year == year:
+        if dt.datetime(d.year, d.month, d.day, 12, tzinfo=CAIRO).utcoffset() == dt.timedelta(hours=3):
+            days.append(d)
+        d += dt.timedelta(days=1)
+    return (days[0], days[-1]) if days else None
+
+
 def monthly(year: int, lat: float, lon: float, day_of_month: int = 15) -> list[DayLight]:
     """One DayLight per month, on the given day of each month."""
     return [day_light(dt.date(year, m, day_of_month), lat, lon) for m in range(1, 13)]

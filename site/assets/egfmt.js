@@ -30,6 +30,15 @@
     if (lang !== 'en' && lang !== 'ar') throw new Error("lang must be 'en' or 'ar', not " + lang);
     return lang;
   }
+  /* Governorate names as the site spells them, for DISPLAY only (the data's
+     spelling stays the join key). Same table as pages/egfmt.py. */
+  var GOV_NAMES = { 'Faiyum': 'Fayoum', 'Fayyum': 'Fayoum', 'Al Fayyum': 'Fayoum', 'Al-Fayyum': 'Fayoum',
+    'El Fayoum': 'Fayoum', 'Al Fayoum': 'Fayoum' };
+  function govName(n) {
+    if (n == null) return '';
+    var k = String(n).trim();
+    return Object.prototype.hasOwnProperty.call(GOV_NAMES, k) ? GOV_NAMES[k] : String(n);
+  }
   function isolate(s) { return LRI + s + PDI; }
   function digits(s, lang) {
     return lang_(lang) === 'ar' ? String(s).replace(/[0-9]/g, function (d) { return AR[+d]; }) : String(s);
@@ -44,6 +53,10 @@
     var r = Number(Math.round(Number(a + 'e' + places)) + 'e-' + places);
     return n < 0 ? -r : r;
   }
+
+  /* The whole number a reader sees, half away from zero (22.5 -> 23), as
+     pages/egfmt.py's whole(). Temperatures are banded on this number. */
+  function whole(x) { var r = round(x, 0); return r === 0 ? 0 : r; }
 
   function fixed(x, lang, places) {
     var r = round(x, places);
@@ -143,7 +156,7 @@
     return digits(h12 + ':' + pad(t.mm), 'ar') + ' ' + (t.hh < 12 ? 'ص' : 'م');
   }
 
-  var api = { isolate: isolate, digits: digits, fixed: fixed, num: num, money: money,
+  var api = { isolate: isolate, digits: digits, whole: whole, govName: govName, fixed: fixed, num: num, money: money,
     moneyRange: moneyRange, rate: rate, pct: pct, date: date, dateOrRaw: dateOrRaw, time: time,
     MONTHS_EN: MONTHS_EN, MONTHS_AR: MONTHS_AR };
   root.EGYBI = root.EGYBI || {};
