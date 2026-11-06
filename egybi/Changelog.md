@@ -1067,3 +1067,9 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **Daily rebuild:** the price refresh now rebuilds the page (`build_food_prices.py`, byte-identical to the full generator) and commits it. Without that it would have frozen on the day it was written, because the general page build does not run on price data. Its sitemap date follows the price data.
 - **Colours:** four categorical hues, validated with the dataviz palette script. All checks pass; worst adjacent colour-blind separation ΔE 8.8. The lines have end labels with one decimal, a legend, one axis, and the credit inside the image.
 - **Proof:** 10 new tests, the full suite passing, and `seo.py` clean across 180 pages.
+
+## 2026-11-06 — The browser checks no longer lose a run to a slow mirror
+- **What happened:** PR #83's browser run (42275508065) ended `cancelled`. Every check had passed. Installing Chromium took 14m27s instead of the usual ~30 s, because the Ubuntu mirror trickled its font packages (one 392 s gap between two log lines). `mutate.py` then finished at the job's 50-minute cap.
+- **Why it mattered:** a stall on the runner read like a failure of the site, and it took the whole 50 minutes to show.
+- **The fix, in `verify-browser.yml`:** the install step has its own 12-minute ceiling, so a stall now fails at that step, under its name. apt drops a fetch that stalls for 20 s and retries it up to five times. Worst case 12 + ~36 minutes stays under the cap.
+- **Proof:** the workflow parses with the new `timeout-minutes`; `workflow-audit.py` and `checks.py workflows` report no gaps.
