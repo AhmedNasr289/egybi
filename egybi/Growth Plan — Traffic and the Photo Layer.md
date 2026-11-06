@@ -31,7 +31,9 @@
 **Blocked on Ahmed** (from the pivot's week 0; this is the critical path to any income):
 1. Employment-contract check for the paid $49 review.
 2. A Payhip (PayTabs) or Lemon Squeezy listing for the $12 dossier. Until then `dossier.html` says "coming".
-3. Affiliate programmes (Awin/GetYourGuide, Impact/Airalo, SafetyWing, CJ/Booking): each must confirm, in its own dashboard, payout to an Egypt resident before a single link ships.
+3. Affiliate programmes (Awin/GetYourGuide, Impact/Airalo, SafetyWing, CJ/Booking): each must confirm, in its own dashboard, payout to an Egypt resident before a single link ships. **2026-11-06:** researched for crafts and workshops in [[Affiliate Plan — Egyptian Handmade]]. Only Awin publishes Egypt evidence (Egypt is on its residency list, paid through Payoneer), and the best craft route is a direct deal with Fair Trade Egypt. That note holds the ranked order and the exact question to send each programme.
+
+Step-by-step instructions for all three, and for A1–A3: [[Owner Steps — Search, Sales and Housekeeping]]. Item 2 also needs the pack itself, which Claude built on 2026-11-06 (`backend/pipeline/dossier_pack.py`, PR "The $12 dossier pack").
 
 ## 2. The one metric, and the dates that judge it
 
