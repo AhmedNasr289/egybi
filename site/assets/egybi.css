@@ -321,15 +321,18 @@ h2 { font-size: clamp(1.6rem, 3vw, 2.15rem); margin: 0 0 12px; color: var(--blue
 /* Skip link. Off-screen until focused, then the first thing a keyboard user
    sees. Without it every page made them tab through thirteen nav links before
    reaching the content. */
-/* Logical offsets, not `left`: on a right-to-left page (prices-ar.html, from
-   2026-11-06) `left:-9999px` points into the SCROLLABLE direction, and the
-   hidden link gave the Arabic page a 9999px sideways scroll (all-pages.js,
-   PR #77). inset-inline-start is `left` in English and `right` in Arabic, the
-   clipped direction in both. The rounded corner mirrors the same way. */
-.skip-link { position: absolute; inset-inline-start: -9999px; top: 0; z-index: 1200;
+/* Hidden by CLIPPING until it has keyboard focus, not by an off-screen offset.
+   `left:-9999px` was fine on English pages, but on the right-to-left Arabic page
+   (from 2026-11-06) it pointed into the scrollable direction: a 9999px sideways
+   scroll (all-pages.js, PR #77). A logical offset only moved the link to the
+   other edge, where overflow.js still found it 9999px off-screen. Clipping keeps
+   it at the start edge taking no space, in either direction, the same technique
+   as .sr-only and the honeypot. On focus it appears there, corner rounded. */
+.skip-link { position: absolute; inset-inline-start: 0; top: 0; z-index: 1200;
   background: var(--gold-bright); color: var(--kemet); padding: 10px 18px;
   font-weight: 700; border-radius: 0; border-end-end-radius: var(--radius); text-decoration: none; }
-.skip-link:focus { inset-inline-start: 0; }
+.skip-link:not(:focus) { width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
 main:focus { outline: none; }
 
 /* The ACTIVE sub-nav chip had no focus state a reader could see: the shared
