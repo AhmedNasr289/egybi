@@ -81,8 +81,21 @@ jobs:
       # env.js resolves playwright-core from node_modules or PLAYWRIGHT_CORE.
       # This repo has no package.json, so install into a scratch directory and
       # name the path explicitly rather than relying on module resolution.
+      # Its own ceiling, and bounded apt fetches. Run 42275508065 (PR #83,
+      # 2026-11-06) spent 14m27s here instead of the usual ~30 s: the Ubuntu
+      # mirror trickled Chromium's font packages (one gap of 392 s between two
+      # log lines). Every checker then passed, but mutate.py finished at the
+      # job's 50-minute cap and the run read `cancelled`, as if the site had
+      # failed. With the step capped at 12 minutes a stalled mirror fails HERE,
+      # under this step's name, and leaves the checkers their usual ~36 minutes.
+      # The cure for a stall is a re-run; nothing in the site causes it.
       - name: Install playwright-core and Chromium
+        timeout-minutes: 12
         run: |
+          # A fetch that stalls for 20 s is dropped and retried, instead of
+          # waiting out apt's default timeout on a dying connection.
+          printf 'Acquire::http::Timeout "20";\nAcquire::https::Timeout "20";\nAcquire::Retries "5";\n' \
+            | sudo tee /etc/apt/apt.conf.d/99-egybi-fetch-timeouts >/dev/null
           mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
           npm init -y >/dev/null
           npm i --no-audit --no-fund playwright-core@1.62.1
