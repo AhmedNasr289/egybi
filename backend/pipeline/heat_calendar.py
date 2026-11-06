@@ -30,6 +30,11 @@ import html
 from dataclasses import dataclass
 from typing import Optional
 
+import os as _os
+import sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+from pages import egfmt  # noqa: E402  (one rounding rule for every whole degree)
+
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
           'August', 'September', 'October', 'November', 'December']
 
@@ -102,7 +107,7 @@ def rows_from_climate(clim: dict, keys: Optional[set[str]] = None) -> list[Row]:
         if [m['month'] for m in ms] != list(range(1, 13)):
             continue
         out.append(Row(s['key'], s['name'], float(s['lat']),
-                       tuple(round(float(m['t_daily_max'])) for m in ms)))
+                       tuple(egfmt.whole(m['t_daily_max']) for m in ms)))
     return sorted(out, key=lambda r: -r.lat)
 
 

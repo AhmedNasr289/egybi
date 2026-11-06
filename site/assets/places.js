@@ -25,6 +25,12 @@
 */
 (function () {
   'use strict';
+  /* A governorate's name as the site spells it ("Fayoum"), for DISPLAY
+     only; the data's own spelling stays the join key. */
+  function gv(n) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.govName(n) : (n == null ? '' : String(n));
+  }
   /* A dataset's date, written as the site writes dates ("3 November 2026",
      EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
      value as written if egfmt.js did not load. */
@@ -137,7 +143,7 @@
     S.base = L.geoJSON(window.EGYBI_EGYPT_GEO, {
       style: window.EGYBI.mapkit.landStyle,
       onEachFeature: function (f, lyr) {
-        lyr.bindTooltip(esc(f.properties.name), { sticky: true });
+        lyr.bindTooltip(esc(gv(f.properties.name)), { sticky: true });
       }
     }).addTo(S.map);
     // The governorate names, drawn while the view is the whole country. Before
@@ -145,7 +151,7 @@
     // cluster counts on it, so "88" sat in the Delta with nothing to say which
     // part of the Delta. Place names begin at zoom 9, so the ceiling here is 8
     // and the two layers hand over without ever competing.
-    mkx('addLabels')(S.map, S.base, function (p) { return p && p.name; },
+    mkx('addLabels')(S.map, S.base, function (p) { return p && gv(p.name); },
                                   { minPx: 62, maxZoom: 8, maxLabels: 16, priority: 0,
                                     className: 'mk-label-sm' });
     S.map.fitBounds(S.base.getBounds(), { padding: [6, 6] });
@@ -217,7 +223,7 @@
       var m = L.marker([p.lat, p.lon], {
         keyboard: true,
         title: p.name,
-        alt: p.name + (p.gov ? ', ' + p.gov : ''),
+        alt: p.name + (p.gov ? ', ' + gv(p.gov) : ''),
         icon: L.divIcon({
           className: 'mk-pin',
           html: '<i style="width:' + d + 'px;height:' + d + 'px;background:' + spec.colour + '"></i>',
@@ -229,7 +235,7 @@
       // separately rather than being parsed back out of a string.
       m._plName = p.name;
       m.bindTooltip('<strong>' + esc(p.name) + '</strong>' +
-        (p.gov ? '<br>' + esc(p.gov) : ''), { direction: 'top' });
+        (p.gov ? '<br>' + esc(gv(p.gov)) : ''), { direction: 'top' });
       m.on('click', function () { select(p); });
       // L.marker is focusable, so Enter must do what a click does or the
       // keyboard path stops at "I can reach it but not open it".
@@ -411,7 +417,7 @@
     bits.push('<div class="pd-row"><span>Kind</span><strong>' +
       esc(spec.label.replace(/s$/, '')) + (p.place ? ' · ' + esc(p.place) : '') + '</strong></div>');
     bits.push('<div class="pd-row"><span>Governorate</span><strong>' +
-      (p.gov ? esc(p.gov) : 'not assigned') + '</strong></div>');
+      (p.gov ? esc(gv(p.gov)) : 'not assigned') + '</strong></div>');
     bits.push('<div class="pd-row"><span>Coordinates</span><strong>' +
       p.lat.toFixed(4) + ', ' + p.lon.toFixed(4) + '</strong></div>');
     if (p.iata) bits.push('<div class="pd-row"><span>IATA code</span><strong>' + esc(p.iata) + '</strong></div>');

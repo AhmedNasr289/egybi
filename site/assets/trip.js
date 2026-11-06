@@ -103,15 +103,20 @@
   /* ----------------------------------------------------------- the heat --
      The same five bands and the same colours as the visitor page, so a dot
      means the same thing on every map on the site. */
+  /* Banded on the WHOLE degree the reader sees (21.7 shows as 22 and is
+     coloured as 22), with the weather page's integer labels, so "22–27 °C"
+     cannot be misread at its edge the way "22–28" could. */
   var BANDS = [
-    { max: 22, colour: '#2C6FAD', label: 'under 22 °C' },
-    { max: 28, colour: '#4FA3A5', label: '22–28 °C' },
-    { max: 34, colour: '#C9A227', label: '28–34 °C' },
-    { max: 39, colour: '#D97B2B', label: '34–39 °C' },
-    { max: Infinity, colour: '#B23A0F', label: '39 °C and above' }
+    { max: 22, colour: '#2C6FAD', label: '21 °C or less' },
+    { max: 28, colour: '#4FA3A5', label: '22–27 °C' },
+    { max: 34, colour: '#C9A227', label: '28–33 °C' },
+    { max: 39, colour: '#D97B2B', label: '34–38 °C' },
+    { max: Infinity, colour: '#B23A0F', label: '39 °C or more' }
   ];
+  function whole(t) { return F() ? F().whole(t) : Math.round(t); }
   function band(t) {
     if (t == null) return null;
+    t = whole(t);
     for (var i = 0; i < BANDS.length; i++) if (t < BANDS[i].max) return BANDS[i];
     return BANDS[BANDS.length - 1];
   }
@@ -187,7 +192,7 @@
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow,
     km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM,
-    eventsIn: eventsIn, rate: rate, rateText: rateText, money: money,
+    eventsIn: eventsIn, rate: rate, rateText: rateText, money: money, whole: whole,
     MONTHS: MONTHS, SHORT: SHORT, esc: esc
   };
 }());

@@ -106,6 +106,8 @@ import sys
 import unicodedata
 from datetime import date, datetime, timezone
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.join(HERE, "..", "..")
 DB = os.path.join(REPO, "backend", "test", "egybi_test.sqlite")
@@ -117,15 +119,10 @@ INDUSTRY = os.path.join(REPO, "site", "data", "geo-industry.json")
 BOUNDS = os.path.join(REPO, "egy_adm1_simplified.geojson")
 OUT = os.path.join(REPO, "site", "data", "invest-projects.json")
 
-# geoBoundaries shapeName -> KB governorates.name. Shared with
-# build_egypt_map.py by duplication rather than by import, because these two
-# scripts are run independently and a shared module that only ever holds three
-# aliases is more coupling than it is worth.
-ALIASES = {
-    "Al Sharqia": "Sharqia",
-    "Gharbiyya": "Gharbia",
-    "Kafr el-Sheikh": "Kafr El Sheikh",
-}
+# geoBoundaries shapeName -> KB governorates.name: the table shared with
+# build_egypt_map.py, kept once in governorates.py. (It was copied here
+# "by duplication rather than by import" until 2026-11-06.)
+from governorates import ALIASES  # noqa: E402
 
 
 def norm(s):

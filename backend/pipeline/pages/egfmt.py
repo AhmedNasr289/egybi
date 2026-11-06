@@ -51,6 +51,21 @@ def _lang(lang: str) -> str:
     return lang
 
 
+# Governorate names as the site writes them. The data spells Fayoum three
+# ways (Faiyum from the knowledge base and OpenStreetMap, Al Fayyum and Fayyum
+# in older copy); the site writes the Egyptian government's "Fayoum". Display
+# only: the data's spelling stays the join key everywhere.
+GOV_NAMES = {'Faiyum': 'Fayoum', 'Fayyum': 'Fayoum', 'Al Fayyum': 'Fayoum', 'Al-Fayyum': 'Fayoum',
+             'El Fayoum': 'Fayoum', 'Al Fayoum': 'Fayoum'}
+
+
+def gov_name(name) -> str:
+    """A governorate's name as the site spells it, for display."""
+    if name is None:
+        return ''
+    return GOV_NAMES.get(str(name).strip(), str(name))
+
+
 def isolate(s: str) -> str:
     """Wrap s in a left-to-right isolate, for a number inside Arabic text."""
     return LRI + s + PDI
@@ -66,6 +81,15 @@ def _round(x: Number, places: int) -> Decimal:
     d = Decimal(str(x))
     q = Decimal(1).scaleb(-places)
     return d.copy_abs().quantize(q, rounding=ROUND_HALF_UP).copy_sign(d) if d else d.quantize(q)
+
+
+def whole(x: Number) -> int:
+    """A temperature (or any figure) as the whole number a reader sees, rounded
+    half away from zero. Python's round() rounds 22.5 to 22 and JavaScript's
+    Math.round to 23, so the same afternoon read differently on the weather
+    page and the home page until 2026-11-06; every whole-degree figure on the
+    site now goes through this rule."""
+    return int(_round(x, 0))
 
 
 def fixed(x: Number, lang: str, places: int) -> str:

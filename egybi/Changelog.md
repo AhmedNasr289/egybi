@@ -1013,3 +1013,19 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
   - On their first run they found exactly the audit's 14 calls and 21 pages. Both are now clean. Total cases: 44.
 - **Visit pages as sheets:** each of the 18 is now four sections in alternating parchment tones (facts, heat and rain, light, other sites), so the scroll rod marks each join. The heat table gains a visible heading.
 - **`egfmt` gains `date_or_raw`** (never throws on a stray field), with five new shared cases: 51 cases in all, matching in both formatters.
+
+## 2026-11-06 — Egyptian formatting, part 3: one rounding rule, Fayoum, the real summer-time dates
+- ⚠️ **Defect found and fixed at the root: the same afternoon read differently on different pages.**
+  - 24 of the 216 site-months sit exactly on a half degree. Python's `round()` rounds halves to even and JavaScript's `Math.round` rounds them up, so 8 of them disagreed. Hurghada in February (22.5 °C) read "22" on the weather page and "23" on the home page.
+  - Every whole-degree figure now goes through `whole()` (half away from zero), in both formatters. Five new shared cases cover it.
+  - On the weather page exactly those 8 cells moved, as predicted. The visit pages also moved their night and record halves, under the same rule.
+- **Heat bands labelled one way:** the trip pages and the visitor map now band the whole degree the reader sees (21.7 shows as 22 and is coloured as 22). They use the weather page's labels: "21 °C or less", "22–27 °C", "28–33 °C", "34–38 °C", "39 °C or more". The old "22–28" was ambiguous at its edge.
+- **Fayoum:**
+  - The site writes the Egyptian government's spelling wherever a governorate name is shown: the Atlas, the Explore map, Places, Visit, the planner, the visit pages and the dossier pack.
+  - The data keeps "Faiyum" as its join key. The boundaries, the four OSM layers and the investment map all join on it, so lookups were deliberately left alone.
+  - `gov_name` / `govName` is in both formatters, with five shared cases (61 in all).
+- **One alias table:** the geoBoundaries-to-knowledge-base aliases, copied into `build_egypt_map.py` and `build_invest_map.py`, now live once in `backend/pipeline/governorates.py`. Rebuilt against a fresh test database: `egypt-geo.js` is byte-identical with all 27 governorates matched; `invest-projects.json` differs only in its build date.
+- **The real summer-time dates:**
+  - The visit pages said "UTC+3 in May–October" because they sampled the 15th of each month. 2026's summer time ran 24 April to 29 October.
+  - `sun_times.summer_time()` reads the IANA database day by day. It is tested on 2026 and 2027 (30 April to 28 October), and on 2020, a year with no summer time.
+- **Workflow comments:** the price and FX refresh comments no longer assume Cairo is UTC+2 all year.
