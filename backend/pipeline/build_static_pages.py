@@ -770,7 +770,8 @@ def build_weather_by_month(urls):
     <div class="kicker"><span data-glyph="scroll"></span>Free to use</div>
     <h2>Put this chart on your own site.</h2>
     <p class="lead" style="max-width:68ch;">Paste this where the chart should appear. It is an image, so it works in
-    any blog or forum that allows HTML; it updates when the data is refreshed, and it links back here. The underlying
+    any blog or forum that allows HTML, and it links back here. When the data is refreshed, copies on other sites
+    follow within a week, as browsers re-check the image. The underlying
     data is NASA&rsquo;s, in the public domain; please keep the credit line inside the image.</p>
     <pre class="hc-code"><code>{esc(snippet)}</code></pre>
     <p class="chart-cap" style="margin-top:12px;">Or <a href="{chart_rel}">open the chart on its own</a> to save it.</p>
@@ -782,8 +783,8 @@ def build_weather_by_month(urls):
         page(title, desc, url, body, ld, extra_head=css, prefix='', nav=nav, foot=foot,
              og_image=f"{SITE_URL}/og-visit.png?v=3"))
 
-    credit = (f"Source: {clim.get('source', 'NASA POWER')}, normals {window}. "
-              f"Modelled averages, not a forecast. Chart: egybi.com/{WBM}")
+    credit = (f"Source: {clim.get('source', 'NASA POWER')}, normals {window}. Modelled averages, not a forecast.",
+              f"Chart: egybi.com/{WBM}")
     os.makedirs(os.path.join(SITE, 'charts'), exist_ok=True)
     io.open(os.path.join(SITE, chart_rel), 'w', encoding='utf-8', newline='\n').write(
         heat_calendar.svg_chart(rows, f"Egypt’s weather, month by month, at {n} sites", credit))

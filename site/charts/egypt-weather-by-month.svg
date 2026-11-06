@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="846" height="714" viewBox="0 0 846 714" role="img" aria-label="Egypt’s weather, month by month, at 18 sites">
+<svg xmlns="http://www.w3.org/2000/svg" width="846" height="730" viewBox="0 0 846 730" role="img" aria-label="Egypt’s weather, month by month, at 18 sites">
 <title>Egypt’s weather, month by month, at 18 sites</title>
-<rect width="846" height="714" fill="#F6EEDC"/>
+<rect width="846" height="730" fill="#F6EEDC"/>
 <g style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif" fill="#1B1B18">
 <text x="16" y="30" font-size="19" font-weight="700">Egypt’s weather, month by month, at 18 sites</text>
 <text x="16" y="50" font-size="12.5">Mean daily maximum, °C: what a normal afternoon reaches. Sites north to south.</text>
@@ -33,7 +33,7 @@
 <rect x="206" y="106" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="231" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">17</text>
 <rect x="258" y="106" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="283" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">18</text>
 <rect x="310" y="106" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="335" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">19</text>
-<rect x="362" y="106" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="387" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">22</text>
+<rect x="362" y="106" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="387" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">22</text>
 <rect x="414" y="106" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="439" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
 <rect x="466" y="106" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="491" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">27</text>
 <rect x="518" y="106" width="50" height="30" rx="4" fill="#C9A227"/><text x="543" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">29</text>
@@ -62,7 +62,7 @@
 <rect x="362" y="170" width="50" height="30" rx="4" fill="#C9A227"/><text x="387" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="414" y="170" width="50" height="30" rx="4" fill="#D97B2B"/><text x="439" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
 <rect x="466" y="170" width="50" height="30" rx="4" fill="#D97B2B"/><text x="491" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
-<rect x="518" y="170" width="50" height="30" rx="4" fill="#D97B2B"/><text x="543" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">39</text>
+<rect x="518" y="170" width="50" height="30" rx="4" fill="#B23A0F"/><text x="543" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">39</text>
 <rect x="570" y="170" width="50" height="30" rx="4" fill="#D97B2B"/><text x="595" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">38</text>
 <rect x="622" y="170" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">36</text>
 <rect x="674" y="170" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="190" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">31</text>
@@ -75,7 +75,7 @@
 <rect x="362" y="202" width="50" height="30" rx="4" fill="#C9A227"/><text x="387" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="414" y="202" width="50" height="30" rx="4" fill="#D97B2B"/><text x="439" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
 <rect x="466" y="202" width="50" height="30" rx="4" fill="#D97B2B"/><text x="491" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
-<rect x="518" y="202" width="50" height="30" rx="4" fill="#D97B2B"/><text x="543" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">39</text>
+<rect x="518" y="202" width="50" height="30" rx="4" fill="#B23A0F"/><text x="543" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">39</text>
 <rect x="570" y="202" width="50" height="30" rx="4" fill="#D97B2B"/><text x="595" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">38</text>
 <rect x="622" y="202" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">36</text>
 <rect x="674" y="202" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">31</text>
@@ -88,7 +88,7 @@
 <rect x="362" y="234" width="50" height="30" rx="4" fill="#C9A227"/><text x="387" y="254" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="414" y="234" width="50" height="30" rx="4" fill="#D97B2B"/><text x="439" y="254" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
 <rect x="466" y="234" width="50" height="30" rx="4" fill="#D97B2B"/><text x="491" y="254" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
-<rect x="518" y="234" width="50" height="30" rx="4" fill="#D97B2B"/><text x="543" y="254" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">39</text>
+<rect x="518" y="234" width="50" height="30" rx="4" fill="#B23A0F"/><text x="543" y="254" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">39</text>
 <rect x="570" y="234" width="50" height="30" rx="4" fill="#D97B2B"/><text x="595" y="254" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">38</text>
 <rect x="622" y="234" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="254" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">36</text>
 <rect x="674" y="234" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="254" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">31</text>
@@ -129,7 +129,7 @@
 <rect x="466" y="330" width="50" height="30" rx="4" fill="#D97B2B"/><text x="491" y="350" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">35</text>
 <rect x="518" y="330" width="50" height="30" rx="4" fill="#D97B2B"/><text x="543" y="350" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">36</text>
 <rect x="570" y="330" width="50" height="30" rx="4" fill="#D97B2B"/><text x="595" y="350" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">36</text>
-<rect x="622" y="330" width="50" height="30" rx="4" fill="#C9A227"/><text x="647" y="350" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
+<rect x="622" y="330" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="350" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
 <rect x="674" y="330" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="350" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">29</text>
 <rect x="726" y="330" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="751" y="350" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">24</text>
 <rect x="778" y="330" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="803" y="350" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">19</text>
@@ -140,17 +140,17 @@
 <rect x="362" y="362" width="50" height="30" rx="4" fill="#C9A227"/><text x="387" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="414" y="362" width="50" height="30" rx="4" fill="#D97B2B"/><text x="439" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
 <rect x="466" y="362" width="50" height="30" rx="4" fill="#D97B2B"/><text x="491" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
-<rect x="518" y="362" width="50" height="30" rx="4" fill="#D97B2B"/><text x="543" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">39</text>
-<rect x="570" y="362" width="50" height="30" rx="4" fill="#D97B2B"/><text x="595" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">39</text>
+<rect x="518" y="362" width="50" height="30" rx="4" fill="#B23A0F"/><text x="543" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">39</text>
+<rect x="570" y="362" width="50" height="30" rx="4" fill="#B23A0F"/><text x="595" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">39</text>
 <rect x="622" y="362" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">37</text>
 <rect x="674" y="362" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">32</text>
 <rect x="726" y="362" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="751" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">26</text>
-<rect x="778" y="362" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="803" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">22</text>
+<rect x="778" y="362" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="803" y="382" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">22</text>
 <text x="196" y="414" font-size="13" font-weight="600" text-anchor="end">Hurghada</text>
 <rect x="206" y="394" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="231" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">21</text>
 <rect x="258" y="394" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="283" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">22</text>
 <rect x="310" y="394" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="335" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
-<rect x="362" y="394" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="387" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">28</text>
+<rect x="362" y="394" width="50" height="30" rx="4" fill="#C9A227"/><text x="387" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">28</text>
 <rect x="414" y="394" width="50" height="30" rx="4" fill="#C9A227"/><text x="439" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">31</text>
 <rect x="466" y="394" width="50" height="30" rx="4" fill="#C9A227"/><text x="491" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">33</text>
 <rect x="518" y="394" width="50" height="30" rx="4" fill="#D97B2B"/><text x="543" y="414" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
@@ -182,7 +182,7 @@
 <rect x="518" y="458" width="50" height="30" rx="4" fill="#B23A0F"/><text x="543" y="478" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">40</text>
 <rect x="570" y="458" width="50" height="30" rx="4" fill="#B23A0F"/><text x="595" y="478" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">40</text>
 <rect x="622" y="458" width="50" height="30" rx="4" fill="#D97B2B"/><text x="647" y="478" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">38</text>
-<rect x="674" y="458" width="50" height="30" rx="4" fill="#C9A227"/><text x="699" y="478" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
+<rect x="674" y="458" width="50" height="30" rx="4" fill="#D97B2B"/><text x="699" y="478" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
 <rect x="726" y="458" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="751" y="478" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">27</text>
 <rect x="778" y="458" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="803" y="478" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">22</text>
 <text x="196" y="510" font-size="13" font-weight="600" text-anchor="end">Dendera Temple</text>
@@ -190,7 +190,7 @@
 <rect x="258" y="490" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="283" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
 <rect x="310" y="490" width="50" height="30" rx="4" fill="#C9A227"/><text x="335" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="362" y="490" width="50" height="30" rx="4" fill="#D97B2B"/><text x="387" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
-<rect x="414" y="490" width="50" height="30" rx="4" fill="#D97B2B"/><text x="439" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">39</text>
+<rect x="414" y="490" width="50" height="30" rx="4" fill="#B23A0F"/><text x="439" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">39</text>
 <rect x="466" y="490" width="50" height="30" rx="4" fill="#B23A0F"/><text x="491" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">41</text>
 <rect x="518" y="490" width="50" height="30" rx="4" fill="#B23A0F"/><text x="543" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">41</text>
 <rect x="570" y="490" width="50" height="30" rx="4" fill="#B23A0F"/><text x="595" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">42</text>
@@ -199,7 +199,7 @@
 <rect x="726" y="490" width="50" height="30" rx="4" fill="#C9A227"/><text x="751" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">29</text>
 <rect x="778" y="490" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="803" y="510" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">24</text>
 <text x="196" y="542" font-size="13" font-weight="600" text-anchor="end">Valley of the Kings</text>
-<rect x="206" y="522" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="231" y="542" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">22</text>
+<rect x="206" y="522" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="231" y="542" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">22</text>
 <rect x="258" y="522" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="283" y="542" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
 <rect x="310" y="522" width="50" height="30" rx="4" fill="#C9A227"/><text x="335" y="542" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="362" y="522" width="50" height="30" rx="4" fill="#D97B2B"/><text x="387" y="542" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
@@ -212,7 +212,7 @@
 <rect x="726" y="522" width="50" height="30" rx="4" fill="#C9A227"/><text x="751" y="542" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">29</text>
 <rect x="778" y="522" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="803" y="542" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">24</text>
 <text x="196" y="574" font-size="13" font-weight="600" text-anchor="end">Karnak Temple</text>
-<rect x="206" y="554" width="50" height="30" rx="4" fill="#2C6FAD"/><text x="231" y="574" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">22</text>
+<rect x="206" y="554" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="231" y="574" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">22</text>
 <rect x="258" y="554" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="283" y="574" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
 <rect x="310" y="554" width="50" height="30" rx="4" fill="#C9A227"/><text x="335" y="574" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="362" y="554" width="50" height="30" rx="4" fill="#D97B2B"/><text x="387" y="574" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">34</text>
@@ -250,10 +250,11 @@
 <rect x="674" y="618" width="50" height="30" rx="4" fill="#D97B2B"/><text x="699" y="638" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">36</text>
 <rect x="726" y="618" width="50" height="30" rx="4" fill="#C9A227"/><text x="751" y="638" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">30</text>
 <rect x="778" y="618" width="50" height="30" rx="4" fill="#4FA3A5"/><text x="803" y="638" font-size="13" font-weight="700" text-anchor="middle" fill="#1B1B18">25</text>
-<rect x="16" y="662" width="13" height="13" rx="3" fill="#2C6FAD"/><text x="35" y="673" font-size="12">under 22 °C</text>
-<rect x="141" y="662" width="13" height="13" rx="3" fill="#4FA3A5"/><text x="160" y="673" font-size="12">22–28 °C</text>
-<rect x="242" y="662" width="13" height="13" rx="3" fill="#C9A227"/><text x="261" y="673" font-size="12">28–34 °C</text>
-<rect x="343" y="662" width="13" height="13" rx="3" fill="#D97B2B"/><text x="362" y="673" font-size="12">34–39 °C</text>
-<rect x="444" y="662" width="13" height="13" rx="3" fill="#B23A0F"/><text x="463" y="673" font-size="12">39 °C and above</text>
-<text x="16" y="700" font-size="11.5">Source: NASA POWER climatology (MERRA-2 reanalysis), normals 2001–2020. Modelled averages, not a forecast. Chart: egybi.com/egypt-weather-by-month.html</text>
+<rect x="16" y="662" width="13" height="13" rx="3" fill="#2C6FAD"/><text x="35" y="673" font-size="12">21 °C or less</text>
+<rect x="157" y="662" width="13" height="13" rx="3" fill="#4FA3A5"/><text x="176" y="673" font-size="12">22–27 °C</text>
+<rect x="258" y="662" width="13" height="13" rx="3" fill="#C9A227"/><text x="277" y="673" font-size="12">28–33 °C</text>
+<rect x="359" y="662" width="13" height="13" rx="3" fill="#D97B2B"/><text x="378" y="673" font-size="12">34–38 °C</text>
+<rect x="460" y="662" width="13" height="13" rx="3" fill="#B23A0F"/><text x="479" y="673" font-size="12">39 °C or more</text>
+<text x="16" y="700" font-size="11.5">Source: NASA POWER climatology (MERRA-2 reanalysis), normals 2001–2020. Modelled averages, not a forecast.</text>
+<text x="16" y="716" font-size="11.5">Chart: egybi.com/egypt-weather-by-month.html</text>
 </g></svg>

@@ -12,11 +12,17 @@ picture: a static HTML table, coloured by the same five bands as the visit
 map, with every number printed in its cell (colour is never the only carrier).
 
 It is pure: data in, HTML and computed sentences out. Nothing here is typed by
-hand — every figure in FINDINGS is read off the same rows the table shows, so
-the prose cannot disagree with the chart beside it.
+hand — every figure in the findings is read off the same rows the table shows,
+so the prose cannot disagree with the chart beside it.
 
-Used by build_static_pages.py for egypt-weather-by-month.html and its
-embeddable twin, embed/egypt-weather-by-month.html.
+Values are rounded to whole degrees ONCE, when the rows are built, and every
+later step — the colour band, the counts, the sentences, the printed number —
+uses that same integer. Banding the unrounded value coloured 13 cells against
+their own label on the first build (a cell reading "39" in the 34–39 colour,
+because the value underneath was 38.6).
+
+Used by build_static_pages.py for egypt-weather-by-month.html and the
+embeddable image charts/egypt-weather-by-month.svg.
 """
 from __future__ import annotations
 
@@ -27,18 +33,23 @@ from typing import Optional
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
           'August', 'September', 'October', 'November', 'December']
 
-# The five bands of the visit map's legend (visit.html, .v-scale), so the two
-# pictures of the same data read the same way. Upper bound is exclusive;
-# None is the open top band.
-BANDS: list[tuple[Optional[float], str, str]] = [
-    (22.0, '#2C6FAD', 'under 22 °C'),
-    (28.0, '#4FA3A5', '22–28 °C'),
-    (34.0, '#C9A227', '28–34 °C'),
-    (39.0, '#D97B2B', '34–39 °C'),
-    (None, '#B23A0F', '39 °C and above'),
+# The five bands and colours of the visit map's legend (visit.html, .v-scale),
+# so the two pictures of the same data read the same way. Upper bound is
+# exclusive; None is the open top band. Labels are in whole degrees because
+# the cells are: "22–27" cannot be misread at a boundary the way "22–28" can.
+BANDS: list[tuple[Optional[int], str, str]] = [
+    (22, '#2C6FAD', '21 °C or less'),
+    (28, '#4FA3A5', '22–27 °C'),
+    (34, '#C9A227', '28–33 °C'),
+    (39, '#D97B2B', '34–38 °C'),
+    (None, '#B23A0F', '39 °C or more'),
 ]
 INK, PAPER = '#1B1B18', '#FFFFFF'
-COMFORT_BELOW = 28.0     # the top of the second band: "warm", not "hot"
+# A credit line at 11.5px runs ~6.5px a character in Arial, the widest of the
+# fallback fonts (measured: the first 136-character credit was ~882px wide), so
+# 110 characters is ~715px against 814px of usable width.
+CREDIT_MAX_CHARS = 110
+COMFORT_BELOW = 28       # the top of the second band: "warm", not "hot"
 
 
 @dataclass(frozen=True)
@@ -46,7 +57,7 @@ class Row:
     key: str
     name: str
     lat: float
-    afternoons: tuple[float, ...]   # mean daily maximum, January..December
+    afternoons: tuple[int, ...]   # mean daily maximum, whole °C as printed, January..December
 
 
 def _esc(v: object) -> str:
@@ -69,7 +80,7 @@ def text_colour(fill: str) -> str:
     return INK if _contrast(fill, INK) >= _contrast(fill, PAPER) else PAPER
 
 
-def band(t: float) -> int:
+def band(t: int) -> int:
     for i, (top, _, _) in enumerate(BANDS):
         if top is None or t < top:
             return i
@@ -91,7 +102,7 @@ def rows_from_climate(clim: dict, keys: Optional[set[str]] = None) -> list[Row]:
         if [m['month'] for m in ms] != list(range(1, 13)):
             continue
         out.append(Row(s['key'], s['name'], float(s['lat']),
-                       tuple(float(m['t_daily_max']) for m in ms)))
+                       tuple(round(float(m['t_daily_max'])) for m in ms)))
     return sorted(out, key=lambda r: -r.lat)
 
 
@@ -107,9 +118,9 @@ def findings(rows: list[Row]) -> list[str]:
     worst_months = [MONTHS[i] for i in range(12) if cool[i] == worst]
     t_hot, r_hot, i_hot = max((r.afternoons[i], r.name, i) for r in rows for i in range(12))
     july = sorted(rows, key=lambda r: r.afternoons[6])
-    # From the ROUNDED values the table prints, so "a spread of 13 °C" can
-    # never sit beside cells that visibly read 42 and 29 = 13 and say 12.
-    j_lo, j_hi = round(july[0].afternoons[6]), round(july[-1].afternoons[6])
+    # The rows already hold the printed whole degrees, so the spread is the
+    # difference a reader can check by subtracting the two visible cells.
+    j_lo, j_hi = july[0].afternoons[6], july[-1].afternoons[6]
     all_under_34 = [MONTHS[i] for i in range(12) if all(r.afternoons[i] < 34 for r in rows)]
 
     def months(ms: list[str]) -> str:
@@ -134,14 +145,16 @@ def findings(rows: list[Row]) -> list[str]:
 
 
 def legend_html() -> str:
-    return ('<div class="hc-legend" aria-label="Colour key">' + ''.join(
+    # role="group": ARIA does not let a plain div carry a name, so without it
+    # the label is dropped by screen readers.
+    return ('<div class="hc-legend" role="group" aria-label="Colour key">' + ''.join(
         f'<span><i style="background:{fill}"></i>{_esc(label)}</span>'
         for _, fill, label in BANDS) + '</div>')
 
 
 def table_html(rows: list[Row], href: str = 'visit/{key}.html', link_attrs: str = '') -> str:
-    """The table itself. `href` is formatted with the site key, so the page
-    links relatively and the embed links absolutely, out of the frame."""
+    """The table itself. `href` is formatted with the site key (relative by
+    default, for the top-level page); `link_attrs` is added to every link."""
     head = ''.join(f'<th scope="col"><abbr title="{m}">{m[:3]}</abbr></th>' for m in MONTHS)
     body = []
     for r in rows:
@@ -158,19 +171,27 @@ def table_html(rows: list[Row], href: str = 'visit/{key}.html', link_attrs: str 
             f'<tbody>{"".join(body)}</tbody></table></div>')
 
 
-def svg_chart(rows: list[Row], title: str, credit: str) -> str:
+def svg_chart(rows: list[Row], title: str, credit_lines: tuple[str, ...]) -> str:
     """The same table as a standalone SVG image, for other sites to embed.
 
     An image, not an iframe: the site sends anti-framing headers on every
     response (they protect the sign-in UI) and an image needs no exception to
     them. The embed snippet wraps it in a link back to the page. System fonts
     only, no external references, so it renders the same wherever it lands.
-    `title` and `credit` are plain text."""
+
+    The credit comes as separate short lines because SVG text does not wrap:
+    the first build drew it as one line that ran ~16-52 px past the 846 px
+    canvas (Segoe UI / Arial), clipping exactly the part naming egybi.com.
+    Keep each line under CREDIT_MAX_CHARS. `title` and the lines are plain text."""
     label_w, cell_w, cell_h, gap = 190, 50, 30, 2
-    top, pad = 74, 16
+    top, pad, line_h = 74, 16, 16
     width = pad * 2 + label_w + 12 * (cell_w + gap)
+    for line in credit_lines:
+        if len(line) > CREDIT_MAX_CHARS:
+            raise ValueError(f"credit line of {len(line)} chars would overflow the "
+                             f"{width}px chart (max {CREDIT_MAX_CHARS}): {line!r}")
     grid_bottom = top + len(rows) * (cell_h + gap)
-    height = grid_bottom + 64
+    height = grid_bottom + 48 + line_h * len(credit_lines)
     font = "font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif"
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
            f'viewBox="0 0 {width} {height}" role="img" aria-label="{_esc(title)}">',
@@ -199,7 +220,8 @@ def svg_chart(rows: list[Row], title: str, credit: str) -> str:
         out.append(f'<rect x="{lx}" y="{grid_bottom + 12}" width="13" height="13" rx="3" fill="{fill}"/>'
                    f'<text x="{lx + 19}" y="{grid_bottom + 23}" font-size="12">{_esc(label)}</text>')
         lx += 19 + 8 * len(label) + 18
-    out.append(f'<text x="{pad}" y="{grid_bottom + 50}" font-size="11.5">{_esc(credit)}</text>')
+    for k, line in enumerate(credit_lines):
+        out.append(f'<text x="{pad}" y="{grid_bottom + 50 + k * line_h}" font-size="11.5">{_esc(line)}</text>')
     out.append('</g></svg>')
     return '\n'.join(out) + '\n'
 
