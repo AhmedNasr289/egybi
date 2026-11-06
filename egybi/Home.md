@@ -14,6 +14,8 @@ The knowledge base and plan for **EgyBI** — a free **encyclopaedia of Egypt to
 
 ## 🧭 The plan
 - [[Growth Plan — Traffic and the Photo Layer]] — **current delivery plan (2026-11-04)**: what is live, the one metric and its dated checks, SEO/Arabic/distribution workstreams with owners, the gated photo layer, deferred agents with triggers, and the next eight weeks
+- [[Affiliate Plan — Egyptian Handmade]] — **(2026-11-06)** who can pay an Egypt resident for links to verifiably Egyptian-made crafts and workshops: a ranked shortlist, six red flags, a three-phase plan, and the accountant's questions
+- [[Owner Steps — Search, Sales and Housekeeping]] — click-by-click steps for the jobs only Ahmed can do: Bing, the Search Console baseline, the contract check, the dossier listing, affiliate applications, stale alerts, the street run
 - [[Build Plan]] — the phased plan (Phase 0 validation → Phase 1 MVP → Phase 2 growth)
 - [[Improvement Roadmap]] — concrete, prioritized next actions (curriculum, architecture, brand, pricing, GTM, timeline)
 - [[Magical Roadmap]] — the product-experience plan (auto-grading, Python/pandas sandbox, gamification, AI tutor)

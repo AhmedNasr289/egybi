@@ -973,6 +973,17 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - ⚠️ **Caught before commit:** Arabic ranges displayed as "100–50 جنيه". The en dash is a neutral character, so the right-to-left algorithm reordered the two numbers. Each range is now wrapped in a left-to-right isolate (U+2066/U+2069), confirmed on screen before and after. The pocket card also first spilled onto a second page; each row's note, source and disagreement between sources now sits in numbered notes under a compact card, so nothing was dropped.
 - **Proof:** 12 new tests (63 in total, ResourceWarning as error), pyflakes clean. The PDF was checked page by page: cover, 18 sites, card, holidays.
 
+## 2026-11-06 — Main's browser check: a reCAPTCHA report, not a map leak
+- **Verify (browser) failed on main at 86abf6c** (alert #75), though the same commit passed on its pull request. `map-interaction.js` saw one request off the site while `explore.html` was used at 375 px with reduced motion: `csp.withgoogle.com/csp/frame-ancestors/38fac9d5…`.
+- **Root cause, measured:** that report id is the one reCAPTCHA's own frames (`www.google.com/recaptcha/api2/anchor`, `aframe`, `bframe`) name in their reporting header. AdSense loads reCAPTCHA on `explore.html` for its invalid-traffic check, and on CI's `localhost` origin the frame sometimes refuses to be framed and reports it. AdSense decides per load whether to run that check, which is why the failure is intermittent.
+- **Fix:** the checker's allowlist now permits Google's report path `csp.withgoogle.com/csp/` and nothing else on that host. A report carries no content, so no map provider can hide behind it. Checked against seven URLs: both report paths are allowed; the rest of the host, Google Maps tiles, OpenStreetMap and Mapbox stay flagged. The mutate case that proves the checker can fail still uses a flagged host.
+
+## 2026-11-06 — Affiliate plan for Egyptian handmade, and owner steps
+- **[[Affiliate Plan — Egyptian Handmade]]**, from five independent research strands (marketplaces; Egyptian and fair-trade shops; networks and payout; experiences; law and tax). The finding: no public programme both pays an Egypt resident on confirmed terms and sells verifiably Egyptian-made goods, so craft income comes from direct deals (Fair Trade Egypt first) plus GetYourGuide/Awin/Viator once each confirms payout in writing. Only Awin publishes Egypt evidence (residency list, Payoneer). Amazon.com cannot pay cash to Egypt. One premise of the research brief was wrong: a US–Egypt tax treaty does exist (flagged to confirm).
+- **[[Owner Steps — Search, Sales and Housekeeping]]**: click-by-click steps for Bing Webmaster Tools, the Search Console baseline, submitting `prices-ar.html`, the contract check, the dossier listing, affiliate applications, closing the stale alerts (#42, #52, #56 and #72, each with the run that proves it recovered) and the hand run of the street refresh.
+- **[[Traffic Baseline & Analytics]]** gained a Search Console readings table for Growth Plan A2.
+- **PR #69 merged and verified live:** `plan.js` sends `plan_stop_added` and `plan_route_built`, and `api/insights.php` answers 403 without its key (it parses and runs).
+
 ## 2026-11-06 — Egyptian formatting, the Arabic prices page, and the Papyrus issue as a letter
 - **One set of Egyptian formatting rules, in two formatters:** `site/assets/egfmt.js` (browser) and `backend/pipeline/pages/egfmt.py` (generators). Rules: Arabic-Indic digits in Arabic text; `EGP 1,234` / `١٬٢٣٤ جنيه`; rates to two decimals; `6 Nov 2026` / `٦ نوفمبر ٢٠٢٦` in Cairo time; changes as `▲ 13.5%`; every number inside Arabic text in a left-to-right isolate. 46 shared cases, written by hand, run against both, in CI too. A positive control broke one rule in a copy of each formatter: the Python copy failed 12 cases and the JavaScript copy failed 3. Spec: `docs/superpowers/specs/2026-11-06-egyptian-formatting-and-papyrus-design.md`.
 - **The Arabic prices page:**
@@ -983,6 +994,7 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - **The Papyrus issues:** each sits on a sheet. Each has a masthead (issue number, date, reading time), a ~66-character measure, ankh-marked headings, a Sources specimen card, older/newer links and three related issues as cards. See [[Papyrus Design System]].
 - ⚠️ **Defect found and fixed at the root:** a stylesheet edit bumps `?v=` on all 178 pages, and the sitemap counted that as a content change. It re-dated 29 URLs (privacy, about, every issue) and would have announced them all to IndexNow. `sitemap_lastmod.py` now ignores asset cache versions, both for dates and for the pushed-pages list. With the fix, only the 12 issues and the two prices pages move. Nine tests run against a throwaway git repo with fixed dates.
 - **Screenshots in CI:** `backend/verify/shots.js` saves full-page screenshots of six layouts at 1280 and 390 px into the uploaded log folder. The workstation cannot render these pages: local servers are blocked, the pane opens local pages without their stylesheet, and headless Edge hangs on the site's pages while it captures a plain one.
+<<<<<<< HEAD
 - **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r".
 
 ## 2026-11-06 — Egyptian formatting, part 2: every page, two new checks, and the visit pages as sheets
@@ -1001,3 +1013,7 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
   - On their first run they found exactly the audit's 14 calls and 21 pages. Both are now clean. Total cases: 44.
 - **Visit pages as sheets:** each of the 18 is now four sections in alternating parchment tones (facts, heat and rain, light, other sites), so the scroll rod marks each join. The heat table gains a visible heading.
 - **`egfmt` gains `date_or_raw`** (never throws on a stray field), with five new shared cases: 51 cases in all, matching in both formatters.
+=======
+- **Noticed, not yet fixed:** the price feed's English name for نبق arrives garbled as "Heorotbr?r" (fixed separately in PR #80).
+- ⚠️ **Caught by CI on this PR:** making `prices-ar.html` right-to-left gave it a 9999 px sideways scroll at phone width. `all-pages.js` flagged it. The skip link hid itself with `left:-9999px`, which on an RTL page points into the scrollable direction. It now uses `inset-inline-start`, which is `left` in English and `right` in Arabic, the clipped direction in both.
+>>>>>>> feat/egyptian-formatting
