@@ -82,3 +82,22 @@ The first pass stripped inline dark colours with a text replace, and that replac
 - **`visit.html`:** the relief plate lost its light text colours.
 
 The screenshot review caught both before commit. The plate's tick labels also went pale, and `contrast.js` caught that. The rules were restored by hand. **The lesson:** a text replace aimed at `style=""` attributes must be scoped to attributes, not to whole files.
+
+## 2026-11-06 — The Papyrus issue, read as a letter
+
+Ahmed asked for the Papyrus formatting and backgrounds to be improved properly. The 12 issues were the weakest place: a bare 720 px column of paragraphs on the section background, a raw `2026-07-19` date and a plain list of links. Each issue (`backend/pipeline/pages/papyrus.py`) now has:
+
+| Piece | How it is built |
+|---|---|
+| **Masthead** | `The Papyrus · No. N · Economy · 19 July 2026 · M min read`. The number follows publication order (the oldest issue is No. 1). Reading time is the word count at 220 words a minute. The date sits in a `<time datetime>` element |
+| **Sheet** | The body sits in `.sheet.issue-sheet`: the torn gold edge and fibre, as on every card |
+| **Measure** | `.issue-body`: about 66 characters per line, 1.075 rem text, 1.75 line height |
+| **Headings** | `h2::before` draws a small ankh and a short gold rule. The ankh is an inline SVG token (`--ankh`), because no font on the site covers U+2625 |
+| **Figures** | Bold text gets a gold underline band. The ink colour is unchanged, so contrast is unaffected |
+| **Sources** | The "Every figure here is real" line is now a `.specimen` card labelled Sources |
+| **Navigation** | The older issue on the left and the newer on the right, each with its number and title; the links stack on a phone |
+| **More** | Three related issues as `.card` sheets (same tag first, then nearest in time), each with number, tag, title and date |
+
+The Arabic prices page is right-to-left from its root, so the hero's hieroglyph watermark moves to the left edge there (`[dir="rtl"] .surface-hero::before`).
+
+The visit pages' sheets come in the next PR.

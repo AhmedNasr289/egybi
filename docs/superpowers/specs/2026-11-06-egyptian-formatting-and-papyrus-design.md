@@ -43,7 +43,10 @@ Separately, the 12 Papyrus issues read as a bare column of paragraphs, and each 
 
 There are two formatters, one per runtime, with identical behaviour:
 
-- `site/assets/egfmt.js`, exposed as `window.EGYBI.fmt`. It uses `Intl.NumberFormat` and `Intl.DateTimeFormat` with `en-GB` / `ar-EG` and `timeZone: 'Africa/Cairo'`. Arabic digits come from the `ar-EG` locale, with an explicit digit map as a fallback, because a browser without Arabic locale data would otherwise print Western digits silently.
+- `site/assets/egfmt.js`, exposed as `window.EGYBI.fmt`.
+  - **Amended during the build:** `Intl` is used only to read a timestamp in Cairo time.
+  - Digits, grouping and rounding are composed explicitly, as in the Python twin. `Intl.NumberFormat`'s Arabic output differs between browsers (some insert invisible direction marks), which would break the byte-for-byte match.
+  - Both round half away from zero on the decimal string. Python's `round()` rounds halves to even, and JavaScript's `Math.round` rounds them up.
 - `backend/pipeline/pages/egfmt.py`. It is pure Python with an explicit digit map, plus `zoneinfo` for Cairo time.
 
 The functions are the same in both, keyed by language (`'en'` or `'ar'`):
@@ -67,7 +70,7 @@ The functions are the same in both, keyed by language (`'en'` or `'ar'`):
 These extend the existing Papyrus Design System. They add no images, no fonts and no new requests.
 
 1. **Issue on a sheet.** The issue body sits in a parchment `.sheet` with the torn gold top edge.
-   - Masthead: `The Papyrus · No. N · 19 July 2026 · M min read`.
+   - Masthead: `The Papyrus · No. N · Economy · 19 July 2026 · M min read`. The tag (here, Economy) the page already showed is kept.
    - `N` is the issue's position in publication order, oldest first, so the first issue is No. 1.
    - `M` is the word count at 220 words a minute, rounded up.
    - The date sits in a `<time datetime>` element.

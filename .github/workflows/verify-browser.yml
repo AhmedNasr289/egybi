@@ -201,6 +201,14 @@ jobs:
         if: always()
         run: backend/verify/ci-step.sh contrast node backend/verify/contrast.js
 
+      # Not a check: full-page screenshots of the main layouts at 1280 and
+      # 390 px, saved into the uploaded log folder, so a person can SEE a visual
+      # change. The workstation cannot render these pages itself (no local
+      # server; the browser pane opens a local page without its stylesheet).
+      - name: shots.js (screenshots, not a check)
+        if: always()
+        run: node backend/verify/shots.js
+
       - name: cssom.js
         if: always()
         run: backend/verify/ci-step.sh cssom node backend/verify/cssom.js
