@@ -77,7 +77,7 @@ $directShare = (int)(q($db, "SELECT COUNT(*) c FROM hits WHERE day>=? AND (ref I
 $maxDay = 1; foreach ($perDay as $r) { $maxDay = max($maxDay, (int)$r['v']); }
 
 // --- funnel (only present once the event column exists) ---------------------
-$funnel = []; $hasEvents = false;
+$hasEvents = false;
 try {
     // PRAGMA table_info is SQLite-only. Storage moved to MySQL, where that
     // statement is a syntax error -- which the catch below swallowed, leaving
@@ -91,20 +91,91 @@ try {
     }
     if (in_array('event', $cols, true)) {
         $hasEvents = true;
-        $steps = [
-            'hero_run_clicked'      => 'Ran the hero query',
-            'hero_browse_challenges'=> 'Clicked through to Practice',
-            'challenge_attempted'   => 'Attempted a challenge',
-            'challenge_solved'      => 'Solved a challenge',
-            'signup_completed'      => 'Created an account',
-        ];
-        $views30 = max(1, $views30);
-        foreach ($steps as $key => $label) {
-            $n = (int)(q($db, 'SELECT COUNT(*) c FROM hits WHERE event=? AND day>=?', [$key, $since30])[0]['c'] ?? 0);
-            $funnel[] = ['label' => $label, 'n' => $n, 'pct' => round(100 * $n / $views30, 1)];
-        }
     }
 } catch (Throwable $ex) { /* funnel is optional */ }
+
+// --- the trip companion: the number the pivot is judged on -------------------
+// Until 2026-11-06 the funnel here counted the RETIRED SQL-practice product
+// (hero query runs, challenge attempts, sign-ups) while the pivot's metric -
+// planner uses per week, and how many of them go on to the paid plan check -
+// was recorded by nothing and shown nowhere. The day-42 rule (>= 300 planner
+// uses by 2026-11-20) could not be read.
+//
+// A "planner use" is a visit that ADDS A STOP (plan.js sends plan_stop_added
+// once per page load). Those events exist only from PLAN_EVENTS_FROM; for the
+// weeks before, the only honest signal is visits to plan.html, shown beside it.
+//
+// 'visitor' is a per-day hash (hit.php mixes in the date), so every count here
+// is VISITOR-DAYS: one person on two days counts twice. The page says so.
+const PIVOT_DAY0 = '2026-10-09';
+const PLAN_EVENTS_FROM = '2026-11-06';
+const DAY42 = '2026-11-20';
+const DAY42_TARGET = 300;
+
+// Labels say what was MEASURED: the last four are clicks (data-ev), so they
+// count people who pressed the button, not prints, orders or confirmed
+// sign-ups.
+$pivotRows = [
+    ['key' => 'planner_opened',   'label' => 'Opened the planner (plan.html)',              'path' => '/plan.html'],
+    ['key' => 'plan_stop_added',  'label' => 'Added a stop: a planner use',                 'event' => 'plan_stop_added'],
+    ['key' => 'plan_route_built', 'label' => 'Built a route (two or more stops)',           'event' => 'plan_route_built'],
+    ['key' => 'plan_print',       'label' => 'Pressed "Print or save as PDF"',              'event' => 'plan_print'],
+    ['key' => 'plan_to_ask',      'label' => 'Clicked through from the plan to the plan check', 'event' => 'plan_to_ask'],
+    ['key' => 'ask_mail',         'label' => 'Opened the e-mail to order the plan check',  'event' => 'ask_mail'],
+    ['key' => 'newsletter_submit','label' => 'Pressed subscribe for The Papyrus',          'event' => 'newsletter_submit'],
+];
+
+function pivot_count(PDO $db, array $row, string $from, string $to, bool $hasEvents): int {
+    if (isset($row['event'])) {
+        $r = q($db, 'SELECT COUNT(DISTINCT visitor) c FROM hits WHERE event=? AND day>=? AND day<=?',
+               [$row['event'], $from, $to]);
+    } elseif ($hasEvents) {
+        // Page views only: an event row carries the path of the page it fired on.
+        $r = q($db, "SELECT COUNT(DISTINCT visitor) c FROM hits WHERE event='' AND path=? AND day>=? AND day<=?",
+               [$row['path'], $from, $to]);
+    } else {
+        // A store from before the event column: every row is a page view, and
+        // naming the missing column would take the whole page down.
+        $r = q($db, 'SELECT COUNT(DISTINCT visitor) c FROM hits WHERE path=? AND day>=? AND day<=?',
+               [$row['path'], $from, $to]);
+    }
+    return (int)($r[0]['c'] ?? 0);
+}
+
+$weekFrom = gmdate('Y-m-d', time() - 6 * 86400);
+$prevFrom = gmdate('Y-m-d', time() - 13 * 86400);
+$prevTo   = gmdate('Y-m-d', time() - 7 * 86400);
+$pivot = [];
+foreach ($pivotRows as $row) {
+    $isEvent = isset($row['event']);
+    $pivot[] = $row + [
+        'week'     => ($isEvent && !$hasEvents) ? null : pivot_count($db, $row, $weekFrom, $today, $hasEvents),
+        'previous' => ($isEvent && !$hasEvents) ? null : pivot_count($db, $row, $prevFrom, $prevTo, $hasEvents),
+        'since0'   => ($isEvent && !$hasEvents) ? null : pivot_count($db, $row, PIVOT_DAY0, $today, $hasEvents),
+    ];
+}
+$plannerUses = $pivot[1]['since0'];          // plan_stop_added, from PLAN_EVENTS_FROM
+$plannerOpens = $pivot[0]['since0'];         // plan.html visitor-days, from day 0
+
+if (($_GET['format'] ?? '') === 'json') {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'generated_utc'     => gmdate('c'),
+        'unit'              => 'visitor-days (the visitor hash is per day)',
+        'windows'           => ['week' => [$weekFrom, $today], 'previous' => [$prevFrom, $prevTo],
+                                'since0' => [PIVOT_DAY0, $today]],
+        'plan_events_from'  => PLAN_EVENTS_FROM,
+        'day42'             => ['date' => DAY42, 'target_planner_uses' => DAY42_TARGET,
+                                'planner_uses' => $plannerUses, 'planner_opens' => $plannerOpens],
+        'rows'              => array_map(function ($r) {
+            return ['key' => $r['key'], 'label' => $r['label'], 'week' => $r['week'],
+                    'previous' => $r['previous'], 'since0' => $r['since0']];
+        }, $pivot),
+        'visitors_7d'       => $uniq7,
+        'views_30d'         => $views30,
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    exit;
+}
 ?><!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EgyBI — Insights</title><style>
 :root{--ink:#14110c;--soft:#6b6153;--gold:#c9a227;--blue:#0e2a5e;--line:#e7e0d0;--bg:#faf7f0}
@@ -139,15 +210,19 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr:last-child td{bo
 <?php endforeach; if (!$perDay): ?><span class="muted">No views yet — share the site and refresh.</span><?php endif; ?>
 </div>
 
-<?php if ($hasEvents): ?>
-<h2>Funnel · 30d</h2>
-<table><tr><th>Step</th><th class="n">People</th><th class="n">% of views</th></tr>
-<?php foreach ($funnel as $f): ?>
-  <tr><td><?=$e($f['label'])?></td><td class="n"><?=number_format($f['n'])?></td><td class="n"><?=$e($f['pct'])?>%</td></tr>
+<h2>The trip companion · the pivot's metric</h2>
+<div class="cards">
+  <div class="card"><b><?=$plannerUses === null ? '—' : number_format($plannerUses)?></b><span>Planner uses since <?=$e(PLAN_EVENTS_FROM)?></span></div>
+  <div class="card"><b><?=number_format((int)$plannerOpens)?></b><span>Planner opened since <?=$e(PIVOT_DAY0)?></span></div>
+  <div class="card"><b><?=number_format(DAY42_TARGET)?></b><span>Day-42 target · <?=$e(DAY42)?></span></div>
+</div>
+<table><tr><th>Step</th><th class="n">Last 7 days</th><th class="n">7 days before</th><th class="n">Since <?=$e(PIVOT_DAY0)?></th></tr>
+<?php $cell = function ($v) { return $v === null ? '—' : number_format((int)$v); }; ?>
+<?php foreach ($pivot as $r): ?>
+  <tr><td><?=$e($r['label'])?></td><td class="n"><?=$cell($r['week'])?></td><td class="n"><?=$cell($r['previous'])?></td><td class="n"><?=$cell($r['since0'])?></td></tr>
 <?php endforeach; ?>
 </table>
-<p class="muted">Each step counts once per page visit, so these read as people-who-reached-the-step. The two numbers to watch first: what share of visitors run the hero query, and what share of attempters actually solve one.</p>
-<?php endif; ?>
+<p class="muted">Counts are visitor-days: the visitor hash changes every day, so one person on two days counts twice. "Added a stop" and "Built a route" are recorded from <?=$e(PLAN_EVENTS_FROM)?> only, so the day-42 reading on <?=$e(DAY42)?> covers two weeks of planner uses, not six; "Planner opened" is the longer, weaker signal. A dash means the event column does not exist yet. The same numbers as JSON: add <code>&amp;format=json</code> to this address.</p>
 
 <h2>Top pages · 30d</h2>
 <table><tr><th>Path</th><th class="n">Views</th></tr>
