@@ -155,6 +155,18 @@ def date(value: Union[str, _dt.date, _dt.datetime], lang: str, style: str = 'com
     return f'{d.day} {months[d.month - 1]} {d.year}'
 
 
+def date_or_raw(value, lang: str, style: str = 'compact') -> str:
+    """date() for a value read from a data file: '' when it is missing, the
+    value as written when it cannot be read as a date. Display code must not
+    fail on a stray field; the shared cases pin both fallbacks."""
+    if value is None or value == '':
+        return ''
+    try:
+        return date(value, lang, style)
+    except (ValueError, TypeError):
+        return str(value)
+
+
 def time(value: Union[str, _dt.datetime], lang: str) -> str:
     """'19:05' / '٧:٠٥ م', in Cairo time."""
     t = _parse(value)

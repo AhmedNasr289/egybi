@@ -37,6 +37,13 @@
 */
 (function () {
   'use strict';
+  /* A dataset's date, written as the site writes dates ("3 November 2026",
+     EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
+     value as written if egfmt.js did not load. */
+  function asOf(v) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+  }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -400,7 +407,7 @@
          but it has to be labelled as what it is, with the reader pointed at
          the per-row source for the age of the figure itself. */
       cap.innerHTML = 'All ' + S.data.projects.length + ' projects in the knowledge base. '
-        + 'This list was last rebuilt on ' + esc(S.data.as_of)
+        + 'This list was last rebuilt on ' + esc(asOf(S.data.as_of))
         + '; that is when the join ran, not when the figures were verified. '
         + 'Every figure is as published by the source linked on its own row, '
         + 'which may be considerably older.';

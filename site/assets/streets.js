@@ -13,6 +13,13 @@
    a result of zero. */
 (function () {
   'use strict';
+  /* A dataset's date, written as the site writes dates ("3 November 2026",
+     EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
+     value as written if egfmt.js did not load. */
+  function asOf(v) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+  }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -440,7 +447,7 @@
       : '';
 
     el.innerHTML = '<h3>' + esc(d.name) + ' <span class="dd-ar">' + esc(d.name_ar) + '</span></h3>' +
-      '<p class="dd-era">' + esc(d.era) + ' &middot; ' + d.area_km2.toLocaleString() + ' km²</p>' +
+      '<p class="dd-era">' + esc(d.era) + ' &middot; ' + d.area_km2.toLocaleString('en-GB') + ' km²</p>' +
       '<p class="dd-why">' + esc(d.why) + '</p>' + boundaryHtml +
       '<div class="dd-split"><div>' + rose(d.orientation_bins, 190, GOLD) +
       '<p class="dd-note" style="text-align:center">Street orientation &mdash; length of road facing each compass direction</p></div>' +
@@ -500,9 +507,9 @@
   function paintMeta() {
     var el = $('streetsMeta'); if (!el) return;
     var bits = [];
-    if (S.card) bits.push('Street network: OSM via OSMnx, built ' + esc(S.card.as_of) +
+    if (S.card) bits.push('Street network: OSM via OSMnx, built ' + esc(asOf(S.card.as_of)) +
                           ' &mdash; ' + S.card.districts.length + ' districts.');
-    if (S.access) bits.push('Access layer built ' + esc(S.access.as_of) + '.');
+    if (S.access) bits.push('Access layer built ' + esc(asOf(S.access.as_of)) + '.');
     if (!S.notes) bits.push('Planner&rsquo;s notes have not been generated for this build.');
     if (S.card && S.card.skipped && S.card.skipped.length)
       bits.push('<strong>Skipped:</strong> ' + esc(S.card.skipped.join('; ')) + '.');

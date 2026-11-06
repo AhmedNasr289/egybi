@@ -125,6 +125,14 @@
     return d.d + ' ' + mon + ' ' + d.y;
   }
 
+  /* date() for a value read from a data file: '' when it is missing, the value
+     as written when it cannot be read as a date. A stray field must not stop
+     the page drawing. */
+  function dateOrRaw(value, lang, style) {
+    if (value == null || value === '') return '';
+    try { return date(value, lang, style); } catch (e) { return String(value); }
+  }
+
   function pad(n) { return (n < 10 ? '0' : '') + n; }
 
   function time(value, lang) {
@@ -136,7 +144,7 @@
   }
 
   var api = { isolate: isolate, digits: digits, fixed: fixed, num: num, money: money,
-    moneyRange: moneyRange, rate: rate, pct: pct, date: date, time: time,
+    moneyRange: moneyRange, rate: rate, pct: pct, date: date, dateOrRaw: dateOrRaw, time: time,
     MONTHS_EN: MONTHS_EN, MONTHS_AR: MONTHS_AR };
   root.EGYBI = root.EGYBI || {};
   root.EGYBI.fmt = api;
