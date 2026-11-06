@@ -66,10 +66,12 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import sys
 import time
 from datetime import date, datetime, timezone
 from pathlib import Path
+from typing import Callable, Optional
 
 REPO = Path(__file__).resolve().parents[2]
 OUT = REPO / "site" / "data"
@@ -304,6 +306,78 @@ WALK_SPEED_M_PER_MIN = 80.0   # ~4.8 km/h, the standard planning walking speed
 ACCESS_THRESHOLD_MIN = 15.0
 
 
+# ------------------------------------------------------------- run budget
+# THE 2026-10-05 RUN. The quarterly refresh built the whole report card, then
+# Overpass stopped accepting connections. Every walk-graph download after the
+# first district failed with ConnectTimeout, and each one waited out
+# requests_timeout (300 s) three times plus back-off: about 16 minutes per
+# district. The job hit its 120-minute limit in the middle of the eighth
+# district and GitHub cancelled it.
+#
+# A cancellation loses everything: the commit step runs only when the job was
+# not cancelled, so the report card that HAD been written was discarded, and
+# the failure alert (if: failure()) does not fire on a cancellation either. The
+# street pages stayed on 2026-08-07 data for three months and nobody was told.
+#
+# Two guards, so the script always ends in its own exit path well inside the
+# job's limit and the commit and alert steps run:
+#   * RunBudget - no district STARTS after the budget is spent. The default
+#     (80 min) leaves room for one worst-case district (~32 min: 3 walk-graph
+#     and 3 amenity attempts at 300 s each) plus setup, inside 120 minutes.
+#   * Breaker   - after two districts in a row could not CONNECT at all, the
+#     endpoint is down, not busy; the rest are recorded as not attempted
+#     rather than each costing another 16 minutes to learn the same thing.
+BUDGET_MIN = float(os.environ.get("STREETS_BUDGET_MIN", "80"))
+
+
+class RunBudget:
+    """Wall-clock budget for one run, checked before each district starts."""
+
+    def __init__(self, minutes: float, clock: Callable[[], float] = time.monotonic) -> None:
+        self.minutes = minutes
+        self._clock = clock
+        self._start = clock()
+
+    def spent_min(self) -> float:
+        return (self._clock() - self._start) / 60.0
+
+    def exhausted(self) -> bool:
+        return self.spent_min() >= self.minutes
+
+
+class Breaker:
+    """Opens after `limit` consecutive districts failed to connect at all.
+
+    Only connection failures count. A read timeout means the endpoint answered
+    and was slow (the big districts are slow), and any success resets the
+    streak, so a busy endpoint never trips this; an unreachable one does."""
+
+    CONNECT_ERRORS = frozenset({"ConnectTimeout", "ConnectionError", "ConnectTimeoutError",
+                                "NewConnectionError", "MaxRetryError"})
+
+    def __init__(self, limit: int = 2) -> None:
+        self.limit = limit
+        self.streak = 0
+
+    def record(self, error_name: Optional[str]) -> None:
+        """Record one district's outcome: None for success, else the exception name."""
+        self.streak = self.streak + 1 if error_name in self.CONNECT_ERRORS else 0
+
+    @property
+    def open(self) -> bool:
+        return self.streak >= self.limit
+
+
+def stop_reason(budget: Optional[RunBudget], breaker: Optional[Breaker]) -> Optional[str]:
+    """Why the next district must not start, or None if it may."""
+    if budget is not None and budget.exhausted():
+        return f"time budget of {budget.minutes:.0f} min spent ({budget.spent_min():.0f} min elapsed)"
+    if breaker is not None and breaker.open:
+        return (f"endpoint unreachable ({breaker.streak} districts in a row failed to connect); "
+                "last-good data kept")
+    return None
+
+
 def log(msg: str) -> None:
     print(msg, flush=True)
 
@@ -428,7 +502,8 @@ def orientation_histogram(Gb, bins: int = ORIENTATION_BINS) -> list[float]:
     return [round(c / total, 5) for c in counts] if total > 0 else counts
 
 
-def build_report_card(ox, resolved: dict, skipped: list) -> bool:
+def build_report_card(ox, resolved: dict, skipped: list,
+                      budget: Optional[RunBudget] = None, breaker: Optional[Breaker] = None) -> bool:
     """Builds the report card and RECORDS each resolved boundary in `resolved`,
     so the access layer can reuse it instead of geocoding every district a
     second time. Nominatim and Overpass are free shared infrastructure; asking
@@ -442,6 +517,11 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
 
     for d in DISTRICTS:
         log(f"  {d['name']}")
+        stop = stop_reason(budget, breaker)
+        if stop:
+            failures.append(f"{d['name']}: not attempted, {stop}")
+            log(f"    not attempted {stop}")
+            continue
         gdf, query, area_km2, boundary_source = resolve_boundary(ox, d)
         if gdf is None:
             failures.append(f"{d['name']}: no candidate query resolved to a plausible boundary")
@@ -462,6 +542,8 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
                 if attempt < 2:
                     log(f"    graph attempt {attempt + 1} failed ({why}); retrying")
                     time.sleep(20 * (attempt + 1))
+        if breaker is not None:
+            breaker.record(why if G is None else None)
         if G is None:
             failures.append(f"{d['name']}: graph download failed after 3 attempts ({why})")
             log(f"    graph failed  {why}")
@@ -564,7 +646,8 @@ def build_report_card(ox, resolved: dict, skipped: list) -> bool:
     return True
 
 
-def build_access(ox, resolved: dict, skipped: list) -> bool:
+def build_access(ox, resolved: dict, skipped: list,
+                 budget: Optional[RunBudget] = None, breaker: Optional[Breaker] = None) -> bool:
     """15-minute access: walking time from street nodes to the nearest amenity.
 
     Uses the WALK network (trap 4) and reports the SHARE of network nodes within
@@ -578,6 +661,11 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
 
     for d in DISTRICTS:
         log(f"  {d['name']}")
+        stop = stop_reason(budget, breaker)
+        if stop:
+            failures.append(f"{d['name']}: not attempted, {stop}")
+            log(f"    not attempted {stop}")
+            continue
         cached = resolved.get(d["key"])
         if cached is None:
             failures.append(f"{d['name']}: no boundary from the report-card pass")
@@ -607,6 +695,8 @@ def build_access(ox, resolved: dict, skipped: list) -> bool:
                 if attempt < 2:
                     log(f"    walk graph attempt {attempt + 1} failed ({why}); retrying")
                     time.sleep(20 * (attempt + 1))
+        if breaker is not None:
+            breaker.record(why if W is None else None)
         if W is None:
             failures.append(f"{d['name']}: walk graph failed after 3 attempts ({why})")
             continue
@@ -797,8 +887,12 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     resolved: dict = {}                      # key -> (boundary gdf, area km²)
     skipped: list = []                       # every district dropped, either layer
-    ok_card = build_report_card(ox, resolved, skipped)
-    ok_access = build_access(ox, resolved, skipped) if ok_card else False
+    # One budget and one breaker for the whole run: an endpoint that stopped
+    # answering during the report card is not going to answer the access layer.
+    budget, breaker = RunBudget(BUDGET_MIN), Breaker()
+    log(f"Run budget: {BUDGET_MIN:.0f} min (STREETS_BUDGET_MIN)\n")
+    ok_card = build_report_card(ox, resolved, skipped, budget, breaker)
+    ok_access = build_access(ox, resolved, skipped, budget, breaker) if ok_card else False
     if not ok_card:
         log("\n(access layer skipped because the report card did not build)")
 
@@ -816,7 +910,9 @@ def main() -> None:
     #
     # Exiting non-zero here costs nothing that matters: the workflow's commit
     # step runs under `if: '!cancelled()'`, so the layers that DID build are
-    # still committed. All this does is turn a silent degradation into a red
+    # still committed. That holds only while the script ends by itself: a job
+    # killed at its time limit counts as CANCELLED and commits nothing, which
+    # is what RunBudget and Breaker above exist to prevent. All this does is turn a silent degradation into a red
     # run and a failure issue, which is a human's decision to make, not this
     # script's.
     if skipped:
