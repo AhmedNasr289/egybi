@@ -63,13 +63,13 @@ Owner **C** = built in a Claude session (branch → PR → CI → merge; every m
 | A1 | Verify egybi.com in **Bing Webmaster Tools** (import from Search Console takes a minute) | A | Open. IndexNow is already reporting to Bing; Webmaster Tools shows what it does with it |
 | A2 | Take the Search Console baseline (impressions, clicks, top 20 queries, top 20 pages) and add a row to [[Traffic Baseline & Analytics]] | A | Open. Nothing below can be judged without it |
 | A3 | Submit `prices-ar.html` in Search Console (URL inspection → request indexing) | A | Open |
-| A4 | Internal links: each Places card and each Atlas UNESCO site links to its `visit/` page where one exists | C | Next after B1 |
+| A4 | Internal links: each Places card and each Atlas UNESCO site links to its `visit/` page where one exists | C | **Done 2026-11-06**: a generated, crawlable list of the 18 guides on Places and the Atlas; a place within 5 km of a guide (232 of 901) and each heritage card (its two nearest within 20 km) link to it |
 | A5 | Image sitemap entries for `visit/` pages | C | Waits for photos (workstream E) |
 
 ### B. Content that only this site can make
 | # | Item | Owner | Status |
 |---|---|---|---|
-| B1 | **"Best time to photograph"** on each `visit/` page: sunrise, sunset and golden-hour windows per month, computed from the site's coordinates in Egypt's own clock (including summer time). Serves the photographer audience the photo layer will need, and no competitor shows it with a source | C | **In progress (this session)** |
+| B1 | **"Best time to photograph"** on each `visit/` page: sunrise, sunset and golden-hour windows per month, computed from the site's coordinates in Egypt's own clock (including summer time). Serves the photographer audience the photo layer will need, and no competitor shows it with a source | C | **Done 2026-11-05** (#65, live) |
 | B2 | **Arabic `visit/` pages** (18), generated like `prices-ar.html` | C | After B1; judge on A3's Search Console result first |
 | B3 | Arabic fair-price card (already in the pivot's months 4–12) | C | After B2 |
 | B4 | One data story every two weeks, with an embeddable chart or map that carries a link back | C drafts, A publishes | Open |
