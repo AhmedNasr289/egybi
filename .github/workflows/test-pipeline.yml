@@ -22,6 +22,7 @@ on:
       - 'backend/pipeline/**'
       - 'site/data/visit-climate.json'
       - 'site/data/visit-terrain.json'
+      - 'site/data/calendar.json'
       - 'site/assets/blog-posts.js'
       - 'site/assets/challenges.js'
       - 'site/assets/egfmt.js'
