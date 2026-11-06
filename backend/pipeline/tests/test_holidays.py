@@ -7,7 +7,6 @@ rule that a weekday is only ever given for a fixed one-day date.
 """
 from __future__ import annotations
 
-import datetime as dt
 import json
 import re
 import sys
