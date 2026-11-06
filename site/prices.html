@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="assets/egybi.css?v=41" rel="stylesheet">
+<link href="assets/egybi.css?v=42" rel="stylesheet">
 <style>
   .src-strip { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:4px solid var(--gold); border-radius:var(--radius); padding:16px 20px; margin:0 0 22px; }
   .src-strip .live { display:inline-flex; align-items:center; gap:7px; font-weight:700; color:var(--blue-deep); }
@@ -123,6 +123,7 @@
   .fx-name .en { display:block; font-size:0.66rem; color:var(--ink-soft); }
   .fx-val { font-size:1.35rem; font-weight:800; color:var(--blue-deep); font-variant-numeric:tabular-nums; }
   .fx-val .cur { font-size:0.72rem; color:var(--ink-soft); font-weight:600; }
+  .fx-en { font-size:0.7rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
   .fx-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px; }
   .fx-chg { font-size:0.75rem; font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; }
   .fx-chg.up { color:var(--danger); }    /* pound buys less of it = pound weaker */
@@ -207,17 +208,17 @@
 <!-- PRICE-SUMMARY:start -->
 <section class="surface-light" id="today-summary">
   <div class="wrap">
-    <h2>Today&#x27;s biggest price moves, 5 November 2026</h2>
-    <p class="lead">On 5 November 2026 the official price portal listed retail prices for 132 items: 66 rose and 66 fell against the previous day. Each figure is the minimum–maximum range across outlets, in Egyptian pounds.</p>
+    <h2>Today&#x27;s biggest price moves, <time datetime="2026-11-05">5 November 2026</time></h2>
+    <p class="lead">On <time datetime="2026-11-05">5 November 2026</time> the official price portal listed retail prices for 132 items: 66 rose and 66 fell against the previous day. Each figure is the minimum–maximum range across outlets, in Egyptian pounds.</p>
     <div class="ns-grid">
-      <div><h3>▲ Rose most</h3><ul class="plain-list"><li><strong>Heorotbr?r</strong> <span lang="ar" dir="rtl">نبق</span>: 10–100 EGP / <span lang="ar">كيلو</span> <span class="chg up">▲ +13.5%</span></li><li><strong>Emperor</strong> <span lang="ar" dir="rtl">شعور</span>: 80–350 EGP / <span lang="ar">كيلو</span> <span class="chg up">▲ +13.2%</span></li><li><strong>Lareng</strong> <span lang="ar" dir="rtl">لارنج</span>: 8–25 EGP / <span lang="ar">كيلو</span> <span class="chg up">▲ +13.1%</span></li><li><strong>Cheddar Cheese</strong> <span lang="ar" dir="rtl">جبنه شيدر (1كجم)</span>: 90–600 EGP / <span lang="ar">كيلو</span> <span class="chg up">▲ +11.0%</span></li><li><strong>Sole Fish</strong> <span lang="ar" dir="rtl">موسى</span>: 80–500 EGP / <span lang="ar">كيلو</span> <span class="chg up">▲ +9.7%</span></li></ul></div>
-      <div><h3>▼ Fell most</h3><ul class="plain-list"><li><strong>Macaroni</strong> <span lang="ar" dir="rtl">مكرونة معبأة</span>: 14–45 EGP / <span lang="ar">400 جرام</span> <span class="chg down">▼ -18.6%</span></li><li><strong>Hyphaene thebaica</strong> <span lang="ar" dir="rtl">دوم</span>: 2–10 EGP / <span lang="ar">واحدة</span> <span class="chg down">▼ -17.3%</span></li><li><strong>kiwifruit</strong> <span lang="ar" dir="rtl">كيوي</span>: 5–15 EGP / <span lang="ar">واحدة</span> <span class="chg down">▼ -12.7%</span></li><li><strong>Vine Leaves</strong> <span lang="ar" dir="rtl">ورق العنب البناتي</span>: 40–200 EGP / <span lang="ar">كيلو</span> <span class="chg down">▼ -12.3%</span></li><li><strong>Lettuce (pack 8 units)</strong> <span lang="ar" dir="rtl">خس (رابطة 8 وحدات)</span>: 2–45 EGP / <span lang="ar">واحدة</span> <span class="chg down">▼ -11.3%</span></li></ul></div>
+      <div><h3>▲ Rose most</h3><ul class="plain-list"><li><strong>Heorotbr?r</strong> <span lang="ar" dir="rtl">نبق</span>: EGP 10–100 / <span lang="ar" dir="rtl">كيلو</span> <span class="chg up">▲ 13.5%</span></li><li><strong>Emperor</strong> <span lang="ar" dir="rtl">شعور</span>: EGP 80–350 / <span lang="ar" dir="rtl">كيلو</span> <span class="chg up">▲ 13.2%</span></li><li><strong>Lareng</strong> <span lang="ar" dir="rtl">لارنج</span>: EGP 8–25 / <span lang="ar" dir="rtl">كيلو</span> <span class="chg up">▲ 13.1%</span></li><li><strong>Cheddar Cheese</strong> <span lang="ar" dir="rtl">جبنه شيدر (1كجم)</span>: EGP 90–600 / <span lang="ar" dir="rtl">كيلو</span> <span class="chg up">▲ 11%</span></li><li><strong>Sole Fish</strong> <span lang="ar" dir="rtl">موسى</span>: EGP 80–500 / <span lang="ar" dir="rtl">كيلو</span> <span class="chg up">▲ 9.7%</span></li></ul></div>
+      <div><h3>▼ Fell most</h3><ul class="plain-list"><li><strong>Macaroni</strong> <span lang="ar" dir="rtl">مكرونة معبأة</span>: EGP 14–45 / <span lang="ar" dir="rtl">400 جرام</span> <span class="chg down">▼ 18.6%</span></li><li><strong>Hyphaene thebaica</strong> <span lang="ar" dir="rtl">دوم</span>: EGP 2–10 / <span lang="ar" dir="rtl">واحدة</span> <span class="chg down">▼ 17.3%</span></li><li><strong>kiwifruit</strong> <span lang="ar" dir="rtl">كيوي</span>: EGP 5–15 / <span lang="ar" dir="rtl">واحدة</span> <span class="chg down">▼ 12.7%</span></li><li><strong>Vine Leaves</strong> <span lang="ar" dir="rtl">ورق العنب البناتي</span>: EGP 40–200 / <span lang="ar" dir="rtl">كيلو</span> <span class="chg down">▼ 12.3%</span></li><li><strong>Lettuce (pack 8 units)</strong> <span lang="ar" dir="rtl">خس (رابطة 8 وحدات)</span>: EGP 2–45 / <span lang="ar" dir="rtl">واحدة</span> <span class="chg down">▼ 11.3%</span></li></ul></div>
     </div>
   </div>
 </section>
 <!-- PRICE-SUMMARY:end -->
 <!-- CURRENCY BAND (fx.js) -->
-<section class="surface-light-2" id="fx-section">
+<section class="surface-light-2" id="fx-section" lang="ar" dir="rtl">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>أسعار العملات · Currencies</div>
     <h2 data-aos="fade-up">الجنيه المصري أمام العملات.</h2>
@@ -284,7 +285,8 @@
 <script src="assets/egybi.js?v=2"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
-<script src="assets/fx.js?v=1"></script>
+<script src="assets/egfmt.js?v=1"></script>
+<script src="assets/fx.js?v=2"></script>
 <script>
 (function(){
   var esc = (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml : function(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; };

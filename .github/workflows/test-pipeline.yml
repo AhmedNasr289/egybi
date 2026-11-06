@@ -24,6 +24,8 @@ on:
       - 'site/data/visit-terrain.json'
       - 'site/assets/blog-posts.js'
       - 'site/assets/challenges.js'
+      - 'site/assets/egfmt.js'
+      - 'backend/verify/egfmt-cases.js'
       - '.github/workflows/test-pipeline.yml'
   workflow_dispatch: {}
 
@@ -68,6 +70,16 @@ jobs:
           set -o pipefail
           python -W error::ResourceWarning -m unittest discover -s backend/pipeline/tests -v 2>&1 \
             | tee -a /tmp/test-pipeline.log
+
+      # The browser formatter (site/assets/egfmt.js) must give the same strings
+      # as the generators' (pages/egfmt.py, run by the unit tests above) for
+      # every shared case, so a page built here and a number drawn in the
+      # browser follow one set of Egyptian formatting rules.
+      - name: Browser formatter matches the shared cases
+        shell: bash
+        run: |
+          set -o pipefail
+          node backend/verify/egfmt-cases.js 2>&1 | tee -a /tmp/test-pipeline.log
 
       - name: Generator is byte-identical across two runs
         shell: bash

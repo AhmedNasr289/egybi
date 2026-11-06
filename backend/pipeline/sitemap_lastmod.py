@@ -20,6 +20,17 @@ So each URL now carries the date its own content last changed:
 
 The later of the two wins.
 
+A CACHE VERSION IS NOT A CONTENT CHANGE
+---------------------------------------
+Pages load their stylesheet and scripts as `egybi.css?v=42`, and every edit to
+a shared asset bumps that number on every page that loads it. The bytes of all
+178 pages change; what a reader sees on most of them does not. Counting that
+as a change stamped 29 sitemap URLs (privacy, about, every Papyrus issue) with
+the day of a CSS edit, and would have announced each one to IndexNow. So a
+page counts as changed only when it differs once `?v=N` on asset references is
+ignored (content_key), both for the date in the sitemap and for the list of
+pages a push announces.
+
 SHALLOW CLONES
 --------------
 In a depth-1 clone the only commit is a grafted root, so `git log -- <file>`
@@ -64,6 +75,8 @@ DATA_PAGES: dict[str, tuple[str, ...]] = {
 }
 
 _ISO = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+_ASSET_VERSION = re.compile(r'(\.(?:css|js|png|jpe?g|svg|webp|woff2?|ico))\?v=\d+')
+HISTORY_DEPTH = 40      # commits walked back to find a page's last real change
 _URL_BLOCK = re.compile(r'(<url>\s*<loc>)([^<]+)(</loc>\s*<lastmod>)([^<]+)(</lastmod>)')
 
 
@@ -84,6 +97,26 @@ def _git(*args: str) -> Optional[str]:
     except (OSError, subprocess.TimeoutExpired):
         return None
     return r.stdout.strip() if r.returncode == 0 else None
+
+
+def content_key(text: str) -> str:
+    """The page as a reader sees it: line endings and asset cache versions
+    (`?v=N`) removed, so a cache bump alone is not a change."""
+    return _ASSET_VERSION.sub(r'\1', text.replace('\r\n', '\n'))
+
+
+def _show(rev: str, path: str) -> Optional[str]:
+    """A file at a revision, decoded as UTF-8 (text=True would decode with the
+    Windows code page and fail on the Arabic pages). None if it is absent."""
+    try:
+        r = subprocess.run(['git', '-C', ROOT, 'show', f'{rev}:{path}'], capture_output=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return r.stdout.decode('utf-8', 'replace') if r.returncode == 0 else None
+
+
+def same_content(a: Optional[str], b: Optional[str]) -> bool:
+    return a is not None and b is not None and content_key(a) == content_key(b)
 
 
 _SHALLOW: Optional[bool] = None
@@ -109,15 +142,24 @@ def git_date(rel: str) -> Optional[str]:
     # regenerated file differs from the checkout only in line endings, and
     # status reports it modified. That would stamp every generated page with
     # today's date on any local build — the defect this module replaces.
+    # content_key also ignores asset cache versions (see the module notes).
     try:
-        r = subprocess.run(['git', '-C', ROOT, 'diff', '--quiet', 'HEAD', '--', path],
-                           capture_output=True, timeout=30)
-        if r.returncode == 1:       # rewritten by this run, not yet committed
-            return today()
-    except (OSError, subprocess.TimeoutExpired):
+        working = _read(os.path.join(ROOT, path))
+    except OSError:
         return None
-    d = _git('log', '-1', '--format=%cs', '--', path)
-    return d if d and _ISO.match(d) else None
+    if not same_content(_show('HEAD', path), working):
+        return today()              # rewritten by this run, not yet committed
+    # The newest commit that changed what a reader sees, skipping commits
+    # that only bumped a cache version.
+    log = _git('log', f'-n{HISTORY_DEPTH}', '--format=%H %cs', '--', path)
+    if not log:
+        return None
+    day = None
+    for line in log.splitlines():
+        sha, day = line.split()
+        if not same_content(_show(f'{sha}^', path), _show(sha, path)):
+            return day if _ISO.match(day) else None
+    return day if day and _ISO.match(day) else None
 
 
 def data_date(rel: str) -> Optional[str]:
@@ -233,7 +275,10 @@ def pushed_urls(before: str, after: str, path: str = SITEMAP) -> Optional[list[s
     if out is None:
         return None
     files = {f[len('site/'):] for f in out.splitlines() if f.startswith('site/')}
-    return [u for u in read_lastmods(path) if url_to_rel(u) in files]
+    # A page whose only change is an asset cache version has not changed for a
+    # reader, so it is not announced (see the module notes).
+    return [u for u in read_lastmods(path) if url_to_rel(u) in files
+            and not same_content(_show(before, 'site/' + url_to_rel(u)), _show(after, 'site/' + url_to_rel(u)))]
 
 
 def main() -> int:
