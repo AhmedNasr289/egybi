@@ -973,6 +973,17 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
 - ⚠️ **Caught before commit:** Arabic ranges displayed as "100–50 جنيه". The en dash is a neutral character, so the right-to-left algorithm reordered the two numbers. Each range is now wrapped in a left-to-right isolate (U+2066/U+2069), confirmed on screen before and after. The pocket card also first spilled onto a second page; each row's note, source and disagreement between sources now sits in numbered notes under a compact card, so nothing was dropped.
 - **Proof:** 12 new tests (63 in total, ResourceWarning as error), pyflakes clean. The PDF was checked page by page: cover, 18 sites, card, holidays.
 
+## 2026-11-06 — Main's browser check: a reCAPTCHA report, not a map leak
+- **Verify (browser) failed on main at 86abf6c** (alert #75), though the same commit passed on its pull request. `map-interaction.js` saw one request off the site while `explore.html` was used at 375 px with reduced motion: `csp.withgoogle.com/csp/frame-ancestors/38fac9d5…`.
+- **Root cause, measured:** that report id is the one reCAPTCHA's own frames (`www.google.com/recaptcha/api2/anchor`, `aframe`, `bframe`) name in their reporting header. AdSense loads reCAPTCHA on `explore.html` for its invalid-traffic check, and on CI's `localhost` origin the frame sometimes refuses to be framed and reports it. AdSense decides per load whether to run that check, which is why the failure is intermittent.
+- **Fix:** the checker's allowlist now permits Google's report path `csp.withgoogle.com/csp/` and nothing else on that host. A report carries no content, so no map provider can hide behind it. Checked against seven URLs: both report paths are allowed; the rest of the host, Google Maps tiles, OpenStreetMap and Mapbox stay flagged. The mutate case that proves the checker can fail still uses a flagged host.
+
+## 2026-11-06 — Affiliate plan for Egyptian handmade, and owner steps
+- **[[Affiliate Plan — Egyptian Handmade]]**, from five independent research strands (marketplaces; Egyptian and fair-trade shops; networks and payout; experiences; law and tax). The finding: no public programme both pays an Egypt resident on confirmed terms and sells verifiably Egyptian-made goods, so craft income comes from direct deals (Fair Trade Egypt first) plus GetYourGuide/Awin/Viator once each confirms payout in writing. Only Awin publishes Egypt evidence (residency list, Payoneer). Amazon.com cannot pay cash to Egypt. One premise of the research brief was wrong: a US–Egypt tax treaty does exist (flagged to confirm).
+- **[[Owner Steps — Search, Sales and Housekeeping]]**: click-by-click steps for Bing Webmaster Tools, the Search Console baseline, submitting `prices-ar.html`, the contract check, the dossier listing, affiliate applications, closing the stale alerts (#42, #52, #56 and #72, each with the run that proves it recovered) and the hand run of the street refresh.
+- **[[Traffic Baseline & Analytics]]** gained a Search Console readings table for Growth Plan A2.
+- **PR #69 merged and verified live:** `plan.js` sends `plan_stop_added` and `plan_route_built`, and `api/insights.php` answers 403 without its key (it parses and runs).
+
 ## 2026-11-06 — Price names from the portal, cleaned at the source
 - **Bad names from the portal:** the government price portal's own English feed sends a few broken names, on both the retail and wholesale views:
   - "Heorotbr?r" for نبق (mangled at the source);

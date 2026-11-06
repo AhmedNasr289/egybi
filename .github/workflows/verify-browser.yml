@@ -19,6 +19,11 @@ on:
   pull_request:
     paths:
       - 'site/**'
+      # The checkers themselves. Until 2026-11-06 a pull request that changed
+      # only a checker (PR #76: map-interaction.js) ran NO browser checks, so a
+      # checker's own change was first exercised on main. Push already listed
+      # this path; pull_request did not.
+      - 'backend/verify/**'
       # the workflow itself, so a change to it can be tested on a branch:
       # workflow_dispatch only works from the default branch, so a PR is the
       # only way to exercise this before it lands on main.
