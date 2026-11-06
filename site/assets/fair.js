@@ -83,7 +83,7 @@
     if (!el || !D.fx) return;
     var r = T.rate(D.fx, CUR);
     el.textContent = CUR === 'EGP' ? 'Showing Egyptian pounds only.'
-      : '1 ' + CUR + ' = ' + T.money(r, 'EGP') + ' — ' + ((D.fx.source || {}).name_en || 'market rate') + ', ' + T.fmtDate(D.fx.as_of) + '. ' + ((D.fx.source || {}).note_en || '');
+      : '1 ' + CUR + ' = ' + T.rateText(r) + ' — ' + ((D.fx.source || {}).name_en || 'market rate') + ', ' + T.fmtDate(D.fx.as_of) + '. ' + ((D.fx.source || {}).note_en || '');
   }
 
   function renderAll() { renderRate(); renderGroups(); renderMarket(); }

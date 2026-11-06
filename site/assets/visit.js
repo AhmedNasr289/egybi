@@ -30,6 +30,19 @@
 */
 (function () {
   'use strict';
+  /* A governorate's name as the site spells it ("Fayoum"), for DISPLAY
+     only; the data's own spelling stays the join key. */
+  function gv(n) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.govName(n) : (n == null ? '' : String(n));
+  }
+  /* A dataset's date, written as the site writes dates ("3 November 2026",
+     EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
+     value as written if egfmt.js did not load. */
+  function asOf(v) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+  }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -155,6 +168,9 @@
     // which is the question the colour is answering. Egypt runs roughly 19 °C
     // (Cairo in January) to 42 °C (Aswan in July) on that measure.
     if (t == null) return '#9A9A9A';
+    // Band the whole degree the reader sees (21.7 shows as 22), as trip.js
+    // and the weather page do, so a dot and its label always agree.
+    t = (window.EGYBI && window.EGYBI.fmt) ? window.EGYBI.fmt.whole(t) : Math.round(t);
     if (t < 22) return '#2C6FAD';
     if (t < 28) return '#4FA3A5';
     if (t < 34) return '#C9A227';
@@ -251,7 +267,7 @@
     });
     tb.innerHTML = rows.map(function (r) {
       return '<tr data-key="' + esc(r.s.key) + '">' +
-        '<td>' + esc(r.s.name) + '<span class="v-gov">' + esc(r.s.gov) + '</span></td>' +
+        '<td>' + esc(r.s.name) + '<span class="v-gov">' + esc(gv(r.s.gov)) + '</span></td>' +
         '<td class="num"><span class="v-chip" style="background:' + heatColour(r.t) +
           ';color:' + readableOn(heatColour(r.t)) + '">' +
           (r.t == null ? '—' : fmt(r.t, 0) + '°') + '</span></td>' +
@@ -328,7 +344,7 @@
     el.hidden = false;
     el.innerHTML =
       '<h3>' + esc(site.name) + ' <span class="v-ar">' + esc(site.name_ar || '') + '</span></h3>' +
-      '<p class="v-sub">' + esc(site.gov) + ' governorate &middot; ' +
+      '<p class="v-sub">' + esc(gv(site.gov)) + ' governorate &middot; ' +
         site.lat.toFixed(4) + '°N, ' + site.lon.toFixed(4) + '°E' +
         (terr ? ' &middot; ' + fmt(terr.elevation_m, 0) + ' m above sea level' : '') +
         (listed === true ? ' &middot; <strong>UNESCO World Heritage</strong>' : '') +
@@ -462,7 +478,7 @@
     var cap = $('reliefCap');
     if (cap) {
       cap.innerHTML = 'Elevation in metres above sea level against distance along the line, from ' +
-        esc(S.relief.source) + '. ' + esc(S.relief.license) + '. Built ' + esc(S.relief.as_of) +
+        esc(S.relief.source) + '. ' + esc(S.relief.license) + '. Built ' + esc(asOf(S.relief.as_of)) +
         '. Gaps in a curve are points the model has no value for, drawn as gaps rather than as zero.';
     }
     selectTransect(0);
@@ -673,7 +689,7 @@
     var bits = [];
     if (S.climate) {
       bits.push('Climate normals: <strong>' + esc(S.climate.source) + '</strong>, built ' +
-                esc(S.climate.as_of) + '. ' + esc(S.climate.license) + '.');
+                esc(asOf(S.climate.as_of)) + '. ' + esc(S.climate.license) + '.');
       if (S.climate.missing && S.climate.missing.length) {
         bits.push('<strong>No climate reading returned for:</strong> ' +
                   esc(S.climate.missing.join(', ')) + '. Shown as unknown, never as zero.');
@@ -681,11 +697,11 @@
     }
     if (S.terrain) {
       bits.push('Elevation: <strong>' + esc(S.terrain.source) + '</strong>, built ' +
-                esc(S.terrain.as_of) + '. ' + esc(S.terrain.license) + '.');
+                esc(asOf(S.terrain.as_of)) + '. ' + esc(S.terrain.license) + '.');
     }
     if (S.heritage) {
       bits.push('World Heritage status: <strong>UNESCO World Heritage Centre</strong>, built ' +
-                esc(S.heritage.as_of) + '.');
+                esc(asOf(S.heritage.as_of)) + '.');
     }
     el.innerHTML = bits.join(' ');
   }

@@ -10,6 +10,19 @@
    empty pretend-layer. */
 (function () {
   'use strict';
+  /* A governorate's name as the site spells it ("Fayoum"), for DISPLAY
+     only; the data's own spelling stays the join key. */
+  function gv(n) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.govName(n) : (n == null ? '' : String(n));
+  }
+  /* A dataset's date, written as the site writes dates ("3 November 2026",
+     EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
+     value as written if egfmt.js did not load. */
+  function asOf(v) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+  }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -56,12 +69,12 @@
 
   var METRICS = {
     population: { label: 'Population (2023)', fmt: function (v) { return (v / 1e6).toFixed(2) + ' M'; } },
-    density:    { label: 'Density', fmt: function (v) { return Math.round(v).toLocaleString() + ' /km²'; } },
+    density:    { label: 'Density', fmt: function (v) { return Math.round(v).toLocaleString('en-GB') + ' /km²'; } },
     urban_pct:  { label: 'Urban population', fmt: function (v) { return v.toFixed(1) + '% urban'; } },
     growth:     { label: 'Growth 2017→2023', fmt: function (v) { return (v >= 0 ? '+' : '') + v.toFixed(1) + '%'; } },
-    area_km2:   { label: 'Area', fmt: function (v) { return Math.round(v).toLocaleString() + ' km²'; } },
-    health:     { label: 'Mapped health facilities', fmt: function (v) { return v.toLocaleString() + ' facilities'; }, joined: true },
-    schools:    { label: 'Mapped schools', fmt: function (v) { return v.toLocaleString() + ' schools'; }, joined: true }
+    area_km2:   { label: 'Area', fmt: function (v) { return Math.round(v).toLocaleString('en-GB') + ' km²'; } },
+    health:     { label: 'Mapped health facilities', fmt: function (v) { return v.toLocaleString('en-GB') + ' facilities'; }, joined: true },
+    schools:    { label: 'Mapped schools', fmt: function (v) { return v.toLocaleString('en-GB') + ' schools'; }, joined: true }
   };
 
   var S = { map: null, layer: null, metric: 'population', breaks: null,
@@ -122,7 +135,7 @@
   }
 
   function tipHtml(p, metric) {
-    return '<strong>' + p.name + '</strong><br>' + METRICS[metric].label + ': ' +
+    return '<strong>' + gv(p.name) + '</strong><br>' + METRICS[metric].label + ': ' +
            METRICS[metric].fmt(metricValue(p, metric));
   }
 
@@ -164,10 +177,10 @@
       ['Urban share', METRICS.urban_pct.fmt(p.urban_pct)],
       ['Growth 2017→2023', METRICS.growth.fmt(p.growth)]
     ];
-    if (S.health) rows.push(['Mapped health facilities', (j.health || 0).toLocaleString() +
+    if (S.health) rows.push(['Mapped health facilities', (j.health || 0).toLocaleString('en-GB') +
       ' (' + (j.hospitals || 0) + ' hospitals, ' + (j.clinics || 0) + ' clinics)']);
-    if (S.schools) rows.push(['Mapped schools', (j.schools || 0).toLocaleString()]);
-    el.innerHTML = '<h3>' + p.name + '</h3>' + rows.map(function (r) {
+    if (S.schools) rows.push(['Mapped schools', (j.schools || 0).toLocaleString('en-GB')]);
+    el.innerHTML = '<h3>' + gv(p.name) + '</h3>' + rows.map(function (r) {
       return '<div class="gd-row"><span>' + r[0] + '</span><strong>' + r[1] + '</strong></div>';
     }).join('') + '<p class="gd-note">Facility &amp; school counts are OSM-mapped totals — relative pattern, not official registries.</p>';
     el.hidden = false;
@@ -261,11 +274,11 @@
       .sort(function (a, b) { return b.properties.population - a.properties.population; });
     tb.innerHTML = feats.map(function (f) {
       var p = f.properties, j = S.joined[p.name] || {};
-      return '<tr><td>' + p.name + '</td>' +
+      return '<tr><td>' + gv(p.name) + '</td>' +
         '<td>' + (p.population / 1e6).toFixed(2) + ' M</td>' +
-        '<td>' + Math.round(p.density).toLocaleString() + '</td>' +
-        '<td>' + (S.health ? (j.health || 0).toLocaleString() : '—') + '</td>' +
-        '<td>' + (S.schools ? (j.schools || 0).toLocaleString() : '—') + '</td></tr>';
+        '<td>' + Math.round(p.density).toLocaleString('en-GB') + '</td>' +
+        '<td>' + (S.health ? (j.health || 0).toLocaleString('en-GB') : '—') + '</td>' +
+        '<td>' + (S.schools ? (j.schools || 0).toLocaleString('en-GB') : '—') + '</td></tr>';
     }).join('');
   }
 
@@ -320,7 +333,7 @@
              '</div>';
     }).join('');
     var meta = $('heritageMeta');
-    if (meta) meta.textContent = 'Source: ' + S.heritage.source + ' — as of ' + S.heritage.as_of + '.';
+    if (meta) meta.textContent = 'Source: ' + S.heritage.source + ' — as of ' + asOf(S.heritage.as_of) + '.';
   }
 
   /* ---------------------------------------------------------- data notes */
@@ -333,7 +346,7 @@
     if (!S.heritage) missing.push('heritage sites');
     if (!missing.length) {
       var d = [S.health.as_of, S.schools.as_of, S.heritage.as_of].sort()[0];
-      el.innerHTML = 'All layers loaded. OSM layers © OpenStreetMap contributors (ODbL); oldest layer refresh: ' + d + '.';
+      el.innerHTML = 'All layers loaded. OSM layers © OpenStreetMap contributors (ODbL); oldest layer refresh: ' + asOf(d) + '.';
       return;
     }
     el.innerHTML = '<strong>' + missing.join(', ') + '</strong> ' +
@@ -394,20 +407,20 @@
     // geometry's own properties, so they cost no request and cannot drift from
     // the shapes they sit on. Small Delta governorates stay unlabelled until
     // the reader zooms far enough in for the name to fit — see addLabels.
-    mkx('addLabels')(S.map, S.layer, function (p) { return p.name; });
+    mkx('addLabels')(S.map, S.layer, function (p) { return gv(p.name); });
     // One tab stop into the map, then arrow keys move geographically. This
     // replaces 27 individual tab stops in GeoJSON file order.
     window.EGYBI.mapkit.choropleth(S.map, S.layer, {
       describe: function (f) {
         var p = f.properties, j = S.joined[p.name] || {};
-        return p.name + ': ' + METRICS[S.metric].label + ' ' +
+        return gv(p.name) + ': ' + METRICS[S.metric].label + ' ' +
                METRICS[S.metric].fmt(metricValue(p, S.metric));
       },
       activate: function (lyr) { activate(lyr, lyr.feature); },
       table: function () {
         var rows = window.EGYBI_EGYPT_GEO.features.map(function (f) {
           var p = f.properties;
-          return '<tr><th scope="row">' + p.name + '</th><td>' +
+          return '<tr><th scope="row">' + gv(p.name) + '</th><td>' +
             (p.population / 1e6).toFixed(2) + ' M</td><td>' + Math.round(p.density) +
             '</td><td>' + p.urban_pct.toFixed(1) + '%</td><td>' +
             (p.growth >= 0 ? '+' : '') + p.growth.toFixed(1) + '%</td><td>' +
@@ -504,7 +517,7 @@
       if (!sel) return;
       var entries = [];
       S.layer.eachLayer(function (l) {
-        entries.push({ name: l.feature.properties.name, layer: l });
+        entries.push({ name: gv(l.feature.properties.name), layer: l });
       });
       entries.sort(function (a, b) { return a.name.localeCompare(b.name); });
       entries.forEach(function (e, i) {
