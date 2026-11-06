@@ -27,9 +27,11 @@ def reading_minutes(html):
 
 def related(posts, i, n=3):
     """Up to n other issues: the same tag first, then the nearest in time.
+    The older and newer issues are left out: issue_nav already links them
+    just above, and the first version repeated two of them as cards.
     Deterministic, so a rebuild writes the same bytes."""
     tag = posts[i].get('tag')
-    others = [j for j in range(len(posts)) if j != i]
+    others = [j for j in range(len(posts)) if j not in (i - 1, i, i + 1)]
     others.sort(key=lambda j: (posts[j].get('tag') != tag, abs(j - i), j))
     return [posts[j] for j in others[:n]]
 
