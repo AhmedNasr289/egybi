@@ -1,0 +1,51 @@
+# Fails if any tracked file holds a merge-conflict marker.
+#
+# On 2026-11-06 a merge between two stacked pull requests was "resolved" by a
+# script that found nothing to resolve. The vault Changelog was committed and
+# pushed with raw <<<<<<< / >>>>>>> markers on two branches. Nothing caught it,
+# because no check runs on a change to the vault alone; a verification by
+# hand did. This is the check: seconds long, on every pull request whatever it
+# touches, and on every push to main.
+#
+# Only the two unambiguous markers are matched, at the start of a line and
+# followed by a space. A bare ======= is also a Markdown heading underline,
+# so it is not matched.
+name: Conflict markers
+
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: conflict-markers-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write            # open a failure-alert issue via notify-failure
+
+jobs:
+  markers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: No conflict markers in any tracked file
+        shell: bash
+        run: |
+          set -o pipefail
+          # git grep exits 1 when nothing matches, which is the passing case.
+          if git grep -nIE '^(<<<<<<<|>>>>>>>) ' -- . ':(exclude).github/workflows/conflict-markers.yml' | tee /tmp/markers.log; then
+            echo "::error::merge-conflict markers are committed in the files above"
+            exit 1
+          fi
+          echo "no conflict markers in $(git ls-files | wc -l) tracked files"
+
+      - name: Alert on failure
+        if: failure() && github.event_name == 'push'
+        uses: ./.github/actions/notify-failure
+        with:
+          reason: Merge-conflict markers were committed to main.

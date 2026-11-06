@@ -1029,3 +1029,8 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
   - The visit pages said "UTC+3 in May–October" because they sampled the 15th of each month. 2026's summer time ran 24 April to 29 October.
   - `sun_times.summer_time()` reads the IANA database day by day. It is tested on 2026 and 2027 (30 April to 28 October), and on 2020, a year with no summer time.
 - **Workflow comments:** the price and FX refresh comments no longer assume Cairo is UTC+2 all year.
+
+## 2026-11-06 — A gate against committed merge-conflict markers
+- ⚠️ **What happened:** while keeping three stacked PRs (#77–#79) up to date, my conflict resolver matched only one marker label, found nothing to resolve, and the loop around it committed and pushed the vault Changelog with raw conflict markers on two branches. It was caught by my own check before anything merged: each branch's Changelog must equal the branch below it plus its own section. The resolver now accepts any label and refuses to write if a marker survives.
+- **Why no check caught it:** no workflow runs on a change to the vault alone.
+- **The gate:** `.github/workflows/conflict-markers.yml` runs on every pull request, whatever it touches, and on every push to main. It fails if any tracked file holds a line starting with a conflict marker. A bare `=======` is a Markdown heading underline, so it is not matched. Run locally, the same command passes on main and reports both marker lines on the bad commit (490d4a9).
