@@ -1030,6 +1030,30 @@ Ahmed rejected four income plans in a row and asked for an idea that changes the
   - `sun_times.summer_time()` reads the IANA database day by day. It is tested on 2026 and 2027 (30 April to 28 October), and on 2020, a year with no summer time.
 - **Workflow comments:** the price and FX refresh comments no longer assume Cairo is UTC+2 all year.
 
+## 2026-11-06 — A gate against committed merge-conflict markers
+- ⚠️ **What happened:** while keeping three stacked PRs (#77–#79) up to date, my conflict resolver matched only one marker label, found nothing to resolve, and the loop around it committed and pushed the vault Changelog with raw conflict markers on two branches. It was caught by my own check before anything merged: each branch's Changelog must equal the branch below it plus its own section. The resolver now accepts any label and refuses to write if a marker survives.
+- **Why no check caught it:** no workflow runs on a change to the vault alone.
+- **The gate:** `.github/workflows/conflict-markers.yml` runs on every pull request, whatever it touches, and on every push to main. It fails if any tracked file holds a line starting with a conflict marker. A bare `=======` is a Markdown heading underline, so it is not matched. Run locally, the same command passes on main and reports both marker lines on the bad commit (490d4a9).
+
+## 2026-11-06 — The day-42 reading, ready to run
+- **`backend/ops/day42_reading.py`** reads the live dashboard's JSON (`api/insights.php?format=json`) with the key from `EGYBI_ANALYTICS_KEY`, which it never prints. It prints:
+  - planner uses since 2026-11-06 against the 300 target, with the share reached;
+  - the week-by-week funnel;
+  - a row ready to paste into [[Traffic Baseline & Analytics]].
+  It reminds the reader that this covers two weeks of planner events, not six. Sales are not in the dashboard, so it asks for them to be counted by hand.
+- **Tests:** six run without the network. They cover the target met and not met, "not measured" rather than zero, the paste row's columns, and refusing before any request when the key is missing.
+- **Live check:** a deliberately wrong key returns "HTTP 403" without echoing the key.
+- **CI:** `Test (pipeline)` now lints and tests `backend/ops/` too.
+
+## 2026-11-06 — Price names from the portal, cleaned at the source
+- **Bad names from the portal:** the government price portal's own English feed sends a few broken names, on both the retail and wholesale views:
+  - "Heorotbr?r" for نبق (mangled at the source);
+  - "Chili pepper" and "Bell pepper" ending in an invisible right-to-left mark, which can reorder the text printed after them;
+  - two names with a double space.
+- **The fix, at the source:** `fetch_prices.clean_name_en` strips invisible direction controls, treats a name with a lost character (`?`, U+FFFD) as missing rather than publishing it, and overrides نبق as "Christ's-thorn jujube (nabq)".
+- **Today's file was cleaned with the same function** (8 names), so the fix shows before the next daily refresh.
+- **Tests:** a new test checks the published file carries no such name. It failed on the file before the cleaning and passes after.
+
 ## 2026-11-06 — Third data story: Egypt's food prices, measured since July
 - **`egypt-food-prices.html`** (`backend/pipeline/pages/foodprices.py`) and an embeddable `charts/egypt-food-prices.svg`.
   - **What it measures:** every retail food price the government portal published since 18 July (128 items, 92 observation days), how far each category moved, and the pound over the same weeks.

@@ -141,6 +141,34 @@ def _cid(k):
         return k
 
 
+# English item names come from the portal's own English feed, and a few arrive
+# broken (first seen 2026-11-05/06, on both views):
+#   * "Heorotbr?r" for نبق (indicator 301): mangled at the source, with "?" where
+#     characters were lost;
+#   * "Chili pepper" and "Bell pepper" (239, 245) end in an invisible
+#     RIGHT-TO-LEFT MARK, which can reorder the text printed after the name.
+# So every name has invisible direction controls stripped. A name still
+# showing "?" or U+FFFD (a lost character) is treated as missing rather than
+# published, and a known-bad one gets a short override.
+_BIDI_CONTROLS = dict.fromkeys([0x200E, 0x200F, 0x061C, 0x202A, 0x202B, 0x202C, 0x202D, 0x202E,
+                                0x2066, 0x2067, 0x2068, 0x2069, 0xFEFF])
+NAME_EN_FIXES = {
+    301: "Christ's-thorn jujube (nabq)",   # portal: "Heorotbr?r"
+}
+
+
+def clean_name_en(ind_id, raw):
+    """The portal's English name, made safe to print, or None if it is broken."""
+    if ind_id in NAME_EN_FIXES:
+        return NAME_EN_FIXES[ind_id]
+    if raw is None:
+        return None
+    s = " ".join(str(raw).translate(_BIDI_CONTROLS).split())
+    if not s or "?" in s or chr(0xFFFD) in s:
+        return None
+    return s
+
+
 def transform(bundle, view):
     """Flatten one IDSC price view ('retail' or 'wholesale') into a clean item list + date."""
     data = bundle.get(view) or {}
@@ -181,7 +209,7 @@ def transform(bundle, view):
             items.append({
                 "slug": slug,
                 "name_ar": (it.get("indictorName") or "").strip(),
-                "name_en": nmap.get(ind_id),
+                "name_en": clean_name_en(ind_id, nmap.get(ind_id)),
                 "category": cat,
                 "unit": unit,
                 "min": it.get("minPrice"),
