@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 846 500" width="846" height="500" role="img" aria-labelledby="t d" font-family="Inter, Segoe UI, Arial, sans-serif">
+<title id="t">Egypt&#x27;s retail food prices since July</title>
+<desc id="d">Median retail price index per category, 100 = first observation, 18 July 2026 to 6 November 2026.</desc>
+<rect width="846" height="500" fill="#FDF9EE"/>
+<text x="58" y="34" font-size="19" font-weight="700" fill="#1B1B18">Egypt&#x27;s retail food prices since July</text>
+<text x="58" y="56" font-size="12.5" fill="#544C3E">Weekly median price per category, 100 = each item&#8217;s own first-week price</text>
+<line x1="58" y1="400.0" x2="716" y2="400.0" stroke="#D8D0BC" stroke-width="1"/>
+<text x="50" y="404.0" font-size="12" text-anchor="end" fill="#544C3E">95</text>
+<line x1="58" y1="239.0" x2="716" y2="239.0" stroke="#544C3E" stroke-width="1.5"/>
+<text x="50" y="243.0" font-size="12" text-anchor="end" fill="#544C3E">100</text>
+<line x1="58" y1="78.0" x2="716" y2="78.0" stroke="#D8D0BC" stroke-width="1"/>
+<text x="50" y="82.0" font-size="12" text-anchor="end" fill="#544C3E">105</text>
+<line x1="141.0" y1="400" x2="141.0" y2="405" stroke="#544C3E"/>
+<text x="141.0" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
+<line x1="324.8" y1="400" x2="324.8" y2="405" stroke="#544C3E"/>
+<text x="324.8" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
+<line x1="502.6" y1="400" x2="502.6" y2="405" stroke="#544C3E"/>
+<text x="502.6" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
+<line x1="686.4" y1="400" x2="686.4" y2="405" stroke="#544C3E"/>
+<text x="686.4" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
+<path d="M75.8,239.0 L117.3,259.5 L158.8,337.4 L200.3,359.9 L241.8,267.1 L283.3,336.3 L324.8,292.9 L366.3,245.1 L407.7,264.7 L449.2,288.7 L490.7,250.7 L532.2,205.0 L573.7,276.5 L615.2,228.1 L656.7,281.7 L698.2,252.7" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="698.2" cy="252.7" r="4" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M75.8,239.0 L117.3,259.6 L158.8,239.8 L200.3,198.7 L241.8,154.7 L283.3,182.2 L324.8,174.1 L366.3,194.2 L407.7,209.1 L449.2,190.3 L490.7,198.2 L532.2,162.3 L573.7,176.8 L615.2,184.5 L656.7,160.9 L698.2,173.9" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="698.2" cy="173.9" r="4" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M75.8,239.0 L117.3,264.3 L158.8,262.3 L200.3,215.4 L241.8,159.1 L283.3,255.6 L324.8,236.2 L366.3,253.0 L407.7,236.7 L449.2,243.3 L490.7,243.7 L532.2,242.9 L573.7,166.1 L615.2,248.4 L656.7,198.2 L698.2,203.2" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="698.2" cy="203.2" r="4" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M75.8,239.0 L117.3,233.7 L158.8,250.3 L200.3,239.4 L241.8,227.6 L283.3,225.8 L324.8,259.4 L366.3,263.3 L407.7,237.0 L449.2,216.8 L490.7,217.2 L532.2,230.2 L573.7,232.7 L615.2,224.7 L656.7,204.4 L698.2,148.3" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="698.2" cy="148.3" r="4" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
+<text x="726" y="152.3" font-size="12.5" font-weight="600" fill="#1B1B18">Groceries 102.8</text>
+<text x="726" y="177.9" font-size="12.5" font-weight="600" fill="#1B1B18">Fish 102.0</text>
+<text x="726" y="207.2" font-size="12.5" font-weight="600" fill="#1B1B18">Fruit 101.1</text>
+<text x="726" y="256.7" font-size="12.5" font-weight="600" fill="#1B1B18">Vegetables 99.6</text>
+<rect x="58" y="442" width="14" height="4" rx="2" fill="#1F5FA6"/>
+<text x="78" y="447" font-size="12" fill="#1B1B18">Vegetables</text>
+<rect x="168" y="442" width="14" height="4" rx="2" fill="#C2410C"/>
+<text x="188" y="447" font-size="12" fill="#1B1B18">Fish</text>
+<rect x="230" y="442" width="14" height="4" rx="2" fill="#2E7D4F"/>
+<text x="250" y="447" font-size="12" fill="#1B1B18">Fruit</text>
+<rect x="300" y="442" width="14" height="4" rx="2" fill="#8A4FB5"/>
+<text x="320" y="447" font-size="12" fill="#1B1B18">Groceries</text>
+<text x="58" y="470" font-size="11.5" fill="#544C3E">egybi.com/egypt-food-prices.html · IDSC price portal, retail averages, 128 items.</text>
+<text x="58" y="484" font-size="11.5" fill="#544C3E">Weekly median per category, first week = 100. Not a basket, not inflation.</text>
+</svg>

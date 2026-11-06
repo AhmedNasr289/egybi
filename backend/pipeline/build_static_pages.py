@@ -59,6 +59,7 @@ own module under pages/ (split 2026-11-06):
                        egypt-weather-by-month.html and its chart
     pages/sitemap.py   sitemap.xml
     pages/holidays.py  egypt-public-holidays.html and its chart
+    pages/foodprices.py egypt-food-prices.html and its chart
     pages/notfound.py  404.html
 
 The split moved code verbatim and was checked byte for byte: every file under
@@ -92,6 +93,7 @@ _force_utf8_output()
 # (python -I / -P does not put the script's own folder on sys.path).
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pages.common import load_js  # noqa: E402
+from pages.foodprices import build_food_prices_page  # noqa: E402
 from pages.holidays import build_holidays_page  # noqa: E402
 from pages.notfound import build_404  # noqa: E402
 from pages.papyrus import build_feed, build_link_indexes, build_posts  # noqa: E402
@@ -112,8 +114,9 @@ def main():
     ng = build_guide_links(vu) if vu else 0
     wu = build_weather_by_month(vu) if vu else []
     hu = build_holidays_page()
+    fu = build_food_prices_page()
     build_link_indexes(ch, posts)
-    total = build_sitemap(pu + vu + wu + hu)
+    total = build_sitemap(pu + vu + wu + hu + fu)
     nfeed = build_feed(posts)
     build_404()
     # Report the sector split so a mis-mapped sector is visible in the log
@@ -134,6 +137,7 @@ def main():
         print("::warning::VISIT-GUIDES markers missing from "
               f"{len(GUIDE_PAGES) - ng} page(s) in GUIDE_PAGES")
     print(f"holidays page   : {'written' if hu else 'skipped (no calendar data)'}")
+    print(f"food prices page: {'written' if fu else 'skipped (too little price history)'}")
     print(f"sitemap URLs    : {total}")
     print(f"RSS feed items  : {nfeed}")
     print("404 page        : written (root-relative, noindex)")
