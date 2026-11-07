@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 846 500" width="846" height="500" role="img" aria-labelledby="t d" font-family="Inter, Segoe UI, Arial, sans-serif">
 <title id="t">What your money buys in Egypt since July</title>
-<desc id="d">Pounds per unit of each currency as an index, 100 = first week, 25 July 2026 to 6 November 2026.</desc>
+<desc id="d">Pounds per unit of each currency as an index, 100 = first week, 26 July 2026 to 7 November 2026.</desc>
 <rect width="846" height="500" fill="#FDF9EE"/>
 <text x="58" y="34" font-size="19" font-weight="700" fill="#1B1B18">What your money buys in Egypt since July</text>
 <text x="58" y="56" font-size="12.5" fill="#544C3E">Pounds for one unit, weekly median, first week = 100</text>
@@ -12,26 +12,26 @@
 <text x="50" y="189.3" font-size="12" text-anchor="end" fill="#544C3E">105</text>
 <line x1="58" y1="78.0" x2="716" y2="78.0" stroke="#D8D0BC" stroke-width="1"/>
 <text x="50" y="82.0" font-size="12" text-anchor="end" fill="#544C3E">110</text>
-<line x1="102.3" y1="400" x2="102.3" y2="405" stroke="#544C3E"/>
-<text x="102.3" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
-<line x1="298.4" y1="400" x2="298.4" y2="405" stroke="#544C3E"/>
-<text x="298.4" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
-<line x1="488.2" y1="400" x2="488.2" y2="405" stroke="#544C3E"/>
-<text x="488.2" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
-<line x1="684.4" y1="400" x2="684.4" y2="405" stroke="#544C3E"/>
-<text x="684.4" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
-<path d="M77.0,292.7 L121.3,327.2 L165.6,344.8 L209.8,327.5 L254.1,305.0 L298.4,302.6 L342.7,300.5 L387.0,262.4 L431.3,258.1 L475.6,256.5 L519.9,243.2 L564.2,227.7 L608.4,175.0 L652.7,85.4 L697.0,111.7" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="697.0" cy="111.7" r="4" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M77.0,292.7 L121.3,311.6 L165.6,322.3 L209.8,301.7 L254.1,261.2 L298.4,270.5 L342.7,264.2 L387.0,241.7 L431.3,246.7 L475.6,271.0 L519.9,277.6 L564.2,273.0 L608.4,218.3 L652.7,145.5 L697.0,155.5" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="697.0" cy="155.5" r="4" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M77.0,292.7 L121.3,314.0 L165.6,326.9 L209.8,302.9 L254.1,264.3 L298.4,281.3 L342.7,275.4 L387.0,250.8 L431.3,256.4 L475.6,275.4 L519.9,266.2 L564.2,252.1 L608.4,185.6 L652.7,96.8 L697.0,106.5" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="697.0" cy="106.5" r="4" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M77.0,292.7 L121.3,328.4 L165.6,353.9 L209.8,345.3 L254.1,330.4 L298.4,337.2 L342.7,341.8 L387.0,313.0 L431.3,316.4 L475.6,325.2 L519.9,312.6 L564.2,310.0 L608.4,269.9 L652.7,194.9 L697.0,227.4" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="697.0" cy="227.4" r="4" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
-<text x="726" y="110.5" font-size="12.5" font-weight="600" fill="#1B1B18">Pound sterling 108.7</text>
-<text x="726" y="126.5" font-size="12.5" font-weight="600" fill="#1B1B18">Dollar &amp; Gulf 108.4</text>
-<text x="726" y="159.5" font-size="12.5" font-weight="600" fill="#1B1B18">Euro 106.4</text>
-<text x="726" y="231.4" font-size="12.5" font-weight="600" fill="#1B1B18">Turkish lira 103.0</text>
+<line x1="96.0" y1="400" x2="96.0" y2="405" stroke="#544C3E"/>
+<text x="96.0" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
+<line x1="292.1" y1="400" x2="292.1" y2="405" stroke="#544C3E"/>
+<text x="292.1" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
+<line x1="481.9" y1="400" x2="481.9" y2="405" stroke="#544C3E"/>
+<text x="481.9" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
+<line x1="678.0" y1="400" x2="678.0" y2="405" stroke="#544C3E"/>
+<text x="678.0" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
+<path d="M77.0,292.7 L121.3,330.8 L165.6,336.5 L209.8,317.4 L254.1,321.4 L298.4,302.1 L342.7,296.2 L387.0,252.4 L431.3,267.9 L475.6,252.2 L519.9,240.0 L564.2,215.2 L608.4,154.9 L652.7,85.4 L697.0,113.5" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="697.0" cy="113.5" r="4" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M77.0,292.7 L121.3,313.0 L165.6,315.4 L209.8,290.5 L254.1,280.1 L298.4,269.1 L342.7,260.7 L387.0,241.2 L431.3,266.9 L475.6,271.0 L519.9,279.8 L564.2,266.5 L608.4,194.8 L652.7,143.9 L697.0,162.3" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="697.0" cy="162.3" r="4" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M77.0,292.7 L121.3,320.2 L165.6,316.9 L209.8,293.5 L254.1,280.7 L298.4,280.0 L342.7,270.9 L387.0,251.4 L431.3,273.9 L475.6,275.7 L519.9,265.5 L564.2,240.5 L608.4,155.0 L652.7,96.4 L697.0,108.4" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="697.0" cy="108.4" r="4" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M77.0,292.7 L121.3,330.4 L165.6,347.9 L209.8,334.8 L254.1,344.4 L298.4,336.4 L342.7,338.0 L387.0,303.8 L431.3,326.0 L475.6,319.6 L519.9,312.2 L564.2,300.4 L608.4,251.1 L652.7,194.1 L697.0,227.8" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="697.0" cy="227.8" r="4" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
+<text x="726" y="112.4" font-size="12.5" font-weight="600" fill="#1B1B18">Pound sterling 108.6</text>
+<text x="726" y="128.4" font-size="12.5" font-weight="600" fill="#1B1B18">Dollar &amp; Gulf 108.3</text>
+<text x="726" y="166.3" font-size="12.5" font-weight="600" fill="#1B1B18">Euro 106.1</text>
+<text x="726" y="231.8" font-size="12.5" font-weight="600" fill="#1B1B18">Turkish lira 103.0</text>
 <rect x="58" y="442" width="14" height="4" rx="2" fill="#1F5FA6"/>
 <text x="78" y="447" font-size="12" fill="#1B1B18">Dollar &amp; Gulf</text>
 <rect x="192" y="442" width="14" height="4" rx="2" fill="#C2410C"/>
