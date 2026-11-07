@@ -118,6 +118,28 @@ def transform(bundle):
     return as_of, items
 
 
+# A currency whose day-on-day change is this many percentage points away from
+# the median change of all the currencies that day is held back for the day.
+# On 2026-08-22 the API returned the Kuwaiti dinar at EGP 114.43 (165.07 the day
+# before, 164.88 the day after) while every other currency moved 0.1% or less;
+# the page published "-30.68%" and the history kept the point. A real move of
+# the pound shifts every currency together, so the median moves with it and
+# nothing is held back: a flat cap on daily moves would have refused the
+# genuine 2024 devaluation (about +60% in one day).
+OUT_OF_LINE_PP = 10.0
+
+
+def out_of_line(changes):
+    """Codes whose change (in %) is more than OUT_OF_LINE_PP from the median
+    change of all of them. Needs at least three currencies to judge."""
+    vals = sorted(changes.values())
+    if len(vals) < 3:
+        return set()
+    n = len(vals)
+    med = vals[n // 2] if n % 2 else (vals[n // 2 - 1] + vals[n // 2]) / 2
+    return {c for c, v in changes.items() if abs(v - med) > OUT_OF_LINE_PP}
+
+
 def load_json(path, default):
     if os.path.exists(path):
         with open(path, encoding="utf-8") as f:
@@ -161,6 +183,24 @@ def main():
                 prev = p["egp"]; break
         if prev:
             it["change_pct"] = round(((it["egp"] - prev) / prev) * 100, 2)
+            it["_has_prev"] = True
+
+    held = out_of_line({it["code"]: it["change_pct"] for it in items if it.get("_has_prev")})
+    for it in items:
+        it.pop("_has_prev", None)
+    if held:
+        for it in items:
+            if it["code"] in held:
+                # GitHub renders ::warning:: in the run summary; the day's value
+                # is neither shown nor kept, and tomorrow is compared with the
+                # last good point instead.
+                print(f"::warning::FX {it['code']} held back for {as_of}: {it['egp']} EGP is "
+                      f"{it['change_pct']:+.2f}% in a day, out of line with the other currencies")
+        items = [it for it in items if it["code"] not in held]
+        if len(items) < MIN_CURRENCIES:
+            print(f"ABORT: only {len(items)} plausible currencies (< {MIN_CURRENCIES}) — keeping last-good.",
+                  file=sys.stderr)
+            return 3
 
     print(f"FX {len(items)} currencies (as_of {as_of}): " +
           ", ".join(f"{it['code']}={it['egp']}" for it in items))
