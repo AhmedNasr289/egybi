@@ -23,6 +23,7 @@ const PAGES = [
   'prices-ar.html',                            // the right-to-left page
   'visit/giza.html',
   'egypt-public-holidays.html',
+  'egyptian-pound-since-july.html',            // a data story with the <picture> phone chart
 ];
 const WIDTHS = [1280, 390];
 

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 454" width="320" height="454" role="img" aria-labelledby="tn dn" font-family="Inter, Segoe UI, Arial, sans-serif">
+<title id="tn">What your money buys in Egypt since July</title>
+<desc id="dn">Pounds per unit of each currency as an index, 100 = first week, 25 July 2026 to 6 November 2026.</desc>
+<rect width="320" height="454" fill="#FDF9EE"/>
+<text x="12" y="28" font-size="17" font-weight="700" fill="#1B1B18">What your money buys in Egypt</text>
+<text x="12" y="50" font-size="17" font-weight="700" fill="#1B1B18">since July</text>
+<text x="12" y="76" font-size="12.5" fill="#544C3E">Pounds for one unit, weekly median,</text>
+<text x="12" y="92" font-size="12.5" fill="#544C3E">first week = 100</text>
+<line x1="34" y1="342.0" x2="208" y2="342.0" stroke="#D8D0BC" stroke-width="1"/>
+<text x="28" y="346.0" font-size="12" text-anchor="end" fill="#544C3E">95</text>
+<line x1="34" y1="265.3" x2="208" y2="265.3" stroke="#544C3E" stroke-width="1.5"/>
+<text x="28" y="269.3" font-size="12" text-anchor="end" fill="#544C3E">100</text>
+<line x1="34" y1="188.7" x2="208" y2="188.7" stroke="#D8D0BC" stroke-width="1"/>
+<text x="28" y="192.7" font-size="12" text-anchor="end" fill="#544C3E">105</text>
+<line x1="34" y1="112.0" x2="208" y2="112.0" stroke="#D8D0BC" stroke-width="1"/>
+<text x="28" y="116.0" font-size="12" text-anchor="end" fill="#544C3E">110</text>
+<line x1="45.7" y1="342" x2="45.7" y2="347" stroke="#544C3E"/>
+<text x="45.7" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
+<line x1="97.6" y1="342" x2="97.6" y2="347" stroke="#544C3E"/>
+<text x="97.6" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
+<line x1="147.8" y1="342" x2="147.8" y2="347" stroke="#544C3E"/>
+<text x="147.8" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
+<line x1="199.6" y1="342" x2="199.6" y2="347" stroke="#544C3E"/>
+<text x="199.6" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
+<path d="M39.0,265.3 L50.7,290.0 L62.4,302.6 L74.2,290.2 L85.9,274.1 L97.6,272.4 L109.3,271.0 L121.0,243.7 L132.7,240.7 L144.4,239.5 L156.1,230.0 L167.8,218.9 L179.6,181.3 L191.3,117.3 L203.0,136.1" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="203.0" cy="136.1" r="3.5" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M39.0,265.3 L50.7,278.8 L62.4,286.5 L74.2,271.8 L85.9,242.9 L97.6,249.5 L109.3,245.0 L121.0,228.9 L132.7,232.5 L144.4,249.9 L156.1,254.6 L167.8,251.3 L179.6,212.2 L191.3,160.2 L203.0,167.4" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="203.0" cy="167.4" r="3.5" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M39.0,265.3 L50.7,280.6 L62.4,289.8 L74.2,272.6 L85.9,245.0 L97.6,257.2 L109.3,253.0 L121.0,235.4 L132.7,239.4 L144.4,253.0 L156.1,246.4 L167.8,236.4 L179.6,188.8 L191.3,125.4 L203.0,132.4" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="203.0" cy="132.4" r="3.5" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M39.0,265.3 L50.7,290.8 L62.4,309.1 L74.2,303.0 L85.9,292.3 L97.6,297.1 L109.3,300.4 L121.0,279.9 L132.7,282.3 L144.4,288.6 L156.1,279.6 L167.8,277.7 L179.6,249.1 L191.3,195.5 L203.0,218.7" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="203.0" cy="218.7" r="3.5" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
+<text x="216" y="136.4" font-size="12" font-weight="600" fill="#1B1B18">Sterling 108.7</text>
+<text x="216" y="152.4" font-size="12" font-weight="600" fill="#1B1B18">$ &amp; Gulf 108.4</text>
+<text x="216" y="171.4" font-size="12" font-weight="600" fill="#1B1B18">Euro 106.4</text>
+<text x="216" y="222.7" font-size="12" font-weight="600" fill="#1B1B18">Lira 103.0</text>
+<text x="12" y="392" font-size="11.5" fill="#544C3E">egybi.com/egyptian-pound-since-july.html ·</text>
+<text x="12" y="407" font-size="11.5" fill="#544C3E">ExchangeRate-API market reference rates.</text>
+<text x="12" y="422" font-size="11.5" fill="#544C3E">Weekly median, first week = 100. Not the</text>
+<text x="12" y="437" font-size="11.5" fill="#544C3E">Central Bank fixing; not a forecast.</text>
+</svg>

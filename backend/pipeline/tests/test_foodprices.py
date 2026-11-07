@@ -22,6 +22,7 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from pages import foodprices as fp  # noqa: E402
+from pages import storychart  # noqa: E402
 
 
 def series_for(prices_by_day):
@@ -75,12 +76,19 @@ class ItemChanges(unittest.TestCase):
 
 
 class Usd(unittest.TestCase):
-    def test_matches_the_nearest_dates_within_a_week(self):
+    def test_first_week_against_last_week_not_single_days(self):
+        # The window's last day dipped (the pound recovered); a single-day
+        # comparison printed +5.5% where the weekly medians said +8.4%.
         import datetime as dt
-        fx = {'series': {'USD': [{'as_of': '2026-07-04', 'egp': 50.0}, {'as_of': '2026-07-28', 'egp': 55.0}]}}
-        u = fp.usd_change(fx, dt.date(2026, 7, 1), dt.date(2026, 7, 29))
+        first = [{'as_of': f'2026-07-{d:02d}', 'egp': 50.0} for d in range(1, 8)]
+        last = [{'as_of': f'2026-07-{d:02d}', 'egp': 55.0} for d in range(23, 29)] + [{'as_of': '2026-07-29', 'egp': 53.0}]
+        u = fp.usd_change({'series': {'USD': first + last}}, dt.date(2026, 7, 1), dt.date(2026, 7, 29))
         self.assertAlmostEqual(u['change'], 0.1)
-        self.assertIsNone(fp.usd_change(fx, dt.date(2026, 6, 1), dt.date(2026, 7, 29)))
+
+    def test_no_rate_in_a_week_gives_none(self):
+        import datetime as dt
+        fx = {'series': {'USD': [{'as_of': '2026-07-28', 'egp': 55.0}]}}
+        self.assertIsNone(fp.usd_change(fx, dt.date(2026, 7, 1), dt.date(2026, 7, 29)))
 
 
 class Chart(unittest.TestCase):
@@ -122,7 +130,7 @@ class Chart(unittest.TestCase):
     def test_an_overlong_credit_is_refused(self):
         import datetime as dt
         with self.assertRaises(ValueError):
-            fp.svg_chart([], dt.date(2026, 7, 1), dt.date(2026, 7, 29), 't', ('x' * (fp.CREDIT_MAX_CHARS + 1),))
+            fp.svg_chart([], dt.date(2026, 7, 1), dt.date(2026, 7, 29), 't', ('x' * (storychart.CREDIT_MAX_CHARS + 1),))
 
 
 class Build(unittest.TestCase):

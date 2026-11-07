@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 846 500" width="846" height="500" role="img" aria-labelledby="t d" font-family="Inter, Segoe UI, Arial, sans-serif">
+<title id="t">What your money buys in Egypt since July</title>
+<desc id="d">Pounds per unit of each currency as an index, 100 = first week, 25 July 2026 to 6 November 2026.</desc>
+<rect width="846" height="500" fill="#FDF9EE"/>
+<text x="58" y="34" font-size="19" font-weight="700" fill="#1B1B18">What your money buys in Egypt since July</text>
+<text x="58" y="56" font-size="12.5" fill="#544C3E">Pounds for one unit, weekly median, first week = 100</text>
+<line x1="58" y1="400.0" x2="716" y2="400.0" stroke="#D8D0BC" stroke-width="1"/>
+<text x="50" y="404.0" font-size="12" text-anchor="end" fill="#544C3E">95</text>
+<line x1="58" y1="292.7" x2="716" y2="292.7" stroke="#544C3E" stroke-width="1.5"/>
+<text x="50" y="296.7" font-size="12" text-anchor="end" fill="#544C3E">100</text>
+<line x1="58" y1="185.3" x2="716" y2="185.3" stroke="#D8D0BC" stroke-width="1"/>
+<text x="50" y="189.3" font-size="12" text-anchor="end" fill="#544C3E">105</text>
+<line x1="58" y1="78.0" x2="716" y2="78.0" stroke="#D8D0BC" stroke-width="1"/>
+<text x="50" y="82.0" font-size="12" text-anchor="end" fill="#544C3E">110</text>
+<line x1="102.3" y1="400" x2="102.3" y2="405" stroke="#544C3E"/>
+<text x="102.3" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
+<line x1="298.4" y1="400" x2="298.4" y2="405" stroke="#544C3E"/>
+<text x="298.4" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
+<line x1="488.2" y1="400" x2="488.2" y2="405" stroke="#544C3E"/>
+<text x="488.2" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
+<line x1="684.4" y1="400" x2="684.4" y2="405" stroke="#544C3E"/>
+<text x="684.4" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
+<path d="M77.0,292.7 L121.3,327.2 L165.6,344.8 L209.8,327.5 L254.1,305.0 L298.4,302.6 L342.7,300.5 L387.0,262.4 L431.3,258.1 L475.6,256.5 L519.9,243.2 L564.2,227.7 L608.4,175.0 L652.7,85.4 L697.0,111.7" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="697.0" cy="111.7" r="4" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M77.0,292.7 L121.3,311.6 L165.6,322.3 L209.8,301.7 L254.1,261.2 L298.4,270.5 L342.7,264.2 L387.0,241.7 L431.3,246.7 L475.6,271.0 L519.9,277.6 L564.2,273.0 L608.4,218.3 L652.7,145.5 L697.0,155.5" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="697.0" cy="155.5" r="4" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M77.0,292.7 L121.3,314.0 L165.6,326.9 L209.8,302.9 L254.1,264.3 L298.4,281.3 L342.7,275.4 L387.0,250.8 L431.3,256.4 L475.6,275.4 L519.9,266.2 L564.2,252.1 L608.4,185.6 L652.7,96.8 L697.0,106.5" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="697.0" cy="106.5" r="4" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M77.0,292.7 L121.3,328.4 L165.6,353.9 L209.8,345.3 L254.1,330.4 L298.4,337.2 L342.7,341.8 L387.0,313.0 L431.3,316.4 L475.6,325.2 L519.9,312.6 L564.2,310.0 L608.4,269.9 L652.7,194.9 L697.0,227.4" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="697.0" cy="227.4" r="4" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
+<text x="726" y="110.5" font-size="12.5" font-weight="600" fill="#1B1B18">Pound sterling 108.7</text>
+<text x="726" y="126.5" font-size="12.5" font-weight="600" fill="#1B1B18">Dollar &amp; Gulf 108.4</text>
+<text x="726" y="159.5" font-size="12.5" font-weight="600" fill="#1B1B18">Euro 106.4</text>
+<text x="726" y="231.4" font-size="12.5" font-weight="600" fill="#1B1B18">Turkish lira 103.0</text>
+<rect x="58" y="442" width="14" height="4" rx="2" fill="#1F5FA6"/>
+<text x="78" y="447" font-size="12" fill="#1B1B18">Dollar &amp; Gulf</text>
+<rect x="192" y="442" width="14" height="4" rx="2" fill="#C2410C"/>
+<text x="212" y="447" font-size="12" fill="#1B1B18">Euro</text>
+<rect x="254" y="442" width="14" height="4" rx="2" fill="#2E7D4F"/>
+<text x="274" y="447" font-size="12" fill="#1B1B18">Pound sterling</text>
+<rect x="396" y="442" width="14" height="4" rx="2" fill="#8A4FB5"/>
+<text x="416" y="447" font-size="12" fill="#1B1B18">Turkish lira</text>
+<text x="58" y="470" font-size="11.5" fill="#544C3E">egybi.com/egyptian-pound-since-july.html · ExchangeRate-API market reference rates.</text>
+<text x="58" y="484" font-size="11.5" fill="#544C3E">Weekly median, first week = 100. Not the Central Bank fixing; not a forecast.</text>
+</svg>
