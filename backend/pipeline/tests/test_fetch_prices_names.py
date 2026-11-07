@@ -36,6 +36,12 @@ class CleanNameEn(unittest.TestCase):
     def test_a_good_name_is_untouched(self):
         self.assertEqual(fp.clean_name_en(5, 'Tomatoes'), 'Tomatoes')
 
+    def test_a_bracket_moved_to_the_front_is_put_back(self):
+        self.assertEqual(fp.clean_name_en(223, '(White Cheese (Talaga'), 'White Cheese (Talaga)')
+        # Balanced names, or ones that merely open with a bracket, are left alone.
+        self.assertEqual(fp.clean_name_en(7, 'Shrimp (Excellent)'), 'Shrimp (Excellent)')
+        self.assertEqual(fp.clean_name_en(7, '(Imported) Rice'), '(Imported) Rice')
+
     def test_the_first_letter_is_capitalised_and_nothing_else(self):
         self.assertEqual(fp.clean_name_en(7, 'onions'), 'Onions')
         self.assertEqual(fp.clean_name_en(7, 'aswan Tilapia fish'), 'Aswan Tilapia fish')
@@ -48,6 +54,13 @@ class PublishedData(unittest.TestCase):
         bad = [(v, i['slug'], i['name_en']) for v in ('retail', 'wholesale')
                for i in d.get(v, {}).get('items', []) if i.get('name_en')
                and (fp.clean_name_en(-1, i['name_en']) != i['name_en'])]
+        self.assertEqual(bad, [])
+
+    def test_no_published_name_has_unbalanced_brackets(self):
+        d = json.loads(DATA.read_text(encoding='utf-8'))
+        bad = [(v, i['slug'], i['name_en']) for v in ('retail', 'wholesale')
+               for i in d.get(v, {}).get('items', []) if i.get('name_en')
+               and i['name_en'].count('(') != i['name_en'].count(')')]
         self.assertEqual(bad, [])
 
 

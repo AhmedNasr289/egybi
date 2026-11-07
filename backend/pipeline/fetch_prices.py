@@ -166,6 +166,11 @@ def clean_name_en(ind_id, raw):
     s = " ".join(str(raw).translate(_BIDI_CONTROLS).split())
     if not s or "?" in s or chr(0xFFFD) in s:
         return None
+    # A closing bracket that the portal's right-to-left handling moved to the
+    # front: on 2026-11-07 it sent "(White Cheese (Talaga" for
+    # "جبنه بيضاء ( ثلاجة)", which is "White Cheese (Talaga)".
+    if s.startswith("(") and s.count("(") == s.count(")") + 2:
+        s = s[1:].strip() + ")"
     # The portal capitalises most names but not all: 23 of 132 retail names on
     # 2026-11-06 began lower case ("onions" beside "Potatoes"). Only the first
     # letter is raised, so "aswan Tilapia fish" keeps its inner capital.
