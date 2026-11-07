@@ -1093,3 +1093,23 @@ After #83 went live I read the page at 1280 and at phone width. Three real defec
 - **The fix, at the source:** `fetch_prices.clean_name_en` puts such a bracket back. The signature is a name that starts with "(" and has two more opening than closing brackets. Balanced names, and ones that only open with a bracket, are untouched. Today's file was cleaned with the same function (1 name).
 - **Proof:** a new published-data test checks that no name has unbalanced brackets. It and the existing fixed-point test both failed on the uncleaned file, naming this item, and pass after cleaning. The full suite passes and pyflakes is clean.
 - **Seen and left alone:** on 7 and 10–16 October the portal published white cheese (`idsc-80`) at about EGP 500 a kilo, with a 275–700 range, against its usual 145 and 77–200. No other item's figures match. It is the portal's own figure, so it stays as published; the food story's weekly medians are not affected.
+
+## 2026-11-07 — Fourth data story: the Egyptian pound since July
+- **The page:** `egyptian-pound-since-july.html` asks what ten currencies bought, from the first whole week (from 25 July) to the last (to 6 November), using weekly medians as the food story does.
+  - The dollar went from EGP 51.11 to EGP 55.41, +8.4%: the pound lost 7.8% of its dollar value.
+  - The Saudi riyal, UAE dirham and Qatari riyal moved +8.4% each. Their dollar price varied by at most 0.8%, so the page says it is one move, not three. This grouping is **measured** (`PEG_SPREAD`, 1%), not assumed; the yuan (1.9%) and the Kuwaiti dinar (2.4%) are not grouped.
+  - The others differ by their own move against the dollar: the euro +6.4%, the Turkish lira +3.0%.
+  - It was not one-way: in the week to 14 August the dollar bought 2.4% fewer pounds; the biggest week (to 30 October) moved every currency +3.3% to +4.7%, a move of the pound itself.
+  - Wide and phone charts; links to the food story; a "Data story" card on both prices pages.
+- **Shared chart code:** the chart drawing moved from `foodprices.py` into `pages/storychart.py`, with the subtitle and description as parameters, and the whole-weeks rule (`whole_weeks`) in the same place. The food page and both its charts were byte-identical across the move; a one-character change to the shared code made that comparison fail.
+- **Found and fixed while building it:**
+  1. **The food story's dollar figure used two single days.** It said "+5.5%" while the weekly medians said +8.2%. The pound recovered 1.6% on the window's last day alone: the one-day effect that page avoids for food. It now compares the dollar's first and last weeks. The new test failed on the old code (6% against 10%).
+  2. **Phone chart labels overflowed.** "Pound sterling 108.7" ran 14 px past the 320 px frame, measured in the browser. The phone chart now takes short names, its right margin is 112 px, and `narrow()` refuses a label over 16 characters rather than clip it. Measured afterwards: the widest currency label ends at 292 px, the widest food label at 302 px.
+  3. **The table hid its key column on phones.** CI's 390 px screenshot showed three columns: Change, last and with "EGP" in every cell, sat past the edge of the sheet. Change now comes second, the unit is in the headers, and only the number cells refuse to wrap. Measured on the live stylesheet at 390 px: the table is 290 px in a 290 px sheet, with no hidden scroll. A test pins the order.
+  4. **Two docstrings were wrong.** They said a chart's last point sits on the window's last day. It sits mid-week, because it stands for the whole week. Corrected in both stories.
+- **Daily rebuild:** `refresh-fx.yml` now rebuilds the currency and food stories and moves their sitemap dates. It commits through `push-with-regenerate.sh`, like the price refresh, instead of a plain `git pull --rebase`, which was safe only while the job generated nothing. Then it announces the changed URLs through IndexNow.
+- **Proof:**
+  - 10 new tests. Three deliberate breakages (a looser peg threshold, accepting a scattered week, the last day instead of the last week) each turned a test red.
+  - The daily entry point writes the same bytes as the full build. The full build changed no other page's content.
+  - The suite passes; pyflakes, `seo.py` (181 pages), `workflow-audit.py` and `checks.py workflows` are clean.
+  - The new page is added to the CI screenshots.
