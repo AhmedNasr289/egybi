@@ -108,6 +108,19 @@ class PhoneChart(unittest.TestCase):
             storychart.narrow(lines, d0, d1, 't', ('a', 'b'), 'd', ('c',))
 
 
+class Table(unittest.TestCase):
+    def test_change_comes_second_and_cells_carry_no_unit(self):
+        # On a 390 px phone the old order (Change last, "EGP" in every cell)
+        # pushed Change past the edge of the sheet (CI screenshot, 2026-11-07).
+        import re
+        series = {c: flat_then(50.0, 55.0) for c in ('USD', 'EUR')}
+        weeks, *_ = cs.currency_weeks(series)
+        html = cs.table_html(weeks, [])
+        heads = re.findall(r'<th scope="col"[^>]*>([^<]+)</th>', html)
+        self.assertEqual(heads[:2], ['Currency', 'Change'])
+        self.assertNotIn('<td class="num">EGP', html)
+
+
 class Text(unittest.TestCase):
     def test_a_fall_uses_a_true_minus(self):
         self.assertEqual(cs._pct_signed(-0.022), chr(0x2212) + '2.2%')

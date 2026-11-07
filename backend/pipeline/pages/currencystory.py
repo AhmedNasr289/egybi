@@ -178,17 +178,20 @@ def findings(weeks, pegs, d0, d1, n, series):
 
 
 def table_html(weeks, pegs):
+    """Change sits next to the name and the unit lives in the headers: with
+    "EGP" in every cell and Change last, a 390 px phone showed three columns
+    and hid Change past the edge (CI screenshot, 2026-11-07)."""
     rows = []
     for c in sorted(weeks, key=lambda c: -weeks[c]['change']):
         w = weeks[c]
         note = ' <span class="cur-note">moves with the dollar</span>' if c in pegs else ''
         rows.append(f'<tr><th scope="row">{esc(NAMES.get(c, c))} <span class="cur-code">{esc(c)}</span>{note}</th>'
-                    f'<td class="num">{egfmt.rate(w["first"], "en")}</td><td class="num">{egfmt.rate(w["last"], "en")}</td>'
-                    f'<td class="num">{esc(_pct_signed(w["change"]))}</td></tr>')
+                    f'<td class="num cur-chg">{esc(_pct_signed(w["change"]))}</td>'
+                    f'<td class="num">{egfmt.fixed(w["first"], "en", 2)}</td><td class="num">{egfmt.fixed(w["last"], "en", 2)}</td></tr>')
     return ('<div class="cur-wrap"><table class="cur-table"><caption>Pounds for one unit of each currency, '
             'median of the first and of the last week. A rise means the currency buys more pounds.</caption>'
-            '<thead><tr><th scope="col">Currency</th><th scope="col" class="num">First week</th>'
-            '<th scope="col" class="num">Last week</th><th scope="col" class="num">Change</th></tr></thead>'
+            '<thead><tr><th scope="col">Currency</th><th scope="col" class="num">Change</th>'
+            '<th scope="col" class="num">First week, EGP</th><th scope="col" class="num">Last week, EGP</th></tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
@@ -197,7 +200,10 @@ CSS = """
 .cur-table{border-collapse:collapse;width:100%}
 .cur-table caption{caption-side:bottom;text-align:left;font-size:.82rem;padding-top:8px;opacity:.85}
 .cur-table th,.cur-table td{text-align:left;padding:9px 8px;border-bottom:1px solid rgba(41,36,32,.15);font-size:.92rem}
-.cur-table .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cur-table .num{text-align:right;font-variant-numeric:tabular-nums}
+.cur-table td.num{white-space:nowrap}
+.cur-table .cur-chg{font-weight:700}
+@media (max-width:600px){.cur-table th,.cur-table td{padding:8px 5px;font-size:.86rem}}
 .cur-code{font-size:.78rem;color:var(--ink-soft);font-weight:500}
 .cur-note{display:block;font-size:.78rem;color:var(--ink-soft);font-weight:400}
 .cur-chart{display:block;width:100%;height:auto;border-radius:10px}
