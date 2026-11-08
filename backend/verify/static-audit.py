@@ -263,7 +263,13 @@ for script, out in GENERATED:
         if r.returncode != 0:
             fails["a generator that no longer runs"].append(
                 f"{script}: exit {r.returncode} — {(r.stderr or '').strip()[:120]}")
-        elif after != before:
+        # Compare with CRLF folded to LF. Git stores the file with LF, but a
+        # Windows checkout with core.autocrlf holds it with CRLF while the
+        # generator writes LF, so a byte compare reported a 7-line SVG as
+        # "no longer reproduced" (1252 -> 1245 bytes) on every local run while
+        # CI, checking out LF, stayed clean. Line endings are git's business,
+        # not the generator's; any other byte still counts.
+        elif after.replace(b"\r\n", b"\n") != before.replace(b"\r\n", b"\n"):
             # `out` is already a repo-relative path. The first version prettified
             # it with .relative_to(Path.cwd()), which raises on a relative path
             # against an absolute cwd — so this check crashed the whole audit at

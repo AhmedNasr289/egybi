@@ -1113,3 +1113,8 @@ After #83 went live I read the page at 1280 and at phone width. Three real defec
   - The daily entry point writes the same bytes as the full build. The full build changed no other page's content.
   - The suite passes; pyflakes, `seo.py` (181 pages), `workflow-audit.py` and `checks.py workflows` are clean.
   - The new page is added to the CI screenshots.
+
+## 2026-11-08 — Static audit: a line-ending false alarm
+- **The defect:** `static-audit.py` reported "a committed asset that its generator no longer reproduces" for `egypt-silhouette.svg` on every local run (1252 -> 1245 bytes), while CI stayed clean. Git stores the file with LF; a Windows checkout with `core.autocrlf` holds it with CRLF; `build_flag.py` writes LF. The 7 bytes were the 7 line endings. A check that always fires locally gets ignored, and then it is ignored the day it is right.
+- **The fix:** the comparison folds CRLF to LF on both sides. Any other byte still counts.
+- **Proof:** on a CRLF working copy, the old code reported 1 finding and the new code 0. A real content change to the SVG's title is still reported (1 finding), and mutate case 3b still covers it in CI.
