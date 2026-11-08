@@ -150,9 +150,11 @@ python -m pyflakes backend/pipeline/     # pip install pyflakes
 claims to catch, asserts the checker was quiet before, caught it, and is quiet again after the
 revert. A checker that cannot be shown failing is not evidence. Set `CASE=` to run one case.
 
-All of them also run in GitHub Actions on every push to `main` — `Verify (browser)` — because
-every push to `main` is a live Hostinger deploy, so a regression reaches readers before anyone
-looks. A failing run opens or comments on a failure issue naming the checker that broke and
+All of them also run in GitHub Actions — `Verify (browser)`, on pull requests and pushes to
+`main` — because every push to `main` is a live Hostinger deploy, so a regression reaches readers
+before anyone looks. A merge identical to an already-passed pull request is not swept twice, and
+`mutate.py` runs when the checkers or the files it edits change, plus a weekly full run; see
+`backend/verify/README.md`. A failing run opens or comments on a failure issue naming the checker that broke and
 quoting what it printed. See `backend/verify/README.md`.
 
 Two rules the tools enforce that are easy to lose by hand:
