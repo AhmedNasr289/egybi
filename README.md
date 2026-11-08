@@ -96,6 +96,7 @@ perankh/
 | `build_prices_pages.py` | the price summary in `prices.html`, and all of `prices-ar.html` | no |
 | `build_food_prices.py` | `egypt-food-prices.html` + `charts/egypt-food-prices.svg` and `-narrow.svg` (also written by `build_static_pages.py`; run daily by the price and FX refreshes) | no |
 | `build_currency_story.py` | `egyptian-pound-since-july.html` + `charts/egyptian-pound.svg` and `-narrow.svg` (also written by `build_static_pages.py`; run daily by the FX refresh). Both stories draw their charts with `pages/storychart.py` | no |
+| `build_wholesale_gap.py` | `egypt-wholesale-to-shop.html` + `charts/egypt-wholesale-to-shop.svg` and `-narrow.svg`: shop prices against wholesale for the items priced in the same unit on both lists (also written by `build_static_pages.py`; run daily by the price refresh, though its window ends on the weekly wholesale date). Dated in the sitemap by its own content (`SELF_DATED` in `sitemap_lastmod.py`) | no |
 | `sitemap_lastmod.py`, `indexnow_ping.py` | sitemap dates; IndexNow announcements after each push | IndexNow only |
 | `dossier_pack.py [--year Y] [--pdf]` | the paid $12 pack: `build/dossier-pack/the-papyrus-egypt-dossier.html` (+ `.pdf` via a local headless Edge/Chrome). Git-ignored and outside `site/`, so it is never deployed | no |
 | *(by hand, cited row by row)* | `site/data/calendar.json` (re-read every 120 d), `fair-prices.json` (every 90 d) | — |

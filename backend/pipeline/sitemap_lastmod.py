@@ -77,6 +77,15 @@ DATA_PAGES: dict[str, tuple[str, ...]] = {
     # Built from the FX history, refreshed by the daily FX job.
     'egyptian-pound-since-july.html': ('data/fx-today.json',),
 }
+# Pages a refresh job rebuilds whose content does NOT change with every data
+# file it reads. egypt-wholesale-to-shop.html reads the daily price history but
+# ends on the last WHOLESALE date, which moves about weekly; dating it by
+# prices-today.json would move its lastmod, and announce it through IndexNow,
+# every day while nothing on it had changed. These pages are dated by their own
+# content instead: today when the rebuilt file differs from HEAD (as a reader
+# sees it), otherwise unchanged. That works in the refresh job's shallow clone,
+# where git_date() cannot.
+SELF_DATED: frozenset[str] = frozenset({'egypt-wholesale-to-shop.html'})
 
 _ISO = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 _ASSET_VERSION = re.compile(r'(\.(?:css|js|png|jpe?g|svg|webp|woff2?|ico))\?v=\d+')
@@ -236,6 +245,17 @@ def refresh_data_pages(path: str = SITEMAP) -> list[str]:
     def sub(m: re.Match) -> str:
         url, current = m.group(2).strip(), m.group(4).strip()
         rel = url_to_rel(url)
+        if rel in SELF_DATED:
+            try:
+                working = _read(os.path.join(SITE, rel))
+            except OSError:
+                return m.group(0)
+            if same_content(_show('HEAD', 'site/' + rel), working):
+                return m.group(0)
+            lm = max(current, today())
+            if lm != current:
+                changed.append(url)
+            return f"{m.group(1)}{m.group(2)}{m.group(3)}{lm}{m.group(5)}"
         if rel not in DATA_PAGES:
             return m.group(0)
         # data_only: a refresh job runs in a shallow clone, and the page file

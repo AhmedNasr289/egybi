@@ -335,6 +335,8 @@ def build_food_prices_page():
     <div class="sheet">
       <span class="seal" aria-hidden="true"><span data-glyph="ankh"></span></span>
       {facts}
+      <p style="margin:0;">How the same foods compare with their wholesale price:
+      <a href="egypt-wholesale-to-shop.html">from the wholesale market to the shop</a>.</p>
     </div>
     <div class="sheet fpx-chart-sheet" style="margin-top:18px;">
       <picture>
