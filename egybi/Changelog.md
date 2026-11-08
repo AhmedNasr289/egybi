@@ -1141,3 +1141,12 @@ Found by running every checker by hand while Actions was blocked, and comparing 
   - The two data-age cases FAILED TO CATCH until the date was fixed, which is how the frozen date was found. All five now pass.
   - Every other non-browser case passes: 18 across static-audit, workflow-audit, seo and map-completeness, plus the 2 neighbouring coverage cases.
   - On today's main, coverage, orphans and fra read 0 findings. Before the fixes they read 20 locally (3 on CI), 1 and 1.
+
+## 2026-11-08 — API include files no longer run on their own
+- **Found by probing every PHP file over the web:** `api/lib/*.php` and `api/controllers/*.php` answered an empty 200 when requested directly, because Apache ran them. `auth/` already refuses its own includes (`lib.php`, `mailer.php`) with 403. Nothing leaked: they only define classes and print nothing. An include still should not run on its own.
+- **The fix:** `api/.htaccess` forbids `lib/` and `controllers/`, beside its existing `_private/` and `cache/` rules. `index.php` requires them from disk, so the API is unaffected.
+- **Before the change, measured live:**
+  - `api/config.php`, `auth/lib.php`, `auth/mailer.php` and `auth/config.sample.php` return 403;
+  - `api/insights.php` returns 403 without its key, and `auth/progress.php` 401 without a sign-in;
+  - `api/` and `api/datasets` return 200.
+- **Not verified:** there is no Apache here, so the new rule is untested until it deploys. After the merge, `api/lib/Database.php` must return 403 and `api/datasets` must still return 200.
