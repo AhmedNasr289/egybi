@@ -41,6 +41,7 @@ PAGE = 'egypt-wholesale-to-shop.html'
 CHART = 'charts/egypt-wholesale-to-shop.svg'
 CHART_NARROW = 'charts/egypt-wholesale-to-shop-narrow.svg'
 TIMES = chr(0xD7)
+KILO = 'كيلو'
 # A wholesale series with this many distinct prices or fewer across the window
 # has not been re-measured, and is left out.
 FROZEN_MAX_DISTINCT = 2
@@ -225,14 +226,18 @@ def table_html(rows):
     for r in sorted(rows, key=lambda r: (-r['gap'], r['slug'])):
         name = (f"{esc(r['name_en'])} <span class=\"wg-ar\" lang=\"ar\" dir=\"rtl\">{esc(r['name_ar'])}</span>"
                 if r['name_en'] else f"<span lang=\"ar\" dir=\"rtl\">{esc(r['name_ar'])}</span>")
-        unit = f" <span class=\"wg-note\" lang=\"ar\" dir=\"rtl\">{esc(r['unit'])}</span>" if r['unit'] else ''
+        # Most rows are per kilo; repeating it on every row made each row
+        # three lines tall on a phone (measured: 128 px rows at 390 px).
+        unit = (f" <span class=\"wg-note\" lang=\"ar\" dir=\"rtl\">{esc(r['unit'])}</span>"
+                if r['unit'] and r['unit'] != KILO else '')
         out.append(f'<tr><th scope="row">{name}{unit}</th><td class="num wg-gap">{esc(_x(r["gap"]))}</td>'
                    f'<td class="num">{egfmt.fixed(r["wholesale"], "en", 2)}</td>'
                    f'<td class="num">{egfmt.fixed(r["shop"], "en", 2)}</td></tr>')
-    return ('<div class="wg-wrap"><table class="wg-table"><caption>Median of the last four weeks, per unit shown '
-            'under each name. Gap = shop price divided by wholesale price: 1.50 means shops charged half as much '
-            'again.</caption><thead><tr><th scope="col">Item</th><th scope="col" class="num">Gap</th>'
-            '<th scope="col" class="num">Wholesale, EGP</th><th scope="col" class="num">Shop, EGP</th></tr></thead>'
+    return ('<div class="wg-wrap"><table class="wg-table"><caption>Median of the last four weeks, in Egyptian '
+            'pounds per kilo unless another unit is shown under the name. Gap = shop price divided by wholesale '
+            'price: 1.50 means shops charged half as much again.</caption><thead><tr><th scope="col">Item</th>'
+            '<th scope="col" class="num">Gap</th><th scope="col" class="num">Wholesale</th>'
+            '<th scope="col" class="num">Shop</th></tr></thead>'
             f'<tbody>{"".join(out)}</tbody></table></div>')
 
 
