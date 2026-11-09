@@ -22,6 +22,7 @@ control.
 | `map-completeness.py` | Whether a map EXPLAINS: legend, labels, units, source line. A map can render perfectly and still be unlabelled gold shapes on a pale field. |
 | `workflow-audit.py` | The whole workflow fleet at once — triggers, path filters, timeouts, concurrency, push-back, and whether anything that can fire unattended tells somebody when it breaks. Exits non-zero on a gap. |
 | `beacon-url.js` | Where the analytics beacon lands, from pages at the root and in folders. It runs `analytics.js` in a stub browser, so no Chromium is needed, and carries its own control (the old relative URL must be caught). |
+| `auth-flow.sh` | The account endpoints end to end, in CI only (no PHP here): PHP's built-in server on a throwaway SQLite database, two users, sign-up, verify, sign-in, CSRF and cross-site refusals, trips and places, one user unable to touch the other's trip, export, and account deletion followed by a direct read proving every row is gone. |
 | `env.js` | Not a check — resolves Chromium, `playwright-core`, the preview server and the log directory for the browser checkers. |
 | `ci-step.sh` | Not a check — runs one checker in CI, tees its output into `$VERIFY_LOG_DIR` and records its name in `FAILED` if it failed, so the failure alert can name the checker and quote what it said. |
 | `checks.py` | `orphans`, `workflows`, `secrets`, `fra`. |

@@ -9,6 +9,10 @@
  *   POST request-reset {email}                       -> issue reset token (generic reply)
  *   POST reset {token,password}                      -> set new password, kill sessions
  *   GET  me                                          -> current user (or null)
+ *   GET  export                                      -> everything the account holds, as JSON
+ *   POST delete-account {password, confirm:'DELETE'} -> delete the account and its data (CSRF)
+ *   GET  trips-list / POST trips-save {id?,title,data} / POST trips-delete {id}
+ *   GET  places-list / POST places-toggle {place}    -> saved places
  * Security: Argon2id hashing, prepared statements, HttpOnly+Secure+SameSite
  * cookie, CSRF on state-changing writes, rate limiting, no account enumeration.
  */
@@ -213,6 +217,124 @@ case 'rename': {
     }
     $db->prepare('UPDATE users SET display_name=?, updated_at=? WHERE id=?')->execute([$name, now(), $s['user_id']]);
     json_out(true, ['name' => $name, 'message' => 'Handle updated.']);
+}
+
+case 'export': {
+    $u = current_user();
+    if (!$u) json_out(false, ['message' => 'Sign in first.'], 401);
+    header('Content-Disposition: attachment; filename="egybi-account.json"');
+    json_out(true, ['export' => account_export($db, $u)]);
+}
+
+case 'delete-account': {
+    if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
+    require_same_origin();
+    $s = current_session();
+    if (!$s) json_out(false, ['message' => 'Sign in first.'], 401);
+    require_csrf($s);
+    if (!rate_ok_key('u:' . $s['user_id'], 'delete', 5, 60)) json_out(false, ['message' => 'Too many attempts — please try again later.'], 429);
+    $b = body();
+    // Typed confirmation, so a stray click cannot delete an account.
+    if ((string)($b['confirm'] ?? '') !== 'DELETE') json_out(false, ['message' => 'Type DELETE to confirm.'], 422);
+    // current_user() does not select the hash, so read it here.
+    $st = $db->prepare('SELECT id, pass_hash FROM users WHERE id=?'); $st->execute([$s['user_id']]);
+    $u = $st->fetch();
+    if (!$u) json_out(false, ['message' => 'Sign in first.'], 401);
+    // Re-enter the password, so a borrowed signed-in browser cannot do it.
+    // A Google-only account has no password; its session and the typed
+    // confirmation are the proof there.
+    if ($u['pass_hash'] !== PASS_NONE && !password_verify((string)($b['password'] ?? ''), $u['pass_hash'])) {
+        json_out(false, ['message' => 'That password is not right.'], 403);
+    }
+    account_delete($db, $u['id']);
+    clear_session_cookie();
+    json_out(true, ['message' => 'Your account and everything saved in it have been deleted.']);
+}
+
+case 'trips-list': {
+    $u = current_user();
+    if (!$u) json_out(false, ['message' => 'Sign in first.'], 401);
+    account_ensure_schema($db);
+    $st = $db->prepare('SELECT id,title,data_json,updated_at FROM user_trips WHERE user_id=? ORDER BY updated_at DESC');
+    $st->execute([$u['id']]);
+    $trips = array_map(function ($t) {
+        return ['id' => $t['id'], 'title' => $t['title'], 'data' => json_decode($t['data_json'], true), 'updated_at' => $t['updated_at']];
+    }, $st->fetchAll());
+    json_out(true, ['trips' => $trips]);
+}
+
+case 'trips-save': {
+    if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
+    require_same_origin();
+    $s = current_session();
+    if (!$s) json_out(false, ['message' => 'Sign in first.'], 401);
+    require_csrf($s);
+    account_ensure_schema($db);
+    $b = body();
+    $title = trim((string)($b['title'] ?? ''));
+    $len = preg_match_all('/./su', $title);   // code points; false on invalid UTF-8
+    if ($title === '' || $len === false || $len > 120) json_out(false, ['message' => 'Give the trip a name of up to 120 characters.'], 422);
+    $data = json_encode($b['data'] ?? null, JSON_UNESCAPED_UNICODE);
+    if (!is_array($b['data'] ?? null) || $data === false || strlen($data) > 65536) {
+        json_out(false, ['message' => 'That trip is too large to save.'], 422);
+    }
+    $id = (string)($b['id'] ?? '');
+    $ts = now();
+    if ($id !== '') {
+        if (!ctype_xdigit($id)) json_out(false, ['message' => 'Unknown trip.'], 404);
+        $up = $db->prepare('UPDATE user_trips SET title=?, data_json=?, updated_at=? WHERE id=? AND user_id=?');
+        $up->execute([$title, $data, $ts, $id, $s['user_id']]);
+        if ($up->rowCount() === 0) json_out(false, ['message' => 'Unknown trip.'], 404);
+    } else {
+        $n = $db->prepare('SELECT COUNT(*) FROM user_trips WHERE user_id=?'); $n->execute([$s['user_id']]);
+        if ((int)$n->fetchColumn() >= 50) json_out(false, ['message' => 'You can keep up to 50 trips. Delete one first.'], 422);
+        $id = rid(16);
+        $db->prepare('INSERT INTO user_trips (id,user_id,title,data_json,created_at,updated_at) VALUES (?,?,?,?,?,?)')
+           ->execute([$id, $s['user_id'], $title, $data, $ts, $ts]);
+    }
+    json_out(true, ['id' => $id, 'message' => 'Trip saved.']);
+}
+
+case 'trips-delete': {
+    if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
+    require_same_origin();
+    $s = current_session();
+    if (!$s) json_out(false, ['message' => 'Sign in first.'], 401);
+    require_csrf($s);
+    account_ensure_schema($db);
+    $id = (string)(body()['id'] ?? '');
+    $del = $db->prepare('DELETE FROM user_trips WHERE id=? AND user_id=?');
+    $del->execute([$id, $s['user_id']]);
+    if ($del->rowCount() === 0) json_out(false, ['message' => 'Unknown trip.'], 404);
+    json_out(true, ['message' => 'Trip deleted.']);
+}
+
+case 'places-list': {
+    $u = current_user();
+    if (!$u) json_out(false, ['message' => 'Sign in first.'], 401);
+    account_ensure_schema($db);
+    $st = $db->prepare('SELECT place_key FROM user_saved_places WHERE user_id=? ORDER BY created_at');
+    $st->execute([$u['id']]);
+    json_out(true, ['places' => array_column($st->fetchAll(), 'place_key')]);
+}
+
+case 'places-toggle': {
+    if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
+    require_same_origin();
+    $s = current_session();
+    if (!$s) json_out(false, ['message' => 'Sign in first.'], 401);
+    require_csrf($s);
+    account_ensure_schema($db);
+    $key = (string)(body()['place'] ?? '');
+    if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,79}$/', $key)) json_out(false, ['message' => 'Unknown place.'], 422);
+    $del = $db->prepare('DELETE FROM user_saved_places WHERE user_id=? AND place_key=?');
+    $del->execute([$s['user_id'], $key]);
+    if ($del->rowCount() > 0) json_out(true, ['saved' => false]);
+    $n = $db->prepare('SELECT COUNT(*) FROM user_saved_places WHERE user_id=?'); $n->execute([$s['user_id']]);
+    if ((int)$n->fetchColumn() >= 500) json_out(false, ['message' => 'You can keep up to 500 saved places.'], 422);
+    $db->prepare('INSERT INTO user_saved_places (user_id,place_key,created_at) VALUES (?,?,?)')
+       ->execute([$s['user_id'], $key, now()]);
+    json_out(true, ['saved' => true]);
 }
 
 case 'health': {

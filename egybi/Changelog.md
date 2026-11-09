@@ -1183,3 +1183,27 @@ Found by running every checker by hand while Actions was blocked, and comparing 
     - a CSS edit and a Python checker edit both run everything.
   - `workflow-audit.py`, `checks.py workflows` and `coverage.py` report no gaps.
 - **Not verified until CI:** the gated steps on a real runner. This PR changes the gate, so its own run is a full one.
+
+## 2026-11-09 — Accounts, server side: saved trips and places, export, deletion
+Part 2 of [[Plan — Private Repo, Free CI and Accounts]]. Sign-up, verification, sign-in, sign-out and password reset already existed in `site/auth/auth.php`: Argon2id, CSRF, rate limits, no account enumeration. What a reader could not do was keep anything, take their data out, or delete their account.
+- **New actions in `auth.php`:**
+  - `trips-list`, `trips-save` and `trips-delete`: up to 50 trips of up to 64 KB each.
+  - `places-list` and `places-toggle`: up to 500 places; keys must match `^[a-z0-9][a-z0-9_-]{0,79}$`.
+  - `export`: everything the account holds, as JSON.
+  - `delete-account`.
+  - Every write needs a signed-in session, the CSRF header and a same-origin request. Every query is prepared and scoped to the signed-in user's id, so one user cannot read, change or delete another's rows.
+- **Deletion:** `delete-account` needs the typed word DELETE and the account password. A Google-only account has no password; its session and the typed confirmation are the proof. `account_delete()` removes the user's trips, places, progress, stats, tokens and sessions, then the user row, in one transaction (`with_tx()`, new). A failure part-way leaves nothing half-deleted. Newsletter subscriptions are keyed on the email, not the account, and keep their own unsubscribe link.
+- **Tables:** `user_trips` and `user_saved_places` are created on first use by `account_ensure_schema()`, like the newsletter tables. The schema files only run when `users` is missing, so a live database would otherwise never get them.
+- **Two mistakes caught before any run:**
+  - `current_user()` does not select `pass_hash`, so the password check would have read nothing. `delete-account` reads the hash itself.
+  - `lib.php` notes that mbstring is not guaranteed on the host, so title length is counted with `preg_match_all('/./su')`, which also refuses invalid UTF-8.
+- **The test:** `backend/verify/auth-flow.sh` runs in CI (there is no PHP on the workstation). It starts PHP's built-in server on a throwaway SQLite database and checks, through curl:
+  - sign-up, verify and sign-in for two users, plus a refused wrong password;
+  - that the session cookie is HttpOnly;
+  - refusals without CSRF and from another site;
+  - trips and places, including that A cannot rename or delete B's trip and B's trip is not in A's list;
+  - that the export holds the trip and the place;
+  - deletion refused without confirmation, with a wrong password and without CSRF; then a real deletion;
+  - a direct read of the database proving no row of A's is left in any table, that A is signed out and cannot sign in again, and that B's data survives.
+  - It fails on any PHP warning in the server log.
+- **Not yet:** the page side (header sign-in, `account.html`, Save trip, Save place, privacy page) is the next PR. The first run of `auth-flow.sh` is this PR's CI.
