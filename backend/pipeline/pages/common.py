@@ -152,7 +152,7 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 <script src="{prefix}assets/glyphs.js?v=3"></script>
 <script src="{prefix}assets/wayfinding.js?v=1"></script>
 <script src="{prefix}assets/ads.js"></script>
-<script src="{prefix}assets/analytics.js"></script>
+<script src="{prefix}assets/analytics.js?v=2"></script>
 </body>
 </html>
 """

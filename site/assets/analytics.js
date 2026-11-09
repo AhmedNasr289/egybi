@@ -8,7 +8,13 @@
     var h = location.hostname;
     if (h === 'localhost' || h === '127.0.0.1' || h === '' || h.indexOf('.') === -1) return;
 
-    var url = 'api/hit.php';
+    // Resolve the endpoint against THIS script's address, not the page's.
+    // Until 2026-11-09 it was the bare relative 'api/hit.php', which a page in
+    // a folder (visit/, papyrus/, practice/: 153 pages) resolved to
+    // visit/api/hit.php - a 404 - so none of their views was ever counted.
+    // The script always sits in assets/, so ../api/ is right on every page.
+    var me = document.currentScript && document.currentScript.src;
+    var url = me ? new URL('../api/hit.php', me).href : '/api/hit.php';
     function send(event) {
       var body = JSON.stringify({ path: location.pathname, ref: document.referrer || '', event: event || '' });
       if (navigator.sendBeacon) {
