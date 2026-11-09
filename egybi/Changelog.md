@@ -1261,3 +1261,24 @@ The plan's safety net before the repo goes private again (part 1 of `Plan — Pr
   - It has the usual timeout, concurrency group and failure alert with the log's last lines.
 - **Checked against the real bill:** for 1–8 November it counts **2,057 minutes** in 170 runs. GitHub billed **2,052** for those days: within 0.25%, inside the plan's 2% test. Verify (browser) was 1,939 of them.
 - **Tests:** `test_usage_guard.py`, 12 cases: rounding, skipped and running jobs, Windows and macOS rates, the 70/90 thresholds, month-scoped titles, the projection, reading every page of runs, and that the report states its scope.
+
+## 2026-11-09 — Save a place to your account
+
+The second thing an account is for, after saved trips (plan part 2). The server side (`places-toggle`, `places-list`) shipped with #95; nothing on the pages used it.
+
+- **`assets/saveplace.js`** (new, v1), loaded only by the 18 visitor-site pages (`visit/*.html`): a "Save this place" button beside "Add to my plan", keyed by the page's slug (`giza`, `karnak`…).
+  - It is rendered `hidden` and shown by the script, so a reader without JavaScript never sees a button that does nothing.
+  - Anonymous readers download nothing more: the account code loads only when the button is pressed, or when this browser was signed in before (to show whether the place is already saved).
+  - Signed out, it opens the sign-in dialog ("Sign in or create a free account to save places."). Signing in then finishes the save, but first asks whether the place is already saved, because the action toggles: finishing blindly would have removed it.
+  - Saved, it reads "Saved to your account" (`aria-pressed="true"`, filled blue); a second press removes it. The result is announced in a status line under the buttons, with a link to the account page.
+- **The page template** (`common.py`): `page()` takes `extra_foot`, so one kind of page can load one script without every page loading it. The 18 visit pages are regenerated; their sitemap dates moved to today, and no other page changed beyond the stylesheet version.
+- **`account.js`:** saved places are listed by name, linked to their page, with a Remove button. Names come from `data/visit-climate.json`, the file the pages are built from. A key it does not know (a retired page) is still listed, unlinked, so it can be removed. The confirmation after a delete ("Trip deleted.", "Place removed.") no longer vanishes when the list reloads.
+- **`egybi.css`** v44 on all 182 pages and the template: the saved state, and the place row.
+- **`backend/verify/save-place.js`** (new browser check, CI): plays the account service in the browser and walks four stories:
+  - signed in, the saved state shows on arrival, a press removes it with the session's CSRF token, and a second press saves it again;
+  - signed out, a press opens the dialog and saves nothing, and the account code is not loaded on arrival;
+  - signing in finishes the save, and does not undo a place already saved;
+  - the account page lists places by name with links, lists an unknown key unlinked, and Remove removes one.
+
+  The real PHP service is still tested by `auth-flow.sh`. Two new `mutate.py` cases prove the check can fail: finishing a save without asking first, and a button that is never shown.
+- **Checked on this machine:** both scripts parse; static-audit, coverage, seo, map-completeness, workflow-audit and the four `checks.py` modes report no findings (CSS orphans 0); 147 unit tests pass. The browser check and its mutation cases run in CI.

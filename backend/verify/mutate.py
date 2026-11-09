@@ -823,6 +823,25 @@ case("one user can delete another user's trip", "auth-flow.sh",
      lambda o: "FAIL  A cannot delete B's trip" in o, SH_AUTH)
 
 
+# ---- 28-29. save-place.js: a save that undoes itself, or never shows --------
+# The button toggles, so finishing a save after sign-in without first asking
+# whether the place was already saved would REMOVE it: the reader presses
+# Save and loses the place. And a button left hidden is a feature nobody sees.
+NODE_SAVE = f"node {HERE}/save-place.js"
+
+case("signing in undoes a place already saved", "save-place.js",
+     ["site/assets/saveplace.js"],
+     lambda: edit("site/assets/saveplace.js",
+                  "if (saved) say('Already in your saved places.', 'ok'); else toggle(A);",
+                  "toggle(A);"),
+     lambda o: "FAIL  signing in does not undo a place already saved" in o, NODE_SAVE)
+
+case("save button never shown", "save-place.js",
+     ["site/assets/saveplace.js"],
+     lambda: edit("site/assets/saveplace.js", "  btn.hidden = false;\n", "\n"),
+     lambda o: "FAIL  signed in: the button is visible" in o, NODE_SAVE)
+
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")

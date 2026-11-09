@@ -324,6 +324,13 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh map-interaction node backend/verify/map-interaction.js
 
+      # "Save this place" on the visitor pages and the account page's place
+      # list, against a played account service (the real PHP one is tested by
+      # auth-flow.sh above).
+      - name: save-place.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh save-place node backend/verify/save-place.js
+
       # A clean sweep is only evidence if the checkers can still fire. This is
       # the argument backend/verify/README.md makes, and it is why an earlier
       # "0/32 checkers work" turned out to be a dead python3 alias rather than

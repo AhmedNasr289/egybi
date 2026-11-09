@@ -85,7 +85,7 @@ def chrome(prefix='../'):
 NAV, FOOT = chrome()
 
 def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
-         nav=None, foot=None, og_image=None, canonical_link=True):
+         nav=None, foot=None, og_image=None, canonical_link=True, extra_foot=''):
     # Parameterised because the card was hardcoded here at ?v=2, so all 135
     # generated pages would have kept advertising the retired "Practice SQL &
     # BI / 123 challenges" preview even after the file behind that URL was
@@ -134,7 +134,7 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="{prefix}assets/egybi.css?v=43" rel="stylesheet">
+<link href="{prefix}assets/egybi.css?v=44" rel="stylesheet">
 <script src="{prefix}assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
@@ -152,7 +152,7 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 <script src="{prefix}assets/glyphs.js?v=3"></script>
 <script src="{prefix}assets/wayfinding.js?v=1"></script>
 <script src="{prefix}assets/ads.js"></script>
-<script src="{prefix}assets/analytics.js?v=2"></script>
+<script src="{prefix}assets/analytics.js?v=2"></script>{extra_foot}
 </body>
 </html>
 """
