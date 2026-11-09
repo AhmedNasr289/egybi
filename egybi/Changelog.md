@@ -1294,3 +1294,9 @@ The second thing an account is for, after saved trips (plan part 2). The server 
   - It reads the base files in one `git cat-file --batch`: 2 seconds, where one `git show` per page took over two minutes.
 - **Where it runs:** a second step in the Conflict markers job, on every pull request (against its base) and every push to main (against the commit before). It shares the job so it adds no billed minute. The job now checks out the full history (10 MB). A push that fails it opens an issue naming the asset and page.
 - **`mutate.py`** case 30 proves it can fail: change `saveplace.js` and leave the pages on `?v=1`. It passes here.
+
+## 2026-11-09 — The minutes guard reads runs side by side
+
+- **First run on GitHub (manual, dry):** November so far is 2,548 minutes in 227 runs (127% of a private month's 2,000). It said it would open the 70% and 90% issues and opened none, as designed for a manual dry run on a public repo.
+- **But it took 2 min 21 s** (billed as 3 minutes), because it asked for each run's jobs one after another. The plan budgeted 1 minute a day, and the number of runs grows through the month.
+- **Now** `usage_guard.py` reads the runs' jobs eight at a time. The sums do not depend on the order, and a new test checks that one-at-a-time and parallel reading give identical totals. On this machine 1–8 November still counts **2,057 minutes**, now in 41 s instead of 4 min 12 s.

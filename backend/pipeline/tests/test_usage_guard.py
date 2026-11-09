@@ -99,6 +99,12 @@ class Tally(unittest.TestCase):
         self.assertTrue(any('page=2' in c for c in self.calls if '/runs?' in c))
         self.assertTrue(all('filter=all' in c for c in self.calls if '/jobs' in c))
 
+    def test_parallel_reading_gives_the_same_totals(self):
+        one = ug.tally(self.fetch, 'o/r', NOW, workers=1)
+        many = ug.tally(self.fetch, 'o/r', NOW, workers=8)
+        self.assertEqual((one.runs, one.jobs, one.minutes, one.by_workflow),
+                         (many.runs, many.jobs, many.minutes, many.by_workflow))
+
     def test_report_states_the_scope(self):
         t = ug.tally(self.fetch, 'o/r', NOW)
         r = ug.report(t, NOW, 2000, public=True)
