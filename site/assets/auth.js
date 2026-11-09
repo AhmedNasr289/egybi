@@ -1,127 +1,78 @@
-/* EgyBI — Phase 2 account UI (client).
-   Renders the nav account control, a sign-in / create-account / reset modal, and
-   syncs solved-challenge progress between localStorage and the account. Talks to
-   the isolated auth endpoints under window.EGYBI_AUTH.base (default 'auth/').
-   Anonymous visitors are untouched — solving still works with localStorage, and
-   nothing here runs until they choose to sign in. Degrades gracefully if the
-   auth backend isn't reachable (e.g. a pure-static preview): the control just
-   shows "Sign in" and the modal explains it. */
+/* EgyBI — account UI (client), for the trip companion (reworked 2026-11-09).
+   Renders the header account control and the sign-in / create-account /
+   reset dialog, and gives the planner and account.html one small API.
+   Accounts are OPTIONAL: anonymous readers never load this file (egybi.js
+   loads it on demand), and nothing about a trip leaves the browser unless a
+   signed-in reader presses Save. Degrades gracefully when the server is not
+   reachable (a static preview): the dialog says so.
+
+   Paths resolve against THIS file's address (always assets/), not the page:
+   a page in visit/ or papyrus/ resolving the old relative 'auth/' would call
+   visit/auth/auth.php, a 404 - the same fault the analytics beacon had. */
 (function () {
   var CFG = window.EGYBI_AUTH || {};
-  var BASE = CFG.base || 'auth/';
-  var SOLVED_KEY = 'egybi_solved';
+  var ME = (document.currentScript && document.currentScript.src) || location.href;
+  var BASE = CFG.base || new URL('../auth/', ME).href;
   var esc = (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml : function (s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; };
-  var csrf = null, user = null, stats = null;
-  var POINTS = { Easy: 10, Medium: 20, Hard: 40 };
-  // Build a { challenge_id: points } map from the catalogue when it's loaded
-  // (Practice page). Elsewhere it's empty and the server defaults to 10 each.
-  function pointsMap() {
-    var m = {}, cat = window.EGYBI_CHALLENGES || [];
-    cat.forEach(function (c) { m[c.id] = POINTS[c.difficulty] || 10; });
-    return m;
-  }
+  var csrf = null, user = null;
+  var readyResolve;
+  var ready = new Promise(function (r) { readyResolve = r; });
 
   // ---- tiny API helper -----------------------------------------------------
   function api(action, method, data) {
     var url = BASE + 'auth.php?action=' + encodeURIComponent(action);
-    var opts = { method: method || 'GET', headers: {} };
+    var opts = { method: method || 'GET', headers: {}, credentials: 'same-origin' };
     if (data) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(data); }
     if (csrf && method === 'POST') opts.headers['X-CSRF'] = csrf;
     return fetch(url, opts).then(function (r) { return r.json().then(function (j) { return { status: r.status, data: j }; }); });
   }
-  function localSolved() { try { return JSON.parse(localStorage.getItem(SOLVED_KEY) || '[]'); } catch (e) { return []; } }
-  function setLocalSolved(arr) { try { localStorage.setItem(SOLVED_KEY, JSON.stringify(arr)); } catch (e) {} }
 
-  // ---- progress sync: merge localStorage <-> account -----------------------
-  function syncProgress() {
-    if (!user) return;
-    var local = localSolved();
-    fetch(BASE + 'progress.php', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF': csrf || '' },
-      body: JSON.stringify({ solved: local, points: pointsMap() })
-    }).then(function (r) { return r.json(); }).then(function (j) {
-      if (j && j.solved) {
-        // union of server + local, written back so the Practice page picks it up
-        var union = {}; j.solved.concat(local).forEach(function (id) { union[id] = 1; });
-        setLocalSolved(Object.keys(union));
-        if (j.stats) { stats = j.stats; }
-        renderNav(); renderProfile();
-        window.dispatchEvent(new CustomEvent('egybi:progress-synced'));
-      }
-    }).catch(function () {});
+  // A flag, not the session: the session is an HttpOnly cookie that script
+  // cannot read. egybi.js reads this flag to decide whether to load this file
+  // on the next page, so a signed-in reader sees their menu straight away.
+  function setFlag(on) { try { if (on) localStorage.setItem('egybi.account', '1'); else localStorage.removeItem('egybi.account'); } catch (e) {} }
+  function accountUrl() { return new URL('../account.html', ME).href; }
+
+  // One place for "a sign-in just succeeded", whatever the route (password or
+  // Google), so the planner can finish a save it was waiting on.
+  function signedIn(d) {
+    csrf = d.csrf; user = d.user; setFlag(true); renderNav();
+    window.dispatchEvent(new CustomEvent('egybi:account', { detail: { user: user } }));
   }
 
   // ---- nav account control -------------------------------------------------
   function renderNav() {
-    // Prefer the dedicated actions zone so the account control never widens
-    // the link row (which used to make the whole header wrap).
+    // egybi.js already put a "Sign in" button in this slot; replace it.
     var nav = document.querySelector('.nav-actions') || document.querySelector('.nav-links'); if (!nav) return;
     var slot = document.getElementById('acct-slot');
     if (!slot) { slot = document.createElement('span'); slot.id = 'acct-slot'; slot.className = 'acct-slot'; nav.appendChild(slot); }
     if (user) {
       var initial = (user.email || '?').charAt(0).toUpperCase();
-      var sHtml = '';
-      if (stats) {
-        var r = stats.rank || {};
-        sHtml = '<div class="acct-stats">' +
-          '<div><b>' + stats.xp + '</b><span>XP</span></div>' +
-          '<div><b>' + stats.current_streak + '🔥</b><span>streak</span></div>' +
-          '<div><b>' + stats.solved_count + '</b><span>solved</span></div></div>' +
-          '<div class="acct-rank">' + esc(r.tier || 'Apprentice Scribe') +
-          (r.next ? '<span class="acct-next"> · ' + (r.next_at - stats.xp) + ' XP to ' + esc(r.next) + '</span>' : '') + '</div>';
-      }
-      slot.innerHTML = '<button class="acct-btn" id="acctBtn" aria-haspopup="true" aria-expanded="false"><span class="acct-av">' + esc(initial) + '</span></button>' +
+      slot.innerHTML = '<button type="button" class="acct-btn" id="acctBtn" aria-haspopup="true" aria-expanded="false" aria-controls="acctMenu" aria-label="Your account">' +
+        '<span class="acct-av" aria-hidden="true">' + esc(initial) + '</span></button>' +
         '<div class="acct-menu" id="acctMenu" hidden>' +
-        '<div class="acct-handle"><span id="acctName">' + esc(user.name || 'Scribe') + '</span>' +
-        '<button id="acctRename" class="acct-edit" title="Change your leaderboard handle" aria-label="Change handle">✎</button></div>' +
         '<div class="acct-email">' + esc(user.email) + '</div>' +
-        '<div class="acct-plan">Plan: ' + esc(user.plan || 'free') + (user.verified ? '' : ' · unverified') + '</div>' +
-        sHtml +
-        // "Your progress" pointed at practice.html, which .htaccess 301s to
-        // explore.html — a signed-in reader clicking their own progress landed
-        // on the country data page. The SQL practice product it belonged to is
-        // retired. No link checker could see this: the menu is built in JS and
-        // only renders when signed in, which never happens in a crawl.
-        '<button id="acctOut">Sign out</button></div>';
-      document.getElementById('acctBtn').addEventListener('click', function (e) {
-        var m = document.getElementById('acctMenu'); var open = m.hasAttribute('hidden');
-        if (open) { m.removeAttribute('hidden'); this.setAttribute('aria-expanded', 'true'); } else { m.setAttribute('hidden', ''); this.setAttribute('aria-expanded', 'false'); }
+        '<a href="' + esc(accountUrl()) + '">Your trips and account</a>' +
+        '<button type="button" id="acctOut">Sign out</button></div>';
+      var btn = document.getElementById('acctBtn'), menu = document.getElementById('acctMenu');
+      btn.addEventListener('click', function () {
+        var open = menu.hasAttribute('hidden');
+        if (open) { menu.removeAttribute('hidden'); } else { menu.setAttribute('hidden', ''); }
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
-      document.getElementById('acctRename').addEventListener('click', function () {
-        var cur = (user && user.name) || '';
-        var next = window.prompt('Your leaderboard handle (3–32 letters, numbers, spaces, - or _):', cur);
-        if (next == null) return;
-        next = next.trim();
-        if (next === '' || next === cur) return;
-        api('rename', 'POST', { name: next }).then(function (res) {
-          var d = res.data || {};
-          if (d.ok) { user.name = d.name; var el = document.getElementById('acctName'); if (el) el.textContent = d.name; }
-          else window.alert(d.message || 'Could not update your handle.');
-        }).catch(function () { window.alert('Could not reach the server.'); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !menu.hasAttribute('hidden')) { menu.setAttribute('hidden', ''); btn.setAttribute('aria-expanded', 'false'); btn.focus(); }
       });
       document.getElementById('acctOut').addEventListener('click', function () {
-        api('logout', 'POST').then(function () { user = null; csrf = null; renderNav(); });
+        api('logout', 'POST').then(function () {
+          user = null; csrf = null; setFlag(false); renderNav();
+          window.dispatchEvent(new CustomEvent('egybi:account', { detail: { user: null } }));
+        });
       });
     } else {
-      slot.innerHTML = '<button class="acct-btn signin" id="signinBtn">Sign in</button>';
+      slot.innerHTML = '<button type="button" class="acct-btn signin" id="signinBtn">Sign in</button>';
       document.getElementById('signinBtn').addEventListener('click', function () { openModal('in'); });
     }
-  }
-
-  // ---- Practice-page profile strip (XP / rank / streak) --------------------
-  function renderProfile() {
-    var head = document.querySelector('.catalog h3'); // Practice page only
-    if (!head) return;
-    var strip = document.getElementById('acct-profile');
-    if (!user || !stats) { if (strip) strip.remove(); return; }
-    if (!strip) { strip = document.createElement('div'); strip.id = 'acct-profile'; strip.className = 'acct-profile'; head.parentNode.insertBefore(strip, head.nextSibling); }
-    var r = stats.rank || {};
-    strip.innerHTML =
-      '<div class="ap-rank"><span class="ap-tier">' + esc(r.tier || 'Apprentice Scribe') + '</span>' +
-      '<span class="ap-xp">' + stats.xp + ' XP</span></div>' +
-      (r.next ? '<div class="ap-bar"><i style="width:' + (r.progress_pct || 0) + '%"></i></div>' +
-        '<div class="ap-next">' + (r.next_at - stats.xp) + ' XP to ' + esc(r.next) + '</div>' : '<div class="ap-next">Top rank reached — Vizier of Data.</div>') +
-      '<div class="ap-stats"><span>🔥 ' + stats.current_streak + '-day streak</span><span>best ' + stats.longest_streak + '</span><span>' + stats.solved_count + ' solved</span></div>';
   }
 
   // ==========================================================================
@@ -203,10 +154,10 @@
       '<div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">' +
         '<aside class="auth-rail">' +
           '<span class="auth-rail-glyph" data-glyph="ankh"></span>' +
-          '<p class="auth-rail-kicker">The House of Life</p>' +
-          '<h2 class="auth-rail-h">Keep your rank, your streak and every challenge you have solved.</h2>' +
-          '<p class="auth-rail-sub">123 auto-graded challenges on 61 tables of real, cited Egyptian data.</p>' +
-          '<p class="auth-rail-safe"><span data-glyph="eye"></span> Your progress syncs privately. We never post anything, anywhere.</p>' +
+          '<p class="auth-rail-kicker">Free and optional</p>' +
+          '<h2 class="auth-rail-h">Keep your trips on every device.</h2>' +
+          '<p class="auth-rail-sub">Everything on EgyBI works without an account. Sign in only to save a trip and come back to it.</p>' +
+          '<p class="auth-rail-safe"><span data-glyph="eye"></span> We keep your email and the trips you save. Delete it all from your account page at any time.</p>' +
         '</aside>' +
         '<div class="auth-panel">' +
           '<button type="button" class="auth-x" aria-label="Close">' +
@@ -294,13 +245,13 @@
 
       if (v === 'in') {
         title.textContent = 'Welcome back';
-        sub.textContent = 'Sign in to pick up your streak where you left it.';
+        sub.textContent = 'Sign in to open your saved trips.';
         lbl.textContent = 'Sign in';
         pwF.autocomplete = 'current-password';
         alt.innerHTML = 'New here? <button type="button" data-go="up">Create an account</button>';
       } else if (v === 'up') {
         title.textContent = 'Create your account';
-        sub.textContent = 'Free, and everything you have already solved comes with you.';
+        sub.textContent = 'Free. You can delete it, and everything in it, at any time.';
         lbl.textContent = 'Create account';
         pwF.autocomplete = 'new-password';
         alt.innerHTML = 'Already have one? <button type="button" data-go="in">Sign in</button>';
@@ -394,9 +345,8 @@
         body: JSON.stringify({ credential: resp.credential, nonce: nonce })
       }).then(function (r) { return r.json(); }).then(function (d) {
         if (d && d.ok) {
-          csrf = d.csrf; user = d.user; stats = d.stats || null;
           if (window.EGYBI_TRACK) EGYBI_TRACK('signup_completed');
-          renderNav(); renderProfile(); syncProgress(); close();
+          signedIn(d); close();
         } else {
           fail((d && d.message) || 'Could not complete Google sign-in.');
         }
@@ -495,7 +445,7 @@
           if (d.ok) succeed(d.message || 'Check your email to verify your account.');
           else fail(d.message || 'Could not create that account.');
         } else if (d.ok) {
-          csrf = d.csrf; user = d.user; renderNav(); syncProgress(); close();
+          signedIn(d); close();
         } else {
           fail(d.message || 'Could not sign in.');
         }
@@ -601,11 +551,18 @@
     api('me', 'GET').then(function (res) {
       var d = res.data || {};
       if (d.google) googleCfg = { enabled: !!d.google.enabled, client_id: d.google.client_id || '' };
-      if (d.ok && d.user) { user = d.user; csrf = d.csrf; stats = d.stats || null; renderNav(); renderProfile(); syncProgress(); }
-      else renderNav();
+      if (d.ok && d.user) { user = d.user; csrf = d.csrf; setFlag(true); }
+      else setFlag(false);
+      renderNav();
       landings();
-    }).catch(function () { renderNav(); landings(); }); // offline/static preview: just show Sign in
+      readyResolve();
+    }).catch(function () { renderNav(); landings(); readyResolve(); }); // offline/static preview: just show Sign in
   }
   if (document.readyState !== 'loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
-  window.EGYBI_ACCOUNT = { syncProgress: syncProgress, get user() { return user; }, open: openModal };
+  window.EGYBI_ACCOUNT = {
+    ready: ready,
+    open: openModal,
+    api: api,
+    get user() { return user; }
+  };
 })();

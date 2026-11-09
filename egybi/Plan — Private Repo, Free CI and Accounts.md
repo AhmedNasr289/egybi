@@ -195,7 +195,7 @@ Get-Status "https://egybi.com/auth/auth.php?action=health"  # 200
 1. **Does your Hostinger plan have SSH, cron and Python 3?** Default: not needed; option B stays rejected.
 2. **Is SMTP filled in on the server?** Default: run `mail-test` once to your own address, after your yes, on Nov 13.
 3. **Should a data-only PR ever run the browser sweep?** Default: no; the weekly full run covers it.
-4. **Keep Google sign-in available?** It exists but needs a client ID. Default: off; email and password only.
+4. **Keep Google sign-in available?** ANSWERED 2026-11-09: it is already configured live (`auth.php?action=me` returns a client ID), so the dialog offers it next to email and password.
 5. **Go private on 1 December, or stay public?** Public costs nothing and nothing secret is in the repo. Default: 1 December, as you asked.
 6. **What should sign-in unlock first?** Default: saved trips, then saved places.
 

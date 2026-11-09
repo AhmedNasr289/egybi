@@ -754,6 +754,13 @@ case("two pages claiming one canonical", "seo.py", ["site/places.html"],
                   '<link rel="canonical" href="https://egybi.com/visit.html">'),
      lambda o: "duplicate canonical" in o, PY_SEO)
 
+# A private page (the account page) must stay out of search: noindex, and no
+# sitemap entry. Removing the noindex is the well-meaning edit that would put
+# a page nobody should land on from Google into the index.
+case("account page made indexable", "seo.py", ["site/account.html"],
+     lambda: edit("site/account.html", '<meta name="robots" content="noindex,follow">', ""),
+     lambda o: "private page indexable" in o and "account.html" in o, PY_SEO)
+
 # Invalid JSON-LD is worse than none: it is discarded in silence, so the page
 # looks marked up in the source and earns nothing.
 case("structured data that no longer parses", "seo.py", ["site/streets.html"],

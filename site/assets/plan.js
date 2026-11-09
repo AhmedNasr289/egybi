@@ -284,9 +284,56 @@
 
   function renderAll() { renderStops(); paintMap(); renderDossier(); }
 
+  /* Save to my account (2026-11-09). Optional: the trip stays in this browser
+     either way. A signed-out reader gets the sign-in dialog first, and the
+     save finishes once they are in. The saved trip's id is kept in the trip
+     (savedId), so saving again updates it rather than making a copy. */
+  function initSave() {
+    var btn = $('saveTrip'), note = $('saveNote');
+    if (!btn) return;
+    var pending = false;
+    function say(msg, kind) { note.textContent = msg; note.className = 'form-note' + (kind ? ' ' + kind : ''); }
+    function title() {
+      var t = S.trip;
+      if (t.name) return t.name.slice(0, 120);
+      if (t.start) return 'Trip from ' + T.fmtDate(t.start);
+      return 'My Egypt trip';
+    }
+    function doSave(A) {
+      if (!S.trip.stops.length && !S.trip.start) { say('Add your dates or a stop first.', 'error'); return; }
+      btn.disabled = true; say('Saving…');
+      var data = JSON.parse(JSON.stringify(S.trip)); delete data.savedId;
+      A.api('trips-save', 'POST', { id: S.trip.savedId || '', title: title(), data: data }).then(function (r) {
+        var d = r.data || {};
+        if (d.ok) {
+          S.trip.savedId = d.id; save();
+          note.className = 'form-note ok';
+          note.innerHTML = 'Saved. <a href="account.html">See your trips</a>.';
+        } else if (r.status === 404 && S.trip.savedId) {
+          // The saved copy was deleted elsewhere: save it as a new trip.
+          delete S.trip.savedId; save(); doSave(A); return;
+        } else {
+          say(d.message || 'Could not save the trip.', 'error');
+        }
+        btn.disabled = false;
+      }).catch(function () { say('Could not reach the account service.', 'error'); btn.disabled = false; });
+    }
+    btn.addEventListener('click', function () {
+      window.EGYBI.account.load().then(function (A) {
+        if (A.user) { doSave(A); return; }
+        pending = true;
+        A.open('in', 'Sign in or create a free account to save this trip.');
+      }).catch(function () { say('The account service could not be reached. Please try again.', 'error'); });
+    });
+    window.addEventListener('egybi:account', function (e) {
+      if (pending && e.detail && e.detail.user) { pending = false; window.EGYBI.account.load().then(doSave); }
+    });
+  }
+
   function init() {
     initForm(); initMap(); initStopEvents();
     $('printPlan').addEventListener('click', function () { window.print(); });
+    initSave();
     $('clearPlan').addEventListener('click', function () {
       if (!S.trip.stops.length) return;
       S.trip.stops = []; save(); renderAll(); announce('All stops removed.');

@@ -5,8 +5,10 @@
    one small store and one set of helpers rather than four copies that drift.
 
    WHAT IS STORED, AND WHERE. Dates, the list of stops and a name for the
-   dossier cover live in this browser's localStorage and nowhere else: nothing
-   is sent to a server, there is no account, and clearing site data clears it.
+   dossier cover live in this browser's localStorage, and clearing site data
+   clears it. Nothing is sent to a server unless a signed-in reader presses
+   "Save to my account" in the planner (plan.js, since 2026-11-09); accounts
+   are optional and everything here works without one.
    Every read and write is wrapped, because private windows and blocked storage
    throw — the tools must still work for a single visit with nothing saved.
 
