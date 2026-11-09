@@ -24,6 +24,8 @@ const PAGES = [
   'visit/giza.html',
   'egypt-public-holidays.html',
   'egyptian-pound-since-july.html',            // a data story with the <picture> phone chart
+  'account.html',                              // the account page, signed out (no server in CI)
+  'plan.html',                                 // the planner, with "Save to my account"
 ];
 const WIDTHS = [1280, 390];
 
