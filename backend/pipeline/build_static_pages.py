@@ -61,6 +61,7 @@ own module under pages/ (split 2026-11-06):
     pages/holidays.py  egypt-public-holidays.html and its chart
     pages/foodprices.py egypt-food-prices.html and its chart
     pages/currencystory.py egyptian-pound-since-july.html and its charts
+    pages/wholesalegap.py  egypt-wholesale-to-shop.html and its charts
     pages/notfound.py  404.html
 
 The split moved code verbatim and was checked byte for byte: every file under
@@ -96,6 +97,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pages.common import load_js  # noqa: E402
 from pages.foodprices import build_food_prices_page  # noqa: E402
 from pages.currencystory import build_currency_page  # noqa: E402
+from pages.wholesalegap import build_wholesale_gap_page  # noqa: E402
 from pages.holidays import build_holidays_page  # noqa: E402
 from pages.notfound import build_404  # noqa: E402
 from pages.papyrus import build_feed, build_link_indexes, build_posts  # noqa: E402
@@ -118,8 +120,9 @@ def main():
     hu = build_holidays_page()
     fu = build_food_prices_page()
     cu = build_currency_page()
+    gu = build_wholesale_gap_page()
     build_link_indexes(ch, posts)
-    total = build_sitemap(pu + vu + wu + hu + fu + cu)
+    total = build_sitemap(pu + vu + wu + hu + fu + cu + gu)
     nfeed = build_feed(posts)
     build_404()
     # Report the sector split so a mis-mapped sector is visible in the log
@@ -142,6 +145,7 @@ def main():
     print(f"holidays page   : {'written' if hu else 'skipped (no calendar data)'}")
     print(f"food prices page: {'written' if fu else 'skipped (too little price history)'}")
     print(f"currency story  : {'written' if cu else 'skipped (too little FX history)'}")
+    print(f"wholesale story : {'written' if gu else 'skipped (too few comparable items)'}")
     print(f"sitemap URLs    : {total}")
     print(f"RSS feed items  : {nfeed}")
     print("404 page        : written (root-relative, noindex)")

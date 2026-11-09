@@ -1151,6 +1151,28 @@ Found by running every checker by hand while Actions was blocked, and comparing 
   - `api/` and `api/datasets` return 200.
 - **Not verified:** there is no Apache here, so the new rule is untested until it deploys. After the merge, `api/lib/Database.php` must return 403 and `api/datasets` must still return 200.
 
+## 2026-11-08 — Fifth data story: from the wholesale market to the shop
+- **The page:** `egypt-wholesale-to-shop.html`, with an embeddable wide chart and a phone chart (`charts/egypt-wholesale-to-shop.svg`, `-narrow.svg`). The IDSC portal publishes a retail list (daily) and a wholesale list (about weekly) for many of the same foods. The page divides one by the other, item by item and week by week. In the four weeks to 1 November 2026, vegetables cost 1.55 times their wholesale price in shops and fruit 1.40 times (medians of 23 and 18 items). The all-item weekly median held between 1.39 and 1.56 across the 11 weeks with both lists.
+- **Measured before it was written, and what that changed:**
+  1. **Units.** 83 items appear on both lists, but 33 are priced at wholesale by the wooden crate, carton or sack, with no weight given, so they cannot be compared per kilo. Only same-unit pairs count, and the page says how many it left out. All the fish are among them.
+  2. **Frozen wholesale prices.** Six to seven wholesale series kept one or two values for the whole window. Malva parviflora and cauliflower, two of them, ranked among the "widest gaps" in the first pass. A price that is never re-measured is not a measurement, so these are left out and counted.
+  3. **No "shops follow the market".** Week to week, an item's two prices moved the same way about half the time (50% of 348 weeks in which both changed), so the page reports a gap in level, never a weekly mark-up.
+  4. **"Gap", never "profit".** The retail figure averages outlets across regions; the portal does not say which wholesale market it quotes. The gap therefore also holds transport, handling and quality, and the page says so.
+- **Method:** the same as the other stories. Whole weeks are counted back from the last WHOLESALE date, the slower list, and each week is a median. The headline and table use the median of the last four weeks; the chart shows single weeks, and the caption says which is which.
+- **Sitemap date by content:** the page reads the daily price history but changes only when the wholesale list does. Dating it by `prices-today.json` would have moved its `lastmod`, and announced it to IndexNow, every day while nothing on it changed. `sitemap_lastmod.py` gains `SELF_DATED`: in the daily job such a page is dated today only when the rebuilt file differs from `HEAD`.
+- **Wiring:**
+  - `build_wholesale_gap.py` runs in the daily price refresh, and its three files are on the commit list;
+  - `build_static_pages.py` writes the page and lists it in the sitemap;
+  - the prices page (and so its Arabic twin) gains a card, and the food story links to it;
+  - CI screenshots include it.
+- **Proof:**
+  - 14 new tests. Six deliberate breakages each turned a test red: keeping frozen series, ignoring units, ending on the last retail day, averaging a week instead of taking its median, counting a flat week as a move, and emptying `SELF_DATED`. The weekly-median test missed its breakage at first, because the four-week median absorbed a wild week, so it now checks the week's own value.
+  - The daily entry point writes the same bytes as the full build.
+  - The full build changed no other page's content: only the food page's new link, the two prices cards and the sitemap entry.
+  - 145 tests pass. pyflakes, `seo.py` (182 pages), `static-audit.py`, `coverage.py`, `checks.py` (orphans, fra, workflows, secrets), `workflow-audit.py` and `map-completeness.py` are all clean. `seo.py` first caught a 69-character title, now shortened.
+- **Measured on a phone without CI:** the table was rendered inside the live site with its real stylesheet, at 390 and 320 px. At 390 px it first fitted but its rows ran up to 128 px tall: the item column got 90 px and every row repeated "kilo". The unit is now shown only when it is not a kilo (the caption says so), and the headers are "Wholesale" and "Shop" with the currency in the caption. Measured again: the table is 290 px in a 290 px sheet, the item column 116 px, most rows 62 px. At 320 px the table is 18 px wider than its box and scrolls inside it, never the page, with Gap still in view, as the pound story's table does.
+- **Not verified:** no CI run (Actions has no minutes), so the browser checks and screenshots have not seen the full page.
+
 ## 2026-11-09 — Page views from 153 pages were never counted
 - **Found by reading the network log of live pages in a browser:** on `visit/giza.html` the analytics beacon posted to `visit/api/hit.php` and got a 404. `analytics.js` used the relative address `'api/hit.php'`, and a browser resolves that against the page. Every page in a folder (18 in `visit/`, 12 in `papyrus/`, 123 in `practice/`) sent its views to an address that does not exist. Pages at the root posted to `api/hit.php` and were counted. So the analytics has never seen a view of the `visit/` guides, the pages the best-time-to-photograph work (B1) was built for, and the day-42 reading would have under-counted them.
 - **The fix:** the beacon address is resolved against the script's own address (`document.currentScript.src`), which is always `assets/`, so `../api/hit.php` is right on every page. If the browser cannot report the script's address, it falls back to `/api/hit.php`. `community.js` uses the same relative pattern but no folder page loads it.

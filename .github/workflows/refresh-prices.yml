@@ -98,6 +98,7 @@ jobs:
           # The food-price story is built from the same history; without this it
           # would freeze at the day it was written (it is not on build-pages' paths).
           python backend/pipeline/build_food_prices.py 2>&1 | tee -a /tmp/prices-refresh.log
+          python backend/pipeline/build_wholesale_gap.py 2>&1 | tee -a /tmp/prices-refresh.log
 
       # The prices pages' cards come from the JSON above, so only this step can
       # tell crawlers the pages changed. It moves those URLs' <lastmod> to the
@@ -119,8 +120,8 @@ jobs:
           bash .github/scripts/push-with-regenerate.sh \
             "Automated daily price refresh — IDSC [skip ci]" \
             "site/data/prices-today.json site/data/prices-history.json" \
-            "site/prices.html site/prices-ar.html site/egypt-food-prices.html site/charts/egypt-food-prices.svg site/charts/egypt-food-prices-narrow.svg site/sitemap.xml" \
-            "python backend/pipeline/build_prices_pages.py && python backend/pipeline/build_food_prices.py && python backend/pipeline/sitemap_lastmod.py --changed-out /tmp/changed-urls.txt"
+            "site/prices.html site/prices-ar.html site/egypt-food-prices.html site/charts/egypt-food-prices.svg site/charts/egypt-food-prices-narrow.svg site/egypt-wholesale-to-shop.html site/charts/egypt-wholesale-to-shop.svg site/charts/egypt-wholesale-to-shop-narrow.svg site/sitemap.xml" \
+            "python backend/pipeline/build_prices_pages.py && python backend/pipeline/build_food_prices.py && python backend/pipeline/build_wholesale_gap.py && python backend/pipeline/sitemap_lastmod.py --changed-out /tmp/changed-urls.txt"
 
       # Only reached when the push succeeded or there was nothing to push.
       # Never fails the job: see indexnow_ping.py.

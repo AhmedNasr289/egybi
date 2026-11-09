@@ -24,6 +24,7 @@ const PAGES = [
   'visit/giza.html',
   'egypt-public-holidays.html',
   'egyptian-pound-since-july.html',            // a data story with the <picture> phone chart
+  'egypt-wholesale-to-shop.html',              // the fifth story: a 43-row table on a phone
 ];
 const WIDTHS = [1280, 390];
 
