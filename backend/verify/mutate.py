@@ -780,6 +780,20 @@ case("map legend stripped from a story", "map-completeness.py",
      lambda o: "stories.html: legend" in o, PY_MAPS)
 
 
+# ---- 25. beacon-url.js: a page view sent to an address that does not exist ---
+# The defect it was written for: a relative 'api/hit.php' made every page in
+# visit/, papyrus/ and practice/ post to <folder>/api/hit.php, a 404, so 153
+# pages' views were never counted. Match the FAIL line for a folder page, not
+# the summary, which a passing run prints too.
+case("analytics beacon resolved against the page", "beacon-url.js",
+     ["site/assets/analytics.js"],
+     lambda: edit("site/assets/analytics.js",
+                  "var url = me ? new URL('../api/hit.php', me).href : '/api/hit.php';",
+                  "var url = 'api/hit.php';"),
+     lambda o: "FAIL /visit/giza.html -> https://egybi.com/visit/api/hit.php" in o,
+     f"node {HERE}/beacon-url.js")
+
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")

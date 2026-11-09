@@ -241,6 +241,13 @@ jobs:
         if: always()
         run: backend/verify/ci-step.sh workflow-audit python3 backend/verify/workflow-audit.py
 
+      # Where the analytics beacon actually lands, from root and folder pages.
+      # A relative 'api/hit.php' sent the 153 folder pages' views to a 404
+      # until 2026-11-09. No browser needed: it runs analytics.js in a stub.
+      - name: beacon-url.js
+        if: always()
+        run: backend/verify/ci-step.sh beacon-url node backend/verify/beacon-url.js
+
       # Each browser checker is its own step so the summary names which one
       # failed, rather than one red block covering nine tools.
       #
