@@ -646,6 +646,40 @@ def build_report_card(ox, resolved: dict, skipped: list,
     return True
 
 
+def carry_forward(fresh: list[dict], prev: Optional[dict], today: str) -> list[dict]:
+    """The access rows to publish: this run's measurements, plus the last-good
+    row of any district this run could not measure, in DISTRICTS order.
+
+    Until 2026-11-09 a run that measured at least MIN_DISTRICTS_OK districts
+    wrote ONLY those, so a partial run deleted good data. The 9 November run
+    measured 5 of 10 (Overpass refused the other walk graphs) and the live
+    page lost Nasr City, Luxor City, Sheikh Zayed City, New Alamein and New
+    Cairo, while the log said "last-good data kept" - true of the file-level
+    guard, false of the districts.
+
+    Every row says when it was measured ("measured_on"); a carried row also
+    says so ("carried": True), so the page can tell a reader the two dates
+    apart. A district with no previous row is simply absent, as before.
+    """
+    by_key = {r["key"]: r for r in fresh}
+    prev_rows = {r["key"]: r for r in (prev or {}).get("districts", [])}
+    prev_as_of = (prev or {}).get("as_of")
+    out = []
+    for d in DISTRICTS:
+        k = d["key"]
+        if k in by_key:
+            row = dict(by_key[k])
+            row["measured_on"] = today
+            row.pop("carried", None)
+            out.append(row)
+        elif k in prev_rows:
+            row = dict(prev_rows[k])
+            row["measured_on"] = row.get("measured_on") or prev_as_of
+            row["carried"] = True
+            out.append(row)
+    return out
+
+
 def build_access(ox, resolved: dict, skipped: list,
                  budget: Optional[RunBudget] = None, breaker: Optional[Breaker] = None) -> bool:
     """15-minute access: walking time from street nodes to the nearest amenity.
@@ -854,8 +888,21 @@ def build_access(ox, resolved: dict, skipped: list,
                 "this as a timeout, not a data problem.")
         return False
 
+    # Keep the last-good row of every district this run could not measure.
+    # The floor above still decides whether this run produced enough to write
+    # at all; it no longer decides how many districts the page keeps.
+    prev_path = OUT / "streets-access.json"
+    try:
+        prev = json.loads(prev_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        prev = None
+    today = date.today().isoformat()
+    measured = len(rows)
+    rows = carry_forward(rows, prev, today)
+    carried = [r["name"] for r in rows if r.get("carried")]
+
     out = {
-        "as_of": date.today().isoformat(),
+        "as_of": today,
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "source": "OpenStreetMap amenities + walk network via OSMnx",
         "license": "ODbL — © OpenStreetMap contributors",
@@ -872,7 +919,9 @@ def build_access(ox, resolved: dict, skipped: list,
     }
     (OUT / "streets-access.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
-    log(f"  wrote streets-access.json ({len(rows)} districts)")
+    log(f"  wrote streets-access.json ({measured} measured now"
+        + (f", {len(carried)} carried from their last-good run: {', '.join(carried)}" if carried else "")
+        + ")")
     skipped.extend(f"access / {f}" for f in failures)
     return True
 

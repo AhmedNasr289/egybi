@@ -100,5 +100,48 @@ class TheOctoberRun(unittest.TestCase):
         self.assertLess(budget.spent_min(), 120 - 5)
 
 
+class CarryForward(unittest.TestCase):
+    """A partial run must not delete districts it could not re-measure.
+
+    The 2026-11-09 run measured 5 of 10 districts and published only those 5;
+    the other 5 vanished from the live page.
+    """
+
+    KEYS = [d["key"] for d in fs.DISTRICTS]
+
+    def row(self, key, pct):
+        return {"key": key, "name": key.title(), "mean_within_15min_pct": pct}
+
+    def test_failed_districts_keep_their_last_good_row(self):
+        prev = {"as_of": "2026-08-07",
+                "districts": [self.row(k, 50.0) for k in self.KEYS]}
+        fresh = [self.row(k, 60.0) for k in self.KEYS[:5]]
+        out = fs.carry_forward(fresh, prev, "2026-11-09")
+        self.assertEqual([r["key"] for r in out], self.KEYS)
+        for r in out[:5]:
+            self.assertEqual((r["mean_within_15min_pct"], r["measured_on"]), (60.0, "2026-11-09"))
+            self.assertNotIn("carried", r)
+        for r in out[5:]:
+            self.assertEqual((r["mean_within_15min_pct"], r["measured_on"], r["carried"]),
+                             (50.0, "2026-08-07", True))
+
+    def test_a_carried_row_keeps_its_original_date_when_carried_again(self):
+        prev = {"as_of": "2026-11-09",
+                "districts": [dict(self.row(self.KEYS[0], 50.0), measured_on="2026-08-07", carried=True)]}
+        out = fs.carry_forward([], prev, "2026-12-01")
+        self.assertEqual((out[0]["measured_on"], out[0]["carried"]), ("2026-08-07", True))
+
+    def test_a_remeasured_district_drops_the_carried_flag(self):
+        prev = {"as_of": "2026-11-09",
+                "districts": [dict(self.row(self.KEYS[0], 50.0), measured_on="2026-08-07", carried=True)]}
+        out = fs.carry_forward([dict(self.row(self.KEYS[0], 70.0), carried=True)], prev, "2026-12-01")
+        self.assertEqual((out[0]["mean_within_15min_pct"], out[0]["measured_on"]), (70.0, "2026-12-01"))
+        self.assertNotIn("carried", out[0])
+
+    def test_no_previous_file_publishes_only_what_was_measured(self):
+        out = fs.carry_forward([self.row(self.KEYS[2], 40.0)], None, "2026-11-09")
+        self.assertEqual([r["key"] for r in out], [self.KEYS[2]])
+
+
 if __name__ == '__main__':
     unittest.main()
