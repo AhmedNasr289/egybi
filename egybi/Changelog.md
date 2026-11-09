@@ -1308,3 +1308,19 @@ The second thing an account is for, after saved trips (plan part 2). The server 
 - **`.github/workflows/refresh-catchup.yml`**, daily at 16:17 UTC (18:17 Cairo). That is after the 14:00–15:35 UTC window in which the daily runs have lately been arriving, so an ordinary day does not get a second refresh. It is itself scheduled, so on a day the whole scheduler is hours late it is late too: it narrows the gap, it does not close it. A manual run defaults to a dry run. It has the usual timeout, concurrency group and failure alert.
 - **Cost once private:** one short job a day, about 30 minutes a month, plus a refresh only on a day one was dropped.
 - **Tests:** `test_refresh_catchup.py`, 5 cases: start only what never started, nothing on a normal day, both dropped means both started on `main`, a dry run starts nothing, and it asks about today by any trigger. A real dry run against GitHub just now found both refreshes already started today (2 runs each).
+
+## 2026-11-09 — The Papyrus from the account page
+
+The last of the plan's account items: the newsletter choice beside saved trips and places.
+
+- **Server (`auth.php`, `lib.php`):** `newsletter-status` (GET) and `newsletter-set` (POST `{on: true|false}`, CSRF, same-origin, 10 changes an hour). They act only on the signed-in account's own email.
+  - **Verified accounts only** can subscribe, and get no confirmation email. Double opt-in exists to prove the address belongs to the person asking, and verifying the account already proved exactly that. An unverified account is refused with the reason (signing in does not require a verified email, so this check is the one that matters). Unsubscribing is always allowed.
+  - Subscribing writes the same row the form does: confirmed, with its own token, so every letter carries a working unsubscribe link. A row the form left unconfirmed is confirmed; an unsubscribed row is restored.
+  - The data download now includes the newsletter choice. Deleting the account still leaves a subscription alone, as the privacy page says, because the list is keyed by email.
+- **`account.html`:** a "The Papyrus" section with one button: "Send me The Papyrus", or "Subscribed to The Papyrus" when on (pressed style). It explains a form signup still waiting for its confirmation link, and an unverified account. `account.js` v3. The version check from #99 confirmed the bump.
+- **`privacy.html`:** one sentence on subscribing from the account page and why no confirmation email is sent then.
+- **Tests:**
+  - `auth-flow.sh` gains 11 steps: starts off; CSRF and type refused; a verified user subscribes and the row is confirmed, live and has a token; an unverified user is refused and gets no row; unsubscribe marks the row; subscribing again works; the export says "subscribed".
+  - `save-place.js` gains two account-page stories: subscribe, then unsubscribe, with the CSRF token; and an unverified account shown the server's reason while staying unsubscribed.
+  - `mutate.py` case 31 removes the verified-only check and must be caught by `auth-flow.sh`.
+- **Checked here:** scripts parse; static-audit, seo, coverage and the `checks.py` modes report nothing. PHP and the browser tests run in CI.

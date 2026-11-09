@@ -89,6 +89,43 @@
     }).catch(function () { say('Could not reach the account service.', 'error'); b.disabled = false; });
   });
 
+  // ---- The Papyrus ---------------------------------------------------------
+  // A verified account subscribes with one press and no confirmation email
+  // (verifying the account already proved the address). The server refuses
+  // an unverified one and says why; that message is shown as it comes.
+  var newsBtn = $('acctNewsBtn'), newsNote = $('acctNewsNote');
+  function newsSay(msg, kind) { newsNote.textContent = msg || ''; newsNote.className = 'form-note' + (kind ? ' ' + kind : ''); }
+  function newsShow(state) {
+    var on = state === 'subscribed';
+    newsBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    newsBtn.textContent = on ? 'Subscribed to The Papyrus' : 'Send me The Papyrus';
+    newsBtn.disabled = false;
+  }
+  function loadNews() {
+    return A.api('newsletter-status', 'GET').then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) { newsSay(d.message || 'Could not read your newsletter choice.', 'error'); return; }
+      newsShow(d.state);
+      if (d.state === 'pending') newsSay('You signed up on the form and the confirmation link is still in your inbox. Press the button to subscribe now instead.');
+      else if (!d.verified && d.state !== 'subscribed') newsSay('Confirm your email first: the link is in the email we sent when you created the account.');
+      else newsSay('');
+    }).catch(function () { newsSay('Could not reach the account service.', 'error'); });
+  }
+  newsBtn.addEventListener('click', function () {
+    var on = newsBtn.getAttribute('aria-pressed') !== 'true';
+    newsBtn.disabled = true; newsSay('Saving…');
+    A.api('newsletter-set', 'POST', { on: on }).then(function (r) {
+      var d = r.data || {};
+      if (d.ok) {
+        newsShow(d.state);
+        newsSay(d.state === 'subscribed' ? 'Subscribed. The next letter comes on the 1st.' : 'Done. You will not receive The Papyrus any more.', 'ok');
+      } else {
+        newsBtn.disabled = false;
+        newsSay(d.message || 'Could not change your newsletter choice.', 'error');
+      }
+    }).catch(function () { newsBtn.disabled = false; newsSay('Could not reach the account service.', 'error'); });
+  });
+
   // `done` is the message to leave showing once the lists are back, so a
   // "deleted" confirmation is not wiped by the reload it triggers.
   function load(done) {
@@ -99,6 +136,8 @@
     }
     $('acctOut').hidden = true; $('acctIn').hidden = false;
     $('acctEmail').textContent = A.user.email;
+    // Not on a reload after a delete (`done`), which would wipe its message.
+    if (!done) loadNews();
     say('Loading your trips…');
     Promise.all([A.api('trips-list', 'GET'), A.api('places-list', 'GET')]).then(function (r) {
       var t = r[0].data || {}, p = r[1].data || {};

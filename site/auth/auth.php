@@ -13,6 +13,7 @@
  *   POST delete-account {password, confirm:'DELETE'} -> delete the account and its data (CSRF)
  *   GET  trips-list / POST trips-save {id?,title,data} / POST trips-delete {id}
  *   GET  places-list / POST places-toggle {place}    -> saved places
+ *   GET  newsletter-status / POST newsletter-set {on} -> The Papyrus, for a verified account
  * Security: Argon2id hashing, prepared statements, HttpOnly+Secure+SameSite
  * cookie, CSRF on state-changing writes, rate limiting, no account enumeration.
  */
@@ -335,6 +336,31 @@ case 'places-toggle': {
     $db->prepare('INSERT INTO user_saved_places (user_id,place_key,created_at) VALUES (?,?,?)')
        ->execute([$s['user_id'], $key, now()]);
     json_out(true, ['saved' => true]);
+}
+
+case 'newsletter-status': {
+    $u = current_user();
+    if (!$u) json_out(false, ['message' => 'Sign in first.'], 401);
+    json_out(true, ['state' => newsletter_account_state($db, $u['email']),
+                    'verified' => (int)$u['email_verified'] === 1]);
+}
+
+case 'newsletter-set': {
+    if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
+    require_same_origin();
+    $s = current_session();
+    if (!$s) json_out(false, ['message' => 'Sign in first.'], 401);
+    require_csrf($s);
+    $u = current_user();
+    $on = (body()['on'] ?? null);
+    if (!is_bool($on)) json_out(false, ['message' => 'Say on or off.'], 422);
+    // Subscribing without a confirmation email is only sound for an address
+    // the account has already proven. Unsubscribing is always allowed.
+    if ($on && (int)$u['email_verified'] !== 1) {
+        json_out(false, ['message' => 'Confirm your email first: the link is in the email we sent when you created the account.'], 403);
+    }
+    if (!rate_ok_key('u:' . $u['id'], 'newsletter-set', 10, 60)) json_out(false, ['message' => 'Too many changes. Try again later.'], 429);
+    json_out(true, ['state' => newsletter_account_set($db, $u['email'], $on)]);
 }
 
 case 'health': {

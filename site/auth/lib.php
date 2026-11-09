@@ -491,6 +491,53 @@ function newsletter_unsub(string $email, string $token): string
     } catch (Throwable $e) { error_log('[EgyBI] newsletter_unsub: ' . $e->getMessage()); return 'invalid'; }
 }
 
+/**
+ * The Papyrus from the account page (2026-11-09).
+ *
+ * A signed-in reader whose email is VERIFIED can subscribe and unsubscribe
+ * with one press. No confirmation email is sent: double opt-in exists to
+ * prove the address belongs to the person asking, and verifying the account
+ * already proved exactly that. An unverified account is refused (the caller
+ * checks), so this can never subscribe an address nobody has proven.
+ *
+ * Returns 'subscribed' (confirmed, not unsubscribed), 'pending' (signed up on
+ * the form, confirmation link not yet clicked) or 'none'.
+ */
+function newsletter_account_state(PDO $db, string $email): string
+{
+    newsletter_ensure_schema($db);
+    $st = $db->prepare('SELECT confirmed, unsubscribed FROM newsletter_subscribers WHERE email = ?');
+    $st->execute([strtolower($email)]);
+    $r = $st->fetch();
+    if (!$r || (int)$r['unsubscribed'] === 1) return 'none';
+    return (int)$r['confirmed'] === 1 ? 'subscribed' : 'pending';
+}
+
+/** Subscribe (confirmed) or unsubscribe a verified account's own email. */
+function newsletter_account_set(PDO $db, string $email, bool $on): string
+{
+    newsletter_ensure_schema($db);
+    $email = strtolower($email);
+    $st = $db->prepare('SELECT email FROM newsletter_subscribers WHERE email = ?');
+    $st->execute([$email]);
+    $exists = (bool)$st->fetch();
+    if ($on) {
+        if ($exists) {
+            $db->prepare('UPDATE newsletter_subscribers SET unsubscribed = 0, unsubscribed_at = NULL, confirmed = 1,
+                          confirmed_at = COALESCE(confirmed_at, ?) WHERE email = ?')->execute([now(), $email]);
+        } else {
+            // The same row shape the form writes, already confirmed, with its
+            // own token so every issue carries a working unsubscribe link.
+            $db->prepare('INSERT INTO newsletter_subscribers (email, created_at, ip_hash, unsubscribed, confirmed, token, confirmed_at)
+                          VALUES (?,?,?,0,1,?,?)')->execute([$email, now(), 'account', rid(16), now()]);
+        }
+    } elseif ($exists) {
+        $db->prepare('UPDATE newsletter_subscribers SET unsubscribed = 1, unsubscribed_at = ? WHERE email = ?')
+           ->execute([now(), $email]);
+    }
+    return newsletter_account_state($db, $email);
+}
+
 /** Insert or refresh (while draft) a newsletter issue by slug. Returns the row or null. */
 function newsletter_upsert_issue(string $slug, string $subject, string $html): ?array
 {
@@ -1069,5 +1116,8 @@ function account_export(PDO $db, array $u): array
         'trips' => $trips,
         'saved_places' => array_column($q('SELECT place_key FROM user_saved_places WHERE user_id=? ORDER BY created_at'), 'place_key'),
         'progress' => $q('SELECT challenge_id, solved_at FROM user_progress WHERE user_id=?'),
+        // Keyed by email, not by account, so the list keeps it after an
+        // account is deleted; the download still says what it holds.
+        'newsletter' => newsletter_account_state($db, $u['email']),
     ];
 }

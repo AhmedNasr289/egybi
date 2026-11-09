@@ -842,6 +842,18 @@ case("save button never shown", "save-place.js",
      lambda o: "FAIL  signed in: the button is visible" in o, NODE_SAVE)
 
 
+# ---- 31. auth-flow.sh: subscribing an address nobody has proven -------------
+# The account page subscribes with no confirmation email, which is sound only
+# because the account's email is verified. Without that check, anyone could
+# create an account under someone else's address and subscribe it.
+case("unverified account subscribed to the newsletter", "auth-flow.sh",
+     ["site/auth/auth.php"],
+     lambda: edit("site/auth/auth.php",
+                  "if ($on && (int)$u['email_verified'] !== 1) {",
+                  "if ($on && false) {"),
+     lambda o: "FAIL  unverified B is refused" in o, SH_AUTH)
+
+
 # ---- 30. cache-bump.py: an asset changed under its old version ---------------
 # Assets are cached `immutable` for a week, by URL, in browsers and the CDN.
 # PR #98 changed account.js and kept ?v=1, and the CDN served old and new
