@@ -79,8 +79,25 @@ expect "save a place"              200 "$(call "$JAR_A" POST places-toggle '{"pl
 expect "unsave it"                 200 "$(call "$JAR_A" POST places-toggle '{"place":"giza"}' -H "X-CSRF: $CA")" '"saved":false'
 expect "save it again"             200 "$(call "$JAR_A" POST places-toggle '{"place":"karnak"}' -H "X-CSRF: $CA")" '"saved":true'
 expect "bad place key refused"     422 "$(call "$JAR_A" POST places-toggle '{"place":"../etc"}' -H "X-CSRF: $CA")"
+# The Papyrus from the account page: a verified account subscribes with one
+# press and no confirmation email; an unverified one is refused, because then
+# nobody would have proven the address.
+expect "newsletter starts off"     200 "$(call "$JAR_A" GET newsletter-status)" '"state":"none"'
+expect "newsletter without CSRF"   403 "$(call "$JAR_A" POST newsletter-set '{"on":true}')"
+expect "newsletter needs true/false" 422 "$(call "$JAR_A" POST newsletter-set '{"on":"yes"}' -H "X-CSRF: $CA")"
+expect "verified A subscribes"     200 "$(call "$JAR_A" POST newsletter-set '{"on":true}' -H "X-CSRF: $CA")" '"state":"subscribed"'
+row=$(sql "SELECT confirmed || '/' || unsubscribed || '/' || (length(token) > 0) FROM newsletter_subscribers WHERE email='a@example.org'")
+[ "$row" = "1/0/1" ] && echo "ok    A's row is confirmed, live, with an unsubscribe token" || { echo "FAIL  A's newsletter row is $row, wanted 1/0/1"; fails=$((fails+1)); }
+expect "unverified B is refused"   403 "$(call "$JAR_B" POST newsletter-set '{"on":true}' -H "X-CSRF: $CB")" 'Confirm your email'
+n=$(sql "SELECT COUNT(*) FROM newsletter_subscribers WHERE email='b@example.org'")
+[ "$n" = 0 ] && echo "ok    no newsletter row for unverified B" || { echo "FAIL  unverified B got a newsletter row"; fails=$((fails+1)); }
+expect "A unsubscribes"            200 "$(call "$JAR_A" POST newsletter-set '{"on":false}' -H "X-CSRF: $CA")" '"state":"none"'
+[ "$(sql "SELECT unsubscribed FROM newsletter_subscribers WHERE email='a@example.org'")" = 1 ] \
+  && echo "ok    A's row is marked unsubscribed" || { echo "FAIL  A's row is not marked unsubscribed"; fails=$((fails+1)); }
+expect "A subscribes again"        200 "$(call "$JAR_A" POST newsletter-set '{"on":true}' -H "X-CSRF: $CA")" '"state":"subscribed"'
 r=$(call "$JAR_A" GET export); expect "export has the trip" 200 "$r" 'Cairo and Luxor'
 expect "export has the place"      200 "$r" 'karnak'
+expect "export has the newsletter" 200 "$r" '"newsletter":"subscribed"'
 
 expect "delete without confirm"    422 "$(call "$JAR_A" POST delete-account "{\"password\":\"correct horse battery\"}" -H "X-CSRF: $CA")"
 expect "delete, wrong password"    403 "$(call "$JAR_A" POST delete-account '{"password":"wrong","confirm":"DELETE"}' -H "X-CSRF: $CA")"

@@ -79,10 +79,18 @@
         <ul class="acct-places" id="acctPlaces"></ul>
       </div>
 
+      <div class="sheet" id="acctNews">
+        <div class="kicker"><span data-glyph="ra"></span>The Papyrus</div>
+        <h2>One letter a month</h2>
+        <p>One number about Egypt you did not know, with its source, once a month, to the email you signed in with. Every letter carries its own unsubscribe link, and you can stop it here at any time.</p>
+        <button type="button" class="btn btn-ghost btn-save" id="acctNewsBtn" aria-pressed="false" disabled>Send me The Papyrus</button>
+        <p class="form-note" id="acctNewsNote" role="status"></p>
+      </div>
+
       <div class="sheet">
         <div class="kicker"><span data-glyph="eye"></span>Your data</div>
         <h2>A copy of everything we hold</h2>
-        <p>Your email, when you joined, your trips and your saved places, as one file.</p>
+        <p>Your email, when you joined, your trips, your saved places and your newsletter choice, as one file.</p>
         <a class="btn btn-ghost" id="acctExport" href="auth/auth.php?action=export" download="egybi-account.json">Download my data</a>
       </div>
 
@@ -117,7 +125,7 @@
 <script src="assets/egybi.js?v=3"></script>
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/trip.js?v=3"></script>
-<script src="assets/account.js?v=2"></script>
+<script src="assets/account.js?v=3"></script>
   <script src="assets/analytics.js?v=2" defer></script>
 </body>
 </html>
