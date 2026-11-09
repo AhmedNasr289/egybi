@@ -1245,3 +1245,19 @@ Part 3 of [[Plan — Private Repo, Free CI and Accounts]]. The server side (#95)
 - **Not verified until CI and the live site:**
   - the dialog, the account page and the save on a rendered page;
   - a real sign-up email (the plan's step that needs Ahmed's yes to send one test email).
+
+## 2026-11-09 — The Actions minutes guard
+
+The plan's safety net before the repo goes private again (part 1 of `Plan — Private Repo, Free CI and Accounts`). In November the repo used the Free plan's ~2,000 minutes in eight days and GitHub stopped starting jobs without telling anyone.
+
+- **`backend/ops/usage_guard.py`** adds up this month's Actions minutes for this repo the way GitHub bills them: every job separately, rounded up to a whole minute, times the runner rate (all 15 jobs here are Linux, rate 1). Re-run attempts count. Skipped jobs cost nothing.
+  - It reads the Actions API with the workflow's own token (`actions: read`). GitHub's billing report needs the account-wide `user` scope, which would mean storing a personal token, so it is not used.
+  - It prints the month to date, the share of 2,000, a straight-line month-end projection and minutes per workflow, and writes the same to the run summary.
+  - It says plainly what it cannot see: other private repos on the account share the allowance, and deleted runs are not counted.
+  - Run locally, it uses `gh api`, so the token stays in the gh keyring.
+- **`.github/workflows/usage-guard.yml`**, daily at 06:23 UTC: opens an issue at 70% ("Actions minutes at 70% of the month (YYYY-MM)") and another at 90%. A title already raised this month is never raised again, even if closed; the month in the title resets it. The issue says what to do, including the hand refresh if jobs stop. GitHub notifies Ahmed; nothing is sent in his name.
+  - While the repo is **public** nothing is billed, so a scheduled run only reports and opens no issue. November is already past 90% from its private days and would otherwise alarm daily.
+  - A manual run defaults to a dry run that only says which issue it would open, and takes a lower allowance to test the alert.
+  - It has the usual timeout, concurrency group and failure alert with the log's last lines.
+- **Checked against the real bill:** for 1–8 November it counts **2,057 minutes** in 170 runs. GitHub billed **2,052** for those days: within 0.25%, inside the plan's 2% test. Verify (browser) was 1,939 of them.
+- **Tests:** `test_usage_guard.py`, 12 cases: rounding, skipped and running jobs, Windows and macOS rates, the 70/90 thresholds, month-scoped titles, the projection, reading every page of runs, and that the report states its scope.

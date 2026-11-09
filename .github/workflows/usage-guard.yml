@@ -1,0 +1,108 @@
+name: Actions minutes guard
+
+# In November 2026 this repo used up the Free plan's ~2,000 Actions minutes in
+# eight days and GitHub silently stopped starting jobs, so the daily data
+# refreshes stopped too. This guard adds up the month's job minutes every day
+# (backend/ops/usage_guard.py) and opens an issue at 70% and again at 90%, so
+# it can never run out unnoticed once the repo is private again.
+#
+# While the repo is public nothing is billed; the figure is then what the month
+# WOULD cost if private, which is the measurement the switch back depends on.
+# GitHub notifies you about the issue; nothing is sent in your name.
+
+on:
+  schedule:
+    - cron: '23 6 * * *'     # 06:23 UTC daily, before the price and FX refreshes
+  workflow_dispatch:
+    inputs:
+      allowance:
+        description: 'Monthly allowance in minutes (lower it to test the alert)'
+        default: '2000'
+      open_issues:
+        description: 'Open the issues for real (otherwise only say which it would open)'
+        type: boolean
+        default: false
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+concurrency:
+  group: usage-guard
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add up this month's minutes
+        id: tally
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        # 'shell: bash' turns on pipefail, so a failing script is not hidden by tee.
+        shell: bash
+        run: |
+          python3 backend/ops/usage_guard.py \
+            --allowance "${{ inputs.allowance || '2000' }}" \
+            --json-out usage.json 2>&1 | tee usage.log
+
+      - name: Open an issue for each threshold crossed
+        uses: actions/github-script@v7
+        env:
+          # A scheduled run has no inputs, so it always opens issues for real.
+          OPEN_ISSUES: ${{ github.event_name == 'schedule' || inputs.open_issues }}
+        with:
+          script: |
+            const fs = require('fs');
+            const u = JSON.parse(fs.readFileSync('usage.json', 'utf8'));
+            if (!u.titles.length) { core.notice(`${u.minutes} minutes, ${u.percent}%: under every threshold`); return; }
+            // A public repo is not billed, so a scheduled run only reports.
+            // (November 2026 is past 90% from its private days; alarming about
+            // it daily after the switch to public would be noise.) A manual
+            // run with open_issues ticked still opens them, for testing.
+            if (u.public === true && context.eventName === 'schedule') {
+              core.notice(`Public repo, not billed: ${u.minutes} minutes (${u.percent}%) reported, no issue opened`);
+              return;
+            }
+            // state 'all': a threshold already raised this month and then
+            // closed by you stays closed; the month in the title resets it.
+            const existing = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner, repo: context.repo.repo, state: 'all', per_page: 100,
+            });
+            const seen = new Set(existing.map(i => i.title));
+            for (const title of u.titles) {
+              if (seen.has(title)) { core.notice(`Already raised: ${title}`); continue; }
+              if (process.env.OPEN_ISSUES !== 'true') { core.notice(`Dry run, would open: ${title}`); continue; }
+              const body = [
+                u.report, '',
+                '**What to do:**',
+                '- Merge fewer PRs that change pages this month, or batch them: a PR that changes a page runs the 20-minute browser sweep on every push.',
+                '- If it reaches 100%, GitHub stops starting jobs until the 1st. The daily price and exchange-rate refresh then needs the hand refresh on the workstation (`C:\\dev\\egybi-ops\\manual_refresh.py`).',
+                '- Billing settings: https://github.com/settings/billing',
+                '', '_Opened by the daily Actions minutes guard. Close it once read; it will not reopen this month._',
+              ].join('\n');
+              const { data } = await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body });
+              core.notice(`Opened #${data.number}: ${title}`);
+            }
+
+      - name: Collect what the run said about itself
+        if: '!cancelled()'
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<GUARD_EOF'
+            tail -n 20 usage.log 2>/dev/null || echo "The minutes step wrote no log."
+            echo 'GUARD_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Alert on failure
+        # A guard that dies quietly is the failure it exists to prevent.
+        if: failure() || cancelled()
+        uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ job.status == 'cancelled' && 'Cancelled, not failed - most often the job hit its timeout-minutes limit, which GitHub records as a cancellation.' || steps.why.outputs.text }}
