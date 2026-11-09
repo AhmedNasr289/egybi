@@ -60,6 +60,14 @@ jobs:
             const fs = require('fs');
             const u = JSON.parse(fs.readFileSync('usage.json', 'utf8'));
             if (!u.titles.length) { core.notice(`${u.minutes} minutes, ${u.percent}%: under every threshold`); return; }
+            // A public repo is not billed, so a scheduled run only reports.
+            // (November 2026 is past 90% from its private days; alarming about
+            // it daily after the switch to public would be noise.) A manual
+            // run with open_issues ticked still opens them, for testing.
+            if (u.public === true && context.eventName === 'schedule') {
+              core.notice(`Public repo, not billed: ${u.minutes} minutes (${u.percent}%) reported, no issue opened`);
+              return;
+            }
             // state 'all': a threshold already raised this month and then
             // closed by you stays closed; the month in the title resets it.
             const existing = await github.paginate(github.rest.issues.listForRepo, {

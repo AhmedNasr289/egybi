@@ -1256,6 +1256,7 @@ The plan's safety net before the repo goes private again (part 1 of `Plan — Pr
   - It says plainly what it cannot see: other private repos on the account share the allowance, and deleted runs are not counted.
   - Run locally, it uses `gh api`, so the token stays in the gh keyring.
 - **`.github/workflows/usage-guard.yml`**, daily at 06:23 UTC: opens an issue at 70% ("Actions minutes at 70% of the month (YYYY-MM)") and another at 90%. A title already raised this month is never raised again, even if closed; the month in the title resets it. The issue says what to do, including the hand refresh if jobs stop. GitHub notifies Ahmed; nothing is sent in his name.
+  - While the repo is **public** nothing is billed, so a scheduled run only reports and opens no issue. November is already past 90% from its private days and would otherwise alarm daily.
   - A manual run defaults to a dry run that only says which issue it would open, and takes a lower allowance to test the alert.
   - It has the usual timeout, concurrency group and failure alert with the log's last lines.
 - **Checked against the real bill:** for 1–8 November it counts **2,057 minutes** in 170 runs. GitHub billed **2,052** for those days: within 0.25%, inside the plan's 2% test. Verify (browser) was 1,939 of them.
