@@ -394,7 +394,12 @@
       // never obtained, which is the one thing this site must not do.
       var un = acc.unanswered || [];
       var isUn = function (k) { return un.indexOf(k) !== -1; };
-      accHtml = '<h4>Walking access</h4><div class="dd-access">' +
+      accHtml = '<h4>Walking access</h4>' +
+        (acc.carried && acc.measured_on
+          ? '<p class="dd-note"><strong>Measured ' + esc(asOf(acc.measured_on)) + '.</strong> The latest ' +
+            'build could not re-measure this district, so these are its last measured figures.</p>'
+          : '') +
+        '<div class="dd-access">' +
         Object.keys(acc.access).map(function (kind) {
           var a = acc.access[kind], body;
           if (a) {
@@ -467,6 +472,15 @@
       behavior: (window.EGYBI && EGYBI.reduceMotion) ? 'auto' : 'smooth', block: 'nearest' });
   }
 
+  /* A district the latest build could not re-measure keeps its last-good row,
+     and says from when. Without this a reader would take an August figure for
+     this week's. */
+  function carriedNote(a) {
+    return a.carried && a.measured_on
+      ? ' &middot; <strong>measured ' + esc(asOf(a.measured_on)) + '</strong>; the latest build could not re-measure it'
+      : '';
+  }
+
   function paintAccessSection() {
     var host = $('accessGrid'), empty = $('accessEmpty');
     if (!host) return;
@@ -488,7 +502,7 @@
           '<div class="acc-pct">no data</div>' +
           '<div class="acc-sub">no hospital, clinic, school or pharmacy is mapped inside this ' +
           'boundary, so there is nothing to measure a walk to &mdash; a gap in OpenStreetMap, ' +
-          'not a finding about the district</div></div>';
+          'not a finding about the district' + carriedNote(a) + '</div></div>';
       }
       var un = (a.unanswered || []).length;
       return '<div class="acc-card" data-key="' + esc(a.key) + '">' +
@@ -497,7 +511,7 @@
         '<div class="acc-pct">' + pct.toFixed(0) + '%</div>' +
         '<div class="acc-sub">of walkable street within 15 minutes of a mapped hospital, clinic, school or pharmacy' +
         (un ? ' &middot; averaged over the ' + (4 - un) + ' categories that returned a result this build' : '') +
-        '</div></div>';
+        carriedNote(a) + '</div></div>';
     }).join('');
     host.querySelectorAll('.acc-card').forEach(function (c) {
       c.addEventListener('click', function () { select(c.dataset.key); });
@@ -509,7 +523,14 @@
     var bits = [];
     if (S.card) bits.push('Street network: OSM via OSMnx, built ' + esc(asOf(S.card.as_of)) +
                           ' &mdash; ' + S.card.districts.length + ' districts.');
-    if (S.access) bits.push('Access layer built ' + esc(asOf(S.access.as_of)) + '.');
+    if (S.access) {
+      var carried = S.access.districts.filter(function (a) { return a.carried; });
+      bits.push('Access layer built ' + esc(asOf(S.access.as_of)) +
+        (carried.length
+          ? ' &mdash; ' + carried.length + ' of ' + S.access.districts.length +
+            ' districts could not be re-measured and keep an earlier measurement, dated on each.'
+          : '.'));
+    }
     if (!S.notes) bits.push('Planner&rsquo;s notes have not been generated for this build.');
     if (S.card && S.card.skipped && S.card.skipped.length)
       bits.push('<strong>Skipped:</strong> ' + esc(S.card.skipped.join('; ')) + '.');

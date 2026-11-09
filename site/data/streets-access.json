@@ -35,7 +35,8 @@
     }
    },
    "unanswered": [],
-   "mean_within_15min_pct": 74.8
+   "mean_within_15min_pct": 74.8,
+   "measured_on": "2026-11-09"
   },
   {
    "key": "heliopolis",
@@ -66,7 +67,8 @@
     }
    },
    "unanswered": [],
-   "mean_within_15min_pct": 88.8
+   "mean_within_15min_pct": 88.8,
+   "measured_on": "2026-11-09"
   },
   {
    "key": "maadi",
@@ -97,7 +99,41 @@
     }
    },
    "unanswered": [],
-   "mean_within_15min_pct": 36.2
+   "mean_within_15min_pct": 36.2,
+   "measured_on": "2026-11-09"
+  },
+  {
+   "key": "nasr-city",
+   "name": "Nasr City",
+   "walk_nodes": 16178,
+   "amenity_counts": {
+    "hospital": 26,
+    "clinic": 9,
+    "school": 42,
+    "pharmacy": 25
+   },
+   "access": {
+    "hospital": {
+     "median_min": 20.9,
+     "within_15min_pct": 35.1
+    },
+    "clinic": {
+     "median_min": 41.1,
+     "within_15min_pct": 22.5
+    },
+    "school": {
+     "median_min": 17.8,
+     "within_15min_pct": 41.7
+    },
+    "pharmacy": {
+     "median_min": 17.6,
+     "within_15min_pct": 42.6
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 35.5,
+   "measured_on": "2026-08-07",
+   "carried": true
   },
   {
    "key": "6th-october",
@@ -128,7 +164,41 @@
     }
    },
    "unanswered": [],
-   "mean_within_15min_pct": 16.1
+   "mean_within_15min_pct": 16.1,
+   "measured_on": "2026-11-09"
+  },
+  {
+   "key": "luxor",
+   "name": "Luxor City",
+   "walk_nodes": 2449,
+   "amenity_counts": {
+    "hospital": 3,
+    "clinic": 9,
+    "school": 8,
+    "pharmacy": 1
+   },
+   "access": {
+    "hospital": {
+     "median_min": 11.1,
+     "within_15min_pct": 74.5
+    },
+    "clinic": {
+     "median_min": 6.4,
+     "within_15min_pct": 88.2
+    },
+    "school": {
+     "median_min": 9.2,
+     "within_15min_pct": 73.3
+    },
+    "pharmacy": {
+     "median_min": 29.7,
+     "within_15min_pct": 12.2
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 62.0,
+   "measured_on": "2026-08-07",
+   "carried": true
   },
   {
    "key": "10th-ramadan",
@@ -159,7 +229,93 @@
     }
    },
    "unanswered": [],
-   "mean_within_15min_pct": 20.5
+   "mean_within_15min_pct": 20.5,
+   "measured_on": "2026-11-09"
+  },
+  {
+   "key": "sheikh-zayed",
+   "name": "Sheikh Zayed City",
+   "walk_nodes": 10038,
+   "amenity_counts": {
+    "hospital": 7,
+    "clinic": 3,
+    "school": 11,
+    "pharmacy": 0
+   },
+   "access": {
+    "hospital": {
+     "median_min": 37.0,
+     "within_15min_pct": 22.3
+    },
+    "clinic": {
+     "median_min": 27.8,
+     "within_15min_pct": 18.4
+    },
+    "school": {
+     "median_min": 13.4,
+     "within_15min_pct": 57.8
+    },
+    "pharmacy": null
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 32.8,
+   "measured_on": "2026-08-07",
+   "carried": true
+  },
+  {
+   "key": "new-alamein",
+   "name": "New Alamein",
+   "walk_nodes": 2906,
+   "amenity_counts": {
+    "hospital": 0,
+    "clinic": 0,
+    "school": 0,
+    "pharmacy": 0
+   },
+   "access": {
+    "hospital": null,
+    "clinic": null,
+    "school": null,
+    "pharmacy": null
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": null,
+   "no_amenities_mapped": true,
+   "measured_on": "2026-08-07",
+   "carried": true
+  },
+  {
+   "key": "new-cairo",
+   "name": "New Cairo",
+   "walk_nodes": 47168,
+   "amenity_counts": {
+    "hospital": 9,
+    "clinic": 7,
+    "school": 48,
+    "pharmacy": 15
+   },
+   "access": {
+    "hospital": {
+     "median_min": 29.3,
+     "within_15min_pct": 18.2
+    },
+    "clinic": {
+     "median_min": 41.3,
+     "within_15min_pct": 5.0
+    },
+    "school": {
+     "median_min": 15.3,
+     "within_15min_pct": 49.0
+    },
+    "pharmacy": {
+     "median_min": 36.7,
+     "within_15min_pct": 13.2
+    }
+   },
+   "unanswered": [],
+   "mean_within_15min_pct": 21.4,
+   "measured_on": "2026-08-07",
+   "carried": true
   }
  ],
  "skipped": [
