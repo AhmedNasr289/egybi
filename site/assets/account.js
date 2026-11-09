@@ -46,12 +46,52 @@
     ul.__trips = trips;
   }
 
-  function renderPlaces(places) {
-    $('acctPlacesBox').hidden = places.length === 0;
-    $('acctPlaces').innerHTML = places.map(function (k) { return '<li>' + esc(k) + '</li>'; }).join('');
+  // Saved places are stored as the visitor page's slug ("giza"). Their names
+  // come from the same climate file those pages are built from, so a name
+  // here cannot disagree with the page it links to. A key the file does not
+  // know (a page since retired) is still listed, unlinked, so it can be removed.
+  var placeNames = null;
+  function names() {
+    if (placeNames) return Promise.resolve(placeNames);
+    return fetch('data/visit-climate.json').then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (d) {
+        placeNames = {};
+        (d.sites || []).forEach(function (s) { placeNames[s.key] = s.name; });
+        return placeNames;
+      }).catch(function () { return {}; });
   }
 
-  function load() {
+  function renderPlaces(places) {
+    $('acctPlacesBox').hidden = places.length === 0;
+    if (!places.length) { $('acctPlaces').innerHTML = ''; return; }
+    names().then(function (n) {
+      $('acctPlaces').innerHTML = places.map(function (k) {
+        var label = n[k]
+          ? '<a href="visit/' + encodeURIComponent(k) + '.html">' + esc(n[k]) + '</a>'
+          : '<span>' + esc(k) + '</span>';
+        return '<li class="acct-place" data-key="' + esc(k) + '">' + label +
+          '<button type="button" class="btn btn-ghost" data-act="remove" aria-label="Remove ' + esc(n[k] || k) + ' from saved places">Remove</button></li>';
+      }).join('');
+    });
+  }
+
+  $('acctPlaces').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-act="remove"]'); if (!b) return;
+    var key = b.closest('.acct-place').dataset.key;
+    b.disabled = true;
+    A.api('places-toggle', 'POST', { place: key }).then(function (r) {
+      var d = r.data || {};
+      // places-toggle removes a saved place; "saved: true" would mean it was
+      // not there (removed elsewhere) and has just been added back, so undo that.
+      if (d.ok && d.saved) return A.api('places-toggle', 'POST', { place: key }).then(function () { load('Place removed.'); });
+      if (d.ok) load('Place removed.');
+      else { say(d.message || 'Could not remove that place.', 'error'); b.disabled = false; }
+    }).catch(function () { say('Could not reach the account service.', 'error'); b.disabled = false; });
+  });
+
+  // `done` is the message to leave showing once the lists are back, so a
+  // "deleted" confirmation is not wiped by the reload it triggers.
+  function load(done) {
     if (!A.user) {
       $('acctIn').hidden = true; $('acctOut').hidden = false;
       say('');
@@ -65,7 +105,7 @@
       if (!t.ok) { say(t.message || 'Could not load your trips.', 'error'); return; }
       renderTrips(t.trips || []);
       renderPlaces((p.ok && p.places) || []);
-      say('');
+      say(done || '', done ? 'ok' : '');
     }).catch(function () { say('Could not reach the account service. Please try again.', 'error'); });
   }
 
@@ -93,7 +133,7 @@
     b.disabled = true;
     A.api('trips-delete', 'POST', { id: id }).then(function (r) {
       var d = r.data || {};
-      if (d.ok) { say('Trip deleted.', 'ok'); load(); }
+      if (d.ok) load('Trip deleted.');
       else { say(d.message || 'Could not delete that trip.', 'error'); b.disabled = false; }
     }).catch(function () { say('Could not reach the account service.', 'error'); b.disabled = false; });
   });

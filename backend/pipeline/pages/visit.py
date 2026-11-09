@@ -164,7 +164,9 @@ def build_site_months():
       <span class="seal" aria-hidden="true"><span data-glyph="ankh"></span></span>
       {''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in facts)}
       <div class="cta-row" style="margin-top:14px;"><a class="btn btn-primary" href="../plan.html?add={esc(key)}">Add {esc(name)} to my plan &rarr;</a>
-      <a class="btn btn-ghost" href="../fair-prices.html">What things should cost &rarr;</a></div>
+      <a class="btn btn-ghost" href="../fair-prices.html">What things should cost &rarr;</a>
+      <button type="button" class="btn btn-ghost btn-save" data-save-place="{esc(key)}" aria-pressed="false" hidden>Save this place</button></div>
+      <p class="form-note" role="status" data-save-note></p>
     </div>
   </div>
 </section>
@@ -198,7 +200,9 @@ def build_site_months():
 </section>
 """
         write_text(os.path.join(outdir, key + '.html'), 
-            page(title, desc, url, body, ld, og_image=f"{SITE_URL}/og-visit.png?v=3"))
+            page(title, desc, url, body, ld, og_image=f"{SITE_URL}/og-visit.png?v=3",
+                 # Only these pages carry a place to save, so only they load it.
+                 extra_foot='\n<script src="../assets/saveplace.js?v=1"></script>'))
         urls.append((url, '0.7'))
     return urls
 

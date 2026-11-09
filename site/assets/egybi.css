@@ -1555,6 +1555,12 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 .acct-trip-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .acct-trip-actions .btn { padding: 10px 16px; font-size: .92rem; min-height: 44px; }
 .acct-places li { padding: 10px 14px; border: 1px solid var(--line-light); border-radius: 10px; background: #fff; }
+/* A saved place: its name links to its page; Remove sits at the end. */
+.acct-place { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.acct-place a { font-weight: 600; color: var(--blue-deep); }
+.acct-place .btn { padding: 8px 14px; font-size: .9rem; min-height: 44px; }
+/* "Save this place" on the visitor pages, pressed once saved. */
+.btn-save[aria-pressed="true"] { background: var(--blue); color: #fff; border-color: var(--blue); }
 .trip-form input[type="password"] {
   font: 500 1rem 'Inter', system-ui, sans-serif; padding: 11px 13px; border-radius: 10px;
   border: 1.5px solid var(--line-light); background: #fff; color: var(--ink); min-height: 46px;
