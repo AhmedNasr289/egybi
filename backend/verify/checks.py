@@ -9,6 +9,19 @@ import subprocess
 import sys
 from pathlib import Path
 
+
+def posix_glob(pattern, recursive=False):
+    """glob.glob with forward slashes on every OS.
+
+    Every rule below compares names as POSIX paths ("site/x.html", "x.json").
+    On Windows glob returns backslashes, so f.replace("site/", "") and
+    f.split("/")[-1] silently did nothing there: coverage.py reported all 20
+    data files as having no writer, never checked one against its cadence, and
+    compared the two retired tombstone pages with the live shell. CI, on
+    Linux, never saw it; a local run cried wolf on every line.
+    """
+    return [p.replace("\\", "/") for p in glob.glob(pattern, recursive=recursive)]
+
 # Windows consoles default to cp1252; printing any non-latin-1 character then
 # raises UnicodeEncodeError and takes the whole report with it.
 for _stream in (sys.stdout, sys.stderr):
@@ -25,10 +38,10 @@ def orphans():
     for m in re.finditer(r"(?m)^[ \t]*([^\n{}@][^\n{}]*)\{", css):
         defined.update(re.findall(r"\.([\w-]+)", m.group(1)))
     used = set()
-    for f in glob.glob("site/**/*.html", recursive=True):
+    for f in posix_glob("site/**/*.html", recursive=True):
         for a in re.findall(r'class="([^"]+)"', Path(f).read_text(encoding="utf-8", errors="replace")):
             used.update(a.split())
-    for f in glob.glob("site/assets/*.js") + glob.glob("site/**/*.php", recursive=True):
+    for f in posix_glob("site/assets/*.js") + posix_glob("site/**/*.php", recursive=True):
         t = Path(f).read_text(encoding="utf-8", errors="replace")
         for a in re.findall(r'class=\\?["\']([^"\'\\]+)', t):
             used.update(a.split())
@@ -43,6 +56,13 @@ def orphans():
         for lit in re.findall(r"['\"]([a-z][\w -]{2,})['\"]", t):
             if " " in lit:
                 used.update(w for w in lit.split() if re.fullmatch(r"[a-z][\w-]*", w))
+        # A class APPENDED with a leading space is a use too: mapkit.js builds
+        # className: cls + (isPoint ? ' mk-label-pt' : ''), and both patterns
+        # above need the literal to start with a letter, so .mk-label-pt was
+        # reported orphaned on every run, CI included, while every point label
+        # on the maps wore it.
+        for lit in re.findall(r"['\"](\s+[a-z][\w -]*)['\"]", t):
+            used.update(w for w in lit.split() if re.fullmatch(r"[a-z][\w-]*", w))
     orph = sorted(c for c in defined - used
                   if not c.startswith(("aos", "leaflet", "cm-", "js-")))
     print(f"CSS classes defined: {len(defined)}   orphaned: {len(orph)}")
@@ -62,11 +82,11 @@ def workflows():
     # read from the workflow AND the helper together.
     helper = Path(".github/scripts/push-with-regenerate.sh")
     helper_t = helper.read_text(encoding="utf-8") if helper.exists() else ""
-    for f in sorted(glob.glob(".github/workflows/*.yml")):
+    for f in sorted(posix_glob(".github/workflows/*.yml")):
         import yaml
         t = Path(f).read_text(encoding="utf-8")
         d = yaml.safe_load(t)
-        n = f.split("/")[-1]
+        n = Path(f).name
         job = list(d["jobs"].values())[0]
         problems = []
         if job.get("timeout-minutes") is None:
@@ -138,12 +158,20 @@ def fra():
     ]
     hits = []
     scanned = 0
-    for f in sorted(glob.glob("site/**/*.html", recursive=True)) + sorted(glob.glob("site/assets/*.js")):
+    for f in sorted(posix_glob("site/**/*.html", recursive=True)) + sorted(posix_glob("site/assets/*.js")):
         scanned += 1
         t = Path(f).read_text(encoding="utf-8", errors="replace")
         if f.endswith(".html"):
             t = re.sub(r"<script\b.*?</script>", "", t, flags=re.S | re.I)
             t = re.sub(r"<[^>]+>", " ", t)
+        else:
+            # Whole-line // comments in a script are notes for whoever edits
+            # it; no reader sees them. One in stories.js ("the answer the
+            # reader will reach for") matched "will reach" and was reported as
+            # a price prediction on every run. Strings, where reader-facing
+            # copy lives, are still scanned. Only WHOLE-line comments go, so a
+            # "//" inside a URL in a string is never mistaken for one.
+            t = re.sub(r"(?m)^[ \t]*//.*$", "", t)
         for pat, why in ADVICE:
             for m in re.finditer(pat, t, re.I):
                 hits.append(f"{f.replace('site/','')} [{why}] …"

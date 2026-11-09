@@ -11,6 +11,13 @@
     RewriteRule ^_private(/|$) - [F]
     RewriteRule ^cache(/|$)    - [F]
 
+    # lib/ and controllers/ are includes that index.php requires from disk,
+    # never endpoints. Until 2026-11-08 a direct request ran them and answered
+    # an empty 200, while auth/ already refused its own includes (lib.php,
+    # mailer.php) with 403. Nothing leaked, but an include should not be
+    # executable on its own; this matches auth/ and costs index.php nothing.
+    RewriteRule ^(lib|controllers)(/|$) - [F]
+
     # If deployed in a subfolder (e.g. egybi.com/api/), Hostinger sets the base
     # automatically; the router also strips a leading /api segment defensively.
     RewriteCond %{REQUEST_FILENAME} !-f

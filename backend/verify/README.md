@@ -132,6 +132,18 @@ only that the workflow failed. Seventeen steps carry `if: always()` — a sweep
 should report everything in one pass, and `tap-targets.js` failing once used to
 skip `map-render`, `map-contrast` and `map-interaction` with it.
 
+A `gate` job (`.github/scripts/verify-gate.sh`) decides first what the sweep
+must run, because the sweep is about 38 minutes and on 2026-11-08 it had used
+up the account's Actions minutes, stopping the daily data refreshes with it:
+
+- A push to `main` whose merge commit has the same tree as the pull request
+  head, where that head's sweep already passed, is not swept again.
+- `mutate.py` (17.5 of the 38 minutes) runs when a checker, the workflow, the
+  gate, or a file `mutate.py` edits has changed, and on the weekly scheduled
+  run (Monday 03:41 UTC) and every manual run.
+
+The gate fails open: anything it cannot determine means a full sweep.
+
 ## What this directory learned the hard way
 
 (The heading used to say "three" and listed four. A count in a heading rots the

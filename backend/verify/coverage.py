@@ -12,6 +12,19 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
+
+def posix_glob(pattern, recursive=False):
+    """glob.glob with forward slashes on every OS.
+
+    Every rule below compares names as POSIX paths ("site/x.html", "x.json").
+    On Windows glob returns backslashes, so f.replace("site/", "") and
+    f.split("/")[-1] silently did nothing there: coverage.py reported all 20
+    data files as having no writer, never checked one against its cadence, and
+    compared the two retired tombstone pages with the live shell. CI, on
+    Linux, never saw it; a local run cried wolf on every line.
+    """
+    return [p.replace("\\", "/") for p in glob.glob(pattern, recursive=recursive)]
+
 # Windows consoles default to cp1252; printing any non-latin-1 character then
 # raises UnicodeEncodeError and takes the whole report with it.
 for _stream in (sys.stdout, sys.stderr):
@@ -19,9 +32,14 @@ for _stream in (sys.stdout, sys.stderr):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
 
-TODAY = datetime.date(2026, 8, 8)
+# Today, in UTC like the CI runner. This was the literal 2026-08-08 from the
+# day the cadence rule was written until 2026-11-08, so every file's age was
+# measured against August: a file could fall any number of days behind its
+# pipeline and the rule still read "fresh". mutate.py's cadence cases now
+# backdate a file relative to the real date and require this rule to say so.
+TODAY = datetime.datetime.now(datetime.timezone.utc).date()
 findings = defaultdict(list)
-pages = sorted(glob.glob("site/**/*.html", recursive=True))
+pages = sorted(posix_glob("site/**/*.html", recursive=True))
 
 
 def strip(t):
@@ -145,7 +163,7 @@ def linkset(fragment):
 heads, foots, sources, colophons = (defaultdict(list), defaultdict(list), {},
                                     defaultdict(list))
 TOMBSTONES = {"practice.html", "tracks.html"}
-for f in sorted(glob.glob("site/*.html")):
+for f in sorted(posix_glob("site/*.html")):
     name = f.replace("site/", "")
     t = Path(f).read_text(encoding="utf-8", errors="replace")
     h, ft = chunk(t, "header"), chunk(t, "footer")
@@ -205,9 +223,18 @@ CADENCE = {  # workflow -> max days a file may age before the page is misciting
 # number of days before each must be re-read against its sources.
 HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90}
 writers = {}
-for wf in glob.glob(".github/workflows/*.yml"):
+for wf in posix_glob(".github/workflows/*.yml"):
     t = Path(wf).read_text(encoding="utf-8")
-    n = wf.split("/")[-1]
+    n = Path(wf).name
+    # Only the jobs can WRITE a file. A path listed under `on:` is a trigger:
+    # test-pipeline.yml and build-pages.yml name calendar.json and the two
+    # visit-*.json files there because a change to them must re-run those
+    # workflows. Reading that as authorship (and the last match winning) made
+    # test-pipeline.yml the "writer" of all three, a workflow with no cadence,
+    # so CI reported them as having no writer and calendar.json's 120-day
+    # re-read below never fired.
+    jobs_at = re.search(r"(?m)^jobs:", t)
+    t = t[jobs_at.start():] if jobs_at else t
     for m in re.findall(r"site/data/([\w-]+\.json)", t):
         writers[m] = n
     for s in re.findall(r"python backend/pipeline/(\w+)\.py", t):
@@ -217,8 +244,8 @@ for wf in glob.glob(".github/workflows/*.yml"):
             for m in (re.findall(r'write\(\s*"([\w-]+\.json)"', body)
                       + re.findall(r'"([\w-]+\.json)"\)\.write_text', body)):
                 writers[m] = n
-for f in sorted(glob.glob("site/data/*.json")):
-    name = f.split("/")[-1]
+for f in sorted(posix_glob("site/data/*.json")):
+    name = Path(f).name
     try:
         d = json.loads(Path(f).read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
@@ -248,7 +275,7 @@ for f in sorted(glob.glob("site/data/*.json")):
 
 print(f"pages checked : {len(pages)}")
 print(f"distinct titles: {len(titles)}   distinct descriptions: {len(descs)}")
-print(f"data files     : {len(glob.glob('site/data/*.json'))}")
+print(f"data files     : {len(posix_glob('site/data/*.json'))}")
 print(f"footer source column, per page (meant to differ): "
       f"{len(sources)} page(s) carry one — "
       + ", ".join(f"{k}={v}" for k, v in sorted(sources.items()) if v != "Data sources"))

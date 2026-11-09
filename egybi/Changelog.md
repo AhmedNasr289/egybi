@@ -1113,3 +1113,40 @@ After #83 went live I read the page at 1280 and at phone width. Three real defec
   - The daily entry point writes the same bytes as the full build. The full build changed no other page's content.
   - The suite passes; pyflakes, `seo.py` (181 pages), `workflow-audit.py` and `checks.py workflows` are clean.
   - The new page is added to the CI screenshots.
+
+## 2026-11-08 — Static audit: a line-ending false alarm
+- **The defect:** `static-audit.py` reported "a committed asset that its generator no longer reproduces" for `egypt-silhouette.svg` on every local run (1252 -> 1245 bytes), while CI stayed clean. Git stores the file with LF; a Windows checkout with `core.autocrlf` holds it with CRLF; `build_flag.py` writes LF. The 7 bytes were the 7 line endings. A check that always fires locally gets ignored, and then it is ignored the day it is right.
+- **The fix:** the comparison folds CRLF to LF on both sides. Any other byte still counts.
+- **Proof:** on a CRLF working copy, the old code reported 1 finding and the new code 0. A real content change to the SVG's title is still reported (1 finding), and mutate case 3b still covers it in CI.
+
+## 2026-11-08 — Actions minutes ran out; the browser sweep stops paying twice
+- **What happened:** from 21:06 UTC on 7 November GitHub stopped starting any job in this repo: "recent account payments have failed or your spending limit needs to be increased". A private repo on the free plan gets 2,000 Actions minutes a month. Measured from job start and finish times (rounded up per job, as GitHub bills), November had used 1,963 minutes in seven days, 1,358 of them on 6 November. Every workflow stops with them, including the daily price and FX refreshes, so the site's data stays at 7 November until minutes are available again. Billing is an account setting, so it is Ahmed's to restore.
+- **Where the minutes went:** `Verify (browser)` used 2,055 of the 2,366 minutes measured since 1 October. One run is about 38 minutes: `mutate.py` 17.5, the browser checkers about 20. Every change paid it twice, once on the pull request and once on the merge to `main`, although a `--merge` merge commit has exactly the tree the pull request already passed.
+- **The fix:** a `gate` job (`.github/scripts/verify-gate.sh`) runs first.
+  1. A push whose merge commit has the same tree as its PR head, where that head's sweep already succeeded, skips the sweep.
+  2. `mutate.py` runs only when a checker, the workflow, the gate, or a file `mutate.py` edits changed. A new weekly scheduled run (Monday 03:41 UTC) and every manual run do the full sweep, so a page edit that moves a case's anchor is caught within a week.
+  3. The gate fails open: no usable history, no API answer or an unknown event all mean a full sweep. Its own failure raises an alert.
+- **Expected effect:** a site-only change goes from about 76 minutes (two full sweeps) to about 23 (one sweep without `mutate.py`, plus a one-minute gate on the pull request and another on the merge).
+- **Proof:** the gate was run against real commits in a detached worktree, 9 cases, all as expected. The #88 merge is skipped as a repeat; the same merge with the API unreachable sweeps fully; schedule, manual, missing-`before` and unknown events sweep fully; PR #88 keeps `mutate.py` (it changed a file `mutate.py` edits); PR #87 and a bot data commit skip it. `workflow-audit.py` and `checks.py workflows` show no gaps. **Not verified in CI:** no job can start until minutes are back, so the first real run of the new workflow is still to come.
+
+## 2026-11-08 — Four checkers that printed false findings, and one that could never fire
+Found by running every checker by hand while Actions was blocked, and comparing the local output with CI's last log (run 42414265996).
+- **The data-age rule was frozen in August.** `coverage.py` measured every data file's age against `TODAY = datetime.date(2026, 8, 8)`, a literal written the day the rule was added (in a commit titled "Three checks were reporting clean while being unable to fail"). For three months a file could fall any distance behind its pipeline and the rule still read fresh. It now uses today's UTC date. Today's real data has no file past its cadence.
+- **A trigger was read as a writer.** The same rule mapped each data file to "the workflow that writes it" by finding its path anywhere in a workflow, and the last match won. `test-pipeline.yml` lists `calendar.json` and the two `visit-*.json` files under `on: paths:` as triggers, so it became their writer. It has no cadence, so CI reported all three as having no writer, and `calendar.json`'s 120-day re-read reminder could never fire. Only the `jobs:` section is read now.
+- **Windows paths.** `coverage.py` and `checks.py` compared names with `f.split("/")[-1]` and `f.replace("site/", "")`, which do nothing to a backslash path. Locally, all 20 data files read as having no writer, and the two retired tombstone pages were compared with the live header and footer. Both files now glob through `posix_glob()`.
+- **`.mk-label-pt` reported as unused.** `mapkit.js` adds it as `' mk-label-pt'`, and the unused-class rule only read string literals that start with a letter. The class is on every point label of every map. CI printed it too.
+- **A code comment read as a price prediction.** "the answer the reader will reach for", in a `//` comment in `stories.js`, matched "will reach". Whole-line comments in scripts are now skipped; page text and script strings are still scanned.
+- **Proof:**
+  - Five new mutate cases: an FX file 9 days old, a calendar 150 days old, an unused CSS class, a prediction in page text, and a prediction in a script string.
+  - The two data-age cases FAILED TO CATCH until the date was fixed, which is how the frozen date was found. All five now pass.
+  - Every other non-browser case passes: 18 across static-audit, workflow-audit, seo and map-completeness, plus the 2 neighbouring coverage cases.
+  - On today's main, coverage, orphans and fra read 0 findings. Before the fixes they read 20 locally (3 on CI), 1 and 1.
+
+## 2026-11-08 — API include files no longer run on their own
+- **Found by probing every PHP file over the web:** `api/lib/*.php` and `api/controllers/*.php` answered an empty 200 when requested directly, because Apache ran them. `auth/` already refuses its own includes (`lib.php`, `mailer.php`) with 403. Nothing leaked: they only define classes and print nothing. An include still should not run on its own.
+- **The fix:** `api/.htaccess` forbids `lib/` and `controllers/`, beside its existing `_private/` and `cache/` rules. `index.php` requires them from disk, so the API is unaffected.
+- **Before the change, measured live:**
+  - `api/config.php`, `auth/lib.php`, `auth/mailer.php` and `auth/config.sample.php` return 403;
+  - `api/insights.php` returns 403 without its key, and `auth/progress.php` 401 without a sign-in;
+  - `api/` and `api/datasets` return 200.
+- **Not verified:** there is no Apache here, so the new rule is untested until it deploys. After the merge, `api/lib/Database.php` must return 403 and `api/datasets` must still return 200.

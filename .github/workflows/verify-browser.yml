@@ -16,6 +16,7 @@ on:
       - 'site/**'
       - 'backend/verify/**'
       - '.github/workflows/verify-browser.yml'
+      - '.github/scripts/verify-gate.sh'
   pull_request:
     paths:
       - 'site/**'
@@ -28,6 +29,13 @@ on:
       # workflow_dispatch only works from the default branch, so a PR is the
       # only way to exercise this before it lands on main.
       - '.github/workflows/verify-browser.yml'
+      - '.github/scripts/verify-gate.sh'
+  # The full sweep, mutate.py included, once a week whatever changed. Pull
+  # requests and pushes now run mutate.py only when something it depends on
+  # changed (see verify-gate.sh), so this is what catches a page edit that
+  # quietly moved the text one of its cases anchors on.
+  schedule:
+    - cron: '41 3 * * 1'   # 03:41 UTC Monday; off the hour on purpose
   workflow_dispatch: {}
 
 # A second push while a sweep is running should supersede it rather than queue:
@@ -38,10 +46,46 @@ concurrency:
 
 permissions:
   contents: read
+  actions: read            # verify-gate.sh asks whether the PR head's sweep passed
   issues: write            # open a failure-alert issue via notify-failure
 
 jobs:
+  # Decides, in under a minute, whether the 38-minute sweep below is needed and
+  # whether mutate.py is. On 2026-11-08 the account's Actions minutes ran out
+  # and GitHub stopped starting jobs, the daily data refreshes included; this
+  # sweep had used 2,055 of the 2,366 minutes measured since 1 October, half of
+  # them repeating a check on a merge commit identical to the PR it came from.
+  # The reasoning, and why it fails open, is in .github/scripts/verify-gate.sh.
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+      mutate: ${{ steps.decide.outputs.mutate }}
+    steps:
+      # Full history without file contents: the gate reads commits and trees
+      # (rev-parse, diff --name-only), never blobs, so this stays small.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+      - name: Decide what to run
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/verify-gate.sh
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
+        with:
+          reason: "verify-gate.sh failed, so the browser checks did not run for this commit. Re-run the workflow; the gate is designed to fail open, so a failure here is itself a bug."
+
   browser-checks:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     # 35, not 25: run 31515324032 ended `cancelled` on the timeout even
     # though every step had reported, which reads as an infrastructure
@@ -264,8 +308,13 @@ jobs:
       # backwards — a red sweep is exactly when you most need to know the
       # checkers are trustworthy. map-interaction.js failing has already
       # skipped this step once, leaving the question unanswered.
+      #
+      # Gated since 2026-11-08: at 17.5 of the run's 38 minutes it is the
+      # single largest cost, and it tests the checkers, not the site. The gate
+      # runs it whenever a checker, this workflow, the gate, or a file it
+      # mutates changed, and on every scheduled (weekly) or manual run.
       - name: mutate.py — the check on the checks
-        if: always()
+        if: always() && needs.gate.outputs.mutate == 'true'
         run: backend/verify/ci-step.sh mutate python3 backend/verify/mutate.py
 
       - name: Upload logs

@@ -9,6 +9,7 @@ restore landed. It used `git checkout --`, which silently does nothing for an
 untracked file — so the first mutation of a brand-new file left the defect in
 the working tree and reported only that the checker had failed to catch it.
 """
+import datetime
 import json
 import os
 import tempfile
@@ -327,6 +328,58 @@ case("footer nav link dropped from one page", "coverage.py", ["site/about.html"]
 case("404 chrome link made relative", "coverage.py", ["site/404.html"],
      lambda: edit("site/404.html", 'href="/explore.html"', 'href="explore.html"'),
      lambda o: "not root-absolute" in o, COVERAGE)
+
+
+# ---- 15b-15c. data older than its refresh cadence ---------------------------
+# Until 2026-11-08 this rule could not fire for the hand-curated files, and on
+# Windows for any file: a workflow that merely LISTED a data file as a trigger
+# path was read as its writer, and backslash paths defeated every name match.
+# The rule printed findings for files that were fine and was never shown
+# catching a file that was not. These two cases are that showing.
+def age_data_file(name, days):
+    """Backdate a data file's own date fields by `days` from today."""
+    p = Path(f"site/data/{name}")
+    d = json.loads(p.read_text(encoding="utf-8"))
+    old = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
+    for k in ("as_of", "fetched_at", "updated"):
+        if k in d:
+            d[k] = old
+    p.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+
+
+case("daily FX file older than its cadence", "coverage.py", ["site/data/fx-today.json"],
+     lambda: age_data_file("fx-today.json", 9),
+     lambda o: "older than its pipeline's cadence" in o and "fx-today.json: 9d old, refresh-fx.yml" in o,
+     COVERAGE)
+
+case("hand-curated calendar overdue for re-reading", "coverage.py", ["site/data/calendar.json"],
+     lambda: age_data_file("calendar.json", 150),
+     lambda o: "calendar.json: 150d old, hand review" in o, COVERAGE)
+
+PY_CHECKS = f'"{sys.executable}" {HERE}/checks.py'
+
+# ---- 15d. a CSS class nothing uses ------------------------------------------
+# checks.py orphans reported .mk-label-pt, a live class, on every run until
+# 2026-11-08. Widening what counts as a use must not blind it to a real orphan.
+case("CSS class no markup or script uses", "checks.py orphans", ["site/assets/egybi.css"],
+     lambda: Path("site/assets/egybi.css").write_text(
+         Path("site/assets/egybi.css").read_text(encoding="utf-8")
+         + "\n.zz-mutation-orphan { color: #000; }\n", encoding="utf-8"),
+     lambda o: ".zz-mutation-orphan" in o, PY_CHECKS + " orphans")
+
+# ---- 15e. a price prediction in reader-visible text -------------------------
+# checks.py fra now skips whole-line // comments in scripts. Copy a reader can
+# see, in a page or in a script's strings, must still be caught.
+case("price prediction in a page's visible text", "checks.py fra", ["site/about.html"],
+     lambda: edit("site/about.html", '<a href="stories.html">Data Stories</a>',
+                  '<a href="stories.html">Data Stories</a> The pound will fall again.'),
+     lambda o: "[price prediction]" in o and "about.html" in o, PY_CHECKS + " fra")
+
+case("price prediction in a script string", "checks.py fra", ["site/assets/stories.js"],
+     lambda: Path("site/assets/stories.js").write_text(
+         Path("site/assets/stories.js").read_text(encoding="utf-8")
+         + "\nvar zzMutation = 'EGX shares will rise this week';\n", encoding="utf-8"),
+     lambda o: "[price prediction]" in o and "stories.js" in o, PY_CHECKS + " fra")
 
 
 # ---- 16. static audit: a date field holding something that is not a date ----
