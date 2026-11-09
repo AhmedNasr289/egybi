@@ -1,6 +1,6 @@
 {
- "as_of": "2026-08-07",
- "fetched_at": "2026-08-07T22:33:46+00:00",
+ "as_of": "2026-11-09",
+ "fetched_at": "2026-11-09T10:18:12+00:00",
  "source": "OpenStreetMap amenities + walk network via OSMnx",
  "license": "ODbL — © OpenStreetMap contributors",
  "method": "Walk network per district. Walking time at 80 m/min (~4.8 km/h) along the network — not straight-line. 'Within 15 min' is the share of walk-network nodes whose nearest facility of that type is inside 15 minutes.",
@@ -19,7 +19,7 @@
    "access": {
     "hospital": {
      "median_min": 9.2,
-     "within_15min_pct": 82.9
+     "within_15min_pct": 83.0
     },
     "clinic": {
      "median_min": 12.8,
@@ -27,7 +27,7 @@
     },
     "school": {
      "median_min": 10.9,
-     "within_15min_pct": 77.0
+     "within_15min_pct": 76.8
     },
     "pharmacy": {
      "median_min": 7.9,
@@ -71,7 +71,7 @@
   {
    "key": "maadi",
    "name": "Maadi",
-   "walk_nodes": 3293,
+   "walk_nodes": 3301,
    "amenity_counts": {
     "hospital": 5,
     "clinic": 1,
@@ -80,60 +80,29 @@
    },
    "access": {
     "hospital": {
-     "median_min": 13.6,
-     "within_15min_pct": 56.0
+     "median_min": 13.7,
+     "within_15min_pct": 55.9
     },
     "clinic": {
      "median_min": 52.9,
-     "within_15min_pct": 10.6
+     "within_15min_pct": 10.7
     },
     "school": {
      "median_min": 16.1,
      "within_15min_pct": 46.6
     },
     "pharmacy": {
-     "median_min": 22.2,
-     "within_15min_pct": 31.3
+     "median_min": 22.1,
+     "within_15min_pct": 31.5
     }
    },
    "unanswered": [],
-   "mean_within_15min_pct": 36.1
-  },
-  {
-   "key": "nasr-city",
-   "name": "Nasr City",
-   "walk_nodes": 16178,
-   "amenity_counts": {
-    "hospital": 26,
-    "clinic": 9,
-    "school": 42,
-    "pharmacy": 25
-   },
-   "access": {
-    "hospital": {
-     "median_min": 20.9,
-     "within_15min_pct": 35.1
-    },
-    "clinic": {
-     "median_min": 41.1,
-     "within_15min_pct": 22.5
-    },
-    "school": {
-     "median_min": 17.8,
-     "within_15min_pct": 41.7
-    },
-    "pharmacy": {
-     "median_min": 17.6,
-     "within_15min_pct": 42.6
-    }
-   },
-   "unanswered": [],
-   "mean_within_15min_pct": 35.5
+   "mean_within_15min_pct": 36.2
   },
   {
    "key": "6th-october",
    "name": "6th of October City",
-   "walk_nodes": 55242,
+   "walk_nodes": 55369,
    "amenity_counts": {
     "hospital": 19,
     "clinic": 3,
@@ -143,7 +112,7 @@
    "access": {
     "hospital": {
      "median_min": 60.8,
-     "within_15min_pct": 9.0
+     "within_15min_pct": 9.1
     },
     "clinic": {
      "median_min": 78.6,
@@ -162,146 +131,42 @@
    "mean_within_15min_pct": 16.1
   },
   {
-   "key": "luxor",
-   "name": "Luxor City",
-   "walk_nodes": 2449,
-   "amenity_counts": {
-    "hospital": 3,
-    "clinic": 9,
-    "school": 8,
-    "pharmacy": 1
-   },
-   "access": {
-    "hospital": {
-     "median_min": 11.1,
-     "within_15min_pct": 74.5
-    },
-    "clinic": {
-     "median_min": 6.4,
-     "within_15min_pct": 88.2
-    },
-    "school": {
-     "median_min": 9.2,
-     "within_15min_pct": 73.3
-    },
-    "pharmacy": {
-     "median_min": 29.7,
-     "within_15min_pct": 12.2
-    }
-   },
-   "unanswered": [],
-   "mean_within_15min_pct": 62.0
-  },
-  {
    "key": "10th-ramadan",
    "name": "10th of Ramadan City",
-   "walk_nodes": 27498,
+   "walk_nodes": 27477,
    "amenity_counts": {
     "hospital": 8,
     "clinic": 1,
-    "school": 16,
+    "school": 17,
     "pharmacy": 6
    },
    "access": {
     "hospital": {
-     "median_min": 29.0,
-     "within_15min_pct": 22.4
+     "median_min": 28.9,
+     "within_15min_pct": 22.5
     },
     "clinic": {
-     "median_min": 52.6,
+     "median_min": 52.7,
      "within_15min_pct": 3.7
     },
     "school": {
-     "median_min": 19.0,
-     "within_15min_pct": 36.6
+     "median_min": 17.2,
+     "within_15min_pct": 40.9
     },
     "pharmacy": {
-     "median_min": 40.0,
-     "within_15min_pct": 15.2
+     "median_min": 40.1,
+     "within_15min_pct": 14.8
     }
    },
    "unanswered": [],
-   "mean_within_15min_pct": 19.5
-  },
-  {
-   "key": "sheikh-zayed",
-   "name": "Sheikh Zayed City",
-   "walk_nodes": 10038,
-   "amenity_counts": {
-    "hospital": 7,
-    "clinic": 3,
-    "school": 11,
-    "pharmacy": 0
-   },
-   "access": {
-    "hospital": {
-     "median_min": 37.0,
-     "within_15min_pct": 22.3
-    },
-    "clinic": {
-     "median_min": 27.8,
-     "within_15min_pct": 18.4
-    },
-    "school": {
-     "median_min": 13.4,
-     "within_15min_pct": 57.8
-    },
-    "pharmacy": null
-   },
-   "unanswered": [],
-   "mean_within_15min_pct": 32.8
-  },
-  {
-   "key": "new-alamein",
-   "name": "New Alamein",
-   "walk_nodes": 2906,
-   "amenity_counts": {
-    "hospital": 0,
-    "clinic": 0,
-    "school": 0,
-    "pharmacy": 0
-   },
-   "access": {
-    "hospital": null,
-    "clinic": null,
-    "school": null,
-    "pharmacy": null
-   },
-   "unanswered": [],
-   "mean_within_15min_pct": null,
-   "no_amenities_mapped": true
-  },
-  {
-   "key": "new-cairo",
-   "name": "New Cairo",
-   "walk_nodes": 47168,
-   "amenity_counts": {
-    "hospital": 9,
-    "clinic": 7,
-    "school": 48,
-    "pharmacy": 15
-   },
-   "access": {
-    "hospital": {
-     "median_min": 29.3,
-     "within_15min_pct": 18.2
-    },
-    "clinic": {
-     "median_min": 41.3,
-     "within_15min_pct": 5.0
-    },
-    "school": {
-     "median_min": 15.3,
-     "within_15min_pct": 49.0
-    },
-    "pharmacy": {
-     "median_min": 36.7,
-     "within_15min_pct": 13.2
-    }
-   },
-   "unanswered": [],
-   "mean_within_15min_pct": 21.4
+   "mean_within_15min_pct": 20.5
   }
  ],
- "skipped": []
+ "skipped": [
+  "Nasr City: walk graph failed after 3 attempts (ResponseStatusCodeError)",
+  "Luxor City: walk graph failed after 3 attempts (ResponseStatusCodeError)",
+  "Sheikh Zayed City: walk graph failed after 3 attempts (ConnectTimeout)",
+  "New Alamein: walk graph failed after 3 attempts (ConnectTimeout)",
+  "New Cairo: not attempted, endpoint unreachable (2 districts in a row failed to connect); last-good data kept"
+ ]
 }
