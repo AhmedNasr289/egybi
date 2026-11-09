@@ -1206,4 +1206,9 @@ Part 2 of [[Plan — Private Repo, Free CI and Accounts]]. Sign-up, verification
   - deletion refused without confirmation, with a wrong password and without CSRF; then a real deletion;
   - a direct read of the database proving no row of A's is left in any table, that A is signed out and cannot sign in again, and that B's data survives.
   - It fails on any PHP warning in the server log.
-- **Not yet:** the page side (header sign-in, `account.html`, Save trip, Save place, privacy page) is the next PR. The first run of `auth-flow.sh` is this PR's CI.
+- **First CI run:** 35 of 35 steps "ok", read from the job log, not inferred from the green step.
+- **Proof it can fail:** two `mutate.py` cases (26 and 27). Each must turn `auth-flow.sh` red on the exact step:
+  - deletion that skips the trips table must print `1 user_trips rows left for A`;
+  - a trip deletion not scoped to its owner must print `A cannot delete B's trip`.
+  - They need PHP, so they run in CI. On the workstation `mutate.py` reports them as COULD NOT RUN (exit 2), never as a pass.
+- **Not yet:** the page side (header sign-in, `account.html`, Save trip, Save place, privacy page) is the next PR.

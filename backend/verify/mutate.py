@@ -794,6 +794,28 @@ case("analytics beacon resolved against the page", "beacon-url.js",
      f"node {HERE}/beacon-url.js")
 
 
+# ---- 26-27. auth-flow.sh: accounts that leak or do not die ------------------
+# The two failures that matter most in an account system: a deletion that
+# leaves the person's data behind, and one user able to act on another's rows.
+# auth-flow.sh runs PHP, so these cases only run where PHP exists (CI). Each
+# matches the FAIL line for the exact step, not the summary.
+SH_AUTH = f"bash {HERE}/auth-flow.sh"
+
+case("account deletion leaves the trips table behind", "auth-flow.sh",
+     ["site/auth/lib.php"],
+     lambda: edit("site/auth/lib.php",
+                  "const ACCOUNT_TABLES = ['user_trips', ",
+                  "const ACCOUNT_TABLES = ["),
+     lambda o: "FAIL  1 user_trips rows left for A" in o, SH_AUTH)
+
+case("one user can delete another user's trip", "auth-flow.sh",
+     ["site/auth/auth.php"],
+     lambda: edit("site/auth/auth.php",
+                  "$del = $db->prepare('DELETE FROM user_trips WHERE id=? AND user_id=?');",
+                  "$del = $db->prepare('DELETE FROM user_trips WHERE id=? OR user_id=?');"),
+     lambda o: "FAIL  A cannot delete B's trip" in o, SH_AUTH)
+
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")
