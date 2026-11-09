@@ -10,6 +10,12 @@
 # Only the two unambiguous markers are matched, at the start of a line and
 # followed by a space. A bare ======= is also a Markdown heading underline,
 # so it is not matched.
+#
+# Second check, same job (one job rounds to one billed minute; a second job
+# would add a minute to every push): backend/verify/cache-bump.py. Assets are
+# served `immutable` for a week and the CDN caches by URL, so an asset that
+# changed must be requested under a new ?v=. PR #98 changed account.js under
+# its old version, and the CDN then served old and new copies at random.
 name: Conflict markers
 
 on:
@@ -31,7 +37,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # Full history (10 MB): the version check compares with the PR's base or
+      # the commit before the push, and reads that commit's files.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: No conflict markers in any tracked file
         shell: bash
@@ -44,8 +54,31 @@ jobs:
           fi
           echo "no conflict markers in $(git ls-files | wc -l) tracked files"
 
+      - name: Every changed asset is requested under a new version
+        if: '!cancelled()'
+        shell: bash
+        env:
+          # The PR's base, or the commit before a push. Empty for a manual run,
+          # where the script compares with the commit before HEAD.
+          CACHE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          set -o pipefail
+          python3 backend/verify/cache-bump.py 2>&1 | tee /tmp/cache-bump.log
+
+      - name: Collect what the run said about itself
+        if: failure() && github.event_name == 'push'
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<WHY_EOF'
+            [ -s /tmp/markers.log ] && { echo "Merge-conflict markers were committed to main:"; head -n 10 /tmp/markers.log; }
+            grep -E '^FAIL' /tmp/cache-bump.log 2>/dev/null | head -n 10
+            echo 'WHY_EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Alert on failure
         if: failure() && github.event_name == 'push'
         uses: ./.github/actions/notify-failure
         with:
-          reason: Merge-conflict markers were committed to main.
+          reason: ${{ steps.why.outputs.text }}

@@ -842,6 +842,20 @@ case("save button never shown", "save-place.js",
      lambda o: "FAIL  signed in: the button is visible" in o, NODE_SAVE)
 
 
+# ---- 30. cache-bump.py: an asset changed under its old version ---------------
+# Assets are cached `immutable` for a week, by URL, in browsers and the CDN.
+# PR #98 changed account.js and kept ?v=1, and the CDN served old and new
+# copies at random. Compared with HEAD, so the case needs no history: the
+# mutation is the only change, and the page still asks for saveplace.js?v=1.
+PY_CACHE = f'"{sys.executable}" {HERE}/cache-bump.py --base HEAD'
+
+case("asset changed under its old cache version", "cache-bump.py",
+     ["site/assets/saveplace.js"],
+     lambda: edit("site/assets/saveplace.js", "(function () {\n  'use strict';",
+                  "(function () {\n  'use strict'; // changed"),
+     lambda o: "FAIL  saveplace.js changed, and site/visit/giza.html still requests ?v=1" in o, PY_CACHE)
+
+
 print()
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")
