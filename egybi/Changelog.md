@@ -1282,3 +1282,15 @@ The second thing an account is for, after saved trips (plan part 2). The server 
 
   The real PHP service is still tested by `auth-flow.sh`. Two new `mutate.py` cases prove the check can fail: finishing a save without asking first, and a button that is never shown.
 - **Checked on this machine:** both scripts parse; static-audit, coverage, seo, map-completeness, workflow-audit and the four `checks.py` modes report no findings (CSS orphans 0); 147 unit tests pass. The browser check and its mutation cases run in CI.
+
+## 2026-11-09 — account.js under a new version, and a check that asks
+
+- **The fault, found checking #98 live:** #98 changed `assets/account.js` (saved places by name, Remove) and left `account.html` asking for `account.js?v=1`. Assets are served `immutable` for a week and Hostinger's CDN caches by URL, so the same URL returned the new file from some CDN edges and the old one from others (measured: three requests, one old). A reader with the old copy sees saved places as bare keys (`giza`) with no Remove button. Nothing else breaks.
+- **Fixed:** `account.html` now asks for `account.js?v=2`.
+- **Why nothing caught it:** static-audit checks that every page asks for the SAME version of an asset, which they did. Nothing asked whether that version had MOVED when the file changed.
+- **`backend/verify/cache-bump.py`** (new) asks. It compares the working tree with a base commit: every `.js`/`.css` in `site/assets/` whose bytes changed must be requested under a different `?v=` than at the base, everywhere it is requested; a changed asset requested with no `?v=` is reported too. New files are exempt, and only quoted references count, so a file named in a comment is not a request.
+  - Run against the commit before #98 it reports exactly the account.js fault; with the bump it is clean.
+  - Run against the commit before #96 it also finds that #96 changed `trip.js` (its header comment only) under `?v=3`. A stale copy only lacks a comment, so it is left.
+  - It reads the base files in one `git cat-file --batch`: 2 seconds, where one `git show` per page took over two minutes.
+- **Where it runs:** a second step in the Conflict markers job, on every pull request (against its base) and every push to main (against the commit before). It shares the job so it adds no billed minute. The job now checks out the full history (10 MB). A push that fails it opens an issue naming the asset and page.
+- **`mutate.py`** case 30 proves it can fail: change `saveplace.js` and leave the pages on `?v=1`. It passes here.
