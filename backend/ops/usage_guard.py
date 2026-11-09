@@ -29,6 +29,7 @@ so the token stays in the gh keyring.
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import datetime as dt
 import json
 import math
@@ -129,23 +130,36 @@ def month_start(now: dt.datetime) -> dt.datetime:
 
 
 def tally(fetch: Fetch, repo: str, now: dt.datetime,
-          since: dt.datetime | None = None, until: dt.datetime | None = None) -> Tally:
+          since: dt.datetime | None = None, until: dt.datetime | None = None,
+          workers: int = 8) -> Tally:
     start = since or month_start(now)
     t = Tally(month=start.strftime("%Y-%m"))
     created = f"{start:%Y-%m-%d}..{(until or now):%Y-%m-%d}"
+    runs = []
     for run in paged(fetch, f"/repos/{repo}/actions/runs?created={created}", "workflow_runs"):
         made = parse_ts(run.get("created_at"))
         if made is None or made < start or (until and made >= until):
             continue
-        t.runs += 1
-        name = run.get("name") or "?"
-        # filter=all includes every attempt of a re-run; each attempt is billed.
-        for job in paged(fetch, f"/repos/{repo}/actions/runs/{run['id']}/jobs?filter=all", "jobs"):
-            m = job_minutes(job, now)
-            if m:
-                t.jobs += 1
-                t.minutes += m
-                t.by_workflow[name] = t.by_workflow.get(name, 0) + m
+        runs.append(run)
+
+    # One request per run for its jobs. Read one after another they took
+    # 2 min 21 s on GitHub for 227 runs (9 November), three times the minute
+    # the plan budgeted, and the count grows through the month. They are
+    # independent, so read them side by side; the sums do not depend on order.
+    # filter=all includes every attempt of a re-run; each attempt is billed.
+    def jobs_of(run: dict) -> list[dict]:
+        return list(paged(fetch, f"/repos/{repo}/actions/runs/{run['id']}/jobs?filter=all", "jobs"))
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        for run, jobs in zip(runs, pool.map(jobs_of, runs)):
+            t.runs += 1
+            name = run.get("name") or "?"
+            for job in jobs:
+                m = job_minutes(job, now)
+                if m:
+                    t.jobs += 1
+                    t.minutes += m
+                    t.by_workflow[name] = t.by_workflow.get(name, 0) + m
     return t
 
 
