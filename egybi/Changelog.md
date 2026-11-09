@@ -1165,3 +1165,21 @@ Found by running every checker by hand while Actions was blocked, and comparing 
 - **On the page:** a carried district's card, its detail panel and the page's build line say when it was measured and that the latest build could not re-measure it. A reader can no longer take an August figure for this week's. `streets.js?v=12`.
 - **The data, restored:** `streets-access.json` is rebuilt from the 9 November file and the 7 August file with the same function. The five measured on 9 November keep their new figures, and the five above come back with their 7 August figures, each dated.
 - **Proof:** four new tests in `test_fetch_streets_guards.py`. With the old behaviour substituted (measured rows only) they fail: 2 failures and 1 error. 149 pipeline tests pass, pyflakes is clean, and static-audit, coverage, seo, map-completeness and the `checks.py` modes report no findings.
+
+## 2026-11-09 — Browser checks only when something a browser renders changed
+- **Why:** the plan to take the repo back to private on the free 2,000 Actions minutes a month ([[Plan — Private Repo, Free CI and Accounts]]). After the merge-time skip (#89), the remaining cost is the browser half of Verify (browser) on pull requests: about 19 minutes a run without `mutate.py`. Per-step timing is from #91's run: `reduced.js` 3.8 min, `a11y2.js` 3.7, `tap-targets.js` and `map-interaction.js` 2.7 each.
+- **Measured first:** of the 18 PRs merged 1–9 November, 10 changed no page and no shared asset. Three of those changed only data or charts (#80, #86, #87) and still ran the full browser sweep.
+- **The change:** the gate (`verify-gate.sh`) makes a third decision, `browser`.
+  - Browser checks run when a page or shared asset under `site/`, a browser checker (`backend/verify/*.js`), the workflow or the gate changed, or whenever `mutate.py` runs (it drives browser cases).
+  - A change to data files, charts, the sitemap, `robots.txt`, `ads.txt`, PHP, docs or a Python-only checker runs the static checks alone. `static-audit.py` still checks every field the pages read from the data.
+  - Scheduled and manual runs render everything, as before.
+  - The 3 Chromium setup steps and the 11 browser checkers carry the condition. The static checks always run.
+- **Proof, in a detached worktree:**
+  - Real merge commits: #87 and #86 (data) go static only. #84, #76 and #91 (workflow or checker) run browser and `mutate.py`. #88 and #79 run everything, because `mutate.py` edits `refresh-fx.yml`.
+  - A scheduled run renders everything. A push the gate cannot verify fails open.
+  - Throwaway commits:
+    - a page edit renders;
+    - a PHP-only, docs-only or data-only change stays static, except `fx-today.json`, which `mutate.py` edits, so it gets the full run;
+    - a CSS edit and a Python checker edit both run everything.
+  - `workflow-audit.py`, `checks.py workflows` and `coverage.py` report no gaps.
+- **Not verified until CI:** the gated steps on a real runner. This PR changes the gate, so its own run is a full one.

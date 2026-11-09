@@ -11,7 +11,7 @@
 # `--merge` merge commit is byte-for-byte the tree the pull request already
 # passed. With the minutes gone, the daily price and FX refreshes stop too.
 #
-# Two decisions, both written to $GITHUB_OUTPUT:
+# Three decisions, all written to $GITHUB_OUTPUT:
 #   run=false    a push whose merge commit has exactly the tree of its second
 #                parent (the PR head), when Verify (browser) already SUCCEEDED
 #                on that head. Nothing new reaches main, so nothing new needs
@@ -20,6 +20,15 @@
 #                workflow, this script, or a file mutate.py itself edits has
 #                changed, and on every scheduled or manual run, so a page edit
 #                that breaks one of its anchors is caught within a week.
+#   browser=false  nothing a browser renders changed: no page, no shared asset,
+#                no browser checker. A change to data files, charts, the
+#                sitemap, PHP, docs or the Python-only checkers runs the static
+#                checks alone (static-audit still checks every field the pages
+#                read from the data). Measured on the 18 PRs merged 1-9 November
+#                2026: 10 changed nothing a browser renders, and the ones that
+#                touched data still paid the full 20-minute browser sweep. This
+#                is what lets the repo go back to private on the 2,000 free
+#                minutes a month. The weekly full run still renders everything.
 #
 # It fails OPEN: any error or missing input leaves run=true and mutate=true.
 # A gate that skipped checks because it could not read the history would be
@@ -32,6 +41,7 @@ set -u
 
 run=true
 mutate=true
+browser=true
 out="${GITHUB_OUTPUT:-/dev/stdout}"
 
 say() { echo "verify-gate: $*"; }
@@ -39,7 +49,8 @@ say() { echo "verify-gate: $*"; }
 finish() {
   echo "run=$run" >> "$out"
   echo "mutate=$mutate" >> "$out"
-  say "run=$run mutate=$mutate"
+  echo "browser=$browser" >> "$out"
+  say "run=$run mutate=$mutate browser=$browser"
   exit 0
 }
 
@@ -74,6 +85,7 @@ if [ "$EVENT" = "push" ] && head2=$(git rev-parse -q --verify HEAD^2); then
       run=false
       say "merge tree equals PR head ${head2:0:12}, whose sweep passed; skipping the repeat"
       mutate=false
+      browser=false
       finish
     fi
     say "merge tree equals PR head ${head2:0:12}, but no passing sweep found for it; running"
@@ -97,4 +109,22 @@ while IFS= read -r f; do
   fi
 done <<< "$changed"
 [ "$mutate" = true ] || say "no checker or mutated file changed ($(printf '%s\n' "$changed" | grep -c .) files); mutate.py waits for the weekly run"
+
+# --- browser: did anything a browser renders change?
+# mutate.py drives browser cases, so it needs Chromium whenever it runs.
+if [ "$mutate" = true ]; then
+  say "browser checks needed: mutate.py runs"
+  finish
+fi
+browser=false
+while IFS= read -r f; do
+  [ -n "$f" ] || continue
+  case "$f" in
+    site/data/*|site/charts/*|site/sitemap.xml|site/robots.txt|site/ads.txt|site/api/*|site/auth/*|*.php)
+      continue ;;   # data, chart images, crawler files, server code: static checks only
+    site/*|backend/verify/*.js|.github/workflows/verify-browser.yml|.github/scripts/verify-gate.sh)
+      browser=true; say "browser checks needed: $f changed"; break ;;
+  esac
+done <<< "$changed"
+[ "$browser" = true ] || say "nothing a browser renders changed; static checks only"
 finish
