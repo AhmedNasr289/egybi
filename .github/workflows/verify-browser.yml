@@ -62,6 +62,7 @@ jobs:
     outputs:
       run: ${{ steps.decide.outputs.run }}
       mutate: ${{ steps.decide.outputs.mutate }}
+      browser: ${{ steps.decide.outputs.browser }}
     steps:
       # Full history without file contents: the gate reads commits and trees
       # (rev-parse, diff --name-only), never blobs, so this stays small.
@@ -134,6 +135,7 @@ jobs:
       # under this step's name, and leaves the checkers their usual ~36 minutes.
       # The cure for a stall is a re-run; nothing in the site causes it.
       - name: Install playwright-core and Chromium
+        if: needs.gate.outputs.browser == 'true'
         timeout-minutes: 12
         run: |
           # A fetch that stalls for 20 s is dropped and retried, instead of
@@ -147,6 +149,7 @@ jobs:
           echo "PLAYWRIGHT_CORE=$RUNNER_TEMP/pw/node_modules/playwright-core" >> "$GITHUB_ENV"
 
       - name: Resolve the Chromium binary
+        if: needs.gate.outputs.browser == 'true'
         run: |
           # env.js takes the highest chromium-* build under PLAYWRIGHT_BROWSERS_PATH.
           # Name the executable outright so a layout change surfaces here rather
@@ -157,6 +160,7 @@ jobs:
           echo "using $exe"
 
       - name: Serve site/ on 8793
+        if: needs.gate.outputs.browser == 'true'
         run: |
           mkdir -p "$VERIFY_LOG_DIR"
           python3 -m http.server 8793 --directory site >"$VERIFY_LOG_DIR/server.log" 2>&1 &
@@ -248,6 +252,11 @@ jobs:
         if: always()
         run: backend/verify/ci-step.sh beacon-url node backend/verify/beacon-url.js
 
+      # Every browser step below runs only when the gate says something a
+      # browser renders changed (browser=true): a page, a shared asset or a
+      # browser checker. A change to data, charts, PHP or docs runs the static
+      # checks above and stops. Scheduled and manual runs render everything.
+      #
       # Each browser checker is its own step so the summary names which one
       # failed, rather than one red block covering nine tools.
       #
@@ -259,15 +268,15 @@ jobs:
       # pass. Setup steps stay fail-fast: if the server or Chromium is missing,
       # every checker fails for the same uninformative reason.
       - name: all-pages.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh all-pages node backend/verify/all-pages.js
 
       - name: overflow.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh overflow node backend/verify/overflow.js
 
       - name: contrast.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh contrast node backend/verify/contrast.js
 
       # Not a check: full-page screenshots of the main layouts at 1280 and
@@ -275,35 +284,35 @@ jobs:
       # change. The workstation cannot render these pages itself (no local
       # server; the browser pane opens a local page without its stylesheet).
       - name: shots.js (screenshots, not a check)
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: node backend/verify/shots.js
 
       - name: cssom.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh cssom node backend/verify/cssom.js
 
       - name: reduced.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh reduced node backend/verify/reduced.js
 
       - name: a11y2.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh a11y2 node backend/verify/a11y2.js
 
       - name: tap-targets.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh tap-targets node backend/verify/tap-targets.js
 
       - name: map-render.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh map-render node backend/verify/map-render.js
 
       - name: map-contrast.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh map-contrast node backend/verify/map-contrast.js
 
       - name: map-interaction.js
-        if: always()
+        if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh map-interaction node backend/verify/map-interaction.js
 
       # A clean sweep is only evidence if the checkers can still fire. This is
