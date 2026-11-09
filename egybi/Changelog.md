@@ -1212,3 +1212,36 @@ Part 2 of [[Plan — Private Repo, Free CI and Accounts]]. Sign-up, verification
   - a trip deletion not scoped to its owner must print `A cannot delete B's trip`.
   - They need PHP, so they run in CI. On the workstation `mutate.py` reports them as COULD NOT RUN (exit 2), never as a pass.
 - **Not yet:** the page side (header sign-in, `account.html`, Save trip, Save place, privacy page) is the next PR.
+
+## 2026-11-09 — Accounts on the page: sign in, save a trip, see and delete it
+Part 3 of [[Plan — Private Repo, Free CI and Accounts]]. The server side (#95) went live with nothing calling it; this puts it in front of readers. Accounts stay optional: anonymous use is exactly as before.
+- **The header:** every page gets a "Sign in" button, put there by `egybi.js` (v3).
+  - The account code (`auth.js`, ~25 KB) loads only when the button is pressed, when this browser signed in before, or when the URL carries `?verify=` or `?reset=` from an account email. Anonymous readers download nothing extra.
+  - "Signed in before" is a localStorage flag, not the session, which is an HttpOnly cookie script cannot read.
+  - If the service cannot be reached, the button says so itself, with no browser alert box.
+- **`auth.js`, reworked for the trip companion:**
+  - The retired practice product's XP, rank, streak, handle editing, profile strip and challenge sync are removed, with their CSS, so the orphan check stays at 0.
+  - The dialog says what an account is for and what it keeps.
+  - The menu has the email, "Your trips and account" and "Sign out".
+  - It resolves `auth/` against its own address rather than the page's, the same fault the analytics beacon had (#91): from `visit/` the old relative path would have been `visit/auth/auth.php`, a 404.
+  - It exposes `ready`, `open`, `api` and `user` to the pages.
+- **`account.html`** (new, `noindex`, no ads): lists the reader's saved trips with "Open in the planner" and "Delete", which takes a second press to confirm. It also lists saved places, offers "Download my data" (the export) and deletes the account (password plus typed DELETE). It uses the planner's sheets, buttons and fields.
+- **The planner:** "Save to my account" beside Print.
+  - A signed-out reader gets the sign-in dialog with a note saying why, and the save finishes once they are in.
+  - The saved trip's id travels with the trip, so saving again updates it instead of copying it. If that copy was deleted elsewhere, it is saved as new.
+  - "Open in the planner" on the account page loads a saved trip back.
+- **The words, which were becoming false:**
+  - `plan.html`: "Nothing is sent to a server and there is no account" now names the one exception.
+  - `index.html`: "there is nothing to sign up for" now reads "nothing needs one".
+  - `trip.js`: its header comment is updated the same way.
+  - `privacy.html` (dated 9 November) now covers the optional account, what it stores, Google sign-in (email and Google's account number only, read in `google.php`), the one session cookie and the cookieless page-view count, which was never mentioned before. A new section says how to download and delete the account. The stale line about the Practice page is gone.
+- **`seo.py`:** a new `PRIVATE_PAGES` list (`account.html`). Such a page must carry `noindex` and must not be in the sitemap, and is spared the share-card checks. It is a named list, not "every noindex page", so an accidental noindex on a real page is still caught. Proof: a new `mutate.py` case removes the account page's `noindex` and must be caught. It passes.
+- **Versions:** `egybi.css` v43, `egybi.js` v3 on all 182 pages and in the page template; `plan.js` v4.
+- **Checked on this machine:**
+  - every JS file parses;
+  - static-audit, coverage, seo, map-completeness, workflow-audit and all `checks.py` modes report no findings;
+  - every `mutate.py` case for a checker that runs here passes (29 cases); the browser cases run in CI;
+  - the generators reproduce the pages, and the sitemap dates moved only for the three pages whose words changed.
+- **Not verified until CI and the live site:**
+  - the dialog, the account page and the save on a rendered page;
+  - a real sign-up email (the plan's step that needs Ahmed's yes to send one test email).

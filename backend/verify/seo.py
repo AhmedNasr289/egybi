@@ -37,6 +37,13 @@ ORIGIN = "https://egybi.com"
 # never reads.
 RETIRED_DIRS = {"practice"}
 
+# Private pages: a signed-in reader's own space, never meant for search. Named
+# one by one on purpose. A rule that exempted every noindex page would let an
+# accidental noindex on a real page pass in silence, which is how a site drops
+# out of Google without anyone noticing. Each one must carry noindex and must
+# not be in the sitemap; the share-card and structured-data checks skip it.
+PRIVATE_PAGES = {"account.html"}
+
 # Pages the server 301s away before their markup is ever sent. Auditing their
 # og: tags is auditing bytes no crawler receives — the first run of this file
 # raised fourteen findings against practice.html and tracks.html, every one of
@@ -98,6 +105,7 @@ if not pages:
 seen_title, seen_desc, seen_canon = defaultdict(list), defaultdict(list), defaultdict(list)
 retired_indexable = []
 live_pages = []
+private_seen = []
 
 for p in pages:
     rel = p.relative_to(SITE).as_posix()
@@ -116,6 +124,12 @@ for p in pages:
         continue
 
     if rel in REDIRECTED:
+        continue
+
+    if rel in PRIVATE_PAGES:
+        private_seen.append(rel)
+        if not noindex:
+            add("private page indexable", rel)
         continue
 
     if is_404:
@@ -239,6 +253,9 @@ else:
     for rel in live_pages:
         if rel not in listed:
             add("live page not in sitemap", rel)
+    for rel in private_seen:
+        if rel in listed:
+            add("sitemap advertises a private page", rel)
     for u in sorted(locs):
         if u.startswith(ORIGIN + "/practice/"):
             add("sitemap advertises a retired page", u)

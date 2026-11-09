@@ -822,31 +822,9 @@ section[id] { scroll-margin-top: calc(var(--header-h) + var(--subnav-h) + 14px);
 .acct-av { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--gold); color: var(--kemet); font-weight: 800; font-family: 'Inter', sans-serif; }
 
 .acct-menu { position: absolute; right: 0; top: 44px; background: var(--kemet-2); border: 1px solid var(--line-dark); border-radius: 12px; padding: 12px 14px; min-width: 190px; box-shadow: 0 18px 40px rgba(0,0,0,.45); z-index: 200; }
-.acct-menu .acct-handle { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
-.acct-menu .acct-handle #acctName { color: var(--gold-bright); font-weight: 800; font-size: .98rem; font-family: 'Cinzel', serif; }
-.acct-edit { background: none; border: none; color: var(--on-dark-soft); cursor: pointer; font-size: .85rem; padding: 0 2px; line-height: 1; width: auto !important; }
-.acct-edit:hover { color: var(--gold-bright); }
-.acct-menu .acct-email { color: #cdbf9e; font-weight: 500; font-size: .78rem; font-family: 'Inter', sans-serif; word-break: break-all; }
-.acct-menu .acct-plan { color: var(--on-dark-soft); font-size: .76rem; margin: 2px 0 10px; }
+.acct-menu .acct-email { color: #cdbf9e; font-weight: 500; font-size: .78rem; font-family: 'Inter', sans-serif; word-break: break-all; margin-bottom: 6px; }
 .acct-menu a, .acct-menu button { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--on-dark); font: inherit; font-size: .88rem; padding: 7px 0; cursor: pointer; text-decoration: none; }
 .acct-menu a:hover, .acct-menu button:hover { color: var(--gold-bright); }
-
-.acct-stats { display: flex; gap: 14px; margin: 2px 0 8px; }
-.acct-stats div { display: flex; flex-direction: column; line-height: 1.1; }
-.acct-stats b { color: var(--gold-bright); font-size: 1.05rem; font-family: 'Cinzel', serif; }
-.acct-stats span { color: var(--on-dark-soft); font-size: .66rem; text-transform: uppercase; letter-spacing: .04em; }
-.acct-rank { color: #f3ead4; font-size: .82rem; font-weight: 700; margin-bottom: 10px; }
-.acct-rank .acct-next { color: var(--on-dark-soft); font-weight: 400; }
-
-/* the Practice-page profile strip */
-.acct-profile { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
-.acct-profile .ap-rank { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.acct-profile .ap-tier { font-family: 'Cinzel', serif; font-weight: 700; color: var(--blue-deep); font-size: .98rem; }
-.acct-profile .ap-xp { font-weight: 800; color: var(--gold-ink); }
-.acct-profile .ap-bar { height: 7px; background: var(--gold-soft); border-radius: 999px; overflow: hidden; margin: 8px 0 6px; }
-.acct-profile .ap-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); }
-.acct-profile .ap-next { font-size: .76rem; color: var(--ink-soft); }
-.acct-profile .ap-stats { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; font-size: .78rem; color: var(--ink-soft); }
 
 /* ---- the dialog: "The Threshold" ----
    width:100vw is belt-and-braces — it pins the overlay to the visual viewport
@@ -1561,4 +1539,31 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 .site-footer::before {
   content: ''; position: absolute; left: 0; right: 0; top: -15px; height: 16px; pointer-events: none;
   background: var(--torn-foot) repeat-x left bottom / 240px 16px;
+}
+
+/* ---------- the account page (account.html, 2026-11-09) ---------------------
+   Saved trips, a data download and account deletion. Built from the same
+   sheets, buttons and form fields as the planner, so it reads as one site. */
+.acct-page { max-width: 860px; display: grid; gap: 22px; }
+.acct-page h2 { margin: 0 0 10px; }
+.acct-who { color: var(--ink-soft); margin: 0 0 14px; }
+.acct-trips, .acct-places { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.acct-trip { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border: 1px solid var(--line-light); border-radius: 12px; background: #fff; }
+.acct-trip h3 { margin: 0 0 4px; font-size: 1.02rem; color: var(--blue-deep); }
+.acct-trip p { margin: 0; color: var(--ink-soft); font-size: .9rem; }
+.acct-trip-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.acct-trip-actions .btn { padding: 10px 16px; font-size: .92rem; min-height: 44px; }
+.acct-places li { padding: 10px 14px; border: 1px solid var(--line-light); border-radius: 10px; background: #fff; }
+.trip-form input[type="password"] {
+  font: 500 1rem 'Inter', system-ui, sans-serif; padding: 11px 13px; border-radius: 10px;
+  border: 1.5px solid var(--line-light); background: #fff; color: var(--ink); min-height: 46px;
+}
+.trip-form input[type="password"]:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: var(--gold); }
+.acct-danger { border-left: 4px solid var(--danger); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover, .btn-danger:focus-visible { background: #8f330b; transform: translateY(-2px); }
+.btn:disabled { opacity: .6; cursor: progress; transform: none; }
+@media (max-width: 560px) {
+  .acct-trip-actions, .acct-trip-actions .btn { width: 100%; }
 }
