@@ -1,0 +1,69 @@
+name: Daily refresh catch-up
+
+# On 2026-11-09 GitHub's scheduler started the daily price and exchange-rate
+# refreshes more than ten hours late (17:34 and 17:38 UTC, for 07:17 and 07:23
+# crons), and until then nothing had failed, so nothing alerted. They had to be
+# started by hand. backend/ops/refresh_catchup.py asks, for each daily
+# workflow, whether it has STARTED today by any trigger, and starts it if not.
+#
+# When: 16:17 UTC (18:17 Cairo). The daily runs have recently arrived between
+# 14:00 and 15:35 UTC, so an earlier catch-up would start a second refresh on
+# ordinary days. This job is itself scheduled, so on a day the whole scheduler
+# is hours late it is late too: it narrows the gap, it does not close it.
+#
+# Cost once private: one short job a day (about 30 minutes a month), plus a
+# refresh only on a day one was dropped.
+
+on:
+  schedule:
+    - cron: '17 16 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only say what it would start'
+        type: boolean
+        default: true
+
+permissions:
+  actions: write            # start a workflow (workflow_dispatch)
+  contents: read
+  issues: write             # open a failure-alert issue via notify-failure
+
+concurrency:
+  group: refresh-catchup
+  cancel-in-progress: false
+
+jobs:
+  catchup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start any daily refresh that has not started today
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          # A scheduled run has no inputs, so it always acts for real.
+          DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          set -o pipefail
+          python3 backend/ops/refresh_catchup.py $([ "$DRY" = "true" ] && echo --dry-run) 2>&1 | tee /tmp/catchup.log
+
+      - name: Collect what the run said about itself
+        if: '!cancelled()'
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<CATCHUP_EOF'
+            tail -n 20 /tmp/catchup.log 2>/dev/null || echo "The catch-up step wrote no log."
+            echo 'CATCHUP_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Alert on failure
+        # A catch-up that dies quietly leaves the day it exists for uncovered.
+        if: failure() || cancelled()
+        uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ job.status == 'cancelled' && 'Cancelled, not failed - most often the job hit its timeout-minutes limit, which GitHub records as a cancellation.' || steps.why.outputs.text }}
