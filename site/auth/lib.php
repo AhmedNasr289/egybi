@@ -983,3 +983,91 @@ function recompute_stats(string $userId): array
     }
     return get_stats($userId);
 }
+
+// ---- account data: saved trips and places, export, deletion ----------------
+
+/**
+ * Tables for what a signed-in reader keeps: saved trips and saved places.
+ * Created on first use, like the newsletter tables, because the schema files
+ * only run when the users table is missing - an already-live database would
+ * otherwise never get them. CREATE TABLE IF NOT EXISTS, so every later call
+ * is a no-op.
+ */
+function account_ensure_schema(PDO $db): void
+{
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    $my = auth_cfg()['driver'] === 'mysql';
+    $db->exec($my
+        ? "CREATE TABLE IF NOT EXISTS user_trips (
+             id VARCHAR(32) NOT NULL, user_id VARCHAR(32) NOT NULL, title VARCHAR(120) NOT NULL,
+             data_json MEDIUMTEXT NOT NULL, created_at VARCHAR(32) NOT NULL, updated_at VARCHAR(32) NOT NULL,
+             PRIMARY KEY (id), KEY idx_trips_user (user_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        : "CREATE TABLE IF NOT EXISTS user_trips (
+             id TEXT PRIMARY KEY, user_id TEXT NOT NULL, title TEXT NOT NULL,
+             data_json TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)");
+    if (!$my) $db->exec('CREATE INDEX IF NOT EXISTS idx_trips_user ON user_trips(user_id)');
+    $db->exec($my
+        ? "CREATE TABLE IF NOT EXISTS user_saved_places (
+             user_id VARCHAR(32) NOT NULL, place_key VARCHAR(80) NOT NULL, created_at VARCHAR(32) NOT NULL,
+             PRIMARY KEY (user_id, place_key)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        : "CREATE TABLE IF NOT EXISTS user_saved_places (
+             user_id TEXT NOT NULL, place_key TEXT NOT NULL, created_at TEXT NOT NULL,
+             PRIMARY KEY (user_id, place_key))");
+}
+
+/** Run $fn inside one transaction: all of it lands, or none of it does. */
+function with_tx(PDO $db, callable $fn)
+{
+    $db->beginTransaction();
+    try {
+        $out = $fn($db);
+        $db->commit();
+        return $out;
+    } catch (Throwable $e) {
+        if ($db->inTransaction()) $db->rollBack();
+        throw $e;
+    }
+}
+
+/** Every table that holds rows belonging to one user, keyed on user_id. */
+const ACCOUNT_TABLES = ['user_trips', 'user_saved_places', 'user_progress', 'user_stats', 'auth_tokens', 'sessions'];
+
+/**
+ * Delete a user and everything keyed to them, in one transaction, so a failure
+ * part-way can never leave an account half-deleted. The users row goes last.
+ * Newsletter subscriptions are keyed on the email address, not the account,
+ * and have their own unsubscribe link, so they are left to that.
+ */
+function account_delete(PDO $db, string $userId): void
+{
+    account_ensure_schema($db);
+    with_tx($db, function (PDO $db) use ($userId) {
+        foreach (ACCOUNT_TABLES as $t) {
+            $db->prepare("DELETE FROM $t WHERE user_id=?")->execute([$userId]);
+        }
+        $db->prepare('DELETE FROM users WHERE id=?')->execute([$userId]);
+    });
+}
+
+/** Everything the account holds about its user, as one JSON-ready array. */
+function account_export(PDO $db, array $u): array
+{
+    account_ensure_schema($db);
+    $q = function (string $sql) use ($db, $u) {
+        $st = $db->prepare($sql); $st->execute([$u['id']]); return $st->fetchAll();
+    };
+    $trips = array_map(function ($t) {
+        return ['id' => $t['id'], 'title' => $t['title'], 'data' => json_decode($t['data_json'], true),
+                'created_at' => $t['created_at'], 'updated_at' => $t['updated_at']];
+    }, $q('SELECT * FROM user_trips WHERE user_id=? ORDER BY created_at'));
+    return [
+        'exported_at' => now(),
+        'account' => ['email' => $u['email'], 'name' => $u['display_name'],
+                      'verified' => (int)$u['email_verified'] === 1, 'created_at' => $u['created_at']],
+        'trips' => $trips,
+        'saved_places' => array_column($q('SELECT place_key FROM user_saved_places WHERE user_id=? ORDER BY created_at'), 'place_key'),
+        'progress' => $q('SELECT challenge_id, solved_at FROM user_progress WHERE user_id=?'),
+    ];
+}

@@ -203,6 +203,15 @@ jobs:
             echo "php -l: $n files, $bad with syntax errors"
             [ "$n" -gt 0 ] && [ "$bad" -eq 0 ]'
 
+      # The account endpoints end to end: PHP's built-in server on a throwaway
+      # SQLite database, two users, every action through curl, and a direct
+      # read of the database proving a deletion removed every row. php -l above
+      # only proves the files parse; this proves sign-in, CSRF, ownership and
+      # deletion behave.
+      - name: auth-flow.sh
+        if: always()
+        run: backend/verify/ci-step.sh auth-flow bash backend/verify/auth-flow.sh
+
       - name: static-audit.py
         run: backend/verify/ci-step.sh static-audit python3 backend/verify/static-audit.py
 
