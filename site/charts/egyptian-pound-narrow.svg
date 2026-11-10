@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 454" width="320" height="454" role="img" aria-labelledby="tn dn" font-family="Inter, Segoe UI, Arial, sans-serif">
 <title id="tn">What your money buys in Egypt since July</title>
-<desc id="dn">Pounds per unit of each currency as an index, 100 = first week, 21 July 2026 to 9 November 2026.</desc>
+<desc id="dn">Pounds per unit of each currency as an index, 100 = first week, 22 July 2026 to 10 November 2026.</desc>
 <rect width="320" height="454" fill="#FDF9EE"/>
 <text x="12" y="28" font-size="17" font-weight="700" fill="#1B1B18">What your money buys in Egypt</text>
 <text x="12" y="50" font-size="17" font-weight="700" fill="#1B1B18">since July</text>
@@ -14,25 +14,25 @@
 <text x="28" y="192.7" font-size="12" text-anchor="end" fill="#544C3E">105</text>
 <line x1="34" y1="112.0" x2="208" y2="112.0" stroke="#D8D0BC" stroke-width="1"/>
 <text x="28" y="116.0" font-size="12" text-anchor="end" fill="#544C3E">110</text>
-<line x1="51.2" y1="342" x2="51.2" y2="347" stroke="#544C3E"/>
-<text x="51.2" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
-<line x1="99.8" y1="342" x2="99.8" y2="347" stroke="#544C3E"/>
-<text x="99.8" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
-<line x1="146.9" y1="342" x2="146.9" y2="347" stroke="#544C3E"/>
-<text x="146.9" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
-<line x1="195.5" y1="342" x2="195.5" y2="347" stroke="#544C3E"/>
-<text x="195.5" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
-<path d="M38.7,265.3 L49.7,283.0 L60.6,310.3 L71.6,296.6 L82.6,278.6 L93.6,297.1 L104.5,277.7 L115.5,264.5 L126.5,240.6 L137.5,253.8 L148.4,237.8 L159.4,233.3 L170.4,201.2 L181.4,148.6 L192.3,123.9 L203.3,184.0" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="203.3" cy="184.0" r="3.5" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M38.7,265.3 L49.7,266.9 L60.6,290.2 L71.6,277.6 L82.6,239.4 L93.6,263.3 L104.5,248.5 L115.5,236.4 L126.5,228.8 L137.5,254.6 L148.4,250.9 L159.4,259.3 L170.4,225.0 L181.4,174.0 L192.3,159.8 L203.3,211.4" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="203.3" cy="211.4" r="3.5" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M38.7,265.3 L49.7,269.3 L60.6,296.0 L71.6,277.7 L82.6,243.9 L93.6,268.6 L104.5,256.1 L115.5,242.9 L126.5,236.7 L137.5,262.5 L148.4,250.0 L159.4,245.8 L170.4,208.0 L181.4,142.3 L192.3,121.1 L203.3,173.2" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="203.3" cy="173.2" r="3.5" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M38.7,265.3 L49.7,278.3 L60.6,319.9 L71.6,315.1 L82.6,302.4 L93.6,323.4 L104.5,309.3 L115.5,303.9 L126.5,286.3 L137.5,303.9 L148.4,293.2 L159.4,293.6 L170.4,272.0 L181.4,228.0 L192.3,208.5 L203.3,278.2" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="49.7" y1="342" x2="49.7" y2="347" stroke="#544C3E"/>
+<text x="49.7" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
+<line x1="98.3" y1="342" x2="98.3" y2="347" stroke="#544C3E"/>
+<text x="98.3" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
+<line x1="145.3" y1="342" x2="145.3" y2="347" stroke="#544C3E"/>
+<text x="145.3" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
+<line x1="193.9" y1="342" x2="193.9" y2="347" stroke="#544C3E"/>
+<text x="193.9" y="362" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
+<path d="M38.7,265.3 L49.7,283.7 L60.6,310.3 L71.6,296.6 L82.6,278.6 L93.6,297.1 L104.5,277.4 L115.5,264.3 L126.5,240.6 L137.5,253.8 L148.4,237.3 L159.4,233.4 L170.4,201.1 L181.4,146.6 L192.3,124.2 L203.3,185.6" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="203.3" cy="185.6" r="3.5" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M38.7,265.3 L49.7,266.9 L60.6,290.2 L71.6,275.5 L82.6,239.4 L93.6,263.3 L104.5,246.5 L115.5,236.2 L126.5,228.8 L137.5,254.6 L148.4,254.4 L159.4,259.7 L170.4,223.1 L181.4,173.8 L192.3,160.2 L203.3,213.2" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="203.3" cy="213.2" r="3.5" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M38.7,265.3 L49.7,268.5 L60.6,295.2 L71.6,276.4 L82.6,243.1 L93.6,267.7 L104.5,255.3 L115.5,241.8 L126.5,237.7 L137.5,261.7 L148.4,248.9 L159.4,244.9 L170.4,204.3 L181.4,140.9 L192.3,124.2 L203.3,174.7" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="203.3" cy="174.7" r="3.5" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M38.7,265.3 L49.7,278.3 L60.6,319.9 L71.6,315.1 L82.6,302.4 L93.6,323.4 L104.5,312.6 L115.5,303.4 L126.5,286.3 L137.5,303.9 L148.4,291.9 L159.4,293.7 L170.4,272.0 L181.4,227.0 L192.3,210.9 L203.3,278.2" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
 <circle cx="203.3" cy="278.2" r="3.5" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
-<text x="216" y="177.2" font-size="12" font-weight="600" fill="#1B1B18">Sterling 106.0</text>
-<text x="216" y="193.2" font-size="12" font-weight="600" fill="#1B1B18">$ &amp; Gulf 105.3</text>
-<text x="216" y="215.4" font-size="12" font-weight="600" fill="#1B1B18">Euro 103.5</text>
+<text x="216" y="178.7" font-size="12" font-weight="600" fill="#1B1B18">Sterling 105.9</text>
+<text x="216" y="194.7" font-size="12" font-weight="600" fill="#1B1B18">$ &amp; Gulf 105.2</text>
+<text x="216" y="217.2" font-size="12" font-weight="600" fill="#1B1B18">Euro 103.4</text>
 <text x="216" y="282.2" font-size="12" font-weight="600" fill="#1B1B18">Lira 99.2</text>
 <text x="12" y="392" font-size="11.5" fill="#544C3E">egybi.com/egyptian-pound-since-july.html ·</text>
 <text x="12" y="407" font-size="11.5" fill="#544C3E">ExchangeRate-API market reference rates.</text>
