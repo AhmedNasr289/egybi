@@ -1332,3 +1332,19 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **`streets-districts.json` and `streets-boundaries.json`** were rebuilt from today's file and the 9 November one with those same functions. Four were measured on 11 Nov and six were carried from 9 Nov, identical to their 9 November rows apart from `measured_on` and `carried`.
 - **`streets.js` v13:** a carried district's street-network figures are dated on its table row, its rose card and its detail panel, and the build line says how many were carried.
 - **Tests:** four new cases. Three cover `carry_forward_features`: kept and dated, the previous file left unchanged, and nothing to carry. One runs `build_report_card` end to end with a fake osmnx (4 measure, 6 time out) and requires all 10 districts in both files. With the old `fetch_streets.py` all four fail.
+
+## 2026-11-11 — The street refresh moves to an Overpass mirror instead of stopping
+
+- **Why:** the refreshes on 9 and 11 November both lost most districts the same way. osmnx asks one Overpass server by default (overpass-api.de). It stopped accepting connections from the GitHub runner (ConnectTimeout), and the breaker then correctly stopped asking it. The other public Overpass instances serve the same OpenStreetMap data.
+- **`fetch_streets.py`:** `OVERPASS_URLS` lists the default server and two public mirrors (overpass.private.coffee, maps.mail.ru). `STREETS_OVERPASS_URLS` can replace the list. When the breaker trips, the run switches `ox.settings.overpass_url` to the next endpoint and starts a fresh streak. It stops only once every endpoint has tripped. osmnx reads the setting on every request (`_overpass.py` in 2.1.1), so the switch takes effect mid-run. The two districts that tripped the breaker are not retried that run, so they keep their last-good rows. The run budget still ends the job inside its limit with every endpoint down.
+- **`probe_overpass.py` + `probe-overpass.yml`:** a read-only, manual workflow. It asks each endpoint for its status page and runs one tiny node count in Downtown Cairo, from the same kind of runner the refresh uses. The work laptop reaches none of these servers, so only a runner can say which ones answer. It imports the same list, so it can never test a different set.
+- **Tests:** seven failover cases cover these behaviours:
+  - the run starts on the first endpoint;
+  - trips move along the list, and the breaker opens at the end;
+  - a working mirror carries the rest of the run;
+  - a slow endpoint never switches;
+  - an empty list is refused;
+  - with every endpoint down the run still ends inside the 120-minute limit;
+  - the default list starts with osmnx's own default.
+
+  With the old `fetch_streets.py` all seven fail.
