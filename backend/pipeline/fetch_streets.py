@@ -360,6 +360,46 @@ OVERPASS_URLS = os.environ.get("STREETS_OVERPASS_URLS", "").split() or [
 ]
 
 
+# THE FIRST PROBE (2026-11-11, from a GitHub runner): overpass-api.de answered
+# 502, overpass.private.coffee timed out, maps.mail.ru answered in 16 s. With
+# the list in fixed order the run would spend ~4 districts x ~16 min failing on
+# the first two before reaching the one that works. So each run first asks
+# every endpoint one tiny question (a node count in a 200 m box in Downtown
+# Cairo) and tries those that answered first, in their listed order. If none
+# answers, the order is left alone and the breaker decides as before.
+PREFLIGHT_QUERY = "[out:json][timeout:25];node(30.044,31.235,30.046,31.237);out count;"
+PREFLIGHT_TIMEOUT_S = 45
+
+
+def overpass_answers(base: str, timeout: float = PREFLIGHT_TIMEOUT_S) -> bool:
+    """True if `base` returns a parseable count for PREFLIGHT_QUERY."""
+    import urllib.parse
+    import urllib.request
+    req = urllib.request.Request(
+        base.rstrip("/") + "/interpreter",
+        data=urllib.parse.urlencode({"data": PREFLIGHT_QUERY}).encode(),
+        headers={"User-Agent": "egybi-streets/1.0 (+https://egybi.com)"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            body = json.loads(r.read())
+        return int(body["elements"][0]["tags"]["nodes"]) >= 0
+    except Exception:  # noqa: BLE001 - any failure means "did not answer"
+        return False
+
+
+def preflight_order(urls: list[str], answers: Callable[[str], bool]) -> list[str]:
+    """`urls` with the endpoints that answer first, each group in listed order.
+    Logs one line per endpoint so the run says why it chose its order."""
+    ok, down = [], []
+    for u in urls:
+        good = answers(u)
+        log(f"  preflight {'answered' if good else 'no answer':9} {u}")
+        (ok if good else down).append(u)
+    if not ok:
+        log("  preflight: no endpoint answered; keeping the listed order")
+    return ok + down
+
+
 class Endpoints:
     """The Overpass endpoints in order of preference; `use` applies one."""
 
@@ -1025,10 +1065,15 @@ def main() -> None:
     skipped: list = []                       # every district dropped, either layer
     # One budget and one breaker for the whole run: an endpoint that stopped
     # answering during the report card is not going to answer the access layer.
-    endpoints = Endpoints(OVERPASS_URLS, lambda url: setattr(ox.settings, "overpass_url", url))
-    budget, breaker = RunBudget(BUDGET_MIN), Breaker(endpoints=endpoints)
+    # The budget starts first so the preflight (at most ~45 s per endpoint)
+    # is counted against it, not added on top of the job's time limit.
+    budget = RunBudget(BUDGET_MIN)
     log(f"Run budget: {BUDGET_MIN:.0f} min (STREETS_BUDGET_MIN)")
-    log(f"Overpass endpoints, in order: {', '.join(OVERPASS_URLS)}\n")
+    log("Overpass preflight…")
+    order = preflight_order(OVERPASS_URLS, overpass_answers)
+    endpoints = Endpoints(order, lambda url: setattr(ox.settings, "overpass_url", url))
+    breaker = Breaker(endpoints=endpoints)
+    log(f"Overpass endpoints, in order: {', '.join(order)}\n")
     ok_card = build_report_card(ox, resolved, skipped, budget, breaker)
     ok_access = build_access(ox, resolved, skipped, budget, breaker) if ok_card else False
     if not ok_card:
