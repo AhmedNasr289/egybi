@@ -143,5 +143,112 @@ class CarryForward(unittest.TestCase):
         self.assertEqual([r["key"] for r in out], [self.KEYS[2]])
 
 
+class CarryForwardFeatures(unittest.TestCase):
+    """The map outlines must survive a partial run too.
+
+    The 2026-11-11 run measured 4 of 10 districts' drive networks and wrote
+    a boundary file with only those 4, so the map lost six outlines.
+    """
+
+    KEYS = [d["key"] for d in fs.DISTRICTS]
+
+    def feat(self, key, x):
+        return {"type": "Feature", "geometry": {"type": "Point", "coordinates": [x, 0]},
+                "properties": {"key": key, "name": key.title()}}
+
+    def test_unmeasured_outlines_are_kept_and_dated(self):
+        prev = {"type": "FeatureCollection", "as_of": "2026-11-09",
+                "features": [self.feat(k, 1) for k in self.KEYS]}
+        fresh = [self.feat(k, 2) for k in self.KEYS[:4]]
+        out = fs.carry_forward_features(fresh, prev, "2026-11-11")
+        self.assertEqual([f["properties"]["key"] for f in out], self.KEYS)
+        for f in out[:4]:
+            self.assertEqual((f["geometry"]["coordinates"][0], f["properties"]["measured_on"]),
+                             (2, "2026-11-11"))
+            self.assertNotIn("carried", f["properties"])
+        for f in out[4:]:
+            self.assertEqual((f["geometry"]["coordinates"][0], f["properties"]["measured_on"],
+                              f["properties"]["carried"]), (1, "2026-11-09", True))
+            self.assertEqual(f["type"], "Feature")
+            self.assertNotIn("_feature", f["properties"])
+
+    def test_previous_file_is_not_modified(self):
+        prev = {"as_of": "2026-11-09", "features": [self.feat(self.KEYS[0], 1)]}
+        fs.carry_forward_features([], prev, "2026-11-11")
+        self.assertEqual(prev["features"][0]["properties"], {"key": self.KEYS[0], "name": self.KEYS[0].title()})
+
+    def test_no_previous_file_keeps_only_fresh_outlines(self):
+        out = fs.carry_forward_features([self.feat(self.KEYS[3], 2)], None, "2026-11-11")
+        self.assertEqual([f["properties"]["key"] for f in out], [self.KEYS[3]])
+
+
+class ReportCardCarriesForward(unittest.TestCase):
+    """End to end through build_report_card with a fake osmnx: 4 districts
+    measure, the rest time out, and the written files must still hold all 10."""
+
+    def test_partial_run_writes_every_district(self):
+        import json
+        import tempfile
+        from unittest import mock
+
+        keys = [d["key"] for d in fs.DISTRICTS]
+        good = set(keys[:4])
+        tmp = Path(tempfile.mkdtemp(prefix="streets-"))
+        prev_rows = [{"key": d["key"], "name": d["name"], "nodes": 1} for d in fs.DISTRICTS]
+        (tmp / "streets-districts.json").write_text(json.dumps(
+            {"as_of": "2026-11-09", "districts": prev_rows}), encoding="utf-8")
+        (tmp / "streets-boundaries.json").write_text(json.dumps(
+            {"type": "FeatureCollection", "as_of": "2026-11-09", "features": [
+                {"type": "Feature", "geometry": None, "properties": {"key": k}} for k in keys]}),
+            encoding="utf-8")
+
+        class GDF:
+            """Just enough of a GeoDataFrame: geometry.iloc[0] is the key,
+            so the fake graph download knows which district it is."""
+            def __init__(self, key):
+                self.geometry = mock.Mock()
+                self.geometry.iloc = [key]
+
+            def to_json(self):
+                return json.dumps({"features": [{"type": "Feature", "geometry": None,
+                                                 "properties": {}}]})
+
+        G = mock.MagicMock()
+        G.number_of_nodes.return_value = 10_000
+        G.number_of_edges.return_value = 20_000
+
+        def graph(poly, **kw):
+            if poly not in good:
+                raise TimeoutError("ConnectTimeout")
+            return G
+
+        ox = mock.Mock()
+        ox.graph_from_polygon.side_effect = graph
+        ox.projection.project_graph.return_value = G
+        ox.stats.basic_stats.return_value = {}
+        ox.bearing.orientation_entropy.return_value = 1.0
+        ox.convert.to_undirected.return_value.degree.return_value = [(1, 1), (2, 3)]
+
+        with mock.patch.object(fs, "OUT", tmp), \
+             mock.patch.object(fs, "resolve_boundary",
+                               lambda ox, d: (GDF(d["key"]), d["name"], 10.0, "osm")), \
+             mock.patch.object(fs, "bearing_graph", lambda ox, g: g), \
+             mock.patch.object(fs, "orientation_histogram", lambda g: []), \
+             mock.patch.object(fs.time, "sleep", lambda s: None), \
+             mock.patch.object(fs, "date") as fake_date:
+            fake_date.today.return_value.isoformat.return_value = "2026-11-11"
+            skipped = []
+            self.assertTrue(fs.build_report_card(ox, {}, skipped))
+
+        card = json.loads((tmp / "streets-districts.json").read_text(encoding="utf-8"))
+        bounds = json.loads((tmp / "streets-boundaries.json").read_text(encoding="utf-8"))
+        self.assertEqual([r["key"] for r in card["districts"]], keys)
+        self.assertEqual([f["properties"]["key"] for f in bounds["features"]], keys)
+        self.assertEqual({r["key"] for r in card["districts"] if not r.get("carried")}, good)
+        self.assertEqual({f["properties"]["key"] for f in bounds["features"]
+                          if not f["properties"].get("carried")}, good)
+        self.assertEqual(len(skipped), len(keys) - 4)
+
+
 if __name__ == '__main__':
     unittest.main()
