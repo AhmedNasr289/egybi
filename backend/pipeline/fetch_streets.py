@@ -321,9 +321,12 @@ ACCESS_THRESHOLD_MIN = 15.0
 #
 # Two guards, so the script always ends in its own exit path well inside the
 # job's limit and the commit and alert steps run:
-#   * RunBudget - no district STARTS after the budget is spent. The default
-#     (80 min) leaves room for one worst-case district (~32 min: 3 walk-graph
-#     and 3 amenity attempts at 300 s each) plus setup, inside 120 minutes.
+#   * RunBudget - no district, and no retry, STARTS after the budget is spent
+#     (no_more_retries). One attempt already in flight is NOT bounded by
+#     requests_timeout (it limits each socket read, and a trickling server
+#     never trips it; one attempt ran 38 min on 2026-11-11), so the workflow
+#     also stops this script at a hard limit below the job's, and every file
+#     is written atomically so what it leaves on disk is whole.
 #   * Breaker   - after two districts in a row could not CONNECT at all, the
 #     endpoint is down, not busy; the rest are recorded as not attempted
 #     rather than each costing another 16 minutes to learn the same thing.
@@ -373,18 +376,30 @@ PREFLIGHT_TIMEOUT_S = 45
 
 def overpass_answers(base: str, timeout: float = PREFLIGHT_TIMEOUT_S) -> bool:
     """True if `base` returns a parseable count for PREFLIGHT_QUERY."""
+    import urllib.error
     import urllib.parse
     import urllib.request
     req = urllib.request.Request(
         base.rstrip("/") + "/interpreter",
         data=urllib.parse.urlencode({"data": PREFLIGHT_QUERY}).encode(),
         headers={"User-Agent": "egybi-streets/1.0 (+https://egybi.com)"})
+    # The second 2026-11-11 run said "no answer" for all three endpoints, two
+    # of them within a second, and then downloaded every drive network from
+    # the first one. A refusal that fast is an HTTP error (a busy server says
+    # 429 or 504), not silence, and without its name the log could not say
+    # which. The reason is logged; any failure still means "did not answer".
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             body = json.loads(r.read())
-        return int(body["elements"][0]["tags"]["nodes"]) >= 0
-    except Exception:  # noqa: BLE001 - any failure means "did not answer"
-        return False
+        if int(body["elements"][0]["tags"]["nodes"]) >= 0:
+            return True
+        why = "negative count"
+    except urllib.error.HTTPError as e:
+        why = f"HTTP {e.code}"
+    except Exception as e:  # noqa: BLE001 - the name IS the finding
+        why = type(e).__name__
+    log(f"    preflight {base}: {why}")
+    return False
 
 
 def preflight_order(urls: list[str], answers: Callable[[str], bool]) -> list[str]:
@@ -461,6 +476,32 @@ def stop_reason(budget: Optional[RunBudget], breaker: Optional[Breaker]) -> Opti
         return (f"endpoint unreachable ({breaker.streak} districts in a row failed to connect); "
                 "last-good data kept")
     return None
+
+
+# THE SECOND 2026-11-11 RUN. The budget was checked only before a district
+# STARTED, so a district that began inside it could run on for as long as its
+# retries took. Nasr City's walk graph started its third attempt two minutes
+# after the 80-minute budget was spent, and that one attempt ran 38 minutes:
+# requests_timeout bounds each socket READ, not the whole download, so a
+# server that trickles data never trips it. GitHub cancelled the job at 120
+# minutes and the fully re-measured report card was never committed. A retry
+# is a new start, so it now asks the budget too.
+def no_more_retries(budget: Optional[RunBudget], attempt: int) -> bool:
+    """True if retry `attempt` (0 = the first try, never refused) must not
+    start because the run's time budget is spent."""
+    if attempt and budget is not None and budget.exhausted():
+        log(f"    no retry: time budget of {budget.minutes:.0f} min spent")
+        return True
+    return False
+
+
+def write_atomic(path: Path, text: str) -> None:
+    """Write `text` to `path` so a reader sees the old file or the new one,
+    never half of one. The workflow stops this script with SIGTERM at its
+    hard limit, and whatever is on disk then gets committed."""
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
 
 
 def log(msg: str) -> None:
@@ -616,8 +657,11 @@ def build_report_card(ox, resolved: dict, skipped: list,
         # its boundary has already been resolved. The guardrails exist to catch
         # bad DATA; a network blip is not data and should not be recorded as a
         # district we could not measure.
-        G, why = None, None
+        G, why, tries = None, None, 0
         for attempt in range(3):
+            if no_more_retries(budget, attempt):
+                break
+            tries = attempt + 1
             try:
                 G = ox.graph_from_polygon(gdf.geometry.iloc[0], network_type="drive", simplify=True)
                 why = None
@@ -630,7 +674,7 @@ def build_report_card(ox, resolved: dict, skipped: list,
         if breaker is not None:
             breaker.record(why if G is None else None)
         if G is None:
-            failures.append(f"{d['name']}: graph download failed after 3 attempts ({why})")
+            failures.append(f"{d['name']}: graph download failed after {tries} attempt(s) ({why})")
             log(f"    graph failed  {why}")
             continue
 
@@ -722,8 +766,8 @@ def build_report_card(ox, resolved: dict, skipped: list,
         "districts": rows,
         "skipped": failures,
     }
-    (OUT / "streets-districts.json").write_text(
-        json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    write_atomic(OUT / "streets-districts.json",
+                 json.dumps(out, ensure_ascii=False, indent=1))
     # A GeoJSON FeatureCollection has nowhere to say when it was fetched, so
     # these are foreign members — RFC 7946 allows them and every consumer,
     # Leaflet included, ignores what it does not recognise. Without them the
@@ -733,8 +777,8 @@ def build_report_card(ox, resolved: dict, skipped: list,
     boundaries["source"] = ("OpenStreetMap via Nominatim, except Downtown Cairo, "
                             "whose extent is drawn by hand from its known edges "
                             "and marked boundary_source: hand-drawn")
-    (OUT / "streets-boundaries.json").write_text(
-        json.dumps(boundaries, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    write_atomic(OUT / "streets-boundaries.json",
+                 json.dumps(boundaries, ensure_ascii=False, separators=(",", ":")))
     log(f"  wrote streets-districts.json ({measured} measured now"
         + (f", {len(carried)} carried from their last-good run: {', '.join(carried)}" if carried else "")
         + ") + streets-boundaries.json")
@@ -844,8 +888,11 @@ def build_access(ox, resolved: dict, skipped: list,
         # complete and the run going red. The backoff is longer than the
         # amenity one because these are the biggest downloads in the pipeline
         # and a timeout usually means the endpoint is busy rather than broken.
-        W, why = None, None
+        W, why, tries = None, None, 0
         for attempt in range(3):
+            if no_more_retries(budget, attempt):
+                break
+            tries = attempt + 1
             try:
                 W = ox.projection.project_graph(
                     ox.graph_from_polygon(poly, network_type="walk", simplify=True))
@@ -859,7 +906,7 @@ def build_access(ox, resolved: dict, skipped: list,
         if breaker is not None:
             breaker.record(why if W is None else None)
         if W is None:
-            failures.append(f"{d['name']}: walk graph failed after 3 attempts ({why})")
+            failures.append(f"{d['name']}: walk graph failed after {tries} attempt(s) ({why})")
             continue
         if W.number_of_nodes() < MIN_NODES:
             failures.append(f"{d['name']}: thin walk graph ({W.number_of_nodes()} nodes)")
@@ -885,8 +932,11 @@ def build_access(ox, resolved: dict, skipped: list,
         # requests per run instead of twenty-four, which is both faster and far
         # less likely to be throttled — and it is the politer thing to do to a
         # free service whose usage policy asks for exactly this restraint.
-        allf, failed = None, None
+        allf, failed, tries = None, None, 0
         for attempt in range(3):
+            if no_more_retries(budget, attempt):
+                break
+            tries = attempt + 1
             try:
                 allf = ox.features.features_from_polygon(
                     poly, tags={"amenity": list(AMENITIES.values())})
@@ -904,7 +954,7 @@ def build_access(ox, resolved: dict, skipped: list,
                     time.sleep(10 * (attempt + 1))
 
         if failed:
-            log(f"    amenity query unanswered after 3 attempts ({failed})")
+            log(f"    amenity query unanswered after {tries} attempt(s) ({failed})")
             failures.append(f"{d['name']}: amenity query unanswered ({failed}) "
                             f"— no data, not zero access")
             continue
@@ -1044,8 +1094,8 @@ def build_access(ox, resolved: dict, skipped: list,
         "districts": rows,
         "skipped": failures,
     }
-    (OUT / "streets-access.json").write_text(
-        json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    write_atomic(OUT / "streets-access.json",
+                 json.dumps(out, ensure_ascii=False, indent=1))
     log(f"  wrote streets-access.json ({measured} measured now"
         + (f", {len(carried)} carried from their last-good run: {', '.join(carried)}" if carried else "")
         + ")")

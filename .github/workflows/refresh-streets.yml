@@ -80,11 +80,32 @@ jobs:
       # and that sentence was reaching nothing but the run log. This workflow
       # failed three times in a row on main while its failure issue said only
       # that it had failed.
+      #
+      # HARD LIMIT. A job that reaches timeout-minutes is CANCELLED, and the
+      # commit step below skips a cancelled job, so everything built so far is
+      # thrown away. That happened on 2026-11-11: the report card was fully
+      # re-measured by minute 22, then one walk-graph download ran 38 minutes
+      # past the budget and GitHub cut the job off at 120. `timeout` stops the
+      # script at 105 minutes instead, which is a FAILED step, not a cancelled
+      # job, so the commit step still runs and keeps the layers already
+      # written (each is written atomically). fetch_streets.py's own budget
+      # (80 min, checked before every district and retry) is the normal stop;
+      # this is the backstop for an attempt that is already in flight.
       - name: Build the report card and access layers
         shell: bash
         run: |
           set -o pipefail
-          python backend/pipeline/fetch_streets.py 2>&1 | tee /tmp/streets-fetch.log
+          LIMIT=105m
+          timeout --signal=TERM --kill-after=2m "$LIMIT" python backend/pipeline/fetch_streets.py 2>&1 \
+            | tee /tmp/streets-fetch.log || {
+            rc=$?
+            if [ "$rc" = 124 ] || [ "$rc" = 137 ]; then
+              echo "STOPPED at the $LIMIT hard limit; the layers already written are committed below" \
+                | tee -a /tmp/streets-fetch.log
+              echo "::error::fetch_streets.py was stopped at its 105-minute hard limit"
+            fi
+            exit "$rc"
+          }
 
       - name: Collect the reasons any district was skipped
         if: '!cancelled()'
@@ -96,7 +117,7 @@ jobs:
             # Matches the vocabulary fetch_streets.py actually uses: the SKIP
             # header, the per-district '    - <name>: <reason>' lines it prints
             # underneath, and the note it emits on the success path.
-            grep -E '(SKIP|FAILED|why each district|no per-district reason|^ +- .+: |note: [0-9]+ district)' \
+            grep -E '(SKIP|FAILED|STOPPED|why each district|no per-district reason|^ +- .+: |note: [0-9]+ district)' \
               /tmp/streets-fetch.log | head -30 || true
             echo 'STREETS_EOF'
           } >> "$GITHUB_OUTPUT"
