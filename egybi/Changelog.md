@@ -1354,3 +1354,25 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The first probe from a runner** (*Probe Overpass endpoints*, run 43034218336, right after #104 merged): overpass-api.de answered **502**, overpass.private.coffee **timed out**, maps.mail.ru answered **in 16 s** (245 nodes). That confirms the cause of the 9 and 11 November failures. It also shows that #104's fixed order would have spent about four districts at ~16 min each failing on the first two servers before reaching the one that works.
 - **`fetch_streets.py`:** before the first district, `preflight_order()` asks every endpoint the probe's tiny question (`PREFLIGHT_QUERY`, at most 45 s each). It then tries the ones that answered first, each group in listed order. If none answers, the order is unchanged and the breaker and failover decide as before. The run budget now starts before the preflight, so its few minutes count against the 80, not on top of the job limit. `probe_overpass.py` imports the same query.
 - **Tests:** four new cases. One replays the 11 November probe (only the third answers, so it goes first). The others cover: answering endpoints keep their listed order; none answering keeps the list; and `overpass_answers()` accepts a parsed count and refuses an empty result, an HTML error page and a timeout. With the old `fetch_streets.py` all four fail.
+
+## 2026-11-11 — A street refresh that runs long keeps what it built
+
+- **What happened** (*Refresh street report card*, run 43039009899, the first run with the preflight):
+  - The report card was fully re-measured, all 10 districts, by 14:52 UTC, 22 minutes in.
+  - In the walking-access layer the main server stopped connecting. Heliopolis and Maadi each spent ~18 min on retries, then the run switched servers as designed.
+  - Nasr City's third walk-graph attempt started at 15:52, two minutes after the 80-minute budget was spent, and ran until GitHub cancelled the job at 120 minutes.
+  - A cancelled job skips the commit step, so the re-measured report card was thrown away. The live page kept its 9 and 11 November rows. Nothing broke, but a good rebuild was lost.
+- **Why the budget did not stop it:** it was checked only before a district *started*. `requests_timeout` (300 s) bounds each socket read, not a whole download, so a server that trickles data never trips it. One attempt can run far past 300 s, which also makes the old "worst case ~32 min per district" estimate wrong.
+- **`fetch_streets.py`:**
+  - `no_more_retries()` refuses any retry (drive graph, walk graph, amenities) once the budget is spent; the first try of a district that started in time still runs. Failure lines now say how many attempts were made.
+  - `write_atomic()` writes each published file to a `.tmp` and renames it into place, so a stop mid-write leaves the old file whole.
+  - The preflight logs *why* an endpoint said no (`HTTP 429`, `TimeoutError` …). On this run it refused all three servers, two within a second, and the first then served every drive network. A refusal that fast is an HTTP error reply, and the log could not name it.
+- **`refresh-streets.yml`:** the build runs under `timeout` at **105 minutes** (2 minutes' grace, then a kill). That ends as a *failed* step, not a cancelled job, so the commit step still runs and keeps the layers already written. The failure alert still fires, and its reasons now include the `STOPPED` line. The script's own 80-minute budget remains the normal stop; the hard limit backs up an attempt already in flight.
+- **Tests:** six new cases:
+  - the workflow's limit plus grace fits inside the job limit, with room for the budget;
+  - a retry asks the budget, and a first try is never refused;
+  - the report card and the access layer each make one call, not three, once the budget is spent;
+  - a failed write leaves the old file intact;
+  - a preflight refusal is logged with its HTTP code or exception name.
+
+  With the old code all six fail. The shell logic was also run locally: a stopped run exits 124 and logs `STOPPED`, and a normal run passes through.
