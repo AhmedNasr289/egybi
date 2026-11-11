@@ -286,6 +286,8 @@
              '<figcaption><strong>' + esc(d.name) + '</strong>' +
              '<span class="rc-era">' + esc(d.era) + '</span>' +
              '<span class="rc-h">entropy ' + (H == null ? '—' : H.toFixed(2)) + '</span>' +
+             (d.carried && d.measured_on
+               ? '<span class="rc-era">measured ' + esc(asOf(d.measured_on)) + '</span>' : '') +
              '</figcaption></figure>';
     }).join('');
     el.querySelectorAll('.rose-card').forEach(function (c) {
@@ -362,7 +364,10 @@
     });
     tb.innerHTML = rows.map(function (d) {
       return '<tr data-key="' + esc(d.key) + '"><td>' + esc(d.name) +
-             '<span class="td-era">' + esc(d.era) + '</span></td>' +
+             '<span class="td-era">' + esc(d.era) + '</span>' +
+             (d.carried && d.measured_on
+               ? '<span class="td-era">measured ' + esc(asOf(d.measured_on)) + '</span>' : '') +
+             '</td>' +
              ORDER.map(function (k) {
                var v = d[k];
                return '<td>' + (typeof v === 'number' ? METRICS[k].fmt(v) : '—') + '</td>';
@@ -454,6 +459,11 @@
     el.innerHTML = '<h3>' + esc(d.name) + ' <span class="dd-ar">' + esc(d.name_ar) + '</span></h3>' +
       '<p class="dd-era">' + esc(d.era) + ' &middot; ' + d.area_km2.toLocaleString('en-GB') + ' km²</p>' +
       '<p class="dd-why">' + esc(d.why) + '</p>' + boundaryHtml +
+      (d.carried && d.measured_on
+        ? '<p class="dd-note"><strong>Street network measured ' + esc(asOf(d.measured_on)) +
+          '.</strong> The latest build could not re-measure this district, so these are its last ' +
+          'measured figures.</p>'
+        : '') +
       '<div class="dd-split"><div>' + rose(d.orientation_bins, 190, GOLD) +
       '<p class="dd-note" style="text-align:center">Street orientation &mdash; length of road facing each compass direction</p></div>' +
       '<div class="dd-metrics">' + metricRows + '</div></div>' +
@@ -521,8 +531,15 @@
   function paintMeta() {
     var el = $('streetsMeta'); if (!el) return;
     var bits = [];
-    if (S.card) bits.push('Street network: OSM via OSMnx, built ' + esc(asOf(S.card.as_of)) +
-                          ' &mdash; ' + S.card.districts.length + ' districts.');
+    if (S.card) {
+      var cardCarried = S.card.districts.filter(function (d) { return d.carried; });
+      bits.push('Street network: OSM via OSMnx, built ' + esc(asOf(S.card.as_of)) +
+        ' &mdash; ' + S.card.districts.length + ' districts' +
+        (cardCarried.length
+          ? ', of which ' + cardCarried.length + ' could not be re-measured and keep an earlier ' +
+            'measurement, dated on each.'
+          : '.'));
+    }
     if (S.access) {
       var carried = S.access.districts.filter(function (a) { return a.carried; });
       bits.push('Access layer built ' + esc(asOf(S.access.as_of)) +

@@ -606,8 +606,19 @@ def build_report_card(ox, resolved: dict, skipped: list,
             f"Reasons: {'; '.join(failures) or 'none recorded'}")
         return False
 
+    # Keep the last-good row and outline of every district this run could not
+    # measure, exactly as the access layer does. The 2026-11-11 run measured 4
+    # of 10 (Overpass timed out on the rest) and, without this, published only
+    # those 4: the live report card and map lost six districts.
+    today = date.today().isoformat()
+    measured = len(rows)
+    rows = carry_forward(rows, _read_json(OUT / "streets-districts.json"), today)
+    boundaries["features"] = carry_forward_features(
+        boundaries["features"], _read_json(OUT / "streets-boundaries.json"), today)
+    carried = [r["name"] for r in rows if r.get("carried")]
+
     out = {
-        "as_of": date.today().isoformat(),
+        "as_of": today,
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "source": "OpenStreetMap street network via OSMnx",
         "license": "ODbL — © OpenStreetMap contributors",
@@ -633,13 +644,15 @@ def build_report_card(ox, resolved: dict, skipped: list,
     # Leaflet included, ignores what it does not recognise. Without them the
     # boundaries are the one published layer here with no date on it, which is
     # not a standard this project gets to keep for geometry only.
-    boundaries["as_of"] = date.today().isoformat()
+    boundaries["as_of"] = today
     boundaries["source"] = ("OpenStreetMap via Nominatim, except Downtown Cairo, "
                             "whose extent is drawn by hand from its known edges "
                             "and marked boundary_source: hand-drawn")
     (OUT / "streets-boundaries.json").write_text(
         json.dumps(boundaries, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    log(f"  wrote streets-districts.json ({len(rows)} districts) + streets-boundaries.json")
+    log(f"  wrote streets-districts.json ({measured} measured now"
+        + (f", {len(carried)} carried from their last-good run: {', '.join(carried)}" if carried else "")
+        + ") + streets-boundaries.json")
     if failures:
         log(f"  note: {len(failures)} district(s) skipped — {'; '.join(failures)}")
     skipped.extend(f"report-card / {f}" for f in failures)
@@ -678,6 +691,35 @@ def carry_forward(fresh: list[dict], prev: Optional[dict], today: str) -> list[d
             row["carried"] = True
             out.append(row)
     return out
+
+
+def carry_forward_features(fresh: list[dict], prev: Optional[dict], today: str) -> list[dict]:
+    """carry_forward() for the boundary FeatureCollection: keyed on
+    properties.key, dated in properties, in DISTRICTS order. Without it a
+    partial run drew only the districts it measured on the map."""
+    def key(f: dict) -> Optional[str]:
+        return (f.get("properties") or {}).get("key")
+    rows = carry_forward(
+        [dict(f["properties"], _feature=f) for f in fresh if key(f)],
+        {"as_of": (prev or {}).get("as_of"),
+         "districts": [dict(f["properties"], _feature=f)
+                       for f in (prev or {}).get("features", []) if key(f)]},
+        today)
+    out = []
+    for r in rows:
+        f = dict(r.pop("_feature"))
+        f["properties"] = r
+        out.append(f)
+    return out
+
+
+def _read_json(path: Path) -> Optional[dict]:
+    """The previous build of a published file, or None if there is none or it
+    does not parse (a first run, or a damaged file: nothing to carry)."""
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
 
 
 def build_access(ox, resolved: dict, skipped: list,
