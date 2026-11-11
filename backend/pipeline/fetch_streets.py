@@ -345,23 +345,68 @@ class RunBudget:
         return self.spent_min() >= self.minutes
 
 
+# THE 2026-11-09 AND 2026-11-11 RUNS. Both lost most districts because the one
+# Overpass server osmnx uses by default stopped accepting connections from the
+# GitHub runner, and the breaker then (correctly) stopped asking it. The other
+# public Overpass instances serve the same OpenStreetMap data, so when the
+# breaker trips the run now moves to the next one instead of stopping. Only
+# when every endpoint has tripped does the breaker stay open. Override the list
+# with STREETS_OVERPASS_URLS (space-separated); probe_overpass.py checks which
+# answer from where the job actually runs.
+OVERPASS_URLS = os.environ.get("STREETS_OVERPASS_URLS", "").split() or [
+    "https://overpass-api.de/api",                 # osmnx's default, the main instance
+    "https://overpass.private.coffee/api",         # public mirror, no rate limit
+    "https://maps.mail.ru/osm/tools/overpass/api", # public mirror (VK)
+]
+
+
+class Endpoints:
+    """The Overpass endpoints in order of preference; `use` applies one."""
+
+    def __init__(self, urls: list[str], use: Callable[[str], None]) -> None:
+        if not urls:
+            raise ValueError("at least one Overpass endpoint is needed")
+        self.urls, self._use, self.i = list(urls), use, 0
+        use(self.urls[0])
+
+    @property
+    def current(self) -> str:
+        return self.urls[self.i]
+
+    def advance(self) -> bool:
+        """Move to the next endpoint; False if there is none left."""
+        if self.i + 1 >= len(self.urls):
+            return False
+        self.i += 1
+        self._use(self.urls[self.i])
+        log(f"    switching Overpass endpoint to {self.current} "
+            f"({self.i + 1} of {len(self.urls)})")
+        return True
+
+
 class Breaker:
     """Opens after `limit` consecutive districts failed to connect at all.
 
     Only connection failures count. A read timeout means the endpoint answered
     and was slow (the big districts are slow), and any success resets the
-    streak, so a busy endpoint never trips this; an unreachable one does."""
+    streak, so a busy endpoint never trips this; an unreachable one does.
+
+    With `endpoints`, tripping first moves to the next endpoint and starts a
+    fresh streak there; the breaker opens only once none is left."""
 
     CONNECT_ERRORS = frozenset({"ConnectTimeout", "ConnectionError", "ConnectTimeoutError",
                                 "NewConnectionError", "MaxRetryError"})
 
-    def __init__(self, limit: int = 2) -> None:
+    def __init__(self, limit: int = 2, endpoints: Optional[Endpoints] = None) -> None:
         self.limit = limit
         self.streak = 0
+        self.endpoints = endpoints
 
     def record(self, error_name: Optional[str]) -> None:
         """Record one district's outcome: None for success, else the exception name."""
         self.streak = self.streak + 1 if error_name in self.CONNECT_ERRORS else 0
+        if self.streak >= self.limit and self.endpoints is not None and self.endpoints.advance():
+            self.streak = 0
 
     @property
     def open(self) -> bool:
@@ -980,8 +1025,10 @@ def main() -> None:
     skipped: list = []                       # every district dropped, either layer
     # One budget and one breaker for the whole run: an endpoint that stopped
     # answering during the report card is not going to answer the access layer.
-    budget, breaker = RunBudget(BUDGET_MIN), Breaker()
-    log(f"Run budget: {BUDGET_MIN:.0f} min (STREETS_BUDGET_MIN)\n")
+    endpoints = Endpoints(OVERPASS_URLS, lambda url: setattr(ox.settings, "overpass_url", url))
+    budget, breaker = RunBudget(BUDGET_MIN), Breaker(endpoints=endpoints)
+    log(f"Run budget: {BUDGET_MIN:.0f} min (STREETS_BUDGET_MIN)")
+    log(f"Overpass endpoints, in order: {', '.join(OVERPASS_URLS)}\n")
     ok_card = build_report_card(ox, resolved, skipped, budget, breaker)
     ok_access = build_access(ox, resolved, skipped, budget, breaker) if ok_card else False
     if not ok_card:

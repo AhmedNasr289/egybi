@@ -74,6 +74,74 @@ class BreakerLogic(unittest.TestCase):
         self.assertIsNone(fs.stop_reason(None, None))
 
 
+class Failover(unittest.TestCase):
+    """2026-11-09 and 2026-11-11: the default Overpass server stopped
+    accepting connections and the run gave up on every district after it.
+    With mirrors the breaker must move on first, and open only at the end."""
+
+    URLS = ["https://a.example/api", "https://b.example/api", "https://c.example/api"]
+
+    def make(self):
+        used = []
+        ep = fs.Endpoints(self.URLS, used.append)
+        return ep, fs.Breaker(endpoints=ep), used
+
+    def test_starts_on_the_first_endpoint(self):
+        ep, _, used = self.make()
+        self.assertEqual((ep.current, used), (self.URLS[0], [self.URLS[0]]))
+
+    def test_trips_move_to_the_next_endpoint_then_open(self):
+        ep, br, used = self.make()
+        for expected in self.URLS[1:]:
+            br.record('ConnectTimeout')
+            br.record('ConnectTimeout')
+            self.assertFalse(br.open)
+            self.assertEqual(ep.current, expected)
+        self.assertEqual(used, self.URLS)
+        br.record('ConnectTimeout')
+        br.record('ConnectTimeout')
+        self.assertTrue(br.open)
+        self.assertIn('unreachable', fs.stop_reason(None, br))
+
+    def test_a_working_mirror_carries_the_rest_of_the_run(self):
+        ep, br, _ = self.make()
+        br.record('ConnectTimeout')
+        br.record('ConnectTimeout')
+        for _ in range(8):
+            br.record(None)
+        self.assertFalse(br.open)
+        self.assertEqual(ep.current, self.URLS[1])
+
+    def test_slow_never_switches(self):
+        ep, br, _ = self.make()
+        for _ in range(5):
+            br.record('ReadTimeout')
+        self.assertEqual(ep.current, self.URLS[0])
+
+    def test_no_endpoints_is_an_error(self):
+        with self.assertRaises(ValueError):
+            fs.Endpoints([], lambda u: None)
+
+    def test_every_endpoint_down_still_ends_inside_the_job_limit(self):
+        # The October replay with three dead endpoints: each district costs
+        # ~16 min, so failover alone would run 6 districts (~96 min) past the
+        # point the budget allows; the budget must still end the run in time.
+        clock = FakeClock()
+        budget = fs.RunBudget(fs.BUDGET_MIN, clock=clock)
+        _, br, _ = self.make()
+        clock.advance_min(5)
+        for _ in range(10):
+            if fs.stop_reason(budget, br):
+                break
+            clock.advance_min(16)
+            br.record('ConnectTimeout')
+        self.assertLess(budget.spent_min() + 5, 120)
+
+    def test_default_list_starts_with_osmnx_default(self):
+        self.assertEqual(fs.OVERPASS_URLS[0], "https://overpass-api.de/api")
+        self.assertGreaterEqual(len(fs.OVERPASS_URLS), 2)
+
+
 class TheOctoberRun(unittest.TestCase):
     """Replays 2026-10-05: 10 districts, every walk graph after the first
     failing with ConnectTimeout at ~16 minutes each. With the guards the

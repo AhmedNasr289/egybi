@@ -1,0 +1,38 @@
+name: Probe Overpass endpoints
+
+# READ-ONLY diagnostic for the street report card. Writes and commits nothing.
+#
+# fetch_streets.py fails over between Overpass endpoints (OVERPASS_URLS). Which
+# of them answer depends on where the job runs, so this asks each one a tiny
+# question from the same kind of runner the street refresh uses, in seconds,
+# instead of finding out in the middle of a two-hour refresh.
+#
+# Same shape as probe-geocodes.yml: manual only, no permissions beyond reading
+# the repo, no commit step, no failure alert (you are watching it run).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: probe-overpass
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Standard library only: fetch_streets imports osmnx lazily, inside main().
+      - name: Probe each endpoint
+        run: python backend/pipeline/probe_overpass.py
