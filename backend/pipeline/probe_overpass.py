@@ -31,9 +31,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 # The same list, with the same env override, as the pipeline uses. Imported
 # rather than restated so the probe can never test a different set.
-from fetch_streets import OVERPASS_URLS  # noqa: E402
+from fetch_streets import OVERPASS_URLS, PREFLIGHT_QUERY as QUERY  # noqa: E402
 
-QUERY = "[out:json][timeout:25];node(30.044,31.235,30.046,31.237);out count;"
 UA = {"User-Agent": "egybi-probe/1.0 (+https://egybi.com)"}
 
 

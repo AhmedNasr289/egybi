@@ -1348,3 +1348,9 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the default list starts with osmnx's own default.
 
   With the old `fetch_streets.py` all seven fail.
+
+## 2026-11-11 — The street refresh asks every Overpass server first
+
+- **The first probe from a runner** (*Probe Overpass endpoints*, run 43034218336, right after #104 merged): overpass-api.de answered **502**, overpass.private.coffee **timed out**, maps.mail.ru answered **in 16 s** (245 nodes). That confirms the cause of the 9 and 11 November failures. It also shows that #104's fixed order would have spent about four districts at ~16 min each failing on the first two servers before reaching the one that works.
+- **`fetch_streets.py`:** before the first district, `preflight_order()` asks every endpoint the probe's tiny question (`PREFLIGHT_QUERY`, at most 45 s each). It then tries the ones that answered first, each group in listed order. If none answers, the order is unchanged and the breaker and failover decide as before. The run budget now starts before the preflight, so its few minutes count against the 80, not on top of the job limit. `probe_overpass.py` imports the same query.
+- **Tests:** four new cases. One replays the 11 November probe (only the third answers, so it goes first). The others cover: answering endpoints keep their listed order; none answering keeps the list; and `overpass_answers()` accepts a parsed count and refuses an empty result, an HTML error page and a timeout. With the old `fetch_streets.py` all four fail.

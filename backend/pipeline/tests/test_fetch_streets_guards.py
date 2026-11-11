@@ -142,6 +142,44 @@ class Failover(unittest.TestCase):
         self.assertGreaterEqual(len(fs.OVERPASS_URLS), 2)
 
 
+class Preflight(unittest.TestCase):
+    """The first probe from a runner (2026-11-11): only the third endpoint
+    answered. The run must try it first, not after ~an hour on the others."""
+
+    URLS = ["https://a.example/api", "https://b.example/api", "https://c.example/api"]
+
+    def test_the_11_november_probe_puts_the_working_mirror_first(self):
+        order = fs.preflight_order(self.URLS, lambda u: u == self.URLS[2])
+        self.assertEqual(order, [self.URLS[2], self.URLS[0], self.URLS[1]])
+
+    def test_answering_endpoints_keep_their_listed_order(self):
+        order = fs.preflight_order(self.URLS, lambda u: u != self.URLS[1])
+        self.assertEqual(order, [self.URLS[0], self.URLS[2], self.URLS[1]])
+
+    def test_none_answering_keeps_the_listed_order(self):
+        self.assertEqual(fs.preflight_order(self.URLS, lambda u: False), self.URLS)
+
+    def test_overpass_answers_parses_a_count_and_refuses_anything_else(self):
+        from unittest import mock
+
+        class Resp:
+            def __init__(self, body): self.body = body
+            def read(self): return self.body
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+
+        cases = [
+            (b'{"elements":[{"tags":{"nodes":"245"}}]}', True),
+            (b'{"elements":[]}', False),
+            (b'<html>502 Bad Gateway</html>', False),
+        ]
+        for body, want in cases:
+            with mock.patch("urllib.request.urlopen", return_value=Resp(body)):
+                self.assertIs(fs.overpass_answers("https://a.example/api"), want, body)
+        with mock.patch("urllib.request.urlopen", side_effect=TimeoutError()):
+            self.assertFalse(fs.overpass_answers("https://a.example/api"))
+
+
 class TheOctoberRun(unittest.TestCase):
     """Replays 2026-10-05: 10 districts, every walk graph after the first
     failing with ConnectTimeout at ~16 minutes each. With the guards the
