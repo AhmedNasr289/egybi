@@ -1,6 +1,6 @@
 {
  "as_of": "2026-11-12",
- "fetched_at": "2026-11-12T10:37:21+00:00",
+ "fetched_at": "2026-11-12T12:33:45+00:00",
  "source": "OpenStreetMap street network via OSMnx",
  "license": "ODbL — © OpenStreetMap contributors",
  "method": "Drive networks per district, projected to UTM before measurement. Counts are normalised by the district's projected area. Orientation bins are share of street length per 10° compass sector.",
@@ -236,8 +236,7 @@
     0.02322,
     0.07925
    ],
-   "measured_on": "2026-11-11",
-   "carried": true
+   "measured_on": "2026-11-12"
   },
   {
    "key": "6th-october",
@@ -365,54 +364,53 @@
    "boundary_source": "OSM",
    "area_km2": 71.87,
    "nodes": 7908,
-   "edges": 18814,
-   "intersection_density_km2": 104.5,
-   "dead_end_share_pct": 4.6,
+   "edges": 18822,
+   "intersection_density_km2": 104.6,
+   "dead_end_share_pct": 4.5,
    "street_density_km_km2": 14.76,
    "mean_street_length_m": 90.0,
    "streets_per_node_avg": 2.98,
    "circuity_avg": 1.0575,
-   "orientation_entropy": 3.4008,
+   "orientation_entropy": 3.401,
    "orientation_bins": [
-    0.02949,
-    0.01398,
-    0.00723,
-    0.01226,
-    0.01217,
-    0.05402,
+    0.02965,
+    0.01393,
+    0.00727,
+    0.01261,
+    0.0124,
+    0.05401,
     0.0178,
-    0.04582,
-    0.03696,
-    0.03301,
-    0.00898,
-    0.00975,
-    0.01058,
-    0.01591,
-    0.04703,
-    0.02335,
-    0.05121,
-    0.0444,
-    0.02643,
-    0.01238,
-    0.0126,
-    0.00942,
+    0.04666,
+    0.03686,
+    0.033,
+    0.009,
+    0.00972,
+    0.01064,
+    0.0159,
+    0.04704,
+    0.02327,
+    0.05141,
+    0.04439,
+    0.02625,
+    0.01237,
+    0.01259,
+    0.00874,
     0.0149,
-    0.05548,
-    0.02746,
-    0.05191,
-    0.03581,
+    0.05557,
+    0.02754,
+    0.05103,
+    0.03589,
     0.03637,
     0.01148,
     0.01127,
-    0.01004,
+    0.01001,
     0.01907,
-    0.06084,
-    0.02674,
-    0.0544,
-    0.04944
+    0.06083,
+    0.02687,
+    0.05426,
+    0.04939
    ],
-   "measured_on": "2026-11-09",
-   "carried": true
+   "measured_on": "2026-11-12"
   },
   {
    "key": "sheikh-zayed",
@@ -586,11 +584,11 @@
     0.02055,
     0.04132
    ],
-   "measured_on": "2026-11-12"
+   "measured_on": "2026-11-12",
+   "carried": true
   }
  ],
  "skipped": [
-  "Nasr City: graph download failed after 3 attempt(s) (ResponseStatusCodeError)",
-  "10th of Ramadan City: graph download failed after 3 attempt(s) (ConnectTimeout)"
+  "New Cairo: not attempted, time budget of 80 min spent (84 min elapsed)"
  ]
 }
