@@ -32,6 +32,16 @@ on:
         type: choice
         default: 'no'
         options: ['no', 'yes']
+      layers:
+        # 'access' skips the report card and reuses its committed boundaries,
+        # so the access layer gets the whole 80-minute budget. For a run where
+        # the report card is already fresh and only the access layer failed
+        # (2026-11-12: the report card used all 80 minutes twice in a row).
+        description: "Which layers to build: all, or access only (reuses the committed boundaries)"
+        required: true
+        type: choice
+        default: 'all'
+        options: ['all', 'access']
 
 permissions:
   contents: write
@@ -93,6 +103,9 @@ jobs:
       # this is the backstop for an attempt that is already in flight.
       - name: Build the report card and access layers
         shell: bash
+        env:
+          # The quarterly schedule has no inputs, so it falls back to 'all'.
+          STREETS_LAYERS: ${{ inputs.layers || 'all' }}
         run: |
           set -o pipefail
           LIMIT=105m

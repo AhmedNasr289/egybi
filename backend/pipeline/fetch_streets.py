@@ -1129,7 +1129,43 @@ def configure_osmnx(ox) -> None:
     ox.settings.overpass_settings = "[out:json][timeout:" + str(READ_TIMEOUT_S) + "]{maxsize}"
 
 
+# WHICH LAYERS TO BUILD. The report card always runs first and the access
+# layer reuses its boundaries, so they share one budget. On 2026-11-12 the
+# only Overpass endpoint answering was slow (Downtown Cairo alone took 20
+# minutes, Sheikh Zayed 27), the report card used all 80 minutes, and the
+# access layer never started - two runs in a row. STREETS_LAYERS=access skips
+# the report card and reads each district's boundary back from the committed
+# streets-boundaries.json, which stores the full polygon the report card
+# measured, so the access layer gets the whole budget. "all" is the default
+# and the only mode the quarterly schedule uses.
+LAYER_MODES = ("all", "access")
+
+
+def parse_layers(value: Optional[str]) -> str:
+    """The layer mode from STREETS_LAYERS; an unknown value stops the run
+    rather than silently building the wrong thing."""
+    mode = (value or "all").strip().lower() or "all"
+    if mode not in LAYER_MODES:
+        raise SystemExit(f"STREETS_LAYERS must be one of {', '.join(LAYER_MODES)}; got {value!r}")
+    return mode
+
+
+def boundary_features(fc: Optional[dict]) -> dict:
+    """district key -> GeoJSON feature, from a committed streets-boundaries.json.
+    Only keys in DISTRICTS with a polygon are returned; a district missing
+    here is reported by build_access as having no boundary."""
+    known = {d["key"] for d in DISTRICTS}
+    out = {}
+    for f in (fc or {}).get("features", []):
+        key = (f.get("properties") or {}).get("key")
+        geom = f.get("geometry") or {}
+        if key in known and geom.get("type") in ("Polygon", "MultiPolygon"):
+            out[key] = f
+    return out
+
+
 def main() -> None:
+    mode = parse_layers(os.environ.get("STREETS_LAYERS"))
     import osmnx as ox
     ox.settings.log_console = False
     ox.settings.use_cache = True
@@ -1150,12 +1186,24 @@ def main() -> None:
     endpoints = Endpoints(order, lambda url: setattr(ox.settings, "overpass_url", url))
     breaker = Breaker(endpoints=endpoints)
     log(f"Overpass endpoints, in order: {', '.join(order)}\n")
-    ok_card = build_report_card(ox, resolved, skipped, budget, breaker)
+    if mode == "access":
+        import geopandas as gpd
+        feats = boundary_features(_read_json(OUT / "streets-boundaries.json"))
+        for key, f in feats.items():
+            resolved[key] = (gpd.GeoDataFrame.from_features([f], crs="EPSG:4326"), None)
+        log(f"Report card not rebuilt (STREETS_LAYERS=access): using {len(feats)} "
+            f"committed boundaries from streets-boundaries.json\n")
+        ok_card = bool(feats)
+        layers = [("report-card boundaries", ok_card)]
+    else:
+        ok_card = build_report_card(ox, resolved, skipped, budget, breaker)
+        layers = [("report-card", ok_card)]
     ok_access = build_access(ox, resolved, skipped, budget, breaker) if ok_card else False
     if not ok_card:
         log("\n(access layer skipped because the report card did not build)")
+    layers.append(("access", ok_access))
 
-    failed = [n for n, ok in [("report-card", ok_card), ("access", ok_access)] if not ok]
+    failed = [n for n, ok in layers if not ok]
     if failed:
         sys.exit(f"\nFAILED layers (last-good files kept): {', '.join(failed)}")
 
@@ -1177,7 +1225,10 @@ def main() -> None:
     if skipped:
         sys.exit("\nPARTIAL build (files written, run marked failed):\n  "
                  + "\n  ".join(skipped))
-    log("\nBoth layers written, all districts resolved.")
+    if mode == "access":
+        log("\nAccess layer written, all districts resolved (report card not rebuilt).")
+    else:
+        log("\nBoth layers written, all districts resolved.")
 
 
 if __name__ == "__main__":
