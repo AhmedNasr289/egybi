@@ -1,6 +1,6 @@
 {
- "as_of": "2026-11-11",
- "fetched_at": "2026-11-11T12:46:50+00:00",
+ "as_of": "2026-11-12",
+ "fetched_at": "2026-11-12T10:37:21+00:00",
  "source": "OpenStreetMap street network via OSMnx",
  "license": "ODbL — © OpenStreetMap contributors",
  "method": "Drive networks per district, projected to UTM before measurement. Counts are normalised by the district's projected area. Orientation bins are share of street length per 10° compass sector.",
@@ -62,7 +62,7 @@
     0.02336,
     0.02922
    ],
-   "measured_on": "2026-11-11"
+   "measured_on": "2026-11-12"
   },
   {
    "key": "heliopolis",
@@ -120,7 +120,7 @@
     0.0153,
     0.02198
    ],
-   "measured_on": "2026-11-11"
+   "measured_on": "2026-11-12"
   },
   {
    "key": "maadi",
@@ -178,7 +178,7 @@
     0.04782,
     0.02602
    ],
-   "measured_on": "2026-11-11"
+   "measured_on": "2026-11-12"
   },
   {
    "key": "nasr-city",
@@ -236,7 +236,8 @@
     0.02322,
     0.07925
    ],
-   "measured_on": "2026-11-11"
+   "measured_on": "2026-11-11",
+   "carried": true
   },
   {
    "key": "6th-october",
@@ -247,55 +248,54 @@
    "query": "مدينة السادس من أكتوبر",
    "boundary_source": "OSM",
    "area_km2": 551.98,
-   "nodes": 18477,
-   "edges": 37625,
+   "nodes": 18511,
+   "edges": 37702,
    "intersection_density_km2": 30.9,
    "dead_end_share_pct": 6.7,
    "street_density_km_km2": 5.99,
-   "mean_street_length_m": 121.0,
+   "mean_street_length_m": 120.9,
    "streets_per_node_avg": 2.96,
    "circuity_avg": 1.0563,
-   "orientation_entropy": 3.2968,
+   "orientation_entropy": 3.2969,
    "orientation_bins": [
-    0.01624,
-    0.02402,
-    0.01231,
-    0.0172,
-    0.02515,
-    0.10151,
-    0.02587,
-    0.022,
-    0.0119,
-    0.0216,
-    0.02317,
-    0.01749,
-    0.01957,
-    0.03103,
-    0.09335,
-    0.01909,
+    0.01623,
+    0.02418,
+    0.01235,
+    0.01728,
+    0.02521,
+    0.10155,
+    0.02577,
+    0.02198,
+    0.01175,
+    0.02163,
+    0.02316,
+    0.01747,
+    0.01934,
+    0.03101,
+    0.09345,
+    0.01908,
     0.01643,
-    0.00981,
-    0.01455,
+    0.0098,
+    0.01449,
     0.02514,
     0.01563,
-    0.01436,
-    0.0213,
-    0.09363,
-    0.02224,
-    0.02008,
-    0.01317,
-    0.02101,
-    0.02346,
-    0.01485,
-    0.01594,
-    0.02753,
-    0.09915,
-    0.023,
-    0.01048,
-    0.01672
+    0.0144,
+    0.02126,
+    0.09377,
+    0.0224,
+    0.02004,
+    0.0133,
+    0.02104,
+    0.02355,
+    0.01486,
+    0.01595,
+    0.02734,
+    0.09906,
+    0.02314,
+    0.01032,
+    0.01663
    ],
-   "measured_on": "2026-11-09",
-   "carried": true
+   "measured_on": "2026-11-12"
   },
   {
    "key": "luxor",
@@ -353,8 +353,7 @@
     0.01525,
     0.02402
    ],
-   "measured_on": "2026-11-09",
-   "carried": true
+   "measured_on": "2026-11-12"
   },
   {
    "key": "10th-ramadan",
@@ -471,8 +470,7 @@
     0.018,
     0.01303
    ],
-   "measured_on": "2026-11-09",
-   "carried": true
+   "measured_on": "2026-11-12"
   },
   {
    "key": "new-alamein",
@@ -530,8 +528,7 @@
     0.00894,
     0.00669
    ],
-   "measured_on": "2026-11-09",
-   "carried": true
+   "measured_on": "2026-11-12"
   },
   {
    "key": "new-cairo",
@@ -542,12 +539,12 @@
    "query": "New Cairo, Cairo, Egypt",
    "boundary_source": "OSM",
    "area_km2": 380.86,
-   "nodes": 22754,
-   "edges": 43771,
+   "nodes": 22760,
+   "edges": 43780,
    "intersection_density_km2": 55.5,
-   "dead_end_share_pct": 6.1,
+   "dead_end_share_pct": 6.2,
    "street_density_km_km2": 9.27,
-   "mean_street_length_m": 105.1,
+   "mean_street_length_m": 105.0,
    "streets_per_node_avg": 2.96,
    "circuity_avg": 1.0485,
    "orientation_entropy": 3.4699,
@@ -555,50 +552,45 @@
     0.05107,
     0.02791,
     0.02401,
-    0.02699,
+    0.027,
     0.02346,
     0.01929,
-    0.02425,
+    0.02419,
     0.01822,
-    0.043,
-    0.05797,
+    0.0431,
+    0.05784,
     0.02604,
     0.01891,
     0.02446,
     0.02323,
     0.01644,
     0.02006,
-    0.02244,
-    0.03503,
-    0.04801,
+    0.02238,
+    0.03504,
+    0.04802,
     0.02455,
     0.02559,
-    0.02526,
+    0.02525,
     0.02123,
     0.02003,
-    0.02168,
+    0.02174,
     0.01936,
     0.03925,
-    0.05704,
-    0.02647,
-    0.02175,
+    0.05705,
+    0.02646,
+    0.02176,
     0.02299,
     0.02238,
     0.01606,
     0.02375,
-    0.02057,
-    0.04125
+    0.02055,
+    0.04132
    ],
-   "measured_on": "2026-11-09",
-   "carried": true
+   "measured_on": "2026-11-12"
   }
  ],
  "skipped": [
-  "6th of October City: graph download failed after 3 attempts (ConnectTimeout)",
-  "Luxor City: graph download failed after 3 attempts (ConnectTimeout)",
-  "10th of Ramadan City: not attempted, endpoint unreachable (2 districts in a row failed to connect); last-good data kept",
-  "Sheikh Zayed City: not attempted, endpoint unreachable (2 districts in a row failed to connect); last-good data kept",
-  "New Alamein: not attempted, endpoint unreachable (2 districts in a row failed to connect); last-good data kept",
-  "New Cairo: not attempted, endpoint unreachable (2 districts in a row failed to connect); last-good data kept"
+  "Nasr City: graph download failed after 3 attempt(s) (ResponseStatusCodeError)",
+  "10th of Ramadan City: graph download failed after 3 attempt(s) (ConnectTimeout)"
  ]
 }
