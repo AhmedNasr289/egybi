@@ -131,6 +131,33 @@ class AtomicWrite(unittest.TestCase):
         self.assertEqual(p.read_text(encoding="utf-8"), '{"v": 1}')
 
 
+class ConnectTimeout(unittest.TestCase):
+    """The 2026-11-12 run lost about an hour to 11 refused connections that
+    each waited 300 s. A connection now gives up fast; a download does not."""
+
+    def configured(self):
+        from types import SimpleNamespace
+        ox = SimpleNamespace(settings=SimpleNamespace(
+            requests_timeout=180,
+            overpass_settings="[out:json][timeout:{timeout}]{maxsize}"))  # osmnx 2.1.1 default
+        fs.configure_osmnx(ox)
+        return ox.settings
+
+    def test_connect_is_short_and_read_is_unchanged(self):
+        connect, read = self.configured().requests_timeout
+        self.assertLessEqual(connect, 30)
+        self.assertEqual(read, 300)
+
+    def test_the_overpass_query_still_gets_a_plain_number(self):
+        # Exactly what osmnx 2.1.1's _overpass._make_overpass_settings does.
+        # With the default template a tuple would land in the query text.
+        s = self.configured()
+        made = s.overpass_settings.format(timeout=s.requests_timeout, maxsize="")
+        self.assertEqual(made, "[out:json][timeout:300]")
+        made = s.overpass_settings.format(timeout=s.requests_timeout, maxsize="[maxsize:1073741824]")
+        self.assertEqual(made, "[out:json][timeout:300][maxsize:1073741824]")
+
+
 class BreakerLogic(unittest.TestCase):
     def test_opens_after_two_connect_failures_in_a_row(self):
         br = fs.Breaker()

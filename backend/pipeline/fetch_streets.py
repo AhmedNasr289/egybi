@@ -330,6 +330,8 @@ ACCESS_THRESHOLD_MIN = 15.0
 #   * Breaker   - after two districts in a row could not CONNECT at all, the
 #     endpoint is down, not busy; the rest are recorded as not attempted
 #     rather than each costing another 16 minutes to learn the same thing.
+#     (A refused connection now fails after CONNECT_TIMEOUT_S, not 300 s - see
+#     configure_osmnx - so learning it costs well under a minute.)
 BUDGET_MIN = float(os.environ.get("STREETS_BUDGET_MIN", "80"))
 
 
@@ -1103,11 +1105,35 @@ def build_access(ox, resolved: dict, skipped: list,
     return True
 
 
+# THE 2026-11-12 RUN. Only one of the three Overpass endpoints answered the
+# preflight, and it refused connections on and off. Each refusal waited the
+# full requests_timeout of 300 s before failing - 11 ConnectTimeouts cost about
+# an hour of the 80-minute budget, so the access layer started at minute 76 and
+# was never built. 300 s is right for READING a large graph that a busy server
+# streams slowly, and far too long for opening a TCP connection, which takes
+# well under a second when the server is up.
+#
+# requests accepts (connect, read). osmnx 2.1.1 passes requests_timeout straight
+# to every requests call, but it ALSO formats it into the Overpass query as
+# [timeout:{timeout}] (_overpass._make_overpass_settings), where a tuple would
+# produce "[timeout:(15, 300)]" and break every query. So the query's own
+# server-side timeout is written out here as a plain number instead.
+CONNECT_TIMEOUT_S = 15
+READ_TIMEOUT_S = 300
+
+
+def configure_osmnx(ox) -> None:
+    """Set osmnx's HTTP timeouts: give up on a connection quickly, but let a
+    slow download that is actually arriving keep going."""
+    ox.settings.requests_timeout = (CONNECT_TIMEOUT_S, READ_TIMEOUT_S)
+    ox.settings.overpass_settings = "[out:json][timeout:" + str(READ_TIMEOUT_S) + "]{maxsize}"
+
+
 def main() -> None:
     import osmnx as ox
     ox.settings.log_console = False
     ox.settings.use_cache = True
-    ox.settings.requests_timeout = 300
+    configure_osmnx(ox)
     log(f"OSMnx {ox.__version__}\n")
 
     OUT.mkdir(parents=True, exist_ok=True)
