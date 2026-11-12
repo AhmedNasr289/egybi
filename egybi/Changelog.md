@@ -1376,3 +1376,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - a preflight refusal is logged with its HTTP code or exception name.
 
   With the old code all six fail. The shell logic was also run locally: a stopped run exits 124 and logs `STOPPED`, and a normal run passes through.
+
+## 2026-11-12 — A refused connection gives up in 15 seconds, not 5 minutes
+- **Why:** the 2026-11-12 street refresh re-measured 8 of 10 districts and committed them, but only one of the three Overpass servers answered the preflight, and it refused connections on and off. Each refusal waited the full 300-second `requests_timeout`. 11 refusals cost about an hour of the 80-minute budget, so the 15-minute access layer started at minute 76 and kept its last-good copy.
+- **`fetch_streets.py`:** `configure_osmnx()` sets `requests_timeout` to `(15, 300)`. A connection now gives up after 15 s; a download that is arriving still gets 300 s per read.
+  - osmnx 2.1.1 also writes `requests_timeout` into the Overpass query as `[timeout:{timeout}]`, where a pair would produce `[timeout:(15, 300)]` and break every query. So `overpass_settings` now carries the server-side timeout as a plain `300`.
+- **Tests:** two new cases:
+  - the connect timeout is short and the read timeout is unchanged;
+  - the query text osmnx builds is still `[out:json][timeout:300]`, with and without `maxsize`.
+
+  The second fails if the query-template line is removed.
