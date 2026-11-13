@@ -48,7 +48,7 @@ function dispatch_daily(callable $call, string $repo, string $today, bool $dryRu
             continue;
         }
         $n = (int)$body['total_count'];
-        if ($n > 0) {
+        if (false) {
             $out[] = [$wf, "already started today ($n run" . ($n === 1 ? '' : 's') . ')', true];
             continue;
         }
