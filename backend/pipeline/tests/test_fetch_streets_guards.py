@@ -515,7 +515,7 @@ class AccessOnly(unittest.TestCase):
         self.assertEqual(list(fs.boundary_features(self.FC)), ["maadi"])
         self.assertEqual(fs.boundary_features(None), {})
 
-    def _run_main(self, boundaries):
+    def _run_main(self, boundaries, districts=""):
         import json
         import os
         import tempfile
@@ -529,8 +529,9 @@ class AccessOnly(unittest.TestCase):
             overpass_settings="[out:json][timeout:{timeout}]{maxsize}", overpass_url=""))
         seen = {}
 
-        def fake_access(ox, resolved, skipped, budget, breaker):
+        def fake_access(ox, resolved, skipped, budget, breaker, only=None):
             seen["resolved"] = dict(resolved)
+            seen["only"] = only
             return True
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -539,7 +540,7 @@ class AccessOnly(unittest.TestCase):
             card = mock.Mock(return_value=True)
             access = mock.Mock(side_effect=fake_access)
             with mock.patch.dict(sys.modules, {"osmnx": fake_ox, "geopandas": fake_gpd}), \
-                 mock.patch.dict(os.environ, {"STREETS_LAYERS": "access"}), \
+                 mock.patch.dict(os.environ, {"STREETS_LAYERS": "access", "STREETS_DISTRICTS": districts}), \
                  mock.patch.object(fs, "OUT", Path(tmp)), \
                  mock.patch.object(fs, "preflight_order", lambda urls, answers: list(urls)), \
                  mock.patch.object(fs, "build_report_card", card), \
@@ -566,3 +567,50 @@ class AccessOnly(unittest.TestCase):
         card.assert_not_called()
         access.assert_not_called()
         self.assertIn("FAILED layers", exit_msg or "")
+
+    def test_a_district_filter_reaches_the_access_layer(self):
+        card, access, seen, made, exit_msg = self._run_main(self.FC, districts="10th-ramadan, New-Alamein")
+        self.assertIsNone(exit_msg)
+        self.assertEqual(seen["only"], {"10th-ramadan", "new-alamein"})
+
+    def test_no_filter_means_every_district(self):
+        card, access, seen, made, exit_msg = self._run_main(self.FC)
+        self.assertIsNone(seen["only"])
+
+
+class DistrictFilter(unittest.TestCase):
+    """STREETS_DISTRICTS: rebuild only the districts Overpass refused last time,
+    and keep every other published row exactly as it was."""
+
+    def test_parse(self):
+        self.assertIsNone(fs.parse_districts("", "access"))
+        self.assertIsNone(fs.parse_districts(None, "all"))
+        self.assertEqual(fs.parse_districts(" maadi ,LUXOR", "access"), {"maadi", "luxor"})
+        with self.assertRaises(SystemExit):
+            fs.parse_districts("maadi,atlantis", "access")      # unknown key
+        with self.assertRaises(SystemExit):
+            fs.parse_districts("maadi", "all")                  # filter needs access mode
+
+    def test_unselected_rows_are_kept_verbatim(self):
+        keys = [d["key"] for d in fs.DISTRICTS]
+        prev = {"as_of": "2026-11-13", "districts": [
+            {"key": k, "name": k, "mean_within_15min_pct": float(i), "measured_on": "2026-11-13"}
+            for i, k in enumerate(keys)]}
+        prev["districts"][keys.index("new-alamein")].update(carried=True, measured_on="2026-08-07")
+        fresh = [{"key": "new-alamein", "name": "new-alamein", "mean_within_15min_pct": 55.5}]
+        only = {"new-alamein"}
+        out = fs.keep_unselected(fs.carry_forward(fresh, prev, "2026-11-14"), prev, only)
+        by = {r["key"]: r for r in out}
+        self.assertEqual(len(out), len(keys))
+        for k in keys:
+            if k == "new-alamein":
+                continue
+            self.assertEqual(by[k], prev["districts"][keys.index(k)])   # same row, no 'carried' added
+            self.assertNotIn("carried", by[k])
+        self.assertEqual(by["new-alamein"]["measured_on"], "2026-11-14")
+        self.assertNotIn("carried", by["new-alamein"])
+        self.assertEqual(by["new-alamein"]["mean_within_15min_pct"], 55.5)
+
+    def test_without_a_filter_nothing_changes(self):
+        rows = [{"key": "maadi", "carried": True}]
+        self.assertIs(fs.keep_unselected(rows, {"districts": []}, None), rows)
