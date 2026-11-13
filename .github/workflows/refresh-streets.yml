@@ -42,6 +42,14 @@ on:
         type: choice
         default: 'all'
         options: ['all', 'access']
+      districts:
+        # Only with layers=access. Comma-separated district keys, e.g.
+        # 10th-ramadan,new-alamein: rebuilds just those and keeps every other
+        # district's published row as it is. Empty = all ten.
+        description: "Access only: rebuild just these district keys (comma-separated), e.g. 10th-ramadan,new-alamein"
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -106,6 +114,7 @@ jobs:
         env:
           # The quarterly schedule has no inputs, so it falls back to 'all'.
           STREETS_LAYERS: ${{ inputs.layers || 'all' }}
+          STREETS_DISTRICTS: ${{ inputs.districts || '' }}
         run: |
           set -o pipefail
           LIMIT=105m

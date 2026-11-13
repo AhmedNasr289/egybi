@@ -854,7 +854,8 @@ def _read_json(path: Path) -> Optional[dict]:
 
 
 def build_access(ox, resolved: dict, skipped: list,
-                 budget: Optional[RunBudget] = None, breaker: Optional[Breaker] = None) -> bool:
+                 budget: Optional[RunBudget] = None, breaker: Optional[Breaker] = None,
+                 only: Optional[set] = None) -> bool:
     """15-minute access: walking time from street nodes to the nearest amenity.
 
     Uses the WALK network (trap 4) and reports the SHARE of network nodes within
@@ -867,6 +868,8 @@ def build_access(ox, resolved: dict, skipped: list,
     rows, failures = [], []
 
     for d in DISTRICTS:
+        if only is not None and d["key"] not in only:
+            continue                     # not asked for: its published row is kept as is
         log(f"  {d['name']}")
         stop = stop_reason(budget, breaker)
         if stop:
@@ -1045,7 +1048,10 @@ def build_access(ox, resolved: dict, skipped: list,
             f"within 15 min (over {len(got)}/{len(AMENITIES)} categories"
             + (f", unanswered: {', '.join(unanswered)}" if unanswered else "") + ")")
 
-    if len(rows) < MIN_DISTRICTS_OK:
+    # With a district filter the floor is one: the other districts are not
+    # re-measured, they keep their published rows, so the comparison stays whole.
+    floor = MIN_DISTRICTS_OK if only is None else 1
+    if len(rows) < floor:
         # PRINT WHY, not just how many. Every district that dropped out recorded
         # its reason in `failures` — and this early return discarded all of them,
         # so the guardrail reported "only 3 districts produced results" and threw
@@ -1056,7 +1062,7 @@ def build_access(ox, resolved: dict, skipped: list,
         # Three consecutive runs failed this way on 2026-08-07 and the logs say
         # nothing about which districts fell over or how. They do now.
         log(f"  SKIP access: only {len(rows)} districts produced results "
-            f"(<{MIN_DISTRICTS_OK})")
+            f"(<{floor})")
         if failures:
             log("  why each district dropped out:")
             for f in failures:
@@ -1077,8 +1083,8 @@ def build_access(ox, resolved: dict, skipped: list,
         prev = None
     today = date.today().isoformat()
     measured = len(rows)
-    rows = carry_forward(rows, prev, today)
-    carried = [r["name"] for r in rows if r.get("carried")]
+    rows = keep_unselected(carry_forward(rows, prev, today), prev, only)
+    carried = [r["name"] for r in rows if r.get("carried") and (only is None or r["key"] in only)]
 
     out = {
         "as_of": today,
@@ -1150,6 +1156,43 @@ def parse_layers(value: Optional[str]) -> str:
     return mode
 
 
+# WHICH DISTRICTS TO REBUILD. On 2026-11-13 the access-only run measured 8 of
+# 10 districts and carried 10th of Ramadan City and New Alamein, because
+# Overpass refused them. Re-running all ten to retry two asks a shared free
+# service for eight walk networks it already gave us, and takes about five
+# times longer. STREETS_DISTRICTS (comma-separated district keys) rebuilds only
+# the named districts; every other row is kept exactly as published, carried
+# flag and date included. Access mode only: the report card's floors and
+# comparisons are written for the whole set.
+def parse_districts(value: Optional[str], mode: str) -> Optional[set]:
+    """The set of district keys to rebuild, or None for all of them. An unknown
+    key, or a filter outside access mode, stops the run rather than silently
+    rebuilding the wrong thing."""
+    keys = {k.strip().lower() for k in (value or "").split(",") if k.strip()}
+    if not keys:
+        return None
+    if mode != "access":
+        raise SystemExit("STREETS_DISTRICTS needs STREETS_LAYERS=access")
+    known = {d["key"] for d in DISTRICTS}
+    unknown = sorted(keys - known)
+    if unknown:
+        raise SystemExit(f"STREETS_DISTRICTS: unknown district key(s) {', '.join(unknown)}; "
+                         f"known: {', '.join(sorted(known))}")
+    return keys
+
+
+def keep_unselected(rows: list[dict], prev: Optional[dict], only: Optional[set]) -> list[dict]:
+    """After carry_forward(), put back the previous row, unchanged, of every
+    district this run was told NOT to rebuild. carry_forward() would otherwise
+    mark them 'carried' (meaning "could not re-measure"), which is false for a
+    district that was simply not asked for."""
+    if only is None:
+        return rows
+    prev_rows = {r["key"]: r for r in (prev or {}).get("districts", [])}
+    return [dict(prev_rows[r["key"]]) if r["key"] not in only and r["key"] in prev_rows else r
+            for r in rows]
+
+
 def boundary_features(fc: Optional[dict]) -> dict:
     """district key -> GeoJSON feature, from a committed streets-boundaries.json.
     Only keys in DISTRICTS with a polygon are returned; a district missing
@@ -1166,6 +1209,7 @@ def boundary_features(fc: Optional[dict]) -> dict:
 
 def main() -> None:
     mode = parse_layers(os.environ.get("STREETS_LAYERS"))
+    only = parse_districts(os.environ.get("STREETS_DISTRICTS"), mode)
     import osmnx as ox
     ox.settings.log_console = False
     ox.settings.use_cache = True
@@ -1198,7 +1242,10 @@ def main() -> None:
     else:
         ok_card = build_report_card(ox, resolved, skipped, budget, breaker)
         layers = [("report-card", ok_card)]
-    ok_access = build_access(ox, resolved, skipped, budget, breaker) if ok_card else False
+    if only is not None:
+        log(f"Rebuilding only: {', '.join(sorted(only))} (STREETS_DISTRICTS); "
+            f"every other district keeps its published row\n")
+    ok_access = build_access(ox, resolved, skipped, budget, breaker, only=only) if ok_card else False
     if not ok_card:
         log("\n(access layer skipped because the report card did not build)")
     layers.append(("access", ok_access))

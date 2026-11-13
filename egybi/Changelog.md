@@ -1414,3 +1414,18 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - unreadable runs start nothing and report a failure;
   - a refused dispatch is reported with its HTTP code.
 - **`egybi/Improvement Plan 2026-11.md`:** the audit of 13 November and the ranked plan this change is item 1 of.
+
+## 2026-11-13 — The street job can rebuild just the districts that failed
+- **Why:** the access-only run on 13 November measured 8 of 10 districts. 10th of Ramadan City and New Alamein were carried because Overpass refused them. Retrying two meant re-measuring all ten, which asks a shared free service for eight walk networks it had already given, and takes about five times as long.
+- **`fetch_streets.py`:** `STREETS_DISTRICTS` (comma-separated keys, access mode only) rebuilds just those districts.
+  - Every other district keeps its published row unchanged (`keep_unselected()`). It is not marked "carried", because that would claim a re-measurement failed when none was asked for.
+  - With a filter the floor is one district, since the others stay published.
+  - An unknown key, or a filter outside access mode, stops the run.
+- **`refresh-streets.yml`:** a new `districts` text input on a manual run, e.g. `10th-ramadan,new-alamein`. The quarterly schedule is unchanged.
+- **Tests:** five new cases:
+  - parsing, including unknown keys and the access-only rule;
+  - unselected rows kept verbatim while the selected one gets today's date;
+  - no filter changes nothing;
+  - the filter reaches the access layer from `main()`.
+
+  The verbatim test fails if `keep_unselected()` is bypassed.
