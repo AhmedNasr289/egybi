@@ -1386,3 +1386,15 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the query text osmnx builds is still `[out:json][timeout:300]`, with and without `maxsize`.
 
   The second fails if the query-template line is removed.
+
+## 2026-11-12 — The access layer can be rebuilt on its own
+- **Why:** the second street refresh on 2026-11-12 re-measured 9 of 10 districts, but only one Overpass server answered and it was slow (Downtown Cairo took 20 minutes, Sheikh Zayed 27). The report card used the whole 80-minute budget, so the 15-minute access layer, which runs after it, never started. That happened on both runs that day.
+- **`fetch_streets.py`:** `STREETS_LAYERS=access` skips the report card and reads each district's boundary back from the committed `streets-boundaries.json`, which holds the full polygon the report card measured. The access layer then gets the whole budget. An unknown value stops the run; a missing or empty boundary file fails the run without downloading anything. `all` stays the default.
+- **`refresh-streets.yml`:** a new `layers` choice (`all` / `access`) on a manual run. The quarterly schedule has no inputs and still builds both.
+- **Tests:** four new cases:
+  - the mode is parsed, and an unknown mode is refused;
+  - only real district polygons are taken from the boundary file;
+  - access mode never calls the report card and passes the committed boundary to the access layer;
+  - with no boundary file it fails without calling either layer.
+
+  The last two fail if the access branch is removed.

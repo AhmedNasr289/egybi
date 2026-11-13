@@ -489,3 +489,80 @@ class ReportCardCarriesForward(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class AccessOnly(unittest.TestCase):
+    """STREETS_LAYERS=access: the 2026-11-12 runs spent the whole budget on
+    the report card, so the access layer never started. Access-only mode must
+    skip the report card and feed build_access the committed boundaries."""
+
+    FC = {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "properties": {"key": "maadi", "name": "Maadi"},
+         "geometry": {"type": "Polygon", "coordinates": [[[31.2, 29.9], [31.3, 29.9], [31.3, 30.0], [31.2, 29.9]]]}},
+        {"type": "Feature", "properties": {"key": "not-a-district"},
+         "geometry": {"type": "Polygon", "coordinates": []}},
+        {"type": "Feature", "properties": {"key": "luxor"}, "geometry": {"type": "Point", "coordinates": [0, 0]}},
+    ]}
+
+    def test_parse_layers(self):
+        self.assertEqual(fs.parse_layers(None), "all")
+        self.assertEqual(fs.parse_layers(""), "all")
+        self.assertEqual(fs.parse_layers(" Access "), "access")
+        with self.assertRaises(SystemExit):
+            fs.parse_layers("card")
+
+    def test_boundary_features_keeps_only_district_polygons(self):
+        self.assertEqual(list(fs.boundary_features(self.FC)), ["maadi"])
+        self.assertEqual(fs.boundary_features(None), {})
+
+    def _run_main(self, boundaries):
+        import json
+        import os
+        import tempfile
+        from types import SimpleNamespace
+        from unittest import mock
+        made = []
+        fake_gpd = SimpleNamespace(GeoDataFrame=SimpleNamespace(
+            from_features=lambda feats, crs: made.append((feats, crs)) or ("gdf", feats[0]["properties"]["key"])))
+        fake_ox = SimpleNamespace(__version__="test", settings=SimpleNamespace(
+            log_console=True, use_cache=False, requests_timeout=180,
+            overpass_settings="[out:json][timeout:{timeout}]{maxsize}", overpass_url=""))
+        seen = {}
+
+        def fake_access(ox, resolved, skipped, budget, breaker):
+            seen["resolved"] = dict(resolved)
+            return True
+
+        with tempfile.TemporaryDirectory() as tmp:
+            if boundaries is not None:
+                Path(tmp, "streets-boundaries.json").write_text(json.dumps(boundaries), encoding="utf-8")
+            card = mock.Mock(return_value=True)
+            access = mock.Mock(side_effect=fake_access)
+            with mock.patch.dict(sys.modules, {"osmnx": fake_ox, "geopandas": fake_gpd}), \
+                 mock.patch.dict(os.environ, {"STREETS_LAYERS": "access"}), \
+                 mock.patch.object(fs, "OUT", Path(tmp)), \
+                 mock.patch.object(fs, "preflight_order", lambda urls, answers: list(urls)), \
+                 mock.patch.object(fs, "build_report_card", card), \
+                 mock.patch.object(fs, "build_access", access), \
+                 mock.patch.object(fs, "log", lambda msg: None):
+                try:
+                    fs.main()
+                    exit_msg = None
+                except SystemExit as e:
+                    exit_msg = str(e)
+        return card, access, seen, made, exit_msg
+
+    def test_skips_the_report_card_and_uses_committed_boundaries(self):
+        card, access, seen, made, exit_msg = self._run_main(self.FC)
+        card.assert_not_called()
+        access.assert_called_once()
+        self.assertIsNone(exit_msg)
+        self.assertEqual(list(seen["resolved"]), ["maadi"])
+        self.assertEqual(seen["resolved"]["maadi"][0], ("gdf", "maadi"))
+        self.assertEqual(made[0][1], "EPSG:4326")
+
+    def test_no_committed_boundaries_fails_without_downloading(self):
+        card, access, seen, made, exit_msg = self._run_main(None)
+        card.assert_not_called()
+        access.assert_not_called()
+        self.assertIn("FAILED layers", exit_msg or "")
