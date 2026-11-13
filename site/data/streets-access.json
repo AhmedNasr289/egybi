@@ -1,6 +1,6 @@
 {
  "as_of": "2026-11-13",
- "fetched_at": "2026-11-13T09:05:29+00:00",
+ "fetched_at": "2026-11-13T22:12:20+00:00",
  "source": "OpenStreetMap amenities + walk network via OSMnx",
  "license": "ODbL — © OpenStreetMap contributors",
  "method": "Walk network per district. Walking time at 80 m/min (~4.8 km/h) along the network — not straight-line. 'Within 15 min' is the share of walk-network nodes whose nearest facility of that type is inside 15 minutes.",
@@ -201,7 +201,7 @@
   {
    "key": "10th-ramadan",
    "name": "10th of Ramadan City",
-   "walk_nodes": 27477,
+   "walk_nodes": 27473,
    "amenity_counts": {
     "hospital": 8,
     "clinic": 1,
@@ -214,22 +214,21 @@
      "within_15min_pct": 22.5
     },
     "clinic": {
-     "median_min": 52.7,
+     "median_min": 52.8,
      "within_15min_pct": 3.7
     },
     "school": {
-     "median_min": 17.2,
-     "within_15min_pct": 40.9
+     "median_min": 17.4,
+     "within_15min_pct": 40.4
     },
     "pharmacy": {
      "median_min": 40.1,
-     "within_15min_pct": 14.8
+     "within_15min_pct": 14.7
     }
    },
    "unanswered": [],
-   "mean_within_15min_pct": 20.5,
-   "measured_on": "2026-11-09",
-   "carried": true
+   "mean_within_15min_pct": 20.3,
+   "measured_on": "2026-11-13"
   },
   {
    "key": "sheikh-zayed",
@@ -263,7 +262,7 @@
   {
    "key": "new-alamein",
    "name": "New Alamein",
-   "walk_nodes": 2906,
+   "walk_nodes": 2910,
    "amenity_counts": {
     "hospital": 0,
     "clinic": 0,
@@ -279,8 +278,7 @@
    "unanswered": [],
    "mean_within_15min_pct": null,
    "no_amenities_mapped": true,
-   "measured_on": "2026-08-07",
-   "carried": true
+   "measured_on": "2026-11-13"
   },
   {
    "key": "new-cairo",
@@ -315,8 +313,5 @@
    "measured_on": "2026-11-13"
   }
  ],
- "skipped": [
-  "10th of Ramadan City: walk graph failed after 3 attempt(s) (ResponseStatusCodeError)",
-  "New Alamein: amenity query unanswered (ResponseStatusCodeError) — no data, not zero access"
- ]
+ "skipped": []
 }
