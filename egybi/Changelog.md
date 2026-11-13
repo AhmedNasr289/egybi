@@ -1398,3 +1398,19 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - with no boundary file it fails without calling either layer.
 
   The last two fail if the access branch is removed.
+
+## 2026-11-13 — The daily refreshes can start on time, from Hostinger's cron
+- **Why:** GitHub's scheduler started the 07:17 UTC price refresh at 15:59, 15:16, 15:37 and 17:34 UTC on 12, 11, 10 and 9 November. It also started the minutes guard (06:23) at 15:21 and the catch-up (16:17) at 22:17. Readers saw yesterday's prices and exchange rate until late afternoon Cairo time.
+- **`backend/ops/dispatch_daily.php`:** run by a Hostinger cron job. For each daily workflow it asks GitHub whether it has started today and starts it if not, using the same rule as `refresh_catchup.py`. The GitHub schedule stays as the backup, and the two can never both run a day.
+  - It reads a fine-grained token (`github_dispatch_token`, Actions read and write, this repo only) from `egybi-config.php` above `public_html`, and never prints it.
+  - It refuses web requests; `backend/` is already 403 through the root `.htaccess`.
+  - `--dry-run` reports without starting anything.
+- **`egybi-config.sample.php`:** documents the new key.
+- **`test-pipeline.yml`:** lints the PHP in `backend/ops/` and runs its tests. No other job exercised it.
+- **Tests:** `backend/ops/tests/test_dispatch_daily.php`, against a fake GitHub:
+  - nothing is started when both refreshes already ran;
+  - both are started, on main, when neither ran, and only the missing one when one ran;
+  - a dry run starts nothing;
+  - unreadable runs start nothing and report a failure;
+  - a refused dispatch is reported with its HTTP code.
+- **`egybi/Improvement Plan 2026-11.md`:** the audit of 13 November and the ranked plan this change is item 1 of.

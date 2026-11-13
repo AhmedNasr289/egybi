@@ -83,6 +83,17 @@ jobs:
           set -o pipefail
           node backend/verify/egfmt-cases.js 2>&1 | tee -a /tmp/test-pipeline.log
 
+      # backend/ops/ also holds PHP run by Hostinger's cron (dispatch_daily.php),
+      # which no other job exercises: verify-browser lints only site/**. The
+      # runner image ships PHP, so this needs no setup step.
+      - name: PHP ops scripts (lint + tests)
+        shell: bash
+        run: |
+          set -o pipefail
+          php --version | head -1
+          for f in backend/ops/*.php backend/ops/tests/*.php; do php -l "$f"; done 2>&1 | tee -a /tmp/test-pipeline.log
+          php backend/ops/tests/test_dispatch_daily.php 2>&1 | tee -a /tmp/test-pipeline.log
+
       - name: Generator is byte-identical across two runs
         shell: bash
         run: |
