@@ -419,6 +419,10 @@ case 'health': {
         // which silently changes the insights ?key= and resets visitor
         // de-duplication. Reports only that it is SET — never the value.
         'analytics_key_set' => analytics_key() !== '',
+        // False means the IP-hash salt is the built-in default or the sample
+        // placeholder: put a long random 'app_secret' in egybi-config.php.
+        // Changing it signs nobody out (sessions are stored server-side).
+        'app_secret_ok' => app_secret_ok(),
         'server_time' => now(),
     ]);
 }
