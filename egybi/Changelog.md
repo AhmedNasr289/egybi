@@ -1429,3 +1429,12 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the filter reaches the access layer from `main()`.
 
   The verbatim test fails if `keep_unselected()` is bypassed.
+
+## 2026-11-13 — The health check says whether the IP-hash secret is real
+- **Why:** `auth_cfg()` falls back to a built-in `app_secret` when `egybi-config.php` sets none, and the sample config ships a placeholder. That secret salts the IP and account hashes behind rate limiting, so a known value makes them reversible by brute force. Nothing reported which one the live site was using.
+- **`lib.php`:** `app_secret_ok()` is true only for a secret of at least 32 characters that is neither the built-in default nor the sample placeholder.
+- **`auth.php`:** the key-gated health check reports `app_secret_ok`, as true or false only, never the value. Without the key the endpoint still answers only `{"ok":true}`.
+- **Tests (`auth-flow.sh`):**
+  - health without the key gives no detail;
+  - keyed health on CI's default secret says `false`;
+  - `app_secret_ok()` is checked on the default, the placeholder, a short value and a long random one.

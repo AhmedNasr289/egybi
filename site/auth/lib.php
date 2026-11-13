@@ -132,6 +132,18 @@ function auth_cfg(): array
  *  the generated file", which is ephemeral — see the note above. */
 function analytics_key(): string { return trim((string)auth_cfg()['analytics_key']); }
 
+/** Whether app_secret is a real secret: set, at least 32 characters, and not
+ *  the built-in fallback or the sample config's placeholder. It salts the IP
+ *  and account hashes behind rate limiting, so a known value makes those
+ *  hashes reversible by brute force. Reported by the keyed health check as a
+ *  yes/no only, never the value. */
+function app_secret_ok(): bool
+{
+    $s = (string)auth_cfg()['app_secret'];
+    return strlen($s) >= 32
+        && !in_array($s, ['dev-only-insecure-secret-change-me', 'PASTE_A_LONG_RANDOM_STRING_HERE'], true);
+}
+
 /** Google Sign-In is available only when a client id is configured. */
 function google_enabled(): bool { return trim((string)auth_cfg()['google_client_id']) !== ''; }
 

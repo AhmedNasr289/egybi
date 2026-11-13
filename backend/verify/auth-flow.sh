@@ -20,7 +20,8 @@ fails=0
 
 php -m | grep -qi '^pdo_sqlite$' || { echo "FAIL: PHP has no pdo_sqlite, cannot run"; exit 2; }
 
-AUTH_DB_DRIVER=sqlite AUTH_SQLITE_PATH="$DB" AUTH_SECURE_COOKIE=0 APP_URL="$BASE" \
+HKEY=ci-health-key-0123456789abcdef
+AUTH_DB_DRIVER=sqlite AUTH_SQLITE_PATH="$DB" AUTH_SECURE_COOKIE=0 APP_URL="$BASE" ANALYTICS_KEY="$HKEY" \
   php -S "127.0.0.1:$PORT" -t site >"$WORK/server.log" 2>&1 &
 SERVER=$!
 trap 'kill $SERVER 2>/dev/null; rm -rf "$WORK"' EXIT
@@ -111,6 +112,21 @@ done
 expect "A is signed out"           200 "$(call "$JAR_A" GET me)" '"user":null'
 expect "A cannot sign in again"    401 "$(call "$JAR_A" POST login "$A")"
 expect "B's trip survives"         200 "$(call "$JAR_B" GET trips-list)" 'B trip'
+
+# The keyed health check reports whether app_secret is a real secret. This
+# server runs on the built-in default, so it must say false. app_secret_ok()
+# itself is checked against the default, the sample placeholder, a short value
+# and a long random one.
+expect "health without the key gives no detail" 200 "200 $(curl -s "$BASE/auth/auth.php?action=health")" '{"ok":true}'
+expect "keyed health: default secret is not ok" 200 "200 $(curl -s "$BASE/auth/auth.php?action=health&key=$HKEY")" '"app_secret_ok":false'
+secret_ok() { APP_SECRET="$1" php -r 'require "site/auth/lib.php"; echo app_secret_ok() ? "yes" : "no";'; }
+LONG=$(head -c 24 /dev/urandom | od -An -tx1 | tr -d ' \n')
+for case in "no|" "no|dev-only-insecure-secret-change-me" "no|PASTE_A_LONG_RANDOM_STRING_HERE" "no|short-but-real" "yes|$LONG"; do
+  want=${case%%|*}; val=${case#*|}
+  got=$(secret_ok "$val")
+  if [ "$got" = "$want" ]; then echo "ok    app_secret_ok('${val:0:12}...') = $want"
+  else echo "FAIL  app_secret_ok('${val:0:12}...') = $got, wanted $want"; fails=$((fails+1)); fi
+done
 
 if grep -qiE 'fatal|warning|deprecated' "$WORK/server.log"; then
   echo "FAIL  PHP printed errors:"; grep -iE 'fatal|warning|deprecated' "$WORK/server.log" | head -10; fails=$((fails+1))
