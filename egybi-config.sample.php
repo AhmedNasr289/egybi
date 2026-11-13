@@ -66,4 +66,12 @@ return [
 
     // ── Google Sign-In. Empty = the button never renders. ──────────────────
     'google_client_id' => '',   // e.g. '1234-abc.apps.googleusercontent.com'
+
+    // ── On-time daily refreshes (backend/ops/dispatch_daily.php) ───────────
+    // GitHub's scheduler starts the 07:17 UTC refreshes hours late. A Hostinger
+    // cron job runs dispatch_daily.php on time and starts them with this token.
+    // Create it at github.com > Settings > Developer settings > Fine-grained
+    // tokens: repository access "Only select repositories" > egybi, permission
+    // "Actions: Read and write", nothing else. Empty = the script does nothing.
+    'github_dispatch_token' => '',
 ];
