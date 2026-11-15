@@ -1491,3 +1491,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - 4 more in `test_lambda_refresh.py`: too little time alerts; a step that overruns is stopped; plenty of time runs normally; a failed ping after a commit is not a failure.
   - 4 in the new `test_deploy_lambda_refresh.py`, against a fake boto3 session: no retries and a long read timeout; the right dry/live flag; a role deleted without its policy; everything removed.
   - Mutation control on copies: undoing each of the six changes fails the tests.
+
+## 2026-11-15 — A helper for the daily refresh's GitHub token, and the Lambda live
+- **Why:** the Lambda needs a GitHub token in SSM, and only Ahmed may create or handle it. Pasting it into the AWS console works, but nothing checks that GitHub accepts it.
+- **`backend/ops/put_github_token.py`:**
+  - asks for the token with the input hidden;
+  - checks with GitHub that it can read the egybi repo, and refuses anything else, saving nothing;
+  - stores it as an SSM SecureString (`/egybi/github-token`, `alias/aws/ssm`) in the personal account only.
+
+  The token is never printed or written to disk. Tested: a fake token was refused with HTTP 401 and nothing was saved.
+- **The Lambda is live** (`egybi/Plan — Daily Refresh on Personal AWS.md`, Status). It is deployed and idempotent, and both dry runs pass on AWS. The schedules have been enabled since 15 Nov, and the first real commit is due 16 Nov at 07:20 UTC.

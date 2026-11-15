@@ -62,7 +62,7 @@ The GitHub schedules stay as a backup. If the Lambda has already refreshed, a la
 |---|---|---|---|---|
 | 1 | Claude, after a yes | Create the $1 budget alert | `budgets:DescribeBudgets` lists it | delete the budget |
 | 2 | Ahmed | Create a fine-grained GitHub token: egybi only; Contents read and write, Issues read and write; one-year expiry | — | revoke it on GitHub |
-| 3 | Ahmed | AWS console → Systems Manager → Parameter Store → Create parameter: name `/egybi/github-token`, tier Standard, type SecureString, key `alias/aws/ssm`; paste the token. Claude never sees it. | Claude reads only that the parameter exists, never the value | delete the parameter |
+| 3 | Ahmed | `python backend\ops\put_github_token.py`: paste the token at a hidden prompt; it checks the token with GitHub, then stores it as SSM `/egybi/github-token` (Standard, SecureString, `alias/aws/ssm`). Or do the same in the console: Systems Manager → Parameter Store → Create parameter. Claude never sees it. | Claude reads only that the parameter exists, never the value | delete the parameter |
 | 4 | Claude, PR | Add `backend/ops/lambda_refresh/` (handler, deploy script, tests against a fake GitHub API) and a Changelog entry; CI green | Test (pipeline) green | close the PR |
 | 5 | Ahmed's yes | Merge the PR | main green | revert |
 | 6 | Claude, after a yes | `python backend/ops/deploy_lambda_refresh.py --apply` deploys the two roles, the function, the log group and both schedules. The schedules are created **disabled**. | the script's status shows each resource, schedules `DISABLED` | `--remove` |
@@ -81,3 +81,12 @@ Step 4 needs CI. Once the repo is private, CI stops until 1 December, because No
 
 - PR CI (Verify (browser)) has no free home on this account. It stays on GitHub-hosted runners, so in November a private repo cannot merge anything. AWS CodeBuild's free 100 build minutes a month (still to be confirmed as always free) would cover about two full sweeps. That is too few to rely on.
 - Nothing here sends email. Failures surface as GitHub issues, the same way they do now.
+
+## Status, 2026-11-15
+- Done:
+  - the $3 budget alert;
+  - the token, stored with the helper at 19:52 Cairo;
+  - `--apply`, twice, with no change the second time;
+  - both dry runs on AWS: prices 11.6 s and FX 3.1 s, 152 MB each. Both said "nothing changed", because the GitHub refreshes had already published the day.
+  - The schedules were **enabled** on 15 Nov.
+- Next: the first real commit at 07:20 UTC on 16 Nov, checked by the read-only scheduled task `egybi-lambda-first-commit-check-20261116` at 10:15 Cairo. After it says VERIFIED, the repo goes private and the workstation backup task is retired, both done with Ahmed present.
