@@ -304,8 +304,14 @@ Measured 15 November, 18:10–18:45 UTC, on main 863fca2 and on the live site. I
 
 ### S3. The visit pages' climate tables need a sideways swipe on phones
 - **Evidence:** measured on 3 of the 18 visit pages (Giza, Karnak, Abu Simbel), identically; all 18 come from the same generator. At 390 px, "Heat and rain, month by month" is a 406 px table in a box of about 342 px, and the sun-times table is 383 px. The last column header shows as "R" and "MM/" until the reader finds the swipe. The box scrolls (`.fp-wrap`, overflow-x auto), so no data is lost, but it reads badly.
-- **Fix:** in `pages/visit.py` and the CSS, at 430 px and below use a compact table: the small type step, tighter cell padding, tabular figures, and units moved into a header line that wraps. All 5 columns then fit at 390 px.
-- **Prove:** a new browser check fails if any visit-page table is wider than its wrapper at 390 px. A mutation copy without the compact rule must fail it.
+  - Re-measured on Giza while building the fix, inside the live page's `.sheet`: the box is **289 px**, the climate table needs 392 px, and the sun-times table 369 px. The earlier 342 px box figure did not account for the sheet's padding.
+- **Fix (as built in PR #120):** at 430 px and below, in `pages/visit.py` and the CSS:
+  - three-letter months, with the full name kept for screen readers;
+  - cells at 4 px a side and text at 0.86 rem;
+  - headers without capitals or letter-spacing, so they wrap at spaces.
+
+  All 5 columns then fit at 360 px (a 263 px box). Breaking words anywhere was tried and rejected, because it split headers mid-word ("AFTERN OON").
+- **Prove:** `visit-tables.js` fails if any visit-page table is wider than its wrapper at 360, 375 or 390 px. Mutation copies without the compact rule, or without the class, must fail it (cases 13f and 13g).
 - **Rollback:** revert.
 
 ### S4. One motion system, applied the same way everywhere
@@ -356,7 +362,7 @@ Measured 15 November, 18:10–18:45 UTC, on main 863fca2 and on the live site. I
   - never animated: body text after first view, tables, maps, form fields and navigation;
   - everything is off under reduced motion, and everything is visible without JavaScript.
 - **Before and after:**
-  1. **Giza on a phone:** the climate table needs a swipe and shows "R… MM/". After: all five columns visible at 390 px.
+  1. **Giza on a phone:** the climate table needs a swipe and shows "R… MM/". After: all five columns visible at 390 px, and at 360 px too (PR #120).
   2. **Labels everywhere:** the six slightly different label sizes, from 0.68 to 0.78 rem, become one 12 px eyebrow style, with even spacing between sections.
   3. **A Papyrus story:** no movement today. After: sections rise into view once, as on the home page, and with JavaScript off or reduced motion everything is simply there. Explore with scripts blocked goes from 106 invisible cards to all of them visible.
 - **PR order:** S1, then S3, then S2 (tokens, then mapping), then S4. Each PR is small, with its own browser check and a mutation-proven test.
