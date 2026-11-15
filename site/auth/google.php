@@ -104,8 +104,9 @@ if (!$u) {
             // See the policy note at the top — refusing here is the whole point.
             json_out(false, ['message' => 'An account already uses that email. Please sign in with your password.'], 409);
         }
-        $db->prepare('UPDATE users SET google_sub=?, email_verified=1, updated_at=? WHERE id=?')
-           ->execute([$sub, $ts, $existing['id']]);
+        // Drops a password nobody proved and ends every existing session: see
+        // google_link_account() for the account-squatting case this closes.
+        google_link_account($db, $existing, $sub);
         $u = $existing;
         $u['email_verified'] = 1;
     } else {

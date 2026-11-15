@@ -1466,3 +1466,16 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   Mutation control on a copy: dropping the stale check, force-pushing, or keeping the old parent each fail the tests.
 - **`egybi/Plan — Daily Refresh on Personal AWS.md`:** the check, the decision and the steps.
+
+## 2026-11-15 — Accounts and mail security pass
+- **Why:** a security review of sign-up, sign-in, password reset, The Papyrus and community notes, read in the code and probed read-only on the live site. Secrets, databases, logs and private folders all answer 403 or 404 from the web, and sessions, CSRF and escaping held. Five real defects were found.
+- **Google sign-in could hand a squatter a shared account (`google.php`, `lib.php`).** Signing up does not need a verified email before signing in. So anyone could create an account on someone else's address with their own password. If the real owner later used "Sign in with Google", the old code linked Google to that account and kept the squatter's password and sessions. `google_link_account()` now removes a password the mailbox owner never proved, and ends every existing session when Google is linked.
+- **Reset emails were capped per IP only (`auth.php`).** With many addresses, anyone could fill a victim's inbox from our domain and spend the host's daily SMTP allowance. There is now also a cap of 3 an hour per address. Over the cap the request is dropped silently, with the same reply.
+- **Timing said who has an account (`auth.php`, `newsletter.php`).** Sign-up, reset and the newsletter form replied with the same words, but only the "new" or "exists" path sent an email first, which takes a second or more. The email now goes out after the reply (`json_out_then`), and sign-up on an existing address does the same password-hash work as a new one.
+- **The newsletter form said who subscribes (`newsletter.php`, `lib.php`).** "You are already on the list" answered whether any typed address was subscribed, and someone who had unsubscribed could not rejoin. There is now one reply for every case. An address that never confirmed, or that unsubscribed, gets the confirmation link again, at most once a day, and the link now brings an unsubscribed address back.
+- **Stored IP hashes were reversible (`newsletter.php`, `community.php`).** They used a fixed public salt, and every IPv4 address can be hashed in minutes. They are now salted with `app_secret` (`ip_hash_short()`). Rows already stored keep their old hashes.
+- **Verification email text:** it still promised "auto-graded SQL challenges". It now says what an account is for.
+- **Tests (`auth-flow.sh`), 23 new checks:**
+  - 4 reset requests send 3 emails, with the same reply, and the reset link works on a database that has never run Google sign-in (which used to make it throw);
+  - the Google link removes an unproven password and ends both kinds of session, while a verified account keeps its password;
+  - the newsletter gives one reply, sends one email a day, lets an address rejoin, and stores a salted IP hash.
