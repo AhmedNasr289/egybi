@@ -1438,3 +1438,12 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - health without the key gives no detail;
   - keyed health on CI's default secret says `false`;
   - `app_secret_ok()` is checked on the default, the placeholder, a short value and a long random one.
+
+## 2026-11-15 — Round 2 of the November plan
+- **Why:** the 13 November audit was two days old, and several of its figures (minutes, scheduler delay, the PR #90 conflict) go stale within hours.
+- **`egybi/Improvement Plan 2026-11.md`:** a new "Round 2" section, appended so the 13 November audit stays as it was. It holds:
+  - what was re-measured on 15 November, each check with a control that shows it can fail;
+  - Actions minutes per day for the last week;
+  - seven ranked items, each with Evidence, Fix, Service, Free limit, Prove and Rollback.
+- **Corrected:** PR #90 conflicts in `backend/verify/shots.js` and `site/egypt-food-prices.html`, not in the Changelog. The second file is rewritten by every daily price refresh, so the PR is rebased on the day it merges.
+- **No code changes.** Pages, links, accounts, data and every CI job that runs without a browser or PHP were checked and found clean.
