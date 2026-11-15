@@ -198,14 +198,14 @@ def table_html(weeks, pegs):
 CSS = """
 .cur-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .cur-table{border-collapse:collapse;width:100%}
-.cur-table caption{caption-side:bottom;text-align:left;font-size:.82rem;padding-top:8px;opacity:.85}
-.cur-table th,.cur-table td{text-align:left;padding:9px 8px;border-bottom:1px solid rgba(41,36,32,.15);font-size:.92rem}
+.cur-table caption{caption-side:bottom;text-align:left;font-size:var(--fs-sm);padding-top:8px;opacity:.85}
+.cur-table th,.cur-table td{text-align:left;padding:9px 8px;border-bottom:1px solid rgba(41,36,32,.15);font-size:var(--fs-sm)}
 .cur-table .num{text-align:right;font-variant-numeric:tabular-nums}
 .cur-table td.num{white-space:nowrap}
 .cur-table .cur-chg{font-weight:700}
-@media (max-width:600px){.cur-table th,.cur-table td{padding:8px 5px;font-size:.86rem}}
-.cur-code{font-size:.78rem;color:var(--ink-soft);font-weight:500}
-.cur-note{display:block;font-size:.78rem;color:var(--ink-soft);font-weight:400}
+@media (max-width:600px){.cur-table th,.cur-table td{padding:8px 5px;font-size:var(--fs-sm)}}
+.cur-code{font-size:var(--fs-xs);color:var(--ink-soft);font-weight:500}
+.cur-note{display:block;font-size:var(--fs-xs);color:var(--ink-soft);font-weight:400}
 .cur-chart{display:block;width:100%;height:auto;border-radius:10px}
 @media (max-width:600px){.cur-chart-sheet{padding:8px}}
 .hc-code{white-space:pre-wrap;word-break:break-all;user-select:all;font:500 .82rem/1.5 ui-monospace,Consolas,monospace;background:var(--papyrus);border:1px solid rgba(41,36,32,.25);border-radius:8px;padding:12px 14px;margin:10px 0 0}
@@ -252,7 +252,7 @@ def build_currency_page():
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:960px;">
     <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="prices.html">Daily prices</a> &middot; {egfmt.time_tag(d0, 'en', 'compact')} to {egfmt.time_tag(d1, 'en', 'compact')} &middot; measured, not a forecast</p>
-    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">The Egyptian pound since July: what your money buys.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">The Egyptian pound since July: what your money buys.</h1>
     <p class="lead" style="margin:0;max-width:68ch;">How many pounds ten currencies bought, kept day by day since
     late July. One move, seen through ten windows.</p>
   </div>
@@ -281,7 +281,7 @@ def build_currency_page():
 
 <section class="surface-light-2" id="currencies" data-nav="All ten">
   <div class="wrap" style="max-width:960px;">
-    <h2 style="font-size:1.2rem;margin:0 0 12px;">All ten currencies</h2>
+    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">All ten currencies</h2>
     <div class="sheet">{table_html(weeks, pegs)}</div>
     <div class="cta-row" style="margin-top:18px;"><a class="btn btn-primary" href="prices.html">Today&rsquo;s rates and prices &rarr;</a>
     <a class="btn btn-ghost" href="fair-prices.html">What things should cost a visitor &rarr;</a></div>

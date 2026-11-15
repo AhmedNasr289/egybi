@@ -24,7 +24,7 @@
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "CollectionPage", "@id": "https://egybi.com/stories.html#page", "url": "https://egybi.com/stories.html", "name": "Data stories", "isPartOf": {"@id": "https://egybi.com/#site"}, "publisher": {"@id": "https://egybi.com/#org"}, "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Data stories", "item": "https://egybi.com/stories.html"}]}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "Egypt population, health provision and street-plan data stories", "description": "The datasets behind three scrollable data stories: where Egyptians actually live, what the health-facility layer does and does not measure, and a century of Cairo street plans. Boundaries and facilities from OpenStreetMap.", "url": "https://egybi.com/stories.html", "creator": {"@type": "Organization", "name": "EgyBI", "url": "https://egybi.com/"}, "isAccessibleForFree": true, "inLanguage": "en", "spatialCoverage": {"@type": "Place", "name": "Egypt"}, "keywords": ["Egypt", "population density", "health facilities", "urban form", "Cairo", "data journalism"], "license": "https://opendatacommons.org/licenses/odbl/1-0/"}</script>
@@ -63,7 +63,7 @@
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap">
     <p class="hero-eyebrow"><span data-glyph="scroll"></span> Data stories</p>
-    <h1 style="font-size:clamp(1.7rem,5vw,2.7rem);margin:0 0 14px;">Egypt, argued from the map.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 14px;">Egypt, argued from the map.</h1>
     <p class="lead" style="margin:0;max-width:72ch;">Three stories where the map moves
     as you read. Every figure below is computed in your browser from the data in this repository,
     so the numbers in the prose cannot drift away from their source. Scroll, or press Tab to walk
@@ -114,7 +114,7 @@
       </section>
     </div>
   </div>
-    <p class="src" style="font-size:0.8rem;color:var(--ink-soft);margin-top:24px;">
+    <p class="src" style="font-size:var(--fs-xs);color:var(--ink-soft);margin-top:24px;">
     <strong>Sources.</strong> Governorate boundaries: geoBoundaries EGY ADM1 (CC BY 4.0). Population,
     area and density attributes: CAPMAS figures bundled with those boundaries. Percentages are
     computed in the browser from those attributes.
@@ -167,7 +167,7 @@
       </section>
     </div>
   </div>
-    <p class="src" style="font-size:0.8rem;color:var(--ink-soft);margin-top:24px;">
+    <p class="src" style="font-size:var(--fs-xs);color:var(--ink-soft);margin-top:24px;">
     <strong>Sources.</strong> Facilities: OpenStreetMap via Overpass (ODbL), as dated above.
     Population: CAPMAS attributes on the bundled geoBoundaries outlines (CC BY 4.0).
     <strong>What this cannot tell you:</strong> nothing here counts Egypt's actual hospitals, beds,
@@ -222,7 +222,7 @@
       </section>
     </div>
   </div>
-    <p class="src" style="font-size:0.8rem;color:var(--ink-soft);margin-top:24px;">
+    <p class="src" style="font-size:var(--fs-xs);color:var(--ink-soft);margin-top:24px;">
     <strong>Sources.</strong> Street networks: OpenStreetMap via OSMnx (ODbL), as dated above.
     Metrics computed on graphs projected to UTM and normalised per square kilometre.
     Hand-drawn boundaries in this story: <strong id="stDrawn">—</strong>.
@@ -287,7 +287,7 @@
       </section>
     </div>
   </div>
-    <p class="src" style="font-size:0.8rem;color:var(--ink-soft);margin-top:24px;">
+    <p class="src" style="font-size:var(--fs-xs);color:var(--ink-soft);margin-top:24px;">
     <strong>Sources.</strong> Archaeological sites: OpenStreetMap via Overpass
     (<code>historic=archaeological_site</code> with a name), fetched
     <strong id="dgAsOf2">—</strong>, ODbL. Governorate boundaries, areas and populations:
@@ -312,7 +312,7 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

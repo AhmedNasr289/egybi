@@ -14,43 +14,43 @@
 <!-- .js: AOS may hide [data-aos]; without it, egybi.css shows everything (S1). -->
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
 <link rel="preload" as="script" href="assets/vendor/sql-wasm.js">
 <link rel="preload" as="fetch" type="application/wasm" href="assets/vendor/sql-wasm.wasm">
 <style>
   .case-progress { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:0 0 4px; }
   .cp-dot { width:26px; height:26px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
-            font-size:0.72rem; font-weight:800; border:1.5px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); }
+            font-size:var(--fs-xs); font-weight:800; border:1.5px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); }
   .cp-dot.done { background:var(--gold); border-color:var(--gold-ink); color:#3a2f10; }
   .cp-dot.now  { border-color:var(--blue); color:var(--blue-deep); box-shadow:0 0 0 3px var(--gold-soft); }
-  .cp-label { font-size:0.8rem; color:var(--ink-soft); margin-left:6px; font-variant-numeric:tabular-nums; }
+  .cp-label { font-size:var(--fs-xs); color:var(--ink-soft); margin-left:6px; font-variant-numeric:tabular-nums; }
 
   .step { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:22px 24px; margin:0 0 16px; }
   .step[data-state="locked"] { opacity:.5; }
   .step[data-state="done"] { border-left:4px solid var(--gold); }
   .step[data-state="now"]  { border-left:4px solid var(--blue); box-shadow:var(--shadow-light); }
   .step-head { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
-  .step-n { font-family:'Cinzel',serif; font-size:0.82rem; font-weight:700; color:var(--gold-ink); letter-spacing:.06em; text-transform:uppercase; }
+  .step-n { font-family:'Cinzel',serif; font-size:var(--fs-sm); font-weight:700; color:var(--gold-ink); letter-spacing:.06em; text-transform:uppercase; }
   /* h2, not h3: these are the case's top-level structure and sit directly
      after the page h1, so h3 skipped a level for every screen reader. */
-  .step-head h2 { margin:0; color:var(--blue-deep); font-size:1.12rem; }
+  .step-head h2 { margin:0; color:var(--blue-deep); font-size:var(--fs-md); }
   .step-q { color:var(--ink); line-height:1.7; margin:12px 0 0; }
   .step-q code { background:var(--gold-soft); color:var(--gold-ink); padding:1px 6px; border-radius:5px; font-size:0.9em; }
   .step-body { margin-top:14px; }
-  .case-ta { width:100%; min-height:132px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.88rem; line-height:1.55;
+  .case-ta { width:100%; min-height:132px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:var(--fs-sm); line-height:1.55;
              padding:13px 15px; border:1px solid var(--line-light); border-radius:var(--radius); background:var(--papyrus); color:var(--ink); resize:vertical; }
   .case-ta:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
   .case-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; }
-  .case-status { font-size:0.85rem; color:var(--ink-soft); }
+  .case-status { font-size:var(--fs-sm); color:var(--ink-soft); }
   .case-status.ok  { color:var(--success); font-weight:700; }
   .case-status.bad { color:var(--danger); font-weight:600; }
   .case-hint { margin-top:10px; }
-  .case-hint summary { cursor:pointer; font-size:0.84rem; font-weight:600; color:var(--gold-ink); }
-  .case-hint p { font-size:0.86rem; color:var(--ink-soft); line-height:1.65; margin:8px 0 0; }
+  .case-hint summary { cursor:pointer; font-size:var(--fs-sm); font-weight:600; color:var(--gold-ink); }
+  .case-hint p { font-size:var(--fs-sm); color:var(--ink-soft); line-height:1.65; margin:8px 0 0; }
   .case-hint code { background:var(--gold-soft); color:var(--gold-ink); padding:1px 5px; border-radius:4px; }
   .reveal { margin-top:14px; padding:14px 16px; background:var(--papyrus); border:1px solid var(--line-light); border-left:4px solid var(--gold); border-radius:var(--radius);
-            color:var(--ink); line-height:1.7; font-size:0.92rem; }
-  .locked-note { font-size:0.86rem; color:var(--ink-soft); margin:10px 0 0; }
+            color:var(--ink); line-height:1.7; font-size:var(--fs-sm); }
+  .locked-note { font-size:var(--fs-sm); color:var(--ink-soft); margin:10px 0 0; }
 
   /* case closed */
   .closed { background:linear-gradient(160deg,var(--blue-deep),#123a72); color:#f3ead4; border-radius:var(--radius); padding:34px 30px; text-align:center; }
@@ -64,13 +64,13 @@
   .closed h2 { color:#fff; margin:6px 0 14px; }
   .closed .verdict { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:22px 0 18px; }
   .vcard { background:rgba(255,255,255,.07); border:1px solid rgba(201,162,39,.45); border-radius:var(--radius); padding:16px 22px; min-width:170px; }
-  .vcard .n { font-family:'Cinzel',serif; font-size:1.9rem; font-weight:700; line-height:1.1; }
+  .vcard .n { font-family:'Cinzel',serif; font-size:var(--fs-xl); font-weight:700; line-height:1.1; }
   .vcard .n.down { color:#ff9b7a; } .vcard .n.up { color:#8fe3a6; }
-  .vcard .l { font-size:0.78rem; color:var(--on-dark-soft); margin-top:6px; }
-  .closed .same { font-size:0.95rem; color:#f3ead4; max-width:56ch; margin:0 auto 6px; line-height:1.75; }
-  .closed .caveat { font-size:0.84rem; color:var(--on-dark-soft); max-width:60ch; margin:14px auto 0; line-height:1.7; }
+  .vcard .l { font-size:var(--fs-xs); color:var(--on-dark-soft); margin-top:6px; }
+  .closed .same { font-size:var(--fs-base); color:#f3ead4; max-width:56ch; margin:0 auto 6px; line-height:1.75; }
+  .closed .caveat { font-size:var(--fs-sm); color:var(--on-dark-soft); max-width:60ch; margin:14px auto 0; line-height:1.7; }
   .closed .cta-row { justify-content:center; margin-top:24px; }
-  #shareMsg { font-size:0.82rem; color:var(--gold-bright); min-height:1.2em; margin-top:10px; }
+  #shareMsg { font-size:var(--fs-sm); color:var(--gold-bright); min-height:1.2em; margin-top:10px; }
   @media (max-width:560px){ .vcard { min-width:0; flex:1 1 140px; } .closed { padding:26px 18px; } }
 </style>
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
@@ -128,7 +128,7 @@
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>A case in six queries</div>
     <h1 data-aos="fade-up">The Vanishing Economy.</h1>
     <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Between 2022 and 2024 Egypt&rsquo;s GDP fell by 18%. Over exactly the same two years, it rose by 68%. Both numbers are real, both come from the same source, and nothing about the country changed in between. Find out why &mdash; in six SQL queries, in your browser.</p>
-    <p class="lead" style="font-size:0.92rem;max-width:52ch;margin:14px auto 0;">About ten minutes. No signup, no install, nothing to download. Every figure is real and cited.</p>
+    <p class="lead" style="font-size:var(--fs-sm);max-width:52ch;margin:14px auto 0;">About ten minutes. No signup, no install, nothing to download. Every figure is real and cited.</p>
   </div>
 </section>
 
@@ -193,7 +193,7 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

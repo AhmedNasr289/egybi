@@ -15,7 +15,7 @@
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -77,7 +77,7 @@
 <section class="surface-hero center" style="padding:72px 6vw;">
   <div class="wrap">
     <div class="kicker"><span data-glyph="ra"></span>The Egypt data explorer</div>
-    <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">Real Egyptian data, charted.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">Real Egyptian data, charted.</h1>
     <p class="lead" style="margin:0 auto;">Every chart below is drawn from EgyBI's knowledge base — the same cited knowledge base behind every map and story here. Every figure is cited; where sources genuinely disagree, we say so rather than smoothing it over.</p>
   </div>
 </section>
@@ -93,7 +93,7 @@
     <p class="lead" data-aos="fade-up">A real geographic choropleth — the kind of view Power BI or Tableau would build — filled with cited figures for every one of Egypt's 27 governorates. Switch the metric to see how population concentrates on the Nile while the desert governorates sprawl empty. Hover any governorate for its exact figure.</p>
     <div class="chart-card" style="margin-top:22px;" data-aos="zoom-in">
       <div class="map-toolbar" role="group" aria-label="Choose the map metric">
-        <span style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Colour by:</span>
+        <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Colour by:</span>
         <button type="button" class="map-toggle on" data-metric="population">Population</button>
         <button type="button" class="map-toggle" data-metric="density">Density (per km²)</button>
         <button type="button" class="map-toggle" data-metric="urban_pct">Urban %</button>
@@ -105,7 +105,7 @@
            fourteen governorates render under 24px on a 390px screen, so half
            the country cannot be tapped and the shapes cannot be made bigger. -->
       <div class="map-toolbar" role="group" aria-label="Read a governorate's value from a list">
-        <label for="egyptMapPick" style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Or pick one:</label>
+        <label for="egyptMapPick" style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Or pick one:</label>
         <select id="egyptMapPick" class="gov-pick"><option value="">Choose a governorate…</option></select>
         <span id="egyptMapPickOut" class="gov-pick-out" role="status" aria-live="polite"></span>
       </div>
@@ -426,9 +426,9 @@
       <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
         <h3>Bahr El-Baqar — a Guinness record</h3>
         <div class="chart-box" style="display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:10px;">
-          <div class="num" data-count="5.6" data-suffix="M" data-decimals="1" style="font-size:clamp(2.4rem,7vw,4rem);color:var(--blue);line-height:1;">0</div>
+          <div class="num" data-count="5.6" data-suffix="M" data-decimals="1" style="font-size:var(--fs-hero);color:var(--blue);line-height:1;">0</div>
           <div style="font-weight:600;margin-top:6px;">m³ of drainage water treated per day</div>
-          <p style="color:var(--ink-soft);font-size:0.9rem;max-width:34ch;margin:12px auto 0;">The world's largest water-treatment plant — one of three Guinness World Records — reclaiming 456,000 feddans of Sinai farmland.</p>
+          <p style="color:var(--ink-soft);font-size:var(--fs-sm);max-width:34ch;margin:12px auto 0;">The world's largest water-treatment plant — one of three Guinness World Records — reclaiming 456,000 feddans of Sinai farmland.</p>
         </div>
         <p class="chart-cap">Source: Egypt SIS / ACCIONA. Distinct from the New Delta / El-Hammam plant (7.5M m³/day, agricultural drainage).</p>
       </div>
@@ -534,7 +534,7 @@ ORDER BY year_inscribed;"
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

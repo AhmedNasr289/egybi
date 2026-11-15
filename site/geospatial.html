@@ -15,35 +15,35 @@
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
 <style>
   /* atlas map card */
   .atlas-box { position: relative; height: clamp(340px, 56vw, 540px); border-radius: var(--radius); overflow: hidden; }
-  .atlas-note { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 12px 16px; margin: 14px 0 0; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.6; }
+  .atlas-note { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 12px 16px; margin: 14px 0 0; font-size: var(--fs-sm); color: var(--ink-soft); line-height: 1.6; }
   .map-toggle:disabled { opacity: .45; cursor: not-allowed; }
-  .ov-toggle { font-size: 0.82rem; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px dashed var(--line-light); background: var(--papyrus); color: var(--ink-soft); cursor: pointer; transition: all .15s; }
+  .ov-toggle { font-size: var(--fs-sm); font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px dashed var(--line-light); background: var(--papyrus); color: var(--ink-soft); cursor: pointer; transition: all .15s; }
   .ov-toggle:hover:not(:disabled), .ov-toggle:focus-visible { border-color: var(--gold); outline: none; }
   .ov-toggle.on { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid var(--gold); }
   .ov-toggle:disabled { opacity: .45; cursor: not-allowed; }
   /* symbol key for the point overlays — the colour legend covers bins only */
   .marker-key { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line-light); }
   .mk-row { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-  .mk-item { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--ink-soft); }
+  .mk-item { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-xs); color: var(--ink-soft); }
   .mk-dot { display: inline-block; border-radius: 50%; border: 1.5px solid #fff;
             box-shadow: 0 0 0 1px rgba(0,0,0,0.18); flex: none; }
 
   /* governorate detail panel */
   .gov-detail { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; margin-top: 14px; }
-  .gov-detail h3 { margin: 0 0 10px; color: var(--blue-deep); font-size: 1.15rem; }
-  .gd-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line-light); font-size: 0.9rem; color: var(--ink-soft); }
+  .gov-detail h3 { margin: 0 0 10px; color: var(--blue-deep); font-size: var(--fs-md); }
+  .gd-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line-light); font-size: var(--fs-sm); color: var(--ink-soft); }
   .gd-row:first-of-type { border-top: none; }
   .gd-row strong { color: var(--ink); font-variant-numeric: tabular-nums; }
-  .gd-note { font-size: 0.78rem; color: var(--ink-soft); margin: 10px 0 0; }
+  .gd-note { font-size: var(--fs-xs); color: var(--ink-soft); margin: 10px 0 0; }
 
   /* governorate table */
   .gov-table-wrap { overflow-x: auto; }
-  .gov-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-  .gov-table th { text-align: left; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); padding: 9px 12px; border-bottom: 2px solid var(--line-light); white-space: nowrap; }
+  .gov-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+  .gov-table th { text-align: left; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); padding: 9px 12px; border-bottom: 2px solid var(--line-light); white-space: nowrap; }
   .gov-table td { padding: 8px 12px; border-bottom: 1px solid var(--line-light); color: var(--ink); font-variant-numeric: tabular-nums; }
   .gov-table td:first-child { font-weight: 600; color: var(--blue-deep); }
   .gov-table tr:hover td { background: var(--papyrus-2); }
@@ -52,9 +52,9 @@
   .wh-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); margin-top: 20px; }
   .wh-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; transition: border-color .2s, box-shadow .2s; }
   .wh-card:hover { border-color: var(--gold); box-shadow: var(--shadow-light); }
-  .wh-year { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-ink); }
-  .wh-card h3 { margin: 6px 0 8px; color: var(--blue-deep); font-size: 1.02rem; line-height: 1.4; }
-  .wh-coords { margin: 0; font-size: 0.8rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .wh-year { font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-ink); }
+  .wh-card h3 { margin: 6px 0 8px; color: var(--blue-deep); font-size: var(--fs-base); line-height: 1.4; }
+  .wh-coords { margin: 0; font-size: var(--fs-xs); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 </style>
   <link rel="canonical" href="https://egybi.com/geospatial.html">
   <meta property="og:site_name" content="EgyBI">
@@ -122,7 +122,7 @@
     <p class="lead" data-aos="fade-up">The colour buttons change what the map measures. The dashed buttons switch point overlays on and off. Click a governorate for its full profile.</p>
     <div class="chart-card" style="margin-top:22px;" data-aos="zoom-in">
       <div class="map-toolbar" role="group" aria-label="Choose the map metric">
-        <span style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Colour by:</span>
+        <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Colour by:</span>
         <button type="button" class="map-toggle on" data-metric="population">Population</button>
         <button type="button" class="map-toggle" data-metric="density">Density</button>
         <button type="button" class="map-toggle" data-metric="urban_pct">Urban %</button>
@@ -132,7 +132,7 @@
         <button type="button" class="map-toggle" data-metric="schools" disabled title="Appears after the first layer build">Schools</button>
       </div>
       <div class="map-toolbar" role="group" aria-label="Toggle point overlays">
-        <span style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Overlays:</span>
+        <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Overlays:</span>
         <button type="button" class="ov-toggle" data-overlay="health" disabled title="Appears after the first layer build">Hospitals &amp; clinics</button>
         <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="Appears after the first layer build">World Heritage sites</button>
       </div>
@@ -146,7 +146,7 @@
            and it is visible rather than screen-reader-only, because the reader
            who cannot hit Gharbia with a thumb is looking right at it. -->
       <div class="map-toolbar" role="group" aria-label="Open a governorate from a list">
-        <label for="govPick" style="font-size:0.82rem;color:var(--ink-soft);font-weight:600;">Or pick one:</label>
+        <label for="govPick" style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Or pick one:</label>
         <select id="govPick" class="gov-pick"><option value="">Choose a governorate…</option></select>
       </div>
       <div class="map-legend" id="atlasLegend"></div>
@@ -213,11 +213,11 @@ ORDER BY population_millions DESC;"
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="chart-card" data-aos="fade-up">
         <h3>Where every layer comes from</h3>
-        <p style="color:var(--ink-soft);font-size:0.92rem;line-height:1.7;">Governorate boundaries are <strong>geoBoundaries.org</strong> (CC-BY 4.0), simplified and bundled into the page so no external map service is ever called. Demographic figures come from the same CAPMAS-sourced knowledge base every SQL challenge on this site queries. Hospitals, clinics and schools come from <strong>OpenStreetMap</strong> (© OpenStreetMap contributors, ODbL) — a community-maintained map, which means real coverage gaps: these layers show <em>where things are mapped</em>, which is not the same as an official registry of everything that exists. Heritage sites come from the <strong>UNESCO World Heritage Centre</strong>'s public list. Each layer's file records its own fetch date, shown on this page.</p>
+        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">Governorate boundaries are <strong>geoBoundaries.org</strong> (CC-BY 4.0), simplified and bundled into the page so no external map service is ever called. Demographic figures come from the same CAPMAS-sourced knowledge base every SQL challenge on this site queries. Hospitals, clinics and schools come from <strong>OpenStreetMap</strong> (© OpenStreetMap contributors, ODbL) — a community-maintained map, which means real coverage gaps: these layers show <em>where things are mapped</em>, which is not the same as an official registry of everything that exists. Heritage sites come from the <strong>UNESCO World Heritage Centre</strong>'s public list. Each layer's file records its own fetch date, shown on this page.</p>
       </div>
       <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
         <h3>What this map is not</h3>
-        <p style="color:var(--ink-soft);font-size:0.92rem;line-height:1.7;">This page is <strong>informational and educational only</strong>. The health layer is not a care directory and says nothing about quality, capacity or opening hours — for real medical needs use official health-ministry channels. Per-governorate counts are assigned using simplified boundaries, so facilities right on a border can be counted one governorate over. Nothing here is advice of any kind. Where a number is a proxy or an undercount, the caption says so instead of hiding it — that's the same <span style="color:var(--gold-ink);font-weight:600;">cited-data honesty rule</span> the whole site runs on.</p>
+        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">This page is <strong>informational and educational only</strong>. The health layer is not a care directory and says nothing about quality, capacity or opening hours — for real medical needs use official health-ministry channels. Per-governorate counts are assigned using simplified boundaries, so facilities right on a border can be counted one governorate over. Nothing here is advice of any kind. Where a number is a proxy or an undercount, the caption says so instead of hiding it — that's the same <span style="color:var(--gold-ink);font-weight:600;">cited-data honesty rule</span> the whole site runs on.</p>
       </div>
     </div>
     <div class="atlas-note" style="margin-top:18px;" data-aos="fade-up"><strong>Coming next on the Atlas:</strong> automated daily layers — earthquakes over Egypt and the Red Sea (USGS) and live air traffic (OpenSky) — built on the same fetch-validate-commit pipelines that already refresh the Prices and FX pages every morning.</div>
@@ -241,7 +241,7 @@ ORDER BY population_millions DESC;"
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

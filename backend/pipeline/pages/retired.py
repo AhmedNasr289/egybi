@@ -105,7 +105,7 @@ def build_challenges(chs, docs):
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:820px;">
     <p class="hero-eyebrow"><span data-glyph="reed"></span> {esc(c['sector'])} &middot; Retired page</p>
-    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{esc(c['title'])}</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">{esc(c['title'])}</h1>
     <p class="lead" style="margin:0;">{esc(c['statement'])}</p>
   </div>
 </section>
@@ -119,7 +119,7 @@ def build_challenges(chs, docs):
       <p style="margin-bottom:0;">The Egyptian data this question was built on is still here, and still sourced:
       <a href="../{dest}">{esc(dest_label)}</a>.</p>
     </div>
-    <h2 style="font-size:1.25rem;margin-top:32px;"><span data-glyph="maat"></span> About this</h2>
+    <h2 style="font-size:var(--fs-lg);margin-top:32px;"><span data-glyph="maat"></span> About this</h2>
     <p>{esc(c['didYouKnow'])}</p>
     <p style="margin-top:30px;"><a class="btn btn-primary" href="../{dest}">{esc(dest_label.capitalize())} &rarr;</a></p>
   </div>

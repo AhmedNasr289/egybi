@@ -271,12 +271,12 @@ def svg_chart_narrow(lines, d0, d1, title, credit_lines):
 CSS = """
 .fpx-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .fpx-table{border-collapse:collapse;width:100%}
-.fpx-table caption{caption-side:bottom;text-align:left;font-size:.82rem;padding-top:8px;opacity:.85}
-.fpx-table th,.fpx-table td{text-align:left;padding:9px 8px;border-bottom:1px solid rgba(41,36,32,.15);font-size:.92rem}
+.fpx-table caption{caption-side:bottom;text-align:left;font-size:var(--fs-sm);padding-top:8px;opacity:.85}
+.fpx-table th,.fpx-table td{text-align:left;padding:9px 8px;border-bottom:1px solid rgba(41,36,32,.15);font-size:var(--fs-sm)}
 .fpx-table .num{text-align:right;font-variant-numeric:tabular-nums}
-.fpx-note{font-size:.8rem;color:var(--ink-soft);font-weight:400}
+.fpx-note{font-size:var(--fs-xs);color:var(--ink-soft);font-weight:400}
 .fpx-movers{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
-.fpx-movers h3{font-size:1rem;margin:0 0 4px}
+.fpx-movers h3{font-size:var(--fs-base);margin:0 0 4px}
 .fpx-chg{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .fpx-chart{display:block;width:100%;height:auto;border-radius:10px}
 @media (max-width:600px){.fpx-chart-sheet{padding:8px}}
@@ -324,7 +324,7 @@ def build_food_prices_page():
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:960px;">
     <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="prices.html">Daily prices</a> &middot; {egfmt.time_tag(d0, 'en', 'compact')} to {egfmt.time_tag(d1, 'en', 'compact')} &middot; measured, not estimated</p>
-    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">Egypt&rsquo;s food prices, measured since July.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">Egypt&rsquo;s food prices, measured since July.</h1>
     <p class="lead" style="margin:0;max-width:68ch;">Every retail price the government&rsquo;s portal published,
     kept day by day since mid-July. How far each category moved, and how that compares with the pound.</p>
   </div>
@@ -351,14 +351,14 @@ def build_food_prices_page():
 
 <section class="surface-light-2" id="categories" data-nav="By category">
   <div class="wrap" style="max-width:960px;">
-    <h2 style="font-size:1.2rem;margin:0 0 12px;">By category</h2>
+    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">By category</h2>
     <div class="sheet">{table_html(stats)}</div>
   </div>
 </section>
 
 <section class="surface-light" id="movers" data-nav="Biggest moves">
   <div class="wrap" style="max-width:960px;">
-    <h2 style="font-size:1.2rem;margin:0 0 12px;">The biggest moves</h2>
+    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">The biggest moves</h2>
     <div class="sheet">{movers_html(rows)}</div>
     <div class="cta-row" style="margin-top:18px;"><a class="btn btn-primary" href="prices.html">Today&rsquo;s prices &rarr;</a>
     <a class="btn btn-ghost" href="fair-prices.html">What things should cost a visitor &rarr;</a></div>

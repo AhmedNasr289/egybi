@@ -99,7 +99,7 @@ def build_posts(posts):
 <section class="surface-hero" style="padding-top:64px;padding-bottom:40px;">
   <div class="wrap" style="max-width:760px;">
     <p class="hero-eyebrow issue-masthead"><span data-glyph="scroll"></span> <a href="../blog.html">The Papyrus</a> &middot; No.&nbsp;{no} &middot; {esc(p.get('tag',''))} &middot; {egfmt.time_tag(p['date'], 'en', 'prose')} &middot; {minutes}&nbsp;min read</p>
-    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{p['title']}</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">{p['title']}</h1>
     <p class="lead" style="margin:0;">{p['excerpt']}</p>
   </div>
 </section>
@@ -170,7 +170,7 @@ def build_link_indexes(chs, posts):
 
     sp = ['<section class="surface-light" id="all-stories">',
           '  <div class="wrap">',
-          '    <h2 style="font-size:1.35rem;"><span data-glyph="scroll"></span> Every story in The Papyrus</h2>',
+          '    <h2 style="font-size:var(--fs-lg);"><span data-glyph="scroll"></span> Every story in The Papyrus</h2>',
           '    <ul class="plain-list">']
     for x in posts:
         sp.append(f'      <li><a href="papyrus/{x["id"]}.html">{esc(x["title"])}</a></li>')

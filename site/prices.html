@@ -11,36 +11,36 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
 <style>
   .src-strip { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:4px solid var(--gold); border-radius:var(--radius); padding:16px 20px; margin:0 0 22px; }
   .src-strip .live { display:inline-flex; align-items:center; gap:7px; font-weight:700; color:var(--blue-deep); }
   .src-strip .dot { width:9px; height:9px; border-radius:50%; background:var(--success); display:inline-block; }
-  .src-strip p { color:var(--ink-soft); font-size:0.88rem; line-height:1.6; margin:8px 0 0; }
+  .src-strip p { color:var(--ink-soft); font-size:var(--fs-sm); line-height:1.6; margin:8px 0 0; }
   .src-strip a { color:var(--gold-ink); font-weight:600; }
   .mini-stats { display:flex; flex-wrap:wrap; gap:22px; margin-top:12px; }
-  .mini-stats .s .n { font-size:1.4rem; font-weight:800; font-family:'Cinzel',serif; color:var(--blue); }
-  .mini-stats .s .l { font-size:0.76rem; color:var(--ink-soft); }
+  .mini-stats .s .n { font-size:var(--fs-lg); font-weight:800; font-family:'Cinzel',serif; color:var(--blue); }
+  .mini-stats .s .l { font-size:var(--fs-xs); color:var(--ink-soft); }
 
   .price-controls { display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between; margin:0 0 14px; }
   .view-toggle { display:inline-flex; border:1px solid var(--line-light); border-radius:999px; overflow:hidden; background:var(--papyrus-2); }
-  .vbtn { padding:9px 20px; border:none; background:none; color:var(--ink-soft); font-weight:700; font-family:inherit; font-size:0.9rem; cursor:pointer; transition:background .15s,color .15s; }
+  .vbtn { padding:9px 20px; border:none; background:none; color:var(--ink-soft); font-weight:700; font-family:inherit; font-size:var(--fs-sm); cursor:pointer; transition:background .15s,color .15s; }
   .vbtn.on { background:var(--blue); color:#fff; }
   .vbtn:focus-visible { outline:2px solid var(--gold); outline-offset:-2px; }
-  .price-search { flex:1 1 220px; max-width:300px; padding:9px 14px; border:1px solid var(--line-light); border-radius:999px; background:var(--papyrus-2); color:var(--ink); font-family:inherit; font-size:0.9rem; }
+  .price-search { flex:1 1 220px; max-width:300px; padding:9px 14px; border:1px solid var(--line-light); border-radius:999px; background:var(--papyrus-2); color:var(--ink); font-family:inherit; font-size:var(--fs-sm); }
   .price-search:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
   .filter-row { display:flex; flex-wrap:wrap; gap:7px; margin:0 0 26px; }
-  .fchip { font-size:0.78rem; font-weight:600; padding:7px 14px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .fchip { font-size:var(--fs-xs); font-weight:600; padding:7px 14px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
   .fchip:hover { border-color:var(--gold); }
   .fchip.on { background:var(--blue); color:#fff; border-color:var(--blue); }
 
   /* biggest movers today */
   .movers { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 20px; }
   .mover-col { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:13px 16px; }
-  .mover-col h3 { margin:0 0 9px; font-size:0.8rem; font-family:'Inter',sans-serif; letter-spacing:0.02em; display:flex; align-items:center; gap:6px; }
+  .mover-col h3 { margin:0 0 9px; font-size:var(--fs-xs); font-family:'Inter',sans-serif; letter-spacing:0.02em; display:flex; align-items:center; gap:6px; }
   .mover-col.up h4 { color:var(--danger); }
   .mover-col.down h4 { color:var(--success); }
-  .mover-row { display:flex; justify-content:space-between; gap:10px; font-size:0.86rem; padding:4px 0; color:var(--ink); border-top:1px solid var(--line-light); }
+  .mover-row { display:flex; justify-content:space-between; gap:10px; font-size:var(--fs-sm); padding:4px 0; color:var(--ink); border-top:1px solid var(--line-light); }
   .mover-row:first-of-type { border-top:none; }
   .mover-row .nm { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .mover-row .p { font-weight:800; white-space:nowrap; }
@@ -52,52 +52,52 @@
   .price-toolbar { position:sticky; top:0; z-index:30; display:flex; flex-wrap:wrap; gap:12px; align-items:center; background:var(--papyrus); padding:12px 0; margin:0 0 12px; border-bottom:1px solid transparent; transition:box-shadow .2s, border-color .2s; }
   .price-toolbar.stuck { border-bottom-color:var(--line-light); box-shadow:0 9px 20px -16px rgba(0,0,0,0.4); }
   .sort-row { display:flex; flex-wrap:wrap; gap:6px; }
-  .schip { font-size:0.75rem; font-weight:600; padding:6px 12px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .schip { font-size:var(--fs-xs); font-weight:600; padding:6px 12px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
   .schip:hover { border-color:var(--gold); }
   .schip.on { background:var(--gold); color:#3a2f10; border-color:var(--gold); }
   .schip:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
-  .sort-note { font-size:0.82rem; color:var(--ink-soft); margin:0 0 14px; }
+  .sort-note { font-size:var(--fs-sm); color:var(--ink-soft); margin:0 0 14px; }
 
   .cat-section { margin:0 0 34px; scroll-margin-top:120px; }
-  .cat-head { display:flex; align-items:baseline; gap:10px; font-family:'Cinzel',serif; font-size:1.2rem; color:var(--blue-deep); margin:0 0 16px; padding-bottom:9px; border-bottom:1px solid var(--line-light); }
+  .cat-head { display:flex; align-items:baseline; gap:10px; font-family:'Cinzel',serif; font-size:var(--fs-lg); color:var(--blue-deep); margin:0 0 16px; padding-bottom:9px; border-bottom:1px solid var(--line-light); }
   .cat-head .ar { font-weight:700; }
-  .cat-head .en { font-size:0.82rem; color:var(--ink-soft); font-family:'Inter',sans-serif; font-weight:600; }
-  .cat-head .cat-count { margin-left:auto; font-size:0.8rem; color:var(--ink-soft); font-family:'Inter',sans-serif; font-weight:600; }
+  .cat-head .en { font-size:var(--fs-sm); color:var(--ink-soft); font-family:'Inter',sans-serif; font-weight:600; }
+  .cat-head .cat-count { margin-left:auto; font-size:var(--fs-xs); color:var(--ink-soft); font-family:'Inter',sans-serif; font-weight:600; }
 
   .price-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:14px; }
   .price-card { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:16px 18px; transition:border-color .2s, box-shadow .2s; }
   .price-card:hover { border-color:var(--gold); box-shadow:var(--shadow-light); }
   .price-card .top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
-  .price-card .cat-tag { font-size:0.62rem; font-weight:800; letter-spacing:0.05em; text-transform:uppercase; padding:2px 8px; border-radius:999px; color:var(--gold-ink); background:var(--gold-soft); white-space:nowrap; }
-  .price-card .chg { font-size:0.74rem; font-weight:700; white-space:nowrap; }
+  .price-card .cat-tag { font-size:var(--fs-xs); font-weight:800; letter-spacing:0.05em; text-transform:uppercase; padding:2px 8px; border-radius:999px; color:var(--gold-ink); background:var(--gold-soft); white-space:nowrap; }
+  .price-card .chg { font-size:var(--fs-xs); font-weight:700; white-space:nowrap; }
   .chg.up { color:var(--danger); }      /* rising = a shopper pays more */
   .chg.down { color:var(--success); }
   .chg.flat { color:var(--ink-soft); }
-  .price-card .pname { font-size:1.05rem; font-weight:700; color:var(--blue-deep); margin:8px 0 4px; }
-  .price-card .pname .en { font-size:.7rem; color:var(--ink-soft); font-weight:600; }
-  .price-card .prange { font-size:1.15rem; font-weight:800; color:var(--ink); }
-  .price-card .prange .cur { font-size:0.8rem; font-weight:600; color:var(--ink-soft); }
-  .price-card .punit { font-size:0.8rem; color:var(--ink-soft); }
-  .trend-btn { margin-top:10px; background:none; border:1px solid var(--line-light); color:var(--blue); font-weight:600; font-size:0.78rem; padding:5px 12px; border-radius:999px; cursor:pointer; transition:all .15s; }
+  .price-card .pname { font-size:var(--fs-base); font-weight:700; color:var(--blue-deep); margin:8px 0 4px; }
+  .price-card .pname .en { font-size:var(--fs-xs); color:var(--ink-soft); font-weight:600; }
+  .price-card .prange { font-size:var(--fs-md); font-weight:800; color:var(--ink); }
+  .price-card .prange .cur { font-size:var(--fs-xs); font-weight:600; color:var(--ink-soft); }
+  .price-card .punit { font-size:var(--fs-xs); color:var(--ink-soft); }
+  .trend-btn { margin-top:10px; background:none; border:1px solid var(--line-light); color:var(--blue); font-weight:600; font-size:var(--fs-xs); padding:5px 12px; border-radius:999px; cursor:pointer; transition:all .15s; }
   .trend-btn:hover, .trend-btn:focus-visible { border-color:var(--gold); outline:none; }
   .trend-box { margin-top:12px; }
   .trend-box canvas { max-height:190px; }
-  .trend-note { font-size:0.78rem; color:var(--ink-soft); margin-top:8px; }
+  .trend-note { font-size:var(--fs-xs); color:var(--ink-soft); margin-top:8px; }
 
   /* inline SVG sparkline on every card (lightweight — no per-card chart instance) */
   .price-card .prange { display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; font-variant-numeric:tabular-nums; }
   .spark-wrap { margin-top:11px; display:flex; align-items:center; gap:9px; }
   .spark { width:100%; height:30px; display:block; flex:1 1 auto; }
   .spark polyline, .spark circle { vector-effect:non-scaling-stroke; }
-  .spark-delta { font-size:0.72rem; font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .spark-delta { font-size:var(--fs-xs); font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; }
   .spark-delta.up { color:var(--danger); }
   .spark-delta.down { color:var(--success); }
   .spark-delta.flat { color:var(--ink-soft); }
-  .spark-cap { font-size:0.68rem; color:var(--ink-soft); margin-top:2px; }
+  .spark-cap { font-size:var(--fs-xs); color:var(--ink-soft); margin-top:2px; }
 
   /* detail chart: timeframe toggle */
   .tf-row { display:inline-flex; gap:4px; margin:2px 0 10px; flex-wrap:wrap; }
-  .tfbtn { font-size:0.72rem; font-weight:700; padding:4px 11px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .tfbtn { font-size:var(--fs-xs); font-weight:700; padding:4px 11px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
   .tfbtn:hover { border-color:var(--gold); }
   .tfbtn.on { background:var(--blue); color:#fff; border-color:var(--blue); }
   .tfbtn:disabled { opacity:.4; cursor:not-allowed; }
@@ -118,20 +118,20 @@
   .fx-card { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:14px 16px; transition:border-color .2s,box-shadow .2s; }
   .fx-card:hover { border-color:var(--gold); box-shadow:var(--shadow-light); }
   .fx-top { display:flex; align-items:center; gap:9px; margin-bottom:8px; }
-  .fx-code { font-weight:800; font-size:0.74rem; letter-spacing:.05em; color:var(--gold-ink); background:var(--gold-soft); padding:3px 9px; border-radius:999px; }
-  .fx-name { font-size:0.8rem; color:var(--ink); line-height:1.25; }
-  .fx-name .en { display:block; font-size:0.66rem; color:var(--ink-soft); }
-  .fx-val { font-size:1.35rem; font-weight:800; color:var(--blue-deep); font-variant-numeric:tabular-nums; }
-  .fx-val .cur { font-size:0.72rem; color:var(--ink-soft); font-weight:600; }
-  .fx-en { font-size:0.7rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .fx-code { font-weight:800; font-size:var(--fs-xs); letter-spacing:.05em; color:var(--gold-ink); background:var(--gold-soft); padding:3px 9px; border-radius:999px; }
+  .fx-name { font-size:var(--fs-xs); color:var(--ink); line-height:1.25; }
+  .fx-name .en { display:block; font-size:var(--fs-xs); color:var(--ink-soft); }
+  .fx-val { font-size:var(--fs-lg); font-weight:800; color:var(--blue-deep); font-variant-numeric:tabular-nums; }
+  .fx-val .cur { font-size:var(--fs-xs); color:var(--ink-soft); font-weight:600; }
+  .fx-en { font-size:var(--fs-xs); color:var(--ink-soft); font-variant-numeric:tabular-nums; }
   .fx-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px; }
-  .fx-chg { font-size:0.75rem; font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .fx-chg { font-size:var(--fs-xs); font-weight:800; white-space:nowrap; font-variant-numeric:tabular-nums; }
   .fx-chg.up { color:var(--danger); }    /* pound buys less of it = pound weaker */
   .fx-chg.down { color:var(--success); } /* pound buys more = pound stronger */
   .fx-chg.flat { color:var(--ink-soft); }
   .fx-spark { width:74px; height:26px; }
   .fx-spark polyline, .fx-spark circle { vector-effect:non-scaling-stroke; }
-  .fx-note { font-size:0.84rem; color:var(--ink-soft); margin-top:14px; line-height:1.6; }
+  .fx-note { font-size:var(--fs-sm); color:var(--ink-soft); margin-top:14px; line-height:1.6; }
   .fx-note a { color:var(--gold-ink); font-weight:600; }
 </style>
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
@@ -198,7 +198,7 @@
 <section class="surface-hero center" style="padding:58px 6vw;">
   <div class="wrap">
     <div class="kicker"><span data-glyph="scroll"></span>أسعار المنتجات · Daily prices</div>
-    <h1 style="font-size:clamp(1.8rem,4.2vw,2.7rem);margin:0 0 12px;"><span data-glyph="ra"></span> Egypt's market prices, refreshed daily.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;"><span data-glyph="ra"></span> Egypt's market prices, refreshed daily.</h1>
     <p class="lead" style="margin:0 auto;">The retail and wholesale prices Egyptians actually pay — grouped by category, from the government's official daily price portal, every figure sourced and dated. أسعار التجزئة والجملة الرسمية، بتتحدّث كل يوم. <a href="prices-ar.html" lang="ar" dir="rtl">اقرأ الصفحة بالعربي &larr;</a></p>
   </div>
 </section>
@@ -273,7 +273,7 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

@@ -63,7 +63,7 @@ def light_section(site, name):
     clock = (f"Egypt time: UTC+2, and UTC+3 from {summer[0].day} {MONTHS[summer[0].month - 1]} "
              f"to {egfmt.date(summer[1], 'en', 'prose')} (summer time)"
              if summer else "Egypt time (UTC+2)")
-    return f"""    <h2 style="font-size:1.2rem;margin:0 0 12px;" id="light">Light for photographs</h2>
+    return f"""    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;" id="light">Light for photographs</h2>
     <p style="margin:0 0 10px;">Golden light, the warm low sun photographers wait for, lasts about {min(lengths)}&ndash;{max(lengths)} minutes after sunrise and before sunset here, depending on the month.</p>
     <div class="sheet">
       <div class="fp-wrap"><table class="fp-table fp-compact">
@@ -161,7 +161,7 @@ def build_site_months():
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:860px;">
     <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="../visit.html">When to go</a> &middot; {esc(egfmt.gov_name(site.get('gov', '')))} &middot; measured, not marketed</p>
-    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">{esc(name)}, month by month.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">{esc(name)}, month by month.</h1>
     <p class="lead" style="margin:0;" lang="ar" dir="rtl">{esc(site.get('name_ar', ''))}</p>
   </div>
 </section>
@@ -184,7 +184,7 @@ def build_site_months():
 
 <section class="surface-light-2">
   <div class="wrap" style="max-width:860px;">
-    <h2 style="font-size:1.2rem;margin:0 0 12px;" id="heat">Heat and rain, month by month</h2>
+    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;" id="heat">Heat and rain, month by month</h2>
     <div class="sheet">
       <div class="fp-wrap"><table class="fp-table fp-compact">
         <caption class="sr-only">{esc(name)}: monthly climate normals</caption>
@@ -204,7 +204,7 @@ def build_site_months():
 
 <section class="surface-light-2">
   <div class="wrap" style="max-width:860px;">
-    <h2 style="font-size:1.2rem;margin:0 0 12px;">The other measured sites</h2>
+    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">The other measured sites</h2>
     <div class="chip-row">{others}</div>
     <p style="margin-top:14px;"><a href="../egypt-weather-by-month.html">Every site, every month, in one table &rarr;</a></p>
   </div>
@@ -324,7 +324,7 @@ def build_weather_by_month(urls):
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:960px;">
     <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="visit.html">When to go</a> &middot; {n} sites &middot; measured, not marketed</p>
-    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">Egypt&rsquo;s weather, month by month, at {n} sites.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">Egypt&rsquo;s weather, month by month, at {n} sites.</h1>
     <p class="lead" style="margin:0;max-width:68ch;">How hot a normal afternoon gets at each site in each month. Heat is
     most of the planning problem in Egypt, and it depends on where as much as on when.</p>
   </div>

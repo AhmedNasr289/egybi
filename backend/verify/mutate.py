@@ -332,8 +332,8 @@ case("AOS content hidden when AOS fails to load", "nojs.js", ["site/explore.html
 VT1 = "ONLY={p} node " + str(HERE) + "/visit-tables.js"
 case("visit table scrolls sideways on a phone", "visit-tables.js", ["site/assets/egybi.css"],
      lambda: edit("site/assets/egybi.css",
-                  "@media (max-width: 430px) {\n  .fp-table.fp-compact { font-size: .86rem; }",
-                  "@media (max-width: 1px) {\n  .fp-table.fp-compact { font-size: .86rem; }"),
+                  "@media (max-width: 430px) {\n  .fp-table.fp-compact { font-size: var(--fs-sm); }",
+                  "@media (max-width: 1px) {\n  .fp-table.fp-compact { font-size: var(--fs-sm); }"),
      lambda o: "TABLE SCROLLS" in o,
      VT1.format(p="visit/giza.html"))
 
@@ -343,6 +343,24 @@ case("visit table loses its compact class", "visit-tables.js", ["site/visit/giza
                   '<table class="fp-table">'),
      lambda o: "TABLE SCROLLS" in o,
      VT1.format(p="visit/giza.html"))
+
+# ---- 13h. type scale: a one-off font size comes back --------------------
+# S2 put every reading size on ten steps (typescale.py). A new literal size in
+# a rule, or in a page's style attribute, must be reported as OFF-SCALE.
+PY_SCALE = f'"{sys.executable}" {HERE}/type-scale.py'
+case("one-off font size in egybi.css", "type-scale.py", ["site/assets/egybi.css"],
+     lambda: edit("site/assets/egybi.css", ".fp-wrap { overflow-x: auto; }",
+                  ".fp-wrap { overflow-x: auto; font-size: 0.83rem; }"),
+     lambda o: "OFF-SCALE" in o and "0.83rem" in o, PY_SCALE)
+case("one-off font size in a page's style attribute", "type-scale.py", ["site/visit/giza.html"],
+     lambda: edit("site/visit/giza.html", 'style="font-size:var(--fs-lg);',
+                  'style="font-size:1.3rem;'),
+     lambda o: "OFF-SCALE" in o and "[style attribute]" in o, PY_SCALE)
+
+# ---- 13i. type scale: a step redefined in egybi.css only -------------------
+case("type scale step drifts from typescale.py", "type-scale.py", ["site/assets/egybi.css"],
+     lambda: edit("site/assets/egybi.css", "--fs-sm: 0.875rem;", "--fs-sm: 0.9rem;"),
+     lambda o: "TOKEN DRIFT" in o and "--fs-sm" in o, PY_SCALE)
 
 # ---- 13c. CC BY 4.0: geometry rendered with the credit stripped ------------
 # index.html carries no map, and draws geoBoundaries-derived geometry on the
