@@ -48,7 +48,7 @@ The GitHub schedules stay as a backup. If the Lambda has already refreshed, a la
 |---|---|---|---|
 | AWS Budgets: $1 cost alert | warns before anything costs money | budgets without actions are free | 1 budget |
 | IAM role for the function | read one SSM parameter, write its own logs | IAM is free | 1 role |
-| Lambda function `egybi-daily-refresh` (Python 3.12, 1024 MB, 10 min timeout) | the run above | 400,000 GB-s and 1M requests a month | about 2 runs a day × about 90 s × 1 GB = about 5,500 GB-s a month (1.4%) |
+| Lambda function `egybi-daily-refresh` (Python 3.12, arm64, 1024 MB, 15 min timeout, no automatic retry) | the run above | 400,000 GB-s and 1M requests a month | about 2 runs a day × about 90 s × 1 GB = about 5,500 GB-s a month (1.4%) |
 | EventBridge Scheduler: 2 schedules (prices 07:20 UTC, FX 07:26 UTC) | starts it on time | 14,000,000 invocations a month | about 60 |
 | CloudWatch log group, 14-day retention | the run logs | 5 GB ingest and storage | under 10 MB |
 | SSM parameter `/egybi/github-token` (Standard, SecureString) | the token | Standard parameters are free | 1 |
@@ -64,10 +64,10 @@ The GitHub schedules stay as a backup. If the Lambda has already refreshed, a la
 | 3 | Ahmed | AWS console → Systems Manager → Parameter Store → Create parameter: name `/egybi/github-token`, tier Standard, type SecureString, key `alias/aws/ssm`; paste the token. Claude never sees it. | Claude reads only that the parameter exists, never the value | delete the parameter |
 | 4 | Claude, PR | Add `backend/ops/lambda_refresh/` (handler, deploy script, tests against a fake GitHub API) and a Changelog entry; CI green | Test (pipeline) green | close the PR |
 | 5 | Ahmed's yes | Merge the PR | main green | revert |
-| 6 | Claude, after a yes | Deploy the role, function, schedules and log group | `lambda:GetFunction`, `scheduler:GetSchedule` | the deploy script's `--remove` |
-| 7 | Claude | One manual test run with dry-run on (no commit) | the log shows each step and "would commit N files" | — |
+| 6 | Claude, after a yes | `python backend/ops/deploy_lambda_refresh.py --apply` deploys the two roles, the function, the log group and both schedules. The schedules are created **disabled**. | the script's status shows each resource, schedules `DISABLED` | `--remove` |
+| 7 | Claude | One manual test run with dry-run on (no commit): `--dry-run prices`, then `--dry-run fx` | the log shows each step and "would commit N files" | — |
 | 8 | Ahmed's yes | The first live run (it pushes to main, so it is a live change) | commit on main, live `prices-today.json` equals main by blob hash | revert the commit |
-| 9 | Claude | Watch the next two scheduled mornings | runs created by 07:30 UTC, data dated today before 09:00 UTC | disable the two schedules |
+| 9 | Claude | `--enable-schedules`, then watch the next two scheduled mornings | runs created by 07:30 UTC, data dated today before 09:00 UTC | disable the two schedules |
 
 ### Order against going private
 
