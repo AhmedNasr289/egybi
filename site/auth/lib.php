@@ -459,6 +459,34 @@ function newsletter_confirm_url(string $email, string $token): string
 function newsletter_unsub_url(string $email, string $token): string
 { return auth_cfg()['app_url'] . '/api/unsubscribe.php?e=' . rawurlencode($email) . '&t=' . rawurlencode($token); }
 
+/**
+ * For a sign-up on an address already in the table: the token to send a fresh
+ * confirmation link with, or null when no email should go out.
+ *
+ * A live subscription needs nothing. An address that never confirmed, or that
+ * unsubscribed, gets the link again, so a lost first email or a change of mind
+ * is not a dead end. At most one confirmation email per address per day, so the
+ * form cannot be used to fill someone's inbox.
+ */
+function newsletter_reconfirm_token(string $email): ?string
+{
+    try {
+        $db = auth_db(); newsletter_ensure_schema($db);
+        $st = $db->prepare('SELECT confirmed, unsubscribed, token FROM newsletter_subscribers WHERE email = ?');
+        $st->execute([strtolower($email)]);
+        $r = $st->fetch();
+        if (!$r || ((int)$r['confirmed'] === 1 && (int)$r['unsubscribed'] === 0)) return null;
+        if (!newsletter_confirm_allowance($email)) return null;
+        return (string)$r['token'] !== '' ? (string)$r['token'] : null;
+    } catch (Throwable $e) { return null; }
+}
+
+/** One confirmation email per address per 24 hours. Counts the attempt. */
+function newsletter_confirm_allowance(string $email): bool
+{
+    return rate_ok_key('n' . account_bucket($email), 'nl-confirm', 1, 1440);
+}
+
 /** The per-address capability token, or null if the email is unknown. */
 function newsletter_token(string $email): ?string
 {
@@ -476,11 +504,15 @@ function newsletter_confirm(string $email, string $token): string
 {
     try {
         $db = auth_db(); newsletter_ensure_schema($db);
-        $st = $db->prepare('SELECT confirmed, token FROM newsletter_subscribers WHERE email = ?');
+        $st = $db->prepare('SELECT confirmed, unsubscribed, token FROM newsletter_subscribers WHERE email = ?');
         $st->execute([strtolower($email)]);
         $row = $st->fetch();
         if (!$row || $token === '' || !hash_equals((string)$row['token'], $token)) return 'invalid';
-        if ((int)$row['confirmed'] === 1) return 'already';
+        // 'already' only for a live subscription. Someone who unsubscribed and
+        // asked to rejoin gets a fresh confirmation link, and that link must
+        // bring them back rather than report "already confirmed" while they
+        // stay unsubscribed.
+        if ((int)$row['confirmed'] === 1 && (int)$row['unsubscribed'] === 0) return 'already';
         $db->prepare('UPDATE newsletter_subscribers SET confirmed = 1, confirmed_at = ?, unsubscribed = 0, unsubscribed_at = NULL WHERE email = ?')
            ->execute([now(), strtolower($email)]);
         return 'confirmed';
@@ -690,6 +722,42 @@ function json_out(bool $ok, array $extra = [], int $code = 200): void
     echo json_encode(array_merge(['ok' => $ok], $extra));
     exit;
 }
+
+/**
+ * Send the JSON reply, end the request, THEN run $after (an email send).
+ *
+ * Signup and password reset send mail only when an account is new or exists,
+ * and an SMTP conversation takes a second or more. Done before replying, that
+ * second is visible in the response time, so the "same reply either way" those
+ * endpoints promise would still say which addresses have accounts. Finishing
+ * the request first takes the send out of the measured time.
+ *
+ * LiteSpeed (Hostinger) and PHP-FPM can close the connection early. Elsewhere
+ * (PHP's built-in server in CI) the reply is flushed and the work still runs,
+ * which is no worse than sending first.
+ */
+function json_out_then(bool $ok, array $extra, callable $after, int $code = 200): void
+{
+    ignore_user_abort(true);
+    http_response_code($code);
+    header('Content-Type: application/json; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    header('Cache-Control: no-store, private');
+    echo json_encode(array_merge(['ok' => $ok], $extra));
+    if (function_exists('litespeed_finish_request')) litespeed_finish_request();
+    elseif (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
+    else { while (ob_get_level() > 0) @ob_end_flush(); @flush(); }
+    try { $after(); } catch (Throwable $e) { error_log('[EgyBI] deferred work failed: ' . $e->getMessage()); }
+    exit;
+}
+
+/**
+ * The salted IP hash for stores that keep it next to an email (newsletter,
+ * community notes). They used a fixed public salt, and the whole IPv4 space is
+ * small enough to hash, so the stored value could be turned back into the IP.
+ * Salting with app_secret means it cannot be reversed without that secret.
+ */
+function ip_hash_short(): string { return substr(ip_hash(), 0, 16); }
 
 function rid(int $bytes = 8): string { return bin2hex(random_bytes($bytes)); }
 function now(): string { return gmdate('c'); }
@@ -922,6 +990,36 @@ function destroy_session_key(string $key): void
 function destroy_all_sessions(string $userId): void
 {
     auth_db()->prepare('DELETE FROM sessions WHERE user_id=?')->execute([$userId]);
+}
+
+/**
+ * Link a Google identity to an account that already exists on the same email.
+ *
+ * Google has just proven that the person signing in controls the mailbox. The
+ * existing account may not have been made by them: signup does not require a
+ * verified email before sign-in, so anyone can create an account on someone
+ * else's address with a password of their choosing. Linking that account and
+ * keeping its password and sessions would hand the real owner an account the
+ * squatter can still open (a pre-account takeover).
+ *
+ * So: if the address was never verified, the password was never proven to
+ * belong to the mailbox owner and is removed (the owner can set one through the
+ * ordinary reset flow). Every existing session is ended either way, so nobody
+ * who was signed in before this link stays signed in after it.
+ */
+function google_link_account(PDO $db, array $existing, string $sub): void
+{
+    $unproven = (int)$existing['email_verified'] !== 1;
+    with_tx($db, function (PDO $db) use ($existing, $sub, $unproven) {
+        if ($unproven) {
+            $db->prepare('UPDATE users SET google_sub=?, email_verified=1, pass_hash=?, updated_at=? WHERE id=?')
+               ->execute([$sub, PASS_NONE, now(), $existing['id']]);
+        } else {
+            $db->prepare('UPDATE users SET google_sub=?, email_verified=1, updated_at=? WHERE id=?')
+               ->execute([$sub, now(), $existing['id']]);
+        }
+        $db->prepare('DELETE FROM sessions WHERE user_id=?')->execute([$existing['id']]);
+    });
 }
 
 /** Require a valid session AND a matching CSRF header for state-changing writes. */

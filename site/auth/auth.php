@@ -43,9 +43,18 @@ case 'signup': {
     // longer passphrase would not be the password the user thinks it is.
     if (strlen($pw) > 128) json_out(false, ['message' => 'Password must be 128 characters or fewer.'], 422);
 
-    // Don't leak whether the email exists: reply the same either way.
+    // Don't leak whether the email exists: reply the same either way, and take
+    // the same time. A new account costs a password hash and an email; the
+    // existing-address path used to cost neither, so the response time said
+    // which addresses were registered. It now pays for the hash too, and the
+    // email goes out after the reply (json_out_then).
+    $done = 'Almost there — check your email to verify your account.';
     $st = $db->prepare('SELECT id FROM users WHERE email=?'); $st->execute([$email]);
-    if (!$st->fetch()) {
+    if ($st->fetch()) {
+        hash_password($pw);
+        json_out(true, ['message' => $done]);
+    }
+    {
         $id = rid(); $ts = now();
         // A public, non-PII handle for the leaderboard (users can rename later).
         $display = 'Scribe-' . strtoupper(substr($id, 0, 4));
@@ -64,12 +73,13 @@ case 'signup': {
                 now() . " VERIFY " . $email . " token=" . substr($token, 0, 8) . "...\n",
                 FILE_APPEND | LOCK_EX);
         }
-        send_mail($email, 'Verify your EgyBI account',
-            mail_template('Welcome to the House of Life',
-                'Confirm your email to start solving real, auto-graded SQL challenges on cited Egyptian data. This link expires in 24 hours.',
-                'Verify my email', $link));
+        json_out_then(true, ['message' => $done], function () use ($email, $link) {
+            send_mail($email, 'Verify your EgyBI account',
+                mail_template('Welcome to EgyBI',
+                    'Confirm your email so the trips and places you save stay tied to an address you control. This link expires in 24 hours.',
+                    'Verify my email', $link));
+        });
     }
-    json_out(true, ['message' => 'Almost there — check your email to verify your account.']);
 }
 
 case 'verify': {
@@ -138,10 +148,18 @@ case 'request-reset': {
     if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
     if (!rate_ok('reset', 6, 60)) json_out(false, ['message' => 'Too many attempts — please try again later.'], 429);
     $email = strtolower(trim((string)(body()['email'] ?? '')));
+    $send = null;
     if (valid_email($email)) {
+        // Per-address cap as well as the per-IP one above. The IP limit alone
+        // let anyone with many addresses (a botnet, a proxy pool, an IPv6 /64)
+        // fill a victim's inbox with reset emails from our domain and spend the
+        // host's daily SMTP allowance, which would then block real verification
+        // mail. Over the cap the request is dropped silently: the reply stays the
+        // generic one, so the cap reveals nothing about whether the account exists.
+        $addrOk = rate_ok_key(account_bucket($email), 'reset', 3, 60);
         $st = $db->prepare('SELECT id FROM users WHERE email=?'); $st->execute([$email]);
         $u = $st->fetch();
-        if ($u) {
+        if ($u && $addrOk) {
             $token = rid(32);
             $db->prepare('INSERT INTO auth_tokens (token,user_id,kind,expires_at,used,created_at) VALUES (?,?,?,?,?,?)')
                ->execute([$token, $u['id'], 'reset', plus_mins(60), 0, now()]);
@@ -157,14 +175,19 @@ case 'request-reset': {
                     now() . " RESET " . $email . " token=" . substr($token, 0, 8) . "...\n",
                     FILE_APPEND | LOCK_EX);
             }
-            send_mail($email, 'Reset your EgyBI password',
-                mail_template('Reset your password',
-                    'Tap the button to choose a new password. This link expires in 60 minutes. If you did not ask for this, just ignore this email.',
-                    'Set a new password', $link));
+            $send = function () use ($email, $link) {
+                send_mail($email, 'Reset your EgyBI password',
+                    mail_template('Reset your password',
+                        'Tap the button to choose a new password. This link expires in 60 minutes. If you did not ask for this, just ignore this email.',
+                        'Set a new password', $link));
+            };
         }
     }
-    // Always the same reply — never reveal whether an account exists.
-    json_out(true, ['message' => 'If that email has an account, a reset link is on its way.']);
+    // Always the same reply, and the email (when there is one) goes out after
+    // it, so neither the words nor the timing say whether an account exists.
+    $msg = ['message' => 'If that email has an account, a reset link is on its way.'];
+    if ($send) json_out_then(true, $msg, $send);
+    json_out(true, $msg);
 }
 
 case 'reset': {

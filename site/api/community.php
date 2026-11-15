@@ -129,10 +129,14 @@ if ($method !== 'POST') {
 // unthrottled write still lets an attacker flood the table and the moderation
 // queue -- and this table now shares a database with auth, so filling the quota
 // takes signup and login down with it.
-$ipRate = substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
 $libRate = __DIR__ . '/../auth/lib.php';
+if (is_file($libRate)) require_once $libRate;
+// Salted with app_secret (ip_hash_short in auth/lib.php). The old fixed salt
+// '|egybi' is public, so the stored hash could be turned back into the IP.
+$ipRate = function_exists('ip_hash_short')
+    ? ip_hash_short()
+    : substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
 if (is_file($libRate)) {
-    require_once $libRate;
     if (function_exists('rate_ok_key') && !rate_ok_key('cm:' . $ipRate, 'community', 5, 60)) {
         out(false, 'Too many submissions — please try again later.', 429);
     }
@@ -176,7 +180,7 @@ if ($name === '') {
     $name = 'Anonymous';
 }
 
-$ipHash = substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
+$ipHash = $ipRate;
 
 // Primary path: the durable database. approved = 0, so a note stays hidden until
 // a human clears it — same moderation rule as before, just in a store that is
@@ -206,7 +210,7 @@ $record = json_encode([
     'name'     => $name,
     'message'  => $message,
     'ts'       => gmdate('c'),
-    'iph'      => substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16),
+    'iph'      => $ipHash,
     'approved' => false,
 ], JSON_UNESCAPED_UNICODE);
 

@@ -88,7 +88,18 @@ if (strlen($email) > 254 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     out(false, 'Please enter a valid email address.', 422);
 }
 
-$ipHash = substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
+// Salted with app_secret when the library is present. The old fixed salt
+// ('|egybi') is public in this repository, and every IPv4 address can be hashed
+// in minutes, so the value stored next to each email gave the IP straight back.
+$libIp = __DIR__ . '/../auth/lib.php';
+if (is_file($libIp)) require_once $libIp;
+$ipHash = function_exists('ip_hash_short')
+    ? ip_hash_short()
+    : substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
+
+// One reply whatever the address's state. "You are already on the list" told
+// anyone who typed an address whether that person subscribes.
+$reply = 'Almost there — check your inbox to confirm your subscription. If you are already subscribed, nothing changes.';
 
 // Throttle before writing anything. The honeypot stops naive bots, and CORS
 // only governs whether an attacker can READ the reply -- the write still lands.
@@ -108,13 +119,19 @@ $lib = __DIR__ . '/../auth/lib.php';
 if (is_file($lib)) {
     require_once $lib;
     $res = newsletter_add($email, $ipHash);
-    if ($res === 'added') {
-        // Double opt-in: the address is inert until confirmed. Email the link.
-        $tok = newsletter_token($email);
-        if ($tok) {
-            $mailer = __DIR__ . '/../auth/mailer.php';
-            if (is_file($mailer)) {
-                require_once $mailer;
+    // Double opt-in: the address is inert until confirmed. A new address gets
+    // the link (and uses up its one confirmation email for the day); an existing
+    // one gets it again only if it never confirmed or has since unsubscribed.
+    $tok = null;
+    if ($res === 'added') { $tok = newsletter_token($email); newsletter_confirm_allowance($email); }
+    elseif ($res === 'duplicate') { $tok = newsletter_reconfirm_token($email); }
+    if ($res === 'added' || $res === 'duplicate') {
+        $mailer = __DIR__ . '/../auth/mailer.php';
+        if ($tok && is_file($mailer)) {
+            require_once $mailer;
+            // Sent after the reply, so the response time does not tell a new
+            // address from a subscribed one either.
+            json_out_then(true, ['message' => $reply], function () use ($email, $tok) {
                 @send_mail(
                     $email,
                     'Confirm your subscription to The Papyrus',
@@ -123,11 +140,10 @@ if (is_file($lib)) {
                         'Confirm your email to start receiving The Papyrus — EgyBI\'s monthly letter about Egypt, told through its data. If you did not request this, ignore this message and nothing will be sent.',
                         'Confirm my subscription',
                         newsletter_confirm_url($email, $tok)));
-            }
+            });
         }
-        out(true, 'Almost there — check your inbox to confirm your subscription.');
+        out(true, $reply);
     }
-    if ($res === 'duplicate') out(true, 'You are already on the list — thank you.');
     // 'error' falls through to the file, so a database hiccup never loses a signup.
     error_log('[EgyBI] newsletter: database write failed, falling back to file storage.');
 }
@@ -151,7 +167,7 @@ if (is_file($file)) {
             $rec = json_decode($line, true);
             if (is_array($rec) && ($rec['email'] ?? '') === $email) {
                 fclose($fh);
-                out(true, 'You are already on the list — thank you.');
+                out(true, $reply);
             }
         }
         fclose($fh);
