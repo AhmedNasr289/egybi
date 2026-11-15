@@ -41,6 +41,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -53,6 +54,10 @@ AUTHOR = {"name": "egybi-data-bot", "email": "41898282+github-actions[bot]@users
 STALE_DAYS = 5
 ATTEMPTS = 3
 STEP_TIMEOUT = 600
+# Seconds kept back before Lambda's own limit so a run that is running out of
+# time can still open the alert issue. Killed by the limit, it would leave no
+# trace except a CloudWatch metric, because nothing retries it.
+RESERVE = 45
 
 # One entry per GitHub workflow. 'paths' is DATA + DERIVED from that workflow's
 # push-with-regenerate.sh call; keep the two lists in step.
@@ -175,10 +180,21 @@ def unpack(tar_bytes: bytes, into: Path) -> Path:
     return roots[0]
 
 
-def run(root: Path, log: list[str], *argv: str) -> None:
+def run(root: Path, log: list[str], *argv: str, deadline: Optional[float] = None) -> None:
+    """Run one repo script. Its time limit is STEP_TIMEOUT or whatever is left
+    before the deadline (a time.monotonic() value), whichever is shorter."""
+    limit = float(STEP_TIMEOUT)
+    if deadline is not None:
+        left = deadline - time.monotonic()
+        if left < 5:
+            raise RefreshError(f"out of time before {argv[0]} ({max(left, 0):.0f} s left before Lambda's limit)")
+        limit = min(limit, left)
     env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1", "HOME": str(root.parent)}
-    p = subprocess.run([sys.executable, *argv], cwd=root, env=env, capture_output=True,
-                       text=True, timeout=STEP_TIMEOUT)
+    try:
+        p = subprocess.run([sys.executable, *argv], cwd=root, env=env, capture_output=True,
+                           text=True, timeout=limit)
+    except subprocess.TimeoutExpired:
+        raise RefreshError(f"{argv[0]} ran past its {limit:.0f} s limit")
     out = (p.stdout + p.stderr).strip()
     log.append(f"$ python {' '.join(argv)}  (exit {p.returncode})")
     if out:
@@ -197,19 +213,20 @@ def stale_check(root: Path, job: dict, log: list[str], today: dt.date) -> None:
         raise RefreshError(f"{job['stale_label']} are {age} days stale (as_of {as_of}).")
 
 
-def refresh_once(gh: GitHub, job: dict, log: list[str], today: dt.date, work: Path):
+def refresh_once(gh: GitHub, job: dict, log: list[str], today: dt.date, work: Path,
+                 deadline: Optional[float] = None):
     """One attempt. Returns (parent sha, changed files, changed-urls path)."""
     sha = gh.head()
     log.append(f"main is {sha[:7]}")
     root = unpack(gh.tarball(sha), work)
     before = {p: ((root / p).read_bytes() if (root / p).exists() else None) for p in job["paths"]}
     changed_urls = work / "changed-urls.txt"
-    run(root, log, job["fetch"])
+    run(root, log, job["fetch"], deadline=deadline)
     stale_check(root, job, log, today)
-    run(root, log, "backend/verify/static-audit.py")
+    run(root, log, "backend/verify/static-audit.py", deadline=deadline)
     for script in job["build"]:
-        run(root, log, script)
-    run(root, log, "backend/pipeline/sitemap_lastmod.py", "--changed-out", str(changed_urls))
+        run(root, log, script, deadline=deadline)
+    run(root, log, "backend/pipeline/sitemap_lastmod.py", "--changed-out", str(changed_urls), deadline=deadline)
     after = {p: ((root / p).read_bytes() if (root / p).exists() else None) for p in job["paths"]}
     changed = {p: after[p] for p in job["paths"] if after[p] != before[p]}
     return sha, changed, root, changed_urls
@@ -224,11 +241,14 @@ def handler(event: dict, context: Any = None, *, gh: Optional[GitHub] = None,
     today = today or dt.datetime.now(dt.timezone.utc).date()
     gh = gh or GitHub((token or ssm_token)())
     log: list[str] = [f"{name}: {'dry run' if dry else 'live'} on {today.isoformat()}"]
+    # Lambda says how long it has left; stop with RESERVE seconds to spare.
+    left_ms = getattr(context, "get_remaining_time_in_millis", None)
+    deadline = (time.monotonic() + left_ms() / 1000 - RESERVE) if callable(left_ms) else None
     try:
         for attempt in range(1, ATTEMPTS + 1):
             work = Path(tempfile.mkdtemp(prefix="egybi-"))
             try:
-                sha, changed, root, urls = refresh_once(gh, job, log, today, work)
+                sha, changed, root, urls = refresh_once(gh, job, log, today, work, deadline)
                 if not changed:
                     log.append("nothing changed: main already holds this content")
                     return {"ok": True, "job": name, "committed": None, "changed": [], "log": log}
@@ -240,7 +260,10 @@ def handler(event: dict, context: Any = None, *, gh: Optional[GitHub] = None,
                 if gh.move_branch(new):
                     log.append(f"committed {new[:7]} on {sha[:7]} ({len(changed)} file(s))")
                     if urls.exists() and urls.stat().st_size > 0:
-                        run(root, log, "backend/pipeline/indexnow_ping.py", str(urls))
+                        try:   # a failed ping must not turn a good refresh into an alert
+                            run(root, log, "backend/pipeline/indexnow_ping.py", str(urls), deadline=deadline)
+                        except RefreshError as ping_error:
+                            log.append(f"IndexNow ping skipped: {ping_error}")
                     return {"ok": True, "job": name, "committed": new, "changed": sorted(changed), "log": log}
                 log.append(f"attempt {attempt}: main moved past {sha[:7]}; rebuilding on the new tip")
             finally:

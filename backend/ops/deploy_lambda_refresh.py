@@ -3,6 +3,7 @@
     python backend/ops/deploy_lambda_refresh.py                 # read-only: what exists, what would change
     python backend/ops/deploy_lambda_refresh.py --apply         # create/update; schedules stay DISABLED
     python backend/ops/deploy_lambda_refresh.py --dry-run prices  # invoke once with dry_run (writes nothing)
+    python backend/ops/deploy_lambda_refresh.py --run prices      # ONE live run: commits to main (needs Ahmed's yes)
     python backend/ops/deploy_lambda_refresh.py --enable-schedules
     python backend/ops/deploy_lambda_refresh.py --budget 1      # a $LIMIT/month cost alert, same recipients as the existing budget
     python backend/ops/deploy_lambda_refresh.py --remove        # delete everything this script made
@@ -35,6 +36,10 @@ SCHEDULES = {  # name: (cron in UTC, job) - a few minutes after the GitHub crons
     "egybi-refresh-prices": ("cron(20 7 * * ? *)", "prices"),
     "egybi-refresh-fx": ("cron(26 7 * * ? *)", "fx"),
 }
+# For synchronous invokes. botocore's defaults (60 s read timeout, retries on a
+# read timeout) would invoke the function AGAIN whenever a run took longer than
+# a minute. One attempt, and wait as long as Lambda itself may run.
+INVOKE_CONFIG = {"read_timeout": 910, "connect_timeout": 10, "retries": {"total_max_attempts": 1}}
 HERE = Path(__file__).resolve().parent
 SSO_DIR = Path(os.environ.get("EGYBI_PERSONAL_SSO_DIR", r"C:\dev\forex-trading\deploy\aws"))
 
@@ -147,13 +152,25 @@ def apply(s) -> None:
             sch.create_schedule(State="DISABLED", **args)     # new schedules start disabled
 
 
-def dry_run(s, job: str) -> None:
-    lam = s.client("lambda", region_name=REGION)
+def invoke_config():
+    from botocore.config import Config  # imported here so the tests need no botocore
+    return Config(**INVOKE_CONFIG)
+
+
+def invoke(s, job: str, dry: bool) -> dict:
+    """One synchronous invocation, never retried. dry=False commits to main."""
+    lam = s.client("lambda", region_name=REGION, config=invoke_config())
     r = lam.invoke(FunctionName=FUNCTION, InvocationType="RequestResponse", LogType="Tail",
-                   Payload=json.dumps({"job": job, "dry_run": True}))
+                   Payload=json.dumps({"job": job, "dry_run": dry}))
     import base64
     print(base64.b64decode(r.get("LogResult", "")).decode(errors="replace"))
-    print("result:", r["Payload"].read().decode(), "| function error:", r.get("FunctionError"))
+    result = r["Payload"].read().decode()
+    print("result:", result, "| function error:", r.get("FunctionError"))
+    return {"result": result, "error": r.get("FunctionError")}
+
+
+def dry_run(s, job: str) -> dict:
+    return invoke(s, job, dry=True)
 
 
 def enable(s) -> None:
@@ -196,9 +213,10 @@ def remove(s) -> None:
     try: lam.delete_function(FunctionName=FUNCTION)
     except lam.exceptions.ResourceNotFoundException: pass
     for r in (ROLE, SCHED_ROLE):
-        try:
-            iam.delete_role_policy(RoleName=r, PolicyName="egybi-daily-refresh")
-            iam.delete_role(RoleName=r)
+        # Separately: a role whose policy is already gone must still be deleted.
+        try: iam.delete_role_policy(RoleName=r, PolicyName="egybi-daily-refresh")
+        except iam.exceptions.NoSuchEntityException: pass
+        try: iam.delete_role(RoleName=r)
         except iam.exceptions.NoSuchEntityException: pass
     try: logs.delete_log_group(logGroupName=LOG_GROUP)
     except logs.exceptions.ResourceNotFoundException: pass
@@ -209,6 +227,7 @@ def main() -> int:
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--apply", action="store_true")
     g.add_argument("--dry-run", choices=["prices", "fx"])
+    g.add_argument("--run", choices=["prices", "fx"], help="one LIVE run; it commits to main")
     g.add_argument("--enable-schedules", action="store_true")
     g.add_argument("--budget", metavar="USD")
     g.add_argument("--remove", action="store_true")
@@ -218,6 +237,8 @@ def main() -> int:
         apply(s)
     elif a.dry_run:
         dry_run(s, a.dry_run)
+    elif a.run:
+        invoke(s, a.run, dry=False)
     elif a.enable_schedules:
         enable(s)
     elif a.budget:

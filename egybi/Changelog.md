@@ -1479,3 +1479,15 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - 4 reset requests send 3 emails, with the same reply, and the reset link works on a database that has never run Google sign-in (which used to make it throw);
   - the Google link removes an unproven password and ends both kinds of session, while a verified account keeps its password;
   - the newsletter gives one reply, sends one email a day, lets an address rejoin, and stores a salted IP hash.
+
+## 2026-11-15 — The AWS daily refresh, hardened before its first deploy
+- **Why:** a review of the Lambda refresh and its deploy script, before anything is deployed, found five defects. None has run live.
+- **A run could die silently (`lambda_refresh.py`).** Each step had a 10-minute limit and a run can retry up to 3 times, against Lambda's 15-minute limit. Killed by that limit, a run leaves no alert and is not retried. Every step's limit is now the smaller of 10 minutes and the time left minus 45 seconds (`RESERVE`). A run that runs short stops with "out of time" or "ran past its limit", and opens the alert.
+- **A failed ping looked like a failed refresh (`lambda_refresh.py`).** If the IndexNow ping failed after a good commit, the run reported FAILED and opened an alert, though the data had been published. The ping failure is now logged instead.
+- **Invokes could run twice (`deploy_lambda_refresh.py`).** botocore's defaults (60 s read timeout, retries on a timeout) would invoke the function again whenever a run took more than a minute. Invokes now wait 910 s and make one attempt only (`INVOKE_CONFIG`).
+- **No command for the first live run.** Plan step 8 had none. `--run prices|fx` is one live invocation and commits to main, so it needs Ahmed's yes.
+- **`--remove` could leave a role behind.** It skipped a role whose policy was already gone. Each deletion now stands on its own.
+- **Tests:**
+  - 4 more in `test_lambda_refresh.py`: too little time alerts; a step that overruns is stopped; plenty of time runs normally; a failed ping after a commit is not a failure.
+  - 4 in the new `test_deploy_lambda_refresh.py`, against a fake boto3 session: no retries and a long read timeout; the right dry/live flag; a role deleted without its policy; everything removed.
+  - Mutation control on copies: undoing each of the six changes fails the tests.
