@@ -135,3 +135,122 @@ Written 2026-11-13 after a full audit of the live site, the pipelines and the la
 - **Free limit:** none.
 - **Prove:** not applicable.
 - **Rollback:** not applicable.
+
+## Round 2 — 15 November 2026
+
+Re-measured on Sunday 15 November 2026, 12:50–13:30 UTC (14:50–15:30 Cairo). Every check below was run that afternoon, and each one comes with a control that shows it can fail. The scripts are throwaway checkers kept outside the repo; the commands in **Evidence** re-measure the same things.
+
+### What round 2 measured
+
+- **Live pages.** All 55 sitemap pages return 200, and all 55 send HSTS, `X-Frame-Options`, `Referrer-Policy` and a CSP. A made-up page returns 404 with the "Page not found" page. `http://` redirects to `https://` with a 301.
+- **Links.** 133 distinct internal links and assets: 0 broken. A planted bad asset was reported, so a broken link would show. 27 distinct outbound links checked:
+  - none is dead;
+  - `egx.com.eg` resets a script but answers 200 to a browser user agent;
+  - `metmuseum.org` and `aboutads.info` answer 429, which is bot rate-limiting, so they could not be confirmed from a script;
+  - the two Google Fonts hosts answer 404 at their root, which is expected for `preconnect` hints.
+- **Blocked folders.** `backend/ops/dispatch_daily.php`, `backend/pipeline/fetch_streets.py`, `egybi/Changelog.md` and this plan all return 404 from the web; `sitemap.xml` still returns 200.
+- **Accounts, signed out.**
+  - `health` gives `{"ok":true}`.
+  - `me` gives no user.
+  - `progress.php` gives 401.
+  - A GET to `login` gives 405.
+  - A cross-site POST to `signup` gives 403 "Cross-site request blocked."
+- **Data.** The live `prices-today.json`, `fx-today.json` and `streets-access.json` equal `origin/main` by git blob hash. A control confirmed that two different files do not match. All 10 street districts were measured on 13 November, and none is carried.
+- **Workflows.** The latest run on main of every workflow that has one succeeded. Test (pipeline) runs only on pull requests, so it has no main run.
+- **Local suites.** The CI jobs that need no browser or PHP were run on a fresh clone of main with Linux line endings:
+  - conflict markers;
+  - pyflakes;
+  - unittest (184 tests, 61 subtests);
+  - the 61 number-format cases;
+  - a determinism rebuild (339 files byte-identical);
+  - generated `site/` equal to committed `site/`;
+  - static audit, coverage, the orphan, workflow, secret and advice scans, SEO (182 pages) and map completeness.
+
+  All of them pass. A planted broken link made the static audit report it.
+- **Actions minutes per day** (minutes guard, `--since`/`--until` per day):
+
+  | 11-08 | 11-09 | 11-10 | 11-11 | 11-12 | 11-13 | 11-14 | 11-15 (to 13:30) |
+  |---:|---:|---:|---:|---:|---:|---:|---:|
+  | 96 | 626 | 4 | 229 | 177 | 152 | 4 | 0 |
+
+  Days with no PR cost about 4 minutes, and days with PR work cost 150–630. The guard's "month ends near 6,715" is a straight-line projection over the early-November burst. It only changes the wording of its report, because its 70% and 90% issues fire on actual minutes. The December estimate of about 1,330 (round 1, item 3) still stands.
+
+### R1. The daily refreshes still start about 7 hours late (needs you in two consoles)
+- **Evidence:**
+  - On 14 November prices started at 14:11 UTC and FX at 14:16, against crons of 07:17 and 07:23 UTC. On 15 November nothing had started by 13:30 UTC.
+  - The on-time trigger (`backend/ops/dispatch_daily.php`, round 1 item 1) is merged but does nothing until it has a token and a cron job.
+  - Re-measure: `gh run list --workflow refresh-prices.yml --limit 3`.
+- **Fix:** three console steps, all yours, because they involve a secret:
+  1. **GitHub:** your avatar → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.
+     - Repository access: Only select repositories → egybi.
+     - Permissions → Repository permissions → Actions: Read and write. Nothing else.
+     - Expiry: up to one year.
+  2. **Hostinger:** hPanel → Files → File Manager. Open the folder that contains `public_html` (where `egybi-config.php` already lives), edit `egybi-config.php`, and add the line `'github_dispatch_token' => '…',` before the closing `];`.
+  3. **Hostinger:** hPanel → Advanced → Cron Jobs.
+     - First, a one-off test with `--dry-run` on the end, then read its output under "View output".
+     - Then add the daily job at 07:20 UTC (hPanel shows server time, so check its clock line and convert): `php /home/<your user>/domains/egybi.com/public_html/backend/ops/dispatch_daily.php`. Your user name is in hPanel's File Manager path.
+- **Service:** Hostinger cron (already paid for) and one GitHub API call a day per workflow.
+- **Free limit:** included in the plan. GitHub allows 5,000 API calls an hour; this uses 4 a day.
+- **Prove:** the next morning, `gh run list --workflow refresh-prices.yml --limit 1` shows a `workflow_dispatch` run created within 10 minutes of the cron time.
+- **Rollback:** delete the cron job. The GitHub schedule and the catch-up keep working as now.
+
+### R2. Whether the live IP-hash secret is real is still unconfirmed (needs you)
+- **Evidence:** the keyed health check reports `app_secret_ok` (round 1 item 4), but only the analytics key opens it, and that key is yours alone. Re-measure: open the URL below.
+- **Fix:** open `https://egybi.com/auth/auth.php?action=health&key=` followed by your analytics key, in your own browser. If it shows `"app_secret_ok":false`, edit `egybi-config.php` (as in R1 step 2) and set `'app_secret'` to a random string of at least 32 characters. To make one in PowerShell:
+
+  ```powershell
+  -join ((48..57) + (97..122) | Get-Random -Count 40 | ForEach-Object { [char]$_ })
+  ```
+
+  Changing it signs nobody out, because sessions are stored server-side.
+- **Service:** Hostinger (PHP); no new resource.
+- **Free limit:** none needed.
+- **Prove:** the same URL shows `"app_secret_ok":true`.
+- **Rollback:** put the old value back.
+
+### R3. PR #90 conflicts with main in two files, not the Changelog
+- **Evidence:**
+  - `git merge-tree --write-tree --name-only origin/main origin/feat/wholesale-story` shows the conflicts are in `backend/verify/shots.js` and `site/egypt-food-prices.html`. `egybi/Changelog.md` merges cleanly.
+  - `site/egypt-food-prices.html` is regenerated by every daily price refresh, so it conflicts again each day.
+  - The PR's head is `f48cdda`, and its last CI was green.
+- **Fix:** on the day you want it merged (planned around 21 November), rebase it onto that day's main. Resolve `shots.js` by hand. Resolve the generated page by rerunning the generators rather than editing it: `python backend/pipeline/build_prices_pages.py` and `python backend/pipeline/build_static_pages.py`. Then push and let CI run. Rebasing earlier only buys another conflict tomorrow.
+- **Service:** GitHub Actions.
+- **Free limit:** one PR sweep, about 41 minutes, free while the repo is public.
+- **Prove:** `gh pr view 90 --json mergeable` says `MERGEABLE`, and every check on the new head is green.
+- **Rollback:** the rebase is on the PR branch only; main is untouched until you say yes.
+- **Needs your yes:** the merge.
+
+### R4. Going private on 1 December: add the budget alert now (needs you)
+- **Evidence:** the repo is public (`gh repo view --json visibility`). The per-day table above puts a no-PR December at about 4 minutes a day. The read-only check `egybi-go-private-check-20261201` reports on 1 December at 16:00 UTC (18:00 Cairo).
+- **Fix:**
+  - **Now:** github.com → your avatar → Settings → Billing and licensing → Budgets and alerts → New budget. Choose Actions, set the amount to $0 (or the lowest allowed), and turn on the alerts at 75%, 90% and 100%.
+  - **On 1 December, after the check reports:** the repo → Settings → General → Danger zone → Change repository visibility → Make private.
+  - The 1 December check now also measures the last seven full days of November and scales them to a month. That rate is the best predictor of December; one day of December alone is not.
+- **Service:** GitHub.
+- **Free limit:** 2,000 minutes a month on the Free plan. With no payment method on file, GitHub stops jobs rather than charging.
+- **Prove:** on 2 December, `gh repo view --json visibility` shows `PRIVATE`, and the minutes guard's run log shows under 70% for the month so far.
+- **Rollback:** make it public again; minutes are free at once.
+
+### R5. The first weekly browser sweep has not run yet
+- **Evidence:** `gh run list --workflow verify-browser.yml --event schedule --limit 1` returns nothing. The first slot is Monday 16 November, 03:41 UTC (05:41 Cairo). GitHub's late scheduler may start it hours later.
+- **Fix:** none now. Check on Monday that it ran and passed. If it did not run at all by Monday evening, look at the workflow's `schedule` trigger.
+- **Service:** GitHub Actions.
+- **Free limit:** about 41 minutes a week, already in the December estimate.
+- **Prove:** the command above shows a run dated 2026-11-16 with conclusion `success`.
+- **Rollback:** not applicable.
+
+### R6. No defect found in pages, links, accounts, data or the local suites
+- **Evidence:** see "What round 2 measured" above. Every check passed and every check's control failed as it should.
+- **Fix:** none. No work is invented here.
+- **Service:** none.
+- **Free limit:** none.
+- **Prove:** re-run the checks in "What round 2 measured".
+- **Rollback:** not applicable.
+
+### R7. Newsletter reminders #55, #57 and #60 are still open (needs you)
+- **Evidence:** `gh issue list --state open` lists only these three.
+- **Fix:** for each, decide whether that issue was sent, then close it. Nothing is sent without your yes on the exact text.
+- **Service:** none.
+- **Free limit:** none.
+- **Prove:** the issues are closed by you.
+- **Rollback:** reopen the issue.
