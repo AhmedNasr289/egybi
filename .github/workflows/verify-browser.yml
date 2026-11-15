@@ -308,6 +308,10 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh nojs node backend/verify/nojs.js
 
+      - name: visit-tables.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh visit-tables node backend/verify/visit-tables.js
+
       - name: a11y2.js
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh a11y2 node backend/verify/a11y2.js

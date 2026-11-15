@@ -1499,6 +1499,20 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 }
 .fp-table th.num { text-align: right; }
 .fp-table tbody th { font-size: 0.92rem; text-transform: none; letter-spacing: 0; color: var(--ink); font-weight: 600; }
+/* Visit-page tables on phones (study S3, 2026-11-15). Measured at 390px: the
+   climate table needed 392px in a 289px box and the light table 369px, so a
+   reader had to scroll sideways to see the record heat and the sunset. Under
+   430px, months show as three letters (the full name stays for screen readers),
+   cells tighten and headers wrap at spaces only, so all five columns fit a
+   360px screen. backend/verify/visit-tables.js guards it. */
+.fp-table .m-short { display: none; }
+@media (max-width: 430px) {
+  .fp-table.fp-compact { font-size: .86rem; }
+  .fp-table.fp-compact th, .fp-table.fp-compact td { padding: 9px 4px; }
+  .fp-table.fp-compact thead th { font-size: .72rem; text-transform: none; letter-spacing: 0; line-height: 1.25; vertical-align: bottom; }
+  .fp-table.fp-compact .m-long { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fp-table.fp-compact .m-short { display: inline; }
+}
 
 /* ======================================================= the ornaments ====
    PAPYRUS EVERYWHERE, the decoration (2026-10-09). Four ornaments, all CSS

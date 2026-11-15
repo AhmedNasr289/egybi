@@ -1524,3 +1524,19 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   It fails as VACUOUS if it found fewer than 100 blocks.
 - **Mutation cases 13d and 13e in `mutate.py`:** removing the CSS rule must make `nojs.js` report HIDDEN WITHOUT JS, and removing the fallback must make it report HIDDEN WHEN AOS FAILS.
+
+## 2026-11-15 — Visit tables fit a phone without sideways scrolling (study S3)
+- **Why:** measured on the live Giza page at 390 px, the table box is 289 px wide. The climate table needed 392 px and the light table 369 px, so the record heat and the sunset sat off-screen behind an unannounced sideways scroll. `overflow.js` cannot see this, because it accepts any table inside a scrolling wrapper and only sweeps top-level pages.
+- **`pages/visit.py`:**
+  - both month tables on the 18 visit pages carry a new `fp-compact` class;
+  - each month label is written twice: the full name, and a three-letter form hidden from screen readers.
+- **`egybi.css`, under 430 px only:**
+  - months show as three letters, while the full name stays available to screen readers;
+  - cells tighten from 10 px to 4 px a side, and text steps from 0.92 to 0.86 rem;
+  - headers lose their capitals and letter-spacing, so they wrap at spaces instead of mid-word.
+
+  Wider screens are unchanged. Checked in the in-app browser on the live Giza page: the final rules fit both tables in the 263 px box at 360 px, the narrowest width checked. The new browser check below measures all three phone widths on every visit page. The stylesheet moves to `?v=46` on all 182 pages and in `pages/common.py`, and `sitemap.xml` moves the 18 visit pages' `lastmod`.
+- **New browser check `backend/verify/visit-tables.js`** (Verify (browser)):
+  - opens every visit page at 360, 375 and 390 px, and fails when any table is wider than its box;
+  - fails as VACUOUS if it measured fewer than two tables per page per width.
+- **Mutation cases 13f and 13g in `mutate.py`:** switching the phone rule off, or dropping `fp-compact` from Giza's page, must make `visit-tables.js` report TABLE SCROLLS.
