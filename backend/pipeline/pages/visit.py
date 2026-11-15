@@ -30,6 +30,17 @@ MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
           'August', 'September', 'October', 'November', 'December']
 
 
+def _month_th(month):
+    """A month row label that fits a phone (study S3, 2026-11-15).
+
+    The full name stays for screen readers and wide screens; under 430px the
+    stylesheet shows the three-letter form instead, which is what lets five
+    columns fit a 360px screen without sideways scrolling."""
+    full = MONTHS[month - 1]
+    return (f'<span class="m-long">{full}</span>'
+            f'<span class="m-short" aria-hidden="true">{full[:3]}</span>')
+
+
 def light_section(site, name):
     """'Light for photographs': sunrise, golden light and sunset per month.
 
@@ -43,7 +54,7 @@ def light_section(site, name):
     days = sun_times.monthly(year, site['lat'], site['lon'])
     hm = lambda t: t.strftime('%H:%M')
     rows = ''.join(
-        f"<tr><th scope=\"row\">{MONTHS[d.date.month - 1]}</th>"
+        f"<tr><th scope=\"row\">{_month_th(d.date.month)}</th>"
         f"<td class=\"num\">{hm(d.sunrise)}</td><td class=\"num\">{hm(d.golden_morning_end)}</td>"
         f"<td class=\"num\">{hm(d.golden_evening_start)}</td><td class=\"num\">{hm(d.sunset)}</td></tr>"
         for d in days)
@@ -55,7 +66,7 @@ def light_section(site, name):
     return f"""    <h2 style="font-size:1.2rem;margin:0 0 12px;" id="light">Light for photographs</h2>
     <p style="margin:0 0 10px;">Golden light, the warm low sun photographers wait for, lasts about {min(lengths)}&ndash;{max(lengths)} minutes after sunrise and before sunset here, depending on the month.</p>
     <div class="sheet">
-      <div class="fp-wrap"><table class="fp-table">
+      <div class="fp-wrap"><table class="fp-table fp-compact">
         <caption class="sr-only">{esc(name)}: sunrise, golden light and sunset on the 15th of each month, {year}</caption>
         <thead><tr><th scope="col">15th of</th><th scope="col" class="num">Sunrise</th><th scope="col" class="num">Golden light until</th>
         <th scope="col" class="num">Golden light from</th><th scope="col" class="num">Sunset</th></tr></thead>
@@ -106,7 +117,7 @@ def build_site_months():
                 f"climate normals — about {egfmt.whole(cool['t_daily_max'])} °C in "
                 f"{MONTHS[cool['month'] - 1]}, {egfmt.whole(hot['t_daily_max'])} °C in {MONTHS[hot['month'] - 1]}.")
         rows = ''.join(
-            f"<tr><th scope=\"row\">{MONTHS[m['month'] - 1]}</th>"
+            f"<tr><th scope=\"row\">{_month_th(m['month'])}</th>"
             f"<td class=\"num\">{egfmt.whole(m['t_daily_max'])} °C</td><td class=\"num\">{egfmt.whole(m['t_daily_min'])} °C</td>"
             f"<td class=\"num\">{m.get('rain_mm_day', 0):.1f}</td>"
             f"<td class=\"num\">{egfmt.whole(m['t_record_max'])} °C</td></tr>" for m in ms)
@@ -175,7 +186,7 @@ def build_site_months():
   <div class="wrap" style="max-width:860px;">
     <h2 style="font-size:1.2rem;margin:0 0 12px;" id="heat">Heat and rain, month by month</h2>
     <div class="sheet">
-      <div class="fp-wrap"><table class="fp-table">
+      <div class="fp-wrap"><table class="fp-table fp-compact">
         <caption class="sr-only">{esc(name)}: monthly climate normals</caption>
         <thead><tr><th scope="col">Month</th><th scope="col" class="num">Afternoon</th><th scope="col" class="num">Night</th>
         <th scope="col" class="num">Rain, mm/day</th><th scope="col" class="num">Hottest hour on record</th></tr></thead>

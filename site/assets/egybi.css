@@ -386,6 +386,16 @@ main:focus { outline: none; }
   [data-aos] { opacity: 1 !important; transform: none !important; }
 }
 
+/* Content must not depend on a script that may never run. AOS's own CSS hides
+   every [data-aos] block at opacity 0 and only its script reveals it, so with
+   JavaScript blocked, or with AOS failing to start, the block stayed invisible
+   for good. Measured 2026-11-15 with scripts blocked: Explore hid 106 blocks
+   (2,557 words), About 33 (837), Home 32 (764).
+   The page head adds .js to <html> only while scripts run, and takes it away
+   again if AOS has not started within 4 s. Without .js, everything simply shows.
+   !important for the same reason as above: AOS doubles its selectors. */
+html:not(.js) [data-aos] { opacity: 1 !important; transform: none !important; }
+
 /* ---------- motion micro-interactions (disabled under reduced-motion above) ---------- */
 .card, .chart-card, .role, .post-card {
   transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, border-color .2s ease;
@@ -1489,6 +1499,20 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 }
 .fp-table th.num { text-align: right; }
 .fp-table tbody th { font-size: 0.92rem; text-transform: none; letter-spacing: 0; color: var(--ink); font-weight: 600; }
+/* Visit-page tables on phones (study S3, 2026-11-15). Measured at 390px: the
+   climate table needed 392px in a 289px box and the light table 369px, so a
+   reader had to scroll sideways to see the record heat and the sunset. Under
+   430px, months show as three letters (the full name stays for screen readers),
+   cells tighten and headers wrap at spaces only, so all five columns fit a
+   360px screen. backend/verify/visit-tables.js guards it. */
+.fp-table .m-short { display: none; }
+@media (max-width: 430px) {
+  .fp-table.fp-compact { font-size: .86rem; }
+  .fp-table.fp-compact th, .fp-table.fp-compact td { padding: 9px 4px; }
+  .fp-table.fp-compact thead th { font-size: .72rem; text-transform: none; letter-spacing: 0; line-height: 1.25; vertical-align: bottom; }
+  .fp-table.fp-compact .m-long { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fp-table.fp-compact .m-short { display: inline; }
+}
 
 /* ======================================================= the ornaments ====
    PAPYRUS EVERYWHERE, the decoration (2026-10-09). Four ornaments, all CSS

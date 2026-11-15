@@ -21,6 +21,14 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
       return (u.startsWith(B)||u.startsWith('data:')||u.startsWith('blob:')) ? r.continue() : r.abort(); });
     await p.goto(`${B}/${path}`, { waitUntil: 'domcontentloaded' });
     await p.waitForTimeout(1800);
+    // Read hidden reveals EARLY too, before the page head's 4 s no-AOS fallback
+    // (study S1). Under reduce, AOS is disabled, so after 4 s that fallback
+    // shows everything anyway, and a reading taken only after the slow scroll
+    // below could no longer see a missing reduced-motion rule. Measured on
+    // PR #119: mutation case 13 went FAILS TO CATCH for exactly that reason,
+    // while a reduced-motion reader would really have faced ~4 s of blank blocks.
+    const earlyInvisibleAos = await p.evaluate(() => [...document.querySelectorAll('[data-aos]')]
+      .filter(e => +getComputedStyle(e).opacity < 0.05).length);
     // AOS reveals on a throttled scroll listener. Stepping faster than it can
     // fire leaves elements at opacity 0 and makes NORMAL mode look broken —
     // that exact mistake produced a false failure earlier today. 400px steps
@@ -82,6 +90,8 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
                chips: document.querySelectorAll('.on-this-page a').length };
     });
     await p.close();
+    // Either reading counts: hidden at first look is hidden.
+    m.invisibleAos = Math.max(m.invisibleAos, earlyInvisibleAos);
     return m;
   };
   const normal = await b.newContext();
