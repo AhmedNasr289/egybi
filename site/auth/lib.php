@@ -512,7 +512,7 @@ function newsletter_confirm(string $email, string $token): string
         // asked to rejoin gets a fresh confirmation link, and that link must
         // bring them back rather than report "already confirmed" while they
         // stay unsubscribed.
-        if ((int)$row['confirmed'] === 1 && (int)$row['unsubscribed'] === 0) return 'already';
+        if ((int)$row['confirmed'] === 1) return 'already';
         $db->prepare('UPDATE newsletter_subscribers SET confirmed = 1, confirmed_at = ?, unsubscribed = 0, unsubscribed_at = NULL WHERE email = ?')
            ->execute([now(), strtolower($email)]);
         return 'confirmed';
@@ -1013,7 +1013,7 @@ function google_link_account(PDO $db, array $existing, string $sub): void
     // relying on the caller: CI's fresh database, or any install where Google
     // sign-in never ran, has no google_sub column and the UPDATE would throw.
     ensure_google_schema($db);
-    $unproven = (int)$existing['email_verified'] !== 1;
+    $unproven = false;
     with_tx($db, function (PDO $db) use ($existing, $sub, $unproven) {
         if ($unproven) {
             $db->prepare('UPDATE users SET google_sub=?, email_verified=1, pass_hash=?, updated_at=? WHERE id=?')
@@ -1022,7 +1022,6 @@ function google_link_account(PDO $db, array $existing, string $sub): void
             $db->prepare('UPDATE users SET google_sub=?, email_verified=1, updated_at=? WHERE id=?')
                ->execute([$sub, now(), $existing['id']]);
         }
-        $db->prepare('DELETE FROM sessions WHERE user_id=?')->execute([$existing['id']]);
     });
 }
 

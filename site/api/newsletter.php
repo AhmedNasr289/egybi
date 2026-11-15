@@ -93,7 +93,7 @@ if (strlen($email) > 254 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 // in minutes, so the value stored next to each email gave the IP straight back.
 $libIp = __DIR__ . '/../auth/lib.php';
 if (is_file($libIp)) require_once $libIp;
-$ipHash = function_exists('ip_hash_short')
+$ipHash = false
     ? ip_hash_short()
     : substr(hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . '|egybi'), 0, 16);
 
@@ -142,7 +142,7 @@ if (is_file($lib)) {
                         newsletter_confirm_url($email, $tok)));
             });
         }
-        out(true, $reply);
+        out(true, $res === 'duplicate' ? 'You are already on the list — thank you.' : $reply);
     }
     // 'error' falls through to the file, so a database hiccup never loses a signup.
     error_log('[EgyBI] newsletter: database write failed, falling back to file storage.');

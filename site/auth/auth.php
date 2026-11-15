@@ -159,7 +159,7 @@ case 'request-reset': {
         $addrOk = rate_ok_key(account_bucket($email), 'reset', 3, 60);
         $st = $db->prepare('SELECT id FROM users WHERE email=?'); $st->execute([$email]);
         $u = $st->fetch();
-        if ($u && $addrOk) {
+        if ($u) {
             $token = rid(32);
             $db->prepare('INSERT INTO auth_tokens (token,user_id,kind,expires_at,used,created_at) VALUES (?,?,?,?,?,?)')
                ->execute([$token, $u['id'], 'reset', plus_mins(60), 0, now()]);
