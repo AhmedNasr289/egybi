@@ -1501,3 +1501,26 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   The token is never printed or written to disk. Tested: a fake token was refused with HTTP 401 and nothing was saved.
 - **The Lambda is live** (`egybi/Plan — Daily Refresh on Personal AWS.md`, Status). It is deployed and idempotent, and both dry runs pass on AWS. The schedules have been enabled since 15 Nov, and the first real commit is due 16 Nov at 07:20 UTC.
+
+## 2026-11-15 — Content stays visible when JavaScript does not run (study S1)
+- **Why:** AOS's CSS hides every `[data-aos]` block at opacity 0 and only its script reveals it. Measured on the live site with scripts blocked:
+  - Explore hid 106 blocks (2,557 words);
+  - About 33 (837) and Home 32 (764);
+  - Plan, which has no AOS, hid 0.
+
+  A failed or blocked AOS script did the same.
+- **`egybi.css`:** `html:not(.js) [data-aos]` is forced visible, the same guard reduced motion already had. The stylesheet moves to `?v=45` on all 182 pages and in `pages/common.py`.
+- **The 17 pages that load AOS:**
+  - a one-line script in the head adds `.js` to `<html>`, so content hides only while a script that reveals it is running;
+  - if AOS has not started within 4 s, the script removes `.js` again, so a failed library shows everything without animation;
+  - `sitemap.xml` moves those 17 pages' `lastmod`, as the pipeline does for any changed page.
+- **`reduced.js` also reads hidden reveals early, at 1.8 s:**
+  - **What it found:** on the first CI run, mutation case 13 ("content hidden under reduced motion") went FAILS TO CATCH. Under reduced motion AOS is disabled, so the new 4 s fallback shows everything, and `reduced.js` only read the page after a slow scroll past 4 s.
+  - **Why it matters:** a reader with reduced motion would still face about 4 s of blank blocks without the reduced-motion rule.
+  - **The fix:** a block hidden at either reading now counts.
+- **New browser check `backend/verify/nojs.js`** (Verify (browser)), on every page whose HTML carries `[data-aos]`:
+  1. with JavaScript disabled, nothing may be transparent;
+  2. with JavaScript on but AOS's script blocked, nothing may be transparent after the 4 s fallback.
+
+  It fails as VACUOUS if it found fewer than 100 blocks.
+- **Mutation cases 13d and 13e in `mutate.py`:** removing the CSS rule must make `nojs.js` report HIDDEN WITHOUT JS, and removing the fallback must make it report HIDDEN WHEN AOS FAILS.

@@ -303,6 +303,29 @@ case("animation still running under reduced motion", "reduced.js", ["site/assets
      lambda o: "still animating" in o,
      REDUCED1.format(p="index.html"))
 
+# ---- 13d. no JavaScript: AOS content left invisible ------------------------
+# AOS's CSS hides [data-aos] until its script runs. The html:not(.js) rule in
+# egybi.css is what shows it when no script runs; without the rule, a reader
+# with scripts blocked sees nothing in those blocks (Explore: 106 blocks).
+NOJS1 = "ONLY={p} node " + str(HERE) + "/nojs.js"
+case("AOS content hidden without JavaScript", "nojs.js", ["site/assets/egybi.css"],
+     lambda: edit("site/assets/egybi.css",
+                  "html:not(.js) [data-aos] { opacity: 1 !important; transform: none !important; }",
+                  "/* removed by mutation test */"),
+     lambda o: "HIDDEN WITHOUT JS" in o,
+     NOJS1.format(p="explore.html"))
+
+# ---- 13e. AOS fails to load: no fallback --------------------------------------
+# With scripts on but AOS's script blocked, the page head's 4 s fallback must
+# drop .js so egybi.css shows everything. Removing the fallback must be caught.
+case("AOS content hidden when AOS fails to load", "nojs.js", ["site/explore.html"],
+     lambda: edit("site/explore.html",
+                  'setTimeout(function(){if(!document.querySelector(".aos-init"))'
+                  'document.documentElement.classList.remove("js")},4000)',
+                  "void 0"),
+     lambda o: "HIDDEN WHEN AOS FAILS" in o,
+     NOJS1.format(p="explore.html"))
+
 # ---- 13c. CC BY 4.0: geometry rendered with the credit stripped ------------
 # index.html carries no map, and draws geoBoundaries-derived geometry on the
 # flag. The old rule keyed on .leaflet-container and could not see this page at

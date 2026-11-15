@@ -386,6 +386,16 @@ main:focus { outline: none; }
   [data-aos] { opacity: 1 !important; transform: none !important; }
 }
 
+/* Content must not depend on a script that may never run. AOS's own CSS hides
+   every [data-aos] block at opacity 0 and only its script reveals it, so with
+   JavaScript blocked, or with AOS failing to start, the block stayed invisible
+   for good. Measured 2026-11-15 with scripts blocked: Explore hid 106 blocks
+   (2,557 words), About 33 (837), Home 32 (764).
+   The page head adds .js to <html> only while scripts run, and takes it away
+   again if AOS has not started within 4 s. Without .js, everything simply shows.
+   !important for the same reason as above: AOS doubles its selectors. */
+html:not(.js) [data-aos] { opacity: 1 !important; transform: none !important; }
+
 /* ---------- motion micro-interactions (disabled under reduced-motion above) ---------- */
 .card, .chart-card, .role, .post-card {
   transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, border-color .2s ease;
