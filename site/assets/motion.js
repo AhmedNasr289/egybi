@@ -1,17 +1,16 @@
 /* EgyBI — motion layer.
-   Tasteful, on-brand, 60fps micro-interactions on top of the static site. Uses
-   Motion One (motion.dev, the vanilla-JS animation library from the Framer team)
-   when present, and falls back to IntersectionObserver + CSS when it isn't — so
-   the page is never broken by a CDN miss. Everything honours prefers-reduced-
-   motion: with motion reduced, elements simply appear (no movement), and the
-   pointer/scroll effects switch off. Only transform/opacity are animated, so
+   Tasteful, on-brand micro-interactions on top of the static site. Reveals
+   use the browser's IntersectionObserver plus CSS transitions; the Motion One
+   library it once used first is no longer loaded (study S4, 2026-11-16), and
+   the window.Motion path below stays only as a harmless option. Everything
+   honours prefers-reduced-motion: with motion reduced, elements simply appear
+   and the scroll effects switch off. Only transform/opacity are animated, so
    there is no layout shift and no reflow cost.
 
    Opt-in hooks (add these attributes in the HTML):
      [data-mo]            reveal on scroll (fade + gentle rise)
      [data-mo-stagger]    a container whose direct children reveal in sequence
      [data-parallax]      drifts slightly slower than the scroll
-     [data-magnetic]      leans toward the cursor on hover (buttons)
    AOS-driven [data-aos] reveals are left untouched; this only adds. */
 (function () {
   var M = window.Motion || null;
@@ -116,21 +115,9 @@
     window.addEventListener('resize', frame, { passive: true });
   })();
 
-  // ---- 4. Magnetic buttons [data-magnetic] ---------------------------------
-  (function magnetic() {
-    if (window.matchMedia && !window.matchMedia('(pointer:fine)').matches) return; // touch: skip
-    document.querySelectorAll('.btn-primary, .nav-links a.cta, [data-magnetic]').forEach(function (el) {
-      var strength = 0.28;
-      el.style.willChange = 'transform';
-      el.addEventListener('pointermove', function (e) {
-        var r = el.getBoundingClientRect();
-        var x = (e.clientX - (r.left + r.width / 2)) * strength;
-        var y = (e.clientY - (r.top + r.height / 2)) * strength;
-        el.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
-      });
-      el.addEventListener('pointerleave', function () { el.style.transform = 'translate(0,0)'; });
-    });
-  })();
+  // ---- 4. (retired 2026-11-16, study S4) Magnetic buttons. They leaned every
+  //         primary button toward the cursor, so the target moved while a reader
+  //         aimed at it. Decoration that costs precision does not stay.
 
   // ---- 5. Hero flourish: a soft one-time staggered entrance for [data-mo-hero] kids.
   //         Pure CSS transition so the end state always persists.

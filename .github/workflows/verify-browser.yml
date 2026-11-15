@@ -221,6 +221,9 @@ jobs:
       - name: type-scale.py
         run: backend/verify/ci-step.sh type-scale python3 backend/verify/type-scale.py
 
+      - name: motion-weight.py
+        run: backend/verify/ci-step.sh motion-weight python3 backend/verify/motion-weight.py
+
       - name: checks.py
         run: |
           for c in orphans workflows secrets fra; do

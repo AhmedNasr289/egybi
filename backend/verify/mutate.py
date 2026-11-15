@@ -362,6 +362,19 @@ case("type scale step drifts from typescale.py", "type-scale.py", ["site/assets/
      lambda: edit("site/assets/egybi.css", "--fs-sm: 0.875rem;", "--fs-sm: 0.9rem;"),
      lambda o: "TOKEN DRIFT" in o and "--fs-sm" in o, PY_SCALE)
 
+# ---- 13j. motion weight: a retired library or an unused AOS comes back ------
+# S4 part 1 stopped loading Motion One (18 pages) and AOS where nothing uses it
+# (5 pages). Putting either back must be reported.
+PY_MW = f'"{sys.executable}" {HERE}/motion-weight.py'
+case("retired Motion One library loaded again", "motion-weight.py", ["site/privacy.html"],
+     lambda: edit("site/privacy.html", '<script src="assets/motion.js?v=3"></script>',
+                  '<script src="assets/vendor/motion.min.js"></script>\n<script src="assets/motion.js?v=3"></script>'),
+     lambda o: "RETIRED LIBRARY" in o and "privacy.html" in o, PY_MW)
+case("AOS loaded on a page that uses none of it", "motion-weight.py", ["site/plan.html"],
+     lambda: edit("site/plan.html", '<link href="assets/egybi.css?v=47" rel="stylesheet">',
+                  '<link href="assets/egybi.css?v=47" rel="stylesheet">\n<link href="assets/vendor/aos.css" rel="stylesheet">'),
+     lambda o: "UNUSED AOS" in o and "plan.html" in o, PY_MW)
+
 # ---- 13c. CC BY 4.0: geometry rendered with the credit stripped ------------
 # index.html carries no map, and draws geoBoundaries-derived geometry on the
 # flag. The old rule keyed on .leaflet-container and could not see this page at

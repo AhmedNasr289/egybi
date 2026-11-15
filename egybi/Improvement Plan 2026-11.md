@@ -301,6 +301,14 @@ Measured 15 November, 18:10–18:45 UTC, on main 863fca2 and on the live site. I
   - contrast stays at or above 4.5:1, and overflow, tap targets and SEO stay green;
   - the 390 and 1280 px screenshots of all 9 shot pages are reviewed side by side.
 - **Rollback:** revert. Only `egybi.css`, inline styles and their `?v=` change.
+- **Status (2026-11-16):**
+  - **Part 1, type, is built (PR #122).** 82 reading sizes became 10 steps, guarded by `type-scale.py`.
+  - **Part 2 (spacing, radii, colours) was measured and not built.** It would not change anything a reader sees:
+    - **Spacing:** sections are already 72 px on desktop and 52 px on a phone. Cards and sheets already pad 26 px. The hero is the same 64/44 px on 160 pages. The remaining 36 px values are 1–2 px differences inside components.
+    - **Radii:** 19 values; the visible ones already use `--radius`.
+    - **Colours:** 81 literal colours, 70 of them used once, each a deliberate alpha on a brand colour.
+
+    Mapping them onto a grid would touch hundreds of lines for no visible change, and each line is a regression risk. Revisit only if a screenshot shows uneven spacing.
 
 ### S3. The visit pages' climate tables need a sideways swipe on phones
 - **Evidence:** measured on 3 of the 18 visit pages (Giza, Karnak, Abu Simbel), identically; all 18 come from the same generator. At 390 px, "Heat and rain, month by month" is a 406 px table in a box of about 342 px, and the sun-times table is 383 px. The last column header shows as "R" and "MM/" until the reader finds the swipe. The box scrolls (`.fp-wrap`, overflow-x auto), so no data is lost, but it reads badly.
@@ -328,6 +336,17 @@ Measured 15 November, 18:10–18:45 UTC, on main 863fca2 and on the live site. I
   - a new check fails if any animated element changes layout size (only opacity and transform may animate);
   - the shots show the same final layout.
 - **Rollback:** revert. AOS stays in `vendor/`.
+- **Status (2026-11-16): part 1 is built (PR stacked on #122).**
+  - **What it removes:**
+    - Motion One from 18 pages, because `motion.js` falls back to IntersectionObserver;
+    - AOS from 5 pages that use none of it;
+    - AOS's script from the prices pages, which had no AOS stylesheet;
+    - `motion.js`'s magnetic buttons, which moved the target under the cursor.
+  - **Guard:** `motion-weight.py`.
+  - **Also measured:**
+    - `stocks.html` carries 31 `data-aos` marks but loads no AOS, so they are inert; nothing is hidden;
+    - `vendor/tsparticles.bundle.min.js` (170 KB) is loaded by no page, so the home page's `#hero-particles` is always empty. The file is kept; it costs a reader nothing.
+  - **Parts 2–4** (one reveal system, generators marking sections, retiring AOS) remain.
 
 ### S5. Small findings, no change planned now
 - **Clipped extra width:** on prices, the currency story and visit pages the page body measures 455–491 px at 390 px. No element is wider than the screen, and `html, body { overflow-x: clip }` stops any sideways scroll. That is why those CI screenshots are wider than 390. Look again only if a phone shows sideways wobble.
