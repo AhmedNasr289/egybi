@@ -134,6 +134,12 @@ ru=$(call "$JAR_B" POST request-reset '{"email":"nobody@example.org"}')
 check "4 reset requests send 3 emails"          "$(mailcount 'RESET b@example.org')" 3
 check "the reply over the cap is unchanged"     "$r" "$r1"
 check "an unknown address gets the same reply"  "$ru" "$r1"
+# The reset link itself, on a database where Google sign-in has never run (no
+# google_sub column yet): the reset clears google_sub, so it must create the
+# column first rather than throw.
+rtok=$(sql "SELECT token FROM auth_tokens WHERE kind='reset' ORDER BY rowid DESC LIMIT 1")
+expect "a reset link sets a new password"  200 "$(call "$JAR_B" POST reset "{\"token\":\"$rtok\",\"password\":\"brand new secret 1\"}")" 'Password updated'
+expect "B signs in with the new password"  200 "$(call "$JAR_B" POST login '{"email":"b@example.org","password":"brand new secret 1"}')" '"csrf"'
 
 # Google sign-in linking an existing account (google_link_account). An account
 # whose email was never verified may be a squatter's: its password is removed

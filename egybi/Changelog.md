@@ -1456,7 +1456,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The newsletter form said who subscribes (`newsletter.php`, `lib.php`).** "You are already on the list" answered whether any typed address was subscribed, and someone who had unsubscribed could not rejoin. There is now one reply for every case. An address that never confirmed, or that unsubscribed, gets the confirmation link again, at most once a day, and the link now brings an unsubscribed address back.
 - **Stored IP hashes were reversible (`newsletter.php`, `community.php`).** They used a fixed public salt, and every IPv4 address can be hashed in minutes. They are now salted with `app_secret` (`ip_hash_short()`). Rows already stored keep their old hashes.
 - **Verification email text:** it still promised "auto-graded SQL challenges". It now says what an account is for.
-- **Tests (`auth-flow.sh`), 21 new checks:**
-  - 4 reset requests send 3 emails, with the same reply;
+- **Tests (`auth-flow.sh`), 23 new checks:**
+  - 4 reset requests send 3 emails, with the same reply, and the reset link works on a database that has never run Google sign-in (which used to make it throw);
   - the Google link removes an unproven password and ends both kinds of session, while a verified account keeps its password;
   - the newsletter gives one reply, sends one email a day, lets an address rejoin, and stores a salted IP hash.

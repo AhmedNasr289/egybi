@@ -1009,6 +1009,10 @@ function destroy_all_sessions(string $userId): void
  */
 function google_link_account(PDO $db, array $existing, string $sub): void
 {
+    // The column is added lazily (ensure_google_schema). Do it here rather than
+    // relying on the caller: CI's fresh database, or any install where Google
+    // sign-in never ran, has no google_sub column and the UPDATE would throw.
+    ensure_google_schema($db);
     $unproven = (int)$existing['email_verified'] !== 1;
     with_tx($db, function (PDO $db) use ($existing, $sub, $unproven) {
         if ($unproven) {

@@ -208,6 +208,9 @@ case 'reset': {
     // squatter who created the account keeps permanent co-ownership alongside
     // the real owner, who has no way to see or remove them. Re-linking Google is
     // one click; silent shared access is not recoverable.
+    // google_sub is created lazily by Google sign-in; make sure it exists so a
+    // reset on an install where nobody has used Google yet does not throw.
+    ensure_google_schema($db);
     $db->prepare('UPDATE users SET pass_hash=?, email_verified=1, google_sub=NULL, updated_at=? WHERE id=?')
        ->execute([hash_password($pw), now(), $t['user_id']]);
     $db->prepare('UPDATE auth_tokens SET used=1 WHERE token=?')->execute([$token]);
