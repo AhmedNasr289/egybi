@@ -1447,3 +1447,22 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - seven ranked items, each with Evidence, Fix, Service, Free limit, Prove and Rollback.
 - **Corrected:** PR #90 conflicts in `backend/verify/shots.js` and `site/egypt-food-prices.html`, not in the Changelog. The second file is rewritten by every daily price refresh, so the PR is rebased on the day it merges.
 - **No code changes.** Pages, links, accounts, data and every CI job that runs without a browser or PHP were checked and found clean.
+
+## 2026-11-15 — The daily refresh can run on the personal AWS account
+- **Why:** GitHub's scheduler starts the 07:17 UTC refreshes 6 to 9 hours late. And once the repo is private, the daily data would stop whenever the month's Actions minutes run out. A read-only check of the personal AWS account found no free-tier EC2 there, so a self-hosted runner would cost money. The refresh scripts are standard-library Python, though, so AWS Lambda's stock runtime can run them as they are, inside the always-free allowance.
+- **`backend/ops/lambda_refresh.py`:**
+  - downloads main as a tarball and runs each workflow's own steps (fetch, stale check, static audit, builders, sitemap);
+  - commits the changed files through GitHub's Git Data API, moving main only if it has not moved, and rebuilding on the new tip if it has;
+  - pings IndexNow;
+  - on failure, comments on the same `⚠️ CI failure: <workflow>` issue the workflow uses. No email.
+  - `dry_run` writes nothing.
+- **`backend/ops/deploy_lambda_refresh.py`:** deploys to account 526741671869 only, through the forex project's `personal_sso.py`. It is read-only by default. `--apply` creates the two roles, the function, a log group with 14-day retention and two schedules, **disabled**. There are also `--dry-run`, `--enable-schedules`, `--budget` and `--remove`. The GitHub token is never handled: Ahmed puts it into SSM himself, and the script only checks that the parameter exists.
+- **Tests (`test_lambda_refresh.py`), 10 against a fake GitHub API:**
+  - one commit on the current tip, and nothing when nothing changed;
+  - a dry run writes nothing;
+  - stale data and a failing script each alert; a second failure comments on the same issue;
+  - main moving mid-run is rebuilt on the new tip; a branch that never settles gives up and alerts;
+  - the file lists match both workflows' push lists.
+
+  Mutation control on a copy: dropping the stale check, force-pushing, or keeping the old parent each fail the tests.
+- **`egybi/Plan — Daily Refresh on Personal AWS.md`:** the check, the decision and the steps.
