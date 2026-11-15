@@ -254,3 +254,115 @@ Re-measured on Sunday 15 November 2026, 12:50–13:30 UTC (14:50–15:30 Cairo).
 - **Free limit:** none.
 - **Prove:** the issues are closed by you.
 - **Rollback:** reopen the issue.
+
+## Round 3 — formatting and motion study, 15 November 2026
+
+Measured 15 November, 18:10–18:45 UTC, on main 863fca2 and on the live site. I read `site/assets/egybi.css`, every live page in the sitemap, and the CI screenshots from run 43729813508. I also measured live pages in a browser at 390 px. Two of my first readings were my own instrument's fault, and are corrected below rather than reported as defects.
+
+### What was measured
+- **One stylesheet for the whole site:** `egybi.css`, 102 KB and 631 rules. It defines 38 tokens (colours, radius, shadows, the papyrus textures) and uses them 422 times.
+- **No type or spacing scale.**
+
+  | Property | Distinct values |
+  |---|---:|
+  | font-size | 69 (around 20 between 0.68 and 0.98 rem; some written twice, `0.9rem` and `.9rem`) |
+  | spacing (margin, padding, gap) | 55 (14, 10, 12, 16, 8, 6, 18, 26, 22, 20, 13, 15… px) |
+  | literal colours outside the tokens | 104 (`#fff` 31 times; golds such as `#8a6d14` 4 times) |
+  | line-height | 19 |
+  | border-radius | 19 |
+  | breakpoints | 13 (380, 430, 560, 600, 640, 720, 900, 959, 960, 1024 px…) |
+
+- **Header and footer, after normalising** `../` path depth, `class="active"` and whitespace. The first count said 14 and 12 "variants"; that was the instrument.
+  - The header is one design on all 54 English pages, plus the Arabic page (`lang`/`dir` only).
+  - The footer is one design. Pages differ only in their **data-source column** (IDSC on prices, EGX on stocks, the Met on About, and so on), which is deliberate.
+  - **Organisation does not need rebuilding.**
+- **Animation:** three mechanisms.
+  - AOS: 333 reveals (324 `fade-up`, 9 `zoom-in`) on 15 pages. It loads on 36 pages (26 KB CSS + 15 KB JS), 5 of which use none of it.
+  - Motion One (24 KB) plus EgyBI's `motion.js` (7.5 KB) load on 39 pages. Its reveal hooks (`data-mo`) are used almost nowhere; it mostly drives the gold scroll bar and the count-up figures (`data-count`, on 3 pages).
+  - The 30 generated pages (Papyrus stories and visit pages) have no reveals at all.
+  - `vendor/tsparticles.bundle.min.js` (170 KB) is loaded by no page.
+  - Reduced motion is already handled: AOS is disabled, and a CSS guard forces `[data-aos]` visible.
+- **Page weight (HTML, CSS and JS):** median 142 KB. The heaviest are explore (734 KB), places, visit, invest, geospatial, streets (488–513 KB), and plan, home and stories (462–476 KB). 17 pages carry inline `<style>`, and prices / prices-ar carry 10 KB each.
+
+### S1. Content is invisible when JavaScript does not run
+- **Evidence:**
+  - AOS's own CSS sets `[data-aos^=fade]{opacity:0}` unconditionally and relies on its script to reveal.
+  - Measured live, in a frame with scripts blocked: Explore hid **106 blocks (2,557 words)**, About **33 (837)** and Home **32 (764)**. Plan, which has no AOS, hid 0 (the control).
+  - The same happens to any reader whose scripts fail, for example after an error earlier in `egybi.js`.
+- **Fix:** add a `js` class to `<html>` from a one-line inline script in every page head (generators and hand-written pages). Then add `html:not(.js) [data-aos] { opacity:1 !important; transform:none !important; }`, the same guard reduced motion already has. Content is then hidden only while a script that will reveal it is running.
+- **Prove:** a new browser check (`nojs.js`) loads every page that uses `data-aos` with JavaScript disabled, and fails if any `[data-aos]` element has opacity below 0.05. A mutation copy without the guard must fail it.
+- **Rollback:** revert the PR.
+
+### S2. One type scale, one spacing scale, fewer one-off colours
+- **Evidence:** the table above. Label-sized text alone uses 0.68, 0.70, 0.72, 0.74, 0.76 and 0.78 rem across the stylesheet, so similar labels on different sections differ by a pixel or two. Spacing likewise has 55 distinct values with no shared scale; 13, 14, 15 and 16 px all appear among them.
+- **Fix:** add scale tokens to `:root` (proposal below). Map every `font-size`, spacing value, `line-height` and radius in `egybi.css` and the inline styles to the nearest step. Turn repeated literal colours into tokens. Mechanical and reviewable: the PR lists each old value and its new step.
+- **Prove:**
+  - distinct font sizes fall from 69 to 12 or fewer, spacing values from 55 to 14 or fewer, and literal colours from 104 to 40 or fewer, each re-measured by the same script;
+  - contrast stays at or above 4.5:1, and overflow, tap targets and SEO stay green;
+  - the 390 and 1280 px screenshots of all 9 shot pages are reviewed side by side.
+- **Rollback:** revert. Only `egybi.css`, inline styles and their `?v=` change.
+
+### S3. The visit pages' climate tables need a sideways swipe on phones
+- **Evidence:** measured on 3 of the 18 visit pages (Giza, Karnak, Abu Simbel), identically; all 18 come from the same generator. At 390 px, "Heat and rain, month by month" is a 406 px table in a box of about 342 px, and the sun-times table is 383 px. The last column header shows as "R" and "MM/" until the reader finds the swipe. The box scrolls (`.fp-wrap`, overflow-x auto), so no data is lost, but it reads badly.
+  - Re-measured on Giza while building the fix, inside the live page's `.sheet`: the box is **289 px**, the climate table needs 392 px, and the sun-times table 369 px. The earlier 342 px box figure did not account for the sheet's padding.
+- **Fix (as built in PR #120):** at 430 px and below, in `pages/visit.py` and the CSS:
+  - three-letter months, with the full name kept for screen readers;
+  - cells at 4 px a side and text at 0.86 rem;
+  - headers without capitals or letter-spacing, so they wrap at spaces.
+
+  All 5 columns then fit at 360 px (a 263 px box). Breaking words anywhere was tried and rejected, because it split headers mid-word ("AFTERN OON").
+- **Prove:** `visit-tables.js` fails if any visit-page table is wider than its wrapper at 360, 375 or 390 px. Mutation copies without the compact rule, or without the class, must fail it (cases 13f and 13g).
+- **Rollback:** revert.
+
+### S4. One motion system, applied the same way everywhere
+- **Evidence:** the three mechanisms above. Reveals exist on 15 of 55 pages, none on the 30 generated pages. AOS is loaded on 5 pages that use none of it, and the Motion reveal hooks are unused.
+- **Fix:**
+  1. Stop loading AOS where no element uses it. This is pure weight, with no visual change.
+  2. Make `motion.js`'s IntersectionObserver reveal the one system. It already honours reduced motion and animates only opacity and transform. It gets the S1 rule: hide only after JavaScript adds its class.
+  3. Have the generators mark the section-level blocks on stories and visit pages.
+  4. Move the AOS pages over, then stop shipping AOS.
+
+  Count-up and chart reveals stay where the figures already are.
+- **Prove:**
+  - `reduced.js` stays green, and `nojs.js` from S1 stays green;
+  - a new check fails if any animated element changes layout size (only opacity and transform may animate);
+  - the shots show the same final layout.
+- **Rollback:** revert. AOS stays in `vendor/`.
+
+### S5. Small findings, no change planned now
+- **Clipped extra width:** on prices, the currency story and visit pages the page body measures 455–491 px at 390 px. No element is wider than the screen, and `html, body { overflow-x: clip }` stops any sideways scroll. That is why those CI screenshots are wider than 390. Look again only if a phone shows sideways wobble.
+- **Inline styles:** 17 pages carry `<style>` (10 KB on each prices page). Moving them into `egybi.css` would let the browser cache them once. Do it during S2, page by page.
+- **Navigation, header and footer:** consistent (see "What was measured"). No change.
+
+### Proposal (waits for Ahmed's yes)
+- **Type scale** (16 px base, about ×1.2):
+
+  | Token | Size | Used for |
+  |---|---|---|
+  | `--fs-xs` | 0.75 rem (12 px) | captions, eyebrows, fine print; nothing smaller anywhere |
+  | `--fs-sm` | 0.875 rem | meta, labels |
+  | `--fs-base` | 1 rem | body |
+  | `--fs-md` | 1.125 rem | lead paragraphs |
+  | `--fs-lg` | 1.375 rem | h3 |
+  | `--fs-xl` | 1.75 rem | h2 |
+  | `--fs-2xl` | clamp(1.75 rem, 1.2 rem + 2.4 vw, 2.5 rem) | h1 |
+  | `--fs-3xl` | clamp(2.1 rem, 1.4 rem + 3.5 vw, 3.25 rem) | hero |
+
+  Line heights: `--lh-tight` 1.15 (Cinzel headings), `--lh-snug` 1.35, `--lh-body` 1.6.
+- **Spacing** (4 px base): `--sp-1` 4, `--sp-2` 8, `--sp-3` 12, `--sp-4` 16, `--sp-5` 24, `--sp-6` 32, `--sp-7` 48 and `--sp-8` 64 px. Section rhythm is `--sp-7` between sections and `--sp-5` inside cards.
+- **Radii:** `--r-sm` 6 px, `--r-md` 10 px, `--radius` 14 px (kept) and `--r-pill` 999 px.
+- **Breakpoints, by convention:** 430, 720 and 960 px.
+- **Colours:** the 38 tokens stay. Repeated literals become tokens, for example `--gold-deep` #8a6d14.
+- **Motion rules:**
+  - hover and focus 150 ms; card lift 250 ms; section reveal 600 ms, a 12 px rise plus fade, once per element, staggered 60 ms across at most 6 children;
+  - count-up 900 ms, with the final number already in the HTML;
+  - chart draw 600 ms;
+  - easing `cubic-bezier(.22,1,.36,1)`;
+  - only opacity and transform move;
+  - never animated: body text after first view, tables, maps, form fields and navigation;
+  - everything is off under reduced motion, and everything is visible without JavaScript.
+- **Before and after:**
+  1. **Giza on a phone:** the climate table needs a swipe and shows "R… MM/". After: all five columns visible at 390 px, and at 360 px too (PR #120).
+  2. **Labels everywhere:** the six slightly different label sizes, from 0.68 to 0.78 rem, become one 12 px eyebrow style, with even spacing between sections.
+  3. **A Papyrus story:** no movement today. After: sections rise into view once, as on the home page, and with JavaScript off or reduced motion everything is simply there. Explore with scripts blocked goes from 106 invisible cards to all of them visible.
+- **PR order:** S1, then S3, then S2 (tokens, then mapping), then S4. Each PR is small, with its own browser check and a mutation-proven test.

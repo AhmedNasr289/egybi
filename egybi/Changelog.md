@@ -1540,3 +1540,14 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - opens every visit page at 360, 375 and 390 px, and fails when any table is wider than its box;
   - fails as VACUOUS if it measured fewer than two tables per page per width.
 - **Mutation cases 13f and 13g in `mutate.py`:** switching the phone rule off, or dropping `fp-compact` from Giza's page, must make `visit-tables.js` report TABLE SCROLLS.
+
+## 2026-11-15 — Round 3 study: formatting and motion
+- **`egybi/Improvement Plan 2026-11.md`, new "Round 3" section.** A measured study of the site's formatting and motion, before any design change. Measured:
+  - `egybi.css` has 69 font sizes, 55 spacing values, 104 literal colours, 19 line heights, 19 radii and 13 breakpoints, but no type or spacing scale;
+  - header and footer are consistent once path depth and the active link are normalised; the earlier count of 14 and 12 variants was the instrument;
+  - there are three overlapping motion mechanisms;
+  - page weights.
+- **Defects found and proven:**
+  - S1: with JavaScript blocked, AOS leaves content invisible. Measured live: Explore 106 blocks and 2,557 words, About 33 and 837, Home 32 and 764; Plan, the control, 0.
+  - S3: the visit pages' climate tables need a sideways swipe at 390 px, with a header cut to "R… MM/".
+- **The proposal** (type and spacing scales, motion rules, before and after, PR order S1, S3, S2, S4) waits for Ahmed's yes. No site file changes in this entry.
