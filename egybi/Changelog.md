@@ -1501,3 +1501,14 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   The token is never printed or written to disk. Tested: a fake token was refused with HTTP 401 and nothing was saved.
 - **The Lambda is live** (`egybi/Plan — Daily Refresh on Personal AWS.md`, Status). It is deployed and idempotent, and both dry runs pass on AWS. The schedules have been enabled since 15 Nov, and the first real commit is due 16 Nov at 07:20 UTC.
+
+## 2026-11-15 — Round 3 study: formatting and motion
+- **`egybi/Improvement Plan 2026-11.md`, new "Round 3" section.** A measured study of the site's formatting and motion, before any design change. Measured:
+  - `egybi.css` has 69 font sizes, 55 spacing values, 104 literal colours, 19 line heights, 19 radii and 13 breakpoints, but no type or spacing scale;
+  - header and footer are consistent once path depth and the active link are normalised; the earlier count of 14 and 12 variants was the instrument;
+  - there are three overlapping motion mechanisms;
+  - page weights.
+- **Defects found and proven:**
+  - S1: with JavaScript blocked, AOS leaves content invisible. Measured live: Explore 106 blocks and 2,557 words, About 33 and 837, Home 32 and 764; Plan, the control, 0.
+  - S3: the visit pages' climate tables need a sideways swipe at 390 px, with a header cut to "R… MM/".
+- **The proposal** (type and spacing scales, motion rules, before and after, PR order S1, S3, S2, S4) waits for Ahmed's yes. No site file changes in this entry.
