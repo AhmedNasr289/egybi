@@ -1514,6 +1514,10 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - a one-line script in the head adds `.js` to `<html>`, so content hides only while a script that reveals it is running;
   - if AOS has not started within 4 s, the script removes `.js` again, so a failed library shows everything without animation;
   - `sitemap.xml` moves those 17 pages' `lastmod`, as the pipeline does for any changed page.
+- **`reduced.js` also reads hidden reveals early, at 1.8 s:**
+  - **What it found:** on the first CI run, mutation case 13 ("content hidden under reduced motion") went FAILS TO CATCH. Under reduced motion AOS is disabled, so the new 4 s fallback shows everything, and `reduced.js` only read the page after a slow scroll past 4 s.
+  - **Why it matters:** a reader with reduced motion would still face about 4 s of blank blocks without the reduced-motion rule.
+  - **The fix:** a block hidden at either reading now counts.
 - **New browser check `backend/verify/nojs.js`** (Verify (browser)), on every page whose HTML carries `[data-aos]`:
   1. with JavaScript disabled, nothing may be transparent;
   2. with JavaScript on but AOS's script blocked, nothing may be transparent after the 4 s fallback.
