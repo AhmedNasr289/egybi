@@ -13,6 +13,7 @@ import io
 import json
 import sys
 import tarfile
+import time
 import unittest
 import urllib.error
 from pathlib import Path
@@ -28,6 +29,8 @@ TODAY = dt.date(2026, 11, 15)
 FETCH_PRICES = '''
 import json, pathlib
 mode = pathlib.Path("MODE").read_text().strip()
+if mode == "slow-fetch":
+    import time; time.sleep(30)
 if mode == "fail-fetch":
     raise SystemExit("fetch_prices: source unreachable")
 as_of = {"stale": "2026-11-01"}.get(mode, "2026-11-14")
@@ -49,6 +52,8 @@ pathlib.Path(out).write_text("https://egybi.com/prices.html\\n")
 '''
 PING = '''
 import sys, pathlib
+if pathlib.Path("MODE").read_text().strip() == "ping-fails":
+    raise SystemExit("indexnow: 503")
 pathlib.Path(sys.argv[1]).with_name("PINGED").write_text("yes")
 '''
 OK = "raise SystemExit(0)\n"
@@ -128,8 +133,16 @@ class FakeGitHub(lr.GitHub):
         raise AssertionError(f"unexpected call {method} {path}")
 
 
-def go(gh: FakeGitHub, **event) -> dict:
-    return lr.handler({"job": "prices", **event}, gh=gh, today=TODAY)
+class FakeContext:
+    """What Lambda passes in: how long the invocation has left."""
+    def __init__(self, seconds_left: float) -> None:
+        self.until = time.monotonic() + seconds_left
+    def get_remaining_time_in_millis(self) -> int:
+        return int((self.until - time.monotonic()) * 1000)
+
+
+def go(gh: FakeGitHub, context=None, **event) -> dict:
+    return lr.handler({"job": "prices", **event}, context, gh=gh, today=TODAY)
 
 
 class LambdaRefresh(unittest.TestCase):
@@ -199,6 +212,40 @@ class LambdaRefresh(unittest.TestCase):
         self.assertFalse(r["ok"])
         self.assertIn("kept moving", r["error"])
         self.assertEqual(len(gh.issues), 1)
+
+    def test_too_little_time_left_alerts_instead_of_dying(self):
+        # 2 s of usable time after the reserve: not enough to start a step.
+        gh = FakeGitHub("change")
+        r = go(gh, FakeContext(lr.RESERVE + 2))
+        self.assertFalse(r["ok"])
+        self.assertIn("out of time", r["error"])
+        self.assertEqual(gh.commits, {})
+        self.assertEqual(len(gh.issues), 1)
+
+    def test_a_step_that_overruns_the_time_left_is_stopped_and_alerts(self):
+        # 8 s left after the reserve; the fetch sleeps 30 s.
+        gh = FakeGitHub("slow-fetch")
+        t0 = time.monotonic()
+        r = go(gh, FakeContext(lr.RESERVE + 8))
+        self.assertFalse(r["ok"])
+        self.assertIn("ran past", r["error"])
+        self.assertLess(time.monotonic() - t0, 20)        # stopped, not waited out
+        self.assertEqual(gh.commits, {})
+        self.assertEqual(len(gh.issues), 1)
+
+    def test_enough_time_runs_normally(self):
+        gh = FakeGitHub("change")
+        r = go(gh, FakeContext(900))
+        self.assertTrue(r["ok"], r)
+        self.assertIsNotNone(r["committed"])
+
+    def test_a_failed_ping_after_a_good_commit_is_not_a_failure(self):
+        gh = FakeGitHub("ping-fails")
+        r = go(gh)
+        self.assertTrue(r["ok"], r)
+        self.assertIsNotNone(r["committed"])
+        self.assertEqual(gh.issues, [])
+        self.assertTrue(any("IndexNow ping skipped" in line for line in r["log"]))
 
     def test_unknown_job_is_refused(self):
         r = lr.handler({"job": "weather"}, gh=FakeGitHub(), today=TODAY)

@@ -39,6 +39,7 @@ What that buys:
 5. Otherwise make one commit through GitHub's Git Data API, with the same message the workflow uses (`[skip ci]`). Update `main` only if it still points at the commit that was downloaded. If `main` moved, start again from the new tip, which is the same rule `push-with-regenerate.sh` follows: generated files are rebuilt, never merged.
 6. Ping IndexNow with the changed URLs, as the workflow does.
 7. On any failure, open or comment on a GitHub issue, as `notify-failure` does. There is no email, so nothing is sent in Ahmed's name.
+8. Every step's time limit is the smaller of 10 minutes and the time left before Lambda's 15-minute limit, minus 45 seconds kept back. A run that is running out of time stops and opens the alert, rather than being killed silently. A failed IndexNow ping after a good commit is logged, not treated as a failure.
 
 The GitHub schedules stay as a backup. If the Lambda has already refreshed, a later GitHub run finds nothing changed and commits nothing.
 
@@ -66,7 +67,7 @@ The GitHub schedules stay as a backup. If the Lambda has already refreshed, a la
 | 5 | Ahmed's yes | Merge the PR | main green | revert |
 | 6 | Claude, after a yes | `python backend/ops/deploy_lambda_refresh.py --apply` deploys the two roles, the function, the log group and both schedules. The schedules are created **disabled**. | the script's status shows each resource, schedules `DISABLED` | `--remove` |
 | 7 | Claude | One manual test run with dry-run on (no commit): `--dry-run prices`, then `--dry-run fx` | the log shows each step and "would commit N files" | — |
-| 8 | Ahmed's yes | The first live run (it pushes to main, so it is a live change) | commit on main, live `prices-today.json` equals main by blob hash | revert the commit |
+| 8 | Ahmed's yes | The first live run, `python backend/ops/deploy_lambda_refresh.py --run prices` and then `--run fx`. It pushes to main, so it is a live change. | commit on main, live `prices-today.json` equals main by blob hash | revert the commit |
 | 9 | Claude | `--enable-schedules`, then watch the next two scheduled mornings | runs created by 07:30 UTC, data dated today before 09:00 UTC | disable the two schedules |
 
 ### Order against going private
