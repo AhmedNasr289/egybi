@@ -142,6 +142,14 @@ def case(name, tool, files, mutate, detects, cmd, timeout=900):
     results.append((name, tool, verdict,
                     f"quiet-before={before_clean} caught={caught} quiet-after={after_clean}"))
     print(f"  {verdict:16} {name}")
+    # Say WHAT the checker printed. A NOISY verdict used to leave nothing but
+    # the word, so the flaky run could not be told from a real fault without a
+    # re-run (runs 43971112849, 43971142792).
+    if verdict != "PASS":
+        for label, rc, out in (("before", rc0, out0), ("mutated", rc1, out1), ("after", rc2, out2)):
+            lines = [l for l in out.splitlines() if l.strip()]
+            shown = [l for l in lines if "FAIL" in l] or lines[-6:]
+            print(f"      [{label}, exit {rc}] " + ("\n      ".join(shown[:8]) or "(no output)"))
 
 
 # sys.executable, not "python3": on Windows `python3` resolves to a Store
