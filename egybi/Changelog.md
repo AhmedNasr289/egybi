@@ -1609,6 +1609,150 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   On the old tree it reports 26 problems; on this one, 0.
 - **Mutation cases 13j**, each proven catching locally: Motion One re-added to Privacy, and AOS re-added to Plan.
 
+## 2026-11-16 — One reveal system; AOS retired (study S4, parts 2 and 4)
+- **Why:** two animation systems did the same job.
+  - AOS (`aos.css` + `aos.js`, 40.7 KB) revealed sections on 12 pages, with 324 `fade-up` and 9 `zoom-in` blocks.
+  - `motion.js`, already on almost every page, had its own IntersectionObserver reveal.
+  - One system means one motion everywhere, one place to keep the S1 guarantees, and 40.7 KB less on 12 pages.
+- **`motion.js` (`?v=4`)** now reveals every `[data-aos]` block as it enters the view, with one motion for the whole site:
+  - a 12 px rise (the 9 `zoom-in` blocks scale from 0.96) and a fade over 0.6 s, once;
+  - existing `data-aos-delay` values are kept, capped at 300 ms;
+  - blocks a renderer adds later, such as the blog's cards, are watched too;
+  - it sets `html.mo-ready` once it has started.
+- **`egybi.css` (`?v=48`):** a block is hidden only while `<html>` has `.js` and the block lacks `.is-in`. It is shown at once:
+  - under reduced motion, where the existing rules win and every transition is off;
+  - in print;
+  - without JavaScript.
+
+  Only opacity and transform move, so nothing shifts the layout.
+- **Pages:**
+  - `aos.css` and `aos.js` leave the 12 pages that loaded them;
+  - S1's head flag now waits for `mo-ready` instead of AOS's `.aos-init`;
+  - `stories.html` gains `motion.js`, which it lacked.
+
+  The AOS files stay in `vendor/`, unused.
+- **`backend/verify/nojs.js`** now has three passes on every page with `[data-aos]`:
+  1. no JavaScript;
+  2. `motion.js` blocked, past the 4 s fallback;
+  3. new: a normal visit scrolled top to bottom, where any block still transparent is STUCK HIDDEN.
+- **`backend/verify/motion-weight.py`** now fails on:
+  - RETIRED LIBRARY: Motion One or either half of AOS loaded again;
+  - FLAG WITHOUT REVEALER: a page sets the `.js` flag but does not load `motion.js`, which would mean 4 s of blank sections.
+- **`mutate.py`:**
+  - 13e now blocks `motion.js`, and the second 13j case expects RETIRED LIBRARY;
+  - new 13k: `motion.js` starts but never reveals, so nojs.js must report STUCK HIDDEN;
+  - new 13l: `about.html` loses `motion.js`, so motion-weight must report FLAG WITHOUT REVEALER.
+
+  13j and 13l were each proven catching locally; 13e and 13k need the browser and run in CI.
+- **Plan:** the S4 status now records parts 2 and 4 as built. Part 3, generators marking story and visit sections, remains.
+
+## 2026-11-16 — Round 4 plan: tour guide, community, sign-in (plan only)
+- **Why:** Ahmed asked for an online tour guide, a community for sharing experiences, effortless Google sign-in and better motion, and reported that sign-up needs fixing. This entry adds the measured study and plan only; nothing in the site changes.
+- **Added:** `Improvement Plan 2026-11.md`, Round 4, which covers:
+  - the checks run today;
+  - the sign-up report: not reproduced from here, with two hypotheses Ahmed can check (Google consent screen in Testing mode, and the verification email landing in spam);
+  - what a tourist can and cannot do, with file and line evidence;
+  - eight ranked findings, each with Fix, Prove and Rollback;
+  - eight workflows, the additive database tables and the PR sequence.
+
+## 2026-11-16 — Plan: Round 4 status and Round 5 (the modern web platform)
+- **Plan:** `Improvement Plan 2026-11.md` gains a Round 4 status table and Round 5, items M1–M6:
+  - cross-document View Transitions;
+  - Speculation Rules prefetch;
+  - a scroll-driven reading-progress bar;
+  - `content-visibility` on long pages;
+  - one site-wide install and offline story;
+  - return after verifying.
+- **Constraints:** every item is a built-in browser feature: no library, font, host or cost. Each has Evidence, Fix, Prove and Rollback.
+- **Timing:** they land together after the Round 4 stack merges, because they touch every page head.
+
+## 2026-11-16 — Plan: status at 12:50 UTC
+- **Plan:** `Improvement Plan 2026-11.md` gains the round's status table at 12:50 UTC. It covers #129 merged and live, the #124 reveal fix, the #128 security-review hardening, the new PRs #132–#134, and the weekly sweep starting 8 h late.
+- **First CI run (43838169768):** every checker passed, but three mutation cases could no longer fail, because each had been written against AOS.
+  - **13, reduced motion:** motion.js now reveals everything at once under reduced motion, which masked a missing CSS rule. reduced.js gains a probe with motion.js blocked, so the CSS guarantee is measured on its own.
+  - **13d, no JavaScript:** two guards now keep blocks visible (the html.js scope and S1's override), so the case removes both.
+  - **27, a tap-target false alarm during AOS's animation:** retired with the measurement, since the new reveal moves a block and its buttons together. The checker keeps its settle step.
+- **Fix after run 43857746528:** 11 of 174 blocks on explore.html stayed hidden after a scroll; the run before saw 5, with the same code.
+  - **Cause:** a block revealed only when the observer saw it cross into view. On a heavy page, frames drop during a fast scroll, so a block that went from below the screen to above it between two observed frames was never seen. The three film counters stuck at "0" were the same defect.
+  - **Fix:** `motion.js` now sweeps once per frame while anything is pending, revealing every block whose top is above the bottom of the screen. The sweep removes its listener when nothing is left.
+  - **Check:** `nojs.js` gains a fling step, one jump to the bottom, which fails STUCK AFTER A FLING every time the sweep is missing, not only when frames happen to drop.
+  - **Mutation case:** the sweep removed must give STUCK AFTER A FLING.
+- **Fix after run 43865452380:** the reveal fix passed on all 15 pages (Explore: 106 of 106 blocks, after scrolling and after a fling). Two mutation cases could not run because they looked for the exact tag `motion.js?v=4`, which the bump to `?v=5` removed. `mutate.py` gains `asset_tag()`, which reads a page's current tag for a versioned asset. Those two cases, and the `egybi.css?v=48` case, now use it, so a version bump can no longer silently disarm a mutation case.
+## 2026-11-16 — Near me on the places page (Round 4, R4-8)
+- **Why:** a tourist standing in Luxor or Aswan wants the closest sights, museums and airports first. The places page could only filter by kind, name and governorate.
+- **The button:** "Near me" asks the browser for the reader's position, only when pressed, then:
+  - sorts the list nearest first;
+  - adds a "From you" column (metres below 1 km, km above);
+  - marks the reader on the map;
+  - says plainly that the distances are straight lines, not travel distances.
+
+  "Stop using my location" puts everything back. A refusal or a timeout is explained, and the list keeps its order. The button only appears where the browser offers geolocation in a secure context.
+- **Privacy:**
+  - the position is used in the page and nowhere else: it is not stored, not sent to EgyBI, and not put in any link;
+  - `privacy.html` gains an entry saying so, and its date moves to 16 November 2026.
+- **Header (approved in chat, 2026-11-16):** `.htaccess` changes `Permissions-Policy` from `geolocation=()` to `geolocation=(self)`. Only EgyBI's own pages can ask, and embedded frames, ads included, stay refused. The other device APIs stay off. This is a live setting, so check it after merge with the command in the PR.
+- **Files:**
+  - `assets/places.js` (`?v=16`): `wireNearMe` and `kmText`, plus the distance sort in `renderList`;
+  - `places.html`: the button, a status line and the column header.
+- **New browser check `backend/verify/near-me.js`**, with Chromium's position fixed at the Giza plateau:
+  - the list must read nearest first, with the first place within 25 km;
+  - no request after the press may carry the coordinates;
+  - "Stop using my location" must restore the order;
+  - a refused permission must be explained, with the order unchanged.
+- **Mutation case:** the sort removed must give NEAR ME NOT SORTED.
+## 2026-11-16 — Share a trip by link (Round 4, R4-6)
+- **Why:** a planned trip lived only in one browser. Travellers plan together, and a guide or a friend should be able to send a route. Until now the only ways to pass a plan on were printing it or signing in.
+- **The button:** the planner gains "Share this trip". It opens the phone's share sheet where there is one, and otherwise copies the link and says so.
+- **The link:** the whole trip (dates, name and stops) travels in the link's `#t=` fragment as base64url JSON. Browsers never send the fragment to a server, so sharing stores nothing on EgyBI and adds nothing to its logs. Nothing new is collected, so the privacy page is unchanged.
+- **Opening a link:**
+  - with no saved plan, the shared trip opens directly;
+  - with a saved plan, the page asks first: "Open the shared trip" replaces it, and "Keep my plan" leaves it exactly as it was;
+  - either way the `#t=` is removed from the address bar, so a reload cannot re-apply it;
+  - a link opened in a tab already on the planner is handled too (`hashchange`).
+- **A shared link is untrusted input:**
+  - a link is refused whole, leaving the reader's plan unchanged, if it has a wrong version, more than 30 stops, a stop outside Egypt's bounds, days outside 1–30, a date that is not YYYY-MM-DD, or text that is not valid base64url JSON;
+  - names are capped, and stop names render through the planner's existing escaping;
+  - the largest possible link (30 stops with Arabic names) measured 6.5 KB, under the 8,000-character cap in the reader.
+- **Files:**
+  - `assets/plan.js` (`?v=5`): `encodeTrip`, `decodeTrip`, `initShare`, `takeShared`;
+  - `plan.html`: the button, a status line and the ask-first banner.
+- **New browser check `backend/verify/share-link.js`:**
+  - 40 generated trips (Arabic names, 1–30 stops) must round-trip exactly;
+  - 6 malformed links must be refused, and a valid one accepted;
+  - a link on an empty plan must show its stops and remove the hash;
+  - with a saved plan, the page must ask first, "Keep my plan" must keep the plan byte for byte, and "Open the shared trip" must replace it;
+  - a stop named `<img onerror>` must render as text.
+- **Mutation cases:** the Egypt bounds check removed must give SHARE ACCEPTS BAD LINK, and the ask-first branch removed must give OWN PLAN OVERWRITTEN.
+
+## 2026-11-16 — The planner, and every page you opened, works offline (Round 4, R4-7)
+- **Why:** a tourist checks the plan in a tomb, on a felucca or in a desert hotel with no signal. The trip already lived in localStorage, but the page itself would not open.
+- **`site/sw.js`, a service worker the planner registers:**
+  - **pages and data:** network first, so an online reader always gets today's figures; the copy on the device is used only when the network fails;
+  - **versioned assets and images:** cache first, because a new version is a new URL;
+  - **a page never opened, offline:** a small built-in note links to the planner. No new HTML page is added to the site;
+  - **never cached:** anything under `/auth/` or `/api/`, any non-GET request, and anything from another host;
+  - **the first visit:** after registering, the planner hands the worker the files it already loaded, so that visit works offline straight away;
+  - **size:** at most 60 pages, 150 assets and 40 data files.
+- **Installable:** `manifest.webmanifest` lets a phone add EgyBI to the home screen. It opens on the planner, with shortcuts to places and to when-to-go, and uses the existing 192 px and 512 px icons.
+- **Kill switch:** deleting `sw.js` would not remove installed copies, because a 404 on update leaves the old worker running. Setting `KILL = true` and deploying makes every installed copy delete its caches and unregister. That is the rollback.
+- **`.htaccess`:**
+  - `sw.js` and the manifest are served `no-cache`, so a fix or the kill switch reaches every device on its next check;
+  - `.webmanifest` gets its file type.
+- **Privacy:** `privacy.html` gains "Pages kept for offline use": the copies stay on the device, are never sent anywhere, and never include account pages.
+- **Files:**
+  - `assets/plan.js` (`?v=6`): `initOffline`;
+  - `plan.html`: the manifest link, the theme colour and a status line.
+- **New browser check `backend/verify/offline.js`:**
+  - with the network cut, the planner must reopen with the saved stops;
+  - an unopened page must show the offline note;
+  - no `/auth/` or `/api/` response may be cached;
+  - back online, the network copy must win over a planted stale one.
+- **Mutation cases:** navigations not answered from the cache must give OFFLINE PLAN NOT SHOWN, and the `/auth/` and `/api/` exclusions removed must give ACCOUNT DATA CACHED.
+
+- **Fix before merge (self-review):**
+  - Pages were cached under their full address, so a link from a verification or reset email (`/?verify=…`) would have left its one-time token in the device's cache, and every `?add=…` visit stored another copy of the planner. Pages are now cached under their path alone.
+  - The worker's version moves to `egybi-sw-2`, so v1 caches are dropped.
+  - `offline.js` opens `/index.html?verify=…` and fails if any cache key keeps it, and a mutation case puts the full address back.
 ## 2026-11-16 — Travellers' notes: the backend, off live (Round 4, R4-2a)
 - **Why:** signing in gave a reader nothing to share. The only community was an anonymous comment box about contributing data. Round 4 (approved by Ahmed on 16 Nov) adds notes travellers write about a visit. This PR is the server half only, and it stays **off live** (`NOTES_LIVE = false`) until the interface PR turns it on.
 - **New `site/api/notes.php`:**
@@ -1722,3 +1866,38 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **the math:** 1,008 sun-time edges (18 sites × 14 dates, including both 2026 summer-time switch days) against the Python, which must agree within 60 s; measured locally, the worst gap is 0.00 s;
   - **the page:** visit/giza.html with the clock fixed at 10:00 Egypt time on 15 July must show the Python's four times, the status line and July's normal.
 - **Mutation case:** golden light at 5° instead of 6° in the browser must give SUN TIMES DIFFER.
+
+## 2026-11-16 — Home hero poster in WebP: 83 KB to 37 KB (Round 5, modern formats)
+- **Why:** the home hero's poster is the one raster image every first visitor downloads; the video itself loads later and only for those it plays for. A sweep of every page found it is the only raster image the pages show: charts and the map silhouette are already SVG.
+- **What:**
+  - `assets/video/hero-lighthouse.webp`, at WebP quality 72, is 36,992 bytes against the JPEG's 83,180, which is 55% smaller. PSNR against the JPEG is 38.6 dB, visually identical under the hero's sepia filter and dark scrim.
+  - `index.html`'s `poster` now points to it (`?v=4`). The JPEG stays in the repo and is no longer requested.
+- **Formats weighed:**
+  - **AVIF** was measured at 33,583 bytes, only 9% smaller than WebP, and has less support on older iPhones. WebP works in every current browser, so WebP was chosen.
+  - **The video (683 KB MP4)** stays as it is: no video encoder is installed on this machine, and adding one is not free of risk here.
+- **Rollback:** point `poster` back to `hero-lighthouse.jpg?v=3`.
+## 2026-11-16 — The sun path: today's sun drawn across each visit page (Round 5)
+- **Why:** the Today card gave four times, and this shows where the reader is in the day. A tourist sees at a glance how much daylight is left and how far away the golden window is, without reading the clock.
+- **What:** an arc from sunrise (left) to sunset (right):
+  - the golden-light stretches in gold;
+  - the part of today already gone drawn solid blue;
+  - the sun at its place now;
+  - before sunrise and after sunset, the sun waits half below the horizon.
+
+  It is a diagram of the day, not the sun's true height, and the arc's spoken label says how far through the day the sun is.
+- **Motion, and why:**
+  - on first view the arc draws itself in (`stroke-dashoffset`, 1.2 s) and the sun glides from sunrise to now (about 1.4 s), once, so the eye follows the day from its start to this moment;
+  - after that, the sun moves only with the clock, once a minute;
+  - under reduced motion everything is placed at once and nothing transitions;
+  - only the dash offset and the sun's position change, inside a box of fixed ratio, so nothing shifts;
+  - the glide counts frames rather than reading the clock, and a timer guarantees the final position.
+- **Built with:** inline SVG made by `today.js`, with no library and no new host.
+- **Files:**
+  - `assets/today.js` and `today.css` (`?v=2`);
+  - `pages/visit.py` (the version bump);
+  - the 18 visit pages, regenerated. Regenerating twice gives identical pages.
+- **`today-sun.js` checks it:**
+  - at a fixed 10:00 the sun must sit at the measured share of daylight (within 1%), with both gold stretches drawn;
+  - under reduced motion it must be in place straight after load, and the arc must not transition;
+  - at 04:00 it must wait below the horizon.
+- **Mutation cases:** the wrong share of the day must give SUN PATH WRONG, and the reduced-motion guard removed must give MOVES UNDER REDUCED MOTION.

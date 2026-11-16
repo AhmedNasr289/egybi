@@ -407,9 +407,22 @@ main:focus { outline: none; }
    for good. Measured 2026-11-15 with scripts blocked: Explore hid 106 blocks
    (2,557 words), About 33 (837), Home 32 (764).
    The page head adds .js to <html> only while scripts run, and takes it away
-   again if AOS has not started within 4 s. Without .js, everything simply shows.
+   again if motion.js (which reveals them since study S4) has not started within
+   4 s. Without .js, everything simply shows.
    !important for the same reason as above: AOS doubles its selectors. */
 html:not(.js) [data-aos] { opacity: 1 !important; transform: none !important; }
+
+/* One reveal system (study S4 part 2, 2026-11-16). AOS (40.7 KB) is no longer
+   loaded: motion.js reveals every [data-aos] block as it enters the view, with
+   one motion for the whole site - a 12 px rise and fade over 0.6 s, once.
+   Hidden only while <html> has .js (set by the page head, removed again if
+   motion.js has not started within 4 s); shown at once under reduced motion
+   (the rules above win), in print, and without JavaScript. Only opacity and
+   transform move, so nothing shifts the layout. nojs.js guards all three. */
+html.js [data-aos]:not(.is-in) { opacity: 0; transform: translateY(12px); }
+html.js [data-aos="zoom-in"]:not(.is-in) { transform: scale(.96); }
+html.js [data-aos] { transition: opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1); }
+@media print { [data-aos] { opacity: 1 !important; transform: none !important; } }
 
 /* ---------- motion micro-interactions (disabled under reduced-motion above) ---------- */
 .card, .chart-card, .role, .post-card {

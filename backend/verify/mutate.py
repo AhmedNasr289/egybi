@@ -78,6 +78,17 @@ def edit(path, old, new):
     p.write_text(t.replace(old, new, 1), encoding="utf-8")
 
 
+def asset_tag(path, asset):
+    """The page's own tag for a versioned asset (`motion.js`, `egybi.css`),
+    whatever its ?v= is now. Hard-coding the version broke two cases the day
+    motion.js went from v=4 to v=5 (run 43865452380: COULD NOT MUTATE, anchor
+    not found): a version bump must not silently disarm a mutation case."""
+    t = Path(path).read_text(encoding="utf-8")
+    m = re.search(r'<(?:script src|link href)="assets/' + re.escape(asset) + r'\?v=\d+"[^>]*>(?:</script>)?', t)
+    assert m, f"no {asset} tag in {path}"
+    return m.group(0)
+
+
 def case(name, tool, files, mutate, detects, cmd, timeout=900):
     """detects(output) -> bool : did the tool report THIS defect?"""
     global skipped
@@ -303,27 +314,39 @@ case("animation still running under reduced motion", "reduced.js", ["site/assets
      lambda o: "still animating" in o,
      REDUCED1.format(p="index.html"))
 
-# ---- 13d. no JavaScript: AOS content left invisible ------------------------
-# AOS's CSS hides [data-aos] until its script runs. The html:not(.js) rule in
-# egybi.css is what shows it when no script runs; without the rule, a reader
-# with scripts blocked sees nothing in those blocks (Explore: 106 blocks).
+# ---- 13d. no JavaScript: revealed blocks left invisible ---------------------
+# Since study S4 part 2 two guards keep [data-aos] blocks visible without
+# JavaScript: the hiding rule is scoped to html.js (which only a running script
+# sets), and S1's html:not(.js) override still forces them visible. Either alone
+# is enough, so removing one changes nothing a reader sees, and CI run
+# 43838169768 showed a one-rule mutation going blind. The pair is load-bearing:
+# drop both, and nojs.js must report HIDDEN WITHOUT JS (Explore: 106 blocks).
 NOJS1 = "ONLY={p} node " + str(HERE) + "/nojs.js"
-case("AOS content hidden without JavaScript", "nojs.js", ["site/assets/egybi.css"],
-     lambda: edit("site/assets/egybi.css",
-                  "html:not(.js) [data-aos] { opacity: 1 !important; transform: none !important; }",
-                  "/* removed by mutation test */"),
+
+
+def unguard_nojs():
+    edit("site/assets/egybi.css",
+         "html:not(.js) [data-aos] { opacity: 1 !important; transform: none !important; }",
+         "/* removed by mutation test */")
+    edit("site/assets/egybi.css",
+         "html.js [data-aos]:not(.is-in) { opacity: 0; transform: translateY(12px); }",
+         "[data-aos]:not(.is-in) { opacity: 0; transform: translateY(12px); }")
+
+
+case("revealed content hidden without JavaScript", "nojs.js", ["site/assets/egybi.css"],
+     unguard_nojs,
      lambda o: "HIDDEN WITHOUT JS" in o,
      NOJS1.format(p="explore.html"))
 
-# ---- 13e. AOS fails to load: no fallback --------------------------------------
-# With scripts on but AOS's script blocked, the page head's 4 s fallback must
-# drop .js so egybi.css shows everything. Removing the fallback must be caught.
-case("AOS content hidden when AOS fails to load", "nojs.js", ["site/explore.html"],
+# ---- 13e. the reveal script fails to load: no fallback -----------------------
+# With scripts on but motion.js blocked, the page head's 4 s fallback must drop
+# .js so egybi.css shows everything. Removing the fallback must be caught.
+case("content hidden when the reveal script fails to load", "nojs.js", ["site/explore.html"],
      lambda: edit("site/explore.html",
-                  'setTimeout(function(){if(!document.querySelector(".aos-init"))'
+                  'setTimeout(function(){if(!document.documentElement.classList.contains("mo-ready"))'
                   'document.documentElement.classList.remove("js")},4000)',
                   "void 0"),
-     lambda o: "HIDDEN WHEN AOS FAILS" in o,
+     lambda o: "HIDDEN WHEN THE REVEAL SCRIPT FAILS" in o,
      NOJS1.format(p="explore.html"))
 
 # ---- 13f. visit tables: phone layout rule switched off --------------------
@@ -367,13 +390,40 @@ case("type scale step drifts from typescale.py", "type-scale.py", ["site/assets/
 # (5 pages). Putting either back must be reported.
 PY_MW = f'"{sys.executable}" {HERE}/motion-weight.py'
 case("retired Motion One library loaded again", "motion-weight.py", ["site/privacy.html"],
-     lambda: edit("site/privacy.html", '<script src="assets/motion.js?v=3"></script>',
-                  '<script src="assets/vendor/motion.min.js"></script>\n<script src="assets/motion.js?v=3"></script>'),
+     lambda: edit("site/privacy.html", asset_tag("site/privacy.html", "motion.js"),
+                  '<script src="assets/vendor/motion.min.js"></script>\n' + asset_tag("site/privacy.html", "motion.js")),
      lambda o: "RETIRED LIBRARY" in o and "privacy.html" in o, PY_MW)
-case("AOS loaded on a page that uses none of it", "motion-weight.py", ["site/plan.html"],
-     lambda: edit("site/plan.html", '<link href="assets/egybi.css?v=47" rel="stylesheet">',
-                  '<link href="assets/egybi.css?v=47" rel="stylesheet">\n<link href="assets/vendor/aos.css" rel="stylesheet">'),
-     lambda o: "UNUSED AOS" in o and "plan.html" in o, PY_MW)
+case("retired AOS stylesheet loaded again", "motion-weight.py", ["site/plan.html"],
+     lambda: edit("site/plan.html", asset_tag("site/plan.html", "egybi.css"),
+                  asset_tag("site/plan.html", "egybi.css") + '\n<link href="assets/vendor/aos.css" rel="stylesheet">'),
+     lambda o: "RETIRED LIBRARY" in o and "aos.css" in o and "plan.html" in o, PY_MW)
+
+# ---- 13k. the one reveal system never reveals -----------------------------
+# S4 part 2: motion.js adds .is-in as each [data-aos] block enters the view.
+# If it stops doing so while still marking itself started, the blocks stay
+# hidden for good, which only the scroll-through pass of nojs.js can see.
+case("reveal script starts but never reveals", "nojs.js", ["site/assets/motion.js"],
+     lambda: edit("site/assets/motion.js", "function show(el) { el.classList.add('is-in'); }",
+                  "function show(el) { }"),
+     lambda o: "STUCK HIDDEN" in o,
+     NOJS1.format(p="explore.html"))
+
+# ---- 13k2. the sweep removed: a fast fling leaves blocks hidden ---------------
+# The observer misses blocks that pass the screen between frames; the sweep in
+# motion.js reveals them. Without it, one jump to the bottom leaves every block
+# in between hidden, deterministically (CI run 43857746528 saw 5 then 11 under
+# an ordinary scroll, which is the flaky form of the same defect).
+case("reveal sweep removed: blocks skipped by a fling stay hidden", "nojs.js", ["site/assets/motion.js"],
+     lambda: edit("site/assets/motion.js", "      pending.push(el);\n", ""),
+     lambda o: "STUCK AFTER A FLING" in o,
+     NOJS1.format(p="explore.html"))
+
+# ---- 13l. a page sets the flag but loses its reveal script ------------------
+# Without motion.js, the .js flag hides every [data-aos] block until the 4 s
+# fallback: four seconds of blank sections on every visit.
+case("flag set but the reveal script not loaded", "motion-weight.py", ["site/about.html"],
+     lambda: edit("site/about.html", asset_tag("site/about.html", "motion.js"), ""),
+     lambda o: "FLAG WITHOUT REVEALER" in o and "about.html" in o, PY_MW)
 
 # ---- 13c. CC BY 4.0: geometry rendered with the credit stripped ------------
 # index.html carries no map, and draws geoBoundaries-derived geometry on the
@@ -721,11 +771,15 @@ def unsettle_tap_targets():
          "reducedMotion: 'reduce'", "reducedMotion: 'no-preference'")
     edit("backend/verify/tap-targets.js", "const SETTLE = 60;", "const SETTLE = 0;")
 
-case("the checker hit-testing a page mid-animation", "tap-targets.js",
-     ["backend/verify/tap-targets.js"],
-     unsettle_tap_targets,
-     lambda o: "COVERED" in o,
-     TAP.format(p="explore.html"))
+# RETIRED 2026-11-16 (study S4 part 2). The false COVERED came from AOS's
+# reveal: for ~700 ms a wrapper was the topmost element at a button's centre.
+# AOS is no longer loaded; motion.js moves a block and its controls together
+# (one transform on the block), so hit-testing mid-animation finds the control
+# itself. Measured in CI run 43838169768: with BOTH guards removed, tap-targets.js
+# reported explore.html clean, so the case could no longer fail. The settle and
+# the reduced-motion context stay in tap-targets.js as cheap insurance;
+# unsettle_tap_targets() is kept so the case can return if a future animation
+# brings the overlap back.
 
 
 # ---- 28. a scheduled workflow that can fail with nobody told ----------------
@@ -930,6 +984,52 @@ case("notes: the place filter not sent to the API", "notes-ui.js", ["site/assets
      lambda: edit("site/assets/notes.js", "(siteFilter ? '&site=' + encodeURIComponent(siteFilter) : '')", "''"),
      lambda o: "FILTER IGNORED" in o, NOTES_UI)
 
+# ---- Near me (Round 4, R4-8) -----------------------------------------------
+# Pressing Near me must sort the list nearest first. Drop the sort and the
+# column still appears, which is exactly the failure a glance would miss.
+NEAR = f"node {HERE}/near-me.js"
+case("near me: the list is not sorted by distance", "near-me.js",
+     ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js",
+                  "      out.sort(function (a, b) { return dist.get(a) - dist.get(b); });\n", ""),
+     lambda o: "NEAR ME NOT SORTED" in o, NEAR)
+
+# ---- Offline (Round 4, R4-7) ------------------------------------------------
+# The worker must answer navigations from its cache when the network fails.
+# Let navigations fall through to the network and the offline plan is gone.
+OFFLINE = f"node {HERE}/offline.js"
+case("offline: pages not served from the cache with no signal", "offline.js",
+     ["site/sw.js"],
+     lambda: edit("site/sw.js", "  if (req.mode === 'navigate') {", "  if (false) {"),
+     lambda o: "OFFLINE PLAN NOT SHOWN" in o or "OFFLINE PAGE MISSING" in o, OFFLINE)
+case("offline: account requests cached", "offline.js",
+     ["site/sw.js"],
+     lambda: edit("site/sw.js", "  if (/^\\/(auth|api)\\//.test(url.pathname)) return;\n", ""),
+     lambda o: "ACCOUNT DATA CACHED" in o, OFFLINE)
+
+case("offline: a page's query string (a verify token) cached", "offline.js",
+     ["site/sw.js"],
+     lambda: edit("site/sw.js", "put(PAGES, MAX_PAGES, key, res)", "put(PAGES, MAX_PAGES, req, res)"),
+     lambda o: "ACCOUNT DATA CACHED" in o and "verify=" in o, OFFLINE)
+
+# ---- Trip share link (Round 4, R4-6) ---------------------------------------
+# A shared link is untrusted input. Without the Egypt bounds check, a link can
+# place a stop anywhere; without the ask-first branch, opening a link silently
+# replaces the reader's own saved plan.
+SHARE = f"node {HERE}/share-link.js"
+case("share link: stops outside Egypt accepted", "share-link.js",
+     ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js",
+                  "if (!(lat > 21 && lat < 32.5 && lon > 24 && lon < 37.5) || days < 1 || days > 30) return null;",
+                  "if (days < 1 || days > 30) return null;"),
+     lambda o: "SHARE ACCEPTS BAD LINK" in o, SHARE)
+case("share link: the reader's own plan replaced without asking", "share-link.js",
+     ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js",
+                  "    if (!S.trip.stops.length) { apply(); return; }",
+                  "    apply(); return;"),
+     lambda o: "OWN PLAN OVERWRITTEN" in o, SHARE)
+
 # ---- Travellers' notes (Round 4, R4-2a): each guard must be load-bearing ----
 case("notes: one user can delete another user's note", "auth-flow.sh",
      ["site/api/notes.php"],
@@ -1022,6 +1122,17 @@ case("today card: the browser's golden light drifts from the table", "today-sun.
      ["site/assets/today.js"],
      lambda: edit("site/assets/today.js", "GOLDEN_ELEVATION = 6.0", "GOLDEN_ELEVATION = 5.0"),
      lambda o: "SUN TIMES DIFFER" in o, TODAY)
+# The sun path (Round 5): the sun must sit at the share of daylight gone, and
+# must not glide for a reader who asked for reduced motion.
+case("sun path: the sun placed at the wrong share of the day", "today-sun.js",
+     ["site/assets/today.js"],
+     lambda: edit("site/assets/today.js", "return { u: (now - L.sunrise) / (L.sunset - L.sunrise) };",
+                  "return { u: (now - L.sunrise) / (L.goldenEveningStart - L.sunrise) };"),
+     lambda o: "SUN PATH WRONG" in o, TODAY)
+case("sun path: the sun glides under reduced motion", "today-sun.js",
+     ["site/assets/today.js"],
+     lambda: edit("site/assets/today.js", "if (glided || reduce) {", "if (glided) {"),
+     lambda o: "MOVES UNDER REDUCED MOTION" in o, TODAY)
 
 case("unverified account subscribed to the newsletter", "auth-flow.sh",
      ["site/auth/auth.php"],

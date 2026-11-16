@@ -1,0 +1,23 @@
+{
+  "name": "EgyBI — Egypt trip companion",
+  "short_name": "EgyBI",
+  "description": "Plan an Egypt trip with cited heat, light, prices and places. Works offline once opened.",
+  "id": "/plan.html",
+  "start_url": "/plan.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F6EEDC",
+  "theme_color": "#14110C",
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "shortcuts": [
+    { "name": "Plan a trip", "url": "/plan.html" },
+    { "name": "Places near me", "url": "/places.html" },
+    { "name": "When to go", "url": "/visit.html" }
+  ]
+}
