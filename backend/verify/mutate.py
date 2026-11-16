@@ -303,15 +303,27 @@ case("animation still running under reduced motion", "reduced.js", ["site/assets
      lambda o: "still animating" in o,
      REDUCED1.format(p="index.html"))
 
-# ---- 13d. no JavaScript: AOS content left invisible ------------------------
-# AOS's CSS hides [data-aos] until its script runs. The html:not(.js) rule in
-# egybi.css is what shows it when no script runs; without the rule, a reader
-# with scripts blocked sees nothing in those blocks (Explore: 106 blocks).
+# ---- 13d. no JavaScript: revealed blocks left invisible ---------------------
+# Since study S4 part 2 two guards keep [data-aos] blocks visible without
+# JavaScript: the hiding rule is scoped to html.js (which only a running script
+# sets), and S1's html:not(.js) override still forces them visible. Either alone
+# is enough, so removing one changes nothing a reader sees, and CI run
+# 43838169768 showed a one-rule mutation going blind. The pair is load-bearing:
+# drop both, and nojs.js must report HIDDEN WITHOUT JS (Explore: 106 blocks).
 NOJS1 = "ONLY={p} node " + str(HERE) + "/nojs.js"
-case("AOS content hidden without JavaScript", "nojs.js", ["site/assets/egybi.css"],
-     lambda: edit("site/assets/egybi.css",
-                  "html:not(.js) [data-aos] { opacity: 1 !important; transform: none !important; }",
-                  "/* removed by mutation test */"),
+
+
+def unguard_nojs():
+    edit("site/assets/egybi.css",
+         "html:not(.js) [data-aos] { opacity: 1 !important; transform: none !important; }",
+         "/* removed by mutation test */")
+    edit("site/assets/egybi.css",
+         "html.js [data-aos]:not(.is-in) { opacity: 0; transform: translateY(12px); }",
+         "[data-aos]:not(.is-in) { opacity: 0; transform: translateY(12px); }")
+
+
+case("revealed content hidden without JavaScript", "nojs.js", ["site/assets/egybi.css"],
+     unguard_nojs,
      lambda o: "HIDDEN WITHOUT JS" in o,
      NOJS1.format(p="explore.html"))
 
@@ -738,11 +750,15 @@ def unsettle_tap_targets():
          "reducedMotion: 'reduce'", "reducedMotion: 'no-preference'")
     edit("backend/verify/tap-targets.js", "const SETTLE = 60;", "const SETTLE = 0;")
 
-case("the checker hit-testing a page mid-animation", "tap-targets.js",
-     ["backend/verify/tap-targets.js"],
-     unsettle_tap_targets,
-     lambda o: "COVERED" in o,
-     TAP.format(p="explore.html"))
+# RETIRED 2026-11-16 (study S4 part 2). The false COVERED came from AOS's
+# reveal: for ~700 ms a wrapper was the topmost element at a button's centre.
+# AOS is no longer loaded; motion.js moves a block and its controls together
+# (one transform on the block), so hit-testing mid-animation finds the control
+# itself. Measured in CI run 43838169768: with BOTH guards removed, tap-targets.js
+# reported explore.html clean, so the case could no longer fail. The settle and
+# the reduced-motion context stay in tap-targets.js as cheap insurance;
+# unsettle_tap_targets() is kept so the case can return if a future animation
+# brings the overlap back.
 
 
 # ---- 28. a scheduled workflow that can fail with nobody told ----------------

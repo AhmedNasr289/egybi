@@ -1645,3 +1645,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   13j and 13l were each proven catching locally; 13e and 13k need the browser and run in CI.
 - **Plan:** the S4 status now records parts 2 and 4 as built. Part 3, generators marking story and visit sections, remains.
+- **First CI run (43838169768):** every checker passed, but three mutation cases could no longer fail, because each had been written against AOS.
+  - **13, reduced motion:** motion.js now reveals everything at once under reduced motion, which masked a missing CSS rule. reduced.js gains a probe with motion.js blocked, so the CSS guarantee is measured on its own.
+  - **13d, no JavaScript:** two guards now keep blocks visible (the html.js scope and S1's override), so the case removes both.
+  - **27, a tap-target false alarm during AOS's animation:** retired with the measurement, since the new reveal moves a block and its buttons together. The checker keeps its settle step.
