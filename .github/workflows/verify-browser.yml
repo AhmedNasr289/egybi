@@ -314,6 +314,22 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh nojs node backend/verify/nojs.js
 
+      - name: near-me.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh near-me node backend/verify/near-me.js
+
+      - name: offline.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh offline node backend/verify/offline.js
+
+      - name: share-link.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh share-link node backend/verify/share-link.js
+
+      - name: today-sun.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh today-sun node backend/verify/today-sun.js
+
       - name: visit-tables.js
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh visit-tables node backend/verify/visit-tables.js

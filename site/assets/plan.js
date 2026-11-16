@@ -330,10 +330,134 @@
     });
   }
 
+  /* Share this trip (Round 4, R4-6, 2026-11-16). The whole trip travels in the
+     link's #fragment, which a browser never sends to any server, so sharing
+     stores and logs nothing. Opening a shared link never overwrites the
+     reader's own plan without asking. EgybiShare is exposed for share-link.js,
+     the check that round-trips random trips through it. */
+  var SHARE_V = 1, SHARE_MAX_STOPS = 30;
+  function b64urlEncode(str) {
+    var bytes = new TextEncoder().encode(str), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecode(s) {
+    var b = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (b.length % 4) b += '=';
+    var bin = atob(b), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  function encodeTrip(t) {
+    return b64urlEncode(JSON.stringify({
+      v: SHARE_V, s: t.start || '', e: t.end || '', n: (t.name || '').slice(0, 40),
+      p: (t.stops || []).slice(0, SHARE_MAX_STOPS).map(function (x) {
+        return [String(x.id || '').slice(0, 140), String(x.name || '').slice(0, 80),
+                Math.round(x.lat * 1000) / 1000, Math.round(x.lon * 1000) / 1000,
+                Math.max(1, Math.min(30, x.days | 0 || 1)), x.name_ar ? String(x.name_ar).slice(0, 80) : ''];
+      })
+    }));
+  }
+  /* Anything that is not a well-formed trip inside Egypt is refused whole. */
+  function decodeTrip(code) {
+    var o;
+    try { o = JSON.parse(b64urlDecode(code)); } catch (e) { return null; }
+    if (!o || o.v !== SHARE_V || !Array.isArray(o.p) || o.p.length > SHARE_MAX_STOPS) return null;
+    var date = /^\d{4}-\d{2}-\d{2}$/;
+    if ((o.s && !date.test(o.s)) || (o.e && !date.test(o.e))) return null;
+    var stops = [];
+    for (var i = 0; i < o.p.length; i++) {
+      var p = o.p[i];
+      if (!Array.isArray(p) || typeof p[0] !== 'string' || typeof p[1] !== 'string') return null;
+      var lat = +p[2], lon = +p[3], days = p[4] | 0;
+      if (!(lat > 21 && lat < 32.5 && lon > 24 && lon < 37.5) || days < 1 || days > 30) return null;
+      var st = { id: p[0].slice(0, 140), name: p[1].slice(0, 80), lat: lat, lon: lon, days: days };
+      if (p[5]) st.name_ar = String(p[5]).slice(0, 80);
+      stops.push(st);
+    }
+    return { start: o.s || null, end: o.e || null, name: typeof o.n === 'string' ? o.n.slice(0, 40) : '', stops: stops };
+  }
+  window.EgybiShare = { encode: encodeTrip, decode: decodeTrip };
+
+  function initShare() {
+    var btn = $('shareTrip'), note = $('shareNote');
+    if (!btn) return;
+    function say(msg, kind) { note.textContent = msg; note.className = 'form-note' + (kind ? ' ' + kind : ''); }
+    btn.addEventListener('click', function () {
+      if (!S.trip.stops.length) { say('Add a stop first, then share.', 'error'); return; }
+      var url = location.origin + location.pathname + '#t=' + encodeTrip(S.trip);
+      if (navigator.share) {
+        navigator.share({ title: S.trip.name || 'My Egypt trip', text: 'My Egypt trip on EgyBI', url: url })
+          .then(function () { say('Shared.', 'ok'); })
+          .catch(function () { /* the reader closed the sheet */ });
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+          say('Link copied. Anyone who opens it sees this trip; nothing is stored on EgyBI.', 'ok');
+        }, function () { say('Copy this link: ' + url); });
+      } else {
+        say('Copy this link: ' + url);
+      }
+    });
+  }
+
+  function takeShared() {
+    var m = /^#t=([A-Za-z0-9_-]{1,8000})$/.exec(location.hash);
+    if (!m) return;
+    var shared = decodeTrip(m[1]);
+    var banner = $('sharedBanner');
+    history.replaceState(null, '', location.pathname + location.search);
+    if (!shared) { if (banner) { banner.hidden = false; banner.textContent = 'That shared link could not be read, so your own plan is unchanged.'; } return; }
+    function apply() {
+      S.trip = { start: shared.start, end: shared.end, name: shared.name, stops: shared.stops };
+      save();
+      $('planStart').value = S.trip.start || ''; $('planEnd').value = S.trip.end || ''; $('planName').value = S.trip.name || '';
+      renderAll();
+    }
+    if (!S.trip.stops.length) { apply(); return; }
+    if (!banner) return;
+    banner.hidden = false; banner.textContent = '';
+    var msg = document.createElement('p');
+    msg.textContent = 'Someone shared a trip with ' + shared.stops.length + ' stop' + (shared.stops.length === 1 ? '' : 's') + '. Open it in place of your own plan?';
+    var yes = document.createElement('button'); yes.type = 'button'; yes.className = 'btn btn-primary'; yes.textContent = 'Open the shared trip';
+    var no = document.createElement('button'); no.type = 'button'; no.className = 'btn btn-ghost'; no.textContent = 'Keep my plan';
+    yes.addEventListener('click', function () { apply(); banner.hidden = true; });
+    no.addEventListener('click', function () { banner.hidden = true; });
+    var row = document.createElement('div'); row.className = 'cta-row'; row.appendChild(yes); row.appendChild(no);
+    banner.appendChild(msg); banner.appendChild(row);
+  }
+
+  /* Offline (Round 4, R4-7, 2026-11-16). Register the site's service worker
+     (/sw.js) from the planner, then hand it the files this page has already
+     loaded, so the very first visit works with no signal. Nothing is sent
+     anywhere: the copies live in this browser's cache. */
+  function initOffline() {
+    var note = $('offlineNote');
+    if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
+    function go() {
+      navigator.serviceWorker.register('/sw.js').then(function () { return navigator.serviceWorker.ready; })
+        .then(function (reg) {
+          var mine = location.origin;
+          var urls = [location.pathname].concat((performance.getEntriesByType('resource') || [])
+            .map(function (r) { return r.name; })
+            .filter(function (u) { return u.indexOf(mine + '/') === 0 && !/\/(auth|api)\//.test(u); }));
+          navigator.serviceWorker.addEventListener('message', function (ev) {
+            if (ev.data && ev.data.type === 'cached' && note) {
+              note.textContent = 'This planner now opens offline on this device, with your saved trip.';
+            }
+          });
+          var w = navigator.serviceWorker.controller || reg.active;
+          if (w) w.postMessage({ type: 'cache-these', urls: urls });
+        }).catch(function () { /* no offline copy; the planner works as before */ });
+    }
+    if (document.readyState === 'complete') go(); else window.addEventListener('load', go);
+  }
+
   function init() {
     initForm(); initMap(); initStopEvents();
     $('printPlan').addEventListener('click', function () { window.print(); });
     initSave();
+    initShare();
+    initOffline();
     $('clearPlan').addEventListener('click', function () {
       if (!S.trip.stops.length) return;
       S.trip.stops = []; save(); renderAll(); announce('All stops removed.');
@@ -355,6 +479,9 @@
       }
       if (q.get('add') || q.get('place')) history.replaceState(null, '', location.pathname);
       renderAll();
+      takeShared();
+      // A shared link opened in a tab already on the planner changes only the hash.
+      window.addEventListener('hashchange', takeShared);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

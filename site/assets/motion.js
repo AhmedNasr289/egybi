@@ -115,7 +115,32 @@
         });
       }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
     }
-    function take(el) { if (io) io.observe(el); else show(el); }
+    // THE SWEEP. An observer only fires when it SEES a block cross into view.
+    // On a heavy page (explore.html: charts, a map, counters) frames drop
+    // during a fast scroll, and a block that goes from below the screen to
+    // above it between two observed frames is never seen, so it stayed hidden
+    // for good (CI run 43857746528: 11 of 174 blocks; 5 in the run before, so
+    // it is timing, not markup). Once per frame while scrolling, reveal any
+    // pending block whose top is already above the bottom of the screen. It
+    // reads one rect per pending block and removes itself when none are left.
+    var pending = [], ticking = false;
+    function sweep() {
+      ticking = false;
+      var h = window.innerHeight;
+      pending = pending.filter(function (el) {
+        if (el.classList.contains('is-in')) return false;
+        if (el.getBoundingClientRect().top < h) { show(el); if (io) io.unobserve(el); return false; }
+        return true;
+      });
+      if (!pending.length) window.removeEventListener('scroll', onScroll);
+    }
+    function onScroll() { if (!ticking) { ticking = true; window.requestAnimationFrame(sweep); } }
+    function take(el) {
+      if (!io) { show(el); return; }
+      io.observe(el);
+      if (!pending.length) window.addEventListener('scroll', onScroll, { passive: true });
+      pending.push(el);
+    }
     Array.prototype.forEach.call(document.querySelectorAll('[data-aos]'), take);
     if ('MutationObserver' in window) {
       new MutationObserver(function (ms) {

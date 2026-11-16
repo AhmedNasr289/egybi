@@ -101,6 +101,23 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
   let bad = 0;
   for (const path of PAGES) {
     const n = await measure(normal, path), r = await measure(reduced, path);
+    // The guarantee that does not depend on the reveal script (study S4 part 2):
+    // with motion.js slow or blocked, a reduced-motion reader must still see
+    // every block at once, before the head's 4 s fallback. Only egybi.css's
+    // reduced-motion rule provides that; motion.js would otherwise mask it by
+    // revealing everything itself, which is how mutation case 13 went blind.
+    {
+      const p = await reduced.newPage({ viewport: { width: 1280, height: 950 } });
+      await p.route('**/*', rt => { const u = rt.request().url();
+        if (u.includes('assets/motion.js')) return rt.abort();
+        return (u.startsWith(B)||u.startsWith('data:')||u.startsWith('blob:')) ? rt.continue() : rt.abort(); });
+      await p.goto(`${B}/${path}`, { waitUntil: 'domcontentloaded' });
+      await p.waitForTimeout(1200);
+      const blocked = await p.evaluate(() => [...document.querySelectorAll('[data-aos]')]
+        .filter(e => +getComputedStyle(e).opacity < 0.05).length);
+      await p.close();
+      r.invisibleAos = Math.max(r.invisibleAos, blocked);
+    }
     const dText = Math.abs(n.text - r.text);
     const lost = (r.links < n.links) || (r.buttons < n.buttons) || (r.chips < n.chips) || dText > 40;
     // A page that keeps animating under reduce IS the failure this file is

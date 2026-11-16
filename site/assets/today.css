@@ -1,0 +1,36 @@
+/* EgyBI — "Today at this site" card on the visit pages (Round 4, R4-1).
+   Loaded by the 18 visit pages only. Sizes use the type-scale tokens; the sun
+   path below animates once, and not at all under reduced motion. */
+.today {
+  background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold);
+  border-radius: var(--radius); padding: 20px 22px; margin: 0 0 22px; box-shadow: var(--shadow-light);
+}
+.today-h { font-size: var(--fs-lg); margin: 0 0 8px; color: var(--blue-deep); }
+.today-date { margin: 0 0 12px; color: var(--ink-soft); font-size: var(--fs-sm); }
+.today-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 12px; }
+@media (max-width: 560px) { .today-grid { grid-template-columns: repeat(2, 1fr); } }
+.today-cell { background: var(--papyrus); border-radius: 10px; padding: 10px 12px; margin: 0; }
+.today-cell dt { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; color: var(--gold-ink); font-weight: 700; }
+.today-cell dd { margin: 2px 0 0; font-size: var(--fs-lg); font-weight: 700; color: var(--blue-deep); font-variant-numeric: tabular-nums; }
+.today-status { margin: 0 0 6px; font-weight: 600; }
+.today-heat { margin: 0 0 6px; }
+.today-fallback { margin: 0; color: var(--ink-soft); }
+.today-src { margin: 8px 0 0; }
+
+/* The sun path (Round 5). The arc draws in once (stroke-dashoffset), and the
+   sun's glide is set by today.js. Under reduced motion nothing transitions. The
+   box keeps its viewBox ratio, so nothing shifts as it fills. */
+.today-arc { display: block; width: 100%; max-width: 520px; height: auto; aspect-ratio: 320 / 128; margin: 0 auto 10px; overflow: visible; }
+.today-arc .arc-day { fill: none; stroke: var(--blue-deep); stroke-opacity: .22; stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.today-arc .arc-past { fill: none; stroke: var(--blue-deep); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 0 1; }
+.today-arc .arc-gold { fill: none; stroke: var(--gold); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.today-arc.is-drawn .arc-day, .today-arc.is-drawn .arc-gold { stroke-dashoffset: 0; }
+.today-arc .arc-glow { fill: var(--gold); opacity: .28; }
+.today-arc .arc-disc { fill: var(--gold); stroke: var(--blue-deep); stroke-width: 1.5; }
+.today-arc .arc-ground { fill: var(--papyrus-2); }
+.today-arc .arc-horizon { stroke: var(--ink-soft); stroke-width: 1.5; }
+@media (prefers-reduced-motion: no-preference) {
+  .today-arc .arc-day, .today-arc .arc-gold { transition: stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1); }
+  .today-arc .arc-gold { transition-delay: .35s; }
+}
+@media print { .today-arc .arc-day, .today-arc .arc-gold { stroke-dashoffset: 0; } }

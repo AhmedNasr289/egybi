@@ -123,7 +123,9 @@
       <button type="button" class="pl-chip on" data-kind="museum" aria-pressed="true">Museums</button>
       <input type="search" class="pl-field" id="placeSearch" placeholder="Search a place&hellip;" aria-label="Search places">
       <select class="pl-field" id="placeGov" aria-label="Filter by governorate"><option value="">All governorates</option></select>
+      <button type="button" class="pl-chip" id="nearMe" aria-pressed="false" hidden>Near me</button>
     </div>
+    <p class="form-note" id="nearNote" role="status" aria-live="polite"></p>
 
     <section id="placesMap" aria-label="Map of Egypt showing places"></section>
     <div class="pl-legend">
@@ -143,7 +145,7 @@
     <p class="lead" data-aos="fade-up">The same data as the map. Click any row to open it.</p>
     <div class="pl-wrap">
       <table class="pl-table">
-        <thead><tr><th>Name</th><th>Kind</th><th>Governorate</th><th class="num">Population (OSM)</th></tr></thead>
+        <thead><tr><th>Name</th><th>Kind</th><th>Governorate</th><th class="num">Population (OSM)</th><th class="num" id="distTh" hidden>From you</th></tr></thead>
         <tbody id="placeList"></tbody>
       </table>
     </div>
@@ -224,8 +226,8 @@
 <script src="assets/glyphs.js?v=3"></script>
 <script src="assets/wayfinding.js?v=1"></script>
 <script src="assets/egfmt.js?v=4"></script>
-<script src="assets/places.js?v=15"></script>
-<script src="assets/motion.js?v=4"></script>
+<script src="assets/places.js?v=16"></script>
+<script src="assets/motion.js?v=5"></script>
 <script src="assets/analytics.js?v=2"></script>
 </body>
 </html>
