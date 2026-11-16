@@ -27,6 +27,14 @@ const { chromium, executablePath, BASE } = require('./env');
   const b = await chromium.launch({ executablePath });
   let fails = 0;
   const fail = m => { console.log('FAIL ' + m); fails++; };
+  // Each section runs on its own. A Playwright call that throws used to end
+  // the whole script, so every later section went unread: in main's mutation
+  // pass (run 43948810613) the no-JS section never printed, and the case
+  // that hides the map without JavaScript went uncaught. A crash is now a
+  // named failure and the next section still runs.
+  const section = async (name, fn) => {
+    try { await fn(); } catch (e) { fail(`SECTION "${name}" CRASHED: ${String(e).split('\n')[0]}`); }
+  };
   const block = async ctx => ctx.route('**/*', r => {
     const u = r.request().url();
     return (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort();
@@ -64,7 +72,7 @@ const { chromium, executablePath, BASE } = require('./env');
   const compare = (exp, act) => Object.keys(exp.colours).filter(k => exp.colours[k] && (act[k] || '').toLowerCase() !== exp.colours[k].toLowerCase());
 
   // ---- 1. motion allowed ------------------------------------------------------
-  {
+  await section('motion', async () => {
     const ctx = await b.newContext({ reducedMotion: 'no-preference', viewport: { width: 1280, height: 900 } });
     await block(ctx);
     await ctx.addInitScript(recorder);
@@ -127,7 +135,7 @@ const { chromium, executablePath, BASE } = require('./env');
       else console.log('ok   July dates recolour every dot');
     }
     await ctx.close();
-  }
+  });
 
   // ---- 1b. a map just showing above the fold ------------------------------------
   // At 1280x900 the map starts below the fold. A reader who has scrolled until
@@ -135,7 +143,7 @@ const { chromium, executablePath, BASE } = require('./env');
   // (the first version waited for 35% of the map). Load with the map entirely
   // below the fold, bring 60px of it into view, and every dot on screen must
   // be shown: MAP EMPTY ON SCREEN.
-  {
+  await section('fold', async () => {
     const ctx = await b.newContext({ reducedMotion: 'no-preference', viewport: { width: 1280, height: 420 } });
     await block(ctx);
     const p = await ctx.newPage();
@@ -155,10 +163,10 @@ const { chromium, executablePath, BASE } = require('./env');
     else if (r.hidden) fail(`MAP EMPTY ON SCREEN: with ${r.peek}px of the map showing, ${r.hidden} of the ${r.on} dots on screen stay hidden`);
     else console.log(`ok   with ${r.peek}px of the map showing, its ${r.on} dots on screen are shown`);
     await ctx.close();
-  }
+  });
 
   // ---- 2. reduced motion --------------------------------------------------------
-  {
+  await section('reduced motion', async () => {
     const ctx = await b.newContext({ reducedMotion: 'reduce', viewport: { width: 1280, height: 900 } });
     await block(ctx);
     await ctx.addInitScript(recorder);
@@ -166,26 +174,34 @@ const { chromium, executablePath, BASE } = require('./env');
     await p.goto(BASE + '/index.html');
     try { await p.waitForSelector('#siteMap svg circle.s', { state: 'attached', timeout: 10000 }); } catch (e) { /* counted below */ }
     await p.evaluate(() => document.getElementById('siteMap').scrollIntoView({ block: 'center' }));
-    await p.waitForTimeout(300);
+    // A whole sweep's worth of time (17 x 70 ms + 550 ms), so motion that
+    // starts at any point is recorded rather than missed by one early reading.
+    await p.waitForTimeout(2600);
     const r = await p.evaluate(() => {
       const cs = [...document.querySelectorAll('#siteMap svg circle.s')];
+      const svg = document.querySelector('#siteMap svg');
       return { n: cs.length, anims: cs.reduce((s, c) => s + c.getAnimations().length, 0) + (window.__mapStarts || []).length,
-               hidden: cs.filter(c => parseFloat(getComputedStyle(c).opacity) < 0.99).length };
+               hidden: cs.filter(c => parseFloat(getComputedStyle(c).opacity) < 0.99).length,
+               cls: svg ? svg.getAttribute('class') : null };
     });
+    console.log(`     reduced motion: ${r.n} dots, ${r.anims} animations seen, ${r.hidden} hidden, class "${r.cls}"`);
     if (!r.n) fail('MAP NOT INLINED: no map under reduced motion');
     else if (r.anims || r.hidden) fail(`MAP MOTION UNDER REDUCED MOTION: ${r.anims} animations, ${r.hidden} dots hidden`);
     else console.log('ok   reduced motion: the coloured map at once, nothing moves');
     await ctx.close();
-  }
+  });
 
   // ---- 3. without JavaScript ----------------------------------------------------
-  {
+  await section('no JavaScript', async () => {
     const ctx = await b.newContext({ javaScriptEnabled: false, viewport: { width: 1280, height: 900 } });
     await block(ctx);
     const p = await ctx.newPage();
     await p.goto(BASE + '/index.html');
     const img = await p.$('#siteMap img');
-    if (img) { await img.scrollIntoViewIfNeeded(); await p.waitForTimeout(800); }
+    // Not img.scrollIntoViewIfNeeded(): that waits for the image to become
+    // visible, so with the image hidden it timed out and threw instead of
+    // reporting MAP HIDDEN WITHOUT JS.
+    if (img) { await p.evaluate(() => document.getElementById('siteMap').scrollIntoView({ block: 'center' })); await p.waitForTimeout(800); }
     const r = await p.evaluate(() => {
       const i = document.querySelector('#siteMap img');
       if (!i) return null;
@@ -195,7 +211,7 @@ const { chromium, executablePath, BASE } = require('./env');
     if (!r || !r.loaded || !r.shown || r.h < 150) fail('MAP HIDDEN WITHOUT JS: ' + JSON.stringify(r));
     else console.log(`ok   without JavaScript the map is an image, ${Math.round(r.w)}x${Math.round(r.h)}px`);
     await ctx.close();
-  }
+  });
 
   await b.close();
   if (fails) { console.log(`\n${fails} briefing-map failure(s)`); process.exit(1); }

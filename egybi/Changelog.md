@@ -2137,3 +2137,12 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   So the next occurrence names its own cause. Test-only; no site file changes.
 - **The verdict order, and why:** case 4 now judges the redirect first, and judges the sign-in by the login exchange as well as the flag. Run 43947896555's mutation pass missed UNASKED REDIRECT because the order was the other way round. The mutated sign-in did happen and did redirect, then community.html's own startup check received the stub's "nobody signed in" and cleared the flag, so the case read SIGN-IN NEVER HAPPENED instead.
+
+## 2026-11-16 — briefing-map.js: two sections that could not report what they guard
+- **What main's mutation pass found** (run 43948810613, 106 of 109 proven), two map cases went uncaught:
+  - **"hidden without JavaScript":** the no-JS section called Playwright's `scrollIntoViewIfNeeded` on the map image, which waits for it to become visible. With the image hidden it timed out and threw, so the section never printed MAP HIDDEN WITHOUT JS.
+  - **"moving under reduced motion":** that section read the map 300 ms after scrolling, so what it saw depended on when the sweep happened to run.
+- **Fixes:**
+  - the no-JS section scrolls with a plain script call;
+  - the reduced-motion section waits a whole sweep (2.6 s) and counts every recorded animation start, and prints what it saw;
+  - every section now runs inside its own guard, so a crash is a named failure (SECTION "..." CRASHED) and the following sections still run.
