@@ -1581,3 +1581,30 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - VACUOUS: fewer than 700 declarations read. Today it reads 930.
 - **Mutation cases 13h and 13i** were each proven catching locally: a one-off size in the stylesheet, a one-off size in a page's style attribute, and a step redefined in `egybi.css` alone.
 - **Next: S2 part 2,** for spacing, radii and repeated literal colours.
+
+## 2026-11-16 — Stop loading motion code that does nothing (study S4, part 1)
+- **Why:** measured on main, several pages loaded motion code that could not do anything there:
+  - **Motion One** (`vendor/motion.min.js`, 24.6 KB) was on 18 pages. Its only user, `motion.js`, behaves the same without it because it falls back to the browser's IntersectionObserver.
+  - **AOS** (`aos.css` + `aos.js`, 40.7 KB) was on 5 pages with no `data-aos` element: Ask, Dossier, Fair prices, Hieroglyphs and Plan.
+  - **The two prices pages** loaded AOS's script without its stylesheet, so it could not animate anything (14.7 KB).
+- **Removed:**
+  - those scripts and stylesheets;
+  - S1's `.js` flag on the 5 pages that no longer load AOS, because it is only needed where AOS can hide content;
+  - `motion.js`'s magnetic buttons. They leaned every primary button toward the cursor, so the target moved while a reader aimed at it.
+
+  Reveals, the reading-progress bar and the hero entrance are unchanged. `motion.js` moves to `?v=3`.
+- **A reader saves:**
+  - 24.6 KB on each of 18 pages;
+  - another 40.7 KB on 5 of them, and 14.7 KB on each prices page.
+- **Plan (`Improvement Plan 2026-11.md`):**
+  - **S2 part 2** (spacing, radii, colours) is recorded as measured and **not built**: no reader-visible defect;
+  - **S4** gets a status line, including two findings: `stocks.html`'s 31 `data-aos` marks are inert, and the 170 KB particles library is loaded by no page.
+- **New check `backend/verify/motion-weight.py`** (Verify (browser), beside type-scale) fails on:
+  - RETIRED LIBRARY: Motion One loaded again;
+  - UNUSED AOS: AOS loaded where nothing uses it;
+  - HALF AOS: one half of AOS loaded without the other;
+  - NO JS FLAG: AOS's CSS without S1's flag before it;
+  - VACUOUS: fewer than 150 pages read.
+
+  On the old tree it reports 26 problems; on this one, 0.
+- **Mutation cases 13j**, each proven catching locally: Motion One re-added to Privacy, and AOS re-added to Plan.
