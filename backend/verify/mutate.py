@@ -1048,12 +1048,16 @@ case("briefing map dots all one colour", "briefing-map.js", ["site/assets/site-m
 case("briefing map dots all at once, not north to south", "briefing-map.js", ["site/assets/site-map.css"],
      lambda: edit("site/assets/site-map.css", "animation-delay: calc(var(--i, 0) * 70ms);", "animation-delay: 0ms;"),
      lambda o: "MAP ORDER WRONG" in o, BMAP)
-# Reduced motion is guarded twice, in the script and in the stylesheet; one
-# guard alone cannot be caught, so the case removes both.
+# Reduced motion is locked THREE times: egybi.css's site-wide rule (under
+# reduce, * { animation: none !important }), the script's own check and the
+# stylesheet's no-preference query. Removing two left the site still, so the
+# case could never fire (runs 43948810613 and 43953866021); it removes all
+# three, to prove the check sees motion when nothing stops it.
 case("briefing map moving for readers who asked for reduced motion", "briefing-map.js",
-     ["site/assets/site-map.js", "site/assets/site-map.css"],
+     ["site/assets/site-map.js", "site/assets/site-map.css", "site/assets/egybi.css"],
      lambda: (edit("site/assets/site-map.js", "var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;", "var reduce = false;"),
-              edit("site/assets/site-map.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {")),
+              edit("site/assets/site-map.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {"),
+              edit("site/assets/egybi.css", "  * { animation: none !important; transition: none !important; }", "  * { }")),
      lambda o: "MAP MOTION UNDER REDUCED MOTION" in o, BMAP)
 case("briefing map hidden without JavaScript", "briefing-map.js", ["site/assets/site-map.css"],
      lambda: edit("site/assets/site-map.css", ".site-map img, .site-map svg { display: block;", ".site-map img { display: none; } .site-map svg { display: block;"),
