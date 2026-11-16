@@ -406,7 +406,11 @@ jobs:
     needs: gate
     if: needs.gate.outputs.run == 'true' && needs.gate.outputs.mutate == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # 60, not 45 (2026-11-16): with the header and briefing-map cases added on
+    # the PRs above, a run carrying platform.js's old 30 s hover timeouts took
+    # 45 min 18 s and was stopped at the cap (run 43921085159). Those timeouts
+    # are fixed; 60 leaves room for the case list to keep growing.
+    timeout-minutes: 60
 
     env:
       BASE: http://localhost:8793
