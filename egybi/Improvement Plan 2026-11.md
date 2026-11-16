@@ -675,3 +675,9 @@ Every item below is a browser feature. None adds a library, a font, a host or a 
 | Round 5: the sun path | #133 | CI running |
 | Round 5: WebP home poster | #134 | 83 KB to 37 KB; CI running |
 | Weekly sweep | — | started 12:02 UTC, 8 h 21 min after its 03:41 slot: GitHub delay as before |
+
+### M7. The mutation pass in its own job (planned 16 November 2026)
+- **Evidence:** with Round 4, `browser-checks` runs five more checkers and 94 mutation cases. On the stacked PRs it took 48m26s (#131, finished) and 50m29s–55m01s (#132, #124, #128, cancelled at the 50-minute cap). A cancel destroyed #128's logs, which hid a real `auth-flow.sh` failure. The cap was raised to 80 minutes as a stopgap.
+- **Fix:** move `mutate.py` into a second job, `mutation`, that needs `gate` and runs alongside `browser-checks` with its own setup (server, PHP, Chromium) and its own log upload. Each job then stays well under 45 minutes, and a slow mutation pass can no longer cancel the checks that decide a merge.
+- **Prove:** both jobs green on a PR that touches a checker; the mutation job skipped when the gate says no checker changed; a mutation case that cannot run still fails its job.
+- **Rollback:** fold the job back into `browser-checks`.

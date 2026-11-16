@@ -1836,3 +1836,6 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - under reduced motion it must be in place straight after load, and the arc must not transition;
   - at 04:00 it must wait below the horizon.
 - **Mutation cases:** the wrong share of the day must give SUN PATH WRONG, and the reduced-motion guard removed must give MOVES UNDER REDUCED MOTION.
+
+## 2026-11-16 — Plan: M7, the mutation pass in its own job
+- **Plan:** `Improvement Plan 2026-11.md` gains M7. Stacked runs reached 48–55 minutes, and the cancels at the 50-minute cap destroyed logs. The CI limit is raised to 80 as a stopgap, and the fix is to run `mutate.py` as a separate job.
