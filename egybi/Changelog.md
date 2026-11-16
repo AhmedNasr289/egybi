@@ -2147,3 +2147,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the no-JS section scrolls with a plain script call;
   - the reduced-motion section waits a whole sweep (2.6 s) and counts every recorded animation start, and prints what it saw;
   - every section now runs inside its own guard, so a crash is a named failure (SECTION "..." CRASHED) and the following sections still run.
+
+## 2026-11-17 — Year strip: figures stay on the same line as °C
+- **What the screenshots showed:** CI's screenshots of the year strip (run 43962750300) broke "under 28" from "°C" at 1280 and 390 px, leaving the unit alone at the start of a line.
+- **The fix:** `heat_calendar.findings()` joins every figure to its unit with a non-breaking space. That covers the year strip's sentence on visit.html and the same sentences on egypt-weather-by-month.html.

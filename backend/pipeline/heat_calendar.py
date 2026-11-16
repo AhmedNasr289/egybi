@@ -146,7 +146,10 @@ def findings(rows: list[Row]) -> list[str]:
         out.append(f"Every site stays under 34 °C in the afternoon in {months(all_under_34)}.")
     else:
         out.append("There is no month in which every site stays under 34 °C in the afternoon.")
-    return out
+    # Keep each figure on the same line as its unit: CI's screenshots of the
+    # year strip (run 43962750300) broke "under 28" from "°C" at 1280 and
+    # 390 px, leaving the unit alone at the start of a line.
+    return [x.replace(' °C', '&nbsp;°C') for x in out]
 
 
 def legend_html() -> str:
