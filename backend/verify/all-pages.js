@@ -59,6 +59,15 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
     try { resp = await p.goto(`${BASE}/${path}`, { waitUntil: 'load', timeout: 15000 }); }
     catch (e) { bad.push(path + '  ->  goto failed: ' + String(e).slice(0, 80)); p.off('pageerror', onErr); p.off('response', onResp); n++; continue; }
     await p.waitForTimeout(250);
+    // A map page builds its credit, and with it the CC BY 4.0 deed link, only
+    // after its data file arrives (streets.js calls mapkit.create once the
+    // district card loads). Read 250 ms after load, a slow CI runner reported
+    // streets.html as unlicensed (run 43922770714) on a page that is fine.
+    // Waiting for the link costs nothing on a fast run; a page that never
+    // links the deed still fails, 8 s later.
+    if (await p.$('.leaflet-container, script[src*="egypt-geo"], img[src*="egypt-silhouette"]')) {
+      await p.waitForSelector('a[href*="creativecommons.org/licenses/by/4.0"]', { state: 'attached', timeout: 8000 }).catch(() => {});
+    }
     const m = await p.evaluate(() => ({
       stuck: (document.body.innerText.match(/Loading[…\.]|Loading the/g) || []).length,
       h1: document.querySelectorAll('h1').length,
