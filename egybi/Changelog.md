@@ -1660,4 +1660,5 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - NO SIGN-IN: a signed-out "Share" must open the dialog and not the composer;
   - SHOWN WHILE OFF.
 - **Mutation cases:** the text helper switched to `innerHTML` must give MARKUP INJECTED, and the place filter dropped must give FILTER IGNORED.
+- **Moderation page:** `api/moderate.php`, which is key-gated, now lists queued and hidden travellers' notes, with their report count, and Publish, Hide and Delete buttons. It and the JSON API share one rule set, `notes_moderate()` in `notes_lib.php`, so the two cannot drift apart. Every action is logged in `note_audit`.
 - **Next:** the 3 latest notes on each visit page (R4-2c).

@@ -146,6 +146,45 @@ function notes_recount_helpful(PDO $db, string $noteId): void
        ->execute([$noteId, $noteId]);
 }
 
+function notes_audit(PDO $db, string $noteId, string $what): void
+{
+    $db->prepare('INSERT INTO note_audit (id,note_id,action,at) VALUES (?,?,?,?)')
+       ->execute([rid(16), $noteId, $what, now()]);
+}
+
+/**
+ * The one moderation rule set, used by the JSON API and by moderate.php:
+ * publish (clears its reports), hide, or delete (with its marks and reports).
+ * Every action is logged in note_audit. Returns a short notice.
+ */
+function notes_moderate(PDO $db, string $id, string $act): string
+{
+    notes_ensure_schema($db);
+    if ($id === '' || !ctype_xdigit($id)) return 'Invalid id.';
+    $st = $db->prepare('SELECT id FROM notes WHERE id=?');
+    $st->execute([$id]);
+    if (!$st->fetchColumn()) return 'Unknown note.';
+    if ($act === 'publish' || $act === 'hide') {
+        with_tx($db, function (PDO $db) use ($id, $act) {
+            $db->prepare('UPDATE notes SET status=?, updated_at=? WHERE id=?')
+               ->execute([$act === 'publish' ? 'published' : 'hidden', now(), $id]);
+            if ($act === 'publish') $db->prepare('DELETE FROM note_reports WHERE note_id=?')->execute([$id]);
+            notes_audit($db, $id, $act);
+        });
+        return $act === 'publish' ? 'Published.' : 'Hidden.';
+    }
+    if ($act === 'delete') {
+        with_tx($db, function (PDO $db) use ($id) {
+            $db->prepare('DELETE FROM note_helpful WHERE note_id=?')->execute([$id]);
+            $db->prepare('DELETE FROM note_reports WHERE note_id=?')->execute([$id]);
+            $db->prepare('DELETE FROM notes WHERE id=?')->execute([$id]);
+            notes_audit($db, $id, 'delete');
+        });
+        return 'Deleted.';
+    }
+    return 'Unknown moderation action.';
+}
+
 function notes_export(PDO $db, string $userId): array
 {
     notes_ensure_schema($db);

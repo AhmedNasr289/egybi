@@ -51,12 +51,6 @@ function notes_find(PDO $db, string $id): ?array
     return $st->fetch() ?: null;
 }
 
-function notes_audit(PDO $db, string $noteId, string $what): void
-{
-    $db->prepare('INSERT INTO note_audit (id,note_id,action,at) VALUES (?,?,?,?)')
-       ->execute([rid(16), $noteId, $what, now()]);
-}
-
 switch ($action) {
 
 case 'list': {
@@ -203,27 +197,10 @@ case 'moderate': {
     }
     if ($method !== 'POST') json_out(false, ['message' => 'POST required.'], 405);
     $b = body();
-    $note = notes_find($db, (string)($b['id'] ?? ''));
-    if (!$note) json_out(false, ['message' => 'Unknown note.'], 404);
-    $act = (string)($b['act'] ?? '');
-    if ($act === 'publish' || $act === 'hide') {
-        with_tx($db, function (PDO $db) use ($note, $act) {
-            $db->prepare('UPDATE notes SET status=?, updated_at=? WHERE id=?')
-               ->execute([$act === 'publish' ? 'published' : 'hidden', now(), $note['id']]);
-            if ($act === 'publish') $db->prepare('DELETE FROM note_reports WHERE note_id=?')->execute([$note['id']]);
-            notes_audit($db, $note['id'], $act);
-        });
-    } elseif ($act === 'delete') {
-        with_tx($db, function (PDO $db) use ($note) {
-            $db->prepare('DELETE FROM note_helpful WHERE note_id=?')->execute([$note['id']]);
-            $db->prepare('DELETE FROM note_reports WHERE note_id=?')->execute([$note['id']]);
-            $db->prepare('DELETE FROM notes WHERE id=?')->execute([$note['id']]);
-            notes_audit($db, $note['id'], 'delete');
-        });
-    } else {
-        json_out(false, ['message' => 'Unknown moderation action.'], 422);
-    }
-    json_out(true, ['message' => 'Done.']);
+    $msg = notes_moderate($db, (string)($b['id'] ?? ''), (string)($b['act'] ?? ''));
+    if ($msg === 'Unknown note.' || $msg === 'Invalid id.') json_out(false, ['message' => 'Unknown note.'], 404);
+    if ($msg === 'Unknown moderation action.') json_out(false, ['message' => $msg], 422);
+    json_out(true, ['message' => $msg]);
 }
 
 default:
