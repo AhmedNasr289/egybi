@@ -112,9 +112,16 @@ const KEY = 'egybi.return';
     // page, its login request went around this check's stub to the preview
     // server, and the reader was never signed in, mutated or not. env.js now
     // blocks workers; this line makes a failed sign-in loud instead of green.
+    //
+    // The redirect is judged FIRST, and the sign-in by the login exchange as
+    // well as the flag. Run 43947896555's mutation pass missed UNASKED REDIRECT
+    // because the order was the other way round: the mutated sign-in did
+    // happen and did redirect, then community.html's own startup check got
+    // this stub's "nobody signed in" and cleared the flag, so the case read
+    // SIGN-IN NEVER HAPPENED instead.
     const signed = await p.evaluate(() => localStorage.getItem('egybi.account'));
-    if (signed !== '1') fail(`SIGN-IN NEVER HAPPENED: the ordinary sign-in in case 4 did not sign the reader in, so it proves nothing (login: ${login}; ${dialog}; at ${at})`);
-    else if (at !== '/index.html') fail('UNASKED REDIRECT: an ordinary sign-in moved the reader to ' + at);
+    if (at !== '/index.html') fail('UNASKED REDIRECT: an ordinary sign-in moved the reader to ' + at + ' (login: ' + login + ')');
+    else if (signed !== '1' || !/^200 POST/.test(login)) fail(`SIGN-IN NEVER HAPPENED: the ordinary sign-in in case 4 did not sign the reader in, so it proves nothing (login: ${login}; ${dialog}; at ${at})`);
     else console.log('ok   an ordinary sign-in stays on the page it happened on');
     await ctx.close();
   }
