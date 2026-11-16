@@ -1654,6 +1654,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **Fix:** `motion.js` now sweeps once per frame while anything is pending, revealing every block whose top is above the bottom of the screen. The sweep removes its listener when nothing is left.
   - **Check:** `nojs.js` gains a fling step, one jump to the bottom, which fails STUCK AFTER A FLING every time the sweep is missing, not only when frames happen to drop.
   - **Mutation case:** the sweep removed must give STUCK AFTER A FLING.
+- **Fix after run 43865452380:** the reveal fix passed on all 15 pages (Explore: 106 of 106 blocks, after scrolling and after a fling). Two mutation cases could not run because they looked for the exact tag `motion.js?v=4`, which the bump to `?v=5` removed. `mutate.py` gains `asset_tag()`, which reads a page's current tag for a versioned asset. Those two cases, and the `egybi.css?v=48` case, now use it, so a version bump can no longer silently disarm a mutation case.
 ## 2026-11-16 — "Today at this site" on every visit page (Round 4, R4-1)
 - **Why:** the study found nothing that helps on the day itself. The visit pages gave golden light for the 15th of each month, and no code anywhere read the time of day. A tourist at Giza wants to know when the light starts and ends today, and how long is left.
 - **The card:** each of the 18 visit pages now opens with "Today at <site>":

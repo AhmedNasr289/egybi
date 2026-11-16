@@ -78,6 +78,17 @@ def edit(path, old, new):
     p.write_text(t.replace(old, new, 1), encoding="utf-8")
 
 
+def asset_tag(path, asset):
+    """The page's own tag for a versioned asset (`motion.js`, `egybi.css`),
+    whatever its ?v= is now. Hard-coding the version broke two cases the day
+    motion.js went from v=4 to v=5 (run 43865452380: COULD NOT MUTATE, anchor
+    not found): a version bump must not silently disarm a mutation case."""
+    t = Path(path).read_text(encoding="utf-8")
+    m = re.search(r'<(?:script src|link href)="assets/' + re.escape(asset) + r'\?v=\d+"[^>]*>(?:</script>)?', t)
+    assert m, f"no {asset} tag in {path}"
+    return m.group(0)
+
+
 def case(name, tool, files, mutate, detects, cmd, timeout=900):
     """detects(output) -> bool : did the tool report THIS defect?"""
     global skipped
@@ -379,12 +390,12 @@ case("type scale step drifts from typescale.py", "type-scale.py", ["site/assets/
 # (5 pages). Putting either back must be reported.
 PY_MW = f'"{sys.executable}" {HERE}/motion-weight.py'
 case("retired Motion One library loaded again", "motion-weight.py", ["site/privacy.html"],
-     lambda: edit("site/privacy.html", '<script src="assets/motion.js?v=4"></script>',
-                  '<script src="assets/vendor/motion.min.js"></script>\n<script src="assets/motion.js?v=4"></script>'),
+     lambda: edit("site/privacy.html", asset_tag("site/privacy.html", "motion.js"),
+                  '<script src="assets/vendor/motion.min.js"></script>\n' + asset_tag("site/privacy.html", "motion.js")),
      lambda o: "RETIRED LIBRARY" in o and "privacy.html" in o, PY_MW)
 case("retired AOS stylesheet loaded again", "motion-weight.py", ["site/plan.html"],
-     lambda: edit("site/plan.html", '<link href="assets/egybi.css?v=48" rel="stylesheet">',
-                  '<link href="assets/egybi.css?v=48" rel="stylesheet">\n<link href="assets/vendor/aos.css" rel="stylesheet">'),
+     lambda: edit("site/plan.html", asset_tag("site/plan.html", "egybi.css"),
+                  asset_tag("site/plan.html", "egybi.css") + '\n<link href="assets/vendor/aos.css" rel="stylesheet">'),
      lambda o: "RETIRED LIBRARY" in o and "aos.css" in o and "plan.html" in o, PY_MW)
 
 # ---- 13k. the one reveal system never reveals -----------------------------
@@ -411,7 +422,7 @@ case("reveal sweep removed: blocks skipped by a fling stay hidden", "nojs.js", [
 # Without motion.js, the .js flag hides every [data-aos] block until the 4 s
 # fallback: four seconds of blank sections on every visit.
 case("flag set but the reveal script not loaded", "motion-weight.py", ["site/about.html"],
-     lambda: edit("site/about.html", '<script src="assets/motion.js?v=4"></script>', ""),
+     lambda: edit("site/about.html", asset_tag("site/about.html", "motion.js"), ""),
      lambda o: "FLAG WITHOUT REVEALER" in o and "about.html" in o, PY_MW)
 
 # ---- 13c. CC BY 4.0: geometry rendered with the credit stripped ------------
