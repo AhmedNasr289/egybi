@@ -1657,3 +1657,8 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - no `/auth/` or `/api/` response may be cached;
   - back online, the network copy must win over a planted stale one.
 - **Mutation cases:** navigations not answered from the cache must give OFFLINE PLAN NOT SHOWN, and the `/auth/` and `/api/` exclusions removed must give ACCOUNT DATA CACHED.
+
+- **Fix before merge (self-review):**
+  - Pages were cached under their full address, so a link from a verification or reset email (`/?verify=…`) would have left its one-time token in the device's cache, and every `?add=…` visit stored another copy of the planner. Pages are now cached under their path alone.
+  - The worker's version moves to `egybi-sw-2`, so v1 caches are dropped.
+  - `offline.js` opens `/index.html?verify=…` and fails if any cache key keeps it, and a mutation case puts the full address back.

@@ -27,7 +27,7 @@
 'use strict';
 
 var KILL = false;
-var VERSION = 'egybi-sw-1';
+var VERSION = 'egybi-sw-2';
 var PAGES = VERSION + '-pages', STATIC = VERSION + '-static', DATA = VERSION + '-data';
 var MAX_PAGES = 60, MAX_STATIC = 150, MAX_DATA = 40;
 var PRECACHE = ['/plan.html', '/manifest.webmanifest', '/favicon.svg', '/icon-192.png'];
@@ -80,7 +80,11 @@ self.addEventListener('fetch', function (e) {
   if (/^\/(auth|api)\//.test(url.pathname)) return;
 
   if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).then(function (res) { put(PAGES, MAX_PAGES, req, res); return res; })
+    // Cache a page under its path alone: a link from a verification or reset
+    // email (/?verify=...) must not leave its one-time token in the cache, and
+    // ?add=... visits must not pile up copies of the planner.
+    var key = new Request(url.origin + url.pathname);
+    e.respondWith(fetch(req).then(function (res) { put(PAGES, MAX_PAGES, key, res); return res; })
       .catch(function () {
         return caches.match(req, { ignoreSearch: true }).then(function (hit) {
           return hit || new Response(OFFLINE_HTML, { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } });

@@ -931,6 +931,11 @@ case("offline: account requests cached", "offline.js",
      lambda: edit("site/sw.js", "  if (/^\\/(auth|api)\\//.test(url.pathname)) return;\n", ""),
      lambda o: "ACCOUNT DATA CACHED" in o, OFFLINE)
 
+case("offline: a page's query string (a verify token) cached", "offline.js",
+     ["site/sw.js"],
+     lambda: edit("site/sw.js", "put(PAGES, MAX_PAGES, key, res)", "put(PAGES, MAX_PAGES, req, res)"),
+     lambda o: "ACCOUNT DATA CACHED" in o and "verify=" in o, OFFLINE)
+
 # ---- Trip share link (Round 4, R4-6) ---------------------------------------
 # A shared link is untrusted input. Without the Egypt bounds check, a link can
 # place a stop anywhere; without the ask-first branch, opening a link silently

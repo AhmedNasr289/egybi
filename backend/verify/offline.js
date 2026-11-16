@@ -46,14 +46,15 @@ const TRIP = { start: '2026-12-10', end: '2026-12-14', name: 'Offline test',
   // 3: nothing private in any cache, even after opening an account URL directly
   await p.goto(BASE + '/auth/auth.php?action=me').catch(() => {});
   await p.goto(BASE + '/api/notes.php?action=list').catch(() => {});
+  await p.goto(BASE + '/index.html?verify=0123456789abcdef&add=giza').catch(() => {});
   await p.goto(BASE + '/plan.html');
   await p.waitForTimeout(800);
   const cached = await p.evaluate(async () => {
     const out = [];
-    for (const k of await caches.keys()) for (const r of await (await caches.open(k)).keys()) out.push(new URL(r.url).pathname);
+    for (const k of await caches.keys()) for (const r of await (await caches.open(k)).keys()) { const x = new URL(r.url); out.push(x.pathname + x.search); }
     return out;
   });
-  const privateHits = cached.filter(u => /^\/(auth|api)\//.test(u));
+  const privateHits = cached.filter(u => /^\/(auth|api)\//.test(u) || /[?&](verify|reset)=/.test(u));
   if (privateHits.length) fail('ACCOUNT DATA CACHED: ' + privateHits.join(', '));
   else console.log(`ok   ${cached.length} files cached, none under /auth/ or /api/`);
 
