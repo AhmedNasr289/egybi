@@ -41,9 +41,20 @@ const KEY = 'egybi.return';
     });
     return ctx;
   }
+  // The dialog moves focus to its first field 60 ms after it opens
+  // (auth.js setView). Typing before that let the focus jump land mid-fill:
+  // run 43962669112 put the password into the email field
+  // ("t@example.orga long enough password", password 0 chars), no login was
+  // sent, and case 4 read SIGN-IN NEVER HAPPENED. Wait until the focus is
+  // inside the dialog, as a reader's first keystroke always is.
+  async function dialogSettled(p) {
+    await p.waitForFunction(() => document.activeElement && document.activeElement.closest && document.activeElement.closest('#authModal'), null, { timeout: 5000 })
+      .catch(() => { /* typing then still exercises the dialog; a real fault shows in the verdict */ });
+  }
+
   async function signInFromLink(p) {
     await p.goto(BASE + '/index.html?verify=0123456789abcdef');
-    await p.waitForSelector('#authModal #authEmail', { timeout: 15000 });
+    await p.waitForSelector('#authModal #authEmail', { timeout: 15000 }); await dialogSettled(p);
     await p.fill('#authEmail', 't@example.org');
     await p.fill('#authPw', 'a long enough password');
     await p.click('#authModal .auth-submit');
@@ -56,7 +67,7 @@ const KEY = 'egybi.return';
     const ctx = await context(); const p = await ctx.newPage();
     await p.goto(BASE + '/community.html');
     await p.evaluate(() => window.EGYBI.account.open('up'));
-    await p.waitForSelector('#authModal #authEmail', { timeout: 15000 });
+    await p.waitForSelector('#authModal #authEmail', { timeout: 15000 }); await dialogSettled(p);
     await p.fill('#authEmail', 't@example.org');
     await p.fill('#authPw', 'a long enough password');
     await p.click('#authModal .auth-submit');
@@ -88,7 +99,7 @@ const KEY = 'egybi.return';
     await p.goto(BASE + '/index.html');
     await p.evaluate(k => localStorage.setItem(k, JSON.stringify({ p: '/community.html', t: Date.now() })), KEY);
     await p.evaluate(() => window.EGYBI.account.open('in'));
-    await p.waitForSelector('#authModal #authEmail', { timeout: 15000 });
+    await p.waitForSelector('#authModal #authEmail', { timeout: 15000 }); await dialogSettled(p);
     await p.fill('#authEmail', 't@example.org');
     await p.fill('#authPw', 'a long enough password');
     // Wait for the login exchange itself, not a fixed time, and keep what it
