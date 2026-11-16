@@ -236,8 +236,8 @@ def build_site_months():
             page(title, desc, url, body, ld, og_image=f"{SITE_URL}/og-visit.png?v=3",
                  # Only these pages carry a place to save, so only they load it.
                  extra_foot='\n<script src="../assets/saveplace.js?v=1"></script>'
-                            '\n<link rel="stylesheet" href="../assets/today.css?v=1">'
-                            '\n<script src="../assets/today.js?v=1"></script>'))
+                            '\n<link rel="stylesheet" href="../assets/today.css?v=2">'
+                            '\n<script src="../assets/today.js?v=2"></script>'))
         urls.append((url, '0.7'))
     return urls
 
