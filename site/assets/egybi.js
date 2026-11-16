@@ -14,6 +14,18 @@
   window.EGYBI = window.EGYBI || {};
   window.EGYBI.reduceMotion = reduceMotion;
 
+  // ---- the site's own addresses ----
+  // 'data/x.json' and 'api/x.php' are the SITE's paths, not the page's. The
+  // Arabic and Russian pages sit one folder down (ar/, ru/), where the bare
+  // relative path would ask for ar/data/x.json - a 404 and an empty page. This
+  // file always sits in assets/, so its own address gives the site root, the
+  // way analytics.js finds api/ and trip.js finds data/.
+  var ME = document.currentScript && document.currentScript.src;
+  var ROOT = ME ? new URL('../', ME).href : '';
+  window.EGYBI.url = function (path) {
+    return (ROOT && !/^([a-z]+:|\/|#)/i.test(path)) ? new URL(path, ROOT).href : path;
+  };
+
   // ---- mobile nav toggle ----
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');

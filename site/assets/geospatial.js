@@ -114,7 +114,7 @@
              fillOpacity: overlayOn() ? DIM_FILL : FULL_FILL };
   }
   function loadJSON(url) {
-    return fetch(url, { cache: 'no-cache' }).then(function (r) {
+    return fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url(url) : url), { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
     });

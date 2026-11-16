@@ -30,7 +30,8 @@ from .common import SITE, SITE_URL, read_text, write_text
 from .i18n_units import norm, script_strings, units
 
 PAGES = ['about.html', 'privacy.html', 'index.html', 'plan.html', 'fair-prices.html',
-         'hieroglyphs.html', 'dossier.html', 'ask.html']
+         'hieroglyphs.html', 'dossier.html', 'ask.html',
+         'visit.html', 'community.html', 'places.html', 'geospatial.html']
 
 LANGS = {
     'ar': {'dir': 'rtl', 'label': 'العربية', 'short': 'عربي',
@@ -46,6 +47,17 @@ EN = {'label': 'English', 'short': 'EN', 'menu': 'Language'}
 CSS_V, JS_V = 1, 1
 CAT_DIR = os.path.join(os.path.dirname(SITE), 'backend', 'i18n')
 TAG = re.compile(r'<[^>]+>')
+# Attribute values a reader sees (a tooltip, alt text) are translated with the
+# text around them; everything else in a tag - href, class, id, data-* - must
+# match the English exactly, so a translation cannot move a link or a hook.
+READABLE_ATTR = re.compile(r'(?<=[\s])(title|alt|aria-label|placeholder)="[^"]*"')
+
+
+def tag_shape(s: str) -> list:
+    """A unit's tags with the readable attribute values blanked, in order-free form."""
+    return sorted(READABLE_ATTR.sub(r'\1=""', t) for t in TAG.findall(s))
+
+
 GLOBE = ('<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
          'stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/>'
          '<path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>')
@@ -64,7 +76,7 @@ def load_catalogue(lang: str) -> dict:
         en, tr = norm(en), tr.strip()
         if en in cat:
             raise SystemExit(f'{lang}.tsv line {n}: duplicate entry for {en[:60]!r}')
-        if sorted(TAG.findall(en)) != sorted(TAG.findall(tr)):
+        if tag_shape(en) != tag_shape(tr):
             raise SystemExit(f'{lang}.tsv line {n}: the translation does not carry the same tags as the English')
         cat[en] = tr
     return cat

@@ -607,12 +607,12 @@
     if (!initMap()) { empty('The map library did not load, so this page cannot draw Egypt.'); return; }
     // Heritage is optional context for the "nearest site" line; the page works
     // without it, so its failure is swallowed rather than surfaced.
-    fetch('data/geo-heritage.json', { cache: 'no-cache' })
+    fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/geo-heritage.json') : 'data/geo-heritage.json'), { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (h) { if (h && h.sites) S.heritage = h.sites; })
       .catch(function () {});
 
-    fetch('data/geo-places.json', { cache: 'no-cache' })
+    fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/geo-places.json') : 'data/geo-places.json'), { cache: 'no-cache' })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
       .then(function (d) {
         S.data = d;

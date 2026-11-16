@@ -34,6 +34,25 @@ once, on either page. 142 entries per language in stage 1.
 - the two population figures on the home page (١١٦٫٥ / 116,5 million and
   ١٠٧ / 107 million) and the GDP pair (−18.4%, +67.9%).
 
+## Stage 2b (2026-11-17): When to go, Community, Places and the Atlas
+
+| Page | Arabic | Russian | English source |
+|---|---|---|---|
+| When to go | https://egybi.com/ar/visit.html | https://egybi.com/ru/visit.html | https://egybi.com/visit.html |
+| Community | https://egybi.com/ar/community.html | https://egybi.com/ru/community.html | https://egybi.com/community.html |
+| Places | https://egybi.com/ar/places.html | https://egybi.com/ru/places.html | https://egybi.com/places.html |
+| Atlas | https://egybi.com/ar/geospatial.html | https://egybi.com/ru/geospatial.html | https://egybi.com/geospatial.html |
+
+315 more entries per language (694 in total). Please look especially at:
+
+- the climate caveats on When to go ("What these numbers are not", "Three
+  figures, three different questions"): they explain what the temperatures
+  mean, so the meaning must match exactly;
+- the Atlas's "What this map is not" paragraph, which tells readers the
+  health layer is not a care directory;
+- the month abbreviations in the year strip (ينا، فبر… / янв, фев…), and the
+  18 site names, which should match the planner's.
+
 ## Where the text lives
 
 - `backend/i18n/ar.tsv` and `backend/i18n/ru.tsv`: one line per unit,

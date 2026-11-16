@@ -11,8 +11,10 @@
   'use strict';
   var root = document.getElementById('notes');
   if (!root) return;
-  var API = 'api/notes.php';
-  var AUTH = 'auth/auth.php';
+  // the site's paths, not the page's: this also runs one folder down (ar/, ru/)
+  var site = function (p) { return window.EGYBI && window.EGYBI.url ? window.EGYBI.url(p) : p; };
+  var API = site('api/notes.php');
+  var AUTH = site('auth/auth.php');
   var $ = function (id) { return document.getElementById(id); };
   var list = $('notesList'), more = $('notesMore'), pick = $('notesSite'),
       form = $('notesForm'), write = $('notesWrite'), say = $('notesNote'),

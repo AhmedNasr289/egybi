@@ -1090,6 +1090,9 @@ TWIN = f"node {HERE}/twin-data.js"
 case("translated pages fetching data relative to themselves", "twin-data.js", ["site/assets/trip.js"],
      lambda: edit("site/assets/trip.js", "cache[path] = fetch(url(path), {", "cache[path] = fetch(path, {"),
      lambda o: "TWIN DATA FROM WRONG FOLDER" in o, TWIN)
+case("EGYBI.url resolving against the page, not the site", "twin-data.js", ["site/assets/egybi.js"],
+     lambda: edit("site/assets/egybi.js", "  var ROOT = ME ? new URL('../', ME).href : '';", "  var ROOT = '';"),
+     lambda o: "TWIN DATA FROM WRONG FOLDER" in o or "TWIN REQUEST FAILED" in o, TWIN)
 case("a script link to an untranslated page left relative to the twin", "twin-data.js", ["site/assets/home.js"],
      lambda: edit("site/assets/home.js", "' + T.url('visit.html#month') + '", "visit.html#month"),
      lambda o: "TWIN LINK WRONG FOLDER" in o, TWIN)

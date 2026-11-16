@@ -2236,3 +2236,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **And the harness:** mutate.py now prints what a checker said for any case that is not a clean pass. Before, a NOISY verdict left only the word, and the cause could not be found without a re-run.
 ## 2026-11-17 — The year strip's order check: the same scheduled-start timing
 - `year-strip.js` timed each month with `performance.now()` when its `animationstart` arrived, which is the same weakness that made the briefing map's order check flake. It now uses each cell's scheduled start (start time plus delay). It has not flaked yet; this removes the cause before it does.
+## 2026-11-17 — Trilingual stage 2b: When to go, Community, Places and the Atlas in Arabic and Russian
+- **What is new:** Arabic and Russian copies of visit.html, community.html, places.html and geospatial.html. That adds 315 entries per language and 8 sitemap URLs (71 to 79).
+- **One fix for every script, not one per script:** `egybi.js`, which every page loads first, now offers `EGYBI.url()`. It resolves the site's own paths (`data/`, `api/`, `auth/`) against its own address in `assets/`. `visit.js`, `places.js`, `geospatial.js`, `community.js` and `notes.js` fetch through it, so their translated copies load data instead of asking for `ar/data/...`. Six script versions are bumped, including `egybi.js` on all 197 pages, through the generator for the generated ones.
+- **The catalogue's tag rule, refined:** a translation must still carry exactly the English tags, but readable attribute values (`title`, `alt`, `aria-label`, `placeholder`) may be translated with the text around them. That is how the year strip's month abbreviations get tooltips in each language. The rule is tested both ways: a translated tooltip is accepted, and a changed `href`, `src` or `data-title` is still refused. The first draft let `data-title` through, because `` matches after a hyphen, and that control caught it.
+- **Checks:**
+  - `twin-data.js` now opens all seven data-loading pages in three languages, and treats `api/` and `auth/` requests like `data/`.
+  - A new mutation case breaks `EGYBI.url` and must be caught.
+  - CI screenshots add `ar/visit.html` and `ru/places.html`.
+  - A Russian title and description were shortened (seo.py).
+- **Review:** `backend/i18n/REVIEW.md` lists the four pages and what to read most carefully.
