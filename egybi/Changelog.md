@@ -2087,3 +2087,8 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - The links are now 60 px apart.
   - The cross-fade test now asserts what the site controls: the page's own `@view-transition` opt-in, read through the CSSOM, is in effect without reduced motion and not under it. Whether the browser then plays the fade is printed, not graded.
 - **No site file changes.** The live behaviour of M1 is checked by hand in the browser after the merge.
+
+## 2026-11-16 — The briefing map's check reads the sweep it is checking (follows the briefing map)
+- **The defect:** CI run 43922770714 reported NO MAP MOTION on a map that moves. That was confirmed in a real browser on the live home page with the same code: the dots started 70 ms apart from Alexandria south, and all 18 were shown after the sweep.
+- **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
+- **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.

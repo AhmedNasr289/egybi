@@ -7,9 +7,10 @@
       - each dot has the colour of its own card's heat band for the briefing
         month, computed here from the page's own trip.js and figures:
         MAP COLOURS WRONG;
-      - when the briefing is reached the dots come in north to south, one after
-        another (animation delays ascend with the generator's order, and that
-        order descends in latitude): NO MAP MOTION / MAP ORDER WRONG;
+      - the dots come in north to south, one after another: every dot's
+        animationstart is recorded from page load, and in the last sweep they
+        start in the generator's order, at least 30 ms apart, an order that
+        descends in latitude: NO MAP MOTION / MAP ORDER WRONG;
       - the animation touches opacity and transform only: MAP ANIMATES LAYOUT;
       - afterwards every dot is fully shown: MAP DOTS STAY HIDDEN;
       - the caption names the coolest and hottest afternoon: NO MAP SUMMARY;
@@ -44,12 +45,29 @@ const { chromium, executablePath, BASE } = require('./env');
     document.querySelectorAll('#siteMap svg circle.s').forEach(c => { o[c.getAttribute('data-key')] = c.getAttribute('fill'); });
     return o;
   };
+  // Every dot's animationstart from the first moment of the page, with the
+  // properties its keyframes touch. Reading getAnimations() at one instant was
+  // the first version, and it missed the sweep in CI (run 43922770714): at
+  // 1280x900 the map is on screen at load, so the sweep had already played and
+  // finished before the check scrolled to it, and a finished animation is no
+  // longer listed. Events are recorded whenever the sweep plays.
+  const recorder = () => {
+    window.__mapStarts = [];
+    document.addEventListener('animationstart', e => {
+      const c = e.target;
+      if (!c || !c.matches || !c.matches('#siteMap circle.s')) return;
+      const a = c.getAnimations()[0];
+      const props = a ? [...new Set((a.effect.getKeyframes() || []).flatMap(k => Object.keys(k)))] : [];
+      window.__mapStarts.push({ key: c.getAttribute('data-key'), order: +c.getAttribute('data-order'), t: performance.now(), props });
+    }, true);
+  };
   const compare = (exp, act) => Object.keys(exp.colours).filter(k => exp.colours[k] && (act[k] || '').toLowerCase() !== exp.colours[k].toLowerCase());
 
   // ---- 1. motion allowed ------------------------------------------------------
   {
     const ctx = await b.newContext({ reducedMotion: 'no-preference', viewport: { width: 1280, height: 900 } });
     await block(ctx);
+    await ctx.addInitScript(recorder);
     const p = await ctx.newPage();
     await p.goto(BASE + '/index.html');
     let inlined = true;
@@ -58,37 +76,31 @@ const { chromium, executablePath, BASE } = require('./env');
     if (!inlined || n !== 18) fail(`MAP NOT INLINED: ${n} dots on the inlined map, expected 18`);
     else console.log('ok   the map is inlined with 18 sites');
 
-    // Reach the briefing, then read the motion while it runs.
+    // Reach the briefing and let the sweep finish, then read what played.
     await p.evaluate(() => document.getElementById('siteMap').scrollIntoView({ block: 'center' }));
-    await p.waitForTimeout(150);
-    const mo = await p.evaluate(() => {
-      const cs = [...document.querySelectorAll('#siteMap svg circle.s')];
-      const props = new Set();
-      const rows = cs.map(c => {
-        const a = c.getAnimations();
-        a.forEach(x => (x.effect.getKeyframes() || []).forEach(k => Object.keys(k).forEach(p => props.add(p))));
-        return { key: c.getAttribute('data-key'), order: +c.getAttribute('data-order'), anims: a.length,
-                 delay: a.length ? a[0].effect.getTiming().delay : null };
-      });
-      return { rows, props: [...props] };
-    });
-    if (inlined) {
-      if (mo.rows.some(r => !r.anims)) fail(`NO MAP MOTION: ${mo.rows.filter(r => !r.anims).length} of ${mo.rows.length} dots do not animate when reached`);
-      else console.log('ok   the dots animate when the briefing is reached');
-      const byOrder = mo.rows.slice().sort((x, y) => x.order - y.order);
-      const lat = await p.evaluate(() => { const o = {}; window.EGYBI.heat.sites.forEach(s => { o[s.key] = s.lat; }); return o; });
-      const latOk = byOrder.every((r, i) => i === 0 || lat[r.key] <= lat[byOrder[i - 1].key]);
-      const delayOk = byOrder.every((r, i) => i === 0 || (r.delay != null && r.delay > byOrder[i - 1].delay));
-      if (!latOk || !delayOk) fail(`MAP ORDER WRONG: north-to-south ${latOk ? 'ok' : 'broken'}, delays ${delayOk ? 'ascend' : 'do not ascend'}`);
-      else console.log('ok   north to south, one after another');
-      const bad = mo.props.filter(x => !['offset', 'easing', 'composite', 'computedOffset', 'opacity', 'transform'].includes(x));
-      if (bad.length) fail('MAP ANIMATES LAYOUT: ' + bad.join(', '));
-      else console.log('ok   opacity and transform only');
-    }
-
     await p.waitForTimeout(2600);
     const after = await p.evaluate(() => [...document.querySelectorAll('#siteMap svg circle.s')].filter(c => parseFloat(getComputedStyle(c).opacity) < 0.99).length);
     if (inlined && after) fail(`MAP DOTS STAY HIDDEN: ${after} dots not fully shown after the sweep`);
+
+    const starts = await p.evaluate(() => window.__mapStarts || []);
+    if (inlined) {
+      const keys = new Set(starts.map(s => s.key));
+      if (keys.size < 18) fail(`NO MAP MOTION: ${18 - keys.size} of 18 dots never animated (${starts.length} animation starts recorded)`);
+      else console.log(`ok   every dot animated (${starts.length} starts recorded, ${Math.round(starts.length / 18)} sweep(s))`);
+      // The last sweep: its 18 starts, in time order, must run north to south,
+      // one after another (at least 30 ms apart; they are set 70 ms apart).
+      const last = starts.slice(-18).sort((x, y) => x.t - y.t);
+      const lat = await p.evaluate(() => { const o = {}; window.EGYBI.heat.sites.forEach(s => { o[s.key] = s.lat; }); return o; });
+      const inOrder = last.length === 18 && last.every((s, i) => i === 0 || s.order > last[i - 1].order);
+      const spaced = last.length === 18 && last.every((s, i) => i === 0 || s.t - last[i - 1].t >= 30);
+      const byOrder = last.slice().sort((x, y) => x.order - y.order);
+      const latOk = byOrder.every((s, i) => i === 0 || lat[s.key] <= lat[byOrder[i - 1].key]);
+      if (!inOrder || !spaced || !latOk) fail(`MAP ORDER WRONG: started in order ${inOrder}, one after another ${spaced}, north to south ${latOk}`);
+      else console.log(`ok   north to south, one after another (${Math.round(last[17].t - last[0].t)} ms from first to last)`);
+      const bad = [...new Set(starts.flatMap(s => s.props))].filter(x => !['offset', 'easing', 'composite', 'computedOffset', 'opacity', 'transform'].includes(x));
+      if (bad.length) fail('MAP ANIMATES LAYOUT: ' + bad.join(', '));
+      else console.log('ok   opacity and transform only');
+    }
 
     const exp = await p.evaluate(expected), act = await p.evaluate(actual);
     if (!exp) fail('MAP COLOURS WRONG: the briefing figures never reached the page');
@@ -121,6 +133,7 @@ const { chromium, executablePath, BASE } = require('./env');
   {
     const ctx = await b.newContext({ reducedMotion: 'reduce', viewport: { width: 1280, height: 900 } });
     await block(ctx);
+    await ctx.addInitScript(recorder);
     const p = await ctx.newPage();
     await p.goto(BASE + '/index.html');
     try { await p.waitForSelector('#siteMap svg circle.s', { state: 'attached', timeout: 10000 }); } catch (e) { /* counted below */ }
@@ -128,7 +141,7 @@ const { chromium, executablePath, BASE } = require('./env');
     await p.waitForTimeout(300);
     const r = await p.evaluate(() => {
       const cs = [...document.querySelectorAll('#siteMap svg circle.s')];
-      return { n: cs.length, anims: cs.reduce((s, c) => s + c.getAnimations().length, 0),
+      return { n: cs.length, anims: cs.reduce((s, c) => s + c.getAnimations().length, 0) + (window.__mapStarts || []).length,
                hidden: cs.filter(c => parseFloat(getComputedStyle(c).opacity) < 0.99).length };
     });
     if (!r.n) fail('MAP NOT INLINED: no map under reduced motion');
