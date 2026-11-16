@@ -127,7 +127,10 @@ ErrorDocument 404 /site/404.html
     # Drop access to device APIs the site never uses, so injected script cannot
     # reach for them either. Topics/interest-cohort is deliberately NOT listed:
     # restricting it would interfere with AdSense.
-    Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()"
+    # geolocation=(self) since 2026-11-16 (Round 4, R4-8): "Near me" on
+    # places.html asks for it, only when pressed. (self) keeps every embedded
+    # frame (ads included) refused; the position never leaves the browser.
+    Header always set Permissions-Policy "geolocation=(self), camera=(), microphone=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()"
 
     # ---------------------------------------------------------------------
     # Caching. This is the fix for a failure that has now recurred twice: the

@@ -1609,6 +1609,28 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   On the old tree it reports 26 problems; on this one, 0.
 - **Mutation cases 13j**, each proven catching locally: Motion One re-added to Privacy, and AOS re-added to Plan.
 
+## 2026-11-16 — Near me on the places page (Round 4, R4-8)
+- **Why:** a tourist standing in Luxor or Aswan wants the closest sights, museums and airports first. The places page could only filter by kind, name and governorate.
+- **The button:** "Near me" asks the browser for the reader's position, only when pressed, then:
+  - sorts the list nearest first;
+  - adds a "From you" column (metres below 1 km, km above);
+  - marks the reader on the map;
+  - says plainly that the distances are straight lines, not travel distances.
+
+  "Stop using my location" puts everything back. A refusal or a timeout is explained, and the list keeps its order. The button only appears where the browser offers geolocation in a secure context.
+- **Privacy:**
+  - the position is used in the page and nowhere else: it is not stored, not sent to EgyBI, and not put in any link;
+  - `privacy.html` gains an entry saying so, and its date moves to 16 November 2026.
+- **Header (approved in chat, 2026-11-16):** `.htaccess` changes `Permissions-Policy` from `geolocation=()` to `geolocation=(self)`. Only EgyBI's own pages can ask, and embedded frames, ads included, stay refused. The other device APIs stay off. This is a live setting, so check it after merge with the command in the PR.
+- **Files:**
+  - `assets/places.js` (`?v=16`): `wireNearMe` and `kmText`, plus the distance sort in `renderList`;
+  - `places.html`: the button, a status line and the column header.
+- **New browser check `backend/verify/near-me.js`**, with Chromium's position fixed at the Giza plateau:
+  - the list must read nearest first, with the first place within 25 km;
+  - no request after the press may carry the coordinates;
+  - "Stop using my location" must restore the order;
+  - a refused permission must be explained, with the order unchanged.
+- **Mutation case:** the sort removed must give NEAR ME NOT SORTED.
 ## 2026-11-16 — Share a trip by link (Round 4, R4-6)
 - **Why:** a planned trip lived only in one browser. Travellers plan together, and a guide or a friend should be able to send a route. Until now the only ways to pass a plan on were printing it or signing in.
 - **The button:** the planner gains "Share this trip". It opens the phone's share sheet where there is one, and otherwise copies the link and says so.
