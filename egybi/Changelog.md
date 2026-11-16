@@ -2092,3 +2092,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The defect:** CI run 43922770714 reported NO MAP MOTION on a map that moves. That was confirmed in a real browser on the live home page with the same code: the dots started 70 ms apart from Alexandria south, and all 18 were shown after the sweep.
 - **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
 - **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.
+
+## 2026-11-16 — auth-return.js case 4 waits for the login exchange and says what happened
+- **Why:** run 43947896555 reported SIGN-IN NEVER HAPPENED once in four runs of identical code (#140, #141 and #142 passed it). Its line gave no way to tell whether a login request was sent at all.
+- **What was ruled out:** a late startup "who is signed in?" answer undoing the sign-in. `EGYBI.account.open` waits for that answer before showing the dialog, so in case 4 it always arrives first, and the only other thing that clears the sign-in is signing out.
+- **What changed:** the case now waits for the login response (up to 10 s) instead of a fixed 2 s. If the sign-in still does not happen, the failure line records:
+  - whether a login request was sent, and its status;
+  - the dialog's error text and the field contents;
+  - the page the reader was on.
+
+  So the next occurrence names its own cause. Test-only; no site file changes.
