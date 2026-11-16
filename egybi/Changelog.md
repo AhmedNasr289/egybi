@@ -1609,6 +1609,32 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   On the old tree it reports 26 problems; on this one, 0.
 - **Mutation cases 13j**, each proven catching locally: Motion One re-added to Privacy, and AOS re-added to Plan.
 
+## 2026-11-16 — Travellers' notes: the backend, off live (Round 4, R4-2a)
+- **Why:** signing in gave a reader nothing to share. The only community was an anonymous comment box about contributing data. Round 4 (approved by Ahmed on 16 Nov) adds notes travellers write about a visit. This PR is the server half only, and it stays **off live** (`NOTES_LIVE = false`) until the interface PR turns it on.
+- **New `site/api/notes.php`:**
+  - **Reading (anyone):** list published notes, newest first, optionally for one of the 18 visit sites.
+  - **Signed in:** write, delete your own, mark helpful (once, and a second press takes it back), report (once), and list your own.
+  - **Moderator (analytics key):** a queue of queued and hidden notes; publish, hide or delete.
+- **Rules (`site/auth/notes_lib.php`):**
+  - **Who can write:** a verified email is required (Google sign-in counts as verified).
+  - **What a note is:** 30–2000 characters, up to 3 of the 18 sites or a typed place, and an optional past visit month.
+  - **Limits:** 5 notes a day per account and 20 per address, counted only for notes that pass every rule.
+  - **Moderation:** a new account's first notes wait for review until 2 are published; 3 reports hide a note.
+  - **Privacy:** only the display name is ever published.
+- **Security:**
+  - every write needs same-origin, a session and the CSRF token;
+  - every query is a prepared statement;
+  - text is stored plain and returned as JSON with `nosniff`, for the interface to render with `textContent`;
+  - `notes_lib.php` is denied in `auth/.htaccess`, like the other includes.
+- **Accounts:**
+  - deleting an account deletes its notes, everyone's marks and reports on them, and its own marks and reports, inside the same transaction;
+  - the data export includes the notes.
+- **Tables:** `notes`, `note_helpful`, `note_reports` and `note_audit`, created with `CREATE TABLE IF NOT EXISTS` on first use. They are additive, and nothing existing changes.
+- **Tests:**
+  - `auth-flow.sh` gains 43 notes checks, run with `NOTES_ENABLED=1`. They cover signed-out writes, missing CSRF, cross-site requests, unverified writers, the length, place and month rules, the moderation queue and key, the publish and trusted paths, the daily limit, helpful toggling, deleting another user's note, reports hiding a note, and an account's deletion leaving 0 rows.
+  - 7 new mutation cases in `mutate.py` each remove one guard and must make `auth-flow.sh` fail.
+  - **Fix after the first run (43846913758):** 13 steps failed because the harness had already made 9 sign-ins from one IP. `auth.php` allows 10 per 15 minutes, so F, G and D were refused (429) and ran signed out. The notes block now lets that window lapse in CI's throwaway database, and asserts each sign-in, so a refusal names itself. The site's limit is unchanged.
+- **Not yet:** the privacy page changes in the interface PR, when notes go live and start collecting anything.
 ## 2026-11-16 — "Today at this site" on every visit page (Round 4, R4-1)
 - **Why:** the study found nothing that helps on the day itself. The visit pages gave golden light for the 15th of each month, and no code anywhere read the time of day. A tourist at Giza wants to know when the light starts and ends today, and how long is left.
 - **The card:** each of the 18 visit pages now opens with "Today at <site>":

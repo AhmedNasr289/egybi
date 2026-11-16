@@ -1204,7 +1204,12 @@ const ACCOUNT_TABLES = ['user_trips', 'user_saved_places', 'user_progress', 'use
 function account_delete(PDO $db, string $userId): void
 {
     account_ensure_schema($db);
+    require_once __DIR__ . '/notes_lib.php';
+    notes_ensure_schema($db);
     with_tx($db, function (PDO $db) use ($userId) {
+        // Travellers' notes first: the user's notes and everyone's marks and
+        // reports on them, then their own marks and reports (Round 4, R4-2a).
+        notes_delete_user($db, $userId);
         foreach (ACCOUNT_TABLES as $t) {
             $db->prepare("DELETE FROM $t WHERE user_id=?")->execute([$userId]);
         }
@@ -1233,5 +1238,6 @@ function account_export(PDO $db, array $u): array
         // Keyed by email, not by account, so the list keeps it after an
         // account is deleted; the download still says what it holds.
         'newsletter' => newsletter_account_state($db, $u['email']),
+        'notes' => (function () use ($db, $u) { require_once __DIR__ . '/notes_lib.php'; return notes_export($db, $u['id']); })(),
     ];
 }

@@ -918,6 +918,46 @@ case("save button never shown", "save-place.js",
 # The account page subscribes with no confirmation email, which is sound only
 # because the account's email is verified. Without that check, anyone could
 # create an account under someone else's address and subscribe it.
+# ---- Travellers' notes (Round 4, R4-2a): each guard must be load-bearing ----
+case("notes: one user can delete another user's note", "auth-flow.sh",
+     ["site/api/notes.php"],
+     lambda: edit("site/api/notes.php",
+                  "if (!$note || $note['user_id'] !== $u['id']) json_out(false, ['message' => 'Unknown note.'], 404);",
+                  "if (!$note) json_out(false, ['message' => 'Unknown note.'], 404);"),
+     lambda o: "FAIL  notes: F cannot delete E's note" in o, SH_AUTH)
+
+case("notes: a write without its CSRF token", "auth-flow.sh",
+     ["site/api/notes.php"],
+     lambda: edit("site/api/notes.php", "    require_csrf($s);\n    $u = current_user();",
+                  "    $u = current_user();"),
+     lambda o: "FAIL  notes: no CSRF token refused" in o, SH_AUTH)
+
+case("notes: an unverified account may write", "auth-flow.sh",
+     ["site/api/notes.php"],
+     lambda: edit("site/api/notes.php", "if ((int)$u['email_verified'] !== 1) {",
+                  "if (false) {"),
+     lambda o: "FAIL  notes: unverified email refused" in o, SH_AUTH)
+
+case("notes: a new account's notes skip moderation", "auth-flow.sh",
+     ["site/api/notes.php"],
+     lambda: edit("site/api/notes.php", "? 'published' : 'queued';", "? 'published' : 'published';"),
+     lambda o: "FAIL  notes: E writes a note (queued)" in o, SH_AUTH)
+
+case("notes: account deletion leaves the notes behind", "auth-flow.sh",
+     ["site/auth/lib.php"],
+     lambda: edit("site/auth/lib.php", "        notes_delete_user($db, $userId);\n", ""),
+     lambda o: "FAIL  notes: no notes left for E" in o, SH_AUTH)
+
+case("notes: reports never hide a note", "auth-flow.sh",
+     ["site/auth/notes_lib.php"],
+     lambda: edit("site/auth/notes_lib.php", "const NOTES_HIDE_AT_REPORTS = 3;", "const NOTES_HIDE_AT_REPORTS = 999;"),
+     lambda o: "FAIL  notes: D's report hides N3" in o, SH_AUTH)
+
+case("notes: no daily limit on writing", "auth-flow.sh",
+     ["site/auth/notes_lib.php"],
+     lambda: edit("site/auth/notes_lib.php", "const NOTES_PER_DAY = 5;", "const NOTES_PER_DAY = 500;"),
+     lambda o: "FAIL  notes: the sixth note in a day is refused" in o, SH_AUTH)
+
 # ---- "Today at this site" (Round 4, R4-1) ----------------------------------
 # The browser's sun times must agree with the Python that builds the light
 # table. Nudge the golden-light threshold in the port and they must part.
