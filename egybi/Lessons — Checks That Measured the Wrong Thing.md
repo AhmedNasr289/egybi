@@ -40,6 +40,15 @@ Back to [[Home]] · related: [[Automation & CI Pipelines]] · [[Changelog]]
   - judge the redirect first;
   - judge the sign-in by the login exchange itself, not only the flag.
 
+### A mutation must remove every lock, or it proves nothing
+- **What happened:** reduced motion is locked three times on this site:
+  - egybi.css's site-wide rule (under reduce, `* { animation: none !important }`);
+  - each feature script's own check;
+  - each feature stylesheet's no-preference query.
+
+  The map's and the year strip's "moving under reduced motion" mutation cases removed only the last two, so the page stayed still and the cases could never be caught (runs 43948810613 and 43953866021). The site was safe the whole time; the cases proved nothing.
+- **Rule:** before writing a mutation case, list every layer that enforces the behaviour, and remove all of them. A case that survives because a lock it does not know about still holds is a broken case, not a broken check.
+
 ### A one-in-four failure needs evidence, not a theory
 - **What happened:** the same sign-in test failed once in four runs of identical code. A plausible cause (a late start-up check undoing the sign-in) turned out impossible on reading the code, because the dialog waits for that check before opening.
 - **Rule:** make the failure line say what happened (login request sent or not, its status, the dialog's text, the page), and wait for the next occurrence.
