@@ -1,0 +1,60 @@
+/* EgyBI — Travellers' notes (Round 4, R4-2b). Loaded by community.html only,
+   so the shared stylesheet and its cache version stay untouched. Sizes use the
+   type-scale tokens from egybi.css (type-scale.py checks pages, not this file,
+   so keep to var(--fs-*) by hand). Only colour, border and box-shadow move on
+   hover and focus; nothing animates position, so nothing shifts the layout. */
+.notes-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 18px 0 14px; }
+.notes-site {
+  min-height: 44px; padding: 8px 12px; border: 1px solid var(--line-light); border-radius: 10px;
+  background: var(--papyrus-2); color: var(--ink); font: inherit; font-size: var(--fs-sm);
+}
+.notes-form {
+  background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius);
+  padding: 20px; margin: 0 0 18px; box-shadow: var(--shadow-light);
+}
+.notes-form fieldset { border: 0; padding: 0; margin: 0 0 14px; }
+.notes-form legend, .notes-form label.notes-lab { display: block; font-weight: 600; font-size: var(--fs-sm); margin: 0 0 6px; color: var(--blue-deep); }
+.notes-picks { display: flex; flex-wrap: wrap; gap: 8px; max-height: 168px; overflow-y: auto; padding: 2px; }
+.note-pick {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 12px;
+  border: 1px solid var(--line-light); border-radius: 999px; font-size: var(--fs-sm); cursor: pointer; background: var(--papyrus);
+}
+.note-pick:has(input:checked) { border-color: var(--gold); background: var(--gold-soft); }
+.notes-form input[type=text], .notes-form input[type=month], .notes-form textarea {
+  width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line-light); border-radius: 10px;
+  background: #fff; color: var(--ink); font: inherit; font-size: var(--fs-base);
+}
+.notes-form textarea { min-height: 140px; resize: vertical; line-height: 1.6; }
+.notes-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 14px; }
+@media (max-width: 560px) { .notes-row { grid-template-columns: 1fr; } }
+.notes-count { font-size: var(--fs-xs); color: var(--ink-soft); text-align: right; margin: 4px 0 12px; }
+.notes-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.notes-list { display: grid; gap: 14px; }
+.note-card {
+  background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+.note-card:hover, .note-card:focus-within { border-color: var(--gold); box-shadow: var(--shadow-light); }
+.note-head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.note-name { color: var(--blue-deep); font-size: var(--fs-base); }
+.note-month { color: var(--ink-soft); font-size: var(--fs-sm); }
+.note-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+.note-tag { font-size: var(--fs-xs); font-weight: 600; color: var(--gold-ink); background: var(--gold-soft); border-radius: 999px; padding: 3px 10px; }
+.note-tag-free { color: var(--blue-deep); background: var(--blue-soft); }
+.note-body { margin: 10px 0 12px; white-space: pre-line; overflow-wrap: anywhere; line-height: 1.65; }
+.note-foot { display: flex; gap: 10px; flex-wrap: wrap; }
+.note-act {
+  min-height: 44px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line-light);
+  background: transparent; color: var(--blue-deep); font: inherit; font-size: var(--fs-sm); cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.note-act:hover, .note-act:focus-visible { border-color: var(--gold); background: var(--gold-soft); outline: none; }
+.note-act:focus-visible { box-shadow: 0 0 0 2px var(--gold); }
+.note-act[aria-pressed=true] { border-color: var(--gold); background: var(--gold-soft); }
+.note-act:disabled { opacity: .6; cursor: default; }
+.note-empty { color: var(--ink-soft); font-size: var(--fs-sm); }
+.note-why { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%; }
+.note-reason { min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line-light);
+  background: var(--papyrus); color: var(--ink); font: inherit; font-size: var(--fs-sm); }
+.note-reason:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .note-card, .note-act { transition: none; } }
