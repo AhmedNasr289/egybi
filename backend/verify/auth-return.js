@@ -91,16 +91,29 @@ const KEY = 'egybi.return';
     await p.waitForSelector('#authModal #authEmail', { timeout: 15000 });
     await p.fill('#authEmail', 't@example.org');
     await p.fill('#authPw', 'a long enough password');
+    // Wait for the login exchange itself, not a fixed time, and keep what it
+    // said. Run 43947896555 reported SIGN-IN NEVER HAPPENED once in four runs
+    // of the same code with no way to tell whether a login request was sent;
+    // the failure line now says what the exchange and the dialog showed.
+    const loginSeen = p.waitForResponse(r => /\/auth\/auth\.php\?action=login/.test(r.url()), { timeout: 10000 })
+      .then(r => r.status() + ' ' + r.request().method()).catch(() => 'no login request within 10 s');
     await p.click('#authModal .auth-submit');
-    await p.waitForTimeout(2000);
+    const login = await loginSeen;
+    await p.waitForTimeout(1000);
     const at = new URL(p.url()).pathname;
+    const dialog = await p.evaluate(() => {
+      const m = document.getElementById('authModal');
+      if (!m) return 'dialog closed';
+      const e = m.querySelector('.auth-err'), em = m.querySelector('#authEmail'), pw = m.querySelector('#authPw');
+      return 'dialog open; error "' + (e ? e.textContent.trim() : '') + '"; email "' + (em ? em.value : '-') + '"; password ' + (pw ? pw.value.length : 0) + ' chars';
+    });
     // A sign-in that never happened also "stays put". Run 43914963730 missed
     // the UNASKED REDIRECT mutation that way: the offline worker had taken the
     // page, its login request went around this check's stub to the preview
     // server, and the reader was never signed in, mutated or not. env.js now
     // blocks workers; this line makes a failed sign-in loud instead of green.
     const signed = await p.evaluate(() => localStorage.getItem('egybi.account'));
-    if (signed !== '1') fail('SIGN-IN NEVER HAPPENED: the ordinary sign-in in case 4 did not sign the reader in, so it proves nothing');
+    if (signed !== '1') fail(`SIGN-IN NEVER HAPPENED: the ordinary sign-in in case 4 did not sign the reader in, so it proves nothing (login: ${login}; ${dialog}; at ${at})`);
     else if (at !== '/index.html') fail('UNASKED REDIRECT: an ordinary sign-in moved the reader to ' + at);
     else console.log('ok   an ordinary sign-in stays on the page it happened on');
     await ctx.close();
