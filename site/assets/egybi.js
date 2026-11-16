@@ -72,7 +72,7 @@
     authPromise = new Promise(function (resolve, reject) {
       if (window.EGYBI_ACCOUNT) { resolve(window.EGYBI_ACCOUNT); return; }
       var s = document.createElement('script');
-      s.src = new URL('auth.js?v=3', acctBase).href;
+      s.src = new URL('auth.js?v=4', acctBase).href;
       s.onload = function () {
         if (window.EGYBI_ACCOUNT) window.EGYBI_ACCOUNT.ready.then(function () { resolve(window.EGYBI_ACCOUNT); });
         else reject(new Error('auth.js loaded but did not start'));
@@ -115,4 +115,15 @@
       return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c];
     });
   };
+})();
+
+/* Offline on every page (Round 5, M5, 2026-11-16). The service worker from
+   R4-7 (site/sw.js) was registered only by the planner. Registering it here
+   means any EgyBI page a reader has opened also opens with no signal. It keeps
+   copies on the reader's device only, and never anything under /auth/ or /api/
+   (privacy.html says so). sw.js's KILL switch is the rollback. */
+(function () {
+  if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
+  function go() { navigator.serviceWorker.register('/sw.js').catch(function () { /* the page works as before */ }); }
+  if (document.readyState === 'complete') go(); else window.addEventListener('load', go);
 })();

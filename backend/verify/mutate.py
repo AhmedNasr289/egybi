@@ -1003,6 +1003,31 @@ case("near me: the list is not sorted by distance", "near-me.js",
                   "      out.sort(function (a, b) { return dist.get(a) - dist.get(b); });\n", ""),
      lambda o: "NEAR ME NOT SORTED" in o, NEAR)
 
+# ---- Round 5: the browser platform (M1, M2, M5) and return after confirming (M6)
+PLATFORM = f"node {HERE}/platform.js"
+AUTH_RETURN = f"node {HERE}/auth-return.js"
+case("page transition kept for readers who asked for reduced motion", "platform.js",
+     ["site/assets/egybi.css"],
+     lambda: edit("site/assets/egybi.css",
+                  "@media (prefers-reduced-motion: no-preference) {\n  @view-transition", "@media all {\n  @view-transition"),
+     lambda o: "TRANSITION UNDER REDUCED MOTION" in o, PLATFORM)
+case("the account page prefetched on hover", "platform.js",
+     ["site/about.html"],
+     lambda: edit("site/about.html", '{"not":{"href_matches":"/account.html"}}', '{"not":{"href_matches":"/nothing.html"}}'),
+     lambda o: "PREFETCHED PRIVATE" in o, PLATFORM)
+case("the offline worker not registered on ordinary pages", "platform.js",
+     ["site/assets/egybi.js"],
+     lambda: edit("site/assets/egybi.js", "navigator.serviceWorker.register('/sw.js').catch(", "Promise.resolve().catch("),
+     lambda o: "NO WORKER ON PAGES" in o, PLATFORM)
+case("return after confirming follows any remembered address", "auth-return.js",
+     ["site/assets/auth.js"],
+     lambda: edit("site/assets/auth.js", "typeof r.p === 'string' && SAFE_RETURN.test(r.p) &&", "typeof r.p === 'string' &&"),
+     lambda o: "OPEN REDIRECT" in o, AUTH_RETURN)
+case("return after confirming fires on an ordinary sign-in", "auth-return.js",
+     ["site/assets/auth.js"],
+     lambda: edit("site/assets/auth.js", "if (cameFromLink) { var to = takeReturn();", "if (true) { var to = takeReturn();"),
+     lambda o: "UNASKED REDIRECT" in o, AUTH_RETURN)
+
 # ---- Offline (Round 4, R4-7) ------------------------------------------------
 # The worker must answer navigations from its cache when the network fails.
 # Let navigations fall through to the network and the offline plan is gone.

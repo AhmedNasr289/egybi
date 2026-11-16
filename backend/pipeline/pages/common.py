@@ -130,11 +130,14 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14110C">
+<script type="speculationrules">{{"prefetch":[{{"where":{{"and":[{{"href_matches":"/*"}},{{"not":{{"href_matches":"/auth/*"}}}},{{"not":{{"href_matches":"/api/*"}}}},{{"not":{{"href_matches":"/account.html"}}}}]}},"eagerness":"moderate"}}]}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
-<link href="{prefix}assets/egybi.css?v=48" rel="stylesheet">
+<link href="{prefix}assets/egybi.css?v=49" rel="stylesheet">
 <script src="{prefix}assets/ads-config.js"></script>
 {('<script type="application/ld+json">' + json.dumps(ld) + '</script>') if ld else ''}
 {extra_head}
@@ -148,7 +151,7 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 </main>
 
 {foot if foot is not None else FOOT}
-<script src="{prefix}assets/egybi.js?v=3"></script>
+<script src="{prefix}assets/egybi.js?v=4"></script>
 <script src="{prefix}assets/glyphs.js?v=3"></script>
 <script src="{prefix}assets/wayfinding.js?v=1"></script>
 <script src="{prefix}assets/ads.js"></script>

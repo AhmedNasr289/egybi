@@ -31,6 +31,33 @@
   // cannot read. egybi.js reads this flag to decide whether to load this file
   // on the next page, so a signed-in reader sees their menu straight away.
   function setFlag(on) { try { if (on) localStorage.setItem('egybi.account', '1'); else localStorage.removeItem('egybi.account'); } catch (e) {} }
+
+  /* Back to where the reader was (Round 5, M6, 2026-11-16). A reader who signs
+     up from the community page, or asks for a reset from the planner, gets an
+     email whose link opens the home page. This remembers the page they were on,
+     only a same-site path like /community.html or /papyrus/x.html#part, never
+     a full URL, for seven days, and after they confirm and sign in it takes
+     them back there. The emails themselves are unchanged. */
+  var RETURN_KEY = 'egybi.return';
+  var SAFE_RETURN = /^\/(?:[a-z0-9-]+\/)?[a-z0-9-]+\.html(?:#[A-Za-z0-9_-]{1,40})?$/;
+  var cameFromLink = false;
+  function rememberReturn() {
+    try {
+      var p = location.pathname + (location.hash || '');
+      if (SAFE_RETURN.test(p) && !/^\/(index|account)\.html/.test(p)) {
+        localStorage.setItem(RETURN_KEY, JSON.stringify({ p: p, t: Date.now() }));
+      }
+    } catch (e) {}
+  }
+  function takeReturn() {
+    try {
+      var r = JSON.parse(localStorage.getItem(RETURN_KEY) || 'null');
+      localStorage.removeItem(RETURN_KEY);
+      if (r && typeof r.p === 'string' && SAFE_RETURN.test(r.p) && Date.now() - r.t < 7 * 864e5 &&
+          r.p.split('#')[0] !== location.pathname) return r.p;
+    } catch (e) {}
+    return null;
+  }
   function accountUrl() { return new URL('../account.html', ME).href; }
 
   // One place for "a sign-in just succeeded", whatever the route (password or
@@ -425,6 +452,7 @@
 
       if (mode === 'forgot') {
         api('request-reset', 'POST', { email: email }).then(function (res) {
+          rememberReturn();
           succeed((res.data && res.data.message) || 'If that email has an account, a reset link is on its way.');
         }).catch(function () { fail('Could not reach the server.'); }).finally(done);
         return;
@@ -442,10 +470,13 @@
         var d = res.data || {};
         if (mode === 'up') {
           if (d.ok && window.EGYBI_TRACK) EGYBI_TRACK('signup_completed');
-          if (d.ok) succeed(d.message || 'Check your email to verify your account.');
+          if (d.ok) { rememberReturn(); succeed(d.message || 'Check your email to verify your account.'); }
           else fail(d.message || 'Could not create that account.');
         } else if (d.ok) {
           signedIn(d); close();
+          // Arrived from a verification or reset email: go back to the page
+          // they were on when they signed up or asked for the link.
+          if (cameFromLink) { var to = takeReturn(); if (to) location.assign(to); }
         } else {
           fail(d.message || 'Could not sign in.');
         }
@@ -531,12 +562,13 @@
     function cleanUrl() { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
 
     function landings() {
-      if (qsReset) { cleanUrl(); setTimeout(function () { openResetModal(qsReset[1]); }, 80); return; }
+      if (qsReset) { cameFromLink = true; cleanUrl(); setTimeout(function () { openResetModal(qsReset[1]); }, 80); return; }
       if (qsVerify) {
         fetch(BASE + 'auth.php?action=verify&token=' + qsVerify[1])
           .then(function (r) { return r.json(); })
           .then(function (j) {
             cleanUrl();
+            if (j && j.ok) cameFromLink = true;
             setTimeout(function () {
               openModal('in', j && j.ok ? (j.message || 'Email verified — you can sign in now.') : null);
               if (j && !j.ok) {
