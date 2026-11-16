@@ -100,7 +100,7 @@ mutate=false
 while IFS= read -r f; do
   [ -n "$f" ] || continue
   case "$f" in
-    backend/verify/*|.github/workflows/verify-browser.yml|.github/scripts/verify-gate.sh)
+    backend/verify/*|.github/workflows/verify-browser.yml|.github/actions/browser-setup/*|.github/scripts/verify-gate.sh)
       mutate=true; say "mutate.py needed: $f changed"; break ;;
   esac
   # A file mutate.py edits: a change to it can move the text a case anchors on.
@@ -122,7 +122,7 @@ while IFS= read -r f; do
   case "$f" in
     site/data/*|site/charts/*|site/sitemap.xml|site/robots.txt|site/ads.txt|site/api/*|site/auth/*|*.php)
       continue ;;   # data, chart images, crawler files, server code: static checks only
-    site/*|backend/verify/*.js|.github/workflows/verify-browser.yml|.github/scripts/verify-gate.sh)
+    site/*|backend/verify/*.js|.github/workflows/verify-browser.yml|.github/actions/browser-setup/*|.github/scripts/verify-gate.sh)
       browser=true; say "browser checks needed: $f changed"; break ;;
   esac
 done <<< "$changed"

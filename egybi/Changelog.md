@@ -1910,6 +1910,18 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 ## 2026-11-16 — Plan: M7, the mutation pass in its own job
 - **Plan:** `Improvement Plan 2026-11.md` gains M7. Stacked runs reached 48–55 minutes, and the cancels at the 50-minute cap destroyed logs. The CI limit is raised to 80 as a stopgap, and the fix is to run `mutate.py` as a separate job.
 
+## 2026-11-16 — The mutation pass in its own CI job (Round 5, M7)
+- **Why:** `mutate.py`, which checks that every checker can still fail, was the largest single cost in `browser-checks`. With Round 4's 94 cases a full run reached 48–55 minutes. Three stacked PRs were cancelled at the 50-minute cap, and one cancel destroyed the logs that held a real `auth-flow.sh` failure. The cap went to 80 minutes as a stopgap; this is the fix that the workflow's own 4 November note asked for.
+- **What:**
+  - **A new `mutation` job** in Verify (browser) runs `mutate.py` alongside `browser-checks`, with its own 45-minute ceiling, its own logs (`verify-logs-mutation`), its own failure summary and its own alert. It runs only when the gate says a checker, the workflow, the gate or a file `mutate.py` edits has changed, as before.
+  - **`browser-checks`** goes back to a 50-minute ceiling and keeps only the checks that decide whether the site is right.
+  - **A new composite action, `.github/actions/browser-setup`,** holds the shared setup: Node 20, Python 3.12 with PyYAML, playwright-core with Chromium, and site/ on port 8793. Both jobs call it, so their setups cannot drift. A composite step cannot carry `timeout-minutes`, so the 12-minute bound on the Chromium install is now a `timeout 12m` around it.
+  - **The gate and the workflow's trigger paths** now include the action, so a change to the shared setup runs the checks.
+- **Checks:**
+  - `checks.py workflows` and `workflow-audit.py` report no gaps;
+  - the YAML of both files parses;
+  - this PR's own run is the first real test of both jobs.
+- **Rollback:** revert this PR. The 80-minute single job comes back.
 ## 2026-11-16 — Counters carry their real figures in the page (Round 5)
 - **Why:** checking #124 live, a jump to the bottom of Explore showed three film counters reading "0", while the fourth, which the scroll had passed slowly, read 1596 mid-count. The HTML of 17 counters on `about.html` and `explore.html` literally said `0`, with the real figure only in `data-count`. A reader without JavaScript, or whose browser skipped the count-up (it waits for the counter to be seen, which a fast scroll can miss), was told that Egypt has made "0 feature films" or that Cairo's festival was founded in year "0". That breaks the round's rule that a count-up only animates a figure already in the HTML.
 - **Fix:** each counter's HTML now holds its final figure, formatted exactly as the count-up ends ("4,000+", "1976", "70%", "EGP 1.8bn", "438,500"). The count-up still runs from 0 when a reader reaches it with JavaScript on. Home's three counters already did this.
