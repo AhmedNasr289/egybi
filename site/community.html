@@ -15,6 +15,7 @@
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/egybi.css?v=47" rel="stylesheet">
+<link href="assets/notes.css?v=1" rel="stylesheet">
 <style>
   .step { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 20px; }
   .step::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-family: 'Cinzel', serif; display: flex; align-items: center; justify-content: center; }
@@ -100,6 +101,39 @@
 <nav class="on-this-page" data-wayfinding aria-label="On this page"></nav>
 
 <!-- CONTRIBUTE -->
+<section class="surface-light-2" id="notes" data-nav="Travellers' notes" hidden>
+  <div class="wrap" style="max-width:860px;">
+    <div class="kicker"><span data-glyph="scroll"></span> Travellers' notes</div>
+    <h2>What it was really like.</h2>
+    <p class="lead">Short notes from people who have been: what to expect, what they would do differently, what was worth it. Notes from new accounts are read before they appear, and only your display name is shown.</p>
+    <div class="notes-bar">
+      <label for="notesSite" class="sr-only">Show notes about</label>
+      <select id="notesSite" class="notes-site"><option value="">All places</option></select>
+      <button type="button" class="btn btn-primary" id="notesWrite" aria-expanded="false" aria-controls="notesForm">Share your experience</button>
+    </div>
+    <form id="notesForm" class="notes-form" hidden novalidate>
+      <fieldset>
+        <legend>Where was it? Pick up to 3</legend>
+        <div class="notes-picks" id="notesSites"></div>
+      </fieldset>
+      <div class="notes-row">
+        <div><label class="notes-lab" for="notesPlace">Or another place in Egypt</label><input type="text" id="notesPlace" maxlength="80" autocomplete="off"></div>
+        <div><label class="notes-lab" for="notesMonth">When you went (optional)</label><input type="month" id="notesMonth"></div>
+      </div>
+      <label class="notes-lab" for="notesBody">Your note</label>
+      <textarea id="notesBody" maxlength="2000" required aria-describedby="notesCount"></textarea>
+      <p class="notes-count" id="notesCount">0 / 2000</p>
+      <div class="notes-actions">
+        <button type="submit" class="btn btn-primary" id="notesSend">Share it</button>
+        <button type="button" class="btn btn-ghost" id="notesCancel">Cancel</button>
+      </div>
+    </form>
+    <p class="form-note" id="notesNote" role="status"></p>
+    <div class="notes-list" id="notesList" aria-live="polite"></div>
+    <button type="button" class="btn btn-ghost" id="notesMore" hidden style="margin-top:14px;">Show older notes</button>
+  </div>
+</section>
+
 <section class="surface-light" id="contribute" data-nav="Contribute">
   <div class="wrap" style="max-width:860px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Contribute</div>
@@ -228,6 +262,7 @@
 <script>window.EGYBI_COMMUNITY = { endpoint: 'api/community.php' };</script>
 <script src="assets/egfmt.js?v=4"></script>
 <script src="assets/community.js?v=2"></script>
+<script src="assets/notes.js?v=1"></script>
 <script src="assets/ads-config.js"></script>
 <script src="assets/ads.js"></script>
 <script src="assets/motion.js?v=3"></script>

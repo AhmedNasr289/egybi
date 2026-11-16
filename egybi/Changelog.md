@@ -1634,3 +1634,30 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - `auth-flow.sh` gains 43 notes checks, run with `NOTES_ENABLED=1`. They cover signed-out writes, missing CSRF, cross-site requests, unverified writers, the length, place and month rules, the moderation queue and key, the publish and trusted paths, the daily limit, helpful toggling, deleting another user's note, reports hiding a note, and an account's deletion leaving 0 rows.
   - 7 new mutation cases in `mutate.py` each remove one guard and must make `auth-flow.sh` fail.
 - **Not yet:** the privacy page changes in the interface PR, when notes go live and start collecting anything.
+
+## 2026-11-16 — Travellers' notes on the community page, switched on (Round 4, R4-2b)
+- **Why:** the R4-2a backend gives travellers somewhere to share a visit. This PR is what a reader sees and uses, and it turns notes on (`NOTES_LIVE = true`).
+- **`community.html`** gains a first section, "Travellers' notes":
+  - a place filter over the 18 sites, which `?site=giza` preselects;
+  - "Share your experience", which opens the site's own sign-in dialog when signed out (Google first), then the composer;
+  - the composer: up to 3 places as chips, or a typed place; an optional visit month; and the note with a character count;
+  - note cards with the display name, month, place tags and text, plus "Helpful · n", "Report", and "Delete my note" with a second press to confirm;
+  - "Show older notes".
+
+  The section stays hidden when the API says notes are off.
+- **Safety in the page:**
+  - every part of a note reaches the page through `textContent`, never `innerHTML`;
+  - writes fetch the CSRF token from `auth.php?action=me` and send it in a header;
+  - the action a reader started resumes after sign-in, as Save already does.
+- **Files:**
+  - **`assets/notes.js` and `assets/notes.css` (new, `?v=1`):** loaded by community.html only, so the shared stylesheet and its version are untouched.
+  - **`notes.css`:** sizes use only the type-scale tokens. Only colour, border and shadow transition on hover and focus, and those transitions are off under reduced motion. Every control is at least 44 px tall.
+- **`privacy.html`:** a "Travellers' notes, only if you write one" entry says what is stored and what is shown. The deletion line now names notes, helpful marks and reports.
+- **New browser check `backend/verify/notes-ui.js`**, which answers the PHP endpoints itself because CI serves the site statically. It fails on:
+  - MARKUP INJECTED: two hostile notes, with `<img onerror>` and `<script>` in the body, name and place, must render as visible text with 0 elements and no script run;
+  - NOT SHOWN;
+  - FILTER IGNORED: Karnak must be asked for and must show 1 card;
+  - NO SIGN-IN: a signed-out "Share" must open the dialog and not the composer;
+  - SHOWN WHILE OFF.
+- **Mutation cases:** the text helper switched to `innerHTML` must give MARKUP INJECTED, and the place filter dropped must give FILTER IGNORED.
+- **Next:** the 3 latest notes on each visit page (R4-2c).

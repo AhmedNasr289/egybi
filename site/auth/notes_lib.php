@@ -16,8 +16,8 @@
  */
 declare(strict_types=1);
 
-/** Off live until the interface ships (PR R4-2b flips it). CI turns it on with NOTES_ENABLED=1. */
-const NOTES_LIVE = false;
+/** On since the interface shipped (R4-2b). Set to false to switch the API off without removing it. */
+const NOTES_LIVE = true;
 const NOTES_BODY_MIN = 30;
 const NOTES_BODY_MAX = 2000;
 const NOTES_PLACE_MAX = 80;

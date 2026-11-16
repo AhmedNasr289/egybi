@@ -918,6 +918,18 @@ case("save button never shown", "save-place.js",
 # The account page subscribes with no confirmation email, which is sound only
 # because the account's email is verified. Without that check, anyone could
 # create an account under someone else's address and subscribe it.
+# ---- Travellers' notes interface (Round 4, R4-2b) ---------------------------
+# notes.js puts every piece of a note on the page with textContent. Switch its
+# one helper to innerHTML and notes-ui.js's hostile fixture must become markup.
+NOTES_UI = f"node {HERE}/notes-ui.js"
+case("notes: a note's text rendered as HTML", "notes-ui.js", ["site/assets/notes.js"],
+     lambda: edit("site/assets/notes.js", "if (text != null) e.textContent = String(text);",
+                  "if (text != null) e.innerHTML = String(text);"),
+     lambda o: "MARKUP INJECTED" in o, NOTES_UI)
+case("notes: the place filter not sent to the API", "notes-ui.js", ["site/assets/notes.js"],
+     lambda: edit("site/assets/notes.js", "(siteFilter ? '&site=' + encodeURIComponent(siteFilter) : '')", "''"),
+     lambda o: "FILTER IGNORED" in o, NOTES_UI)
+
 # ---- Travellers' notes (Round 4, R4-2a): each guard must be load-bearing ----
 case("notes: one user can delete another user's note", "auth-flow.sh",
      ["site/api/notes.php"],
