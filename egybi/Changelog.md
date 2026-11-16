@@ -2102,3 +2102,4 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the page the reader was on.
 
   So the next occurrence names its own cause. Test-only; no site file changes.
+- **The verdict order, and why:** case 4 now judges the redirect first, and judges the sign-in by the login exchange as well as the flag. Run 43947896555's mutation pass missed UNASKED REDIRECT because the order was the other way round. The mutated sign-in did happen and did redirect, then community.html's own startup check received the stub's "nobody signed in" and cleared the flag, so the case read SIGN-IN NEVER HAPPENED instead.
