@@ -426,11 +426,38 @@
     banner.appendChild(msg); banner.appendChild(row);
   }
 
+  /* Offline (Round 4, R4-7, 2026-11-16). Register the site's service worker
+     (/sw.js) from the planner, then hand it the files this page has already
+     loaded, so the very first visit works with no signal. Nothing is sent
+     anywhere: the copies live in this browser's cache. */
+  function initOffline() {
+    var note = $('offlineNote');
+    if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
+    function go() {
+      navigator.serviceWorker.register('/sw.js').then(function () { return navigator.serviceWorker.ready; })
+        .then(function (reg) {
+          var mine = location.origin;
+          var urls = [location.pathname].concat((performance.getEntriesByType('resource') || [])
+            .map(function (r) { return r.name; })
+            .filter(function (u) { return u.indexOf(mine + '/') === 0 && !/\/(auth|api)\//.test(u); }));
+          navigator.serviceWorker.addEventListener('message', function (ev) {
+            if (ev.data && ev.data.type === 'cached' && note) {
+              note.textContent = 'This planner now opens offline on this device, with your saved trip.';
+            }
+          });
+          var w = navigator.serviceWorker.controller || reg.active;
+          if (w) w.postMessage({ type: 'cache-these', urls: urls });
+        }).catch(function () { /* no offline copy; the planner works as before */ });
+    }
+    if (document.readyState === 'complete') go(); else window.addEventListener('load', go);
+  }
+
   function init() {
     initForm(); initMap(); initStopEvents();
     $('printPlan').addEventListener('click', function () { window.print(); });
     initSave();
     initShare();
+    initOffline();
     $('clearPlan').addEventListener('click', function () {
       if (!S.trip.stops.length) return;
       S.trip.stops = []; save(); renderAll(); announce('All stops removed.');
