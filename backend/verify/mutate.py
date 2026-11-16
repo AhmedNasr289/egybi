@@ -926,6 +926,17 @@ case("today card: the browser's golden light drifts from the table", "today-sun.
      ["site/assets/today.js"],
      lambda: edit("site/assets/today.js", "GOLDEN_ELEVATION = 6.0", "GOLDEN_ELEVATION = 5.0"),
      lambda o: "SUN TIMES DIFFER" in o, TODAY)
+# The sun path (Round 5): the sun must sit at the share of daylight gone, and
+# must not glide for a reader who asked for reduced motion.
+case("sun path: the sun placed at the wrong share of the day", "today-sun.js",
+     ["site/assets/today.js"],
+     lambda: edit("site/assets/today.js", "return { u: (now - L.sunrise) / (L.sunset - L.sunrise) };",
+                  "return { u: (now - L.sunrise) / (L.goldenEveningStart - L.sunrise) };"),
+     lambda o: "SUN PATH WRONG" in o, TODAY)
+case("sun path: the sun glides under reduced motion", "today-sun.js",
+     ["site/assets/today.js"],
+     lambda: edit("site/assets/today.js", "if (glided || reduce) {", "if (glided) {"),
+     lambda o: "MOVES UNDER REDUCED MOTION" in o, TODAY)
 
 case("unverified account subscribed to the newsletter", "auth-flow.sh",
      ["site/auth/auth.php"],
