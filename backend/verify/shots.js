@@ -27,6 +27,8 @@ const PAGES = [
   'account.html',                              // the account page, signed out (no server in CI)
   'plan.html',                                 // the planner, with "Save to my account"
   'visit.html',                                // When to go, with the year strip
+  'ar/about.html',                             // Arabic, right to left
+  'ru/about.html',                             // Russian
 ];
 const WIDTHS = [1280, 390];
 

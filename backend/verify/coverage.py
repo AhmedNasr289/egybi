@@ -156,8 +156,12 @@ def linkset(fragment):
     place of the general cited-data sentence. Both are required to differ. The
     failure this check exists to catch is a LINK that exists on some pages and
     not others, so compare links and leave editorial wording alone."""
+    # Language links (data-lang) are left out: each one points at THIS page's
+    # own Arabic or Russian twin, so they differ from page to page by design,
+    # and would still differ once every page has them (trilingual, 2026-11-16).
     return tuple((h, re.sub(r"<[^>]+>", "", lab).strip())
-                 for h, lab in re.findall(r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', fragment))
+                 for a, h, lab in re.findall(r'(<a\b[^>]*href="([^"]+)"[^>]*>)(.*?)</a>', fragment)
+                 if 'data-lang=' not in a)
 
 
 heads, foots, sources, colophons = (defaultdict(list), defaultdict(list), {},

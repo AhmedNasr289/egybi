@@ -170,6 +170,10 @@ jobs:
       - name: static-audit.py
         run: backend/verify/ci-step.sh static-audit python3 backend/verify/static-audit.py
 
+      - name: i18n.py
+        if: always()
+        run: backend/verify/ci-step.sh i18n python3 backend/verify/i18n.py
+
       - name: coverage.py
         run: backend/verify/ci-step.sh coverage python3 backend/verify/coverage.py
 
