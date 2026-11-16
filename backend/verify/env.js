@@ -45,8 +45,30 @@ function findChrome() {
   process.exit(2);
 }
 
+/* Service workers are blocked in every check unless it asks for one
+   (2026-11-16). Since Round 5 (M5) every page registers the offline worker,
+   and a request a worker makes goes around page.route and context.route. A
+   check that blocks motion.js or answers an API itself then stops doing so as
+   soon as the worker controls the page. reduced.js went blind exactly that
+   way: its reload with motion.js blocked ran through the worker, motion.js
+   loaded anyway, and mutation case "content hidden under reduced motion"
+   stopped being caught (run 43915133691). The checks measure the page as the
+   server sends it; only the checks about the worker itself (offline.js and
+   platform.js's offline test) pass serviceWorkers: 'allow'. */
+function blockWorkers(chromium) {
+  return {
+    launch: async (...args) => {
+      const b = await chromium.launch(...args);
+      const newContext = b.newContext.bind(b), newPage = b.newPage.bind(b);
+      b.newContext = (o = {}) => newContext({ serviceWorkers: 'block', ...o });
+      b.newPage = (o = {}) => newPage({ serviceWorkers: 'block', ...o });
+      return b;
+    },
+  };
+}
+
 module.exports = {
-  chromium: loadPlaywright().chromium,
+  chromium: blockWorkers(loadPlaywright().chromium),
   executablePath: findChrome(),
   // The preview server the checkers drive. Start it with:
   //   python3 -m http.server 8793 --directory site
