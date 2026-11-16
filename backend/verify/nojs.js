@@ -36,8 +36,21 @@ const REVEALER = 'assets/motion.js';
     return (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort(); };
   const hidden = async (p) => p.evaluate(() => {
     const els = [...document.querySelectorAll('[data-aos]')];
-    return { total: els.length,
-             hidden: els.filter(e => +getComputedStyle(e).opacity < 0.05).length };
+    const bad = els.filter(e => +getComputedStyle(e).opacity < 0.05);
+    // Name each hidden block, so a red run says which one and why, not only how many.
+    const where = bad.slice(0, 8).map(e => {
+      const r = e.getBoundingClientRect(), cs = getComputedStyle(e);
+      let clip = '', a = e.parentElement;
+      for (; a && a !== document.body; a = a.parentElement) {
+        const s = getComputedStyle(a);
+        if (s.display === 'none' || a.hidden) { clip = 'inside hidden ' + a.tagName.toLowerCase() + (a.id ? '#' + a.id : ''); break; }
+        if (s.overflow !== 'visible' || s.overflowX !== 'visible') { clip = 'inside overflow:' + s.overflow + ' ' + a.tagName.toLowerCase() + (a.id ? '#' + a.id : '') + '.' + String(a.className).split(' ')[0]; break; }
+      }
+      return `${e.tagName.toLowerCase()}.${String(e.className).replace(/ /g, '.')} "${(e.textContent || '').trim().slice(0, 40)}" ` +
+        `${Math.round(r.width)}x${Math.round(r.height)} at y=${Math.round(r.top + scrollY)} x=${Math.round(r.left)} ` +
+        `transition=${cs.transitionProperty}/${cs.transitionDuration} ${clip}`;
+    });
+    return { total: els.length, hidden: bad.length, where };
   });
 
   let fails = 0, seen = 0;
@@ -51,7 +64,7 @@ const REVEALER = 'assets/motion.js';
     const a = await hidden(p1);
     await off.close();
     seen += a.total;
-    if (a.hidden) { fails++; console.log(`HIDDEN WITHOUT JS  ${page}: ${a.hidden} of ${a.total} [data-aos] blocks transparent`); }
+    if (a.hidden) { fails++; console.log(`HIDDEN WITHOUT JS  ${page}: ${a.hidden} of ${a.total} [data-aos] blocks transparent`); a.where.forEach(w => console.log('      ' + w)); }
 
     // 2. JavaScript on, the revealing script blocked
     const on = await b.newContext({ viewport: { width: 1280, height: 900 } });
@@ -61,7 +74,7 @@ const REVEALER = 'assets/motion.js';
     await p2.waitForTimeout(4800);   // past the 4 s fallback in the page head
     const c = await hidden(p2);
     await on.close();
-    if (c.hidden) { fails++; console.log(`HIDDEN WHEN THE REVEAL SCRIPT FAILS  ${page}: ${c.hidden} of ${c.total} [data-aos] blocks transparent`); }
+    if (c.hidden) { fails++; console.log(`HIDDEN WHEN THE REVEAL SCRIPT FAILS  ${page}: ${c.hidden} of ${c.total} [data-aos] blocks transparent`); c.where.forEach(w => console.log('      ' + w)); }
 
     // 3. JavaScript on and working: scroll through, then nothing may stay hidden
     const ok = await b.newContext({ viewport: { width: 1280, height: 900 } });
@@ -78,7 +91,7 @@ const REVEALER = 'assets/motion.js';
     const d = await hidden(p3);
     const ready = await p3.evaluate(() => document.documentElement.classList.contains('mo-ready'));
     await ok.close();
-    if (d.hidden) { fails++; console.log(`STUCK HIDDEN  ${page}: ${d.hidden} of ${d.total} [data-aos] blocks never revealed after scrolling (mo-ready=${ready})`); }
+    if (d.hidden) { fails++; console.log(`STUCK HIDDEN  ${page}: ${d.hidden} of ${d.total} [data-aos] blocks never revealed after scrolling (mo-ready=${ready})`); d.where.forEach(w => console.log('      ' + w)); }
 
     if (!a.hidden && !c.hidden && !d.hidden) console.log(`ok    ${page}: ${a.total} [data-aos] blocks visible without JS, without the reveal script, and after scrolling`);
   }
