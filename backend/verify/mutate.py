@@ -918,6 +918,19 @@ case("save button never shown", "save-place.js",
 # The account page subscribes with no confirmation email, which is sound only
 # because the account's email is verified. Without that check, anyone could
 # create an account under someone else's address and subscribe it.
+# ---- Offline (Round 4, R4-7) ------------------------------------------------
+# The worker must answer navigations from its cache when the network fails.
+# Let navigations fall through to the network and the offline plan is gone.
+OFFLINE = f"node {HERE}/offline.js"
+case("offline: pages not served from the cache with no signal", "offline.js",
+     ["site/sw.js"],
+     lambda: edit("site/sw.js", "  if (req.mode === 'navigate') {", "  if (false) {"),
+     lambda o: "OFFLINE PLAN NOT SHOWN" in o or "OFFLINE PAGE MISSING" in o, OFFLINE)
+case("offline: account requests cached", "offline.js",
+     ["site/sw.js"],
+     lambda: edit("site/sw.js", "  if (/^\\/(auth|api)\\//.test(url.pathname)) return;\n", ""),
+     lambda o: "ACCOUNT DATA CACHED" in o, OFFLINE)
+
 # ---- Trip share link (Round 4, R4-6) ---------------------------------------
 # A shared link is untrusted input. Without the Egypt bounds check, a link can
 # place a stop anywhere; without the ask-first branch, opening a link silently

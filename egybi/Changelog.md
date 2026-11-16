@@ -1632,3 +1632,28 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - with a saved plan, the page must ask first, "Keep my plan" must keep the plan byte for byte, and "Open the shared trip" must replace it;
   - a stop named `<img onerror>` must render as text.
 - **Mutation cases:** the Egypt bounds check removed must give SHARE ACCEPTS BAD LINK, and the ask-first branch removed must give OWN PLAN OVERWRITTEN.
+
+## 2026-11-16 — The planner, and every page you opened, works offline (Round 4, R4-7)
+- **Why:** a tourist checks the plan in a tomb, on a felucca or in a desert hotel with no signal. The trip already lived in localStorage, but the page itself would not open.
+- **`site/sw.js`, a service worker the planner registers:**
+  - **pages and data:** network first, so an online reader always gets today's figures; the copy on the device is used only when the network fails;
+  - **versioned assets and images:** cache first, because a new version is a new URL;
+  - **a page never opened, offline:** a small built-in note links to the planner. No new HTML page is added to the site;
+  - **never cached:** anything under `/auth/` or `/api/`, any non-GET request, and anything from another host;
+  - **the first visit:** after registering, the planner hands the worker the files it already loaded, so that visit works offline straight away;
+  - **size:** at most 60 pages, 150 assets and 40 data files.
+- **Installable:** `manifest.webmanifest` lets a phone add EgyBI to the home screen. It opens on the planner, with shortcuts to places and to when-to-go, and uses the existing 192 px and 512 px icons.
+- **Kill switch:** deleting `sw.js` would not remove installed copies, because a 404 on update leaves the old worker running. Setting `KILL = true` and deploying makes every installed copy delete its caches and unregister. That is the rollback.
+- **`.htaccess`:**
+  - `sw.js` and the manifest are served `no-cache`, so a fix or the kill switch reaches every device on its next check;
+  - `.webmanifest` gets its file type.
+- **Privacy:** `privacy.html` gains "Pages kept for offline use": the copies stay on the device, are never sent anywhere, and never include account pages.
+- **Files:**
+  - `assets/plan.js` (`?v=6`): `initOffline`;
+  - `plan.html`: the manifest link, the theme colour and a status line.
+- **New browser check `backend/verify/offline.js`:**
+  - with the network cut, the planner must reopen with the saved stops;
+  - an unopened page must show the offline note;
+  - no `/auth/` or `/api/` response may be cached;
+  - back online, the network copy must win over a planted stale one.
+- **Mutation cases:** navigations not answered from the cache must give OFFLINE PLAN NOT SHOWN, and the `/auth/` and `/api/` exclusions removed must give ACCOUNT DATA CACHED.
