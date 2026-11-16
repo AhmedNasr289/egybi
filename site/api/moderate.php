@@ -93,9 +93,12 @@ try {
     require_once __DIR__ . '/../auth/notes_lib.php';
     notes_ensure_schema($db);
     $tnotes = $db->query("SELECT n.id, n.sites, n.place_text, n.visited_month, n.body, n.status, n.created_at, u.display_name,
-                                 (SELECT COUNT(*) FROM note_reports r WHERE r.note_id = n.id) AS reports
+                                 (SELECT COUNT(*) FROM note_reports r WHERE r.note_id = n.id AND r.resolved = 0) AS reports,
+                                 (SELECT GROUP_CONCAT(r.reason) FROM note_reports r WHERE r.note_id = n.id AND r.resolved = 0) AS reasons
                           FROM notes n JOIN users u ON u.id = n.user_id
-                          WHERE n.status IN ('queued','hidden') ORDER BY n.created_at LIMIT 500")->fetchAll(PDO::FETCH_ASSOC);
+                          WHERE n.status IN ('queued','hidden')
+                             OR EXISTS (SELECT 1 FROM note_reports r WHERE r.note_id = n.id AND r.resolved = 0)
+                          ORDER BY n.created_at LIMIT 500")->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $ex) {
     error_log('[EgyBI moderate notes] ' . $ex);
 }
@@ -134,11 +137,11 @@ button.del{color:var(--red);border-color:#e4c9ca}
 <p class="sub">Community submissions. Nothing is public until approved here.</p>
 <?php if ($notice !== ''): ?><div class="flash"><?=$e($notice)?></div><?php endif; ?>
 
-<h2>Travellers' notes waiting — <?=count($tnotes)?></h2>
-<?php if (!$tnotes): ?><p class="empty">No notes waiting or hidden.</p><?php endif; ?>
+<h2>Travellers' notes waiting, hidden or reported — <?=count($tnotes)?></h2>
+<?php if (!$tnotes): ?><p class="empty">No notes waiting, hidden or reported.</p><?php endif; ?>
 <?php foreach ($tnotes as $r): ?>
   <div class="note">
-    <div class="meta"><?=$e($r['display_name'])?> · <?=$e($r['status'])?><?=((int)$r['reports'] ? ' · ' . (int)$r['reports'] . ' report(s)' : '')?> · <?=$e($r['created_at'])?> · <?=$e(trim($r['sites'] . ' ' . $r['place_text']))?> <?=$e($r['visited_month'])?></div>
+    <div class="meta"><?=$e($r['display_name'])?> · <?=$e($r['status'])?><?=((int)$r['reports'] ? ' · ' . (int)$r['reports'] . ' open report(s): ' . $e(str_replace(',', ', ', (string)$r['reasons'])) : '')?> · <?=$e($r['created_at'])?> · <?=$e(trim($r['sites'] . ' ' . $r['place_text']))?> <?=$e($r['visited_month'])?></div>
     <div class="msg"><?=$e($r['body'])?></div>
     <?=$form((string)$r['id'], 'note-publish', 'Publish', $key, 'go')?>
     <?php if ($r['status'] !== 'hidden'): ?><?=$form((string)$r['id'], 'note-hide', 'Hide', $key)?><?php endif; ?>

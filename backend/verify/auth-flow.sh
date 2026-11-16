@@ -209,8 +209,9 @@ fi
 # ---- Travellers' notes (Round 4, R4-2a, 2026-11-16) --------------------------
 # api/notes.php end to end: who may write, every abuse path, moderation,
 # reports, helpful marks, and that deleting an account takes its notes with it.
-# The endpoint is off live (NOTES_LIVE=false); this server runs with
-# NOTES_ENABLED=1. Three more sign-ups keep the run at 7 of the 8-an-hour limit.
+# NOTES_LIVE is true from R4-2b; the server also sets NOTES_ENABLED=1 so this
+# section runs on R4-2a alone. Four more sign-ups make 8: the 8-an-hour limit, exactly.
+# Every rule from the R4-2b security review is exercised here, not only named.
 ncall() {  # ncall JAR METHOD ACTION [JSON] [extra curl args...] -> "STATUS BODY"
   local jar=$1 method=$2 action=$3 data=${4:-}; shift 4 2>/dev/null || shift $#
   local args=(-s -o "$WORK/nbody" -w '%{http_code}' -b "$jar" -c "$jar" -X "$method"
@@ -219,16 +220,21 @@ ncall() {  # ncall JAR METHOD ACTION [JSON] [extra curl args...] -> "STATUS BODY
   local code; code=$(curl "${args[@]}" "$BASE/api/notes.php?action=$action")
   echo "$code $(cat "$WORK/nbody")"
 }
-JAR_E="$WORK/e.jar"; JAR_F="$WORK/f.jar"; JAR_G="$WORK/g.jar"; JAR_N="$WORK/n.jar"
+JAR_E="$WORK/e.jar"; JAR_F="$WORK/f.jar"; JAR_G="$WORK/g.jar"; JAR_H="$WORK/h.jar"; JAR_N="$WORK/n.jar"
 E='{"email":"e@example.org","password":"notes writer secret"}'
 F='{"email":"f@example.org","password":"notes reader secret"}'
 G='{"email":"g@example.org","password":"never verified secret"}'
+H='{"email":"h@example.org","password":"notes second reader"}'
 # D (d@example.org) is the verified account from the security pass; $D is defined there.
-for who in E F G; do
+# Like the sign-in window below: earlier passes made sign-ups from this one IP,
+# and four more would sit exactly on the 8-an-hour limit. The limit is tested
+# in the security pass; here it would only make the notes section fragile.
+sql "DELETE FROM auth_attempts WHERE action='signup'" >/dev/null
+for who in E F G H; do
   eval "j=\$JAR_$who; body=\$$who"
   expect "sign up $who (notes)" 200 "$(call "$j" POST signup "$body")" '"ok":true'
 done
-for who in e f; do
+for who in e f h; do
   uid=$(sql "SELECT id FROM users WHERE email='$who@example.org'")
   tok=$(sql "SELECT token FROM auth_tokens WHERE kind='verify' AND user_id='$uid'")
   up=$(echo "$who" | tr a-z A-Z); eval "j=\$JAR_$up"
@@ -245,13 +251,22 @@ r=$(call "$JAR_F" POST login "$F"); expect "notes: sign in F" 200 "$r" '"csrf"';
 r=$(call "$JAR_G" POST login "$G"); expect "notes: sign in G (unverified)" 200 "$r" '"csrf"'; CG=$(echo "${r#* }" | field csrf)
 note() { printf '{"sites":["giza"],"month":"2026-10","body":"%s"}' "$1"; }
 LONG="We went at opening time and had the plateau almost to ourselves for an hour."
+mod() { ncall "$JAR_N" POST moderate "{\"key\":\"$HKEY\",\"id\":\"$1\",\"act\":\"$2\"}"; }
+queue() { ncall "$JAR_N" GET queue -H "X-Mod-Key: $HKEY"; }
+public_has() {  # public_has NAME NOTE_ID yes|no
+  local l; l=$(ncall "$JAR_N" GET list)
+  if { [ "$3" = yes ] && [[ "$l" == *"$2"* ]]; } || { [ "$3" = no ] && [[ "$l" != *"$2"* ]]; }; then echo "ok    $1"
+  else echo "FAIL  $1"; fails=$((fails+1)); fi
+}
 
 expect "notes: anyone can read the list"      200 "$(ncall "$JAR_N" GET list)" '"notes":[]'
 expect "notes: signed out cannot write"       401 "$(ncall "$JAR_N" POST create "$(note "$LONG")")"
 expect "notes: no CSRF token refused"         403 "$(ncall "$JAR_E" POST create "$(note "$LONG")")"
 expect "notes: cross-site write refused"      403 "$(ncall "$JAR_E" POST create "$(note "$LONG")" -H "X-CSRF: $CE" -H 'Sec-Fetch-Site: cross-site')"
+expect "notes: a foreign Origin refused"      403 "$(ncall "$JAR_E" POST create "$(note "$LONG")" -H "X-CSRF: $CE" -H 'Origin: https://evil.example')"
 expect "notes: unverified email refused"      403 "$(ncall "$JAR_G" POST create "$(note "$LONG")" -H "X-CSRF: $CG")" 'Confirm your email'
 expect "notes: too short refused"             422 "$(ncall "$JAR_E" POST create "$(note "Too short.")" -H "X-CSRF: $CE")"
+expect "notes: blank lines do not count towards the length" 422 "$(ncall "$JAR_E" POST create '{"sites":["giza"],"body":"a\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nb"}' -H "X-CSRF: $CE")"
 expect "notes: unknown site refused"          422 "$(ncall "$JAR_E" POST create '{"sites":["../etc"],"body":"'"$LONG"'"}' -H "X-CSRF: $CE")"
 expect "notes: no place at all refused"       422 "$(ncall "$JAR_E" POST create '{"sites":[],"place":"","body":"'"$LONG"'"}' -H "X-CSRF: $CE")"
 expect "notes: future month refused"          422 "$(ncall "$JAR_E" POST create '{"sites":["giza"],"month":"2999-01","body":"'"$LONG"'"}' -H "X-CSRF: $CE")"
@@ -260,50 +275,110 @@ XSS='<script>alert(1)</script> and a long enough honest note about Giza.'
 r=$(ncall "$JAR_E" POST create "$(note "$XSS")" -H "X-CSRF: $CE"); expect "notes: E writes a note (queued)" 200 "$r" '"status":"queued"'
 N1=$(echo "${r#* }" | field id)
 check "notes: the script tag is stored as plain text" "$(sql "SELECT body FROM notes WHERE id='$N1'")" "$XSS"
-[[ "$(ncall "$JAR_N" GET list)" != *"$N1"* ]] && echo "ok    notes: a queued note is not public" || { echo "FAIL  notes: a queued note is public"; fails=$((fails+1)); }
-expect "notes: queue needs the key"           404 "$(ncall "$JAR_N" GET "queue&key=wrong-key-0123456789")"
-expect "notes: the moderator sees the queue"  200 "$(ncall "$JAR_N" GET "queue&key=$HKEY")" "$N1"
-expect "notes: moderator publishes N1"        200 "$(ncall "$JAR_N" POST moderate "{\"key\":\"$HKEY\",\"id\":\"$N1\",\"act\":\"publish\"}")"
+public_has "notes: a queued note is not public" "$N1" no
+expect "notes: queue needs the key"           404 "$(ncall "$JAR_N" GET queue -H 'X-Mod-Key: wrong-key-0123456789')"
+expect "notes: the key in the URL is refused" 404 "$(ncall "$JAR_N" GET "queue&key=$HKEY")"
+expect "notes: the moderator sees the queue"  200 "$(queue)" "$N1"
+expect "notes: moderator publishes N1"        200 "$(mod "$N1" publish)"
 r=$(ncall "$JAR_N" GET "list&site=giza"); expect "notes: N1 is public under Giza" 200 "$r" "$N1"
-[[ "$r" != *"e@example.org"* ]] && echo "ok    notes: the author's email is never published" || { echo "FAIL  notes: an email address is in the list"; fails=$((fails+1)); }
+[[ "$r" != *"e@example.org"* && "$r" != *"$EID"* ]] && echo "ok    notes: the author's email and id are never published" || { echo "FAIL  notes: an email or user id is in the list"; fails=$((fails+1)); }
 hdr=$(curl -s -D - -o /dev/null "$BASE/api/notes.php?action=list")
 [[ "${hdr,,}" == *"content-type: application/json"* && "${hdr,,}" == *"nosniff"* ]] \
   && echo "ok    notes: the list is JSON with nosniff" || { echo "FAIL  notes: list headers: $hdr"; fails=$((fails+1)); }
 [[ "$(ncall "$JAR_N" GET "list&site=karnak")" != *"$N1"* ]] && echo "ok    notes: N1 is not under Karnak" || { echo "FAIL  notes: N1 shown under Karnak"; fails=$((fails+1)); }
 
 r=$(ncall "$JAR_E" POST create "$(note "$LONG two")" -H "X-CSRF: $CE"); N2=$(echo "${r#* }" | field id)
-ncall "$JAR_N" POST moderate "{\"key\":\"$HKEY\",\"id\":\"$N2\",\"act\":\"publish\"}" >/dev/null
+mod "$N2" publish >/dev/null
 r=$(ncall "$JAR_E" POST create "$(note "$LONG three")" -H "X-CSRF: $CE"); expect "notes: after two approved, E publishes at once" 200 "$r" '"status":"published"'
 N3=$(echo "${r#* }" | field id)
 ncall "$JAR_E" POST create "$(note "$LONG four")" -H "X-CSRF: $CE" >/dev/null
 ncall "$JAR_E" POST create "$(note "$LONG five")" -H "X-CSRF: $CE" >/dev/null
 expect "notes: the sixth note in a day is refused" 429 "$(ncall "$JAR_E" POST create "$(note "$LONG six")" -H "X-CSRF: $CE")"
 
+# ---- helpful marks
 expect "notes: F marks N1 helpful"            200 "$(ncall "$JAR_F" POST helpful "{\"id\":\"$N1\"}" -H "X-CSRF: $CF")" '"helpful":1'
 expect "notes: a second press takes it back"  200 "$(ncall "$JAR_F" POST helpful "{\"id\":\"$N1\"}" -H "X-CSRF: $CF")" '"helpful":0'
 expect "notes: F marks it again"              200 "$(ncall "$JAR_F" POST helpful "{\"id\":\"$N1\"}" -H "X-CSRF: $CF")" '"helpful":1'
+expect "notes: the list says F marked it"     200 "$(ncall "$JAR_F" GET list)" '"marked":true'
 expect "notes: E cannot mark E's own note"    422 "$(ncall "$JAR_E" POST helpful "{\"id\":\"$N1\"}" -H "X-CSRF: $CE")"
+expect "notes: an unverified account cannot mark" 403 "$(ncall "$JAR_G" POST helpful "{\"id\":\"$N1\"}" -H "X-CSRF: $CG")" 'Confirm your email'
 expect "notes: helpful without CSRF refused"  403 "$(ncall "$JAR_F" POST helpful "{\"id\":\"$N1\"}")"
 expect "notes: F cannot delete E's note"      404 "$(ncall "$JAR_F" POST delete "{\"id\":\"$N1\"}" -H "X-CSRF: $CF")"
-expect "notes: E's note survives F's attempt" 200 "$(ncall "$JAR_N" GET list)" "$N1"
+public_has "notes: E's note survives F's attempt" "$N1" yes
+# The per-address limit: fill this address's helpful bucket for the day, as
+# 300 presses from other accounts on one network would, and the next is refused.
+IPH=$(sql "SELECT ip_hash FROM auth_attempts WHERE action='note-helpful' AND ip_hash NOT LIKE 'notes-%' LIMIT 1")
+[ -n "$IPH" ] && echo "ok    notes: helpful presses are counted per address" || { echo "FAIL  notes: no per-address helpful counter"; fails=$((fails+1)); }
+sql "WITH RECURSIVE c(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM c WHERE x<300) INSERT INTO auth_attempts (id, ip_hash, action, created_at) SELECT 'simulated' || x, '$IPH', 'note-helpful', strftime('%Y-%m-%dT%H:%M:%S', 'now') || '+00:00' FROM c" >/dev/null
+expect "notes: the per-address helpful limit holds" 429 "$(ncall "$JAR_F" POST helpful "{\"id\":\"$N2\"}" -H "X-CSRF: $CF")"
+sql "DELETE FROM auth_attempts WHERE id LIKE 'simulated%'" >/dev/null
 
+# ---- reports: verified accounts, not your own note, two addresses, trusted authors reviewed
 r=$(call "$JAR_D" POST login "$D"); CD=$(echo "${r#* }" | field csrf)
-expect "notes: F reports N3"                  200 "$(ncall "$JAR_F" POST report "{\"id\":\"$N3\",\"reason\":\"spam\"}" -H "X-CSRF: $CF")" '"hidden":false'
-expect "notes: a second report by F counts once" 200 "$(ncall "$JAR_F" POST report "{\"id\":\"$N3\",\"reason\":\"spam\"}" -H "X-CSRF: $CF")" '"hidden":false'
-expect "notes: G reports N3"                  200 "$(ncall "$JAR_G" POST report "{\"id\":\"$N3\",\"reason\":\"rude\"}" -H "X-CSRF: $CG")" '"hidden":false'
-expect "notes: D's report hides N3"           200 "$(ncall "$JAR_D" POST report "{\"id\":\"$N3\",\"reason\":\"off topic\"}" -H "X-CSRF: $CD")" '"hidden":true'
-[[ "$(ncall "$JAR_N" GET list)" != *"$N3"* ]] && echo "ok    notes: a hidden note is not public" || { echo "FAIL  notes: hidden N3 still public"; fails=$((fails+1)); }
-expect "notes: the moderator sees it hidden"  200 "$(ncall "$JAR_N" GET "queue&key=$HKEY")" '"status":"hidden"'
+r=$(call "$JAR_H" POST login "$H"); expect "notes: sign in H" 200 "$r" '"csrf"'; CH=$(echo "${r#* }" | field csrf)
+DID=$(sql "SELECT id FROM users WHERE email='d@example.org'")
+r=$(ncall "$JAR_F" POST create "$(note "$LONG by F")" -H "X-CSRF: $CF"); NF=$(echo "${r#* }" | field id)
+mod "$NF" publish >/dev/null
+public_has "notes: F's first note is published by the moderator" "$NF" yes
+expect "notes: E cannot report E's own note"  422 "$(ncall "$JAR_E" POST report "{\"id\":\"$N1\",\"reason\":\"spam\"}" -H "X-CSRF: $CE")"
+expect "notes: an unverified account cannot report" 403 "$(ncall "$JAR_G" POST report "{\"id\":\"$N3\",\"reason\":\"spam\"}" -H "X-CSRF: $CG")" 'Confirm your email'
+for who in F D H; do
+  eval "j=\$JAR_$who; c=\$C$who"
+  r=$(ncall "$j" POST report "{\"id\":\"$N3\",\"reason\":\"unkind\"}" -H "X-CSRF: $c")
+  expect "notes: $who reports trusted E's N3" 200 "$r" 'Thank you'
+done
+[[ "$r" != *'"hidden"'* ]] && echo "ok    notes: a report reply never says whether the note was hidden" || { echo "FAIL  notes: the report reply leaks the threshold"; fails=$((fails+1)); }
+sql "UPDATE note_reports SET ip_hash='simulated-second-address' WHERE note_id='$N3' AND user_id='$DID'" >/dev/null
+ncall "$JAR_H" POST report "{\"id\":\"$N3\",\"reason\":\"unkind\"}" -H "X-CSRF: $CH" >/dev/null
+public_has "notes: a trusted author's reported note stays up" "$N3" yes
+r=$(queue); expect "notes: and goes to the review queue with its reasons" 200 "$r" '"reports":3'
+[[ "$r" == *'"unkind"'* ]] && echo "ok    notes: the queue shows the reasons" || { echo "FAIL  notes: no reasons in the queue"; fails=$((fails+1)); }
+for who in E D H; do
+  eval "j=\$JAR_$who; c=\$C$who"
+  ncall "$j" POST report "{\"id\":\"$NF\",\"reason\":\"spam\"}" -H "X-CSRF: $c" >/dev/null
+done
+public_has "notes: three reports from one address do not hide a note" "$NF" yes
+check "notes: a second report by H counts once" "$(sql "SELECT COUNT(*) FROM note_reports WHERE note_id='$NF'")" 3
+sql "UPDATE note_reports SET ip_hash='simulated-second-address' WHERE note_id='$NF' AND user_id='$DID'" >/dev/null
+ncall "$JAR_H" POST report "{\"id\":\"$NF\",\"reason\":\"spam\"}" -H "X-CSRF: $CH" >/dev/null
+public_has "notes: reports from two addresses hide an untrusted author's note" "$NF" no
+expect "notes: the moderator sees it hidden"  200 "$(queue)" '"status":"hidden"'
+expect "notes: moderator republishes NF"      200 "$(mod "$NF" publish)"
+ncall "$JAR_E" POST report "{\"id\":\"$NF\",\"reason\":\"spam\"}" -H "X-CSRF: $CE" >/dev/null
+ncall "$JAR_H" POST report "{\"id\":\"$NF\",\"reason\":\"spam\"}" -H "X-CSRF: $CH" >/dev/null
+public_has "notes: the same reporters cannot hide a republished note" "$NF" yes
+check "notes: republishing resolved the reports, it did not delete them" "$(sql "SELECT COUNT(*) FROM note_reports WHERE note_id='$NF' AND resolved=1")" 3
+# moderate.php's own note buttons (a form POST, the key in the panel's URL)
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST --data "key=$HKEY&id=$NF&act=note-hide" "$BASE/api/moderate.php?key=$HKEY")
+[ "$code" = 302 ] || [ "$code" = 303 ] && echo "ok    notes: moderate.php hides a note" || { echo "FAIL  notes: moderate.php note-hide answered $code"; fails=$((fails+1)); }
+check "notes: moderate.php's hide reached the database" "$(sql "SELECT status FROM notes WHERE id='$NF'")" hidden
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST --data "key=wrong-key-0123456789&id=$NF&act=note-publish" "$BASE/api/moderate.php?key=wrong-key-0123456789")
+check "notes: moderate.php refuses a wrong key" "$code" 404
+expect "notes: moderator publishes NF again"  200 "$(mod "$NF" publish)"
+expect "notes: E marks F's note helpful"      200 "$(ncall "$JAR_E" POST helpful "{\"id\":\"$NF\"}" -H "X-CSRF: $CE")" '"helpful":1'
 
+# ---- the author's own delete, the export, and account deletion
 expect "notes: E deletes E's own N2"          200 "$(ncall "$JAR_E" POST delete "{\"id\":\"$N2\"}" -H "X-CSRF: $CE")"
-[[ "$(ncall "$JAR_N" GET list)" != *"$N2"* ]] && echo "ok    notes: a deleted note is gone" || { echo "FAIL  notes: deleted N2 still listed"; fails=$((fails+1)); }
-expect "notes: E sees E's own notes"          200 "$(ncall "$JAR_E" GET mine)" '"status":"hidden"'
-expect "notes: export carries the notes"      200 "$(call "$JAR_E" GET export)" "$N1"
+public_has "notes: a deleted note is gone" "$N2" no
+check "notes: an author's delete is logged" "$(sql "SELECT COUNT(*) FROM note_audit WHERE note_id='$N2' AND action='author-delete'")" 1
+expect "notes: E sees E's own notes"          200 "$(ncall "$JAR_E" GET mine)" '"status":"published"'
+r=$(call "$JAR_E" GET export)
+expect "notes: export carries the notes"      200 "$r" "$N1"
+[[ "$r" == *'"helpful_marks"'* && "$r" == *'"reports"'* && "$r" == *"$NF"* ]] \
+  && echo "ok    notes: export carries E's marks and reports" || { echo "FAIL  notes: export lacks E's marks or reports"; fails=$((fails+1)); }
+EID_R=$(sql "SELECT COUNT(*) FROM auth_attempts WHERE ip_hash LIKE 'notes-%:$EID'")
+[ "$EID_R" -gt 0 ] && echo "ok    notes: E has abuse counters before deletion ($EID_R)" || { echo "FAIL  notes: no counters to delete"; fails=$((fails+1)); }
 expect "notes: E deletes the account"         200 "$(call "$JAR_E" POST delete-account '{"password":"notes writer secret","confirm":"DELETE"}' -H "X-CSRF: $CE")" 'deleted'
 check "notes: no notes left for E"            "$(sql "SELECT COUNT(*) FROM notes WHERE user_id='$EID'")" 0
 check "notes: no marks left on E's notes"     "$(sql "SELECT COUNT(*) FROM note_helpful WHERE note_id IN ('$N1','$N2','$N3')")" 0
 check "notes: no reports left on E's notes"   "$(sql "SELECT COUNT(*) FROM note_reports WHERE note_id IN ('$N1','$N2','$N3')")" 0
-[[ "$(ncall "$JAR_N" GET list)" != *"$N1"* ]] && echo "ok    notes: E's notes left the list with the account" || { echo "FAIL  notes: E's note outlived the account"; fails=$((fails+1)); }
+check "notes: E's own marks are gone"         "$(sql "SELECT COUNT(*) FROM note_helpful WHERE user_id='$EID'")" 0
+check "notes: E's own reports are gone"       "$(sql "SELECT COUNT(*) FROM note_reports WHERE user_id='$EID'")" 0
+check "notes: F's note lost E's mark"         "$(sql "SELECT helpful_count FROM notes WHERE id='$NF'")" 0
+check "notes: E's abuse counters are gone"    "$(sql "SELECT COUNT(*) FROM auth_attempts WHERE ip_hash LIKE 'notes-%:$EID'")" 0
+public_has "notes: E's notes left the list with the account" "$N1" no
+expect "notes: the moderator deletes NF"      200 "$(mod "$NF" delete)"
+check "notes: a moderator's delete takes the reports" "$(sql "SELECT COUNT(*) FROM note_reports WHERE note_id='$NF'")" 0
 
 [ "$fails" -eq 0 ] && { echo "account flow: every step answered as expected"; exit 0; }
 echo "account flow: $fails step(s) wrong"; exit 1

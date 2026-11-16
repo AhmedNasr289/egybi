@@ -17,7 +17,16 @@
   var list = $('notesList'), more = $('notesMore'), pick = $('notesSite'),
       form = $('notesForm'), write = $('notesWrite'), say = $('notesNote'),
       body = $('notesBody'), count = $('notesCount'), sitesBox = $('notesSites');
-  var names = {}, cursor = '', pending = null, siteFilter = '';
+  var names = {}, cursor = '', pending = null, siteFilter = '', loadId = 0;
+  var REASONS = [['spam', 'Spam or advertising'], ['wrong', 'Wrong or misleading'], ['unkind', 'Rude or unkind'],
+                 ['personal', 'Shares personal details'], ['other', 'Something else']];
+  function failed() { tell('Could not reach EgyBI. Please try again.', 'error'); }
+  /* The section is hidden when notes are off; drop its link from the page's
+     own sub-navigation too, so it never points at something invisible. */
+  function hideSection() {
+    root.hidden = true;
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="#notes"]'), function (x) { x.remove(); });
+  }
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
@@ -82,13 +91,15 @@
     help.type = 'button';
     help.setAttribute('aria-label', 'Mark this note helpful. ' + (n.helpful || 0) + ' so far.');
     if (n.mine) help.disabled = true;
+    else help.setAttribute('aria-pressed', n.marked ? 'true' : 'false');
     help.addEventListener('click', function () {
       signedIn('Sign in to mark notes helpful.', function () {
+        help.disabled = true;   // one request at a time: a double press cannot send two toggles
         post('helpful', { id: n.id }).then(function (r) {
           var d = r.data || {};
           if (d.ok) { help.textContent = 'Helpful · ' + d.helpful; help.setAttribute('aria-pressed', d.marked ? 'true' : 'false'); }
           else tell(d.message || 'Could not mark it.', 'error');
-        });
+        }).catch(failed).then(function () { help.disabled = false; });
       });
     });
     foot.appendChild(help);
@@ -98,10 +109,11 @@
       var armed = false;
       del.addEventListener('click', function () {
         if (!armed) { armed = true; del.textContent = 'Press again to delete'; return; }
+        del.disabled = true;
         post('delete', { id: n.id }).then(function (r) {
           if (r.data && r.data.ok) { a.remove(); tell('Your note is deleted.', 'ok'); }
-          else tell((r.data && r.data.message) || 'Could not delete it.', 'error');
-        });
+          else { del.disabled = false; tell((r.data && r.data.message) || 'Could not delete it.', 'error'); }
+        }).catch(function () { del.disabled = false; failed(); });
       });
       foot.appendChild(del);
     } else {
@@ -109,11 +121,23 @@
       rep.type = 'button';
       rep.addEventListener('click', function () {
         signedIn('Sign in to report a note.', function () {
-          post('report', { id: n.id, reason: 'reported from community page' }).then(function (r) {
-            var d = r.data || {};
-            if (d.ok) { rep.textContent = 'Reported'; rep.disabled = true; if (d.hidden) a.remove(); }
-            else tell(d.message || 'Could not report it.', 'error');
+          if (a.querySelector('.note-why')) return;
+          var why = el('div', 'note-why');
+          var lab = el('label', 'sr-only', 'Why are you reporting this note?');
+          var sel = document.createElement('select');
+          sel.className = 'note-reason'; sel.id = 'why-' + n.id; lab.htmlFor = sel.id;
+          REASONS.forEach(function (o) { var op = el('option', null, o[1]); op.value = o[0]; sel.appendChild(op); });
+          var send = el('button', 'note-act', 'Send report'); send.type = 'button';
+          send.addEventListener('click', function () {
+            send.disabled = true;
+            post('report', { id: n.id, reason: sel.value }).then(function (r) {
+              var d = r.data || {};
+              if (d.ok) { why.remove(); rep.textContent = 'Reported — thank you'; rep.disabled = true; }
+              else { send.disabled = false; tell(d.message || 'Could not report it.', 'error'); }
+            }).catch(function () { send.disabled = false; failed(); });
           });
+          why.appendChild(lab); why.appendChild(sel); why.appendChild(send);
+          foot.appendChild(why); sel.focus();
         });
       });
       foot.appendChild(rep);
@@ -123,13 +147,15 @@
   }
 
   function load(fresh) {
+    var mine = ++loadId;   // a newer load wins: an older reply arriving late is ignored, so no card shows twice
     if (fresh) { cursor = ''; list.textContent = ''; }
     var url = API + '?action=list' + (siteFilter ? '&site=' + encodeURIComponent(siteFilter) : '') +
               (cursor ? '&before=' + encodeURIComponent(cursor) : '');
     return getJSON(url).then(function (r) {
+      if (mine !== loadId) return;
       var d = r.data || {};
       if (!d.ok) {
-        if (d.disabled) { root.hidden = true; return; }
+        if (d.disabled) { hideSection(); return; }
         list.textContent = ''; list.appendChild(el('p', 'note-empty', 'Notes could not be loaded just now.'));
         return;
       }
@@ -140,9 +166,10 @@
           : 'No notes yet. Be the first to share one.'));
       }
       notes.forEach(function (n) { list.appendChild(card(n)); });
-      cursor = notes.length ? notes[notes.length - 1].at : cursor;
+      var last = notes[notes.length - 1];
+      cursor = last ? last.at + '~' + last.id : cursor;   // keyset: same-second notes are never skipped
       more.hidden = notes.length < 20;
-    }).catch(function () { list.textContent = ''; list.appendChild(el('p', 'note-empty', 'Notes could not be loaded just now.')); });
+    }).catch(function () { if (mine !== loadId) return; list.textContent = ''; list.appendChild(el('p', 'note-empty', 'Notes could not be loaded just now.')); });
   }
 
   function buildSites(keys) {
@@ -192,7 +219,7 @@
     var q = new URLSearchParams(location.search).get('site') || '';
     return getJSON(API + '?action=list').then(function (r) {
       var d = r.data || {};
-      if (d.disabled) { root.hidden = true; return; }
+      if (d.disabled || !d.ok) { hideSection(); return; }
       buildSites(d.sites || Object.keys(names));
       if (q && names[q]) { pick.value = q; siteFilter = q; }
       root.hidden = false;

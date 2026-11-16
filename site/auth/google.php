@@ -124,7 +124,7 @@ if (!$u) {
             json_out(false, ['message' => 'Google has not verified that email address. Please verify it with Google first.'], 409);
         }
         $id      = rid();
-        $display = 'Scribe-' . strtoupper(substr($id, 0, 4));
+        $display = 'Scribe-' . strtoupper(bin2hex(random_bytes(2)));  // random, not derived from the account id
         $db->prepare('INSERT INTO users (id,email,pass_hash,email_verified,plan,display_name,created_at,updated_at,google_sub) VALUES (?,?,?,?,?,?,?,?,?)')
            ->execute([$id, $email, PASS_NONE, 1, 'free', $display, $ts, $ts, $sub]);
         $st = $db->prepare('SELECT * FROM users WHERE id=?');

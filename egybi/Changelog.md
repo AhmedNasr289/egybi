@@ -1663,6 +1663,44 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Mutation cases:** the text helper switched to `innerHTML` must give MARKUP INJECTED, and the place filter dropped must give FILTER IGNORED.
 - **Moderation page:** `api/moderate.php`, which is key-gated, now lists queued and hidden travellers' notes, with their report count, and Publish, Hide and Delete buttons. It and the JSON API share one rule set, `notes_moderate()` in `notes_lib.php`, so the two cannot drift apart. Every action is logged in `note_audit`.
 - **Next:** the 3 latest notes on each visit page (R4-2c).
+- **Hardening before go-live (independent security review, 2026-11-16).** A separate reviewer read the whole notes diff. Each finding below was confirmed in the code before it was fixed.
+  - **Reports could be abused:** three throwaway accounts on one connection could hide any note, again after every republish. Now:
+    - reporting needs a verified email, and an author cannot report their own note;
+    - reports are limited per account (20 a day) and per address (40);
+    - a note is auto-hidden only when 3 verified accounts on at least 2 different addresses report it, and a trusted author's reported note goes to the review queue instead;
+    - a moderator's publish marks the reports resolved instead of deleting them, so the same accounts cannot hide it again.
+  - **Missing limits:** helpful marks are limited per account (60 a day) and per address (300) and need a verified email; deletes are limited to 30 a day. A double press can no longer fail, because inserts are idempotent and the button is disabled while it sends.
+  - **The moderation key** is accepted only from the `X-Mod-Key` header or a POST body, never from a URL, where it would land in access logs and history.
+  - **Privacy:**
+    - the data export now includes the account's helpful marks and reports;
+    - account deletion also removes the abuse counters tied to the account;
+    - day-old counters are pruned on every notes write, so the privacy page's 'deleted once they are a day old' holds;
+    - new accounts get a random default name instead of one built from the first 4 characters of their id (`auth.php`, `google.php`);
+    - `privacy.html` now says what marks, reports, report reasons, counters and the moderation log store.
+  - **Robustness:**
+    - database errors answer as JSON 500s instead of raw error pages;
+    - the list uses a keyset cursor (`created_at~id`), so two notes in the same second are never skipped;
+    - the queue (500) and 'mine' (200) are bounded;
+    - a report table created by the first schema gains its two new columns automatically;
+    - the SQLite indexes now match MySQL;
+    - text cleaning keeps the zero-width joiners that emoji and Persian need, drops bidirectional overrides, and collapses long runs of blank lines, and the 30-character minimum counts visible characters only.
+  - **Interface:**
+    - a reader picks a report reason, and the moderation panel shows reasons for notes that are reported but still public;
+    - a report never removes the card, so the reply does not reveal the threshold;
+    - late replies from an older load are ignored, so cards cannot show twice;
+    - when notes are off, the page's sub-navigation link to them is removed;
+    - `notes.js` and `notes.css` move to `?v=2`.
+  - **Tests:** `auth-flow.sh` now runs each rule rather than naming it. It adds a fourth account (H) and covers:
+    - one address cannot hide a note, while two addresses hide an untrusted author's note but not a trusted one's;
+    - a republished note survives the same reporters;
+    - the per-address helpful limit;
+    - the key in a URL is refused;
+    - `moderate.php`'s note buttons work and refuse a wrong key;
+    - a foreign Origin is refused;
+    - blank lines do not count towards the length;
+    - account deletion removes the account's own marks, reports and counters, and F's note loses E's mark;
+    - the export carries the marks and reports.
+  - **Mutation cases:** 8 new ones each remove one guard and must make `auth-flow.sh` fail.
 ## 2026-11-16 — "Today at this site" on every visit page (Round 4, R4-1)
 - **Why:** the study found nothing that helps on the day itself. The visit pages gave golden light for the 15th of each month, and no code anywhere read the time of day. A tourist at Giza wants to know when the light starts and ends today, and how long is left.
 - **The card:** each of the 18 visit pages now opens with "Today at <site>":

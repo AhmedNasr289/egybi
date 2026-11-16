@@ -53,4 +53,8 @@
 .note-act[aria-pressed=true] { border-color: var(--gold); background: var(--gold-soft); }
 .note-act:disabled { opacity: .6; cursor: default; }
 .note-empty { color: var(--ink-soft); font-size: var(--fs-sm); }
+.note-why { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%; }
+.note-reason { min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line-light);
+  background: var(--papyrus); color: var(--ink); font: inherit; font-size: var(--fs-sm); }
+.note-reason:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .note-card, .note-act { transition: none; } }
