@@ -1055,6 +1055,9 @@ case("briefing map moving for readers who asked for reduced motion", "briefing-m
      lambda: (edit("site/assets/site-map.js", "var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;", "var reduce = false;"),
               edit("site/assets/site-map.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {")),
      lambda o: "MAP MOTION UNDER REDUCED MOTION" in o, BMAP)
+case("briefing map waits for a third of itself before showing any dot", "briefing-map.js", ["site/assets/site-map.js"],
+     lambda: edit("site/assets/site-map.js", "}, { threshold: 0 });", "}, { threshold: 0.35 });"),
+     lambda o: "MAP EMPTY ON SCREEN" in o, BMAP)
 case("briefing map hidden without JavaScript", "briefing-map.js", ["site/assets/site-map.css"],
      lambda: edit("site/assets/site-map.css", ".site-map img, .site-map svg { display: block;", ".site-map img { display: none; } .site-map svg { display: block;"),
      lambda o: "MAP HIDDEN WITHOUT JS" in o, BMAP)

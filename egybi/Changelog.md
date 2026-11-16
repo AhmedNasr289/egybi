@@ -2092,3 +2092,11 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The defect:** CI run 43922770714 reported NO MAP MOTION on a map that moves. That was confirmed in a real browser on the live home page with the same code: the dots started 70 ms apart from Alexandria south, and all 18 were shown after the sweep.
 - **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
 - **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.
+
+## 2026-11-16 — The briefing map shows its dots as soon as the map is on screen
+- **Why:** on the live home page at 1280x900 the map starts just below the fold (its top at 843 px). The sweep waited until 35% of the map was visible, so a reader who had scrolled only a little saw Egypt's north coast with no dots on it.
+- **What changed:**
+  - `assets/site-map.js` (v2) starts the sweep as soon as any part of the map is on screen (IntersectionObserver threshold 0), so the dots come in as the coast does.
+  - The motion itself is unchanged: opacity and transform only, none under reduced motion, a plain image without JavaScript.
+- **New case in `backend/verify/briefing-map.js`:** the page loads with the map entirely below the fold, scrolls until 60 px of it shows, and every dot on screen must be shown, or the check gives MAP EMPTY ON SCREEN.
+- **Mutation case:** the old 0.35 threshold restored must give MAP EMPTY ON SCREEN.
