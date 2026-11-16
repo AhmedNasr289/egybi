@@ -94,7 +94,14 @@ const KEY = 'egybi.return';
     await p.click('#authModal .auth-submit');
     await p.waitForTimeout(2000);
     const at = new URL(p.url()).pathname;
-    if (at !== '/index.html') fail('UNASKED REDIRECT: an ordinary sign-in moved the reader to ' + at);
+    // A sign-in that never happened also "stays put". Run 43914963730 missed
+    // the UNASKED REDIRECT mutation that way: the offline worker had taken the
+    // page, its login request went around this check's stub to the preview
+    // server, and the reader was never signed in, mutated or not. env.js now
+    // blocks workers; this line makes a failed sign-in loud instead of green.
+    const signed = await p.evaluate(() => localStorage.getItem('egybi.account'));
+    if (signed !== '1') fail('SIGN-IN NEVER HAPPENED: the ordinary sign-in in case 4 did not sign the reader in, so it proves nothing');
+    else if (at !== '/index.html') fail('UNASKED REDIRECT: an ordinary sign-in moved the reader to ' + at);
     else console.log('ok   an ordinary sign-in stays on the page it happened on');
     await ctx.close();
   }
