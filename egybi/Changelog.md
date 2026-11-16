@@ -2136,6 +2136,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the page the reader was on.
 
   So the next occurrence names its own cause. Test-only; no site file changes.
+- **The cause, found by those lines** (run 43962669112): the email field held "t@example.orga long enough password" and the password field nothing. The dialog moves focus to its first field 60 ms after opening (`auth.js` `setView`), and the test typed inside that window, so the focus jump landed mid-fill and no login was sent. The test now waits until the focus is inside the dialog before typing, in all three places it opens it. A reader cannot type within 60 ms of the dialog appearing, so the site is unchanged.
 - **The verdict order, and why:** case 4 now judges the redirect first, and judges the sign-in by the login exchange as well as the flag. Run 43947896555's mutation pass missed UNASKED REDIRECT because the order was the other way round. The mutated sign-in did happen and did redirect, then community.html's own startup check received the stub's "nobody signed in" and cleared the flag, so the case read SIGN-IN NEVER HAPPENED instead.
 
 ## 2026-11-16 — briefing-map.js: two sections that could not report what they guard
