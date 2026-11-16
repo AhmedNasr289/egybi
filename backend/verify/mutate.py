@@ -1028,6 +1028,18 @@ case("return after confirming fires on an ordinary sign-in", "auth-return.js",
      lambda: edit("site/assets/auth.js", "if (cameFromLink) { var to = takeReturn();", "if (true) { var to = takeReturn();"),
      lambda o: "UNASKED REDIRECT" in o, AUTH_RETURN)
 
+# ---- Community in every header, and a header that fits (2026-11-16) --------
+HEADER = f"node {HERE}/header.js"
+case("Community dropped from one hand-written page's header", "header.js", ["site/about.html"],
+     lambda: edit("site/about.html", '<a href="community.html">Community</a>', ''),
+     lambda o: "COMMUNITY MISSING" in o and "about.html" in o, HEADER)
+case("the desktop header row kept below 1280px, where it overflows", "header.js", ["site/assets/egybi.css"],
+     lambda: edit("site/assets/egybi.css", "@media (max-width: 1279px) {", "@media (max-width: 1024px) {"),
+     lambda o: "HEADER OVERFLOW" in o, HEADER)
+case("the current page no longer highlighted in the header", "header.js", ["site/assets/egybi.js"],
+     lambda: edit("site/assets/egybi.js", "if (target === here) a.classList.add('active');", "if (false) a.classList.add('active');"),
+     lambda o: "NO ACTIVE HIGHLIGHT" in o, HEADER)
+
 # ---- travellers' notes on visit pages (R4-2c) and reading progress (M3) ------
 GUIDE = f"node {HERE}/guide.js"
 case("visit-page notes rendered as HTML", "guide.js", ["site/assets/visit-notes.js"],
