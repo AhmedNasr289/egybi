@@ -29,6 +29,9 @@ const PAGES = [
   'visit.html',                                // When to go, with the year strip
   'ar/about.html',                             // Arabic, right to left
   'ru/about.html',                             // Russian
+  'ar/index.html',                             // Arabic home: briefing, map and tools, mirrored
+  'ru/index.html',                             // Russian home: the longest labels
+  'ar/plan.html',                              // Arabic planner: map, legend and buttons
 ];
 const WIDTHS = [1280, 390];
 

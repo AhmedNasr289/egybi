@@ -1071,6 +1071,20 @@ case("English left in a Russian page's script-written cards", "i18n.py", ["site/
 case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
      lambda: edit("site/ar/about.html", "بيت الحياة.", "The House of Life."),
      lambda o: "ENGLISH LEAK" in o, I18N)
+# the home page's twins: the home page is the folder address, egybi.com/ar/
+case("the Arabic home page claiming the English home page as its canonical", "i18n.py", ["site/ar/index.html"],
+     lambda: edit("site/ar/index.html", '<link rel="canonical" href="https://egybi.com/ar/">',
+                  '<link rel="canonical" href="https://egybi.com/">'),
+     lambda o: "CANONICAL WRONG" in o, I18N)
+
+# ---- the translated copies load the site's data (2026-11-17) ----------------
+TWIN = f"node {HERE}/twin-data.js"
+case("translated pages fetching data relative to themselves", "twin-data.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "cache[path] = fetch(url(path), {", "cache[path] = fetch(path, {"),
+     lambda o: "TWIN DATA FROM WRONG FOLDER" in o, TWIN)
+case("a script link to an untranslated page left relative to the twin", "twin-data.js", ["site/assets/home.js"],
+     lambda: edit("site/assets/home.js", "' + T.url('visit.html#month') + '", "visit.html#month"),
+     lambda o: "TWIN LINK WRONG FOLDER" in o, TWIN)
 
 # ---- the year strip on When to go (2026-11-16) -------------------------------
 YEAR = f"node {HERE}/year-strip.js"

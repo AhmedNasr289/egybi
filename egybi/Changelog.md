@@ -2212,3 +2212,17 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **Moving under reduced motion:** the section read 300 ms after scrolling. It now waits a full sweep and prints what it saw, and the mutation case removes all three locks (egybi.css's site-wide `* { animation: none !important }` under reduce, the script's check and the stylesheet's query); with two removed, the page stayed still and the case could never fire.
 - **Also:** every section runs inside its own guard, so a crash is a named failure and the rest still run.
 - **Verified:** the verdict-order fix in this PR is proven by run 43962643068, where "return after confirming fires on an ordinary sign-in" was caught.
+## 2026-11-17 — Trilingual stage 2a: the trip pages in Arabic and Russian
+- **What is new:** six pages have Arabic and Russian copies built from the same catalogue: Home (egybi.com/ar/, /ru/), the route planner, Fair prices, the name studio, the Papyrus dossier and Plan check. That adds 237 entries per language and 12 sitemap URLs (59 to 71).
+- **A bug found before it shipped:** the trip scripts fetched `data/visit-climate.json` relative to the page. From `ar/index.html` that is `ar/data/...`, a 404 and an empty briefing. The links they write to pages with no translated copy (visit.html, prices.html, account.html) would have pointed into `ar/` as well.
+  - **The fix:** `trip.js` resolves data paths and those links against its own address (always `assets/`), the way `analytics.js` already finds `api/`. The new `T.url()` is used by `home.js`, `plan.js` and `fair.js`.
+  - **The newsletter form's endpoint** in the page is moved up one folder by the generator, like the sign-in base.
+- **Home page addresses:** the home page's twins are `egybi.com/ar/` and `egybi.com/ru/`, the same folder form as the English canonical `egybi.com/`. Previously the twins inherited the English canonical, so the three would have competed in search. hreflang, canonical and sitemap now use one rule (`page_url`), shared by the builder and the check.
+- **Checks:**
+  - **`twin-data.js` (new):** opens home, planner and prices in all three languages and fails if any request 404s, data comes from the wrong folder, the data never reaches the page, or a script-written link points into `ar/` or `ru/`. Two mutation cases undo each half of the fix.
+  - **`i18n.py`:** reads the home page's folder address, and accepts the example e-mail address as language-neutral. A new mutation case catches the Arabic home page claiming the English canonical.
+  - **`seo.py`:** a folder address in the sitemap now counts as that folder's index page.
+  - **`header.js`:** also measures `ar/index.html` and `ru/plan.html`.
+  - **CI screenshots:** `ar/index.html`, `ru/index.html` and `ar/plan.html` at 1280 and 390 px.
+  - **Seven translated titles and one description** were shortened to fit search snippets.
+- **Still English on these pages, by design until stage 4:** text the scripts write after load (the briefing, the planner's cards, the price tables, the sign table). `backend/i18n/REVIEW.md` lists every page for the native reviewer.

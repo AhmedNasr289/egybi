@@ -47,11 +47,22 @@
     catch (e) { return false; }
   }
 
-  /* ------------------------------------------------------------- the data */
+  /* ------------------------------------------------------------- the data
+     Paths like 'data/visit-climate.json' are the SITE's, not the page's: the
+     Arabic and Russian copies live one folder down (ar/, ru/), where the bare
+     relative path would ask for ar/data/... - a 404, an empty briefing. So
+     they resolve against this script's own address, which is always assets/,
+     the way analytics.js finds api/. url() does the same for links the
+     scripts write to pages that have no translated copy. */
+  var ME = document.currentScript && document.currentScript.src;
+  var ROOT = ME ? new URL('../', ME).href : '';
+  function url(path) {
+    return (ROOT && !/^([a-z]+:|\/|#)/i.test(path)) ? new URL(path, ROOT).href : path;
+  }
   var cache = {};
   function getJSON(path) {
     if (!cache[path]) {
-      cache[path] = fetch(path, { cache: 'no-cache' }).then(function (r) {
+      cache[path] = fetch(url(path), { cache: 'no-cache' }).then(function (r) {
         if (!r.ok) throw new Error(path + ' ' + r.status);
         return r.json();
       });
@@ -189,7 +200,7 @@
 
   window.EGYBI = window.EGYBI || {};
   window.EGYBI.trip = {
-    load: load, save: save, blank: blank, getJSON: getJSON,
+    load: load, save: save, blank: blank, getJSON: getJSON, url: url,
     parse: parse, iso: iso, addDays: addDays, today: today, nights: nights,
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow,

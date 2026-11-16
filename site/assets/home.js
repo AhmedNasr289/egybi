@@ -122,7 +122,7 @@
     try { document.dispatchEvent(new CustomEvent('egybi:heat', { detail: heat })); } catch (e) { /* old browser: no map colours */ }
     cap.innerHTML = 'Source: ' + esc(c.source) + ', mean daily maximum and minimum averaged over ' + esc(c.normal_window || '2001–2020') +
       '; checked against published station normals before publication. Layer dated ' + esc(T.fmtDate(c.as_of)) +
-      '. <a href="visit.html#month">Every month, every site &rarr;</a>';
+      '. <a href="' + T.url('visit.html#month') + '">Every month, every site &rarr;</a>';
   }
 
   /* ----------------------------------------------------------- events --- */
@@ -167,7 +167,7 @@
     var src = fx.source || {};
     box.innerHTML = '<div class="fp-wrap"><table class="fp-table"><tbody>' + rows + '</tbody></table></div>' +
       '<p class="chart-cap">' + esc(src.name_en || 'Market rates') + ', dated ' + esc(T.fmtDate(fx.as_of)) + '. ' +
-      esc(src.note_en || '') + ' <a href="prices.html#fx-section">The rate, daily &rarr;</a></p>';
+      esc(src.note_en || '') + ' <a href="' + T.url('prices.html#fx-section') + '">The rate, daily &rarr;</a></p>';
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
