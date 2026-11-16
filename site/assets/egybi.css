@@ -1625,3 +1625,12 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 @media (max-width: 560px) {
   .acct-trip-actions, .acct-trip-actions .btn { width: 100%; }
 }
+
+/* Page to page (Round 5, M1, 2026-11-16). Same-site navigations cross-fade
+   instead of flashing white between two papyrus pages. A browser feature with
+   no script: browsers without it simply navigate as before. Off for anyone who
+   asked for reduced motion, and short, because it only bridges the load. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; }
+}

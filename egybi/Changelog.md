@@ -1921,3 +1921,59 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Fix:** `backend/ops/usage_guard.py` gains `retrying()`, which wraps its API calls. A 429, 500, 502, 503 or 504, or a dropped connection, is retried after 2, 4 and then 8 seconds, four tries in all. A 401, 403 or 404 still fails at once, because those are real faults.
 - **Tests:** `test_usage_guard.py` gains 4 tests (two 502s then an answer, a 404 not retried, giving up after four tries, a dropped connection retried). All 17 pass. With the retry disabled, 2 fail.
 - **Not changed:** the minutes arithmetic, the thresholds and the alert wording.
+
+## 2026-11-16 — Smoother, faster, offline everywhere, and back to your page after confirming (Round 5: M1, M2, M5, M6)
+- **Why:** four plan items share one job: changing every page's head and the shared script. They ship together in one version bump (`egybi.css` v49, `egybi.js` v4, `auth.js` v4), so no other open PR conflicts with 180 pages twice.
+- **M1, page to page.**
+  - Same-site navigations cross-fade (a cross-document view transition, 0.22 s) instead of flashing white between two papyrus pages.
+  - Browsers without the feature navigate as before.
+  - Off for readers who asked for reduced motion.
+  - Pure CSS in `egybi.css`.
+- **M2, the next page early.**
+  - Every page carries one Speculation Rules block. Hovering a link to another EgyBI page for a moment (`eagerness: moderate`) prefetches it, so the click opens almost at once.
+  - Only `/*` on this site, and never `/auth/`, `/api/` or `account.html`.
+  - It is prefetch, not prerender, so no script runs early and analytics counts stay exact.
+  - No new host and no library.
+- **M5, offline on every page.**
+  - `egybi.js` now registers the R4-7 worker on every page, not only the planner, and every page links the app manifest and theme colour.
+  - Any page a reader has opened then also opens with no signal.
+  - `privacy.html` now says copies start "once you have opened EgyBI".
+- **M6, back to your page after confirming (R4-3).**
+  - When a reader signs up or asks for a password reset, `auth.js` remembers the page they were on, for 7 days. Only a same-site path is kept (`/community.html`, `/papyrus/x.html#part`), never a URL.
+  - After the email's link and a sign-in, the reader goes back there.
+  - Anything else is ignored, and an ordinary sign-in never redirects.
+  - The verification and reset emails are unchanged, so no mail text changes.
+- **Files:**
+  - `pages/common.py` (head and versions), with the generated pages regenerated;
+  - the 24 hand-written pages given the same head;
+  - `assets/egybi.css`, `egybi.js` and `auth.js`;
+  - `privacy.html`.
+- **New browser checks:**
+  - **`platform.js`** checks three things:
+    - the cross-fade appears from about to plan, and not under reduced motion (`pagereveal`);
+    - hovering a link prefetches it, while account, API and auth links are not prefetched (Chrome's Preload events);
+    - stories.html registers the worker.
+  - **`auth-return.js`** drives the real sign-in dialog with stubbed `auth.php` answers:
+    - sign up on community, then follow the email link, then sign in, and the reader is back on community;
+    - four hostile remembered values are ignored;
+    - an ordinary sign-in stays put.
+- **Mutation cases:** 5 new ones, giving TRANSITION UNDER REDUCED MOTION, PREFETCHED PRIVATE, NO WORKER ON PAGES, OPEN REDIRECT and UNASKED REDIRECT.
+- **Run locally:**
+  - `static-audit.py`: no findings;
+  - `cache-bump.py`: every changed asset is on a new version;
+  - `motion-weight.py`, `type-scale.py`: clean;
+  - the rules JSON parses on all 182 pages.
+
+## 2026-11-16 — Fix for Round 5's checks: service workers blocked in every check, platform.js corrected (follows M1, M2, M5)
+- **What CI found** (run 43915133691, on #138, which carries this branch):
+  - **Mutation "content hidden under reduced motion" (reduced.js) stopped being caught.**
+    - Since M5 every page registers the offline worker. reduced.js reuses one browser context, so its reload with `motion.js` blocked ran through the worker.
+    - A worker's requests go around Playwright's `page.route`, so `motion.js` loaded anyway and revealed everything.
+    - So a check written to see a missing reduced-motion rule went blind.
+  - **platform.js's hover test timed out.** The four test links were placed at `100 + 50 * charCode % 4` px, which is 100 or 102, so they covered each other.
+  - **platform.js's cross-fade test.** CI's headless Chromium reported no view transition even with motion allowed, so it failed. Its reduced-motion mutation then had nothing to catch.
+- **Fixes:**
+  - `env.js` now launches every check's browser with service workers blocked, unless a check asks for one. Only offline.js and platform.js's offline test do. Checks measure the page as the server sends it.
+  - The links are now 60 px apart.
+  - The cross-fade test now asserts what the site controls: the page's own `@view-transition` opt-in, read through the CSSOM, is in effect without reduced motion and not under it. Whether the browser then plays the fade is printed, not graded.
+- **No site file changes.** The live behaviour of M1 is checked by hand in the browser after the merge.
