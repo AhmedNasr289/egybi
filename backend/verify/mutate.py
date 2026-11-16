@@ -418,6 +418,15 @@ case("reveal sweep removed: blocks skipped by a fling stay hidden", "nojs.js", [
      lambda o: "STUCK AFTER A FLING" in o,
      NOJS1.format(p="explore.html"))
 
+# ---- 13k3. a counter written as 0 in the HTML ---------------------------------
+# A count-up only animates a figure that is already in the page. Written as 0,
+# a reader without JavaScript, or one who flings past the counter, is told
+# "0 feature films" (17 counters did this until 2026-11-16).
+case("counter written as 0 in the HTML", "nojs.js", ["site/explore.html"],
+     lambda: edit("site/explore.html", 'data-sep="1">4,000+</div>', 'data-sep="1">0</div>'),
+     lambda o: "COUNTER WRONG WITHOUT JS" in o and "explore.html" in o,
+     NOJS1.format(p="explore.html"))
+
 # ---- 13l. a page sets the flag but loses its reveal script ------------------
 # Without motion.js, the .js flag hides every [data-aos] block until the 4 s
 # fallback: four seconds of blank sections on every visit.

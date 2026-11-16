@@ -64,8 +64,21 @@ const REVEALER = 'assets/motion.js';
     await p1.goto(`${BASE}/${page}`, { waitUntil: 'domcontentloaded' });
     await p1.waitForTimeout(300);
     const a = await hidden(p1);
+    // Counters: the HTML itself must carry the real figure. A count-up only
+    // animates it, so without JavaScript, or when the animation never starts
+    // (a fling past it), a reader sees the number and not "0" (2026-11-16:
+    // 17 counters on about.html and explore.html said 0, e.g. "0 feature films").
+    const cnt = await p1.evaluate(() => {
+      const fmt = d => { const v = parseFloat(d.count), dp = parseInt(d.decimals || '0', 10);
+        const n = d.sep ? v.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp }) : v.toFixed(dp);
+        return (d.prefix || '') + n + (d.suffix || ''); };
+      const els = [...document.querySelectorAll('.num[data-count]')];
+      return { total: els.length, wrong: els.filter(e => e.textContent.trim() !== fmt(e.dataset))
+        .map(e => `"${e.textContent.trim()}" should read "${fmt(e.dataset)}"`) };
+    });
     await off.close();
     seen += a.total;
+    if (cnt.wrong.length) { fails++; console.log(`COUNTER WRONG WITHOUT JS  ${page}: ${cnt.wrong.length} of ${cnt.total}: ${cnt.wrong.slice(0, 4).join('; ')}`); }
     if (a.hidden) { fails++; console.log(`HIDDEN WITHOUT JS  ${page}: ${a.hidden} of ${a.total} [data-aos] blocks transparent`); a.where.forEach(w => console.log('      ' + w)); }
 
     // 2. JavaScript on, the revealing script blocked
