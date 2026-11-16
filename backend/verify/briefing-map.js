@@ -66,7 +66,13 @@ const { chromium, executablePath, BASE } = require('./env');
       if (!c || !c.matches || !c.matches('#siteMap circle.s')) return;
       const a = c.getAnimations()[0];
       const props = a ? [...new Set((a.effect.getKeyframes() || []).flatMap(k => Object.keys(k)))] : [];
-      window.__mapStarts.push({ key: c.getAttribute('data-key'), order: +c.getAttribute('data-order'), t: performance.now(), props });
+      // t is when the animation was SCHEDULED to start (its start time plus
+      // its delay), not when this event happened to be delivered: on a busy
+      // runner two starts 70 ms apart can arrive in the same frame, which read
+      // as "all at once" on a correct page (runs 43971112849, 43971142792).
+      const sched = a && a.startTime != null ? a.startTime + (a.effect.getTiming().delay || 0) : null;
+      window.__mapStarts.push({ key: c.getAttribute('data-key'), order: +c.getAttribute('data-order'),
+                                t: sched != null ? sched : performance.now(), at: performance.now(), props });
     }, true);
   };
   const compare = (exp, act) => Object.keys(exp.colours).filter(k => exp.colours[k] && (act[k] || '').toLowerCase() !== exp.colours[k].toLowerCase());
@@ -97,13 +103,18 @@ const { chromium, executablePath, BASE } = require('./env');
       else console.log(`ok   every dot animated (${starts.length} starts recorded, ${Math.round(starts.length / 18)} sweep(s))`);
       // The last sweep: its 18 starts, in time order, must run north to south,
       // one after another (at least 30 ms apart; they are set 70 ms apart).
-      const last = starts.slice(-18).sort((x, y) => x.t - y.t);
+      // the latest start of each dot, so a sweep that replays cannot mix in
+      const latest = {};
+      starts.forEach(s => { if (!latest[s.key] || s.at >= latest[s.key].at) latest[s.key] = s; });
+      const last = Object.values(latest).sort((x, y) => x.t - y.t);
       const lat = await p.evaluate(() => { const o = {}; window.EGYBI.heat.sites.forEach(s => { o[s.key] = s.lat; }); return o; });
       const inOrder = last.length === 18 && last.every((s, i) => i === 0 || s.order > last[i - 1].order);
       const spaced = last.length === 18 && last.every((s, i) => i === 0 || s.t - last[i - 1].t >= 30);
       const byOrder = last.slice().sort((x, y) => x.order - y.order);
       const latOk = byOrder.every((s, i) => i === 0 || lat[s.key] <= lat[byOrder[i - 1].key]);
-      if (!inOrder || !spaced || !latOk) fail(`MAP ORDER WRONG: started in order ${inOrder}, one after another ${spaced}, north to south ${latOk}`);
+      const gaps = last.slice(1).map((s, i) => Math.round(s.t - last[i].t));
+      if (!inOrder || !spaced || !latOk) fail(`MAP ORDER WRONG: started in order ${inOrder}, one after another ${spaced}, north to south ${latOk}; ` +
+        `${last.length} dots, orders ${last.map(s => s.order).join(',')}, gaps ms ${gaps.join(',')}`);
       else console.log(`ok   north to south, one after another (${Math.round(last[17].t - last[0].t)} ms from first to last)`);
       const bad = [...new Set(starts.flatMap(s => s.props))].filter(x => !['offset', 'easing', 'composite', 'computedOffset', 'opacity', 'transform'].includes(x));
       if (bad.length) fail('MAP ANIMATES LAYOUT: ' + bad.join(', '));

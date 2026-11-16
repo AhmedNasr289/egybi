@@ -2127,3 +2127,11 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **Moving under reduced motion:** the section read 300 ms after scrolling. It now waits a full sweep and prints what it saw, and the mutation case removes all three locks (egybi.css's site-wide `* { animation: none !important }` under reduce, the script's check and the stylesheet's query); with two removed, the page stayed still and the case could never fire.
 - **Also:** every section runs inside its own guard, so a crash is a named failure and the rest still run.
 - **Verified:** the verdict-order fix in this PR is proven by run 43962643068, where "return after confirming fires on an ordinary sign-in" was caught.
+## 2026-11-17 — The briefing map's order check: measured from the schedule, not the frame
+- **What failed:** on this PR's head (run 43971112849) and the stage 1 head (run 43971142792), the mutation case "briefing map dots all at once" came back NOISY. It caught the defect, but the clean run after the file was restored reported MAP ORDER WRONG on a correct page. Three other runs of the same check were clean.
+- **The cause:** the check timed each dot with `performance.now()` when its `animationstart` event arrived. On a busy runner, starts scheduled 70 ms apart can be delivered in the same frame, which breaks the "at least 30 ms apart" rule. It also took the last 18 events as one sweep, so a replayed sweep could mix two.
+- **The fix:**
+  - Each dot's start is now its animation's scheduled start (start time plus delay), which does not depend on frame delivery.
+  - Only each dot's latest start is used.
+  - A failure prints the order and the gaps it measured.
+- **And the harness:** mutate.py now prints what a checker said for any case that is not a clean pass. Before, a NOISY verdict left only the word, and the cause could not be found without a re-run.
