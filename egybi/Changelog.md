@@ -1649,6 +1649,11 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **13, reduced motion:** motion.js now reveals everything at once under reduced motion, which masked a missing CSS rule. reduced.js gains a probe with motion.js blocked, so the CSS guarantee is measured on its own.
   - **13d, no JavaScript:** two guards now keep blocks visible (the html.js scope and S1's override), so the case removes both.
   - **27, a tap-target false alarm during AOS's animation:** retired with the measurement, since the new reveal moves a block and its buttons together. The checker keeps its settle step.
+- **Fix after run 43857746528:** 11 of 174 blocks on explore.html stayed hidden after a scroll; the run before saw 5, with the same code.
+  - **Cause:** a block revealed only when the observer saw it cross into view. On a heavy page, frames drop during a fast scroll, so a block that went from below the screen to above it between two observed frames was never seen. The three film counters stuck at "0" were the same defect.
+  - **Fix:** `motion.js` now sweeps once per frame while anything is pending, revealing every block whose top is above the bottom of the screen. The sweep removes its listener when nothing is left.
+  - **Check:** `nojs.js` gains a fling step, one jump to the bottom, which fails STUCK AFTER A FLING every time the sweep is missing, not only when frames happen to drop.
+  - **Mutation case:** the sweep removed must give STUCK AFTER A FLING.
 ## 2026-11-16 — "Today at this site" on every visit page (Round 4, R4-1)
 - **Why:** the study found nothing that helps on the day itself. The visit pages gave golden light for the 15th of each month, and no code anywhere read the time of day. A tourist at Giza wants to know when the light starts and ends today, and how long is left.
 - **The card:** each of the 18 visit pages now opens with "Today at <site>":

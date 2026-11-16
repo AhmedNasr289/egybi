@@ -397,6 +397,16 @@ case("reveal script starts but never reveals", "nojs.js", ["site/assets/motion.j
      lambda o: "STUCK HIDDEN" in o,
      NOJS1.format(p="explore.html"))
 
+# ---- 13k2. the sweep removed: a fast fling leaves blocks hidden ---------------
+# The observer misses blocks that pass the screen between frames; the sweep in
+# motion.js reveals them. Without it, one jump to the bottom leaves every block
+# in between hidden, deterministically (CI run 43857746528 saw 5 then 11 under
+# an ordinary scroll, which is the flaky form of the same defect).
+case("reveal sweep removed: blocks skipped by a fling stay hidden", "nojs.js", ["site/assets/motion.js"],
+     lambda: edit("site/assets/motion.js", "      pending.push(el);\n", ""),
+     lambda o: "STUCK AFTER A FLING" in o,
+     NOJS1.format(p="explore.html"))
+
 # ---- 13l. a page sets the flag but loses its reveal script ------------------
 # Without motion.js, the .js flag hides every [data-aos] block until the 4 s
 # fallback: four seconds of blank sections on every visit.
