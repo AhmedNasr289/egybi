@@ -1665,3 +1665,6 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - return after verifying.
 - **Constraints:** every item is a built-in browser feature: no library, font, host or cost. Each has Evidence, Fix, Prove and Rollback.
 - **Timing:** they land together after the Round 4 stack merges, because they touch every page head.
+
+## 2026-11-16 — Plan: status at 12:50 UTC
+- **Plan:** `Improvement Plan 2026-11.md` gains the round's status table at 12:50 UTC. It covers #129 merged and live, the #124 reveal fix, the #128 security-review hardening, the new PRs #132–#134, and the weekly sweep starting 8 h late.

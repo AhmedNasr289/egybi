@@ -661,3 +661,17 @@ Every item below is a browser feature. None adds a library, a font, a host or a 
 - **Fix:** before sign-up or a reset request, `auth.js` remembers the page in localStorage (a same-origin `*.html` path only, kept 7 days). After the `?verify` landing and sign-in, the reader goes back there.
 - **No email changes:** the verification and reset mails keep their exact wording and links, so no mail-text yes is needed.
 - **Prove:** an `auth-flow.sh` UI check, and a mutation case that accepts an off-site path and must give OPEN REDIRECT.
+
+### Status, 16 November 2026, 12:50 UTC
+| Item | PR | State |
+|---|---|---|
+| R4-1: Today card | #129 | **merged** (e5d2aea), live and checked: 18 of 18 visit pages byte-equal to main |
+| S4 parts 2 and 4: one reveal system | #124 | fixed: stuck blocks were frames dropped during a fast scroll, now caught by a sweep and a fling test; CI running |
+| R4-2a: notes backend | #127 | the login-limit test fix and main merged in; CI running |
+| R4-2b: notes interface | #128 | an independent security review found report abuse, missing limits, the moderation key in a URL, export and privacy gaps; all fixed locally (277207b), to push when the run ends |
+| R4-6: share link | #130 | green before the main merge; CI running |
+| R4-7: offline and installable | #132 | green (70/70 mutations); a token-in-cache fix and main merged in; CI running |
+| R4-8: Near me | #131 | green before the main merge; CI running |
+| Round 5: the sun path | #133 | CI running |
+| Round 5: WebP home poster | #134 | 83 KB to 37 KB; CI running |
+| Weekly sweep | — | started 12:02 UTC, 8 h 21 min after its 03:41 slot: GitHub delay as before |
