@@ -1,0 +1,23 @@
+/* EgyBI — reading progress on The Papyrus stories (Round 5, M3, 2026-11-16).
+
+   WHY IT MOVES. A story runs to several screens; a thin gold line along the top
+   shows how much is left, so a reader can decide to finish now or come back.
+
+   HOW. A CSS scroll-driven animation (animation-timeline: scroll(root)), so no
+   script and no scroll listener: the browser maps the page's scroll position
+   onto the line's width on its compositor. Only transform changes, so nothing
+   shifts. Browsers without scroll timelines, and every reader who asked for
+   reduced motion, get no line at all rather than a static one that would
+   mean nothing. Loaded by the story pages only. */
+.read-progress { display: none; }
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .read-progress {
+      display: block; position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60;
+      background: var(--gold); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none;
+      animation: egybi-read-progress linear both; animation-timeline: scroll(root);
+    }
+  }
+}
+@keyframes egybi-read-progress { to { transform: scaleX(1); } }
+@media print { .read-progress { display: none; } }

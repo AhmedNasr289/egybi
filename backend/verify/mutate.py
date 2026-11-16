@@ -1028,6 +1028,16 @@ case("return after confirming fires on an ordinary sign-in", "auth-return.js",
      lambda: edit("site/assets/auth.js", "if (cameFromLink) { var to = takeReturn();", "if (true) { var to = takeReturn();"),
      lambda o: "UNASKED REDIRECT" in o, AUTH_RETURN)
 
+# ---- travellers' notes on visit pages (R4-2c) and reading progress (M3) ------
+GUIDE = f"node {HERE}/guide.js"
+case("visit-page notes rendered as HTML", "guide.js", ["site/assets/visit-notes.js"],
+     lambda: edit("site/assets/visit-notes.js", "if (text != null) e.textContent = String(text);",
+                  "if (text != null) e.innerHTML = String(text);"),
+     lambda o: "MARKUP INJECTED" in o, GUIDE)
+case("reading progress kept for readers who asked for reduced motion", "guide.js", ["site/assets/progress.css"],
+     lambda: edit("site/assets/progress.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {"),
+     lambda o: "PROGRESS UNDER REDUCED MOTION" in o, GUIDE)
+
 # ---- Offline (Round 4, R4-7) ------------------------------------------------
 # The worker must answer navigations from its cache when the network fails.
 # Let navigations fall through to the network and the offline plan is gone.
