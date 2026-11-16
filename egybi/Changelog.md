@@ -2003,6 +2003,40 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - an empty list invites the first note;
   - half way down a story the line is about half wide, and under reduced motion there is no line.
 - **Mutation cases:** the notes helper switched to `innerHTML` must give MARKUP INJECTED, and the reduced-motion guard removed must give PROGRESS UNDER REDUCED MOTION.
+
+## 2026-11-16 — Community in every header, and a header row that fits
+- **Why:**
+  - Community was in the header until the 2026-10-09 travel-first pivot (df3f49c), which moved the encyclopaedia pages to the footer and took Community with them.
+  - Round 4 then made Community a traveller feature (travellers' notes, #128 and #140) without revisiting the header, so a traveller could reach it only from the footer.
+  - That was an oversight, not a decision: the plan's line on navigation predates the notes.
+- **What changed:**
+  - "Community" now follows "Stories" in the header of all 180 pages that have one:
+    - generated pages take it from `site/blog.html`, the generator's nav source, and were regenerated;
+    - hand-written pages were edited directly.
+  - It is labelled "Community" to match the footer and the page, and because it is shorter than "Travellers' notes" in a full row.
+  - On community.html the link is highlighted like every other current page, by the existing filename match in `egybi.js`.
+- **The header fits (`egybi.css` v50):**
+  - The desktop row already overflowed before this change. The bar shared the 1120px reading column with 6vw padding, which at 1280px left 966px for about 1,120px of content. The actions ran into the padding at 1280px and off the screen near 1030px.
+  - From 1280px the bar may now be up to 1320px wide, with `max(24px, 3vw)` padding and 16px gaps between links.
+  - Below 1280px the menu button takes over (it was 1024px).
+  - Measured on the live page at 1280px with Community added: 68px to spare in Inter, 111px in Arial, and 30px in Verdana, which is wider than the font Linux falls back to. So the row fits even if Google Fonts fail.
+  - At 1240px Verdana overflowed by 7px, which is why the switch point is 1280px, not lower.
+- **New check `backend/verify/header.js`:**
+  - Static: every page with a main nav links Community right after Stories (180 of 180).
+  - In the browser, with every other host blocked (fallback font, the worst case), on about, stories, Giza and community:
+    - at 1280, 1366 and 1920px every link is on one line, inside the bar and the window;
+    - at 390, 1024 and 1279px the menu button shows, and its menu offers Community;
+    - community.html highlights its own link.
+- **Mutation cases:**
+  - the link removed from about.html must give COMMUNITY MISSING;
+  - the menu breakpoint put back to 1024px must give HEADER OVERFLOW;
+  - the active-link line disabled must give NO ACTIVE HIGHLIGHT.
+- **Files:**
+  - `site/blog.html` (nav source) and every hand-written page with a nav;
+  - the regenerated pages;
+  - `assets/egybi.css` (v50, via `pages/common.py` and the hand pages);
+  - `backend/verify/header.js`, `mutate.py`, the workflow;
+  - a comment in `a11y2.js`.
 ## 2026-11-16 — Fix for Round 5's checks: service workers blocked in every check, platform.js corrected (follows M1, M2, M5)
 - **What CI found** (run 43915133691, on #138, which carries this branch):
   - **Mutation "content hidden under reduced motion" (reduced.js) stopped being caught.**

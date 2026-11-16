@@ -126,7 +126,7 @@ const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
       // A page with no collapsible nav needs no toggle. The retired-section
       // notices carry a brand link and nothing else; demanding a toggle there
       // reported a fault for markup that does not exist. What IS a fault is a
-      // .nav-links that the stylesheet hides below 1024px with no way to open
+      // .nav-links that the stylesheet hides below 1280px with no way to open
       // it — which is exactly what those two pages had before the nav was
       // dropped, twelve links invisible on every phone.
       if (!t) return { toggle: false, needed: !!links };

@@ -611,8 +611,24 @@ html.js [data-aos] { transition: opacity .6s cubic-bezier(.22,1,.36,1), transfor
 .nav-links a.active { color: var(--gold-bright); opacity: 1; }
 .acct-slot { display: inline-flex; align-items: center; position: relative; } /* position anchors .acct-menu */
 
-/* Collapse to the menu at 1024px — before the links can run out of room. */
-@media (max-width: 1024px) {
+/* Wide screens: room for every link (2026-11-16). The bar shared the page's
+   1120px column with 6vw padding, which at 1280px left 966px for content
+   needing about 1,120px, so the actions already ran into the padding there
+   and off the screen near 1030px. Community made the row longer still. From
+   1280px the bar may be wider than the reading column, with slimmer padding
+   and gaps. Measured on the live page at 1280px with Community added: 68px to
+   spare in Inter, 111px in Arial and 30px in Verdana (wider than the DejaVu
+   Sans a Linux browser falls back to when Google Fonts fail), so the row fits
+   even without the web font. At 1240px Verdana overflowed by 7px, hence
+   1280px. Below it the menu takes over. */
+@media (min-width: 1280px) {
+  .site-header .bar { max-width: 1320px; padding-left: max(24px, 3vw); padding-right: max(24px, 3vw); }
+  .nav-links { gap: 16px; }
+}
+
+/* Collapse to the menu below 1280px — before the links can run out of room
+   (was 1024px, which let the row overflow from 1025px up to about 1280px). */
+@media (max-width: 1279px) {
   .nav-toggle { display: inline-block; order: 3; }
   .nav-actions { order: 2; margin-left: auto; }
   .nav-links {
