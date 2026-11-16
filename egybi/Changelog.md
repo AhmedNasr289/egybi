@@ -1631,6 +1631,85 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - "Stop using my location" must restore the order;
   - a refused permission must be explained, with the order unchanged.
 - **Mutation case:** the sort removed must give NEAR ME NOT SORTED.
+## 2026-11-16 — Share a trip by link (Round 4, R4-6)
+- **Why:** a planned trip lived only in one browser. Travellers plan together, and a guide or a friend should be able to send a route. Until now the only ways to pass a plan on were printing it or signing in.
+- **The button:** the planner gains "Share this trip". It opens the phone's share sheet where there is one, and otherwise copies the link and says so.
+- **The link:** the whole trip (dates, name and stops) travels in the link's `#t=` fragment as base64url JSON. Browsers never send the fragment to a server, so sharing stores nothing on EgyBI and adds nothing to its logs. Nothing new is collected, so the privacy page is unchanged.
+- **Opening a link:**
+  - with no saved plan, the shared trip opens directly;
+  - with a saved plan, the page asks first: "Open the shared trip" replaces it, and "Keep my plan" leaves it exactly as it was;
+  - either way the `#t=` is removed from the address bar, so a reload cannot re-apply it;
+  - a link opened in a tab already on the planner is handled too (`hashchange`).
+- **A shared link is untrusted input:**
+  - a link is refused whole, leaving the reader's plan unchanged, if it has a wrong version, more than 30 stops, a stop outside Egypt's bounds, days outside 1–30, a date that is not YYYY-MM-DD, or text that is not valid base64url JSON;
+  - names are capped, and stop names render through the planner's existing escaping;
+  - the largest possible link (30 stops with Arabic names) measured 6.5 KB, under the 8,000-character cap in the reader.
+- **Files:**
+  - `assets/plan.js` (`?v=5`): `encodeTrip`, `decodeTrip`, `initShare`, `takeShared`;
+  - `plan.html`: the button, a status line and the ask-first banner.
+- **New browser check `backend/verify/share-link.js`:**
+  - 40 generated trips (Arabic names, 1–30 stops) must round-trip exactly;
+  - 6 malformed links must be refused, and a valid one accepted;
+  - a link on an empty plan must show its stops and remove the hash;
+  - with a saved plan, the page must ask first, "Keep my plan" must keep the plan byte for byte, and "Open the shared trip" must replace it;
+  - a stop named `<img onerror>` must render as text.
+- **Mutation cases:** the Egypt bounds check removed must give SHARE ACCEPTS BAD LINK, and the ask-first branch removed must give OWN PLAN OVERWRITTEN.
+
+## 2026-11-16 — The planner, and every page you opened, works offline (Round 4, R4-7)
+- **Why:** a tourist checks the plan in a tomb, on a felucca or in a desert hotel with no signal. The trip already lived in localStorage, but the page itself would not open.
+- **`site/sw.js`, a service worker the planner registers:**
+  - **pages and data:** network first, so an online reader always gets today's figures; the copy on the device is used only when the network fails;
+  - **versioned assets and images:** cache first, because a new version is a new URL;
+  - **a page never opened, offline:** a small built-in note links to the planner. No new HTML page is added to the site;
+  - **never cached:** anything under `/auth/` or `/api/`, any non-GET request, and anything from another host;
+  - **the first visit:** after registering, the planner hands the worker the files it already loaded, so that visit works offline straight away;
+  - **size:** at most 60 pages, 150 assets and 40 data files.
+- **Installable:** `manifest.webmanifest` lets a phone add EgyBI to the home screen. It opens on the planner, with shortcuts to places and to when-to-go, and uses the existing 192 px and 512 px icons.
+- **Kill switch:** deleting `sw.js` would not remove installed copies, because a 404 on update leaves the old worker running. Setting `KILL = true` and deploying makes every installed copy delete its caches and unregister. That is the rollback.
+- **`.htaccess`:**
+  - `sw.js` and the manifest are served `no-cache`, so a fix or the kill switch reaches every device on its next check;
+  - `.webmanifest` gets its file type.
+- **Privacy:** `privacy.html` gains "Pages kept for offline use": the copies stay on the device, are never sent anywhere, and never include account pages.
+- **Files:**
+  - `assets/plan.js` (`?v=6`): `initOffline`;
+  - `plan.html`: the manifest link, the theme colour and a status line.
+- **New browser check `backend/verify/offline.js`:**
+  - with the network cut, the planner must reopen with the saved stops;
+  - an unopened page must show the offline note;
+  - no `/auth/` or `/api/` response may be cached;
+  - back online, the network copy must win over a planted stale one.
+- **Mutation cases:** navigations not answered from the cache must give OFFLINE PLAN NOT SHOWN, and the `/auth/` and `/api/` exclusions removed must give ACCOUNT DATA CACHED.
+
+- **Fix before merge (self-review):**
+  - Pages were cached under their full address, so a link from a verification or reset email (`/?verify=…`) would have left its one-time token in the device's cache, and every `?add=…` visit stored another copy of the planner. Pages are now cached under their path alone.
+  - The worker's version moves to `egybi-sw-2`, so v1 caches are dropped.
+  - `offline.js` opens `/index.html?verify=…` and fails if any cache key keeps it, and a mutation case puts the full address back.
+## 2026-11-16 — Travellers' notes: the backend, off live (Round 4, R4-2a)
+- **Why:** signing in gave a reader nothing to share. The only community was an anonymous comment box about contributing data. Round 4 (approved by Ahmed on 16 Nov) adds notes travellers write about a visit. This PR is the server half only, and it stays **off live** (`NOTES_LIVE = false`) until the interface PR turns it on.
+- **New `site/api/notes.php`:**
+  - **Reading (anyone):** list published notes, newest first, optionally for one of the 18 visit sites.
+  - **Signed in:** write, delete your own, mark helpful (once, and a second press takes it back), report (once), and list your own.
+  - **Moderator (analytics key):** a queue of queued and hidden notes; publish, hide or delete.
+- **Rules (`site/auth/notes_lib.php`):**
+  - **Who can write:** a verified email is required (Google sign-in counts as verified).
+  - **What a note is:** 30–2000 characters, up to 3 of the 18 sites or a typed place, and an optional past visit month.
+  - **Limits:** 5 notes a day per account and 20 per address, counted only for notes that pass every rule.
+  - **Moderation:** a new account's first notes wait for review until 2 are published; 3 reports hide a note.
+  - **Privacy:** only the display name is ever published.
+- **Security:**
+  - every write needs same-origin, a session and the CSRF token;
+  - every query is a prepared statement;
+  - text is stored plain and returned as JSON with `nosniff`, for the interface to render with `textContent`;
+  - `notes_lib.php` is denied in `auth/.htaccess`, like the other includes.
+- **Accounts:**
+  - deleting an account deletes its notes, everyone's marks and reports on them, and its own marks and reports, inside the same transaction;
+  - the data export includes the notes.
+- **Tables:** `notes`, `note_helpful`, `note_reports` and `note_audit`, created with `CREATE TABLE IF NOT EXISTS` on first use. They are additive, and nothing existing changes.
+- **Tests:**
+  - `auth-flow.sh` gains 43 notes checks, run with `NOTES_ENABLED=1`. They cover signed-out writes, missing CSRF, cross-site requests, unverified writers, the length, place and month rules, the moderation queue and key, the publish and trusted paths, the daily limit, helpful toggling, deleting another user's note, reports hiding a note, and an account's deletion leaving 0 rows.
+  - 7 new mutation cases in `mutate.py` each remove one guard and must make `auth-flow.sh` fail.
+  - **Fix after the first run (43846913758):** 13 steps failed because the harness had already made 9 sign-ins from one IP. `auth.php` allows 10 per 15 minutes, so F, G and D were refused (429) and ran signed out. The notes block now lets that window lapse in CI's throwaway database, and asserts each sign-in, so a refusal names itself. The site's limit is unchanged.
+- **Not yet:** the privacy page changes in the interface PR, when notes go live and start collecting anything.
 ## 2026-11-16 — "Today at this site" on every visit page (Round 4, R4-1)
 - **Why:** the study found nothing that helps on the day itself. The visit pages gave golden light for the 15th of each month, and no code anywhere read the time of day. A tourist at Giza wants to know when the light starts and ends today, and how long is left.
 - **The card:** each of the 18 visit pages now opens with "Today at <site>":
@@ -1652,3 +1731,38 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **the math:** 1,008 sun-time edges (18 sites × 14 dates, including both 2026 summer-time switch days) against the Python, which must agree within 60 s; measured locally, the worst gap is 0.00 s;
   - **the page:** visit/giza.html with the clock fixed at 10:00 Egypt time on 15 July must show the Python's four times, the status line and July's normal.
 - **Mutation case:** golden light at 5° instead of 6° in the browser must give SUN TIMES DIFFER.
+
+## 2026-11-16 — Home hero poster in WebP: 83 KB to 37 KB (Round 5, modern formats)
+- **Why:** the home hero's poster is the one raster image every first visitor downloads; the video itself loads later and only for those it plays for. A sweep of every page found it is the only raster image the pages show: charts and the map silhouette are already SVG.
+- **What:**
+  - `assets/video/hero-lighthouse.webp`, at WebP quality 72, is 36,992 bytes against the JPEG's 83,180, which is 55% smaller. PSNR against the JPEG is 38.6 dB, visually identical under the hero's sepia filter and dark scrim.
+  - `index.html`'s `poster` now points to it (`?v=4`). The JPEG stays in the repo and is no longer requested.
+- **Formats weighed:**
+  - **AVIF** was measured at 33,583 bytes, only 9% smaller than WebP, and has less support on older iPhones. WebP works in every current browser, so WebP was chosen.
+  - **The video (683 KB MP4)** stays as it is: no video encoder is installed on this machine, and adding one is not free of risk here.
+- **Rollback:** point `poster` back to `hero-lighthouse.jpg?v=3`.
+## 2026-11-16 — The sun path: today's sun drawn across each visit page (Round 5)
+- **Why:** the Today card gave four times, and this shows where the reader is in the day. A tourist sees at a glance how much daylight is left and how far away the golden window is, without reading the clock.
+- **What:** an arc from sunrise (left) to sunset (right):
+  - the golden-light stretches in gold;
+  - the part of today already gone drawn solid blue;
+  - the sun at its place now;
+  - before sunrise and after sunset, the sun waits half below the horizon.
+
+  It is a diagram of the day, not the sun's true height, and the arc's spoken label says how far through the day the sun is.
+- **Motion, and why:**
+  - on first view the arc draws itself in (`stroke-dashoffset`, 1.2 s) and the sun glides from sunrise to now (about 1.4 s), once, so the eye follows the day from its start to this moment;
+  - after that, the sun moves only with the clock, once a minute;
+  - under reduced motion everything is placed at once and nothing transitions;
+  - only the dash offset and the sun's position change, inside a box of fixed ratio, so nothing shifts;
+  - the glide counts frames rather than reading the clock, and a timer guarantees the final position.
+- **Built with:** inline SVG made by `today.js`, with no library and no new host.
+- **Files:**
+  - `assets/today.js` and `today.css` (`?v=2`);
+  - `pages/visit.py` (the version bump);
+  - the 18 visit pages, regenerated. Regenerating twice gives identical pages.
+- **`today-sun.js` checks it:**
+  - at a fixed 10:00 the sun must sit at the measured share of daylight (within 1%), with both gold stretches drawn;
+  - under reduced motion it must be in place straight after load, and the arc must not transition;
+  - at 04:00 it must wait below the horizon.
+- **Mutation cases:** the wrong share of the day must give SUN PATH WRONG, and the reduced-motion guard removed must give MOVES UNDER REDUCED MOTION.

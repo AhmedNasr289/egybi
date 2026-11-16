@@ -16,9 +16,9 @@
     Require all denied
 </FilesMatch>
 
-# lib.php / mailer.php / google_verify.php are includes, not endpoints — no
+# lib.php / mailer.php / google_verify.php / notes_lib.php are includes, not endpoints — no
 # reason to serve them raw. (google.php IS an endpoint and stays reachable.)
-<FilesMatch "^(lib|mailer|google_verify)\.php$">
+<FilesMatch "^(lib|mailer|google_verify|notes_lib)\.php$">
     Require all denied
 </FilesMatch>
 

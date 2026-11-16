@@ -9,6 +9,8 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14110C">
 <meta property="og:title" content="Plan an Egypt Trip — Route, Heat and Distances | EgyBI">
 <meta property="og:description" content="Put your stops on a map of Egypt and see the measured heat at each in your months, the straight-line distances and the holidays in your dates. Print it as a dossier.">
 <meta property="og:type" content="website">
@@ -107,13 +109,17 @@
       </div>
       <div class="screen-only">
         <p class="chart-cap" id="planSum" style="margin-top:0;"></p>
+        <div class="sheet shared-banner" id="sharedBanner" role="status" hidden></div>
         <ol class="stop-list" id="stopList"></ol>
         <div class="cta-row screen-only">
           <button type="button" class="btn btn-primary" id="printPlan" data-ev="plan_print">Print or save as PDF</button>
+          <button type="button" class="btn btn-ghost" id="shareTrip" data-ev="plan_share">Share this trip</button>
           <button type="button" class="btn btn-ghost" id="saveTrip" data-ev="plan_save">Save to my account</button>
           <button type="button" class="btn btn-ghost" id="clearPlan">Remove all stops</button>
         </div>
         <p class="form-note" id="saveNote" role="status" aria-live="polite"></p>
+        <p class="form-note" id="shareNote" role="status" aria-live="polite"></p>
+        <p class="form-note" id="offlineNote" role="status" aria-live="polite"></p>
       </div>
     </div>
   </div>
@@ -161,7 +167,7 @@
 <script src="assets/egfmt.js?v=4"></script>
 <script src="assets/trip.js?v=3"></script>
 <script src="assets/cartouche.js?v=1"></script>
-<script src="assets/plan.js?v=4"></script>
+<script src="assets/plan.js?v=6"></script>
 <script src="assets/motion.js?v=3"></script>
 <script src="assets/analytics.js?v=2"></script>
 </body>
