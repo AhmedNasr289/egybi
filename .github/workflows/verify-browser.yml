@@ -16,6 +16,7 @@ on:
       - 'site/**'
       - 'backend/verify/**'
       - '.github/workflows/verify-browser.yml'
+      - '.github/actions/browser-setup/**'
       - '.github/scripts/verify-gate.sh'
   pull_request:
     paths:
@@ -29,6 +30,7 @@ on:
       # workflow_dispatch only works from the default branch, so a PR is the
       # only way to exercise this before it lands on main.
       - '.github/workflows/verify-browser.yml'
+      - '.github/actions/browser-setup/**'
       - '.github/scripts/verify-gate.sh'
   # The full sweep, mutate.py included, once a week whatever changed. Pull
   # requests and pushes now run mutate.py only when something it depends on
@@ -107,7 +109,10 @@ jobs:
     # cancel. This is the stopgap; the fix the note above asks for, mutate.py
     # in its own job, is planned in the Improvement Plan (Round 5, M7).
     # Actions minutes are free while the repository is public.
-    timeout-minutes: 80
+    # 50 again (2026-11-16, M7): mutate.py, the largest single cost, now runs
+    # in the `mutation` job below, alongside this one, so this job is back to
+    # the checks that decide whether the site is right.
+    timeout-minutes: 50
 
     env:
       BASE: http://localhost:8793
@@ -116,69 +121,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      # Node, Python, PyYAML, Chromium and site/ on 8793: one composite action
+      # shared with the mutation job below, so the two setups cannot drift.
+      - name: Browser checks setup
+        uses: ./.github/actions/browser-setup
         with:
-          node-version: '20'
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      # checks.py's `workflows` subcommand imports yaml. The workstation has
-      # PyYAML installed, so this only shows up on a clean runner — which is
-      # the point of running here rather than only where it happens to pass.
-      - name: Python dependencies
-        run: python3 -m pip install --quiet pyyaml
-
-      # env.js resolves playwright-core from node_modules or PLAYWRIGHT_CORE.
-      # This repo has no package.json, so install into a scratch directory and
-      # name the path explicitly rather than relying on module resolution.
-      # Its own ceiling, and bounded apt fetches. Run 42275508065 (PR #83,
-      # 2026-11-06) spent 14m27s here instead of the usual ~30 s: the Ubuntu
-      # mirror trickled Chromium's font packages (one gap of 392 s between two
-      # log lines). Every checker then passed, but mutate.py finished at the
-      # job's 50-minute cap and the run read `cancelled`, as if the site had
-      # failed. With the step capped at 12 minutes a stalled mirror fails HERE,
-      # under this step's name, and leaves the checkers their usual ~36 minutes.
-      # The cure for a stall is a re-run; nothing in the site causes it.
-      - name: Install playwright-core and Chromium
-        if: needs.gate.outputs.browser == 'true'
-        timeout-minutes: 12
-        run: |
-          # A fetch that stalls for 20 s is dropped and retried, instead of
-          # waiting out apt's default timeout on a dying connection.
-          printf 'Acquire::http::Timeout "20";\nAcquire::https::Timeout "20";\nAcquire::Retries "5";\n' \
-            | sudo tee /etc/apt/apt.conf.d/99-egybi-fetch-timeouts >/dev/null
-          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
-          npm init -y >/dev/null
-          npm i --no-audit --no-fund playwright-core@1.62.1
-          npx --yes playwright@1.62.1 install --with-deps chromium
-          echo "PLAYWRIGHT_CORE=$RUNNER_TEMP/pw/node_modules/playwright-core" >> "$GITHUB_ENV"
-
-      - name: Resolve the Chromium binary
-        if: needs.gate.outputs.browser == 'true'
-        run: |
-          # env.js takes the highest chromium-* build under PLAYWRIGHT_BROWSERS_PATH.
-          # Name the executable outright so a layout change surfaces here rather
-          # than as a launch failure three steps later.
-          exe=$(find "$HOME/.cache/ms-playwright" -name chrome -type f -path '*chrome-linux*' | sort | tail -1)
-          test -n "$exe" || { echo "::error::no Chromium found under ~/.cache/ms-playwright"; exit 1; }
-          echo "CHROME=$exe" >> "$GITHUB_ENV"
-          echo "using $exe"
-
-      - name: Serve site/ on 8793
-        if: needs.gate.outputs.browser == 'true'
-        run: |
-          mkdir -p "$VERIFY_LOG_DIR"
-          python3 -m http.server 8793 --directory site >"$VERIFY_LOG_DIR/server.log" 2>&1 &
-          # Wait for a real 200 rather than sleeping: a fixed sleep either wastes
-          # time or races, and a sweep against a server that is not up yet fails
-          # every page for the wrong reason.
-          for i in $(seq 1 40); do
-            curl -fsS -o /dev/null "$BASE/index.html" && { echo "server up after ${i}00ms"; exit 0; }
-            sleep 0.1
-          done
-          echo "::error::server never answered on $BASE"; exit 1
+          browser: ${{ needs.gate.outputs.browser }}
 
       # EVERY checker below runs through backend/verify/ci-step.sh, which tees
       # its output into $VERIFY_LOG_DIR and records its name if it failed. That
@@ -368,24 +316,6 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh save-place node backend/verify/save-place.js
 
-      # A clean sweep is only evidence if the checkers can still fire. This is
-      # the argument backend/verify/README.md makes, and it is why an earlier
-      # "0/32 checkers work" turned out to be a dead python3 alias rather than
-      # sixteen broken checks.
-      # if: always() because whether the checkers can fire is independent of
-      # whether the site passes. A site finding suppressing this one is
-      # backwards — a red sweep is exactly when you most need to know the
-      # checkers are trustworthy. map-interaction.js failing has already
-      # skipped this step once, leaving the question unanswered.
-      #
-      # Gated since 2026-11-08: at 17.5 of the run's 38 minutes it is the
-      # single largest cost, and it tests the checkers, not the site. The gate
-      # runs it whenever a checker, this workflow, the gate, or a file it
-      # mutates changed, and on every scheduled (weekly) or manual run.
-      - name: mutate.py — the check on the checks
-        if: always() && needs.gate.outputs.mutate == 'true'
-        run: backend/verify/ci-step.sh mutate python3 backend/verify/mutate.py
-
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -438,6 +368,81 @@ jobs:
       # `reason:` is what turns the alert from a notification into a diagnosis.
       # Without it every one of these issues is the same sentence and a link,
       # and #54 collected three days of exactly that.
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
+        with:
+          reason: ${{ steps.why.outputs.text }}
+
+  # ---------------------------------------------------------------------------
+  # The check on the checks, in its own job (2026-11-16, Improvement Plan M7).
+  # In browser-checks it had become the largest single cost, and with Round 4's
+  # 94 cases a full run reached 48-55 minutes: three stacked PRs were cancelled
+  # at the cap, one with its logs destroyed, which hid a real auth-flow.sh
+  # failure. Here it runs in parallel with browser-checks, under its own
+  # ceiling, with its own logs, so a slow mutation pass can never cancel the
+  # checks that decide a merge, and a failure in one never hides the other.
+  mutation:
+    needs: gate
+    if: needs.gate.outputs.run == 'true' && needs.gate.outputs.mutate == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      BASE: http://localhost:8793
+      VERIFY_LOG_DIR: ${{ github.workspace }}/verify-logs
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Browser checks setup
+        uses: ./.github/actions/browser-setup
+        with:
+          browser: 'true'
+
+      # A clean sweep is only evidence if the checkers can still fire. This is
+      # the argument backend/verify/README.md makes, and it is why an earlier
+      # "0/32 checkers work" turned out to be a dead python3 alias rather than
+      # sixteen broken checks.
+      # if: always() because whether the checkers can fire is independent of
+      # whether the site passes. A site finding suppressing this one is
+      # backwards — a red sweep is exactly when you most need to know the
+      # checkers are trustworthy. map-interaction.js failing has already
+      # skipped this step once, leaving the question unanswered.
+      #
+      # Gated since 2026-11-08: at 17.5 of the run's 38 minutes it is the
+      # single largest cost, and it tests the checkers, not the site. The gate
+      # runs it whenever a checker, this workflow, the gate, or a file it
+      # mutates changed, and on every scheduled (weekly) or manual run.
+      - name: mutate.py — the check on the checks
+        run: backend/verify/ci-step.sh mutate python3 backend/verify/mutate.py
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-logs-mutation
+          path: ${{ env.VERIFY_LOG_DIR }}
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Collect what the mutation pass said
+        if: always()
+        id: why
+        shell: bash
+        run: |
+          {
+            echo 'text<<VERIFY_EOF'
+            if [ -s "$VERIFY_LOG_DIR/FAILED" ]; then
+              echo "--- mutate"
+              grep -A12 'NOT PROVEN' "$VERIFY_LOG_DIR/mutate.log" 2>/dev/null || tail -18 "$VERIFY_LOG_DIR/mutate.log" 2>/dev/null || echo "(no output captured)"
+            else
+              echo "mutate.py recorded no failure, so the job broke before or"
+              echo "around it — setup, the preview server, or the job timeout."
+            fi
+            echo 'VERIFY_EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Alert on failure
         if: failure()
         uses: ./.github/actions/notify-failure

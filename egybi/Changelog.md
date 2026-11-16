@@ -1839,3 +1839,16 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
 ## 2026-11-16 — Plan: M7, the mutation pass in its own job
 - **Plan:** `Improvement Plan 2026-11.md` gains M7. Stacked runs reached 48–55 minutes, and the cancels at the 50-minute cap destroyed logs. The CI limit is raised to 80 as a stopgap, and the fix is to run `mutate.py` as a separate job.
+
+## 2026-11-16 — The mutation pass in its own CI job (Round 5, M7)
+- **Why:** `mutate.py`, which checks that every checker can still fail, was the largest single cost in `browser-checks`. With Round 4's 94 cases a full run reached 48–55 minutes. Three stacked PRs were cancelled at the 50-minute cap, and one cancel destroyed the logs that held a real `auth-flow.sh` failure. The cap went to 80 minutes as a stopgap; this is the fix that the workflow's own 4 November note asked for.
+- **What:**
+  - **A new `mutation` job** in Verify (browser) runs `mutate.py` alongside `browser-checks`, with its own 45-minute ceiling, its own logs (`verify-logs-mutation`), its own failure summary and its own alert. It runs only when the gate says a checker, the workflow, the gate or a file `mutate.py` edits has changed, as before.
+  - **`browser-checks`** goes back to a 50-minute ceiling and keeps only the checks that decide whether the site is right.
+  - **A new composite action, `.github/actions/browser-setup`,** holds the shared setup: Node 20, Python 3.12 with PyYAML, playwright-core with Chromium, and site/ on port 8793. Both jobs call it, so their setups cannot drift. A composite step cannot carry `timeout-minutes`, so the 12-minute bound on the Chromium install is now a `timeout 12m` around it.
+  - **The gate and the workflow's trigger paths** now include the action, so a change to the shared setup runs the checks.
+- **Checks:**
+  - `checks.py workflows` and `workflow-audit.py` report no gaps;
+  - the YAML of both files parses;
+  - this PR's own run is the first real test of both jobs.
+- **Rollback:** revert this PR. The 80-minute single job comes back.

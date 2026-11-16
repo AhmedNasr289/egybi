@@ -1,0 +1,81 @@
+name: Browser checks setup
+description: >
+  Everything a job needs before it can run EgyBI's checkers: Node 20, Python
+  3.12 with PyYAML, playwright-core with Chromium, and site/ served on 8793.
+  Shared by Verify (browser)'s two jobs, browser-checks and mutation, so the
+  setup cannot drift between them (2026-11-16, Improvement Plan M7). PHP, which
+  auth-flow.sh needs, is preinstalled on GitHub's Ubuntu runners.
+
+  The calling job must set BASE and VERIFY_LOG_DIR in its env.
+inputs:
+  browser:
+    description: "'true' to install Chromium and serve site/; 'false' for the static checks only"
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # checks.py's `workflows` subcommand imports yaml. The workstation has
+    # PyYAML installed, so this only shows up on a clean runner — which is
+    # the point of running here rather than only where it happens to pass.
+    - name: Python dependencies
+      shell: bash
+      run: python3 -m pip install --quiet pyyaml
+
+    # env.js resolves playwright-core from node_modules or PLAYWRIGHT_CORE.
+    # This repo has no package.json, so install into a scratch directory and
+    # name the path explicitly rather than relying on module resolution.
+    # Bounded at 12 minutes: run 42275508065 (PR #83, 2026-11-06) spent 14m27s
+    # here when the Ubuntu mirror trickled Chromium's font packages, and the
+    # whole job then read `cancelled` as if the site had failed. A composite
+    # step cannot carry timeout-minutes, so `timeout` bounds it instead; a
+    # stalled mirror then fails HERE, under this step's name. The cure for a
+    # stall is a re-run; nothing in the site causes it.
+    - name: Install playwright-core and Chromium
+      if: inputs.browser == 'true'
+      shell: bash
+      run: |
+        # A fetch that stalls for 20 s is dropped and retried, instead of
+        # waiting out apt's default timeout on a dying connection.
+        printf 'Acquire::http::Timeout "20";\nAcquire::https::Timeout "20";\nAcquire::Retries "5";\n' \
+          | sudo tee /etc/apt/apt.conf.d/99-egybi-fetch-timeouts >/dev/null
+        mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
+        npm init -y >/dev/null
+        timeout 12m bash -c '
+          npm i --no-audit --no-fund playwright-core@1.62.1 &&
+          npx --yes playwright@1.62.1 install --with-deps chromium'
+        echo "PLAYWRIGHT_CORE=$RUNNER_TEMP/pw/node_modules/playwright-core" >> "$GITHUB_ENV"
+
+    - name: Resolve the Chromium binary
+      if: inputs.browser == 'true'
+      shell: bash
+      run: |
+        # env.js takes the highest chromium-* build under PLAYWRIGHT_BROWSERS_PATH.
+        # Name the executable outright so a layout change surfaces here rather
+        # than as a launch failure three steps later.
+        exe=$(find "$HOME/.cache/ms-playwright" -name chrome -type f -path '*chrome-linux*' | sort | tail -1)
+        test -n "$exe" || { echo "::error::no Chromium found under ~/.cache/ms-playwright"; exit 1; }
+        echo "CHROME=$exe" >> "$GITHUB_ENV"
+        echo "using $exe"
+
+    - name: Serve site/ on 8793
+      if: inputs.browser == 'true'
+      shell: bash
+      run: |
+        mkdir -p "$VERIFY_LOG_DIR"
+        python3 -m http.server 8793 --directory site >"$VERIFY_LOG_DIR/server.log" 2>&1 &
+        # Wait for a real 200 rather than sleeping: a fixed sleep either wastes
+        # time or races, and a sweep against a server that is not up yet fails
+        # every page for the wrong reason.
+        for i in $(seq 1 40); do
+          curl -fsS -o /dev/null "$BASE/index.html" && { echo "server up after ${i}00ms"; exit 0; }
+          sleep 0.1
+        done
+        echo "::error::server never answered on $BASE"; exit 1
