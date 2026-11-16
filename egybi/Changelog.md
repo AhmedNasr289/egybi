@@ -1630,3 +1630,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **the math:** 1,008 sun-time edges (18 sites × 14 dates, including both 2026 summer-time switch days) against the Python, which must agree within 60 s; measured locally, the worst gap is 0.00 s;
   - **the page:** visit/giza.html with the clock fixed at 10:00 Egypt time on 15 July must show the Python's four times, the status line and July's normal.
 - **Mutation case:** golden light at 5° instead of 6° in the browser must give SUN TIMES DIFFER.
+
+## 2026-11-16 — Home hero poster in WebP: 83 KB to 37 KB (Round 5, modern formats)
+- **Why:** the home hero's poster is the one raster image every first visitor downloads; the video itself loads later and only for those it plays for. A sweep of every page found it is the only raster image the pages show: charts and the map silhouette are already SVG.
+- **What:**
+  - `assets/video/hero-lighthouse.webp`, at WebP quality 72, is 36,992 bytes against the JPEG's 83,180, which is 55% smaller. PSNR against the JPEG is 38.6 dB, visually identical under the hero's sepia filter and dark scrim.
+  - `index.html`'s `poster` now points to it (`?v=4`). The JPEG stays in the repo and is no longer requested.
+- **Formats weighed:**
+  - **AVIF** was measured at 33,583 bytes, only 9% smaller than WebP, and has less support on older iPhones. WebP works in every current browser, so WebP was chosen.
+  - **The video (683 KB MP4)** stays as it is: no video encoder is installed on this machine, and adding one is not free of risk here.
+- **Rollback:** point `poster` back to `hero-lighthouse.jpg?v=3`.
