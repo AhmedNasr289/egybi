@@ -2166,3 +2166,5 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - Only each dot's latest start is used.
   - A failure prints the order and the gaps it measured.
 - **And the harness:** mutate.py now prints what a checker said for any case that is not a clean pass. Before, a NOISY verdict left only the word, and the cause could not be found without a re-run.
+## 2026-11-17 — The year strip's order check: the same scheduled-start timing
+- `year-strip.js` timed each month with `performance.now()` when its `animationstart` arrived, which is the same weakness that made the briefing map's order check flake. It now uses each cell's scheduled start (start time plus delay). It has not flaked yet; this removes the cause before it does.
