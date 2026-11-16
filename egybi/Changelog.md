@@ -2037,3 +2037,40 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - `assets/egybi.css` (v50, via `pages/common.py` and the hand pages);
   - `backend/verify/header.js`, `mutate.py`, the workflow;
   - a comment in `a11y2.js`.
+
+## 2026-11-16 — The briefing map: where the 18 sites are, and how hot, in the reader's month
+- **Why:**
+  - The home page's motion was mostly decoration: the flag's sway, reveals, and counters.
+  - The briefing listed 18 sites and their heat, but a list cannot show where they are. Where is half the answer, because the hot sites are the southern ones.
+- **What a reader sees:**
+  - Beside the briefing's lead, a map of Egypt with each measured site at its own coordinates, coloured by the same heat band as its card for the reader's month.
+  - When the briefing is reached, the dots come in from north to south, 70 ms apart.
+  - When the reader changes their dates, the dots are recoloured and come in again, so the change shows.
+  - The caption names the range, for example "In November, a normal afternoon runs from 15 °C at … to 29 °C at …".
+- **How:**
+  - `backend/pipeline/build_site_map.py` writes `site/assets/egypt-sites.svg` (4.4 KB).
+    - It uses the national outline dissolved by `build_flag.py`'s own functions from the geoBoundaries file the Atlas uses, plus each site projected from the lat/lon in `data/visit-climate.json`.
+    - Two runs give the same bytes.
+  - `assets/site-map.js` (v1) inlines that file and colours it from the figures `home.js` (v3) hands over in an `egybi:heat` event.
+  - `assets/site-map.css` (v1) is loaded by index.html only, so no other page changes.
+- **The rules kept:**
+  - opacity and transform only;
+  - none of it under reduced motion, where the coloured map appears at once;
+  - without JavaScript the map is a plain image with every site in place;
+  - if the file cannot be fetched, the image stays;
+  - no new host, library or font.
+- **New check `backend/verify/briefing-map.js`:**
+  - 18 dots inlined;
+  - every dot in its own card's band, computed from the page's trip.js;
+  - north-to-south order, with delays ascending as latitude falls;
+  - only opacity and transform animated;
+  - every dot shown after the sweep;
+  - the caption summary;
+  - July dates recolour every dot;
+  - reduced motion: no animation, nothing hidden;
+  - no JavaScript: the image is shown.
+- **Mutation cases:**
+  - all dots one colour must give MAP COLOURS WRONG;
+  - no stagger must give MAP ORDER WRONG;
+  - both reduced-motion guards removed must give MAP MOTION UNDER REDUCED MOTION;
+  - the image hidden must give MAP HIDDEN WITHOUT JS.
