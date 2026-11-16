@@ -2120,3 +2120,10 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the no-JS section scrolls with a plain script call;
   - the reduced-motion section waits a whole sweep (2.6 s) and counts every recorded animation start, and prints what it saw;
   - every section now runs inside its own guard, so a crash is a named failure (SECTION "..." CRASHED) and the following sections still run.
+## 2026-11-17 — The checks already on main that main's own mutation pass could not prove
+- **Why this is here:** main's mutation pass (run 43948810613) and this branch's own (run 43962643068) could not prove two briefing-map cases. The cases and the check are already on main, so this PR, the base of the train, must carry the fix to be green on its own head.
+- **The two cases:**
+  - **Hidden without JavaScript:** the no-JS section waited (`scrollIntoViewIfNeeded`) for a hidden image, threw, and never reported. It now scrolls with a plain script call.
+  - **Moving under reduced motion:** the section read 300 ms after scrolling. It now waits a full sweep and prints what it saw, and the mutation case removes all three locks (egybi.css's site-wide `* { animation: none !important }` under reduce, the script's check and the stylesheet's query); with two removed, the page stayed still and the case could never fire.
+- **Also:** every section runs inside its own guard, so a crash is a named failure and the rest still run.
+- **Verified:** the verdict-order fix in this PR is proven by run 43962643068, where "return after confirming fires on an ordinary sign-in" was caught.
