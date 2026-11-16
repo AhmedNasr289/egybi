@@ -957,7 +957,8 @@ function prune_expired(): void
     $db = auth_db();
     try {
         $db->prepare('DELETE FROM sessions WHERE expires_at < ?')->execute([now()]);
-        // Rate-limit rows older than a day are useless (widest window is 60 min).
+        // Rate-limit rows older than a day are useless: the widest window is the
+        // notes' 24 hours (1440 min), so a day-old row can no longer count.
         $db->prepare('DELETE FROM auth_attempts WHERE created_at < ?')->execute([gmdate('c', time() - 86400)]);
         // auth_tokens was never pruned, so spent verify/reset/gnonce rows
         // accumulated forever. google.php?action=nonce alone mints up to 30 rows
@@ -1239,5 +1240,6 @@ function account_export(PDO $db, array $u): array
         // account is deleted; the download still says what it holds.
         'newsletter' => newsletter_account_state($db, $u['email']),
         'notes' => (function () use ($db, $u) { require_once __DIR__ . '/notes_lib.php'; return notes_export($db, $u['id']); })(),
+        'note_marks' => notes_export_marks($db, $u['id']),
     ];
 }

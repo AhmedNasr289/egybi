@@ -972,6 +972,18 @@ case("save button never shown", "save-place.js",
 # The account page subscribes with no confirmation email, which is sound only
 # because the account's email is verified. Without that check, anyone could
 # create an account under someone else's address and subscribe it.
+# ---- Travellers' notes interface (Round 4, R4-2b) ---------------------------
+# notes.js puts every piece of a note on the page with textContent. Switch its
+# one helper to innerHTML and notes-ui.js's hostile fixture must become markup.
+NOTES_UI = f"node {HERE}/notes-ui.js"
+case("notes: a note's text rendered as HTML", "notes-ui.js", ["site/assets/notes.js"],
+     lambda: edit("site/assets/notes.js", "if (text != null) e.textContent = String(text);",
+                  "if (text != null) e.innerHTML = String(text);"),
+     lambda o: "MARKUP INJECTED" in o, NOTES_UI)
+case("notes: the place filter not sent to the API", "notes-ui.js", ["site/assets/notes.js"],
+     lambda: edit("site/assets/notes.js", "(siteFilter ? '&site=' + encodeURIComponent(siteFilter) : '')", "''"),
+     lambda o: "FILTER IGNORED" in o, NOTES_UI)
+
 # ---- Near me (Round 4, R4-8) -----------------------------------------------
 # Pressing Near me must sort the list nearest first. Drop the sort and the
 # column still appears, which is exactly the failure a glance would miss.
@@ -1051,7 +1063,51 @@ case("notes: account deletion leaves the notes behind", "auth-flow.sh",
 case("notes: reports never hide a note", "auth-flow.sh",
      ["site/auth/notes_lib.php"],
      lambda: edit("site/auth/notes_lib.php", "const NOTES_HIDE_AT_REPORTS = 3;", "const NOTES_HIDE_AT_REPORTS = 999;"),
-     lambda o: "FAIL  notes: D's report hides N3" in o, SH_AUTH)
+     lambda o: "FAIL  notes: reports from two addresses hide an untrusted author's note" in o, SH_AUTH)
+
+# ---- the R4-2b security review: each new guard must be load-bearing ---------
+case("notes: three reports from one address hide a note", "auth-flow.sh",
+     ["site/auth/notes_lib.php"],
+     lambda: edit("site/auth/notes_lib.php",
+                  " || (int)$r['ips'] < NOTES_HIDE_MIN_ADDRESSES) return false;", ") return false;"),
+     lambda o: "FAIL  notes: three reports from one address do not hide a note" in o, SH_AUTH)
+case("notes: reports hide a trusted author's note", "auth-flow.sh",
+     ["site/auth/notes_lib.php"],
+     lambda: edit("site/auth/notes_lib.php",
+                  "    if (notes_author_trusted($db, $note['user_id'], $note['id'])) return false;\n", ""),
+     lambda o: "FAIL  notes: a trusted author's reported note stays up" in o, SH_AUTH)
+case("notes: republishing deletes the reports, so the same accounts hide it again", "auth-flow.sh",
+     ["site/auth/notes_lib.php"],
+     lambda: edit("site/auth/notes_lib.php",
+                  "$db->prepare('UPDATE note_reports SET resolved=1 WHERE note_id=?')->execute([$id]);",
+                  "$db->prepare('DELETE FROM note_reports WHERE note_id=?')->execute([$id]);"),
+     lambda o: "FAIL  notes: the same reporters cannot hide a republished note" in o, SH_AUTH)
+case("notes: an author can report their own note", "auth-flow.sh",
+     ["site/api/notes.php"],
+     lambda: edit("site/api/notes.php",
+                  "        if ($note['user_id'] === $u['id']) json_out(false, ['message' => 'You cannot report your own note — you can delete it.'], 422);\n", ""),
+     lambda o: "FAIL  notes: E cannot report E's own note" in o, SH_AUTH)
+case("notes: the moderation key accepted from the URL", "auth-flow.sh",
+     ["site/api/notes.php"],
+     lambda: edit("site/api/notes.php",
+                  "$key = (string)($_SERVER['HTTP_X_MOD_KEY'] ?? ($method === 'POST' ? (body()['key'] ?? '') : ''));",
+                  "$key = (string)($_GET['key'] ?? ($_SERVER['HTTP_X_MOD_KEY'] ?? ($method === 'POST' ? (body()['key'] ?? '') : '')));"),
+     lambda o: "FAIL  notes: the key in the URL is refused" in o, SH_AUTH)
+case("notes: no per-address limit on helpful marks", "auth-flow.sh",
+     ["site/api/notes.php"],
+     lambda: edit("site/api/notes.php",
+                  "\n            || !rate_ok('note-helpful', NOTES_HELPFUL_PER_DAY_IP, 1440)) notes_slow_down();", ") notes_slow_down();"),
+     lambda o: "FAIL  notes: the per-address helpful limit holds" in o, SH_AUTH)
+case("notes: account deletion leaves the abuse counters", "auth-flow.sh",
+     ["site/auth/notes_lib.php"],
+     lambda: edit("site/auth/notes_lib.php",
+                  "    $db->prepare('DELETE FROM auth_attempts WHERE ip_hash IN (?,?,?,?)')\n",
+                  "    if (false) $db->prepare('DELETE FROM auth_attempts WHERE ip_hash IN (?,?,?,?)')\n"),
+     lambda o: "FAIL  notes: E's abuse counters are gone" in o, SH_AUTH)
+case("notes: the data export leaves out marks and reports", "auth-flow.sh",
+     ["site/auth/lib.php"],
+     lambda: edit("site/auth/lib.php", "        'note_marks' => notes_export_marks($db, $u['id']),\n", ""),
+     lambda o: "FAIL  notes: export lacks E's marks or reports" in o, SH_AUTH)
 
 case("notes: no daily limit on writing", "auth-flow.sh",
      ["site/auth/notes_lib.php"],
