@@ -2120,3 +2120,19 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - reduced motion: no animation;
   - no JavaScript: the whole table is shown.
 - **Mutation cases:** YEAR NOT IN ORDER, YEAR MOTION UNDER REDUCED MOTION (both guards removed), YEAR EMPTY ON SCREEN and YEAR HIDDEN WITHOUT JS.
+## 2026-11-16 — The briefing map shows its dots as soon as the map is on screen
+- **Why:** on the live home page at 1280x900 the map starts just below the fold (its top at 843 px). The sweep waited until 35% of the map was visible, so a reader who had scrolled only a little saw Egypt's north coast with no dots on it.
+- **What changed:**
+  - `assets/site-map.js` (v2) starts the sweep as soon as any part of the map is on screen (IntersectionObserver threshold 0), so the dots come in as the coast does.
+  - The motion itself is unchanged: opacity and transform only, none under reduced motion, a plain image without JavaScript.
+- **New case in `backend/verify/briefing-map.js`:** the page loads with the map entirely below the fold, scrolls until 60 px of it shows, and every dot on screen must be shown, or the check gives MAP EMPTY ON SCREEN.
+- **Mutation case:** the old 0.35 threshold restored must give MAP EMPTY ON SCREEN.
+## 2026-11-16 — auth-return.js case 4 waits for the login exchange and says what happened
+- **Why:** run 43947896555 reported SIGN-IN NEVER HAPPENED once in four runs of identical code (#140, #141 and #142 passed it). Its line gave no way to tell whether a login request was sent at all.
+- **What was ruled out:** a late startup "who is signed in?" answer undoing the sign-in. `EGYBI.account.open` waits for that answer before showing the dialog, so in case 4 it always arrives first, and the only other thing that clears the sign-in is signing out.
+- **What changed:** the case now waits for the login response (up to 10 s) instead of a fixed 2 s. If the sign-in still does not happen, the failure line records:
+  - whether a login request was sent, and its status;
+  - the dialog's error text and the field contents;
+  - the page the reader was on.
+
+  So the next occurrence names its own cause. Test-only; no site file changes.

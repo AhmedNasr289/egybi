@@ -129,6 +129,34 @@ const { chromium, executablePath, BASE } = require('./env');
     await ctx.close();
   }
 
+  // ---- 1b. a map just showing above the fold ------------------------------------
+  // At 1280x900 the map starts below the fold. A reader who has scrolled until
+  // only its top edge shows must see the dots on that edge, not an empty coast
+  // (the first version waited for 35% of the map). Load with the map entirely
+  // below the fold, bring 60px of it into view, and every dot on screen must
+  // be shown: MAP EMPTY ON SCREEN.
+  {
+    const ctx = await b.newContext({ reducedMotion: 'no-preference', viewport: { width: 1280, height: 420 } });
+    await block(ctx);
+    const p = await ctx.newPage();
+    await p.goto(BASE + '/index.html');
+    try { await p.waitForSelector('#siteMap svg circle.s', { state: 'attached', timeout: 10000 }); } catch (e) { /* counted below */ }
+    const below = await p.evaluate(() => document.getElementById('siteMap').getBoundingClientRect().top - innerHeight);
+    await p.evaluate(() => { const f = document.getElementById('siteMap'); window.scrollTo(0, f.getBoundingClientRect().top + scrollY - innerHeight + 60); });
+    await p.waitForTimeout(2600);
+    const r = await p.evaluate(() => {
+      const cs = [...document.querySelectorAll('#siteMap svg circle.s')];
+      const on = cs.filter(c => { const b = c.getBoundingClientRect(); return b.height > 0 && b.bottom > 0 && b.top < innerHeight; });
+      return { on: on.length, hidden: on.filter(c => +getComputedStyle(c).opacity < 0.99).length,
+               peek: Math.round(innerHeight - document.getElementById('siteMap').getBoundingClientRect().top) };
+    });
+    if (below <= 0) fail(`MAP EMPTY ON SCREEN: could not set the case up, the map was already on screen at load (${Math.round(below)}px)`);
+    else if (!r.on) fail(`MAP EMPTY ON SCREEN: no dot came into view with ${r.peek}px of the map showing`);
+    else if (r.hidden) fail(`MAP EMPTY ON SCREEN: with ${r.peek}px of the map showing, ${r.hidden} of the ${r.on} dots on screen stay hidden`);
+    else console.log(`ok   with ${r.peek}px of the map showing, its ${r.on} dots on screen are shown`);
+    await ctx.close();
+  }
+
   // ---- 2. reduced motion --------------------------------------------------------
   {
     const ctx = await b.newContext({ reducedMotion: 'reduce', viewport: { width: 1280, height: 900 } });
