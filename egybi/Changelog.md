@@ -2092,3 +2092,23 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The defect:** CI run 43922770714 reported NO MAP MOTION on a map that moves. That was confirmed in a real browser on the live home page with the same code: the dots started 70 ms apart from Alexandria south, and all 18 were shown after the sweep.
 - **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
 - **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.
+
+## 2026-11-16 — auth-return.js case 4 waits for the login exchange and says what happened
+- **Why:** run 43947896555 reported SIGN-IN NEVER HAPPENED once in four runs of identical code (#140, #141 and #142 passed it). Its line gave no way to tell whether a login request was sent at all.
+- **What was ruled out:** a late startup "who is signed in?" answer undoing the sign-in. `EGYBI.account.open` waits for that answer before showing the dialog, so in case 4 it always arrives first, and the only other thing that clears the sign-in is signing out.
+- **What changed:** the case now waits for the login response (up to 10 s) instead of a fixed 2 s. If the sign-in still does not happen, the failure line records:
+  - whether a login request was sent, and its status;
+  - the dialog's error text and the field contents;
+  - the page the reader was on.
+
+  So the next occurrence names its own cause. Test-only; no site file changes.
+- **The cause, found by those lines** (run 43962669112): the email field held "t@example.orga long enough password" and the password field nothing. The dialog moves focus to its first field 60 ms after opening (`auth.js` `setView`), and the test typed inside that window, so the focus jump landed mid-fill and no login was sent. The test now waits until the focus is inside the dialog before typing, in all three places it opens it. A reader cannot type within 60 ms of the dialog appearing, so the site is unchanged.
+- **The verdict order, and why:** case 4 now judges the redirect first, and judges the sign-in by the login exchange as well as the flag. Run 43947896555's mutation pass missed UNASKED REDIRECT because the order was the other way round. The mutated sign-in did happen and did redirect, then community.html's own startup check received the stub's "nobody signed in" and cleared the flag, so the case read SIGN-IN NEVER HAPPENED instead.
+
+## 2026-11-17 — The checks already on main that main's own mutation pass could not prove
+- **Why this is here:** main's mutation pass (run 43948810613) and this branch's own (run 43962643068) could not prove two briefing-map cases. The cases and the check are already on main, so this PR, the base of the train, must carry the fix to be green on its own head.
+- **The two cases:**
+  - **Hidden without JavaScript:** the no-JS section waited (`scrollIntoViewIfNeeded`) for a hidden image, threw, and never reported. It now scrolls with a plain script call.
+  - **Moving under reduced motion:** the section read 300 ms after scrolling. It now waits a full sweep and prints what it saw, and the mutation case removes all three locks (egybi.css's site-wide `* { animation: none !important }` under reduce, the script's check and the stylesheet's query); with two removed, the page stayed still and the case could never fire.
+- **Also:** every section runs inside its own guard, so a crash is a named failure and the rest still run.
+- **Verified:** the verdict-order fix in this PR is proven by run 43962643068, where "return after confirming fires on an ordinary sign-in" was caught.
