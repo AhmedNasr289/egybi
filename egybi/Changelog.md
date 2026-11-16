@@ -2202,3 +2202,6 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - English planted into a Russian card is caught;
   - all eight translated inline scripts parse;
   - a new mutation case covers script-written English.
+## 2026-11-17 — Year strip: figures stay on the same line as °C
+- **What the screenshots showed:** CI's screenshots of the year strip (run 43962750300) broke "under 28" from "°C" at 1280 and 390 px, leaving the unit alone at the start of a line.
+- **The fix:** `heat_calendar.findings()` joins every figure to its unit with a non-breaking space. That covers the year strip's sentence on visit.html and the same sentences on egypt-weather-by-month.html.
