@@ -52,6 +52,8 @@ Back to [[Home]] · related: [[Automation & CI Pipelines]] · [[Changelog]]
 ### A one-in-four failure needs evidence, not a theory
 - **What happened:** the same sign-in test failed once in four runs of identical code. A plausible cause (a late start-up check undoing the sign-in) turned out impossible on reading the code, because the dialog waits for that check before opening.
 - **Rule:** make the failure line say what happened (login request sent or not, its status, the dialog's text, the page), and wait for the next occurrence.
+- **Resolved the next day (run 43962669112):** the failure line showed the email field holding "t@example.orga long enough password" and the password field empty. The dialog moves focus to its first field 60 ms after opening, and the test typed inside that window, so the focus jump landed mid-fill. The test now waits for the dialog's focus before typing.
+- **The general rule:** a test must wait for the same "ready" a reader waits for, here the cursor in the field, not merely for the element to exist.
 
 ### Stacked test links and invented positions
 - **What happened:** test links placed at `100 + 50 * charCode % 4` px all landed at 100 or 102 px, covered each other, and the hover timed out.
