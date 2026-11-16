@@ -1649,3 +1649,24 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **13, reduced motion:** motion.js now reveals everything at once under reduced motion, which masked a missing CSS rule. reduced.js gains a probe with motion.js blocked, so the CSS guarantee is measured on its own.
   - **13d, no JavaScript:** two guards now keep blocks visible (the html.js scope and S1's override), so the case removes both.
   - **27, a tap-target false alarm during AOS's animation:** retired with the measurement, since the new reveal moves a block and its buttons together. The checker keeps its settle step.
+## 2026-11-16 — "Today at this site" on every visit page (Round 4, R4-1)
+- **Why:** the study found nothing that helps on the day itself. The visit pages gave golden light for the 15th of each month, and no code anywhere read the time of day. A tourist at Giza wants to know when the light starts and ends today, and how long is left.
+- **The card:** each of the 18 visit pages now opens with "Today at <site>":
+  - today's date and the time in Egypt;
+  - sunrise, golden light until, golden light from, and sunset;
+  - a live line saying what is happening now, such as "Golden light returns in 4 h 12 min; sunset in 6 h 30 min";
+  - this month's normal afternoon and night, labelled a long-run normal and not a forecast.
+- **Method:**
+  - `assets/today.js` ports the NOAA equations from `sun_times.py`, the code that builds the page's light table;
+  - Egypt time, including summer time, comes from the browser's own time-zone database (`Intl`, Africa/Cairo);
+  - the normals are embedded by the generator in `data-normals`, so the card needs no download;
+  - no opening hours, prices or crowd levels appear, because none are measured.
+- **Without JavaScript:** the card keeps a sentence pointing to the light table.
+- **Files:**
+  - `pages/visit.py`: `today_card()`, and the card first in the page's first section;
+  - `assets/today.css` and `assets/today.js` (`?v=1`), loaded by the visit pages only, so `egybi.css` is untouched;
+  - the 18 visit pages, regenerated.
+- **New check `backend/verify/today-sun.js`** (Verify (browser)):
+  - **the math:** 1,008 sun-time edges (18 sites × 14 dates, including both 2026 summer-time switch days) against the Python, which must agree within 60 s; measured locally, the worst gap is 0.00 s;
+  - **the page:** visit/giza.html with the clock fixed at 10:00 Egypt time on 15 July must show the Python's four times, the status line and July's normal.
+- **Mutation case:** golden light at 5° instead of 6° in the browser must give SUN TIMES DIFFER.
