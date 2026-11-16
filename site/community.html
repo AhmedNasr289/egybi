@@ -14,7 +14,7 @@
 <!-- .js: AOS may hide [data-aos]; without it, egybi.css shows everything (S1). -->
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
 <style>
   .step { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 20px; }
   .step::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-family: 'Cinzel', serif; display: flex; align-items: center; justify-content: center; }
@@ -22,15 +22,15 @@
   .rule-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
   .rule-item .mk { color: var(--success); font-weight: 800; flex: 0 0 auto; }
   .road-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
-  .road-item .badge { flex: 0 0 auto; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; margin-top: 2px; }
+  .road-item .badge { flex: 0 0 auto; font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; margin-top: 2px; }
   .badge.done { color: #0f5c43; background: rgba(31,122,92,0.16); }
   .badge.now { color: var(--gold-ink); background: var(--gold-soft); }
   .badge.next { color: var(--blue); background: var(--blue-soft); }
   .comment { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px; }
   .comment-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
-  .comment-name { font-weight: 700; color: var(--blue-deep); font-size: 0.92rem; }
-  .comment-date { font-size: 0.76rem; color: var(--ink-soft); white-space: nowrap; }
-  .comment-body { color: var(--ink); line-height: 1.6; margin: 0; font-size: 0.94rem; white-space: pre-wrap; }
+  .comment-name { font-weight: 700; color: var(--blue-deep); font-size: var(--fs-sm); }
+  .comment-date { font-size: var(--fs-xs); color: var(--ink-soft); white-space: nowrap; }
+  .comment-body { color: var(--ink); line-height: 1.6; margin: 0; font-size: var(--fs-base); white-space: pre-wrap; }
 </style>
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
@@ -91,7 +91,7 @@
 <section class="surface-hero center" style="padding:64px 6vw;">
   <div class="wrap">
     <div class="kicker"><span data-glyph="scribe"></span>The community</div>
-    <h1 style="font-size:clamp(1.9rem,4.4vw,2.9rem);margin:0 0 12px;">Help build the House of Life.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">Help build the House of Life.</h1>
     <p class="lead" style="margin:0 auto;">EgyBI grows through cited data and good problems. If you can bring a real dataset about Egypt, a correction, or a fix — there is a place for you here.</p>
   </div>
 </section>
@@ -186,23 +186,23 @@
       <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div style="display:grid;gap:12px;">
         <label style="display:block;">
-          <span style="font-size:0.85rem;font-weight:600;color:var(--blue-deep);">Your name <span style="color:var(--ink-soft);font-weight:400;">(optional)</span></span>
-          <input type="text" name="name" maxlength="60" placeholder="Anonymous" style="width:100%;margin-top:5px;padding:10px 13px;border:1px solid var(--line-light);border-radius:10px;background:var(--papyrus-2);color:var(--ink);font-family:inherit;font-size:0.92rem;">
+          <span style="font-size:var(--fs-sm);font-weight:600;color:var(--blue-deep);">Your name <span style="color:var(--ink-soft);font-weight:400;">(optional)</span></span>
+          <input type="text" name="name" maxlength="60" placeholder="Anonymous" style="width:100%;margin-top:5px;padding:10px 13px;border:1px solid var(--line-light);border-radius:10px;background:var(--papyrus-2);color:var(--ink);font-family:inherit;font-size:var(--fs-sm);">
         </label>
         <label style="display:block;">
-          <span style="font-size:0.85rem;font-weight:600;color:var(--blue-deep);">Your idea or comment</span>
-          <textarea name="message" rows="4" maxlength="1500" required placeholder="What should EgyBI add or improve? Share a dataset, a challenge idea, a correction…" style="width:100%;margin-top:5px;padding:10px 13px;border:1px solid var(--line-light);border-radius:10px;background:var(--papyrus-2);color:var(--ink);font-family:inherit;font-size:0.92rem;resize:vertical;"></textarea>
+          <span style="font-size:var(--fs-sm);font-weight:600;color:var(--blue-deep);">Your idea or comment</span>
+          <textarea name="message" rows="4" maxlength="1500" required placeholder="What should EgyBI add or improve? Share a dataset, a challenge idea, a correction…" style="width:100%;margin-top:5px;padding:10px 13px;border:1px solid var(--line-light);border-radius:10px;background:var(--papyrus-2);color:var(--ink);font-family:inherit;font-size:var(--fs-sm);resize:vertical;"></textarea>
         </label>
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
           <button type="submit" class="btn btn-primary">Post to the board →</button>
-          <span class="form-note" role="status" aria-live="polite" style="font-size:0.88rem;"></span>
+          <span class="form-note" role="status" aria-live="polite" style="font-size:var(--fs-sm);"></span>
         </div>
       </div>
     </form>
-    <p style="font-size:0.8rem;color:var(--ink-soft);margin-top:10px;">By posting you agree it may be shown publicly after review. Please keep it constructive and on-topic. See our <a href="privacy.html" style="color:var(--gold-ink);font-weight:600;">privacy note</a>.</p>
+    <p style="font-size:var(--fs-xs);color:var(--ink-soft);margin-top:10px;">By posting you agree it may be shown publicly after review. Please keep it constructive and on-topic. See our <a href="privacy.html" style="color:var(--gold-ink);font-weight:600;">privacy note</a>.</p>
 
-    <h3 style="color:var(--blue-deep);font-size:1.15rem;margin:34px 0 14px;border-top:1px solid var(--line-light);padding-top:26px;">From the community</h3>
-    <div id="communityList" aria-live="polite"><p style="color:var(--ink-soft);font-size:0.9rem;">Loading notes…</p></div>
+    <h3 style="color:var(--blue-deep);font-size:var(--fs-md);margin:34px 0 14px;border-top:1px solid var(--line-light);padding-top:26px;">From the community</h3>
+    <div id="communityList" aria-live="polite"><p style="color:var(--ink-soft);font-size:var(--fs-sm);">Loading notes…</p></div>
 
     <div class="cta-row" style="margin-top:30px;" data-aos="fade-up"><a href="index.html#newsletter" class="btn btn-primary">Get The Papyrus →</a><a href="blog.html" class="btn btn-ghost">Read the blog</a></div>
   </div>
@@ -212,7 +212,7 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

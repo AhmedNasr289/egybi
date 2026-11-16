@@ -21,7 +21,7 @@
 <!-- .js: AOS may hide [data-aos]; without it, egybi.css shows everything (S1). -->
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -90,13 +90,13 @@
   .case-strip { display:grid; grid-template-columns:1.55fr 1fr; gap:30px; align-items:center;
                 background:var(--papyrus-2); border:1px solid var(--line-light); border-left:5px solid var(--gold);
                 border-radius:var(--radius); padding:30px 32px; }
-  .case-strip h2 { margin:8px 0 10px; color:var(--blue-deep); font-size:clamp(1.25rem,2.4vw,1.72rem); line-height:1.28; }
-  .case-strip .lead { margin:0; font-size:0.97rem; }
+  .case-strip h2 { margin:8px 0 10px; color:var(--blue-deep); font-size:var(--fs-h2); line-height:1.28; }
+  .case-strip .lead { margin:0; font-size:var(--fs-base); }
   .cs-nums { display:flex; flex-direction:column; gap:12px; }
   .csn { background:var(--papyrus); border:1px solid var(--line-light); border-radius:var(--radius); padding:14px 18px; text-align:center; }
-  .csn b { font-family:'Cinzel',serif; font-size:1.85rem; display:block; line-height:1; }
+  .csn b { font-family:'Cinzel',serif; font-size:var(--fs-xl); display:block; line-height:1; }
   .csn.down b { color:var(--danger); } .csn.up b { color:var(--success); }
-  .csn span { font-size:0.76rem; color:var(--ink-soft); display:block; margin-top:6px; }
+  .csn span { font-size:var(--fs-xs); color:var(--ink-soft); display:block; margin-top:6px; }
   @media (max-width:820px){ .case-strip { grid-template-columns:1fr; }
     .cs-nums { flex-direction:row; } .csn { flex:1; } }
 
@@ -405,7 +405,7 @@
     <div class="papyrus-letter" data-mo>
       <div class="pl-seal" aria-hidden="true"><span class="pl-seal-glyph" data-glyph="ankh"></span></div>
       <p class="kicker" style="margin-bottom:6px;"><span data-glyph="scroll"></span> The Papyrus &middot; before you go</p>
-      <h2 style="font-size:clamp(1.5rem,4vw,2.1rem);margin:0 0 12px;">One letter a month, for anyone planning Egypt.</h2>
+      <h2 style="font-size:var(--fs-h2);margin:0 0 12px;">One letter a month, for anyone planning Egypt.</h2>
       <p class="lead" style="margin:0 0 18px;">The coming month measured: the heat at the sites, the holidays ahead, how the pound has moved &mdash; and one short story from the data that changes how a place looks to you.</p>
 
       <blockquote class="pl-specimen">
@@ -413,7 +413,7 @@
         Thirty-three ancient Egyptian obelisks survive. Only fifteen are still in Egypt. The tallest one standing anywhere is in Rome, and the largest ever cut never rose at all &mdash; it cracked in the Aswan quarry and lies there still, at nearly 42 metres.
       </blockquote>
 
-      <p style="font-size:0.92rem;color:var(--ink-soft);margin:0 0 20px;">Monthly, never more. Every figure cited, disputes flagged. Unsubscribe in one click.</p>
+      <p style="font-size:var(--fs-sm);color:var(--ink-soft);margin:0 0 20px;">Monthly, never more. Every figure cited, disputes flagged. Unsubscribe in one click.</p>
 
       <form id="newsletterForm" class="newsletter-form nl-form" novalidate>
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -432,7 +432,7 @@
   <div class="cols">
     <div>
       <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
-      <p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — real heat, holidays and prices, every figure with its source and its date.</p>
+      <p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — real heat, holidays and prices, every figure with its source and its date.</p>
     </div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>

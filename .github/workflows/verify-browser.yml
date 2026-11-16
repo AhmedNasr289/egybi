@@ -218,6 +218,9 @@ jobs:
       - name: coverage.py
         run: backend/verify/ci-step.sh coverage python3 backend/verify/coverage.py
 
+      - name: type-scale.py
+        run: backend/verify/ci-step.sh type-scale python3 backend/verify/type-scale.py
+
       - name: checks.py
         run: |
           for c in orphans workflows secrets fra; do

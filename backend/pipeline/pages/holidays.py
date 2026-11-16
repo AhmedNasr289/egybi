@@ -207,12 +207,12 @@ def svg_chart(rows, title, credit_lines):
 CSS = """
 .hol-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .hol-table{border-collapse:collapse;width:100%;min-width:620px}
-.hol-table caption{caption-side:bottom;text-align:left;font-size:.82rem;padding-top:8px;opacity:.85}
-.hol-table th,.hol-table td{text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid rgba(41,36,32,.15);font-size:.92rem}
-.hol-table thead th{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.hol-table caption{caption-side:bottom;text-align:left;font-size:var(--fs-sm);padding-top:8px;opacity:.85}
+.hol-table th,.hol-table td{text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid rgba(41,36,32,.15);font-size:var(--fs-sm)}
+.hol-table thead th{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.04em}
 .hol-ar{font-weight:500;margin-left:6px}
-.hol-note{font-size:.82rem;opacity:.85}
-.hol-exp{display:inline-block;padding:2px 8px;border-radius:999px;background:#C9A227;color:#1B1B18;font-size:.78rem;font-weight:700}
+.hol-note{font-size:var(--fs-sm);opacity:.85}
+.hol-exp{display:inline-block;padding:2px 8px;border-radius:999px;background:#C9A227;color:#1B1B18;font-size:var(--fs-xs);font-weight:700}
 .hc-code{white-space:pre-wrap;word-break:break-all;user-select:all;font:500 .82rem/1.5 ui-monospace,Consolas,monospace;background:var(--papyrus);border:1px solid rgba(41,36,32,.25);border-radius:8px;padding:12px 14px;margin:10px 0 0}
 """
 
@@ -249,7 +249,7 @@ def build_holidays_page():
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:960px;">
     <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="visit.html">When to go</a> &middot; {esc(year)} &middot; sourced, row by row</p>
-    <h1 style="font-size:clamp(1.6rem,5vw,2.6rem);margin:0 0 12px;">Egypt&rsquo;s public holidays in {esc(year)}.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">Egypt&rsquo;s public holidays in {esc(year)}.</h1>
     <p class="lead" style="margin:0;max-width:68ch;">Every public holiday, with Ramadan and the two Eids. Fixed dates
     are given as days; the Islamic ones move every year and are given as the range they can fall in, until the
     moon is sighted.</p>

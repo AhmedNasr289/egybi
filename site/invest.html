@@ -24,7 +24,7 @@
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
 <style>
   /* Page-local because nothing else on the site needs them. Anything that a
      second page ever wants moves into egybi.css instead of being copied. */
@@ -37,19 +37,19 @@
   .iv-chip.on { background:var(--blue-deep); color:#fff; border-color:var(--blue-deep); }
   .iv-chip:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
   @media (prefers-reduced-motion: reduce) { .iv-chip { transition:none; } }
-  .iv-legend { display:flex; flex-wrap:wrap; gap:18px; margin-top:14px; font-size:0.82rem; color:var(--ink-soft); }
+  .iv-legend { display:flex; flex-wrap:wrap; gap:18px; margin-top:14px; font-size:var(--fs-sm); color:var(--ink-soft); }
   .iv-legend b { color:var(--ink); font-weight:600; }
   .iv-key { display:inline-block; width:14px; height:14px; border-radius:50%; vertical-align:-2px; margin-right:7px; }
   .iv-key.gov { border-radius:50%; background:transparent; border:2.5px dashed var(--gold-ink); }
-  .iv-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
-  .iv-table caption { text-align:left; font-size:0.8rem; color:var(--ink-soft); padding-bottom:10px; }
-  .iv-table th { text-align:left; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em;
+  .iv-table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
+  .iv-table caption { text-align:left; font-size:var(--fs-xs); color:var(--ink-soft); padding-bottom:10px; }
+  .iv-table th { text-align:left; font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:0.05em;
                  color:var(--ink-soft); border-bottom:2px solid var(--line-light); padding:8px 10px; }
   .iv-table th[scope="row"] { min-width:15ch; }
   .iv-table td { padding:9px 10px; border-bottom:1px solid var(--line-light); vertical-align:top; }
   .iv-table tbody tr:hover { background:var(--papyrus-2); }
-  .iv-fig { font-family:'Cinzel',serif; font-size:1.02rem; white-space:nowrap; }
-  .iv-status { display:inline-block; padding:2px 9px; border-radius:999px; font-size:0.72rem; font-weight:600;
+  .iv-fig { font-family:'Cinzel',serif; font-size:var(--fs-base); white-space:nowrap; }
+  .iv-status { display:inline-block; padding:2px 9px; border-radius:999px; font-size:var(--fs-xs); font-weight:600;
                background:var(--gold-soft); color:var(--gold-ink); white-space:nowrap; }
   .iv-status.target { background:rgba(23,64,139,0.10); color:var(--blue-deep); }
   .iv-wrap { overflow-x:auto; }
@@ -58,8 +58,8 @@
   .iv-note p:last-child { margin-bottom:0; }
   .iv-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin:22px 0 6px; }
   .iv-stat { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:16px 18px; }
-  .iv-stat b { display:block; font-family:'Cinzel',serif; font-size:1.9rem; line-height:1; color:var(--blue-deep); }
-  .iv-stat span { display:block; font-size:0.78rem; color:var(--ink-soft); margin-top:7px; }
+  .iv-stat b { display:block; font-family:'Cinzel',serif; font-size:var(--fs-xl); line-height:1; color:var(--blue-deep); }
+  .iv-stat span { display:block; font-size:var(--fs-xs); color:var(--ink-soft); margin-top:7px; }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "CollectionPage", "@id": "https://egybi.com/invest.html#page", "url": "https://egybi.com/invest.html", "name": "Where Egypt is building", "isPartOf": {"@id": "https://egybi.com/#site"}, "publisher": {"@id": "https://egybi.com/#org"}, "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Where Egypt is building", "item": "https://egybi.com/invest.html"}]}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "Egypt megaprojects, renewable plants, hydrogen deals and ports", "description": "Announced and under-construction projects across Egypt with their locations and the source that published each one. Positions come from the OpenStreetMap gazetteer and governorate outlines from geoBoundaries. Information and education only, not investment advice.", "url": "https://egybi.com/invest.html", "creator": {"@type": "Organization", "name": "EgyBI", "url": "https://egybi.com/"}, "isAccessibleForFree": true, "inLanguage": "en", "spatialCoverage": {"@type": "Place", "name": "Egypt"}, "keywords": ["Egypt", "megaprojects", "renewable energy", "green hydrogen", "ports", "infrastructure", "investment"], "license": "https://creativecommons.org/licenses/by/4.0/"}</script>
@@ -187,7 +187,7 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

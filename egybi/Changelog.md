@@ -1551,3 +1551,33 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - S1: with JavaScript blocked, AOS leaves content invisible. Measured live: Explore 106 blocks and 2,557 words, About 33 and 837, Home 32 and 764; Plan, the control, 0.
   - S3: the visit pages' climate tables need a sideways swipe at 390 px, with a header cut to "R… MM/".
 - **The proposal** (type and spacing scales, motion rules, before and after, PR order S1, S3, S2, S4) waits for Ahmed's yes. No site file changes in this entry.
+
+## 2026-11-16 — One type scale (study S2, part 1 of 2: type)
+- **Why:** the stylesheet and the pages used **82 distinct reading sizes** (measured against main, glyphs and parent-relative `em` sizes excluded). That had two visible effects:
+  - labels that meant the same thing differed by a pixel or two from section to section (0.68, 0.70, 0.72, 0.74, 0.76 and 0.78 rem);
+  - on a phone, a page title (`h1`, 25.6 px) was the same size as a section heading (`h2`, 25.6 px).
+- **Ten steps, defined once in `egybi.css` `:root`:**
+  - six fixed reading sizes: `--fs-xs` 12 px (nothing smaller), `sm` 14, `base` 16, `md` 18, `lg` 20 and `xl` 28 px for headline figures;
+  - four that grow with the screen: `lead` for intro paragraphs, `h2` (25.6 to 34.4 px, as before), `h1` (28.6 to 43.2 px) and `hero` (unchanged).
+- **Changed from the approved proposal:**
+  - `lg` is 20 px, not 22, because 184 in-page headings already sat at 1.2 to 1.25 rem;
+  - headings got role names (`h2`, `h1`, `hero`) instead of `2xl`/`3xl`, and figures got their own fixed `xl`, so stat numbers do not grow with the screen.
+- **Applied everywhere:**
+  - `egybi.css`, the page generators in `backend/pipeline` and the hand-written pages, all regenerated (191 files);
+  - every old value maps to its nearest step by one rule in `backend/verify/typescale.py`;
+  - after the change, **10 reading sizes** remain (29 distinct values in all, counting glyph sizes and parent-relative `em` values).
+- **Left as they are, on purpose:**
+  - 14 glyph, icon and map-label rules, which size hieroglyphs, seals, the close cross and map markers rather than text;
+  - SVG `font-size=""` attributes in charts, which are not CSS;
+  - the PDF dossier's `pt` sizes and the e-mail templates, which cannot use CSS variables.
+- **What a reader sees:**
+  - labels below 12 px grow to 12 px;
+  - page titles on a phone are now larger than section headings (28.6 against 25.6 px);
+  - most other text moves by at most a pixel.
+- **The stylesheet moves to `?v=47`** on all 182 pages and in `pages/common.py`. `build_prices_pages.py`'s Arabic title swap now matches `var(--fs-h1)`, and mutation case 13f's anchor follows the S3 rule's new token.
+- **New check `backend/verify/type-scale.py`**, which runs in Verify (browser) beside static-audit. It reads `egybi.css` and every page, and fails on:
+  - OFF-SCALE: a font size that is not a token, `em` or `%` outside the exempt rules;
+  - TOKEN DRIFT: `:root` disagrees with `typescale.py`;
+  - VACUOUS: fewer than 700 declarations read. Today it reads 930.
+- **Mutation cases 13h and 13i** were each proven catching locally: a one-off size in the stylesheet, a one-off size in a page's style attribute, and a step redefined in `egybi.css` alone.
+- **Next: S2 part 2,** for spacing, radii and repeated literal colours.

@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
 <style>
   /* TradingView embeds keep their own look; we only size their containers and
      frame them in the site's card so the page reads as one system. */
@@ -31,18 +31,18 @@
   .tv-tall { height:520px; } .tv-tall .tradingview-widget-container, .tv-tall .tradingview-widget-container__widget { height:100%; }
   .tv-mini { height:210px; } .tv-mini .tradingview-widget-container, .tv-mini .tradingview-widget-container__widget { height:100%; }
   .tv-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:22px; }
-  .tradingview-widget-copyright { font-size:0.72rem; color:var(--ink-soft); text-align:right; padding-top:6px; }
+  .tradingview-widget-copyright { font-size:var(--fs-xs); color:var(--ink-soft); text-align:right; padding-top:6px; }
   .tradingview-widget-copyright a { color:var(--gold-ink); text-decoration:none; }
   .disclaimer { background:var(--papyrus-2); border:2px solid var(--gold); border-radius:var(--radius); padding:22px 26px; box-shadow:0 12px 30px rgba(201,162,39,.12); }
-  .disclaimer .label { color:var(--danger); font-weight:800; font-size:0.74rem; letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; }
-  .disclaimer p { margin:0 0 10px; font-size:0.95rem; line-height:1.65; color:var(--ink); }
-  .disclaimer p:last-child { margin-bottom:0; color:var(--ink-soft); font-size:0.86rem; }
+  .disclaimer .label { color:var(--danger); font-weight:800; font-size:var(--fs-xs); letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; }
+  .disclaimer p { margin:0 0 10px; font-size:var(--fs-base); line-height:1.65; color:var(--ink); }
+  .disclaimer p:last-child { margin-bottom:0; color:var(--ink-soft); font-size:var(--fs-sm); }
 
   /* --- Fundamentals: stock picker (accessible combobox) --- */
   .stock-picker { margin-top:22px; }
-  .stock-picker > label { display:block; font-weight:700; font-size:0.9rem; color:var(--ink); margin-bottom:8px; }
+  .stock-picker > label { display:block; font-weight:700; font-size:var(--fs-sm); color:var(--ink); margin-bottom:8px; }
   .sp-field { position:relative; max-width:540px; }
-  #sp-input { width:100%; box-sizing:border-box; font:inherit; font-size:1rem; padding:12px 14px; border:1.5px solid var(--line-light); border-radius:12px; background:var(--papyrus); color:var(--ink); }
+  #sp-input { width:100%; box-sizing:border-box; font:inherit; font-size:var(--fs-base); padding:12px 14px; border:1.5px solid var(--line-light); border-radius:12px; background:var(--papyrus); color:var(--ink); }
   #sp-input::placeholder { color:var(--ink-soft); }
   #sp-input:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,162,39,.22); }
   #sp-list { position:absolute; z-index:40; left:0; right:0; top:calc(100% + 6px); margin:0; padding:6px; list-style:none; background:var(--papyrus); border:1.5px solid var(--line-light); border-radius:12px; box-shadow:var(--shadow-light); max-height:322px; overflow-y:auto; }
@@ -50,18 +50,18 @@
   .sp-opt { display:flex; align-items:baseline; gap:10px; padding:9px 11px; border-radius:8px; cursor:pointer; }
   .sp-opt:hover, .sp-opt.active { background:var(--papyrus-2); }
   .sp-opt .t { font-weight:800; color:var(--gold-ink); font-variant-numeric:tabular-nums; min-width:58px; }
-  .sp-opt .n { color:var(--ink); font-size:0.92rem; }
+  .sp-opt .n { color:var(--ink); font-size:var(--fs-sm); }
   .sp-opt .n .ar { color:var(--ink-soft); }
-  .sp-opt .s { margin-left:auto; color:var(--ink-soft); font-size:0.75rem; white-space:nowrap; }
-  .sp-empty { padding:11px; color:var(--ink-soft); font-size:0.9rem; }
-  .sp-now { margin:12px 0 0; font-size:0.95rem; color:var(--ink); }
+  .sp-opt .s { margin-left:auto; color:var(--ink-soft); font-size:var(--fs-xs); white-space:nowrap; }
+  .sp-empty { padding:11px; color:var(--ink-soft); font-size:var(--fs-sm); }
+  .sp-now { margin:12px 0 0; font-size:var(--fs-base); color:var(--ink); }
   .sp-now strong { color:var(--gold-ink); }
   .sp-now .sp-now-ar { color:var(--ink-soft); font-weight:500; }
-  .sp-err { margin:10px 0 0; font-size:0.9rem; color:var(--danger); font-weight:600; }
+  .sp-err { margin:10px 0 0; font-size:var(--fs-sm); color:var(--danger); font-weight:600; }
   .sp-err[hidden] { display:none; }
-  .sp-hint { margin:8px 0 0; font-size:0.82rem; color:var(--ink-soft); line-height:1.5; }
+  .sp-hint { margin:8px 0 0; font-size:var(--fs-sm); color:var(--ink-soft); line-height:1.5; }
   .sp-sectors { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
-  .sp-sector { font:inherit; font-size:0.76rem; font-weight:600; padding:6px 12px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .sp-sector { font:inherit; font-size:var(--fs-xs); font-weight:600; padding:6px 12px; border-radius:999px; border:1px solid var(--line-light); background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
   .sp-sector:hover { border-color:var(--gold); color:var(--ink); }
   .sp-sector.on { background:var(--blue); color:#fff; border-color:var(--blue); }
   .sp-sector:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
@@ -70,29 +70,29 @@
   /* --- Fundamentals: "how to read these numbers" metric guide --- */
   .metric-guide { margin-top:34px; }
   .metric-guide .mg-head { margin:0 0 4px; }
-  .metric-guide .mg-lead { margin:0 0 16px; color:var(--ink-soft); font-size:0.95rem; max-width:70ch; }
+  .metric-guide .mg-lead { margin:0 0 16px; color:var(--ink-soft); font-size:var(--fs-base); max-width:70ch; }
   .mg-list { display:grid; gap:12px; }
   .mg { border:1px solid var(--line-light); border-radius:12px; background:var(--papyrus-2); overflow:hidden; }
   .mg > summary { cursor:pointer; list-style:none; padding:14px 16px; font-weight:700; color:var(--ink); display:flex; align-items:baseline; gap:10px; }
   .mg > summary::-webkit-details-marker { display:none; }
-  .mg > summary .mg-ar { color:var(--ink-soft); font-weight:500; font-size:0.9rem; }
-  .mg > summary::after { content:"+"; margin-left:auto; color:var(--gold-ink); font-weight:800; font-size:1.15rem; line-height:1; }
+  .mg > summary .mg-ar { color:var(--ink-soft); font-weight:500; font-size:var(--fs-sm); }
+  .mg > summary::after { content:"+"; margin-left:auto; color:var(--gold-ink); font-weight:800; font-size:var(--fs-md); line-height:1; }
   .mg[open] > summary::after { content:"\2013"; }
   .mg .mg-body { padding:0 16px 16px; }
-  .mg .mg-body p { margin:0 0 10px; font-size:0.94rem; line-height:1.62; color:var(--ink); }
-  .mg .mini-eg { background:var(--papyrus); border-left:3px solid var(--gold); border-radius:6px; padding:10px 12px; font-size:0.88rem; color:var(--ink-soft); line-height:1.55; }
+  .mg .mg-body p { margin:0 0 10px; font-size:var(--fs-base); line-height:1.62; color:var(--ink); }
+  .mg .mini-eg { background:var(--papyrus); border-left:3px solid var(--gold); border-radius:6px; padding:10px 12px; font-size:var(--fs-sm); color:var(--ink-soft); line-height:1.55; }
   .mg .mini-eg b { color:var(--ink); }
   .mg .watch { color:var(--danger); font-weight:600; }
 
   /* --- Fundamentals: 5-minute evaluation walkthrough --- */
   .eval-wrap { margin-top:34px; background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:26px; }
   .eval-wrap h3 { margin:0; }
-  .eval-wrap .eval-lead { margin:8px 0 0; color:var(--ink-soft); font-size:0.95rem; }
+  .eval-wrap .eval-lead { margin:8px 0 0; color:var(--ink-soft); font-size:var(--fs-base); }
   .eval-steps { margin:20px 0 0; padding:0; list-style:none; counter-reset:step; display:grid; gap:16px; }
   .eval-steps li { position:relative; padding-left:48px; }
-  .eval-steps li::before { counter-increment:step; content:counter(step); position:absolute; left:0; top:0; width:32px; height:32px; border-radius:50%; background:var(--blue); color:#fff; font-weight:800; display:grid; place-items:center; font-size:0.92rem; }
-  .eval-steps li h4 { margin:3px 0 4px; font-size:1rem; color:var(--ink); }
-  .eval-steps li p { margin:0; font-size:0.92rem; color:var(--ink-soft); line-height:1.55; }
+  .eval-steps li::before { counter-increment:step; content:counter(step); position:absolute; left:0; top:0; width:32px; height:32px; border-radius:50%; background:var(--blue); color:#fff; font-weight:800; display:grid; place-items:center; font-size:var(--fs-sm); }
+  .eval-steps li h4 { margin:3px 0 4px; font-size:var(--fs-base); color:var(--ink); }
+  .eval-steps li p { margin:0; font-size:var(--fs-sm); color:var(--ink-soft); line-height:1.55; }
   @media (prefers-reduced-motion: reduce) { #sp-list { scroll-behavior:auto; } }
 </style>
 <meta name="google-adsense-account" content="ca-pub-1432845423481814">
@@ -133,7 +133,7 @@
 <section class="surface-hero center" style="padding:58px 6vw;">
   <div class="wrap">
     <div class="kicker"><span data-glyph="was"></span>The Egyptian Exchange</div>
-    <h1 style="font-size:clamp(1.8rem,4.2vw,2.7rem);margin:0 0 12px;">The EGX, live.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">The EGX, live.</h1>
     <p class="page-intro lead" style="margin:0 auto;">Live charts, quotes and a screener for the Egyptian stock market (EGX) — CIB, EFG, Elsewedy, Telecom Egypt and the rest — free and no signup. <strong>Information and education only, not investment advice.</strong></p>
   </div>
 </section>
@@ -328,7 +328,7 @@
       <a href="explore.html" class="btn btn-primary">Explore Egypt&rsquo;s data →</a>
       <a href="explore.html" class="btn btn-ghost">Explore Egypt, charted</a>
     </div>
-    <p style="font-size:0.9rem;margin-top:18px;">Coming next: EGX end-of-day data as its own cited dataset with computed indicators — and SQL challenges built on it.</p>
+    <p style="font-size:var(--fs-sm);margin-top:18px;">Coming next: EGX end-of-day data as its own cited dataset with computed indicators — and SQL challenges built on it.</p>
   </div>
 </section>
 
@@ -363,7 +363,7 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

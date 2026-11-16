@@ -14,7 +14,7 @@
 <!-- .js: AOS may hide [data-aos]; without it, egybi.css shows everything (S1). -->
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
      crossorigin="anonymous"></script>
@@ -75,9 +75,9 @@
   <div id="hero-particles" class="hero-particles" aria-hidden="true"></div>
   <div class="wrap" style="position:relative;z-index:1;">
     <div class="kicker"><span data-glyph="ankh"></span>The identity</div>
-    <h1 style="font-size:clamp(1.9rem,4.4vw,3rem);margin:0 0 12px;">The House of Life.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">The House of Life.</h1>
     <p class="lead" style="margin:0 auto;">In ancient Egypt, the <em>Per Ankh</em> — "House of Life" — was the temple institution where scribes trained in writing, record-keeping, medicine, and astronomy. EgyBI is a modern House of Life for Egypt itself: a place where the country is written down, measured, mapped and sourced.</p>
-    <p class="page-intro" style="margin:14px auto 0;max-width:640px;font-size:0.95rem;">In plain terms: <strong>EgyBI</strong> is a free encyclopaedia of Egypt told through maps and cited open data. Built solo by <strong>Ahmed Nasr</strong>, a civil engineer working in data.</p>
+    <p class="page-intro" style="margin:14px auto 0;max-width:640px;font-size:var(--fs-base);">In plain terms: <strong>EgyBI</strong> is a free encyclopaedia of Egypt told through maps and cited open data. Built solo by <strong>Ahmed Nasr</strong>, a civil engineer working in data.</p>
   </div>
 </section>
 
@@ -153,7 +153,7 @@
           <line x1="118" y1="150" x2="150" y2="118" stroke="#E7C64C" stroke-width="5" stroke-linecap="round"/>
           <polygon points="150,118 156,112 158,124" fill="#E7C64C"/>
         </svg>
-        <p style="font-size:0.8rem;margin-top:8px;">A placeholder mark — a fully illustrated Ibi is on the roadmap.</p>
+        <p style="font-size:var(--fs-xs);margin-top:8px;">A placeholder mark — a fully illustrated Ibi is on the roadmap.</p>
       </div>
     </div>
 
@@ -198,14 +198,14 @@
     <h2 data-aos="fade-up">The signs we use, and what they actually mean.</h2>
     <p class="lead" data-aos="fade-up">These are real Egyptian signs, not ornament. Each one appears somewhere on the site for a reason, and each is listed here with its name, its sound where it has one, and its Gardiner code &mdash; the standard catalogue Egyptologists use. The ancient Egyptians called their own script <em>medu netjer</em>, the words of the gods, and their country <em>Kemet</em>, the black land, after the dark silt the Nile left behind.</p>
     <div class="glyph-legend" id="glyphLegend" data-aos="fade-up"></div>
-    <p style="font-size:0.86rem;color:var(--ink-soft);margin-top:18px;">Signs are drawn from the Unicode Egyptian Hieroglyphs block (U+13000&ndash;U+1342F). Because most phones and Macs ship no font covering that block, we load a small subset of Noto Sans Egyptian Hieroglyphs so they render for everyone rather than appearing as empty boxes.</p>
+    <p style="font-size:var(--fs-sm);color:var(--ink-soft);margin-top:18px;">Signs are drawn from the Unicode Egyptian Hieroglyphs block (U+13000&ndash;U+1342F). Because most phones and Macs ship no font covering that block, we load a small subset of Noto Sans Egyptian Hieroglyphs so they render for everyone rather than appearing as empty boxes.</p>
   </div>
 </section>
 </main>
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
@@ -236,7 +236,7 @@
     ['Transport','Metro, monorail, the Siemens high-speed rail, ports & airports'],
   ];
   var sg=document.getElementById('sectorGrid');
-  if(sg) sg.innerHTML=sectors.map(function(s){ return '<div class="card" data-aos="fade-up"><h3 style="font-size:1rem;">'+s[0]+'</h3><p>'+s[1]+'</p></div>'; }).join('');
+  if(sg) sg.innerHTML=sectors.map(function(s){ return '<div class="card" data-aos="fade-up"><h3 style="font-size:var(--fs-base);">'+s[0]+'</h3><p>'+s[1]+'</p></div>'; }).join('');
 
   // ---- source pills ----
   var sources=['World Bank','IMF','Central Bank of Egypt','CAPMAS','FAO AQUASTAT','UNESCO','Ember','IRENA','Our World in Data','Suez Canal Authority','Egypt SIS','Britannica','Met Museum','QS Rankings'];
@@ -253,7 +253,7 @@
     ['Quietly world-beating','Egypt has won the Africa Cup of Nations a record 7 times, dominates world squash, and was the first country cleared by the WHO to eliminate hepatitis C.']
   ];
   var dc=document.getElementById('discoverCards');
-  if(dc) dc.innerHTML=discover.map(function(d){ return '<div class="card" data-aos="fade-up"><h3 style="font-size:1rem;">'+d[0]+'</h3><p>'+d[1]+'</p></div>'; }).join('');
+  if(dc) dc.innerHTML=discover.map(function(d){ return '<div class="card" data-aos="fade-up"><h3 style="font-size:var(--fs-base);">'+d[0]+'</h3><p>'+d[1]+'</p></div>'; }).join('');
 
   // ---- animated counters (CountUp on scroll) ----
   (function(){

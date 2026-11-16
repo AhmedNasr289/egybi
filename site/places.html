@@ -24,7 +24,7 @@
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.querySelector(".aos-init"))document.documentElement.classList.remove("js")},4000)</script>
 <link href="assets/vendor/aos.css" rel="stylesheet">
 <link href="assets/vendor/leaflet.css" rel="stylesheet">
-<link href="assets/egybi.css?v=46" rel="stylesheet">
+<link href="assets/egybi.css?v=47" rel="stylesheet">
 <style>
   #placesMap { height: 560px; border-radius: var(--radius); background: var(--papyrus-2); }
   @media (max-width: 720px) { #placesMap { height: 400px; } }
@@ -37,8 +37,8 @@
   .pl-field { padding:8px 12px; font:400 0.86rem 'Inter',system-ui,sans-serif; color:var(--ink);
               background:var(--papyrus); border:1px solid var(--line-light); border-radius:8px; }
   .pl-field:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
-  .pl-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
-  .pl-table th { text-align:left; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em;
+  .pl-table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
+  .pl-table th { text-align:left; font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:0.05em;
                  color:var(--ink-soft); border-bottom:2px solid var(--line-light); padding:8px 10px; }
   .pl-table td { padding:8px 10px; border-bottom:1px solid var(--line-light); }
   .pl-table td.num { text-align:right; font-variant-numeric:tabular-nums; }
@@ -48,20 +48,20 @@
   #placeDetail { margin-top:22px; padding:22px 24px; background:var(--papyrus-2);
                  border:1px solid var(--line-light); border-left:4px solid var(--gold);
                  border-radius:0 var(--radius) var(--radius) 0; }
-  #placeDetail h3 { margin:0 0 14px; color:var(--blue-deep); font-size:1.2rem; }
-  .pd-ar { font-weight:400; color:var(--ink-soft); font-size:0.9rem; }
+  #placeDetail h3 { margin:0 0 14px; color:var(--blue-deep); font-size:var(--fs-lg); }
+  .pd-ar { font-weight:400; color:var(--ink-soft); font-size:var(--fs-sm); }
   .pd-row { display:flex; justify-content:space-between; gap:16px; padding:7px 0;
-            border-bottom:1px solid var(--line-light); font-size:0.88rem; }
+            border-bottom:1px solid var(--line-light); font-size:var(--fs-sm); }
   .pd-row span { color:var(--ink-soft); }
-  .pd-note { font-size:0.78rem; color:var(--ink-soft); line-height:1.6; margin:8px 0 0; }
+  .pd-note { font-size:var(--fs-xs); color:var(--ink-soft); line-height:1.6; margin:8px 0 0; }
   .pd-going { margin-top:20px; padding-top:18px; border-top:1px solid var(--line-light); }
-  .pd-going h4 { margin:0 0 12px; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.07em;
+  .pd-going h4 { margin:0 0 12px; font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:0.07em;
                  color:var(--gold-ink); font-family:'Inter',system-ui,sans-serif; }
   .pd-links { list-style:none; margin:14px 0 0; padding:0; display:grid; gap:11px; }
   .pd-links li { display:grid; gap:2px; }
-  .pd-links a { font-weight:600; font-size:0.9rem; }
-  .pd-links span { font-size:0.76rem; color:var(--ink-soft); line-height:1.5; }
-  .pl-legend { display:flex; gap:18px; flex-wrap:wrap; font-size:0.8rem; color:var(--ink-soft); margin-top:12px; }
+  .pd-links a { font-weight:600; font-size:var(--fs-sm); }
+  .pd-links span { font-size:var(--fs-xs); color:var(--ink-soft); line-height:1.5; }
+  .pl-legend { display:flex; gap:18px; flex-wrap:wrap; font-size:var(--fs-xs); color:var(--ink-soft); margin-top:12px; }
   .pl-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "CollectionPage", "@id": "https://egybi.com/places.html#page", "url": "https://egybi.com/places.html", "name": "Places of Egypt", "isPartOf": {"@id": "https://egybi.com/#site"}, "publisher": {"@id": "https://egybi.com/#org"}, "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Places of Egypt", "item": "https://egybi.com/places.html"}]}]}</script>
@@ -101,7 +101,7 @@
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap">
     <p class="hero-eyebrow"><span data-glyph="reed"></span> The gazetteer</p>
-    <h1 style="font-size:clamp(1.7rem,5vw,2.7rem);margin:0 0 14px;">Every place in Egypt, on one map.</h1>
+    <h1 style="font-size:var(--fs-h1);margin:0 0 14px;">Every place in Egypt, on one map.</h1>
     <p class="lead" style="margin:0;max-width:70ch;">Cities, towns, airports and ancient
     sites, exactly as the OpenStreetMap community has recorded them. Search by name, narrow to a
     governorate, and open any place for what the open data actually says &mdash; and does not say. Every place also carries a <strong>Going there</strong> block: the OpenStreetMap record, photographs, video and places to stay, each as a live search rather than a quoted price or opening time that would be stale before you read it.</p>
@@ -208,7 +208,7 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:0.9rem;max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Plan Egypt honestly — every figure with its source and its date.</p></div>
     <div><h2 class="foot-h">Plan a trip</h2><a href="plan.html">Plan your route</a><a href="visit.html">When to go</a><a href="fair-prices.html">Fair prices</a><a href="hieroglyphs.html">Your name in hieroglyphs</a><a href="dossier.html">The dossier</a><a href="ask.html">Plan check</a></div>
     <div><h2 class="foot-h">Egypt in data</h2><a href="explore.html">Egypt Data</a><a href="geospatial.html">Egypt Atlas</a><a href="places.html">Places</a><a href="stories.html">Data Stories</a><a href="streets.html">Street Report Card</a><a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">Where Egypt is building</a></div>
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>

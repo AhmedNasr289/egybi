@@ -235,12 +235,12 @@ def svg_chart(rows: list[Row], title: str, credit_lines: tuple[str, ...]) -> str
 CSS = """
 .hc-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
 .hc-table{border-collapse:separate;border-spacing:2px;width:100%;min-width:640px;font-variant-numeric:tabular-nums}
-.hc-table caption{caption-side:bottom;text-align:left;font-size:.82rem;padding-top:8px;opacity:.85}
-.hc-table th{font-weight:600;font-size:.82rem;padding:6px 4px;text-align:center}
+.hc-table caption{caption-side:bottom;text-align:left;font-size:var(--fs-sm);padding-top:8px;opacity:.85}
+.hc-table th{font-weight:600;font-size:var(--fs-sm);padding:6px 4px;text-align:center}
 .hc-table th[scope=row]{text-align:left;white-space:nowrap;padding-right:10px;position:sticky;left:0;background:var(--papyrus,#F6EEDC)}
-.hc-table td{text-align:center;font-weight:700;font-size:.86rem;padding:8px 2px;border-radius:4px;min-width:34px}
+.hc-table td{text-align:center;font-weight:700;font-size:var(--fs-sm);padding:8px 2px;border-radius:4px;min-width:34px}
 .hc-table abbr{text-decoration:none}
-.hc-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:12px 0 4px;font-size:.82rem}
+.hc-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:12px 0 4px;font-size:var(--fs-sm)}
 .hc-legend span{display:inline-flex;align-items:center;gap:6px}
 .hc-legend i{display:inline-block;width:14px;height:14px;border-radius:3px}
 """

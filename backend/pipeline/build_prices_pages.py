@@ -208,8 +208,8 @@ def build_ar(en: str, data: dict) -> str:
             {"@type": "ListItem", "position": 2, "name": "أسعار اليوم", "item": AR_URL}]}]}
     ar = swap_re(ar, r'<script type="application/ld\+json">.*?</script>',
                  '<script type="application/ld+json">\n' + json.dumps(ld, ensure_ascii=False) + '\n</script>', 'JSON-LD')
-    ar = swap_re(ar, r'<h1 style="font-size:clamp\(1\.8rem,4\.2vw,2\.7rem\);margin:0 0 12px;">.*?</h1>',
-                 '<h1 style="font-size:clamp(1.8rem,4.2vw,2.7rem);margin:0 0 12px;" dir="rtl"><span data-glyph="ra"></span> '
+    ar = swap_re(ar, r'<h1 style="font-size:var\(--fs-h1\);margin:0 0 12px;">.*?</h1>',
+                 '<h1 style="font-size:var(--fs-h1);margin:0 0 12px;" dir="rtl"><span data-glyph="ra"></span> '
                  'أسعار الخضار والفاكهة والسلع في مصر النهارده.</h1>', 'hero H1')
     ar = swap_re(ar, r'<p class="lead" style="margin:0 auto;">The retail and wholesale prices.*?</p>',
                  '<p class="lead" style="margin:0 auto;" dir="rtl">أسعار التجزئة والجملة اللي الناس بتدفعها فعلًا، '
