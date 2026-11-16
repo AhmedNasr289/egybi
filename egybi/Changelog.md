@@ -1846,6 +1846,10 @@ The last of the plan's account items: the newsletter choice beside saved trips a
     - account deletion removes the account's own marks, reports and counters, and F's note loses E's mark;
     - the export carries the marks and reports.
   - **Mutation cases:** 8 new ones each remove one guard and must make `auth-flow.sh` fail.
+  - **Fix after run 43887148228:** this was the first run of the hardened code, and the server answered correctly throughout. Two faults were in the new tests:
+    - the queue calls passed the key header where `ncall` expects the body, so `curl` read the header text as a second URL;
+    - the 'republished note' test re-reported from one address, which cannot hide a note with or without the fix, so its mutation case could not fail. Now all three reporters press again, with one on a second address.
+    - Both were caught by the run: 5 steps wrong, and 93 of 94 mutation cases proven.
 ## 2026-11-16 — "Today at this site" on every visit page (Round 4, R4-1)
 - **Why:** the study found nothing that helps on the day itself. The visit pages gave golden light for the 15th of each month, and no code anywhere read the time of day. A tourist at Giza wants to know when the light starts and ends today, and how long is left.
 - **The card:** each of the 18 visit pages now opens with "Today at <site>":

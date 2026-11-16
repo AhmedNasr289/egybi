@@ -252,7 +252,9 @@ r=$(call "$JAR_G" POST login "$G"); expect "notes: sign in G (unverified)" 200 "
 note() { printf '{"sites":["giza"],"month":"2026-10","body":"%s"}' "$1"; }
 LONG="We went at opening time and had the plateau almost to ourselves for an hour."
 mod() { ncall "$JAR_N" POST moderate "{\"key\":\"$HKEY\",\"id\":\"$1\",\"act\":\"$2\"}"; }
-queue() { ncall "$JAR_N" GET queue -H "X-Mod-Key: $HKEY"; }
+# The empty fourth argument is the (absent) body: without it ncall would take
+# -H as the body and curl would read the header text as a second URL (run 43887148228).
+queue() { ncall "$JAR_N" GET queue '' -H "X-Mod-Key: $HKEY"; }
 public_has() {  # public_has NAME NOTE_ID yes|no
   local l; l=$(ncall "$JAR_N" GET list)
   if { [ "$3" = yes ] && [[ "$l" == *"$2"* ]]; } || { [ "$3" = no ] && [[ "$l" != *"$2"* ]]; }; then echo "ok    $1"
@@ -276,7 +278,7 @@ r=$(ncall "$JAR_E" POST create "$(note "$XSS")" -H "X-CSRF: $CE"); expect "notes
 N1=$(echo "${r#* }" | field id)
 check "notes: the script tag is stored as plain text" "$(sql "SELECT body FROM notes WHERE id='$N1'")" "$XSS"
 public_has "notes: a queued note is not public" "$N1" no
-expect "notes: queue needs the key"           404 "$(ncall "$JAR_N" GET queue -H 'X-Mod-Key: wrong-key-0123456789')"
+expect "notes: queue needs the key"           404 "$(ncall "$JAR_N" GET queue '' -H 'X-Mod-Key: wrong-key-0123456789')"
 expect "notes: the key in the URL is refused" 404 "$(ncall "$JAR_N" GET "queue&key=$HKEY")"
 expect "notes: the moderator sees the queue"  200 "$(queue)" "$N1"
 expect "notes: moderator publishes N1"        200 "$(mod "$N1" publish)"
@@ -344,7 +346,15 @@ ncall "$JAR_H" POST report "{\"id\":\"$NF\",\"reason\":\"spam\"}" -H "X-CSRF: $C
 public_has "notes: reports from two addresses hide an untrusted author's note" "$NF" no
 expect "notes: the moderator sees it hidden"  200 "$(queue)" '"status":"hidden"'
 expect "notes: moderator republishes NF"      200 "$(mod "$NF" publish)"
-ncall "$JAR_E" POST report "{\"id\":\"$NF\",\"reason\":\"spam\"}" -H "X-CSRF: $CE" >/dev/null
+# All three reporters press Report again, and D's report again comes from a
+# second address. With the reports resolved, none of this counts. If publishing
+# had deleted them instead, these would be three fresh reports from two
+# addresses, and the note would be hidden again.
+for who in E D H; do
+  eval "j=\$JAR_$who; c=\$C$who"
+  ncall "$j" POST report "{\"id\":\"$NF\",\"reason\":\"spam\"}" -H "X-CSRF: $c" >/dev/null
+done
+sql "UPDATE note_reports SET ip_hash='simulated-second-address' WHERE note_id='$NF' AND user_id='$DID' AND resolved=0" >/dev/null
 ncall "$JAR_H" POST report "{\"id\":\"$NF\",\"reason\":\"spam\"}" -H "X-CSRF: $CH" >/dev/null
 public_has "notes: the same reporters cannot hide a republished note" "$NF" yes
 check "notes: republishing resolved the reports, it did not delete them" "$(sql "SELECT COUNT(*) FROM note_reports WHERE note_id='$NF' AND resolved=1")" 3
