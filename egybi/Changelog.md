@@ -2187,3 +2187,18 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **`coverage.py`:** ignores language links when comparing headers. They point at each page's own twins, so they differ by design.
 - **Three translated descriptions** were shortened to fit search snippets (seo.py).
 - **CI screenshots:** `ar/about.html` and `ru/about.html` added at 1280 and 390 px.
+
+## 2026-11-17 — Trilingual stage 1: About's script-written cards and the section chips, translated and checked
+- **What the screenshots showed:** CI's 1280 px screenshot of the Arabic About page (run 43962750300) showed English that the leak check had passed:
+  - **The section chips** (Why Egypt, Signs…): built by a script from each section's `data-nav` attribute, which the extractor did not read.
+  - **The 12 sector cards and 6 fact cards:** text inside the page's inline script, which the extractor skipped.
+- **Fixes:**
+  - `i18n_units.py` reads `data-nav`, and has a small JavaScript string tokenizer (quotes, escapes, comments).
+  - The build translates a quoted string in an inline script when the catalogue has it, escaped for its quote.
+  - 55 more entries per language: card titles and texts, institution names, section labels. Product names such as Our World in Data stay as written.
+  - The leak check now also reads inline-script text.
+- **Proof:**
+  - the previous Arabic page now fails the check with 44 English units;
+  - English planted into a Russian card is caught;
+  - all eight translated inline scripts parse;
+  - a new mutation case covers script-written English.

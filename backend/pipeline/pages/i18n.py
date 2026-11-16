@@ -27,7 +27,7 @@ import os
 import re
 
 from .common import SITE, SITE_URL, read_text, write_text
-from .i18n_units import norm, units
+from .i18n_units import norm, script_strings, units
 
 PAGES = ['about.html', 'privacy.html']
 
@@ -137,6 +137,14 @@ def translate(src: str, lang: str, cat: dict, page: str) -> str:
     u, a = units(src)
     spans = list(u) + [x for x in a if not any(s <= x[0] and x[1] <= e for s, e, _ in u)]
     attr_spans = {(s, e) for s, e, _ in a}
+    # Text a page's inline script writes (About's sector and fact cards): a
+    # quoted string is translated when the catalogue has it, escaped for the
+    # quote it sits in. Strings it does not have are code, and stay.
+    code_spans = {}
+    for s_, e_, t in script_strings(src):
+        if norm(t) in cat:
+            code_spans[(s_, e_)] = src[s_ - 1]
+            spans.append((s_, e_, t))
     missing = []
     out = src
     for s, e, t in sorted(spans, reverse=True):
@@ -147,6 +155,9 @@ def translate(src: str, lang: str, cat: dict, page: str) -> str:
             continue
         if (s, e) in attr_spans and '"' in tr:
             raise SystemExit(f'i18n {lang}/{page}: a translated attribute value contains a double quote: {tr[:60]!r}')
+        if (s, e) in code_spans:
+            q, bs = code_spans[(s, e)], chr(92)
+            tr = tr.replace(bs, bs + bs).replace(q, bs + q)
         out = out[:s] + tr + out[e:]
     if missing:
         raise SystemExit(f'i18n {lang}/{page}: {len(missing)} unit(s) have no translation in {lang}.tsv, e.g. {missing[-1][:80]!r}')

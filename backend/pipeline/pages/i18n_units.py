@@ -24,7 +24,7 @@ INLINE = {'a', 'strong', 'em', 'b', 'i', 'span', 'abbr', 'code', 'small', 'sup',
 SKIP = {'script', 'style', 'svg', 'code', 'pre', 'noscript', 'template', 'math'}
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source',
         'track', 'wbr'}
-ATTRS = ('title', 'alt', 'aria-label', 'placeholder')
+ATTRS = ('title', 'alt', 'aria-label', 'placeholder', 'data-nav')
 META_NAMES = {'description', 'twitter:title', 'twitter:description'}
 META_PROPS = {'og:title', 'og:description', 'og:image:alt'}
 LETTER = re.compile(r'[A-Za-z]')
@@ -175,3 +175,54 @@ def norm(s: str) -> str:
     """The catalogue key: whitespace collapsed, so re-indenting a page does not
     orphan its translations."""
     return re.sub(r'\s+', ' ', s).strip()
+
+
+# ---- text inside inline scripts --------------------------------------------
+_SCRIPT = re.compile(r'<script\b([^>]*)>(.*?)</script>', re.S)
+NL, BS = chr(10), chr(92)   # newline and backslash, spelled out so no shell can eat them
+
+
+def _js_strings(code: str, base: int):
+    """Spans of quoted string literals in JavaScript source, skipping
+    comments. Template literals are left alone (they hold markup and code)."""
+    out, i, n = [], 0, len(code)
+    while i < n:
+        c = code[i]
+        if c == '/' and i + 1 < n and code[i + 1] == '/':
+            j = code.find(NL, i)
+            i = n if j == -1 else j
+        elif c == '/' and i + 1 < n and code[i + 1] == '*':
+            j = code.find('*/', i + 2)
+            i = n if j == -1 else j + 2
+        elif c in ('"', "'"):
+            j = i + 1
+            while j < n and code[j] != c and code[j] != NL:
+                j += 2 if code[j] == BS else 1
+            if j < n and code[j] == c:
+                out.append((base + i + 1, base + j, code[i + 1:j]))
+            i = j + 1
+        elif c == '`':
+            j = i + 1
+            while j < n and code[j] != '`':
+                j += 2 if code[j] == BS else 1
+            i = j + 1
+        else:
+            i += 1
+    return out
+
+
+def script_strings(src: str):
+    """(start, end, text) for every quoted string in the page's inline
+    scripts (not JSON-LD, not speculation rules, not external scripts)."""
+    out = []
+    for m in _SCRIPT.finditer(src):
+        attrs = m.group(1)
+        if 'src=' in attrs or 'ld+json' in attrs or 'speculationrules' in attrs:
+            continue
+        out += _js_strings(m.group(2), m.start(2))
+    return out
+
+
+def prose(text: str) -> bool:
+    """A string a reader would read: at least two words of three letters or more."""
+    return len(re.findall(r'[A-Za-z]{3,}', text)) >= 2 and ' ' in text and '<' not in text

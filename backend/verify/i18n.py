@@ -13,8 +13,9 @@ For each page in backend/pipeline/pages/i18n.py PAGES:
                       links does not lead to an existing file
   NOT IN SITEMAP      a twin's address is missing from sitemap.xml
   ENGLISH LEAK        an Arabic or Russian page still shows an English
-                      sentence from the English page (static HTML; strings a
-                      script writes are stage 4)
+                      sentence from the English page: in its HTML, or in text
+                      its inline script writes (About's cards). Strings that
+                      external scripts write (glyphs.js) are stage 4
 
 Exits 1 on any failure.
 """
@@ -27,14 +28,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SITE = ROOT / 'site'
 sys.path.insert(0, str(ROOT / 'backend' / 'pipeline'))
-from pages.i18n import PAGES  # noqa: E402
-from pages.i18n_units import norm, units  # noqa: E402
+from pages.i18n import LANGS, PAGES, load_catalogue  # noqa: E402
+from pages.i18n_units import norm, prose, script_strings, units  # noqa: E402
 
 URL = 'https://egybi.com'
 WANT = {'en': 'ltr', 'ar': 'rtl', 'ru': 'ltr'}
 # Unit texts that are the same in every language: names, addresses, codes.
 SAME = {'EgyBI', 'egybi.com', 'hello@egybi.com', 'aboutads.info/choices', 'Google AdSense',
-        'Chronologie des pharaonischen Ägypten', 'SQL', 'Cinzel'}
+        'Chronologie des pharaonischen Ägypten', 'SQL', 'Cinzel',
+        # product and database names, kept as their makers write them
+        'Our World in Data', 'FAO AQUASTAT', 'QS Rankings'}
+CATS = {l: load_catalogue(l) for l in LANGS}
 WORD = re.compile(r'[A-Za-z]{3,}')
 
 fails: list[str] = []
@@ -91,6 +95,12 @@ for page in PAGES:
                 continue
             tu, ta = units(html[lang])
             left = sorted({text(t) for _, _, t in tu + ta} & english)
+            # ...and text the page's inline script writes (About's cards),
+            # which the static units cannot see: any English string there that
+            # reads as prose, or that the catalogue was meant to translate.
+            en_code = {norm(t) for _, _, t in script_strings(html['en'])}
+            en_code = {t for t in en_code if t not in SAME and (prose(t) or t in CATS[lang])}
+            left += sorted({norm(t) for _, _, t in script_strings(html[lang])} & en_code)
             if left:
                 fail(f'ENGLISH LEAK: {lang}/{page} still shows {len(left)} English unit(s), e.g. "{left[0][:70]}"')
 

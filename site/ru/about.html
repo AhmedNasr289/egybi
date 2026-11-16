@@ -96,7 +96,7 @@
 <nav class="on-this-page" data-wayfinding aria-label="На этой странице"></nav>
 
 <!-- STORY -->
-<section class="surface-light" id="story" data-nav="Why Egypt">
+<section class="surface-light" id="story" data-nav="Почему Египет">
   <div class="wrap" style="max-width:820px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Почему Египет</div>
     <h2 data-aos="fade-up">Не декорация — Египет и есть предмет.</h2>
@@ -106,7 +106,7 @@
 </section>
 
 <!-- THE KNOWLEDGE BASE (breadth) -->
-<section class="surface-light-2" id="knowledge-base" data-nav="Knowledge base">
+<section class="surface-light-2" id="knowledge-base" data-nav="База знаний">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>База знаний</div>
     <h2 data-aos="fade-up">Одна база данных с источниками. Пять тысяч лет Египта.</h2>
@@ -130,7 +130,7 @@
 </section>
 
 <!-- FOR THE CURIOUS ABOUT EGYPT -->
-<section class="surface-light" id="discover" data-nav="For the curious">
+<section class="surface-light" id="discover" data-nav="Для любознательных">
   <div class="wrap" style="max-width:900px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scribe"></span>Не инженер данных? Всё равно заходите.</div>
     <h2 data-aos="fade-up">Способ по-настоящему открыть Египет.</h2>
@@ -145,7 +145,7 @@
      removed on 2026-08-07: they offered rewards for solving SQL challenges, and
      those challenges are retired, so nothing could award them. -->
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-deep" id="ibi" data-nav="Ibi">
+<section class="surface-deep" id="ibi" data-nav="Иби">
   <div class="wrap">
     <div class="grid grid-2" style="align-items:center;gap:36px;">
       <div data-aos="fade-up">
@@ -171,7 +171,7 @@
   </div>
 </section>
 <!-- ACCURACY PRINCIPLE -->
-<section class="surface-light" id="accuracy" data-nav="Accuracy">
+<section class="surface-light" id="accuracy" data-nav="Точность">
   <div class="wrap" style="max-width:820px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>Правило без исключений</div>
     <h2 data-aos="fade-up">Точность важнее лоска.</h2>
@@ -203,7 +203,7 @@
 
 
 <div class="wrap"><div class="glyph-rule"><span data-glyph="ra"></span></div></div>
-<section class="surface-light" id="glyphs" data-nav="Signs">
+<section class="surface-light" id="glyphs" data-nav="Знаки">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span> Меду нечер &mdash; слова богов</div>
     <h2 data-aos="fade-up">Знаки, которые мы используем, и что они на самом деле значат.</h2>
@@ -233,35 +233,35 @@
 <script>
   // ---- knowledge-base sector grid ----
   var sectors = [
-    ['History & Pharaohs','45 pharaohs, 20 monuments, 7 UNESCO sites, a full era timeline'],
-    ['Economy & Finance','GDP, inflation, the pound, debt, reserves, remittances — as time series'],
-    ['Tourism','Arrivals & revenue 2019–2025, including the ~19M record year'],
-    ['The Suez Canal','Revenue by year, and the 2024 Red Sea collapse'],
-    ['Demographics','All 27 governorates, population 1960–2024, urbanisation'],
-    ['Energy & Environment','Generation, the renewable mix, CO₂, El Dabaa, green-hydrogen deals'],
-    ['Water & Irrigation','The 86% agriculture split, New Delta, desalination, the Aswan Dam'],
-    ['Industry & Companies','Sectors, the largest listed firms, and landmark investment deals'],
-    ['Science & Space','Egypt’s satellites, the space agency, scientists, a health world-first'],
-    ['Art & Cinema','Screen legends, music icons, artists, and the Cairo Film Festival'],
-    ['Sport','AFCON, the CAF record, squash dominance, Olympic medals'],
-    ['Transport','Metro, monorail, the Siemens high-speed rail, ports & airports'],
+    ['История и фараоны','45 фараонов, 20 памятников, 7 объектов ЮНЕСКО и полная хронология эпох'],
+    ['Экономика и финансы','ВВП, инфляция, фунт, долг, резервы, денежные переводы — в виде временных рядов'],
+    ['Туризм','Прибытия и доходы 2019–2025, включая рекордный год с ~19 млн туристов'],
+    ['Суэцкий канал','Доходы по годам и обвал 2024 года из-за кризиса в Красном море'],
+    ['Население','Все 27 мухафаз, население 1960–2024, урбанизация'],
+    ['Энергетика и экология','Выработка, доля возобновляемых источников, CO₂, Эд-Дабаа, сделки по зелёному водороду'],
+    ['Вода и орошение','86 % воды на сельское хозяйство, Новая дельта, опреснение, Асуанская плотина'],
+    ['Промышленность и компании','Отрасли, крупнейшие публичные компании и знаковые инвестиционные сделки'],
+    ['Наука и космос','Спутники Египта, космическое агентство, учёные и мировое первенство в здравоохранении'],
+    ['Искусство и кино','Легенды экрана, иконы музыки, художники и Каирский кинофестиваль'],
+    ['Спорт','Кубок африканских наций, рекорд КАФ, господство в сквоше, олимпийские медали'],
+    ['Транспорт','Метро, монорельс, скоростная железная дорога Siemens, порты и аэропорты'],
   ];
   var sg=document.getElementById('sectorGrid');
   if(sg) sg.innerHTML=sectors.map(function(s){ return '<div class="card" data-aos="fade-up"><h3 style="font-size:var(--fs-base);">'+s[0]+'</h3><p>'+s[1]+'</p></div>'; }).join('');
 
   // ---- source pills ----
-  var sources=['World Bank','IMF','Central Bank of Egypt','CAPMAS','FAO AQUASTAT','UNESCO','Ember','IRENA','Our World in Data','Suez Canal Authority','Egypt SIS','Britannica','Met Museum','QS Rankings'];
+  var sources=['Всемирный банк','IMF','Центральный банк Египта','CAPMAS','FAO AQUASTAT','UNESCO','Ember','IRENA','Our World in Data','Управление Суэцкого канала','Государственная информационная служба Египта','Britannica','Музей Метрополитен','QS Rankings'];
   var sp=document.getElementById('sourcePills');
   if(sp) sp.innerHTML=sources.map(function(s){ return '<span class="pill" style="cursor:default;margin:0 8px 8px 0;display:inline-block;">'+s+'</span>'; }).join('');
 
   // ---- "discover Egypt" cards ----
   var discover=[
-    ['The Nile is everything','~97% of Egypt’s fresh water comes from a single river that rises outside its borders — which is why one dam upstream can become a national-security question.'],
-    ['A country on 4% of its land','More than 95% of Egyptians live packed onto the Nile Valley and Delta; the interactive map shows it instantly — a few dark governorates, and vast pale desert.'],
-    ['Older than you think','From Narmer (~3100 BCE) to today is over 5,000 years of continuous recorded history — the pyramids were already 2,000 years old when Cleopatra ruled.'],
-    ['Still a global crossroads','About 12% of world trade passes through the Suez Canal — so a shipping crisis in the Red Sea shows up directly in Egypt’s national accounts.'],
-    ['A cultural superpower','“Hollywood on the Nile” has made 4,000+ films, and Umm Kulthum’s voice defined a century of Arab music — culture is data here too.'],
-    ['Quietly world-beating','Egypt has won the Africa Cup of Nations a record 7 times, dominates world squash, and was the first country cleared by the WHO to eliminate hepatitis C.']
+    ['Нил — это всё','Около 97 % пресной воды Египта даёт одна река, истоки которой за пределами страны, — поэтому одна плотина выше по течению может стать вопросом национальной безопасности.'],
+    ['Страна на 4 % своей земли','Более 95 % египтян живут в тесноте долины и дельты Нила; интерактивная карта показывает это сразу — несколько тёмных мухафаз и огромная бледная пустыня.'],
+    ['Старше, чем кажется','От Нармера (~3100 до н. э.) до наших дней — более 5000 лет непрерывной письменной истории: пирамидам было уже 2000 лет, когда правила Клеопатра.'],
+    ['По-прежнему мировой перекрёсток','Около 12 % мировой торговли проходит через Суэцкий канал — поэтому кризис судоходства в Красном море прямо отражается в национальных счетах Египта.'],
+    ['Культурная сверхдержава','«Голливуд на Ниле» снял более 4000 фильмов, а голос Умм Кульсум определил целый век арабской музыки — культура здесь тоже данные.'],
+    ['Тихо лучшие в мире','Египет рекордные 7 раз выигрывал Кубок африканских наций, доминирует в мировом сквоше и первым получил от ВОЗ подтверждение элиминации гепатита C.']
   ];
   var dc=document.getElementById('discoverCards');
   if(dc) dc.innerHTML=discover.map(function(d){ return '<div class="card" data-aos="fade-up"><h3 style="font-size:var(--fs-base);">'+d[0]+'</h3><p>'+d[1]+'</p></div>'; }).join('');

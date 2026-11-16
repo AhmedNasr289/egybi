@@ -1065,6 +1065,9 @@ case("a twin without the language button", "i18n.py", ["site/ru/privacy.html"],
 case("a twin left out of the sitemap", "i18n.py", ["site/sitemap.xml"],
      lambda: edit("site/sitemap.xml", "https://egybi.com/ar/privacy.html", "https://egybi.com/ar/privacy-x.html"),
      lambda o: "NOT IN SITEMAP" in o, I18N)
+case("English left in a Russian page's script-written cards", "i18n.py", ["site/ru/about.html"],
+     lambda: edit("site/ru/about.html", "'Суэцкий канал'", "'The Suez Canal'"),
+     lambda o: "ENGLISH LEAK" in o, I18N)
 case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
      lambda: edit("site/ar/about.html", "بيت الحياة.", "The House of Life."),
      lambda o: "ENGLISH LEAK" in o, I18N)
