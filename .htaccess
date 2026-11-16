@@ -91,6 +91,7 @@ ErrorDocument 404 /site/404.html
 # ArrayBuffer path. Wrapped so a host without mod_mime cannot 500 the site.
 <IfModule mod_mime.c>
     AddType application/wasm .wasm
+    AddType application/manifest+json .webmanifest
 </IfModule>
 
 # ---------------------------------------------------------------------------
@@ -126,7 +127,10 @@ ErrorDocument 404 /site/404.html
     # Drop access to device APIs the site never uses, so injected script cannot
     # reach for them either. Topics/interest-cohort is deliberately NOT listed:
     # restricting it would interfere with AdSense.
-    Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()"
+    # geolocation=(self) since 2026-11-16 (Round 4, R4-8): "Near me" on
+    # places.html asks for it, only when pressed. (self) keeps every embedded
+    # frame (ads included) refused; the position never leaves the browser.
+    Header always set Permissions-Policy "geolocation=(self), camera=(), microphone=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()"
 
     # ---------------------------------------------------------------------
     # Caching. This is the fix for a failure that has now recurred twice: the
@@ -163,6 +167,14 @@ ErrorDocument 404 /site/404.html
     # land in the same commit every time.
     <FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|mp4|webm)$">
         Header always set Cache-Control "public, max-age=604800, immutable"
+    </FilesMatch>
+
+    # The service worker and the manifest have fixed names, so they must never
+    # sit in a week-long cache: a fix (or the KILL switch in sw.js) has to reach
+    # every installed copy on its next check. Listed AFTER the rule above so it
+    # wins for these two names.
+    <FilesMatch "^(sw\.js|manifest\.webmanifest)$">
+        Header always set Cache-Control "no-cache, must-revalidate"
     </FilesMatch>
 
     # HSTS. Browsers ignore this over plain HTTP, so it is safe to set here.

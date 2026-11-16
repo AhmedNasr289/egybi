@@ -118,7 +118,7 @@
   // So the swamping this default was guarding against does not happen:
   // clustering absorbs the extra 393 into 19 more icons, not 393 more. That is
   // the measurement the original reasoning never took.
-  var S = { map: null, data: null, layers: {},
+  var S = { map: null, data: null, layers: {}, me: null, meMark: null,
             active: { settlement: true, airport: true, antiquity: true, museum: true },
             sel: null };
 
@@ -484,19 +484,73 @@
       return true;
     });
     var body = $('placeList'); if (!body) return;
+    // Near me: nearest first, by straight-line distance from the reader.
+    var me = S.me, dist = new Map();
+    if (me) {
+      out.forEach(function (p) { dist.set(p, km(me.lat, me.lon, p.lat, p.lon)); });
+      out.sort(function (a, b) { return dist.get(a) - dist.get(b); });
+    }
+    var th = $('distTh'); if (th) th.hidden = !me;
     $('placeCount').textContent = out.length.toLocaleString('en-US');
     body.innerHTML = out.slice(0, 300).map(function (p) {
       return '<tr data-k="' + esc(p.kind) + '"><td>' + esc(p.name) + '</td>' +
         '<td>' + esc((KIND[p.kind] || {}).label || p.kind) + '</td>' +
         '<td>' + (p.gov ? esc(p.gov) : '—') + '</td>' +
-        '<td class="num">' + (typeof p.population_osm === 'number' ? fmt(p.population_osm) : '—') + '</td></tr>';
+        '<td class="num">' + (typeof p.population_osm === 'number' ? fmt(p.population_osm) : '—') + '</td>' +
+        (me ? '<td class="num">' + kmText(dist.get(p)) + '</td>' : '') + '</tr>';
     }).join('');
     if (out.length > 300) {
-      body.innerHTML += '<tr><td colspan="4" class="pd-note">Showing the first 300 of ' +
+      body.innerHTML += '<tr><td colspan="' + (me ? 5 : 4) + '" class="pd-note">Showing the first 300 of ' +
         out.length.toLocaleString('en-US') + '. Narrow it with the search box or a governorate.</td></tr>';
     }
     Array.prototype.forEach.call(body.querySelectorAll('tr[data-k]'), function (tr, i) {
       tr.addEventListener('click', function () { select(out[i]); });
+    });
+  }
+
+  /* ---- Near me (Round 4, R4-8, 2026-11-16) -----------------------------------
+     A tourist standing somewhere wants the closest places first. The browser's
+     own geolocation answers that, only when the reader presses the button, and
+     the position is used here and nowhere else: it is not stored, not sent to
+     EgyBI, and not put in any URL. Distances are straight lines, labelled so.
+     Permissions-Policy allows geolocation for this origin only (.htaccess). */
+  function kmText(d) {
+    if (d < 1) return Math.round(d * 1000).toLocaleString('en-US') + ' m';
+    return (d < 10 ? d.toFixed(1) : Math.round(d).toLocaleString('en-US')) + ' km';
+  }
+  function wireNearMe() {
+    var btn = $('nearMe'), note = $('nearNote');
+    if (!btn || !note || !('geolocation' in navigator) || !window.isSecureContext) return;
+    btn.hidden = false;
+    function say(msg, kind) { note.textContent = msg; note.className = 'form-note' + (kind ? ' ' + kind : ''); }
+    function off() {
+      S.me = null; btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); btn.textContent = 'Near me';
+      if (S.meMark && S.map) { S.map.removeLayer(S.meMark); S.meMark = null; }
+      say(''); renderList();
+    }
+    btn.addEventListener('click', function () {
+      if (S.me) { off(); return; }
+      say('Asking your browser for your location…');
+      btn.disabled = true;
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        btn.disabled = false;
+        S.me = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Stop using my location';
+        var inEgypt = S.me.lat > 21 && S.me.lat < 32.5 && S.me.lon > 24 && S.me.lon < 37.5;
+        say((inEgypt ? 'Nearest first' : 'You seem to be outside Egypt, so these are far away, nearest first') +
+            ', by straight-line distance, not travel distance. Your location stays in this browser; EgyBI never receives it.', 'ok');
+        if (S.map && window.L) {
+          if (S.meMark) S.map.removeLayer(S.meMark);
+          S.meMark = L.circleMarker([S.me.lat, S.me.lon], { radius: 8, color: '#14110C', weight: 3, fillColor: '#C9A227', fillOpacity: 1 })
+            .bindTooltip('You are here (approximate)').addTo(S.map);
+          if (inEgypt) S.map.setView([S.me.lat, S.me.lon], Math.max(S.map.getZoom(), 9));
+        }
+        renderList();
+      }, function (err) {
+        btn.disabled = false;
+        say(err && err.code === 1 ? 'Location permission was not given, so the list keeps its usual order.'
+                                  : 'Your location could not be found just now, so the list keeps its usual order.', 'error');
+      }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
     });
   }
 
@@ -530,6 +584,7 @@
     ['placeSearch', 'placeGov'].forEach(function (id) {
       var el = $(id); if (el) el.addEventListener('input', renderList);
     });
+    wireNearMe();
   }
 
   function fillGovs() {
