@@ -36,6 +36,8 @@ import math
 import os
 import subprocess
 import sys
+import time
+import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Callable, Iterable
@@ -63,6 +65,29 @@ def fetch_with_token(token: str) -> Fetch:
         with urllib.request.urlopen(req, timeout=30) as r:
             return json.load(r)
     return fetch
+
+
+# GitHub's API answers a 502 or 503 now and then (run 43901881002 on
+# 2026-11-16, after four green days). One such answer must not fail the whole
+# guard and open an alert, so transient answers are retried with a short
+# backoff. Anything else (401, 403, 404) is a real fault and fails at once.
+RETRY_STATUSES = frozenset({429, 500, 502, 503, 504})
+
+
+def retrying(fetch: Fetch, attempts: int = 4, sleep: Callable[[float], None] = time.sleep) -> Fetch:
+    def wrapped(path: str) -> dict:
+        for i in range(attempts):
+            try:
+                return fetch(path)
+            except urllib.error.HTTPError as e:
+                if e.code not in RETRY_STATUSES or i == attempts - 1:
+                    raise
+            except urllib.error.URLError:
+                if i == attempts - 1:
+                    raise
+            sleep(2 ** (i + 1))   # 2, 4, 8 seconds
+        raise AssertionError("unreachable")
+    return wrapped
 
 
 def fetch_with_gh(path: str) -> dict:
@@ -219,7 +244,7 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
 
     token = os.environ.get("GITHUB_TOKEN")
-    fetch = fetch_with_token(token) if token else fetch_with_gh
+    fetch = retrying(fetch_with_token(token)) if token else fetch_with_gh
     now = dt.datetime.now(dt.timezone.utc)
     since = dt.datetime.fromisoformat(a.since).replace(tzinfo=dt.timezone.utc) if a.since else None
     until = dt.datetime.fromisoformat(a.until).replace(tzinfo=dt.timezone.utc) if a.until else None

@@ -1780,6 +1780,76 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - 7 new mutation cases in `mutate.py` each remove one guard and must make `auth-flow.sh` fail.
   - **Fix after the first run (43846913758):** 13 steps failed because the harness had already made 9 sign-ins from one IP. `auth.php` allows 10 per 15 minutes, so F, G and D were refused (429) and ran signed out. The notes block now lets that window lapse in CI's throwaway database, and asserts each sign-in, so a refusal names itself. The site's limit is unchanged.
 - **Not yet:** the privacy page changes in the interface PR, when notes go live and start collecting anything.
+
+## 2026-11-16 — Travellers' notes on the community page, switched on (Round 4, R4-2b)
+- **Why:** the R4-2a backend gives travellers somewhere to share a visit. This PR is what a reader sees and uses, and it turns notes on (`NOTES_LIVE = true`).
+- **`community.html`** gains a first section, "Travellers' notes":
+  - a place filter over the 18 sites, which `?site=giza` preselects;
+  - "Share your experience", which opens the site's own sign-in dialog when signed out (Google first), then the composer;
+  - the composer: up to 3 places as chips, or a typed place; an optional visit month; and the note with a character count;
+  - note cards with the display name, month, place tags and text, plus "Helpful · n", "Report", and "Delete my note" with a second press to confirm;
+  - "Show older notes".
+
+  The section stays hidden when the API says notes are off.
+- **Safety in the page:**
+  - every part of a note reaches the page through `textContent`, never `innerHTML`;
+  - writes fetch the CSRF token from `auth.php?action=me` and send it in a header;
+  - the action a reader started resumes after sign-in, as Save already does.
+- **Files:**
+  - **`assets/notes.js` and `assets/notes.css` (new, `?v=1`):** loaded by community.html only, so the shared stylesheet and its version are untouched.
+  - **`notes.css`:** sizes use only the type-scale tokens. Only colour, border and shadow transition on hover and focus, and those transitions are off under reduced motion. Every control is at least 44 px tall.
+- **`privacy.html`:** a "Travellers' notes, only if you write one" entry says what is stored and what is shown. The deletion line now names notes, helpful marks and reports.
+- **New browser check `backend/verify/notes-ui.js`**, which answers the PHP endpoints itself because CI serves the site statically. It fails on:
+  - MARKUP INJECTED: two hostile notes, with `<img onerror>` and `<script>` in the body, name and place, must render as visible text with 0 elements and no script run;
+  - NOT SHOWN;
+  - FILTER IGNORED: Karnak must be asked for and must show 1 card;
+  - NO SIGN-IN: a signed-out "Share" must open the dialog and not the composer;
+  - SHOWN WHILE OFF.
+- **Mutation cases:** the text helper switched to `innerHTML` must give MARKUP INJECTED, and the place filter dropped must give FILTER IGNORED.
+- **Moderation page:** `api/moderate.php`, which is key-gated, now lists queued and hidden travellers' notes, with their report count, and Publish, Hide and Delete buttons. It and the JSON API share one rule set, `notes_moderate()` in `notes_lib.php`, so the two cannot drift apart. Every action is logged in `note_audit`.
+- **Next:** the 3 latest notes on each visit page (R4-2c).
+- **Hardening before go-live (independent security review, 2026-11-16).** A separate reviewer read the whole notes diff. Each finding below was confirmed in the code before it was fixed.
+  - **Reports could be abused:** three throwaway accounts on one connection could hide any note, again after every republish. Now:
+    - reporting needs a verified email, and an author cannot report their own note;
+    - reports are limited per account (20 a day) and per address (40);
+    - a note is auto-hidden only when 3 verified accounts on at least 2 different addresses report it, and a trusted author's reported note goes to the review queue instead;
+    - a moderator's publish marks the reports resolved instead of deleting them, so the same accounts cannot hide it again.
+  - **Missing limits:** helpful marks are limited per account (60 a day) and per address (300) and need a verified email; deletes are limited to 30 a day. A double press can no longer fail, because inserts are idempotent and the button is disabled while it sends.
+  - **The moderation key** is accepted only from the `X-Mod-Key` header or a POST body, never from a URL, where it would land in access logs and history.
+  - **Privacy:**
+    - the data export now includes the account's helpful marks and reports;
+    - account deletion also removes the abuse counters tied to the account;
+    - day-old counters are pruned on every notes write, so the privacy page's 'deleted once they are a day old' holds;
+    - new accounts get a random default name instead of one built from the first 4 characters of their id (`auth.php`, `google.php`);
+    - `privacy.html` now says what marks, reports, report reasons, counters and the moderation log store.
+  - **Robustness:**
+    - database errors answer as JSON 500s instead of raw error pages;
+    - the list uses a keyset cursor (`created_at~id`), so two notes in the same second are never skipped;
+    - the queue (500) and 'mine' (200) are bounded;
+    - a report table created by the first schema gains its two new columns automatically;
+    - the SQLite indexes now match MySQL;
+    - text cleaning keeps the zero-width joiners that emoji and Persian need, drops bidirectional overrides, and collapses long runs of blank lines, and the 30-character minimum counts visible characters only.
+  - **Interface:**
+    - a reader picks a report reason, and the moderation panel shows reasons for notes that are reported but still public;
+    - a report never removes the card, so the reply does not reveal the threshold;
+    - late replies from an older load are ignored, so cards cannot show twice;
+    - when notes are off, the page's sub-navigation link to them is removed;
+    - `notes.js` and `notes.css` move to `?v=2`.
+  - **Tests:** `auth-flow.sh` now runs each rule rather than naming it. It adds a fourth account (H) and covers:
+    - one address cannot hide a note, while two addresses hide an untrusted author's note but not a trusted one's;
+    - a republished note survives the same reporters;
+    - the per-address helpful limit;
+    - the key in a URL is refused;
+    - `moderate.php`'s note buttons work and refuse a wrong key;
+    - a foreign Origin is refused;
+    - blank lines do not count towards the length;
+    - account deletion removes the account's own marks, reports and counters, and F's note loses E's mark;
+    - the export carries the marks and reports.
+  - **Mutation cases:** 8 new ones each remove one guard and must make `auth-flow.sh` fail.
+  - **Fix after run 43887148228:** this was the first run of the hardened code, and the server answered correctly throughout. Two faults were in the new tests:
+    - the queue calls passed the key header where `ncall` expects the body, so `curl` read the header text as a second URL;
+    - the 'republished note' test re-reported from one address, which cannot hide a note with or without the fix, so its mutation case could not fail. Now all three reporters press again, with one on a second address.
+    - Both were caught by the run: 5 steps wrong, and 93 of 94 mutation cases proven.
 ## 2026-11-16 — "Today at this site" on every visit page (Round 4, R4-1)
 - **Why:** the study found nothing that helps on the day itself. The visit pages gave golden light for the 15th of each month, and no code anywhere read the time of day. A tourist at Giza wants to know when the light starts and ends today, and how long is left.
 - **The card:** each of the 18 visit pages now opens with "Today at <site>":
@@ -1846,3 +1916,8 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Check:** `nojs.js`, with JavaScript disabled, now compares every `.num[data-count]` with its own data and fails COUNTER WRONG WITHOUT JS. Its formatter agrees with all 21 counters on the site.
 - **Mutation case:** one counter put back to `0` must give COUNTER WRONG WITHOUT JS.
 - **Files:** `about.html` and `explore.html` (17 counters), `backend/verify/nojs.js`, `mutate.py`. No asset changes, so no `?v=` bump.
+## 2026-11-16 — The minutes guard retries GitHub's transient errors
+- **Why:** the daily Actions minutes guard opened alert #135 because GitHub's API answered one request with `502 Bad Gateway`. That was GitHub's own hiccup: the guard had passed on each of the four previous days. A single transient answer failed the whole run and raised an alert that meant nothing.
+- **Fix:** `backend/ops/usage_guard.py` gains `retrying()`, which wraps its API calls. A 429, 500, 502, 503 or 504, or a dropped connection, is retried after 2, 4 and then 8 seconds, four tries in all. A 401, 403 or 404 still fails at once, because those are real faults.
+- **Tests:** `test_usage_guard.py` gains 4 tests (two 502s then an answer, a 404 not retried, giving up after four tries, a dropped connection retried). All 17 pass. With the retry disabled, 2 fail.
+- **Not changed:** the minutes arithmetic, the thresholds and the alert wording.

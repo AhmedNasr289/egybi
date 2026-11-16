@@ -49,6 +49,13 @@ $notice = '';
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $id  = (string)($_POST['id'] ?? '');
     $act = (string)($_POST['act'] ?? '');
+    // Travellers' notes (Round 4): the same rules the JSON API uses.
+    if (strncmp($act, 'note-', 5) === 0) {
+        require_once __DIR__ . '/../auth/notes_lib.php';
+        $notice = notes_moderate($db, $id, substr($act, 5));
+        header('Location: ?key=' . rawurlencode($key) . '&m=' . rawurlencode($notice));
+        exit;
+    }
     // Ids are app-generated random hex; anything else is not one of ours.
     if ($id !== '' && ctype_xdigit($id)) {
         if ($act === 'approve') {
@@ -80,6 +87,20 @@ try {
                         LIMIT 500')->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $ex) {
     error_log('[EgyBI moderate] ' . $ex);
+}
+$tnotes = [];
+try {
+    require_once __DIR__ . '/../auth/notes_lib.php';
+    notes_ensure_schema($db);
+    $tnotes = $db->query("SELECT n.id, n.sites, n.place_text, n.visited_month, n.body, n.status, n.created_at, u.display_name,
+                                 (SELECT COUNT(*) FROM note_reports r WHERE r.note_id = n.id AND r.resolved = 0) AS reports,
+                                 (SELECT GROUP_CONCAT(r.reason) FROM note_reports r WHERE r.note_id = n.id AND r.resolved = 0) AS reasons
+                          FROM notes n JOIN users u ON u.id = n.user_id
+                          WHERE n.status IN ('queued','hidden')
+                             OR EXISTS (SELECT 1 FROM note_reports r WHERE r.note_id = n.id AND r.resolved = 0)
+                          ORDER BY n.created_at LIMIT 500")->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $ex) {
+    error_log('[EgyBI moderate notes] ' . $ex);
 }
 $pending  = array_values(array_filter($rows, static fn($r) => (int)$r['approved'] === 0));
 $approved = array_values(array_filter($rows, static fn($r) => (int)$r['approved'] === 1));
@@ -115,6 +136,18 @@ button.del{color:var(--red);border-color:#e4c9ca}
 <h1>EgyBI <span>Moderation</span></h1>
 <p class="sub">Community submissions. Nothing is public until approved here.</p>
 <?php if ($notice !== ''): ?><div class="flash"><?=$e($notice)?></div><?php endif; ?>
+
+<h2>Travellers' notes waiting, hidden or reported — <?=count($tnotes)?></h2>
+<?php if (!$tnotes): ?><p class="empty">No notes waiting, hidden or reported.</p><?php endif; ?>
+<?php foreach ($tnotes as $r): ?>
+  <div class="note">
+    <div class="meta"><?=$e($r['display_name'])?> · <?=$e($r['status'])?><?=((int)$r['reports'] ? ' · ' . (int)$r['reports'] . ' open report(s): ' . $e(str_replace(',', ', ', (string)$r['reasons'])) : '')?> · <?=$e($r['created_at'])?> · <?=$e(trim($r['sites'] . ' ' . $r['place_text']))?> <?=$e($r['visited_month'])?></div>
+    <div class="msg"><?=$e($r['body'])?></div>
+    <?=$form((string)$r['id'], 'note-publish', 'Publish', $key, 'go')?>
+    <?php if ($r['status'] !== 'hidden'): ?><?=$form((string)$r['id'], 'note-hide', 'Hide', $key)?><?php endif; ?>
+    <?=$form((string)$r['id'], 'note-delete', 'Delete', $key, 'del')?>
+  </div>
+<?php endforeach; ?>
 
 <h2>Pending — <?=count($pending)?></h2>
 <?php if (!$pending): ?><p class="empty">Nothing waiting.</p><?php endif; ?>

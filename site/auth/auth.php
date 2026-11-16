@@ -57,7 +57,7 @@ case 'signup': {
     {
         $id = rid(); $ts = now();
         // A public, non-PII handle for the leaderboard (users can rename later).
-        $display = 'Scribe-' . strtoupper(substr($id, 0, 4));
+        $display = 'Scribe-' . strtoupper(bin2hex(random_bytes(2)));  // random, not derived from the account id
         $db->prepare('INSERT INTO users (id,email,pass_hash,email_verified,plan,display_name,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)')
            ->execute([$id, $email, hash_password($pw), 0, 'free', $display, $ts, $ts]);
         $token = rid(32);
