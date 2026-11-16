@@ -76,6 +76,26 @@ def light_section(site, name):
 """
 
 
+def today_card(site, name, ms, clim):
+    """"Today at this site" (Round 4, R4-1): the frame and the data; assets/today.js fills it.
+
+    The browser computes today's sun times from data-lat/data-lon with the same
+    NOAA equations as light_section(), and reads this month's normal from
+    data-normals (12 pairs of whole degrees: afternoon, night). Without
+    JavaScript the static sentence stays, pointing to the light table."""
+    normals = [None] * 12
+    for m in ms:
+        if m.get('t_daily_max') is not None and m.get('t_daily_min') is not None:
+            normals[m['month'] - 1] = [int(egfmt.whole(m['t_daily_max'])), int(egfmt.whole(m['t_daily_min']))]
+    src = esc(clim.get('source', 'NASA POWER'))
+    window = esc(clim.get('normal_window', '2001–2020'))
+    return f"""    <div class="today" data-today data-lat="{site['lat']:.4f}" data-lon="{site['lon']:.4f}" data-normals='{json.dumps(normals, separators=(",", ":"))}'>
+      <h2 class="today-h"><span data-glyph="ra"></span> Today at {esc(name)}</h2>
+      <div class="today-body"><p class="today-fallback">Sunrise, golden light and sunset for the 15th of every month are in the light table further down this page. With JavaScript on, today&rsquo;s times and how long is left appear here.</p></div>
+      <p class="chart-cap today-src">Sun times are worked out in your browser for this site&rsquo;s coordinates, with the NOAA solar equations used for the light table, and shown in Egypt time from your browser&rsquo;s own time-zone database. Cliffs, dunes and temple walls can hide a low sun earlier. Temperatures: {src} normals, {window}.</p>
+    </div>"""
+
+
 def build_site_months():
     """One page per measured visitor site: its twelve months, as measured.
 
@@ -137,6 +157,7 @@ def build_site_months():
         if site.get('unesco'):
             facts.append("It is part of a UNESCO World Heritage property.")
         light_html = light_section(site, name)
+        today_html = today_card(site, name, ms, clim)
         # The page is ABOUT a real place, and saying so is what lets a search
         # engine connect it to the attraction rather than read it as a loose
         # table of temperatures. Only fields this file actually holds are
@@ -171,6 +192,7 @@ def build_site_months():
      lets the Papyrus scroll rod mark each join (egybi.css, "The scroll rod"). -->
 <section class="surface-light">
   <div class="wrap" style="max-width:860px;">
+{today_html}
     <div class="sheet">
       <span class="seal" aria-hidden="true"><span data-glyph="ankh"></span></span>
       {''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in facts)}
@@ -213,7 +235,9 @@ def build_site_months():
         write_text(os.path.join(outdir, key + '.html'), 
             page(title, desc, url, body, ld, og_image=f"{SITE_URL}/og-visit.png?v=3",
                  # Only these pages carry a place to save, so only they load it.
-                 extra_foot='\n<script src="../assets/saveplace.js?v=1"></script>'))
+                 extra_foot='\n<script src="../assets/saveplace.js?v=1"></script>'
+                            '\n<link rel="stylesheet" href="../assets/today.css?v=1">'
+                            '\n<script src="../assets/today.js?v=1"></script>'))
         urls.append((url, '0.7'))
     return urls
 

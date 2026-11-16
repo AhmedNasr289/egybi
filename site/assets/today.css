@@ -1,0 +1,18 @@
+/* EgyBI — "Today at this site" card on the visit pages (Round 4, R4-1).
+   Loaded by the 18 visit pages only. Sizes use the type-scale tokens; nothing
+   here animates, so reduced motion needs no rule and nothing shifts layout. */
+.today {
+  background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold);
+  border-radius: var(--radius); padding: 20px 22px; margin: 0 0 22px; box-shadow: var(--shadow-light);
+}
+.today-h { font-size: var(--fs-lg); margin: 0 0 8px; color: var(--blue-deep); }
+.today-date { margin: 0 0 12px; color: var(--ink-soft); font-size: var(--fs-sm); }
+.today-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 12px; }
+@media (max-width: 560px) { .today-grid { grid-template-columns: repeat(2, 1fr); } }
+.today-cell { background: var(--papyrus); border-radius: 10px; padding: 10px 12px; margin: 0; }
+.today-cell dt { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; color: var(--gold-ink); font-weight: 700; }
+.today-cell dd { margin: 2px 0 0; font-size: var(--fs-lg); font-weight: 700; color: var(--blue-deep); font-variant-numeric: tabular-nums; }
+.today-status { margin: 0 0 6px; font-weight: 600; }
+.today-heat { margin: 0 0 6px; }
+.today-fallback { margin: 0; color: var(--ink-soft); }
+.today-src { margin: 8px 0 0; }
