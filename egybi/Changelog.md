@@ -1645,6 +1645,29 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   13j and 13l were each proven catching locally; 13e and 13k need the browser and run in CI.
 - **Plan:** the S4 status now records parts 2 and 4 as built. Part 3, generators marking story and visit sections, remains.
+
+## 2026-11-16 — Round 4 plan: tour guide, community, sign-in (plan only)
+- **Why:** Ahmed asked for an online tour guide, a community for sharing experiences, effortless Google sign-in and better motion, and reported that sign-up needs fixing. This entry adds the measured study and plan only; nothing in the site changes.
+- **Added:** `Improvement Plan 2026-11.md`, Round 4, which covers:
+  - the checks run today;
+  - the sign-up report: not reproduced from here, with two hypotheses Ahmed can check (Google consent screen in Testing mode, and the verification email landing in spam);
+  - what a tourist can and cannot do, with file and line evidence;
+  - eight ranked findings, each with Fix, Prove and Rollback;
+  - eight workflows, the additive database tables and the PR sequence.
+
+## 2026-11-16 — Plan: Round 4 status and Round 5 (the modern web platform)
+- **Plan:** `Improvement Plan 2026-11.md` gains a Round 4 status table and Round 5, items M1–M6:
+  - cross-document View Transitions;
+  - Speculation Rules prefetch;
+  - a scroll-driven reading-progress bar;
+  - `content-visibility` on long pages;
+  - one site-wide install and offline story;
+  - return after verifying.
+- **Constraints:** every item is a built-in browser feature: no library, font, host or cost. Each has Evidence, Fix, Prove and Rollback.
+- **Timing:** they land together after the Round 4 stack merges, because they touch every page head.
+
+## 2026-11-16 — Plan: status at 12:50 UTC
+- **Plan:** `Improvement Plan 2026-11.md` gains the round's status table at 12:50 UTC. It covers #129 merged and live, the #124 reveal fix, the #128 security-review hardening, the new PRs #132–#134, and the weekly sweep starting 8 h late.
 - **First CI run (43838169768):** every checker passed, but three mutation cases could no longer fail, because each had been written against AOS.
   - **13, reduced motion:** motion.js now reveals everything at once under reduced motion, which masked a missing CSS rule. reduced.js gains a probe with motion.js blocked, so the CSS guarantee is measured on its own.
   - **13d, no JavaScript:** two guards now keep blocks visible (the html.js scope and S1's override), so the case removes both.
@@ -1813,3 +1836,6 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - under reduced motion it must be in place straight after load, and the arc must not transition;
   - at 04:00 it must wait below the horizon.
 - **Mutation cases:** the wrong share of the day must give SUN PATH WRONG, and the reduced-motion guard removed must give MOVES UNDER REDUCED MOTION.
+
+## 2026-11-16 — Plan: M7, the mutation pass in its own job
+- **Plan:** `Improvement Plan 2026-11.md` gains M7. Stacked runs reached 48–55 minutes, and the cancels at the 50-minute cap destroyed logs. The CI limit is raised to 80 as a stopgap, and the fix is to run `mutate.py` as a separate job.
