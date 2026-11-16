@@ -2003,3 +2003,16 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - an empty list invites the first note;
   - half way down a story the line is about half wide, and under reduced motion there is no line.
 - **Mutation cases:** the notes helper switched to `innerHTML` must give MARKUP INJECTED, and the reduced-motion guard removed must give PROGRESS UNDER REDUCED MOTION.
+## 2026-11-16 — Fix for Round 5's checks: service workers blocked in every check, platform.js corrected (follows M1, M2, M5)
+- **What CI found** (run 43915133691, on #138, which carries this branch):
+  - **Mutation "content hidden under reduced motion" (reduced.js) stopped being caught.**
+    - Since M5 every page registers the offline worker. reduced.js reuses one browser context, so its reload with `motion.js` blocked ran through the worker.
+    - A worker's requests go around Playwright's `page.route`, so `motion.js` loaded anyway and revealed everything.
+    - So a check written to see a missing reduced-motion rule went blind.
+  - **platform.js's hover test timed out.** The four test links were placed at `100 + 50 * charCode % 4` px, which is 100 or 102, so they covered each other.
+  - **platform.js's cross-fade test.** CI's headless Chromium reported no view transition even with motion allowed, so it failed. Its reduced-motion mutation then had nothing to catch.
+- **Fixes:**
+  - `env.js` now launches every check's browser with service workers blocked, unless a check asks for one. Only offline.js and platform.js's offline test do. Checks measure the page as the server sends it.
+  - The links are now 60 px apart.
+  - The cross-fade test now asserts what the site controls: the page's own `@view-transition` opt-in, read through the CSSOM, is in effect without reduced motion and not under it. Whether the browser then plays the fade is printed, not graded.
+- **No site file changes.** The live behaviour of M1 is checked by hand in the browser after the merge.
