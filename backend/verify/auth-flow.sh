@@ -235,9 +235,14 @@ for who in e f; do
   expect "verify $up's email" 200 "$(call "$j" GET "verify&token=$tok")" 'verified'
 done
 EID=$(sql "SELECT id FROM users WHERE email='e@example.org'")
-r=$(call "$JAR_E" POST login "$E"); CE=$(echo "${r#* }" | field csrf)
-r=$(call "$JAR_F" POST login "$F"); CF=$(echo "${r#* }" | field csrf)
-r=$(call "$JAR_G" POST login "$G"); CG=$(echo "${r#* }" | field csrf)
+# The passes above already made 9 sign-ins from this one IP, and auth.php allows
+# 10 per 15 minutes. Without this, F, G and D are refused with 429 and every
+# later notes step runs signed out (run 43846913758). Let the window lapse in
+# this throwaway database; the limit itself is tested in the security pass.
+sql "DELETE FROM auth_attempts WHERE action='login'" >/dev/null
+r=$(call "$JAR_E" POST login "$E"); expect "notes: sign in E" 200 "$r" '"csrf"'; CE=$(echo "${r#* }" | field csrf)
+r=$(call "$JAR_F" POST login "$F"); expect "notes: sign in F" 200 "$r" '"csrf"'; CF=$(echo "${r#* }" | field csrf)
+r=$(call "$JAR_G" POST login "$G"); expect "notes: sign in G (unverified)" 200 "$r" '"csrf"'; CG=$(echo "${r#* }" | field csrf)
 note() { printf '{"sites":["giza"],"month":"2026-10","body":"%s"}' "$1"; }
 LONG="We went at opening time and had the plateau almost to ourselves for an hour."
 
