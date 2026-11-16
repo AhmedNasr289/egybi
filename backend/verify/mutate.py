@@ -1049,12 +1049,16 @@ YEAR = f"node {HERE}/year-strip.js"
 case("year strip months all at once, not January to December", "year-strip.js", ["site/assets/heat-calendar.css"],
      lambda: edit("site/assets/heat-calendar.css", "animation-delay: calc(var(--m, 0) * 70ms);", "animation-delay: 0ms;"),
      lambda o: "YEAR NOT IN ORDER" in o, YEAR)
-# Reduced motion is guarded twice, in the script and in the stylesheet; one
-# guard alone cannot be caught, so the case removes both.
+# Reduced motion is locked THREE times: egybi.css's site-wide rule (under
+# reduce, * { animation: none !important }), the script's own check and the
+# stylesheet's no-preference query. Removing two left the site still, so the
+# case could never fire (runs 43948810613 and 43953866021); it removes all
+# three, to prove the check sees motion when nothing stops it.
 case("year strip moving for readers who asked for reduced motion", "year-strip.js",
-     ["site/assets/year-strip.js", "site/assets/heat-calendar.css"],
+     ["site/assets/year-strip.js", "site/assets/heat-calendar.css", "site/assets/egybi.css"],
      lambda: (edit("site/assets/year-strip.js", "if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;", ""),
-              edit("site/assets/heat-calendar.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {")),
+              edit("site/assets/heat-calendar.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {"),
+              edit("site/assets/egybi.css", "  * { animation: none !important; transition: none !important; }", "  * { }")),
      lambda o: "YEAR MOTION UNDER REDUCED MOTION" in o, YEAR)
 case("year strip waits for a third of itself before showing a cell", "year-strip.js", ["site/assets/year-strip.js"],
      lambda: edit("site/assets/year-strip.js", "}, { threshold: 0 });", "}, { threshold: 0.35 });"),
