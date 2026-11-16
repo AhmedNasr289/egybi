@@ -1910,6 +1910,12 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 ## 2026-11-16 — Plan: M7, the mutation pass in its own job
 - **Plan:** `Improvement Plan 2026-11.md` gains M7. Stacked runs reached 48–55 minutes, and the cancels at the 50-minute cap destroyed logs. The CI limit is raised to 80 as a stopgap, and the fix is to run `mutate.py` as a separate job.
 
+## 2026-11-16 — Counters carry their real figures in the page (Round 5)
+- **Why:** checking #124 live, a jump to the bottom of Explore showed three film counters reading "0", while the fourth, which the scroll had passed slowly, read 1596 mid-count. The HTML of 17 counters on `about.html` and `explore.html` literally said `0`, with the real figure only in `data-count`. A reader without JavaScript, or whose browser skipped the count-up (it waits for the counter to be seen, which a fast scroll can miss), was told that Egypt has made "0 feature films" or that Cairo's festival was founded in year "0". That breaks the round's rule that a count-up only animates a figure already in the HTML.
+- **Fix:** each counter's HTML now holds its final figure, formatted exactly as the count-up ends ("4,000+", "1976", "70%", "EGP 1.8bn", "438,500"). The count-up still runs from 0 when a reader reaches it with JavaScript on. Home's three counters already did this.
+- **Check:** `nojs.js`, with JavaScript disabled, now compares every `.num[data-count]` with its own data and fails COUNTER WRONG WITHOUT JS. Its formatter agrees with all 21 counters on the site.
+- **Mutation case:** one counter put back to `0` must give COUNTER WRONG WITHOUT JS.
+- **Files:** `about.html` and `explore.html` (17 counters), `backend/verify/nojs.js`, `mutate.py`. No asset changes, so no `?v=` bump.
 ## 2026-11-16 — The minutes guard retries GitHub's transient errors
 - **Why:** the daily Actions minutes guard opened alert #135 because GitHub's API answered one request with `502 Bad Gateway`. That was GitHub's own hiccup: the guard had passed on each of the four previous days. A single transient answer failed the whole run and raised an alert that meant nothing.
 - **Fix:** `backend/ops/usage_guard.py` gains `retrying()`, which wraps its API calls. A 429, 500, 502, 503 or 504, or a dropped connection, is retried after 2, 4 and then 8 seconds, four tries in all. A 401, 403 or 404 still fails at once, because those are real faults.
