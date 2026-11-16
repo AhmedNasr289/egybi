@@ -2226,3 +2226,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **CI screenshots:** `ar/index.html`, `ru/index.html` and `ar/plan.html` at 1280 and 390 px.
   - **Seven translated titles and one description** were shortened to fit search snippets.
 - **Still English on these pages, by design until stage 4:** text the scripts write after load (the briefing, the planner's cards, the price tables, the sign table). `backend/i18n/REVIEW.md` lists every page for the native reviewer.
+## 2026-11-17 — The briefing map's order check: measured from the schedule, not the frame
+- **What failed:** on this PR's head (run 43971112849) and the stage 1 head (run 43971142792), the mutation case "briefing map dots all at once" came back NOISY. It caught the defect, but the clean run after the file was restored reported MAP ORDER WRONG on a correct page. Three other runs of the same check were clean.
+- **The cause:** the check timed each dot with `performance.now()` when its `animationstart` event arrived. On a busy runner, starts scheduled 70 ms apart can be delivered in the same frame, which breaks the "at least 30 ms apart" rule. It also took the last 18 events as one sweep, so a replayed sweep could mix two.
+- **The fix:**
+  - Each dot's start is now its animation's scheduled start (start time plus delay), which does not depend on frame delivery.
+  - Only each dot's latest start is used.
+  - A failure prints the order and the gaps it measured.
+- **And the harness:** mutate.py now prints what a checker said for any case that is not a clean pass. Before, a NOISY verdict left only the word, and the cause could not be found without a re-run.
+## 2026-11-17 — The year strip's order check: the same scheduled-start timing
+- `year-strip.js` timed each month with `performance.now()` when its `animationstart` arrived, which is the same weakness that made the briefing map's order check flake. It now uses each cell's scheduled start (start time plus delay). It has not flaked yet; this removes the cause before it does.

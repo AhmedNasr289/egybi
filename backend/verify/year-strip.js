@@ -26,7 +26,11 @@ const recorder = () => {
     if (!td || !td.matches || !td.matches('[data-year-strip] .hc-table td')) return;
     const a = td.getAnimations()[0];
     const props = a ? [...new Set((a.effect.getKeyframes() || []).flatMap(k => Object.keys(k)))] : [];
-    window.__yearStarts.push({ m: +getComputedStyle(td).getPropertyValue('--m'), t: performance.now(), props });
+    // t is the scheduled start (start time plus delay), not the moment the
+    // event was delivered: under load, starts 70 ms apart can arrive in one
+    // frame (the same flake briefing-map.js had, runs 43971112849/43971142792).
+    const sched = a && a.startTime != null ? a.startTime + (a.effect.getTiming().delay || 0) : null;
+    window.__yearStarts.push({ m: +getComputedStyle(td).getPropertyValue('--m'), t: sched != null ? sched : performance.now(), props });
   }, true);
 };
 
