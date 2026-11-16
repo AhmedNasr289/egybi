@@ -602,3 +602,62 @@ Each PR gets a Changelog entry, `?v=` bumps, regenerated pages, the local CI job
 - **H2:** test a second-address sign-up and look in spam.
 - **R4-8:** a yes to change `Permissions-Policy` to `geolocation=(self)`.
 - **Keep the repo public until this round is done, or go private now?** No CI runs privately until 1 December. Recommended: stay public until the round is done (about 8 PRs at about 45 minutes of CI each), then go private. The code has been public since the start and holds no secrets (scan-gated), while going private now freezes every PR above for two weeks.
+
+### Status, 16 November 2026, 12:00 UTC
+| Item | PR | State |
+|---|---|---|
+| S4 parts 2 and 4: one reveal system | #124 | 5 of 174 blocks on explore.html stuck hidden; diagnostics pushed (8b19952) to name them |
+| R4-2a: notes backend | #127 | 13 auth-flow steps failed on the harness's own login limit (10 per IP per 15 min); test fixed (a6bccbe) |
+| R4-2b: notes interface | #128 | the fix merged in (804f257) |
+| R4-1: Today card | #129 | green (run 43851313759) |
+| R4-6: share link | #130 | CI running |
+| R4-7: offline and installable | #132 | stacked on #130; CI running |
+| R4-8: Near me | #131 | CI running; header yes given in chat |
+| R4-3: return after verifying | — | parked: it needs a new `egybi.js` version on all 180 pages, which would conflict with every open PR |
+
+## Round 5 — the modern web platform, free and built in (planned 16 November 2026)
+Every item below is a browser feature. None adds a library, a font, a host or a cost. Each is ignored by browsers that lack it, so it needs no fallback code, and each is off under `prefers-reduced-motion` where it moves anything. They all touch `egybi.css`, `pages/common.py` or every page head, so they land together, after the Round 4 stack has merged, to avoid a 180-file conflict.
+
+### M1. Page-to-page transitions (cross-document View Transitions)
+- **Evidence:** every navigation is a hard white flash between two papyrus pages. Chrome 126+ and Safari 18.2+ can cross-fade same-origin navigations with CSS alone.
+- **Fix:** add `@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }` to `egybi.css`, plus a `view-transition-name` on the site header so it stays put while the content fades.
+- **Prove:**
+  - a new browser check navigates index → plan and must see the `pagereveal` event carry a `viewTransition` with motion allowed, and none under reduced motion;
+  - CLS stays 0 in `reduced.js`;
+  - a mutation case removes the media guard and must give TRANSITION UNDER REDUCED MOTION.
+- **Rollback:** delete the rule.
+
+### M2. Instant next pages (Speculation Rules prefetch)
+- **Evidence:** the pages are static and small (giza 19 KB, stories 25 KB), but each click still waits for a round trip to Hostinger.
+- **Fix:** one inline `<script type="speculationrules">` in the shared head:
+  - `prefetch`, `eagerness: "moderate"` (hover of 200 ms or pointer-down), same-origin `/*.html` only;
+  - `/auth/*`, `/api/*`, `account.html` and anything with a query string excluded.
+
+  It is prefetch, not prerender, so no script runs early and analytics counts stay exact.
+- **Prove:**
+  - a new check hovers a nav link and must see one prefetch request for that page and none for `account.html`;
+  - `static-audit` must parse the JSON on every page;
+  - a mutation case adds `/auth/*` to the allow list and must give PREFETCHED ACCOUNT.
+- **Rollback:** remove the script from `common.py` and regenerate.
+
+### M3. Reading progress on stories (scroll-driven animation)
+- **Evidence:** the story pages are long, and a reader has no sense of how much is left.
+- **Fix:** a 3 px gold bar using `animation-timeline: scroll(root)` on `transform: scaleX()`, inside `@supports (animation-timeline: scroll())` and the reduced-motion guard. It is pure CSS: no scroll listener and no layout cost.
+- **Prove:** `motion-weight.py` must count 0 scroll handlers added; `reduced.js` must see the bar static. A mutation case drops the `@supports` and must make `cssom` flag the unsupported property.
+- **Rollback:** delete the rule.
+
+### M4. Cheaper long pages (`content-visibility: auto`)
+- **Evidence:** explore.html is 77 KB with 23 dashboards, all laid out on load.
+- **Fix:** `content-visibility: auto` with `contain-intrinsic-size: auto 600px` on below-the-fold `section`s of the data pages.
+- **Prove:** the reveal check (`nojs.js` step 3) must still see every block revealed, `overflow.js` must see no clipping, and a timed run must show a lower layout duration.
+- **Rollback:** delete the rule.
+
+### M5. One install and offline story across the site
+- **Fix:** after R4-7 (#132) proves the worker on the planner, register it from `egybi.js` and link the manifest from every page head (`common.py`), in the same version bump as M1 and M2.
+- **Prove:** `offline.js` must be extended to an unopened-then-opened story page.
+- **Rollback:** the `KILL` switch in `sw.js`.
+
+### M6. R4-3, return after verifying, in the same bump
+- **Fix:** before sign-up or a reset request, `auth.js` remembers the page in localStorage (a same-origin `*.html` path only, kept 7 days). After the `?verify` landing and sign-in, the reader goes back there.
+- **No email changes:** the verification and reset mails keep their exact wording and links, so no mail-text yes is needed.
+- **Prove:** an `auth-flow.sh` UI check, and a mutation case that accepts an off-site path and must give OPEN REDIRECT.

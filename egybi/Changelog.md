@@ -1654,3 +1654,14 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - what a tourist can and cannot do, with file and line evidence;
   - eight ranked findings, each with Fix, Prove and Rollback;
   - eight workflows, the additive database tables and the PR sequence.
+
+## 2026-11-16 — Plan: Round 4 status and Round 5 (the modern web platform)
+- **Plan:** `Improvement Plan 2026-11.md` gains a Round 4 status table and Round 5, items M1–M6:
+  - cross-document View Transitions;
+  - Speculation Rules prefetch;
+  - a scroll-driven reading-progress bar;
+  - `content-visibility` on long pages;
+  - one site-wide install and offline story;
+  - return after verifying.
+- **Constraints:** every item is a built-in browser feature: no library, font, host or cost. Each has Evidence, Fix, Prove and Rollback.
+- **Timing:** they land together after the Round 4 stack merges, because they touch every page head.
