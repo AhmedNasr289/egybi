@@ -107,13 +107,16 @@
       </div>
       <div class="screen-only">
         <p class="chart-cap" id="planSum" style="margin-top:0;"></p>
+        <div class="sheet shared-banner" id="sharedBanner" role="status" hidden></div>
         <ol class="stop-list" id="stopList"></ol>
         <div class="cta-row screen-only">
           <button type="button" class="btn btn-primary" id="printPlan" data-ev="plan_print">Print or save as PDF</button>
+          <button type="button" class="btn btn-ghost" id="shareTrip" data-ev="plan_share">Share this trip</button>
           <button type="button" class="btn btn-ghost" id="saveTrip" data-ev="plan_save">Save to my account</button>
           <button type="button" class="btn btn-ghost" id="clearPlan">Remove all stops</button>
         </div>
         <p class="form-note" id="saveNote" role="status" aria-live="polite"></p>
+        <p class="form-note" id="shareNote" role="status" aria-live="polite"></p>
       </div>
     </div>
   </div>
@@ -161,7 +164,7 @@
 <script src="assets/egfmt.js?v=4"></script>
 <script src="assets/trip.js?v=3"></script>
 <script src="assets/cartouche.js?v=1"></script>
-<script src="assets/plan.js?v=4"></script>
+<script src="assets/plan.js?v=5"></script>
 <script src="assets/motion.js?v=3"></script>
 <script src="assets/analytics.js?v=2"></script>
 </body>

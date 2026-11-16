@@ -918,6 +918,24 @@ case("save button never shown", "save-place.js",
 # The account page subscribes with no confirmation email, which is sound only
 # because the account's email is verified. Without that check, anyone could
 # create an account under someone else's address and subscribe it.
+# ---- Trip share link (Round 4, R4-6) ---------------------------------------
+# A shared link is untrusted input. Without the Egypt bounds check, a link can
+# place a stop anywhere; without the ask-first branch, opening a link silently
+# replaces the reader's own saved plan.
+SHARE = f"node {HERE}/share-link.js"
+case("share link: stops outside Egypt accepted", "share-link.js",
+     ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js",
+                  "if (!(lat > 21 && lat < 32.5 && lon > 24 && lon < 37.5) || days < 1 || days > 30) return null;",
+                  "if (days < 1 || days > 30) return null;"),
+     lambda o: "SHARE ACCEPTS BAD LINK" in o, SHARE)
+case("share link: the reader's own plan replaced without asking", "share-link.js",
+     ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js",
+                  "    if (!S.trip.stops.length) { apply(); return; }",
+                  "    apply(); return;"),
+     lambda o: "OWN PLAN OVERWRITTEN" in o, SHARE)
+
 case("unverified account subscribed to the newsletter", "auth-flow.sh",
      ["site/auth/auth.php"],
      lambda: edit("site/auth/auth.php",
