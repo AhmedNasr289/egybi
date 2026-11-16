@@ -318,6 +318,10 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh notes-ui node backend/verify/notes-ui.js
 
+      - name: today-sun.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh today-sun node backend/verify/today-sun.js
+
       - name: visit-tables.js
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh visit-tables node backend/verify/visit-tables.js
