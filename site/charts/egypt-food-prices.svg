@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 846 500" width="846" height="500" role="img" aria-labelledby="t d" font-family="Inter, Segoe UI, Arial, sans-serif">
 <title id="t">Egypt&#x27;s retail food prices since July</title>
-<desc id="d">Median retail price index per category, 100 = first observation, 20 July 2026 to 15 November 2026.</desc>
+<desc id="d">Median retail price index per category, 100 = first observation, 21 July 2026 to 16 November 2026.</desc>
 <rect width="846" height="500" fill="#FDF9EE"/>
 <text x="58" y="34" font-size="19" font-weight="700" fill="#1B1B18">Egypt&#x27;s retail food prices since July</text>
 <text x="58" y="56" font-size="12.5" fill="#544C3E">Weekly median price per category, 100 = each item&#8217;s own first-week price</text>
@@ -12,26 +12,26 @@
 <text x="50" y="189.3" font-size="12" text-anchor="end" fill="#544C3E">105</text>
 <line x1="58" y1="78.0" x2="716" y2="78.0" stroke="#D8D0BC" stroke-width="1"/>
 <text x="50" y="82.0" font-size="12" text-anchor="end" fill="#544C3E">110</text>
-<line x1="124.9" y1="400" x2="124.9" y2="405" stroke="#544C3E"/>
-<text x="124.9" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
-<line x1="297.8" y1="400" x2="297.8" y2="405" stroke="#544C3E"/>
-<text x="297.8" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
-<line x1="465.1" y1="400" x2="465.1" y2="405" stroke="#544C3E"/>
-<text x="465.1" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
-<line x1="637.9" y1="400" x2="637.9" y2="405" stroke="#544C3E"/>
-<text x="637.9" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
-<path d="M74.7,292.7 L113.8,299.9 L152.8,339.8 L191.8,326.6 L230.9,311.8 L269.9,348.1 L308.9,295.0 L348.0,296.2 L387.0,332.1 L426.0,293.3 L465.1,295.0 L504.1,261.8 L543.1,279.2 L582.2,281.2 L621.2,292.4 L660.2,307.1 L699.3,263.5" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="699.3" cy="263.5" r="4" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M74.7,292.7 L113.8,314.5 L152.8,300.7 L191.8,270.1 L230.9,181.9 L269.9,270.0 L308.9,235.7 L348.0,274.0 L387.0,280.3 L426.0,266.0 L465.1,268.8 L504.1,249.2 L543.1,263.8 L582.2,244.5 L621.2,228.9 L660.2,300.3 L699.3,271.0" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="699.3" cy="271.0" r="4" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M74.7,292.7 L113.8,332.0 L152.8,284.9 L191.8,262.1 L230.9,174.2 L269.9,305.3 L308.9,304.6 L348.0,289.7 L387.0,292.7 L426.0,281.9 L465.1,288.1 L504.1,290.4 L543.1,258.3 L582.2,245.1 L621.2,250.3 L660.2,318.3 L699.3,349.4" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="699.3" cy="349.4" r="4" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M74.7,292.7 L113.8,300.7 L152.8,299.4 L191.8,294.1 L230.9,273.7 L269.9,294.8 L308.9,305.9 L348.0,308.8 L387.0,289.8 L426.0,278.0 L465.1,267.7 L504.1,292.4 L543.1,273.0 L582.2,269.3 L621.2,256.9 L660.2,255.5 L699.3,249.9" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="699.3" cy="249.9" r="4" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
-<text x="726" y="253.9" font-size="12.5" font-weight="600" fill="#1B1B18">Groceries 102.0</text>
-<text x="726" y="269.9" font-size="12.5" font-weight="600" fill="#1B1B18">Vegetables 101.4</text>
-<text x="726" y="285.9" font-size="12.5" font-weight="600" fill="#1B1B18">Fish 101.0</text>
-<text x="726" y="353.4" font-size="12.5" font-weight="600" fill="#1B1B18">Fruit 97.4</text>
+<line x1="119.3" y1="400" x2="119.3" y2="405" stroke="#544C3E"/>
+<text x="119.3" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
+<line x1="292.2" y1="400" x2="292.2" y2="405" stroke="#544C3E"/>
+<text x="292.2" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
+<line x1="459.5" y1="400" x2="459.5" y2="405" stroke="#544C3E"/>
+<text x="459.5" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
+<line x1="632.4" y1="400" x2="632.4" y2="405" stroke="#544C3E"/>
+<text x="632.4" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
+<path d="M74.7,292.7 L113.8,308.5 L152.8,349.9 L191.8,336.9 L230.9,310.1 L269.9,368.7 L308.9,308.5 L348.0,301.0 L387.0,330.3 L426.0,331.5 L465.1,302.3 L504.1,297.2 L543.1,283.0 L582.2,281.2 L621.2,337.7 L660.2,304.3 L699.3,285.4" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="699.3" cy="285.4" r="4" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M74.7,292.7 L113.8,287.6 L152.8,271.8 L191.8,256.3 L230.9,181.5 L269.9,240.6 L308.9,228.3 L348.0,235.2 L387.0,263.0 L426.0,266.8 L465.1,255.2 L504.1,249.3 L543.1,266.1 L582.2,223.0 L621.2,210.9 L660.2,287.8 L699.3,221.7" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="699.3" cy="221.7" r="4" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M74.7,292.7 L113.8,318.5 L152.8,278.5 L191.8,283.2 L230.9,194.4 L269.9,276.0 L308.9,323.0 L348.0,285.4 L387.0,257.9 L426.0,264.8 L465.1,272.7 L504.1,284.9 L543.1,206.0 L582.2,293.7 L621.2,233.0 L660.2,315.3 L699.3,319.6" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="699.3" cy="319.6" r="4" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M74.7,292.7 L113.8,287.9 L152.8,293.4 L191.8,292.4 L230.9,270.4 L269.9,300.0 L308.9,316.8 L348.0,305.7 L387.0,287.6 L426.0,271.3 L465.1,267.1 L504.1,294.5 L543.1,272.1 L582.2,280.0 L621.2,250.7 L660.2,250.7 L699.3,251.3" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="699.3" cy="251.3" r="4" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
+<text x="726" y="225.7" font-size="12.5" font-weight="600" fill="#1B1B18">Fish 103.3</text>
+<text x="726" y="255.3" font-size="12.5" font-weight="600" fill="#1B1B18">Groceries 101.9</text>
+<text x="726" y="289.4" font-size="12.5" font-weight="600" fill="#1B1B18">Vegetables 100.3</text>
+<text x="726" y="323.6" font-size="12.5" font-weight="600" fill="#1B1B18">Fruit 98.7</text>
 <rect x="58" y="442" width="14" height="4" rx="2" fill="#1F5FA6"/>
 <text x="78" y="447" font-size="12" fill="#1B1B18">Vegetables</text>
 <rect x="168" y="442" width="14" height="4" rx="2" fill="#C2410C"/>
