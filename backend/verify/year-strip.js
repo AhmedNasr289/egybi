@@ -58,7 +58,10 @@ const recorder = () => {
     else console.log(`ok   the year strip holds ${c0.rows} sites x 12 months`);
 
     const below = await p.evaluate(() => document.querySelector('[data-year-strip] .hc-table').getBoundingClientRect().top - innerHeight);
-    await p.evaluate(() => { const t = document.querySelector('[data-year-strip] .hc-table'); window.scrollTo(0, t.getBoundingClientRect().top + scrollY - innerHeight + 60); });
+    await p.evaluate(() => { const t = document.querySelector('[data-year-strip] .hc-table'); window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - innerHeight + 60, behavior: 'instant' }); });
+    // 'instant': the site scrolls smoothly (egybi.css), so a plain scrollTo
+    // glided for most of the wait and the table came into view late; run
+    // 43953866021 then read half a sweep as YEAR EMPTY ON SCREEN.
     await p.waitForTimeout(1800);
     const peek = await p.evaluate(() => {
       const tds = [...document.querySelectorAll('[data-year-strip] .hc-table tbody td')];

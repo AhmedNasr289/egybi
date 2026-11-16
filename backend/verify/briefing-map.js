@@ -150,7 +150,9 @@ const { chromium, executablePath, BASE } = require('./env');
     await p.goto(BASE + '/index.html');
     try { await p.waitForSelector('#siteMap svg circle.s', { state: 'attached', timeout: 10000 }); } catch (e) { /* counted below */ }
     const below = await p.evaluate(() => document.getElementById('siteMap').getBoundingClientRect().top - innerHeight);
-    await p.evaluate(() => { const f = document.getElementById('siteMap'); window.scrollTo(0, f.getBoundingClientRect().top + scrollY - innerHeight + 60); });
+    await p.evaluate(() => { const f = document.getElementById('siteMap'); window.scrollTo({ top: f.getBoundingClientRect().top + scrollY - innerHeight + 60, behavior: 'instant' }); });
+    // 'instant': the site scrolls smoothly (egybi.css); a gliding scroll
+    // brings the map into view late and the reading would see half a sweep.
     await p.waitForTimeout(2600);
     const r = await p.evaluate(() => {
       const cs = [...document.querySelectorAll('#siteMap svg circle.s')];
