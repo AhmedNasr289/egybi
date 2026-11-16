@@ -1609,6 +1609,29 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   On the old tree it reports 26 problems; on this one, 0.
 - **Mutation cases 13j**, each proven catching locally: Motion One re-added to Privacy, and AOS re-added to Plan.
 
+## 2026-11-16 — Share a trip by link (Round 4, R4-6)
+- **Why:** a planned trip lived only in one browser. Travellers plan together, and a guide or a friend should be able to send a route. Until now the only ways to pass a plan on were printing it or signing in.
+- **The button:** the planner gains "Share this trip". It opens the phone's share sheet where there is one, and otherwise copies the link and says so.
+- **The link:** the whole trip (dates, name and stops) travels in the link's `#t=` fragment as base64url JSON. Browsers never send the fragment to a server, so sharing stores nothing on EgyBI and adds nothing to its logs. Nothing new is collected, so the privacy page is unchanged.
+- **Opening a link:**
+  - with no saved plan, the shared trip opens directly;
+  - with a saved plan, the page asks first: "Open the shared trip" replaces it, and "Keep my plan" leaves it exactly as it was;
+  - either way the `#t=` is removed from the address bar, so a reload cannot re-apply it;
+  - a link opened in a tab already on the planner is handled too (`hashchange`).
+- **A shared link is untrusted input:**
+  - a link is refused whole, leaving the reader's plan unchanged, if it has a wrong version, more than 30 stops, a stop outside Egypt's bounds, days outside 1–30, a date that is not YYYY-MM-DD, or text that is not valid base64url JSON;
+  - names are capped, and stop names render through the planner's existing escaping;
+  - the largest possible link (30 stops with Arabic names) measured 6.5 KB, under the 8,000-character cap in the reader.
+- **Files:**
+  - `assets/plan.js` (`?v=5`): `encodeTrip`, `decodeTrip`, `initShare`, `takeShared`;
+  - `plan.html`: the button, a status line and the ask-first banner.
+- **New browser check `backend/verify/share-link.js`:**
+  - 40 generated trips (Arabic names, 1–30 stops) must round-trip exactly;
+  - 6 malformed links must be refused, and a valid one accepted;
+  - a link on an empty plan must show its stops and remove the hash;
+  - with a saved plan, the page must ask first, "Keep my plan" must keep the plan byte for byte, and "Open the shared trip" must replace it;
+  - a stop named `<img onerror>` must render as text.
+- **Mutation cases:** the Egypt bounds check removed must give SHARE ACCEPTS BAD LINK, and the ask-first branch removed must give OWN PLAN OVERWRITTEN.
 ## 2026-11-16 — Travellers' notes: the backend, off live (Round 4, R4-2a)
 - **Why:** signing in gave a reader nothing to share. The only community was an anonymous comment box about contributing data. Round 4 (approved by Ahmed on 16 Nov) adds notes travellers write about a visit. This PR is the server half only, and it stays **off live** (`NOTES_LIVE = false`) until the interface PR turns it on.
 - **New `site/api/notes.php`:**
