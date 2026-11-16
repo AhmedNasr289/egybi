@@ -918,6 +918,16 @@ case("save button never shown", "save-place.js",
 # The account page subscribes with no confirmation email, which is sound only
 # because the account's email is verified. Without that check, anyone could
 # create an account under someone else's address and subscribe it.
+# ---- Near me (Round 4, R4-8) -----------------------------------------------
+# Pressing Near me must sort the list nearest first. Drop the sort and the
+# column still appears, which is exactly the failure a glance would miss.
+NEAR = f"node {HERE}/near-me.js"
+case("near me: the list is not sorted by distance", "near-me.js",
+     ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js",
+                  "      out.sort(function (a, b) { return dist.get(a) - dist.get(b); });\n", ""),
+     lambda o: "NEAR ME NOT SORTED" in o, NEAR)
+
 case("unverified account subscribed to the newsletter", "auth-flow.sh",
      ["site/auth/auth.php"],
      lambda: edit("site/auth/auth.php",
