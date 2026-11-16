@@ -22,7 +22,7 @@ const TRIP = { start: '2026-12-10', end: '2026-12-14', name: 'Offline test',
 
 (async () => {
   const b = await chromium.launch({ executablePath });
-  const ctx = await b.newContext();
+  const ctx = await b.newContext({ serviceWorkers: 'allow' });   // this check IS the worker
   // Same-origin only, as every checker here: a third-party host must not be needed.
   await ctx.route('**/*', r => { const u = r.request().url();
     return (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort(); });
