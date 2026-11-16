@@ -389,3 +389,216 @@ Measured 15 November, 18:10–18:45 UTC, on main 863fca2 and on the live site. I
   2. **Labels everywhere:** the six slightly different label sizes, from 0.68 to 0.78 rem, become one 12 px eyebrow style, with even spacing between sections.
   3. **A Papyrus story:** no movement today. After: sections rise into view once, as on the home page, and with JavaScript off or reduced motion everything is simply there. Explore with scripts blocked goes from 106 invisible cards to all of them visible.
 - **PR order:** S1, then S3, then S2 (tokens, then mapping), then S4. Each PR is small, with its own browser check and a mutation-proven test.
+
+## Round 4 — a tour guide in the pocket, a community, effortless sign-in (16 November 2026)
+
+Measured on 16 Nov 2026, around 09:50 UTC, on main `0d769e6` and the live site. Nothing below is built yet. It waits for Ahmed's yes on the direction.
+
+### What was checked first
+- **Live site:**
+  - 55 of 55 pages return 200 with security headers, and a made-up page returns 404;
+  - 133 internal links and assets work, and 4 of 4 blocked folders are blocked;
+  - all 20 data files equal main by blob hash.
+- **Endpoints, signed out, GET only:**
+  - `auth.php?action=me` returns `user: null` with `google.enabled: true`;
+  - `health` returns ok;
+  - `signup` by GET returns 405;
+  - an unknown action returns 404;
+  - `community.php` returns `items: []`, so nothing has been approved yet.
+- **The live sign-in dialog (in-app browser, nothing submitted):**
+  - at 1280 px, "Continue with Google" renders first, then an OR divider, then email and password;
+  - at 375 px, Google's button fits its 312 px box;
+  - the console shows no errors.
+- **CI's sign-up flow** (`auth-flow.sh` on a fresh database, run 43831788693): 76 steps OK, ending with "account flow: every step answered as expected".
+- **Weekly Verify sweep:** due at 03:41 UTC and not started by 09:50. Every scheduled job here starts 6–9 hours late.
+
+### The reported sign-up problem: not reproduced
+- **What was checked:**
+  - every part reachable from here works: the dialog, Google's button, the endpoints, and the full flow in CI;
+  - the email link `https://egybi.com/?verify=<token>` is handled by `assets/auth.js:530-536`;
+  - Ahmed's own live sign-up on 9 Nov worked.
+- **Two failures can only be seen with a real person, so they remain hypotheses:**
+  - **H1. Google's consent screen is in "Testing" mode.** Google then refuses everyone not listed as a test user ("Access blocked: this app's request is invalid", or "has not completed the Google verification process"). Ahmed, a test user, would see it work. Check: Google Cloud console → APIs & Services → OAuth consent screen → Publishing status.
+  - **H2. The verification email lands in spam,** or SMTP is not configured on Hostinger. `auth.php:70-75` then only logs the mail. Check: sign up with a second address and look in its spam folder; or `auth.php?action=health&key=<analytics key>` (Ahmed only) shows the mail settings.
+- **Not a bug, but the real gap:** signing in gives a reader nothing to do in the community. The community is an anonymous, moderated comment box about contributing data (`community.html:10`, `community.php:146-191`), not a place to share travel experiences.
+
+### What a tourist can and cannot do today
+- **Before the trip:**
+  - **Can:**
+    - plan stops with day counts, the monthly climate and straight-line distances (`plan.js:179-227`);
+    - see holidays inside the dates (`trip.js:162-169`);
+    - print the "Papyrus dossier";
+    - save the trip locally or to an account.
+  - **Cannot:**
+    - get a dated day-by-day itinerary;
+    - see travel times;
+    - share a trip by link: `navigator.share` and the clipboard are absent from plan.js and trip.js, and the URL carries one stop at most.
+- **On the day:**
+  - **Cannot use anything time-aware.** `getHours` and `toLocaleTimeString` are absent from `site/assets`. The visit pages give golden light for the 15th of each month, not for today.
+  - **No "near me":** the live `Permissions-Policy` sets `geolocation=()`, which blocks location for every page.
+  - **No offline use:** there is no service worker and no manifest.
+- **At a site:**
+  - **Can:**
+    - see climate by month, light times, and links to fair prices and the planner;
+    - save the place, for the 18 visit pages only.
+  - **Cannot:**
+    - see a map on the visit page;
+    - see opening hours (16 of 901 places carry an OSM `opening_hours` tag, shown with a caution);
+    - see ticket prices (one Giza row in `fair-prices.json`).
+- **Community:**
+  - **Can:** post an anonymous note of 3–1500 characters, which shows only after moderation (`moderate.php`, key-gated).
+  - **Cannot:**
+    - post under an account;
+    - reply;
+    - browse by site;
+    - mark a post helpful;
+    - report one.
+
+### Findings, ranked by how much each hurts a tourist
+**R4-1. Nothing helps on the day itself.** The site is a pre-trip almanac.
+- **Evidence:** above. No time logic, no location, no "today" view.
+- **Fix:** a "Today at this site" card on each visit page, computed in the browser from data the page already carries. It shows:
+  - sunrise, golden light and sunset for today's date, from the same NOAA equations `sun_times.py` uses, ported to JavaScript and checked against the generator's table;
+  - this hour's typical heat, from the monthly normals, labelled as a normal and not a forecast;
+  - the next holiday.
+
+  Opening hours appear only for the 16 places with an OSM tag, with the tag's date and a caution. Crowd levels never appear, because they are not measured.
+- **Prove:**
+  - a unit test pins JavaScript against Python sun times for all 18 sites and 12 dates, to within 1 minute;
+  - a browser check fixes the clock (Playwright `clock`) and asserts the card's times;
+  - nojs.js: without JavaScript, the static month table still shows.
+- **Rollback:** revert.
+
+**R4-2. The community cannot hold travel experiences.**
+- **Evidence:** above.
+- **Fix:** a new "Travellers' notes" space. Notes:
+  - are written by signed-in readers only;
+  - carry up to 3 site tags from the 18 visit sites plus a free place name, a "visited in" month, and 30–2000 characters of text;
+  - show the display name only.
+- **What readers get:**
+  - browse by site and by newest;
+  - mark a note helpful, once per account;
+  - report a note;
+  - each visit page shows its 3 latest notes.
+- **Moderation:**
+  - new accounts' first 2 notes wait for approval, and later notes publish at once;
+  - 3 reports hide a note until reviewed;
+  - Ahmed's `moderate.php` queue gains notes and reports.
+- **Account deletion** deletes the account's notes and helpful marks. Export includes them.
+- **Prove:** auth-flow.sh gains:
+  - write signed out → 401;
+  - write without CSRF → 403;
+  - rate limit → 429;
+  - editing or deleting another user's note → 403;
+  - `<script>` stored as text and escaped on output;
+  - a deleted account leaves 0 rows;
+  - report threshold hides a note;
+  - helpful counted once.
+
+  Each case is proven to fail on a mutation copy.
+- **Rollback:**
+  - revert the code;
+  - the tables are additive and created by `CREATE TABLE IF NOT EXISTS`, so rolling back leaves them unused, and dropping them is a separate, explicit step.
+
+**R4-3. Signing in does not return you to what you were doing.**
+- **Evidence:**
+  - grep `next=|returnTo|return_to` finds nothing;
+  - verification and reset links land on the home page (`auth.php:68`, `166`).
+- **Fix:**
+  - an "after sign-in" intent kept in sessionStorage (`egybi.after`: `compose-note` with the site, `save-trip` or `save-place`), resumed by `auth.js` after any successful sign-in, including the Google one;
+  - verification links carry a safe, same-site `next` path (validated against a list of local paths, never a full URL).
+- **Prove:**
+  - a browser check signs in through CI's test host and lands in the composer;
+  - an open-redirect check: `next=//evil.example` must be refused.
+- **Rollback:** revert.
+
+**R4-4. Google sign-in may be closed to the public (H1).**
+- **Fix:** Ahmed checks the publishing status. If it says "Testing", he publishes the app; basic scopes (openid, email, profile) need no Google review.
+- **Prove:** a friend's Google account signs in live.
+- **Rollback:** none needed.
+
+**R4-5. Motion on the generated story and visit pages (S4 part 3).**
+- **Fix:** the generators mark section-level blocks with `data-aos="fade-up"`, using the one reveal system from #124.
+- **Prove:** nojs.js and reduced.js cover the new pages, because the page list is every page carrying `data-aos`.
+- **Rollback:** revert.
+
+**R4-6. No share link for a trip.**
+- **Fix:**
+  - the planner encodes stops, days and dates in the URL fragment, compressed and with no personal data;
+  - a Share button uses `navigator.share` on phones and copy-to-clipboard elsewhere.
+- **Prove:** a unit test round-trips 30 random trips.
+- **Rollback:** revert.
+
+**R4-7. No offline use.**
+- **Fix:** a small service worker that caches the planner, the 18 visit pages, the data files and their assets after the first visit (cache-first for assets, network-first for HTML), plus a manifest so phones can "Add to Home screen".
+- **Prove:** a browser check goes offline after one visit and still opens visit/giza.html.
+- **Rollback:** a "kill switch" service worker that unregisters itself, kept ready in the repo.
+
+**R4-8. "Near me" needs geolocation, which the site blocks.**
+- **Fix:**
+  - change `Permissions-Policy` to `geolocation=(self)` in `.htaccess`, which is a live security setting and needs Ahmed's yes;
+  - a "Near me" button on places.html sorts the 901 places by distance;
+  - the position stays in the browser, is never sent and is never stored.
+- **Prove:**
+  - a browser check grants a fixed location and asserts the nearest place;
+  - the privacy page says it.
+- **Rollback:** revert the header.
+
+### Workflows
+1. **Tourist before the trip:**
+   1. plan.html: pick dates and add stops.
+   2. The dossier lists climate, holidays and light.
+   3. Share: the URL fragment goes to `navigator.share` (R4-6).
+   4. Optional: Save to my account (`auth.php trips-save`; table `trips`, unchanged).
+2. **On the day:**
+   1. Open visit/giza.html, from the cache if offline (R4-7).
+   2. The "Today" card computes today's light and heat in the browser (R4-1). No endpoint and no database.
+3. **At a site:**
+   1. visit/X.html shows today's card, the 3 latest notes for X (`community.php?site=X`, read-only), and "Share your experience".
+4. **Sign up with Google:**
+   1. Any "Share your experience" or Save button opens the dialog.
+   2. "Continue with Google" first. Google's button posts its token to `google.php?action=signin` with a nonce from `google.php?action=nonce`.
+   3. A session starts, and the `egybi.after` intent resumes (R4-3). Tables `users` and `auth_tokens` are unchanged.
+5. **Write a note:**
+   1. The composer posts to `community.php?action=note-create` with CSRF and a session.
+   2. Server checks: rate limit (5 a day per account, 20 per IP), length, tags against the list of 18.
+   3. Stored in a new `notes` table, published at once or queued.
+   4. Output is escaped as text on render (`textContent`, never `innerHTML`).
+6. **Report a note:**
+   1. "Report" posts `community.php?action=note-report` (session, CSRF, one per account) into a new `note_reports` table.
+   2. At 3 reports, the note's status becomes `hidden`.
+7. **Moderate:**
+   1. `moderate.php?key=…` lists queued and hidden notes.
+   2. Approve, hide or delete. Each action is logged in the `note_audit` table.
+8. **Delete account:**
+   1. `auth.php delete-account` runs inside one transaction: delete notes, helpful marks and reports by this user, then the user.
+   2. `export` includes the notes.
+
+### Database changes (additive, MySQL and the CI SQLite both)
+- `notes`:
+  - columns: id, user_id, sites (CSV of up to 3 keys), place_text, visited_month, body, status (`queued`/`published`/`hidden`), helpful_count, created_at, updated_at;
+  - indexes: (status, created_at) and (user_id).
+- `note_helpful`: (note_id, user_id) as the primary key.
+- `note_reports`: (note_id, user_id) as the primary key, plus reason and created_at.
+- `note_audit`: id, note_id, action, at.
+- **Migration:** `ensure_notes_schema()`, using `CREATE TABLE IF NOT EXISTS` on first use, the same pattern as `ensure_google_schema`.
+- **Rollback:** the tables are left unused, and an explicit `DROP` script is kept in `backend/sql/` and is never run without Ahmed's yes.
+
+### PR sequence
+1. R4-3, return-to after sign-in (needs nothing from Ahmed).
+2. R4-2a, notes backend, auth-flow checks and moderation, behind a feature flag that keeps it off live until 3.
+3. R4-2b, the notes interface on community.html and visit pages, with the flag on.
+4. R4-1, the Today card.
+5. R4-5, motion on the story and visit pages.
+6. R4-6, share link.
+7. R4-7, offline.
+8. R4-8, Near me, which needs the header yes.
+
+Each PR gets a Changelog entry, `?v=` bumps, regenerated pages, the local CI jobs, a green Verify (browser) run, screenshots reviewed at 390 and 1280 px, and mutation-proven checks.
+
+### Waiting for Ahmed
+- **Yes on the direction above,** and which of R4-6, R4-7 and R4-8 to include.
+- **H1:** check the OAuth consent screen's publishing status.
+- **H2:** test a second-address sign-up and look in spam.
+- **R4-8:** a yes to change `Permissions-Policy` to `geolocation=(self)`.
+- **Keep the repo public until this round is done, or go private now?** No CI runs privately until 1 December. Recommended: stay public until the round is done (about 8 PRs at about 45 minutes of CI each), then go private. The code has been public since the start and holds no secrets (scan-gated), while going private now freezes every PR above for two weeks.

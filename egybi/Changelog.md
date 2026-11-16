@@ -1645,3 +1645,12 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   13j and 13l were each proven catching locally; 13e and 13k need the browser and run in CI.
 - **Plan:** the S4 status now records parts 2 and 4 as built. Part 3, generators marking story and visit sections, remains.
+
+## 2026-11-16 — Round 4 plan: tour guide, community, sign-in (plan only)
+- **Why:** Ahmed asked for an online tour guide, a community for sharing experiences, effortless Google sign-in and better motion, and reported that sign-up needs fixing. This entry adds the measured study and plan only; nothing in the site changes.
+- **Added:** `Improvement Plan 2026-11.md`, Round 4, which covers:
+  - the checks run today;
+  - the sign-up report: not reproduced from here, with two hypotheses Ahmed can check (Google consent screen in Testing mode, and the verification email landing in spam);
+  - what a tourist can and cannot do, with file and line evidence;
+  - eight ranked findings, each with Fix, Prove and Rollback;
+  - eight workflows, the additive database tables and the PR sequence.
