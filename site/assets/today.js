@@ -81,6 +81,87 @@
     return (h ? h + ' h ' : '') + mm + ' min';
   }
 
+  /* ---- The sun path (Round 5, 2026-11-16) ------------------------------------
+     WHY IT MOVES. Four times in a grid say when; this says where the reader is
+     in the day. A tourist sees at a glance how much daylight is left and how
+     far away the golden window is. It is a diagram of the day (left = sunrise,
+     right = sunset, gold = golden light), not the sun's true height.
+     MOTION. On first view the arc draws itself and the sun glides from sunrise
+     to now, once; after that it only moves with the clock. Under reduced motion
+     everything is placed at once. Only stroke-dashoffset and the sun's position
+     change, inside a box whose size is fixed by its viewBox: no layout shift. */
+  var SVG = 'http://www.w3.org/2000/svg';
+  var reduce = !!(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var X0 = 24, X1 = 296, HY = 108, TOP = 22;
+  function arcPoint(u) { return [X0 + (X1 - X0) * u, HY - (HY - TOP) * Math.sin(Math.PI * u)]; }
+  function arcPath(u0, u1) {
+    var d = '', steps = Math.max(2, Math.round((u1 - u0) * 48));
+    for (var i = 0; i <= steps; i++) {
+      var q = arcPoint(u0 + (u1 - u0) * i / steps);
+      d += (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1);
+    }
+    return d;
+  }
+  function sv(tag, attrs, cls) {
+    var e = document.createElementNS(SVG, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (cls) e.setAttribute('class', cls);
+    return e;
+  }
+  /* Where the sun sits: u is the share of daylight gone, or null at night. */
+  function sunAt(now, L) {
+    if (now < L.sunrise) return { u: null, side: 0 };
+    if (now > L.sunset) return { u: null, side: 1 };
+    return { u: (now - L.sunrise) / (L.sunset - L.sunrise) };
+  }
+  var glided = false;
+  function sunPath(now, L) {
+    var span = L.sunset - L.sunrise, gm = (L.goldenMorningEnd - L.sunrise) / span, ge = (L.goldenEveningStart - L.sunrise) / span;
+    var at = sunAt(now, L);
+    var label = at.u == null ? (at.side ? 'The sun has set.' : 'The sun has not risen yet.')
+      : 'The sun is ' + Math.round(at.u * 100) + '% of the way from sunrise to sunset.';
+    var svg = sv('svg', { viewBox: '0 0 320 128', role: 'img', 'aria-label': "Today's sun path. " + label + ' Gold marks golden light.' }, 'today-arc');
+    svg.appendChild(sv('path', { d: arcPath(0, 1), pathLength: '1' }, 'arc-day'));
+    // The part of today already gone, drawn solid and growing with the sun.
+    var past = sv('path', { d: arcPath(0, 1), pathLength: '1' }, 'arc-past');
+    svg.appendChild(past);
+    svg.appendChild(sv('path', { d: arcPath(0, gm), pathLength: '1' }, 'arc-gold'));
+    svg.appendChild(sv('path', { d: arcPath(ge, 1), pathLength: '1' }, 'arc-gold'));
+    var sun = sv('g', {}, 'arc-sun');
+    sun.appendChild(sv('circle', { r: '13' }, 'arc-glow'));
+    sun.appendChild(sv('circle', { r: '7' }, 'arc-disc'));
+    svg.appendChild(sun);
+    // The ground is drawn after the sun, so a sun below the horizon is half hidden.
+    svg.appendChild(sv('rect', { x: '0', y: String(HY), width: '320', height: '20' }, 'arc-ground'));
+    svg.appendChild(sv('line', { x1: '8', y1: String(HY), x2: '312', y2: String(HY) }, 'arc-horizon'));
+    function place(u) {
+      var q = u == null ? [at.side ? X1 : X0, HY + 1] : arcPoint(u);
+      var gone = u == null ? (at.side ? 1 : 0) : u;
+      past.style.strokeDasharray = gone.toFixed(4) + ' 1';
+      sun.setAttribute('transform', 'translate(' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) + ')');
+      sun.setAttribute('data-u', u == null ? 'night' : u.toFixed(4));
+    }
+    if (glided || reduce) { place(at.u); svg.setAttribute('class', 'today-arc is-drawn'); return svg; }
+    glided = true;
+    if (at.u == null) {   // night: the arc still draws in once; the sun waits below the horizon
+      place(null);
+      root.requestAnimationFrame(function () { root.requestAnimationFrame(function () { svg.setAttribute('class', 'today-arc is-drawn'); }); });
+      return svg;
+    }
+    place(0);
+    // Frame-counted, not clock-timed: about 1.4 s at 60 fps, and a timer
+    // guarantees the final position even where frames are throttled.
+    var f = 0, FRAMES = 84, target = at.u;
+    function step() {
+      f++; var k = Math.min(1, f / FRAMES), e = 1 - Math.pow(1 - k, 3);
+      place(target * e);
+      if (k < 1) root.requestAnimationFrame(step);
+    }
+    root.requestAnimationFrame(function () { svg.setAttribute('class', 'today-arc is-drawn'); root.requestAnimationFrame(step); });
+    root.setTimeout(function () { f = FRAMES; place(target); }, 2400);
+    return svg;
+  }
+
   var body = card.querySelector('.today-body') || card;
   function render() {
     var now = Date.now(), t = egyptDate(now);
@@ -97,6 +178,7 @@
       grid.appendChild(cell);
     });
     body.appendChild(grid);
+    body.appendChild(sunPath(now, L));
     var status;
     if (now < L.sunrise) status = 'Before sunrise. The sun rises in ' + span(L.sunrise - now) + '.';
     else if (now < L.goldenMorningEnd) status = 'Golden light now, for another ' + span(L.goldenMorningEnd - now) + '.';
