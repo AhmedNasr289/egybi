@@ -1609,6 +1609,53 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   On the old tree it reports 26 problems; on this one, 0.
 - **Mutation cases 13j**, each proven catching locally: Motion One re-added to Privacy, and AOS re-added to Plan.
 
+## 2026-11-16 — One reveal system; AOS retired (study S4, parts 2 and 4)
+- **Why:** two animation systems did the same job.
+  - AOS (`aos.css` + `aos.js`, 40.7 KB) revealed sections on 12 pages, with 324 `fade-up` and 9 `zoom-in` blocks.
+  - `motion.js`, already on almost every page, had its own IntersectionObserver reveal.
+  - One system means one motion everywhere, one place to keep the S1 guarantees, and 40.7 KB less on 12 pages.
+- **`motion.js` (`?v=4`)** now reveals every `[data-aos]` block as it enters the view, with one motion for the whole site:
+  - a 12 px rise (the 9 `zoom-in` blocks scale from 0.96) and a fade over 0.6 s, once;
+  - existing `data-aos-delay` values are kept, capped at 300 ms;
+  - blocks a renderer adds later, such as the blog's cards, are watched too;
+  - it sets `html.mo-ready` once it has started.
+- **`egybi.css` (`?v=48`):** a block is hidden only while `<html>` has `.js` and the block lacks `.is-in`. It is shown at once:
+  - under reduced motion, where the existing rules win and every transition is off;
+  - in print;
+  - without JavaScript.
+
+  Only opacity and transform move, so nothing shifts the layout.
+- **Pages:**
+  - `aos.css` and `aos.js` leave the 12 pages that loaded them;
+  - S1's head flag now waits for `mo-ready` instead of AOS's `.aos-init`;
+  - `stories.html` gains `motion.js`, which it lacked.
+
+  The AOS files stay in `vendor/`, unused.
+- **`backend/verify/nojs.js`** now has three passes on every page with `[data-aos]`:
+  1. no JavaScript;
+  2. `motion.js` blocked, past the 4 s fallback;
+  3. new: a normal visit scrolled top to bottom, where any block still transparent is STUCK HIDDEN.
+- **`backend/verify/motion-weight.py`** now fails on:
+  - RETIRED LIBRARY: Motion One or either half of AOS loaded again;
+  - FLAG WITHOUT REVEALER: a page sets the `.js` flag but does not load `motion.js`, which would mean 4 s of blank sections.
+- **`mutate.py`:**
+  - 13e now blocks `motion.js`, and the second 13j case expects RETIRED LIBRARY;
+  - new 13k: `motion.js` starts but never reveals, so nojs.js must report STUCK HIDDEN;
+  - new 13l: `about.html` loses `motion.js`, so motion-weight must report FLAG WITHOUT REVEALER.
+
+  13j and 13l were each proven catching locally; 13e and 13k need the browser and run in CI.
+- **Plan:** the S4 status now records parts 2 and 4 as built. Part 3, generators marking story and visit sections, remains.
+- **First CI run (43838169768):** every checker passed, but three mutation cases could no longer fail, because each had been written against AOS.
+  - **13, reduced motion:** motion.js now reveals everything at once under reduced motion, which masked a missing CSS rule. reduced.js gains a probe with motion.js blocked, so the CSS guarantee is measured on its own.
+  - **13d, no JavaScript:** two guards now keep blocks visible (the html.js scope and S1's override), so the case removes both.
+  - **27, a tap-target false alarm during AOS's animation:** retired with the measurement, since the new reveal moves a block and its buttons together. The checker keeps its settle step.
+- **Fix after run 43857746528:** 11 of 174 blocks on explore.html stayed hidden after a scroll; the run before saw 5, with the same code.
+  - **Cause:** a block revealed only when the observer saw it cross into view. On a heavy page, frames drop during a fast scroll, so a block that went from below the screen to above it between two observed frames was never seen. The three film counters stuck at "0" were the same defect.
+  - **Fix:** `motion.js` now sweeps once per frame while anything is pending, revealing every block whose top is above the bottom of the screen. The sweep removes its listener when nothing is left.
+  - **Check:** `nojs.js` gains a fling step, one jump to the bottom, which fails STUCK AFTER A FLING every time the sweep is missing, not only when frames happen to drop.
+  - **Mutation case:** the sweep removed must give STUCK AFTER A FLING.
+- **Fix after run 43865452380:** the reveal fix passed on all 15 pages (Explore: 106 of 106 blocks, after scrolling and after a fling). Two mutation cases could not run because they looked for the exact tag `motion.js?v=4`, which the bump to `?v=5` removed. `mutate.py` gains `asset_tag()`, which reads a page's current tag for a versioned asset. Those two cases, and the `egybi.css?v=48` case, now use it, so a version bump can no longer silently disarm a mutation case.
+- **CI time limit:** `browser-checks` moves from 50 to 80 minutes. Round 4's stacked PRs now run five more browser checkers and 94 mutation cases. #131 finished in 48m26s, while #132, this PR and #128 were cancelled at 50m29s, 55m00s and 55m01s; #128's logs were destroyed by the cancel. Actions minutes are free while the repository is public. Splitting `mutate.py` into its own job, as the workflow's 4 November note asks, is planned as Round 5 M7.
 ## 2026-11-16 — Near me on the places page (Round 4, R4-8)
 - **Why:** a tourist standing in Luxor or Aswan wants the closest sights, museums and airports first. The places page could only filter by kind, name and governorate.
 - **The button:** "Near me" asks the browser for the reader's position, only when pressed, then:
