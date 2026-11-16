@@ -315,15 +315,15 @@ case("AOS content hidden without JavaScript", "nojs.js", ["site/assets/egybi.css
      lambda o: "HIDDEN WITHOUT JS" in o,
      NOJS1.format(p="explore.html"))
 
-# ---- 13e. AOS fails to load: no fallback --------------------------------------
-# With scripts on but AOS's script blocked, the page head's 4 s fallback must
-# drop .js so egybi.css shows everything. Removing the fallback must be caught.
-case("AOS content hidden when AOS fails to load", "nojs.js", ["site/explore.html"],
+# ---- 13e. the reveal script fails to load: no fallback -----------------------
+# With scripts on but motion.js blocked, the page head's 4 s fallback must drop
+# .js so egybi.css shows everything. Removing the fallback must be caught.
+case("content hidden when the reveal script fails to load", "nojs.js", ["site/explore.html"],
      lambda: edit("site/explore.html",
-                  'setTimeout(function(){if(!document.querySelector(".aos-init"))'
+                  'setTimeout(function(){if(!document.documentElement.classList.contains("mo-ready"))'
                   'document.documentElement.classList.remove("js")},4000)',
                   "void 0"),
-     lambda o: "HIDDEN WHEN AOS FAILS" in o,
+     lambda o: "HIDDEN WHEN THE REVEAL SCRIPT FAILS" in o,
      NOJS1.format(p="explore.html"))
 
 # ---- 13f. visit tables: phone layout rule switched off --------------------
@@ -367,13 +367,30 @@ case("type scale step drifts from typescale.py", "type-scale.py", ["site/assets/
 # (5 pages). Putting either back must be reported.
 PY_MW = f'"{sys.executable}" {HERE}/motion-weight.py'
 case("retired Motion One library loaded again", "motion-weight.py", ["site/privacy.html"],
-     lambda: edit("site/privacy.html", '<script src="assets/motion.js?v=3"></script>',
-                  '<script src="assets/vendor/motion.min.js"></script>\n<script src="assets/motion.js?v=3"></script>'),
+     lambda: edit("site/privacy.html", '<script src="assets/motion.js?v=4"></script>',
+                  '<script src="assets/vendor/motion.min.js"></script>\n<script src="assets/motion.js?v=4"></script>'),
      lambda o: "RETIRED LIBRARY" in o and "privacy.html" in o, PY_MW)
-case("AOS loaded on a page that uses none of it", "motion-weight.py", ["site/plan.html"],
-     lambda: edit("site/plan.html", '<link href="assets/egybi.css?v=47" rel="stylesheet">',
-                  '<link href="assets/egybi.css?v=47" rel="stylesheet">\n<link href="assets/vendor/aos.css" rel="stylesheet">'),
-     lambda o: "UNUSED AOS" in o and "plan.html" in o, PY_MW)
+case("retired AOS stylesheet loaded again", "motion-weight.py", ["site/plan.html"],
+     lambda: edit("site/plan.html", '<link href="assets/egybi.css?v=48" rel="stylesheet">',
+                  '<link href="assets/egybi.css?v=48" rel="stylesheet">\n<link href="assets/vendor/aos.css" rel="stylesheet">'),
+     lambda o: "RETIRED LIBRARY" in o and "aos.css" in o and "plan.html" in o, PY_MW)
+
+# ---- 13k. the one reveal system never reveals -----------------------------
+# S4 part 2: motion.js adds .is-in as each [data-aos] block enters the view.
+# If it stops doing so while still marking itself started, the blocks stay
+# hidden for good, which only the scroll-through pass of nojs.js can see.
+case("reveal script starts but never reveals", "nojs.js", ["site/assets/motion.js"],
+     lambda: edit("site/assets/motion.js", "function show(el) { el.classList.add('is-in'); }",
+                  "function show(el) { }"),
+     lambda o: "STUCK HIDDEN" in o,
+     NOJS1.format(p="explore.html"))
+
+# ---- 13l. a page sets the flag but loses its reveal script ------------------
+# Without motion.js, the .js flag hides every [data-aos] block until the 4 s
+# fallback: four seconds of blank sections on every visit.
+case("flag set but the reveal script not loaded", "motion-weight.py", ["site/about.html"],
+     lambda: edit("site/about.html", '<script src="assets/motion.js?v=4"></script>', ""),
+     lambda o: "FLAG WITHOUT REVEALER" in o and "about.html" in o, PY_MW)
 
 # ---- 13c. CC BY 4.0: geometry rendered with the credit stripped ------------
 # index.html carries no map, and draws geoBoundaries-derived geometry on the

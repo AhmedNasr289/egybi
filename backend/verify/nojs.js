@@ -1,16 +1,20 @@
 /* "Content must not depend on a script that may never run."
 
-   AOS's own CSS hides every [data-aos] block at opacity 0, and only its script
-   reveals it. Measured 2026-11-15 on the live site with scripts blocked:
-   Explore hid 106 blocks (2,557 words), About 33 (837), Home 32 (764).
+   [data-aos] blocks are hidden by egybi.css only while <html> has .js, and only
+   until motion.js marks them .is-in as they enter the view (study S4; AOS
+   used to do this and is no longer loaded). Measured 2026-11-15 with scripts
+   blocked, before the S1 guard: Explore hid 106 blocks (2,557 words), About 33
+   (837), Home 32 (764).
 
-   egybi.css now shows [data-aos] unless <html> has .js. The page head adds
-   .js while scripts run, and removes it if AOS has not started within 4 s.
-   This checks both halves, on every page whose HTML carries [data-aos]:
+   The page head adds .js while scripts run, and removes it if motion.js has not
+   started (html.mo-ready) within 4 s. This checks three things, on every page
+   whose HTML carries [data-aos]:
 
      1. JavaScript disabled: no [data-aos] element may be transparent.
-     2. JavaScript on, AOS's script blocked (a CDN or script failure): after
-        the 4 s fallback, no [data-aos] element may be transparent.
+     2. JavaScript on, motion.js blocked (a script failure): after the 4 s
+        fallback, no [data-aos] element may be transparent.
+     3. JavaScript on and working, the page scrolled top to bottom: every
+        [data-aos] element must have been revealed (none STUCK HIDDEN).
 
    Exits 1 on any hidden block, and also when it found too few blocks to mean
    anything (a check that inspected nothing must not pass). */
@@ -24,6 +28,7 @@ const ALL = fs.readdirSync(SITE).filter(f => f.endsWith('.html') &&
 // ONLY lets the mutation harness drive one page, through the same code path.
 const PAGES = process.env.ONLY ? process.env.ONLY.split(',') : ALL;
 const MIN_BLOCKS = process.env.ONLY ? 5 : 100;
+const REVEALER = 'assets/motion.js';
 
 (async () => {
   const b = await chromium.launch({ executablePath });
@@ -48,17 +53,34 @@ const MIN_BLOCKS = process.env.ONLY ? 5 : 100;
     seen += a.total;
     if (a.hidden) { fails++; console.log(`HIDDEN WITHOUT JS  ${page}: ${a.hidden} of ${a.total} [data-aos] blocks transparent`); }
 
-    // 2. JavaScript on, AOS blocked
+    // 2. JavaScript on, the revealing script blocked
     const on = await b.newContext({ viewport: { width: 1280, height: 900 } });
     const p2 = await on.newPage();
-    await p2.route('**/*', r => r.request().url().includes('vendor/aos.js') ? r.abort() : local(r));
+    await p2.route('**/*', r => r.request().url().includes(REVEALER) ? r.abort() : local(r));
     await p2.goto(`${BASE}/${page}`, { waitUntil: 'domcontentloaded' });
     await p2.waitForTimeout(4800);   // past the 4 s fallback in the page head
     const c = await hidden(p2);
     await on.close();
-    if (c.hidden) { fails++; console.log(`HIDDEN WHEN AOS FAILS  ${page}: ${c.hidden} of ${c.total} [data-aos] blocks transparent`); }
+    if (c.hidden) { fails++; console.log(`HIDDEN WHEN THE REVEAL SCRIPT FAILS  ${page}: ${c.hidden} of ${c.total} [data-aos] blocks transparent`); }
 
-    if (!a.hidden && !c.hidden) console.log(`ok    ${page}: ${a.total} [data-aos] blocks visible without JS and without AOS`);
+    // 3. JavaScript on and working: scroll through, then nothing may stay hidden
+    const ok = await b.newContext({ viewport: { width: 1280, height: 900 } });
+    const p3 = await ok.newPage();
+    await p3.route('**/*', local);
+    await p3.goto(`${BASE}/${page}`, { waitUntil: 'domcontentloaded' });
+    await p3.waitForTimeout(600);
+    await p3.evaluate(async () => {
+      for (let y = 0; y <= document.body.scrollHeight; y += 500) {
+        window.scrollTo(0, y); await new Promise(r => setTimeout(r, 90));
+      }
+    });
+    await p3.waitForTimeout(1100);   // 0.6 s transition plus at most 0.3 s delay
+    const d = await hidden(p3);
+    const ready = await p3.evaluate(() => document.documentElement.classList.contains('mo-ready'));
+    await ok.close();
+    if (d.hidden) { fails++; console.log(`STUCK HIDDEN  ${page}: ${d.hidden} of ${d.total} [data-aos] blocks never revealed after scrolling (mo-ready=${ready})`); }
+
+    if (!a.hidden && !c.hidden && !d.hidden) console.log(`ok    ${page}: ${a.total} [data-aos] blocks visible without JS, without the reveal script, and after scrolling`);
   }
   await b.close();
 

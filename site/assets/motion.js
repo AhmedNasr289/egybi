@@ -11,7 +11,7 @@
      [data-mo]            reveal on scroll (fade + gentle rise)
      [data-mo-stagger]    a container whose direct children reveal in sequence
      [data-parallax]      drifts slightly slower than the scroll
-   AOS-driven [data-aos] reveals are left untouched; this only adds. */
+     [data-aos]           the site-wide section reveal (study S4: AOS retired) */
 (function () {
   var M = window.Motion || null;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -95,6 +95,41 @@
     }
   })();
 
+  // ---- 2b. The one reveal system for [data-aos] (study S4 part 2) -----------
+  //   egybi.css hides a [data-aos] block only while <html> has .js and the
+  //   block lacks .is-in. This adds .is-in as each block enters the view, and
+  //   sets html.mo-ready so the page head's 4 s fallback knows it started.
+  //   Blocks a renderer adds later (the blog's cards) are watched too.
+  (function aosReveal() {
+    var root = document.documentElement;
+    function show(el) { el.classList.add('is-in'); }
+    var io = null;
+    if (!reduce && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          var d = parseInt(e.target.getAttribute('data-aos-delay'), 10) || 0;
+          if (d) e.target.style.transitionDelay = Math.min(d, 300) + 'ms';
+          show(e.target);
+          io.unobserve(e.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+    }
+    function take(el) { if (io) io.observe(el); else show(el); }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-aos]'), take);
+    if ('MutationObserver' in window) {
+      new MutationObserver(function (ms) {
+        ms.forEach(function (m) {
+          Array.prototype.forEach.call(m.addedNodes, function (n) {
+            if (n.nodeType !== 1) return;
+            if (n.hasAttribute('data-aos')) take(n);
+            Array.prototype.forEach.call(n.querySelectorAll('[data-aos]'), take);
+          });
+        });
+      }).observe(document.body, { childList: true, subtree: true });
+    }
+    root.classList.add('mo-ready');
+  })();
   if (reduce) return; // everything below is pure motion — skip it entirely
 
   // ---- 3. Parallax drift for [data-parallax] -------------------------------

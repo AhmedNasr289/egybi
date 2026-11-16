@@ -346,7 +346,11 @@ Measured 15 November, 18:10–18:45 UTC, on main 863fca2 and on the live site. I
   - **Also measured:**
     - `stocks.html` carries 31 `data-aos` marks but loads no AOS, so they are inert; nothing is hidden;
     - `vendor/tsparticles.bundle.min.js` (170 KB) is loaded by no page, so the home page's `#hero-particles` is always empty. The file is kept; it costs a reader nothing.
-  - **Parts 2–4** (one reveal system, generators marking sections, retiring AOS) remain.
+  - **Parts 2 and 4 are built (PR stacked on part 1):** one reveal system, and AOS retired.
+    - `motion.js` reveals every `[data-aos]` block with the same motion: a 12 px rise and fade over 0.6 s, once.
+    - AOS (40.7 KB) is no longer loaded on any page.
+    - `nojs.js` adds a scroll-through pass that fails on any block STUCK HIDDEN.
+  - **Part 3 remains:** generators marking story and visit sections.
 
 ### S5. Small findings, no change planned now
 - **Clipped extra width:** on prices, the currency story and visit pages the page body measures 455–491 px at 390 px. No element is wider than the screen, and `html, body { overflow-x: clip }` stops any sideways scroll. That is why those CI screenshots are wider than 390. Look again only if a phone shows sideways wobble.

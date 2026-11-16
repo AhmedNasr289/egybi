@@ -1608,3 +1608,40 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
   On the old tree it reports 26 problems; on this one, 0.
 - **Mutation cases 13j**, each proven catching locally: Motion One re-added to Privacy, and AOS re-added to Plan.
+
+## 2026-11-16 — One reveal system; AOS retired (study S4, parts 2 and 4)
+- **Why:** two animation systems did the same job.
+  - AOS (`aos.css` + `aos.js`, 40.7 KB) revealed sections on 12 pages, with 324 `fade-up` and 9 `zoom-in` blocks.
+  - `motion.js`, already on almost every page, had its own IntersectionObserver reveal.
+  - One system means one motion everywhere, one place to keep the S1 guarantees, and 40.7 KB less on 12 pages.
+- **`motion.js` (`?v=4`)** now reveals every `[data-aos]` block as it enters the view, with one motion for the whole site:
+  - a 12 px rise (the 9 `zoom-in` blocks scale from 0.96) and a fade over 0.6 s, once;
+  - existing `data-aos-delay` values are kept, capped at 300 ms;
+  - blocks a renderer adds later, such as the blog's cards, are watched too;
+  - it sets `html.mo-ready` once it has started.
+- **`egybi.css` (`?v=48`):** a block is hidden only while `<html>` has `.js` and the block lacks `.is-in`. It is shown at once:
+  - under reduced motion, where the existing rules win and every transition is off;
+  - in print;
+  - without JavaScript.
+
+  Only opacity and transform move, so nothing shifts the layout.
+- **Pages:**
+  - `aos.css` and `aos.js` leave the 12 pages that loaded them;
+  - S1's head flag now waits for `mo-ready` instead of AOS's `.aos-init`;
+  - `stories.html` gains `motion.js`, which it lacked.
+
+  The AOS files stay in `vendor/`, unused.
+- **`backend/verify/nojs.js`** now has three passes on every page with `[data-aos]`:
+  1. no JavaScript;
+  2. `motion.js` blocked, past the 4 s fallback;
+  3. new: a normal visit scrolled top to bottom, where any block still transparent is STUCK HIDDEN.
+- **`backend/verify/motion-weight.py`** now fails on:
+  - RETIRED LIBRARY: Motion One or either half of AOS loaded again;
+  - FLAG WITHOUT REVEALER: a page sets the `.js` flag but does not load `motion.js`, which would mean 4 s of blank sections.
+- **`mutate.py`:**
+  - 13e now blocks `motion.js`, and the second 13j case expects RETIRED LIBRARY;
+  - new 13k: `motion.js` starts but never reveals, so nojs.js must report STUCK HIDDEN;
+  - new 13l: `about.html` loses `motion.js`, so motion-weight must report FLAG WITHOUT REVEALER.
+
+  13j and 13l were each proven catching locally; 13e and 13k need the browser and run in CI.
+- **Plan:** the S4 status now records parts 2 and 4 as built. Part 3, generators marking story and visit sections, remains.
