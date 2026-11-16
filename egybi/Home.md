@@ -20,6 +20,8 @@ The knowledge base and plan for **EgyBI** — a free **encyclopaedia of Egypt to
 - [[Improvement Roadmap]] — concrete, prioritized next actions (curriculum, architecture, brand, pricing, GTM, timeline)
 - [[Magical Roadmap]] — the product-experience plan (auto-grading, Python/pandas sandbox, gamification, AI tutor)
 - [[Changelog]] — dated log of everything built so far
+- [[Trilingual Plan — English, Arabic, Russian]] — **(2026-11-16)** the approved plan for Arabic and Russian twins of every indexed page: structure, toggle, measured header widths, fonts, digits, five stages and the native review
+- [[Motion — What Moves and Why]] — **(2026-11-16)** an honest inventory of every animation, where it is and when it plays, the proposals and why each was built, dropped or deferred
 
 ## 🎯 Strategy
 - [[Competitive Landscape]] — sourced research on HackerRank/LeetCode/SQLZoo/DataCamp and the real gap EgyBI fills
@@ -52,6 +54,7 @@ The knowledge base and plan for **EgyBI** — a free **encyclopaedia of Egypt to
 - [[Map Toolkit — Decisions and Handover]] — what was acted on from the map/dataviz toolkit document, what was declined and why (ECharts measured at three times its stated weight; the capitals timeline the data cannot carry), and the traps confirmed against the repo
 - [[Automation & CI Pipelines]] — every automated job: the 11 GitHub Actions, their schedules & guardrails, and the monthly send-reminder
 - [[Product Format & Architecture]] — in-browser sandbox strategy, execution security, gamification mechanics
+- [[Lessons — Checks That Measured the Wrong Thing]] — **(2026-11-16)** every check that reported something false, why, and the rule that stops it recurring: service workers around request blocking, finished animations, smooth scrolling, verdict order, heredoc backslashes, CI log handling
 - [[Security Posture & Audit Log]] — the 2026-07-20 review: what was fixed, what was already right, and which reported findings were wrong
 - [[Traffic Baseline & Analytics]] — the pre-launch traffic baseline, how to read the dashboards, and which figures are honest
 
