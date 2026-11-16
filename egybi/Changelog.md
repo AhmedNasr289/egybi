@@ -1640,3 +1640,28 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **AVIF** was measured at 33,583 bytes, only 9% smaller than WebP, and has less support on older iPhones. WebP works in every current browser, so WebP was chosen.
   - **The video (683 KB MP4)** stays as it is: no video encoder is installed on this machine, and adding one is not free of risk here.
 - **Rollback:** point `poster` back to `hero-lighthouse.jpg?v=3`.
+## 2026-11-16 — The sun path: today's sun drawn across each visit page (Round 5)
+- **Why:** the Today card gave four times, and this shows where the reader is in the day. A tourist sees at a glance how much daylight is left and how far away the golden window is, without reading the clock.
+- **What:** an arc from sunrise (left) to sunset (right):
+  - the golden-light stretches in gold;
+  - the part of today already gone drawn solid blue;
+  - the sun at its place now;
+  - before sunrise and after sunset, the sun waits half below the horizon.
+
+  It is a diagram of the day, not the sun's true height, and the arc's spoken label says how far through the day the sun is.
+- **Motion, and why:**
+  - on first view the arc draws itself in (`stroke-dashoffset`, 1.2 s) and the sun glides from sunrise to now (about 1.4 s), once, so the eye follows the day from its start to this moment;
+  - after that, the sun moves only with the clock, once a minute;
+  - under reduced motion everything is placed at once and nothing transitions;
+  - only the dash offset and the sun's position change, inside a box of fixed ratio, so nothing shifts;
+  - the glide counts frames rather than reading the clock, and a timer guarantees the final position.
+- **Built with:** inline SVG made by `today.js`, with no library and no new host.
+- **Files:**
+  - `assets/today.js` and `today.css` (`?v=2`);
+  - `pages/visit.py` (the version bump);
+  - the 18 visit pages, regenerated. Regenerating twice gives identical pages.
+- **`today-sun.js` checks it:**
+  - at a fixed 10:00 the sun must sit at the measured share of daylight (within 1%), with both gold stretches drawn;
+  - under reduced motion it must be in place straight after load, and the arc must not transition;
+  - at 04:00 it must wait below the horizon.
+- **Mutation cases:** the wrong share of the day must give SUN PATH WRONG, and the reduced-motion guard removed must give MOVES UNDER REDUCED MOTION.

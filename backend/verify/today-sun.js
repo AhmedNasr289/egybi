@@ -68,6 +68,40 @@ const python = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 
              times: [...c.querySelectorAll('.today-cell dd')].map(e => e.textContent.trim()),
              status: (c.querySelector('.today-status') || {}).textContent || '' };
   });
+  // 3. the sun path (Round 5): the sun sits at the share of daylight gone,
+  //    glides there once, is placed at once under reduced motion, and waits
+  //    below the horizon before sunrise.
+  const wantU = (Date.parse('2026-07-15T07:00:00Z') - L.sunrise) / (L.sunset - L.sunrise);
+  const arcOf = pg => pg.evaluate(() => {
+    const s = document.querySelector('[data-today] .arc-sun'), svg = document.querySelector('[data-today] svg.today-arc');
+    return s ? { u: s.getAttribute('data-u'), gold: svg.querySelectorAll('.arc-gold').length,
+                 label: svg.getAttribute('aria-label') || '', drawn: svg.classList.contains('is-drawn') } : null;
+  });
+  await p.waitForTimeout(2600);   // past the 1.4 s glide and its 2.4 s backstop
+  const arc = await arcOf(p);
+  if (!arc) bad.push('SUN PATH MISSING  no sun path on the card');
+  else {
+    if (Math.abs(parseFloat(arc.u) - wantU) > 0.01) bad.push(`SUN PATH WRONG  sun at ${arc.u}, want ${wantU.toFixed(4)} of the day at 10:00`);
+    if (arc.gold !== 2 || !arc.drawn || !/% of the way from sunrise to sunset/.test(arc.label)) bad.push(`SUN PATH WRONG  gold=${arc.gold} drawn=${arc.drawn} label="${arc.label}"`);
+  }
+  const rp = await b.newPage({ viewport: { width: 390, height: 900 }, reducedMotion: 'reduce' });
+  await rp.clock.setFixedTime(new Date('2026-07-15T07:00:00Z'));
+  await rp.route('**/*', r => { const u = r.request().url();
+    return (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort(); });
+  await rp.goto(`${BASE}/visit/giza.html`, { waitUntil: 'domcontentloaded' });
+  await rp.waitForFunction(() => document.querySelector('[data-today-ready="1"]'), null, { timeout: 10000 }).catch(() => {});
+  const ra = await arcOf(rp);
+  if (!ra || Math.abs(parseFloat(ra.u) - wantU) > 0.01 || !ra.drawn) bad.push(`MOVES UNDER REDUCED MOTION  the sun was at ${ra && ra.u} straight after load, not placed at once`);
+  const tr = await rp.evaluate(() => getComputedStyle(document.querySelector('.today-arc .arc-gold')).transitionDuration).catch(() => '?');
+  if (!/^0s(, 0s)*$/.test(tr)) bad.push(`MOVES UNDER REDUCED MOTION  the arc still transitions (${tr})`);
+  const np = await b.newPage({ viewport: { width: 390, height: 900 } });
+  await np.clock.setFixedTime(new Date('2026-07-15T01:00:00Z'));   // 04:00 Egypt summer time, before sunrise
+  await np.route('**/*', r => { const u = r.request().url();
+    return (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort(); });
+  await np.goto(`${BASE}/visit/giza.html`, { waitUntil: 'domcontentloaded' });
+  await np.waitForTimeout(800);
+  const na = await arcOf(np);
+  if (!na || na.u !== 'night' || !/not risen/.test(na.label)) bad.push(`SUN PATH WRONG  before sunrise the sun was at ${na && na.u}`);
   await b.close();
   if (!card) bad.push('CARD MISSING  visit/giza.html has no [data-today] card');
   else {
