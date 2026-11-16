@@ -958,6 +958,15 @@ case("notes: no daily limit on writing", "auth-flow.sh",
      lambda: edit("site/auth/notes_lib.php", "const NOTES_PER_DAY = 5;", "const NOTES_PER_DAY = 500;"),
      lambda o: "FAIL  notes: the sixth note in a day is refused" in o, SH_AUTH)
 
+# ---- "Today at this site" (Round 4, R4-1) ----------------------------------
+# The browser's sun times must agree with the Python that builds the light
+# table. Nudge the golden-light threshold in the port and they must part.
+TODAY = f"node {HERE}/today-sun.js"
+case("today card: the browser's golden light drifts from the table", "today-sun.js",
+     ["site/assets/today.js"],
+     lambda: edit("site/assets/today.js", "GOLDEN_ELEVATION = 6.0", "GOLDEN_ELEVATION = 5.0"),
+     lambda o: "SUN TIMES DIFFER" in o, TODAY)
+
 case("unverified account subscribed to the newsletter", "auth-flow.sh",
      ["site/auth/auth.php"],
      lambda: edit("site/auth/auth.php",
