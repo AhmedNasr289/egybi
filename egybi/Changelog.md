@@ -1678,6 +1678,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **Check:** `nojs.js` gains a fling step, one jump to the bottom, which fails STUCK AFTER A FLING every time the sweep is missing, not only when frames happen to drop.
   - **Mutation case:** the sweep removed must give STUCK AFTER A FLING.
 - **Fix after run 43865452380:** the reveal fix passed on all 15 pages (Explore: 106 of 106 blocks, after scrolling and after a fling). Two mutation cases could not run because they looked for the exact tag `motion.js?v=4`, which the bump to `?v=5` removed. `mutate.py` gains `asset_tag()`, which reads a page's current tag for a versioned asset. Those two cases, and the `egybi.css?v=48` case, now use it, so a version bump can no longer silently disarm a mutation case.
+- **CI time limit:** `browser-checks` moves from 50 to 80 minutes. Round 4's stacked PRs now run five more browser checkers and 94 mutation cases. #131 finished in 48m26s, while #132, this PR and #128 were cancelled at 50m29s, 55m00s and 55m01s; #128's logs were destroyed by the cancel. Actions minutes are free while the repository is public. Splitting `mutate.py` into its own job, as the workflow's 4 November note asks, is planned as Round 5 M7.
 ## 2026-11-16 — Near me on the places page (Round 4, R4-8)
 - **Why:** a tourist standing in Luxor or Aswan wants the closest sights, museums and airports first. The places page could only filter by kind, name and governorate.
 - **The button:** "Near me" asks the browser for the reader's position, only when pressed, then:
@@ -1901,3 +1902,6 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - under reduced motion it must be in place straight after load, and the arc must not transition;
   - at 04:00 it must wait below the horizon.
 - **Mutation cases:** the wrong share of the day must give SUN PATH WRONG, and the reduced-motion guard removed must give MOVES UNDER REDUCED MOTION.
+
+## 2026-11-16 — Plan: M7, the mutation pass in its own job
+- **Plan:** `Improvement Plan 2026-11.md` gains M7. Stacked runs reached 48–55 minutes, and the cancels at the 50-minute cap destroyed logs. The CI limit is raised to 80 as a stopgap, and the fix is to run `mutate.py` as a separate job.

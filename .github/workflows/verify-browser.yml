@@ -100,7 +100,14 @@ jobs:
     # new page adds time to every browser checker, so the headroom has to
     # grow with the site. If a run nears 45m, split mutate.py into its own job
     # rather than raising this again.
-    timeout-minutes: 50
+    # 80, not 50 (2026-11-16): Round 4 added five browser checkers and 25
+    # mutation cases (94 in all). Measured full runs on the stacked PRs:
+    # 48m26s for PR #131 (82/82, finished), and #132, #124 and #128 cancelled
+    # at 50m29s, 55m00s and 55m01s, the last with its logs destroyed by the
+    # cancel. This is the stopgap; the fix the note above asks for, mutate.py
+    # in its own job, is planned in the Improvement Plan (Round 5, M7).
+    # Actions minutes are free while the repository is public.
+    timeout-minutes: 80
 
     env:
       BASE: http://localhost:8793
