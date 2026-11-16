@@ -1633,4 +1633,5 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Tests:**
   - `auth-flow.sh` gains 43 notes checks, run with `NOTES_ENABLED=1`. They cover signed-out writes, missing CSRF, cross-site requests, unverified writers, the length, place and month rules, the moderation queue and key, the publish and trusted paths, the daily limit, helpful toggling, deleting another user's note, reports hiding a note, and an account's deletion leaving 0 rows.
   - 7 new mutation cases in `mutate.py` each remove one guard and must make `auth-flow.sh` fail.
+  - **Fix after the first run (43846913758):** 13 steps failed because the harness had already made 9 sign-ins from one IP. `auth.php` allows 10 per 15 minutes, so F, G and D were refused (429) and ran signed out. The notes block now lets that window lapse in CI's throwaway database, and asserts each sign-in, so a refusal names itself. The site's limit is unchanged.
 - **Not yet:** the privacy page changes in the interface PR, when notes go live and start collecting anything.
