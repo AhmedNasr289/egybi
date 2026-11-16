@@ -289,6 +289,10 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh header node backend/verify/header.js
 
+      - name: year-strip.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh year-strip node backend/verify/year-strip.js
+
       - name: briefing-map.js
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh briefing-map node backend/verify/briefing-map.js

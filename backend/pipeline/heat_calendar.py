@@ -157,16 +157,20 @@ def legend_html() -> str:
         for _, fill, label in BANDS) + '</div>')
 
 
-def table_html(rows: list[Row], href: str = 'visit/{key}.html', link_attrs: str = '') -> str:
+def table_html(rows: list[Row], href: str = 'visit/{key}.html', link_attrs: str = '',
+               sweep: bool = False) -> str:
     """The table itself. `href` is formatted with the site key (relative by
-    default, for the top-level page); `link_attrs` is added to every link."""
+    default, for the top-level page); `link_attrs` is added to every link.
+    `sweep` gives each cell its month (--m: 0-11) for the year strip on
+    visit.html, which brings the months in January to December."""
     head = ''.join(f'<th scope="col"><abbr title="{m}">{m[:3]}</abbr></th>' for m in MONTHS)
     body = []
     for r in rows:
         cells = []
-        for t in r.afternoons:
+        for i, t in enumerate(r.afternoons):
             fill = BANDS[band(t)][1]
-            cells.append(f'<td style="background:{fill};color:{text_colour(fill)}">{t:.0f}</td>')
+            m = f';--m:{i}' if sweep else ''
+            cells.append(f'<td style="background:{fill};color:{text_colour(fill)}{m}">{t:.0f}</td>')
         link = href.format(key=r.key)
         body.append(f'<tr><th scope="row"><a href="{_esc(link)}"{link_attrs}>{_esc(r.name)}</a></th>'
                     + ''.join(cells) + '</tr>')
@@ -230,6 +234,19 @@ def svg_chart(rows: list[Row], title: str, credit_lines: tuple[str, ...]) -> str
     out.append('</g></svg>')
     return '\n'.join(out) + '\n'
 
+
+# The year strip's motion (visit.html, 2026-11-16): the months come in
+# January to December, 70 ms apart, as soon as any of the table is on
+# screen (assets/year-strip.js adds the classes). Opacity and transform
+# only; none of it for readers who asked for reduced motion; and without the
+# script the classes never appear, so the table is simply there.
+SWEEP_CSS = """
+@media (prefers-reduced-motion: no-preference) {
+  .hc-table.is-waiting td { opacity: 0; }
+  .hc-table.is-sweeping td { animation: hc-month-in .45s ease-out both; animation-delay: calc(var(--m, 0) * 70ms); }
+  @keyframes hc-month-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+"""
 
 # Styles for the page's HTML table.
 CSS = """

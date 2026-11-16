@@ -2092,3 +2092,31 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The defect:** CI run 43922770714 reported NO MAP MOTION on a map that moves. That was confirmed in a real browser on the live home page with the same code: the dots started 70 ms apart from Alexandria south, and all 18 were shown after the sweep.
 - **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
 - **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.
+
+## 2026-11-16 — The year strip on When to go: every site, every month, the year filling in
+- **Why:** of the four motion proposals, this one carries the most for a first-time visitor. Every measured site's year is visible at once, so the reader learns at a glance which months are comfortable and which are too hot at each place. The fill from January to December shows the heat building into summer and easing off.
+- **Proposals not chosen, and why:**
+  - **Fair-price meter:** dropped, because `fair-prices.json` holds fair ranges but no "typical first quote", so the meter would need invented numbers.
+  - **Planner route:** left for later, because a first-time visitor has no stops yet.
+  - **Moving sun:** left for later, because it adds little to the sun path already shown.
+- **What a reader sees:**
+  - "Each site, all twelve months" on visit.html now opens with the table of all 18 sites by 12 months. It is the same table egypt-weather-by-month.html shows, built from the same rows: every cell coloured by the visit map's heat bands, with its number printed.
+  - Above it sits one sentence computed from the same rows: "In January, February and December, 18 of 18 sites have a normal afternoon under 28 °C … In July, August and September, none does."
+  - As soon as any of the table is on screen, the months come in January to December, 70 ms apart.
+- **The rules kept:**
+  - opacity and transform only;
+  - none of it under reduced motion;
+  - without JavaScript the full table is there.
+- **How:**
+  - `heat_calendar.table_html(..., sweep=True)` gives each cell its month. The default is off, so egypt-weather-by-month.html is byte-identical.
+  - `pages/visit.py` writes the block and generates `assets/heat-calendar.css` from `heat_calendar.CSS` and the new `SWEEP_CSS`, so the table's look has one source.
+  - `assets/year-strip.js` (v1) starts the sweep.
+- **`static-audit.py`:** its "figures typed into visit.html" rule now skips generator-owned `<!-- NAME:START … NAME:END -->` regions. Those are written from the data on every build and guarded by the regenerated-equals-committed check. The rule had no mutation case; it has one now: a temperature typed into the hand-written prose is caught. That was also tried locally (caught alone, then clean again).
+- **New check `backend/verify/year-strip.js`:**
+  - all sites by 12 months present;
+  - with 60 px of the table showing, the cells on screen are shown;
+  - the months start in order, at least 30 ms apart, animating opacity and transform only;
+  - every cell is shown after the sweep;
+  - reduced motion: no animation;
+  - no JavaScript: the whole table is shown.
+- **Mutation cases:** YEAR NOT IN ORDER, YEAR MOTION UNDER REDUCED MOTION (both guards removed), YEAR EMPTY ON SCREEN and YEAR HIDDEN WITHOUT JS.
