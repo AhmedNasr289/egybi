@@ -2037,6 +2037,43 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - `assets/egybi.css` (v50, via `pages/common.py` and the hand pages);
   - `backend/verify/header.js`, `mutate.py`, the workflow;
   - a comment in `a11y2.js`.
+
+## 2026-11-16 — The briefing map: where the 18 sites are, and how hot, in the reader's month
+- **Why:**
+  - The home page's motion was mostly decoration: the flag's sway, reveals, and counters.
+  - The briefing listed 18 sites and their heat, but a list cannot show where they are. Where is half the answer, because the hot sites are the southern ones.
+- **What a reader sees:**
+  - Beside the briefing's lead, a map of Egypt with each measured site at its own coordinates, coloured by the same heat band as its card for the reader's month.
+  - When the briefing is reached, the dots come in from north to south, 70 ms apart.
+  - When the reader changes their dates, the dots are recoloured and come in again, so the change shows.
+  - The caption names the range, for example "In November, a normal afternoon runs from 15 °C at … to 29 °C at …".
+- **How:**
+  - `backend/pipeline/build_site_map.py` writes `site/assets/egypt-sites.svg` (4.4 KB).
+    - It uses the national outline dissolved by `build_flag.py`'s own functions from the geoBoundaries file the Atlas uses, plus each site projected from the lat/lon in `data/visit-climate.json`.
+    - Two runs give the same bytes.
+  - `assets/site-map.js` (v1) inlines that file and colours it from the figures `home.js` (v3) hands over in an `egybi:heat` event.
+  - `assets/site-map.css` (v1) is loaded by index.html only, so no other page changes.
+- **The rules kept:**
+  - opacity and transform only;
+  - none of it under reduced motion, where the coloured map appears at once;
+  - without JavaScript the map is a plain image with every site in place;
+  - if the file cannot be fetched, the image stays;
+  - no new host, library or font.
+- **New check `backend/verify/briefing-map.js`:**
+  - 18 dots inlined;
+  - every dot in its own card's band, computed from the page's trip.js;
+  - north-to-south order, with delays ascending as latitude falls;
+  - only opacity and transform animated;
+  - every dot shown after the sweep;
+  - the caption summary;
+  - July dates recolour every dot;
+  - reduced motion: no animation, nothing hidden;
+  - no JavaScript: the image is shown.
+- **Mutation cases:**
+  - all dots one colour must give MAP COLOURS WRONG;
+  - no stagger must give MAP ORDER WRONG;
+  - both reduced-motion guards removed must give MAP MOTION UNDER REDUCED MOTION;
+  - the image hidden must give MAP HIDDEN WITHOUT JS.
 ## 2026-11-16 — Fix for Round 5's checks: service workers blocked in every check, platform.js corrected (follows M1, M2, M5)
 - **What CI found** (run 43915133691, on #138, which carries this branch):
   - **Mutation "content hidden under reduced motion" (reduced.js) stopped being caught.**
@@ -2050,3 +2087,8 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - The links are now 60 px apart.
   - The cross-fade test now asserts what the site controls: the page's own `@view-transition` opt-in, read through the CSSOM, is in effect without reduced motion and not under it. Whether the browser then plays the fade is printed, not graded.
 - **No site file changes.** The live behaviour of M1 is checked by hand in the browser after the merge.
+
+## 2026-11-16 — The briefing map's check reads the sweep it is checking (follows the briefing map)
+- **The defect:** CI run 43922770714 reported NO MAP MOTION on a map that moves. That was confirmed in a real browser on the live home page with the same code: the dots started 70 ms apart from Alexandria south, and all 18 were shown after the sweep.
+- **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
+- **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.

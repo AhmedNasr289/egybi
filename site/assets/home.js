@@ -115,6 +115,11 @@
         T.save(t);
       });
     });
+    // The briefing map (assets/site-map.js) colours its dots from the same
+    // figures; the last set stays on window.EGYBI in case that script is late.
+    var heat = { sites: c.sites, month: main };
+    window.EGYBI.heat = heat;
+    try { document.dispatchEvent(new CustomEvent('egybi:heat', { detail: heat })); } catch (e) { /* old browser: no map colours */ }
     cap.innerHTML = 'Source: ' + esc(c.source) + ', mean daily maximum and minimum averaged over ' + esc(c.normal_window || '2001–2020') +
       '; checked against published station normals before publication. Layer dated ' + esc(T.fmtDate(c.as_of)) +
       '. <a href="visit.html#month">Every month, every site &rarr;</a>';

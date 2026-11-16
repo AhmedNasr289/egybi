@@ -1040,6 +1040,25 @@ case("the current page no longer highlighted in the header", "header.js", ["site
      lambda: edit("site/assets/egybi.js", "if (target === here) a.classList.add('active');", "if (false) a.classList.add('active');"),
      lambda o: "NO ACTIVE HIGHLIGHT" in o, HEADER)
 
+# ---- the briefing map: where the sites are and how hot (2026-11-16) ---------
+BMAP = f"node {HERE}/briefing-map.js"
+case("briefing map dots all one colour", "briefing-map.js", ["site/assets/site-map.js"],
+     lambda: edit("site/assets/site-map.js", "c.setAttribute('fill', bd ? bd.colour : '#C9A227');", "c.setAttribute('fill', '#C9A227');"),
+     lambda o: "MAP COLOURS WRONG" in o, BMAP)
+case("briefing map dots all at once, not north to south", "briefing-map.js", ["site/assets/site-map.css"],
+     lambda: edit("site/assets/site-map.css", "animation-delay: calc(var(--i, 0) * 70ms);", "animation-delay: 0ms;"),
+     lambda o: "MAP ORDER WRONG" in o, BMAP)
+# Reduced motion is guarded twice, in the script and in the stylesheet; one
+# guard alone cannot be caught, so the case removes both.
+case("briefing map moving for readers who asked for reduced motion", "briefing-map.js",
+     ["site/assets/site-map.js", "site/assets/site-map.css"],
+     lambda: (edit("site/assets/site-map.js", "var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;", "var reduce = false;"),
+              edit("site/assets/site-map.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {")),
+     lambda o: "MAP MOTION UNDER REDUCED MOTION" in o, BMAP)
+case("briefing map hidden without JavaScript", "briefing-map.js", ["site/assets/site-map.css"],
+     lambda: edit("site/assets/site-map.css", ".site-map img, .site-map svg { display: block;", ".site-map img { display: none; } .site-map svg { display: block;"),
+     lambda o: "MAP HIDDEN WITHOUT JS" in o, BMAP)
+
 # ---- travellers' notes on visit pages (R4-2c) and reading progress (M3) ------
 GUIDE = f"node {HERE}/guide.js"
 case("visit-page notes rendered as HTML", "guide.js", ["site/assets/visit-notes.js"],
