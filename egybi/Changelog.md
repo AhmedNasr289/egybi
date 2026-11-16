@@ -1839,3 +1839,9 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 
 ## 2026-11-16 — Plan: M7, the mutation pass in its own job
 - **Plan:** `Improvement Plan 2026-11.md` gains M7. Stacked runs reached 48–55 minutes, and the cancels at the 50-minute cap destroyed logs. The CI limit is raised to 80 as a stopgap, and the fix is to run `mutate.py` as a separate job.
+
+## 2026-11-16 — The minutes guard retries GitHub's transient errors
+- **Why:** the daily Actions minutes guard opened alert #135 because GitHub's API answered one request with `502 Bad Gateway`. That was GitHub's own hiccup: the guard had passed on each of the four previous days. A single transient answer failed the whole run and raised an alert that meant nothing.
+- **Fix:** `backend/ops/usage_guard.py` gains `retrying()`, which wraps its API calls. A 429, 500, 502, 503 or 504, or a dropped connection, is retried after 2, 4 and then 8 seconds, four tries in all. A 401, 403 or 404 still fails at once, because those are real faults.
+- **Tests:** `test_usage_guard.py` gains 4 tests (two 502s then an answer, a 404 not retried, giving up after four tries, a dropped connection retried). All 17 pass. With the retry disabled, 2 fail.
+- **Not changed:** the minutes arithmetic, the thresholds and the alert wording.

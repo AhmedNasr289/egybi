@@ -114,5 +114,52 @@ class Tally(unittest.TestCase):
         self.assertIn('this repository only', r)
 
 
+
+class Retrying(unittest.TestCase):
+    """A transient GitHub answer is retried; a real fault is not (2026-11-16)."""
+
+    @staticmethod
+    def _flaky(errors, result=None):
+        calls = []
+
+        def fetch(path):
+            calls.append(path)
+            if len(calls) <= len(errors):
+                raise errors[len(calls) - 1]
+            return result
+
+        return fetch, calls
+
+    @staticmethod
+    def _http(code):
+        import urllib.error
+        return urllib.error.HTTPError('https://api.github.com/x', code, 'err', {}, None)
+
+    def test_two_502s_then_an_answer_succeeds(self):
+        fetch, calls = self._flaky([self._http(502), self._http(503)], {'ok': 1})
+        waits = []
+        self.assertEqual(ug.retrying(fetch, sleep=waits.append)('/p'), {'ok': 1})
+        self.assertEqual(len(calls), 3)
+        self.assertEqual(waits, [2, 4])
+
+    def test_a_404_is_not_retried(self):
+        fetch, calls = self._flaky([self._http(404)])
+        with self.assertRaises(Exception):
+            ug.retrying(fetch, sleep=lambda s: None)('/p')
+        self.assertEqual(len(calls), 1)
+
+    def test_it_gives_up_after_four_tries(self):
+        fetch, calls = self._flaky([self._http(502)] * 4, {'ok': 1})
+        with self.assertRaises(Exception):
+            ug.retrying(fetch, sleep=lambda s: None)('/p')
+        self.assertEqual(len(calls), 4)
+
+    def test_a_dropped_connection_is_retried(self):
+        import urllib.error
+        fetch, calls = self._flaky([urllib.error.URLError('reset')], {'ok': 2})
+        self.assertEqual(ug.retrying(fetch, sleep=lambda s: None)('/p'), {'ok': 2})
+        self.assertEqual(len(calls), 2)
+
+
 if __name__ == '__main__':
     unittest.main()
