@@ -224,7 +224,15 @@ def build_site_months():
   </div>
 </section>
 
-<section class="surface-light-2">
+<section class="surface-light-2" id="notes" data-visit-notes="{esc(key)}" data-site-name="{esc(name)}">
+  <div class="wrap" style="max-width:860px;">
+    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">What travellers say about {esc(name)}</h2>
+    <div class="vn-list" aria-live="polite"><p class="vn-empty"><a href="../community.html?site={esc(key)}#notes">Read what travellers wrote about {esc(name)}, or share your own &rarr;</a></p></div>
+    <p class="chart-cap" style="margin-top:12px;">Notes are written by travellers about their own visit and read by the editor before they appear. They are experiences, not EgyBI&rsquo;s measurements.</p>
+  </div>
+</section>
+
+<section class="surface-light">
   <div class="wrap" style="max-width:860px;">
     <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">The other measured sites</h2>
     <div class="chip-row">{others}</div>
@@ -237,7 +245,10 @@ def build_site_months():
                  # Only these pages carry a place to save, so only they load it.
                  extra_foot='\n<script src="../assets/saveplace.js?v=1"></script>'
                             '\n<link rel="stylesheet" href="../assets/today.css?v=2">'
-                            '\n<script src="../assets/today.js?v=2"></script>'))
+                            '\n<script src="../assets/today.js?v=2"></script>'
+                            # Travellers' notes about this site (R4-2c): the community page's card styles.
+                            '\n<link rel="stylesheet" href="../assets/notes.css?v=3">'
+                            '\n<script src="../assets/visit-notes.js?v=1"></script>'))
         urls.append((url, '0.7'))
     return urls
 

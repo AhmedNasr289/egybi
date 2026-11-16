@@ -104,6 +104,7 @@ def build_posts(posts):
   </div>
 </section>
 
+<div class="read-progress" aria-hidden="true"></div>
 <section class="surface-light">
   <div class="wrap issue-wrap">
     <article class="sheet issue-sheet">
@@ -119,7 +120,9 @@ def build_posts(posts):
 """
         write_text(os.path.join(outdir, sl + '.html'), 
             page(title, desc, url, body, ld,
-                 og_image=f"{SITE_URL}/og-blog.png?v=3"))
+                 og_image=f"{SITE_URL}/og-blog.png?v=3",
+                 # The reading-progress line (Round 5, M3): stories only.
+                 extra_head='<link rel="stylesheet" href="../assets/progress.css?v=1">'))
         urls.append((url, '0.7'))
     return urls
 

@@ -1976,6 +1976,33 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - `motion-weight.py`, `type-scale.py`: clean;
   - the rules JSON parses on all 182 pages.
 
+## 2026-11-16 — Travellers' notes on every visit page, and a reading-progress line on the stories (R4-2c, M3)
+- **Why:**
+  - A tourist reading about Giza wants to know what it was really like for someone who went. With notes now live on the community page (#128), each visit page can show them where they are needed.
+  - The Papyrus stories run to several screens, and a reader could not tell how much was left.
+- **R4-2c, notes on the visit pages:**
+  - each of the 18 visit pages gains "What travellers say about <site>", showing the 3 latest published notes about that site (`assets/visit-notes.js`, through the same API and card styles as the community page);
+  - each note shows the display name, the month visited and the text, trimmed at about 300 characters;
+  - a link goes to all notes about the site, with the composer, on the community page;
+  - every part of a note is set with `textContent`;
+  - without JavaScript, with notes off or with the API unreachable, the section keeps a plain link to read or share notes;
+  - the caption says notes are travellers' own experience, read by the editor, not EgyBI's measurements.
+- **M3, reading progress:**
+  - a 3 px gold line along the top of each story grows as the reader scrolls (`assets/progress.css`);
+  - it is a CSS scroll-driven animation, so no script and no scroll listener; only `transform` changes, so nothing shifts;
+  - browsers without scroll timelines, and readers who asked for reduced motion, get no line at all;
+  - it is loaded by the 12 story pages only.
+- **Not done, M4 (`content-visibility` on long pages):** dropped on purpose. Its benefit was never measured, and it risks the page jumping as estimated heights are replaced, and changing the reveal checks just fixed in #124.
+- **Files:**
+  - `pages/visit.py`, `pages/papyrus.py`, with the 18 visit pages and 12 stories regenerated;
+  - `assets/visit-notes.js` (v1), `assets/progress.css` (v1);
+  - `assets/notes.css` (v3, the `vn-*` styles; community.html follows).
+- **New browser check `backend/verify/guide.js`:**
+  - two notes, one hostile, render as text on Giza;
+  - notes off keeps the plain link;
+  - an empty list invites the first note;
+  - half way down a story the line is about half wide, and under reduced motion there is no line.
+- **Mutation cases:** the notes helper switched to `innerHTML` must give MARKUP INJECTED, and the reduced-motion guard removed must give PROGRESS UNDER REDUCED MOTION.
 ## 2026-11-16 — Fix for Round 5's checks: service workers blocked in every check, platform.js corrected (follows M1, M2, M5)
 - **What CI found** (run 43915133691, on #138, which carries this branch):
   - **Mutation "content hidden under reduced motion" (reduced.js) stopped being caught.**

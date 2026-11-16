@@ -58,3 +58,8 @@
   background: var(--papyrus); color: var(--ink); font: inherit; font-size: var(--fs-sm); }
 .note-reason:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .note-card, .note-act { transition: none; } }
+
+/* The three latest notes on each visit page (R4-2c, assets/visit-notes.js). */
+.vn-list { display: grid; gap: 12px; }
+.vn-empty, .vn-more { margin: 0; font-size: var(--fs-sm); color: var(--ink-soft); }
+.vn-more a, .vn-empty a { font-weight: 600; }
