@@ -196,6 +196,13 @@ case("video poster pointing at a missing file", "static-audit.py", ["site/index.
      lambda: edit("site/index.html", 'poster="assets/video/hero-lighthouse.webp', 'poster="assets/video/no-such-poster.webp'),
      lambda o: "internal links that do not resolve" in o, PY_AUDIT)
 
+# the Abu Simbel sun-alignment days counted as public holidays again: the
+# holidays page would claim two more days off than Egypt has (2026-11-17)
+case("a dated event that is not a holiday counted as one", "test_holidays.py", ["backend/pipeline/pages/holidays.py"],
+     lambda: edit("backend/pipeline/pages/holidays.py", "        if e.get('not_holiday'):\n            continue\n", ""),
+     lambda o: "FAIL" in o and "test_a_dated_event_that_is_not_a_holiday_is_left_out" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_holidays.py -v')
+
 # an empty-state note that talks to the maintainer, not the traveller (2026-11-17)
 case("build language back in a visitor note", "static-audit.py", ["site/visit.html"],
      lambda: edit("site/visit.html", "The cross-sections are not ready yet. Please check back soon.",
