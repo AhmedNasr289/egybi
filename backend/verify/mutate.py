@@ -175,6 +175,10 @@ print("mutation tests — each injects a defect the checker exists to catch\n")
 case("broken internal link", "static-audit.py", ["site/about.html"],
      lambda: edit("site/about.html", "</footer>", '<a href="no-such-page.html">x</a></footer>'),
      lambda o: "internal links that do not resolve" in o, PY_AUDIT)
+# a video poster is a file too: the Arabic home page's 404'd unseen (2026-11-17)
+case("video poster pointing at a missing file", "static-audit.py", ["site/index.html"],
+     lambda: edit("site/index.html", 'poster="assets/video/hero-lighthouse.webp', 'poster="assets/video/no-such-poster.webp'),
+     lambda o: "internal links that do not resolve" in o, PY_AUDIT)
 
 # ---- 2. static audit: an anchor whose id is not there -----------------------
 case("anchor to a missing id", "static-audit.py", ["site/about.html"],
