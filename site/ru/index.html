@@ -124,7 +124,7 @@
 <meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html stories.html streets.html">
 <link href="../assets/i18n.css?v=1" rel="stylesheet">
 <script src="../assets/lang.js?v=1" defer></script>
-<script src="../assets/i18n/ru.js?v=489bcab9"></script>
+<script src="../assets/i18n/ru.js?v=27656023"></script>
 <!-- I18N-HEAD:END -->
 </head>
 <body>
@@ -147,11 +147,11 @@
       <a href="community.html">Сообщество</a>
       <a href="../explore.html">Данные</a>
       <a href="about.html">О проекте</a>
-      <a class="nav-only-mobile" href="ask.html">Проверка плана</a>
+      <a class="nav-only-mobile" href="ask.html">Проверка маршрута</a>
       <a class="nav-only-mobile" href="#newsletter">Рассылка</a>
     <!-- LANG-LINKS:START --><a class="nav-only-mobile lang-link" href="../index.html" hreflang="en" lang="en" data-lang="en">English</a><a class="nav-only-mobile lang-link" href="../ar/index.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><!-- LANG-LINKS:END -->
 </nav>
-    <div class="nav-actions"><!-- LANG-SWITCH:START --><details class="lang-switch"><summary aria-label="Язык: Русский"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> RU</summary><div class="lang-menu"><a href="../index.html" hreflang="en" lang="en" data-lang="en">English</a><a href="../ar/index.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><a href="index.html" hreflang="ru" lang="ru" data-lang="ru" aria-current="true">Русский</a></div></details><!-- LANG-SWITCH:END --><a class="cta" href="ask.html">Проверка плана</a></div>
+    <div class="nav-actions"><!-- LANG-SWITCH:START --><details class="lang-switch"><summary aria-label="Язык: Русский"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> RU</summary><div class="lang-menu"><a href="../index.html" hreflang="en" lang="en" data-lang="en">English</a><a href="../ar/index.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><a href="index.html" hreflang="ru" lang="ru" data-lang="ru" aria-current="true">Русский</a></div></details><!-- LANG-SWITCH:END --><a class="cta" href="ask.html">Проверка маршрута</a></div>
     <button class="nav-toggle" aria-label="Меню" aria-expanded="false" aria-controls="navLinks">☰</button>
   </div>
 </header>
@@ -173,7 +173,7 @@
     <div>
     <p class="hero-eyebrow"><span data-glyph="reed"></span> Египет честно &middot; У каждой цифры есть источник &middot; Без регистрации <span data-glyph="scroll"></span></p>
     <h1 class="hero-h1">Когда вы едете в Египет?</h1>
-    <p class="lead hero-lead">Выберите даты. Вы увидите, какой температуры по измерениям достигает обычный день в каждом из восемнадцати главных мест, какие праздники выпадают на поездку, курс на сегодня и сколько что должно стоить, &mdash; у каждой цифры указаны источник и дата.</p>
+    <p class="lead hero-lead">Выберите даты. Вы увидите, насколько жарко обычно бывает днём в каждом из восемнадцати главных мест по данным измерений, какие праздники выпадают на поездку, курс на сегодня и сколько что должно стоить, &mdash; у каждой цифры указаны источник и дата.</p>
 
     <form class="trip-form" id="tripForm" novalidate>
       <label>Прибытие<input type="date" id="tripStart" name="start" required></label>
@@ -208,7 +208,7 @@
 <section class="surface-light" id="briefing" data-nav="Ваша сводка">
   <div class="wrap">
     <div class="kicker"><span data-glyph="ra"></span>Ваша сводка</div>
-    <h2 id="briefTitle">Жара по каждому месту.</h2>
+    <h2 id="briefTitle">Жара — место за местом.</h2>
     <div class="brief-top">
       <div>
         <p class="lead" id="briefLead">Загружаем климатические данные&hellip;</p>
@@ -218,7 +218,7 @@
            and brought in north to south by assets/site-map.js. Without JS it is
            this image, every site in its place. -->
       <figure class="site-map" id="siteMap">
-        <img src="../assets/egypt-sites.svg?v=1" alt="Карта Египта с 18 измеренными местами, перечисленными ниже, от Александрии на севере до Абу-Симбела на юге" width="450" height="400" loading="lazy" decoding="async">
+        <img src="../assets/egypt-sites.svg?v=1" alt="Карта Египта: 18 мест с климатическими данными из списка ниже, от Александрии на севере до Абу-Симбела на юге" width="450" height="400" loading="lazy" decoding="async">
         <figcaption class="chart-cap"><span id="siteMapSummary"></span>Каждая точка — одно из мест ниже, по его собственным координатам. Граница: <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>, <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>.</figcaption>
       </figure>
     </div>
@@ -250,12 +250,12 @@
   <div class="wrap">
     <div class="kicker"><span data-glyph="was"></span>Четыре инструмента, одна поездка</div>
     <h2>Планируйте по тем же данным.</h2>
-    <p class="lead">Всё, что ниже, читает те же файлы с источниками, что и сводка выше, и запоминает ваши даты на этом устройстве &mdash; ничего никуда не отправляется, если вы сами не решите сохранить поездку в бесплатном аккаунте, и аккаунт ни для чего не нужен.</p>
+    <p class="lead">Все инструменты ниже берут данные из тех же файлов с источниками, что и сводка выше, и запоминают ваши даты на этом устройстве &mdash; ничего никуда не отправляется, если вы сами не решите сохранить поездку в бесплатном аккаунте, а для работы аккаунт не нужен.</p>
     <div class="grid grid-2" style="margin-top:28px;">
       <a class="card card-link" href="plan.html" data-ev="home_to_plan">
         <span class="tag">Планировщик маршрута</span>
         <h3>Отметьте остановки на карте.</h3>
-        <p>Выберите из 18 главных мест и 897 мест на карте, укажите дни для каждого и смотрите измеренную жару и расстояния по прямой. Распечатайте всё как досье «Папируса».</p>
+        <p>Выберите из 18 главных мест и 897 мест на карте, укажите дни для каждого — и увидите измеренную жару и расстояния по прямой. Распечатайте всё как досье «Папируса».</p>
       </a>
       <a class="card card-link" href="fair-prices.html" data-ev="home_to_fair">
         <span class="tag">Честные цены</span>
@@ -265,10 +265,10 @@
       <a class="card card-link" href="hieroglyphs.html" data-ev="home_to_glyphs">
         <span class="tag">Студия имён</span>
         <h3>Ваше имя иероглифами.</h3>
-        <p>Знак за знаком по списку Гардинера, в картуше, который можно сохранить, &mdash; и честно сказано, что это транслитерация, а не перевод.</p>
+        <p>Знак за знаком по списку Гардинера, в картуше, который можно сохранить, &mdash; с честной оговоркой: это транслитерация, а не перевод.</p>
       </a>
       <a class="card card-link" href="ask.html" data-ev="home_to_ask">
-        <span class="tag">Проверка плана</span>
+        <span class="tag">Проверка маршрута</span>
         <h3>Пусть ваш план прочтёт человек из Каира.</h3>
         <p>Пришлите черновик маршрута и в течение 48 часов получите письменную проверку жары, расстояний, праздников и цен по данным.</p>
       </a>
@@ -284,7 +284,7 @@
         <div class="kicker"><span data-glyph="ra"></span>Начните здесь &middot; около 10 минут</div>
         <h2>ВВП Египта упал на 18&nbsp;% и вырос на 68&nbsp;% &mdash; за одни и те же два года.</h2>
         <p class="lead">Обе цифры настоящие и взяты из одного источника. В самой стране за это время ничего не изменилось. Разберитесь почему за шесть SQL-запросов прямо в браузере &mdash; без регистрации и установки.</p>
-        <div class="cta-row" style="margin-top:20px;"><a class="btn btn-primary" href="../case.html" data-ev="home_open_case">Открыть дело &rarr;</a> <a class="btn btn-blue" href="../explore.html">Или изучите Египет в графиках</a></div>
+        <div class="cta-row" style="margin-top:20px;"><a class="btn btn-primary" href="../case.html" data-ev="home_open_case">Открыть дело &rarr;</a> <a class="btn btn-blue" href="../explore.html">Или изучить Египет в графиках</a></div>
       </div>
       <div class="cs-nums" aria-hidden="true">
         <div class="csn down"><b>&minus;18,4&nbsp;%</b><span>в долларах США</span></div>
@@ -302,7 +302,7 @@
       <div class="stat" data-aos="fade-up"><div class="num" data-count="27">27</div><div class="label">Мухафаз на карте</div><div class="cap">Население, плотность, доля горожан</div></div>
       <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="61">61</div><div class="label">Таблиц с источниками</div><div class="cap">У каждой строки есть источник</div></div>
       <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="33">33</div><div class="label">Сохранившихся обелисков</div><div class="cap">Только 15 по-прежнему в Египте</div></div>
-      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="0" data-raw="0">0</div><div class="label">Регистраций нужно</div><div class="cap">Ничего не нужно устанавливать или оформлять</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="0" data-raw="0">0</div><div class="label">Регистраций нужно</div><div class="cap">Ничего не нужно устанавливать и ни на что подписываться</div></div>
     </div>
   </div>
 </section>
@@ -320,12 +320,12 @@
 <section class="surface-light-2" id="inside" data-nav="Египет в данных">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Египет в данных</div>
-    <h2 data-aos="fade-up">Шесть путей в страну.</h2>
+    <h2 data-aos="fade-up">Шесть способов узнать страну.</h2>
     <p class="lead" data-aos="fade-up">Египет — большая тема, и единственно верной двери в неё нет. Каждый из этих путей отвечает на свой вопрос, и все они опираются на одни и те же данные с источниками.</p>
     <div class="grid grid-3" style="margin-top:32px;">
       <a class="card card-link" href="visit.html" data-aos="fade-up" data-ev="home_to_visit">
         <span class="tag">Начните здесь</span>
-        <h3>Планирование поездки.</h3>
+        <h3>Для тех, кто планирует поездку.</h3>
         <p>Куда ехать, что представляет собой каждое место и какая погода на самом деле в выбранный месяц &mdash; по климатическим данным, а не по рекламной брошюре.</p>
       </a>
       <a class="card card-link" href="geospatial.html" data-aos="fade-up" data-aos-delay="60" data-ev="home_to_atlas">
@@ -365,9 +365,9 @@
     <h2 data-aos="fade-up">Один график, чтобы показать, как выглядят остальные.</h2>
     <p class="lead" data-aos="fade-up">База знаний охватывает всё от древней хронологии до современной экономики — фараоны, памятники, ВВП, Суэцкий канал, туризм, энергетика, демография и мегапроекты. Обратите внимание, где подпись ниже отказывается проводить линию: это наш принцип, а не упущение.</p>
     <div class="chart-card" style="margin-top:26px;" data-aos="zoom-in">
-      <h3>Туризм в Египте — прибытия и доходы</h3>
+      <h3>Туризм в Египте — турпоток и доходы</h3>
       <div class="chart-box"><canvas id="tourismChart"></canvas></div>
-      <p class="chart-cap">Источник: Министерство туризма и древностей, Центральный банк Египта, ЮНВТО/Всемирный банк. Доходы за 2021 год оставлены пустыми, потому что источники действительно расходятся. <a href="../explore.html">Открыть полный обозреватель данных →</a></p>
+      <p class="chart-cap">Источник: Министерство туризма и древностей, Центральный банк Египта, ЮНВТО/Всемирный банк. Доходы за 2021 год не указаны, потому что источники действительно расходятся. <a href="../explore.html">Смотреть все данные →</a></p>
     </div>
   </div>
 </section>
@@ -379,8 +379,8 @@
 <section class="surface-light-2" id="for-egypt">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Два примера</div>
-    <h2 data-aos="fade-up">Как «у каждой цифры есть источник» выглядит на практике.</h2>
-    <p class="lead" data-aos="fade-up">Заявить о бережном отношении к данным легко. Эти две записи показывают, чего это стоит: одна — подсчёт, который удивляет, другая — цифра, о которой спорят два уважаемых источника, &mdash; там, где проще всего было бы выбрать одну и промолчать.</p>
+    <h2 data-aos="fade-up">Как принцип «у каждой цифры есть источник» выглядит на практике.</h2>
+    <p class="lead" data-aos="fade-up">Заявить о бережном отношении к данным легко. Эти две записи показывают, чего это стоит на деле: одна — подсчёт, который удивляет, другая — цифра, о которой спорят два уважаемых источника &mdash; и где проще всего было бы выбрать одну и промолчать.</p>
 
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="card" data-aos="fade-up">
@@ -423,8 +423,8 @@
     <div class="papyrus-letter" data-mo>
       <div class="pl-seal" aria-hidden="true"><span class="pl-seal-glyph" data-glyph="ankh"></span></div>
       <p class="kicker" style="margin-bottom:6px;"><span data-glyph="scroll"></span> «Папирус» &middot; перед поездкой</p>
-      <h2 style="font-size:var(--fs-h2);margin:0 0 12px;">Одно письмо в месяц для всех, кто планирует Египет.</h2>
-      <p class="lead" style="margin:0 0 18px;">Предстоящий месяц в цифрах: жара в достопримечательностях, ближайшие праздники, движение фунта &mdash; и одна короткая история из данных, которая меняет взгляд на какое-нибудь место.</p>
+      <h2 style="font-size:var(--fs-h2);margin:0 0 12px;">Одно письмо в месяц для всех, кто собирается в Египет.</h2>
+      <p class="lead" style="margin:0 0 18px;">Предстоящий месяц в цифрах: жара у главных достопримечательностей, ближайшие праздники, движение фунта &mdash; и одна короткая история из данных, которая меняет взгляд на какое-нибудь место.</p>
 
       <blockquote class="pl-specimen"><span class="pl-specimen-label"><span data-glyph="scarab"></span> Из прошлого выпуска</span> Сохранилось тридцать три древнеегипетских обелиска. Только пятнадцать из них по-прежнему в Египте. Самый высокий из стоящих находится в Риме, а самый большой из когда-либо высеченных так и не был поднят &mdash; он треснул в асуанской каменоломне и до сих пор лежит там, почти 42 метра длиной.</blockquote>
 
@@ -449,7 +449,7 @@
       <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
       <p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Честно о поездке в Египет — реальная жара, праздники и цены, у каждой цифры источник и дата.</p>
     </div>
-    <div><h2 class="foot-h">Спланировать поездку</h2><a href="plan.html">Составить маршрут</a><a href="visit.html">Когда ехать</a><a href="fair-prices.html">Честные цены</a><a href="hieroglyphs.html">Ваше имя иероглифами</a><a href="dossier.html">Досье</a><a href="ask.html">Проверка плана</a></div>
+    <div><h2 class="foot-h">Спланировать поездку</h2><a href="plan.html">Составить маршрут</a><a href="visit.html">Когда ехать</a><a href="fair-prices.html">Честные цены</a><a href="hieroglyphs.html">Ваше имя иероглифами</a><a href="dossier.html">Досье</a><a href="ask.html">Проверка маршрута</a></div>
     <div><h2 class="foot-h">Египет в данных</h2><a href="../explore.html">Данные о Египте</a><a href="geospatial.html">Атлас Египта</a><a href="places.html">Места</a><a href="stories.html">Истории в данных</a><a href="streets.html">Оценка улиц</a><a href="../prices.html">Цены за день</a><a href="../stocks.html">Фондовый рынок</a><a href="../invest.html">Где строит Египет</a></div>
     <div><h2 class="foot-h">Ещё</h2><a href="../blog.html">Блог</a><a href="community.html">Сообщество</a><a href="about.html">Идея и образ</a><a href="#newsletter">Рассылка</a></div>
     <div><h2 class="foot-h">Источники данных</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">Всемирный банк</a><a href="../explore.html">Полный список источников</a></div>
@@ -521,7 +521,7 @@
     if (!window.Chart) return;
     new Chart(document.getElementById('tourismChart'), {
       data: { labels: [2019,2020,2021,2022,2023,2024,2025], datasets: [
-        { type:'bar', label:'Прибытия (млн)', data:[null,null,null,null,14.9,15.7,19.0], backgroundColor:'rgba(23,64,139,0.75)', yAxisID:'yA', borderRadius:4 },
+        { type:'bar', label:'Турпоток (млн)', data:[null,null,null,null,14.9,15.7,19.0], backgroundColor:'rgba(23,64,139,0.75)', yAxisID:'yA', borderRadius:4 },
         { type:'line', label:'Доходы (млрд долларов США)', data:[13.03,4.40,null,10.70,13.6,15.3,16.7], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.15)', yAxisID:'yR', tension:0.3, spanGaps:false, pointRadius:4, pointBackgroundColor:'#C9A227', fill:true }
       ]},
       options: { responsive:true, maintainAspectRatio:false, animation: reduceMotion?false:{duration:1200}, interaction:{intersect:false,mode:'index'}, plugins:{legend:{position:'top'}}, scales:{ yA:{position:'left',beginAtZero:true,title:{display:true,text:'Arrivals (M)'},grid:{display:false}}, yR:{position:'right',beginAtZero:true,title:{display:true,text:'Revenue ($B)'},grid:{drawOnChartArea:false}} } }

@@ -1,0 +1,35 @@
+# Russian glossary for EgyBI (2026-11-17). One English term per line, the Russian
+# the site uses for it, and optionally a pattern (Python regex) for a variant that
+# must not come back. backend/verify/i18n.py fails with GLOSSARY TERM when any
+# translation in ru.tsv matches an "avoid" pattern. Address the reader as «вы»,
+# lower case, everywhere.
+# english	russian	avoid
+account	аккаунт	учётн\w* запис
+sign in / sign out	войти / выйти; вход (noun)
+planner / route planner	планировщик / планировщик маршрута
+Plan (navigation)	Маршрут
+Plan check	Проверка маршрута	Проверк\w* плана
+fair prices	честные цены
+dossier	досье; досье «Папируса»
+The Papyrus	«Папирус»
+briefing	сводка
+governorate	мухафаза
+source / sourced	источник / с источником
+major sites	главные места
+measured site	место с климатическими данными
+golden hour	«золотой час»
+arrivals (tourism)	турпоток
+dashboard	дашборд (BI-дашборд)	BI-панел
+gazetteer	справочник мест
+Atlas	Атлас
+Explore	Обзор
+data story	история в данных
+argued from the map	объяснённый картой	доказанн\w* карт
+scrambled (one-way hashed)	необратимо преобразованный	зашифрован
+travellers' notes	заметки путешественников
+display name	отображаемое имя
+Philae	храм на острове Филе	\bФилы\b
+Beckerath	Бекерат	Беккерат
+Eid	Ураза-байрам / Курбан-байрам	\bИд\b
+informal "you"	вы	\b(ты|тебя|тебе|твой|твоя|твои)\b
+Uber, Careem, OpenStreetMap, EgyBI, NASA, SRTM, CAPMAS	as written

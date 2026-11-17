@@ -12,6 +12,8 @@ For each page in backend/pipeline/pages/i18n.py PAGES:
   NO SWITCHER         the language button is missing, or one of its three
                       links does not lead to an existing file
   NOT IN SITEMAP      a twin's address is missing from sitemap.xml
+  GLOSSARY TERM       a translation uses a variant its language's glossary
+                      (backend/i18n/glossary-<lang>.tsv) has rejected
   ENGLISH LEAK        an Arabic or Russian page still shows an English
                       sentence from the English page: in its HTML, or in text
                       its inline script writes (About's cards). Strings that
@@ -158,6 +160,28 @@ for page in PAGES:
             if node_left:
                 fail(f'ENGLISH LEAK: {lang}/{page} still shows {len(node_left)} English text node(s), '
                      f'e.g. "{node_left[0][:70]}"')
+
+# One term, one translation (2026-11-17). backend/i18n/glossary-<lang>.tsv names
+# the word the site uses for each recurring term and, where a rejected variant
+# existed, a pattern for it. "Account" was once «аккаунт» on 16 lines and
+# «учётная запись» on 13; a reader met both on the same screen. A translation
+# that brings a rejected variant back fails here.
+for lang in LANGS:
+    gpath = ROOT / 'backend' / 'i18n' / f'glossary-{lang}.tsv'
+    if not gpath.exists():
+        continue
+    for gline in gpath.read_text(encoding='utf-8').splitlines():
+        if not gline.strip() or gline.startswith('#'):
+            continue
+        cols = gline.split('\t')
+        if len(cols) < 3 or not cols[2].strip():
+            continue
+        avoid = re.compile(cols[2].strip())
+        for en, tr in CATS[lang].items():
+            if avoid.search(tr):
+                fail(f'GLOSSARY TERM: {lang}.tsv uses a rejected variant for "{cols[0]}" '
+                     f'(the glossary says {cols[1]!r}): "{tr[:70]}"')
+                break
 
 if fails:
     print(f'\n{len(fails)} i18n failure(s)')
