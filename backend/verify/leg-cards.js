@@ -90,10 +90,14 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
     fail('STOP CARD LEFT IN ENGLISH (ar): ' + JSON.stringify(arJuly.cards));
   else console.log('ok   ar/plan.html: summary, stop cards and heat warning in Arabic with Arabic-Indic digits');
   const ruJuly = await legsOf('ru/plan.html', [GIZA, KARNAK], '2027-07-10', '2027-07-14');
-  if (!/Остановок: 2/.test(ruJuly.sum) || /[A-Za-z]/.test(ruJuly.sum)) fail('SUMMARY LEFT IN ENGLISH (ru): ' + JSON.stringify(ruJuly.sum));
-  else if (!ruJuly.cards.length || !ruJuly.cards.every(c => c.includes('Июль') && !/[A-Za-z]/.test(c.replace(/The Giza Pyramids|Karnak Temple/g, ''))))
+  const ruSumBad = !/Остановок: 2/.test(ruJuly.sum) || /[A-Za-z]/.test(ruJuly.sum);
+  if (ruSumBad) fail('SUMMARY LEFT IN ENGLISH (ru): ' + JSON.stringify(ruJuly.sum));
+  // Russian writes the unit as °C too (the first CI run of this check read
+  // that C as English), so the unit and the stop names are taken out first.
+  const ruLatin = (c) => /[A-Za-z]/.test(c.replace(/°C|The Giza Pyramids|Karnak Temple/g, ''));
+  if (!ruJuly.cards.length || !ruJuly.cards.every(c => c.includes('Июль') && !ruLatin(c)))
     fail('STOP CARD LEFT IN ENGLISH (ru): ' + JSON.stringify(ruJuly.cards));
-  else console.log('ok   ru/plan.html: summary and stop cards in Russian');
+  else if (!ruSumBad) console.log('ok   ru/plan.html: summary and stop cards in Russian');
 
   // 3. An uncovered leg
   const up = await legsOf('plan.html', [KARNAK, PHILAE]);
