@@ -96,6 +96,28 @@ def today_card(site, name, ms, clim):
     </div>"""
 
 
+def load_hours() -> dict:
+    """Opening hours by visit-site key, from site/data/opening-hours.json.
+
+    Hand-compiled from the Ministry's own pages (coverage.py holds each row to
+    a re-read date, and fails a row whose key matches no measured site). A
+    site with no row gets no hours line: an hour we could not source is left
+    out, never guessed."""
+    path = os.path.join(SITE, 'data', 'opening-hours.json')
+    if not os.path.isfile(path):
+        return {}
+    d = json.loads(read_text(path))
+    return {r['key']: r for g in d.get('groups', []) for r in g.get('rows', [])}
+
+
+def hours_fact(h: dict) -> str:
+    """One fact line: the hours, the note, and where they come from."""
+    note = f" {esc(h['note'])}" if h.get('note') else ''
+    return (f"<strong>Opening hours:</strong> {esc(h['hours'])}.{note} The afternoon temperatures below are "
+            f"what a visit after midday meets. Source: <a href=\"{esc(h['source_url'])}\" rel=\"noopener\">"
+            f"{esc(h['source'])}</a>, checked {egfmt.time_tag(h['checked'], 'en', 'prose')}.")
+
+
 def build_site_months():
     """One page per measured visitor site: its twelve months, as measured.
 
@@ -114,6 +136,7 @@ def build_site_months():
     if not os.path.isfile(cpath):
         return []
     clim = load_climate()
+    hours = load_hours()
     terr = {}
     if os.path.isfile(tpath):
         terr = {x['key']: x for x in json.loads(read_text(tpath)).get('sites', [])}
@@ -152,6 +175,8 @@ def build_site_months():
                          f"{'' if len(under30) == 1 else 's'}: {', '.join(under30)}.")
         else:
             facts.append("A normal afternoon reaches 30 °C or more in every month of the year.")
+        if key in hours:
+            facts.append(hours_fact(hours[key]))
         if el is not None:
             facts.append(f"The ground at the site's coordinates sits {el:.0f} m above sea level (NASA SRTM).")
         if site.get('unesco'):
@@ -161,10 +186,12 @@ def build_site_months():
         # The page is ABOUT a real place, and saying so is what lets a search
         # engine connect it to the attraction rather than read it as a loose
         # table of temperatures. Only fields this file actually holds are
-        # stated: name, Arabic name, coordinates and governorate. Opening
-        # hours, prices and "free entry" are deliberately absent — none of
-        # them is in the data, and a wrong one in structured data is worse
-        # than none.
+        # stated: name, Arabic name, coordinates and governorate. Prices and
+        # "free entry" are deliberately absent — neither is in this data, and a
+        # wrong one in structured data is worse than none. Opening hours are
+        # shown on the page (opening-hours.json, since 2026-11-17) with their
+        # source and check date, but stay out of the structured data, where a
+        # search engine would repeat them without either.
         place_id = url + "#place"
         attraction = {"@type": "TouristAttraction", "@id": place_id, "name": name, "url": url,
                       "geo": {"@type": "GeoCoordinates", "latitude": site['lat'], "longitude": site['lon']},
