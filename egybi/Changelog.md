@@ -2286,3 +2286,12 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Mutation cases:**
   - The "untranslated page" case now uses prices.html, because visit.html has a copy and the old case could no longer fail.
   - A new case disables the in-language branch of `T.url()` and must be caught.
+## 2026-11-17 — English left on translated pages: labels with fields, and paragraphs with code
+- **What a reader saw:** the live Russian home page (checked in a browser after #150-#152 merged) showed "Arriving" and "Leaving" beside its date fields. The same gap left "Show amounts in", "A name, in Latin letters", the dossier-cover label and the planner's search label in English, and left half-English paragraphs on Privacy, Community, Stories and Streets, in both Arabic and Russian.
+- **The mechanism:** `i18n_units.py` takes an element as one unit only when everything inside it is inline.
+  - A `<label>` wrapping its `<input>` or `<select>` is not, and the fallback that collects loose text skipped every unit tag, so the label's text was never collected and never asked for.
+  - A paragraph containing `<code>` was refused the same way, because `code` is in the skip list (so nothing inside it is translated); only its links were translated and the rest stayed English.
+- **The fix:** `<code>` stays inside its sentence as the module's docstring always said, and loose text in any element that could not be taken whole is its own unit. The build then asked for 12 new strings per language, now in the catalogues (the brand name EgyBI is kept as is).
+- **Why the check missed it:** the English-leak check found text with the same `units()` function, so it could not see what the generator never found, and it ignored single words. It now also compares every visible text node of each twin with the English page, one word or many, with a short named list of things that stay in English (data sources, a licence, a book title, the language button's own label).
+  - Proved both ways: with the old pages it fails on ru/index.html ("Arriving") and ar/stories.html; with the old checker, a planted "Arriving" passes.
+  - Two new mutation cases plant an English label on a Russian and an Arabic page; both are caught.

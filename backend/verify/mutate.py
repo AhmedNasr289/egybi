@@ -1093,6 +1093,14 @@ case("English left in a Russian page's script-written cards", "i18n.py", ["site/
 case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
      lambda: edit("site/ar/about.html", "بيت الحياة.", "The House of Life."),
      lambda o: "ENGLISH LEAK" in o, I18N)
+# text the generator never collected (a <label> wrapping its <input>): the
+# units()-based check above is blind to it, the text-node instrument is not
+case("a Russian label left in English beside its input", "i18n.py", ["site/ru/index.html"],
+     lambda: edit("site/ru/index.html", "<label>Прибытие<input", "<label>Arriving<input"),
+     lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)
+case("an Arabic label left in English beside its select", "i18n.py", ["site/ar/fair-prices.html"],
+     lambda: edit("site/ar/fair-prices.html", "<label>اعرض المبالغ بـ<select", "<label>Show amounts in<select"),
+     lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)
 # the home page's twins: the home page is the folder address, egybi.com/ar/
 case("the Arabic home page claiming the English home page as its canonical", "i18n.py", ["site/ar/index.html"],
      lambda: edit("site/ar/index.html", '<link rel="canonical" href="https://egybi.com/ar/">',

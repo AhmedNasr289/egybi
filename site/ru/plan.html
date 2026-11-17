@@ -88,9 +88,9 @@
       <div class="kicker"><span data-glyph="ra"></span>Когда</div>
       <h2 style="margin:0;">Ваши даты</h2>
       <form class="trip-form" id="planForm" novalidate>
-        <label>Arriving<input type="date" id="planStart" required></label>
-        <label>Leaving<input type="date" id="planEnd" required></label>
-        <label>Name for the dossier cover<input type="text" id="planName" maxlength="40" autocomplete="off" placeholder="необязательно"></label>
+        <label>Прибытие<input type="date" id="planStart" required></label>
+        <label>Отъезд<input type="date" id="planEnd" required></label>
+        <label>Имя для обложки досье<input type="text" id="planName" maxlength="40" autocomplete="off" placeholder="необязательно"></label>
       </form>
       <p class="form-note" id="planNote" role="status" aria-live="polite"></p>
       <p class="chart-cap">Ваши даты, остановки и имя хранятся в этом браузере. Ничего не отправляется на сервер, пока вы не войдёте и не нажмёте <em>Сохранить в аккаунте</em>; аккаунт бесплатный и необязательный.</p>
@@ -105,7 +105,7 @@
     <p class="lead screen-only">Нажмите на цветную точку на карте &mdash; каждая — одно из восемнадцати измеренных мест, окрашенное по жаре в ваш основной месяц, &mdash; или воспользуйтесь кнопками и поиском ниже.</p>
     <div class="chip-row screen-only" id="siteChips" role="group" aria-label="Добавить измеренное место"></div>
     <div class="trip-form screen-only" style="margin-top:16px;">
-      <label for="placeSearch">Or search 897 mapped places<input type="search" id="placeSearch" list="placeOptions" autocomplete="off" placeholder="Начните вводить название места"></label>
+      <label for="placeSearch">Или найдите среди 897 мест на карте<input type="search" id="placeSearch" list="placeOptions" autocomplete="off" placeholder="Начните вводить название места"></label>
       <datalist id="placeOptions"></datalist>
       <button type="button" class="btn btn-blue" id="placeAdd">Добавить</button>
     </div>

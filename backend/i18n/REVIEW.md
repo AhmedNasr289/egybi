@@ -116,6 +116,13 @@ still written by script in English digits until stage 4.
   any time." It is a privacy statement, so its meaning must match exactly.
   Messages the server sends (for example a rejected password) are still
   English, and the verification and reset emails are unchanged.
+- Twelve more strings per language (2026-11-17), text the generator had
+  missed: the date labels "Arriving" / "Leaving", "Show amounts in", "A name,
+  in Latin letters", "Name for the dossier cover", "Or search 897 mapped
+  places", and whole paragraphs on Privacy (the account bullet), Community
+  (two bullets), Stories (the sources note) and Streets (the boundaries
+  note). The Privacy bullet describes what an account stores; please check
+  its meaning matches the English exactly.
 - Menu links to pages that have no translation yet lead to the English page.
 - Verification and password-reset emails are unchanged and English only.
   Any translation of them needs the owner's approval of the exact text first.

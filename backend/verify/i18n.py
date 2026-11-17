@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import re
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -52,6 +53,47 @@ def fail(m: str) -> None:
 
 def text(s: str) -> str:
     return norm(re.sub(r'<[^>]+>', ' ', s))
+
+
+# Text nodes that stay as they are in every language, on top of SAME: the
+# language button's own label, and data sources, licences and a book title
+# named as their owners write them.
+NODE_SAME = SAME | {'English', 'geoBoundaries', 'geoBoundaries.org', 'OpenStreetMap', 'SIPRI', 'CAPMAS',
+                    'SIL Open Font License 1.1',
+                    'Egyptian Grammar'}  # Gardiner's book, cited by title on the hieroglyphs page
+NODE_SKIP = {'script', 'style', 'svg', 'code', 'pre', 'noscript', 'template', 'math'}
+NODE_VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source',
+             'track', 'wbr'}
+
+
+class _Text(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack: list[str] = []
+        self.out: set[str] = set()
+
+    def handle_starttag(self, tag, attrs):
+        if tag not in NODE_VOID:
+            self.stack.append(tag)
+
+    def handle_endtag(self, tag):
+        if tag in self.stack:
+            while self.stack and self.stack.pop() != tag:
+                pass
+
+    def handle_data(self, d):
+        if NODE_SKIP & set(self.stack) or ('head' in self.stack and 'title' not in self.stack):
+            return
+        d = norm(d).strip(' ·|—-:;,.()')
+        if WORD.search(d):
+            self.out.add(d)
+
+
+def text_nodes(h: str) -> set:
+    """Every visible text node with a word of three letters or more."""
+    p = _Text()
+    p.feed(h)
+    return p.out
 
 
 sitemap = (SITE / 'sitemap.xml').read_text(encoding='utf-8') if (SITE / 'sitemap.xml').exists() else ''
@@ -105,6 +147,17 @@ for page in PAGES:
             left += sorted({norm(t) for _, _, t in script_strings(html[lang])} & en_code)
             if left:
                 fail(f'ENGLISH LEAK: {lang}/{page} still shows {len(left)} English unit(s), e.g. "{left[0][:70]}"')
+            # A second instrument that does not use units(): every visible
+            # text node, one word or many. units() is what the generator uses
+            # to FIND text, so a check built only on it cannot see text the
+            # generator never found - the <label>Arriving<input></label> and
+            # the half-translated paragraphs around <code> (2026-11-17)
+            # passed every run of the check above.
+            en_nodes = {t for t in text_nodes(html['en']) if t not in NODE_SAME}
+            node_left = sorted({t for t in text_nodes(html[lang])} & en_nodes)
+            if node_left:
+                fail(f'ENGLISH LEAK: {lang}/{page} still shows {len(node_left)} English text node(s), '
+                     f'e.g. "{node_left[0][:70]}"')
 
 if fails:
     print(f'\n{len(fails)} i18n failure(s)')
