@@ -56,6 +56,12 @@ def holidays(cal):
     start date are dropped rather than guessed."""
     out = []
     for e in cal.get('events', []):
+        # Dated events a traveller should know about that are not holidays at
+        # all (the Abu Simbel sun-alignment days, with their higher ticket
+        # price): the planner and home page list them inside a trip, but this
+        # page counts days off, so they stay out of it entirely.
+        if e.get('not_holiday'):
+            continue
         start = _d(e.get('start'))
         if start is None:
             continue
