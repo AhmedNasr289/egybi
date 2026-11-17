@@ -1457,6 +1457,14 @@ case("a planner leg read backwards loses its rows", "leg-rows.js", ["site/assets
                   "return (w[0] === x && w[1] === y);"),
      lambda o: "FAIL the same leg read backwards gives the same rows" in o, f"node {HERE}/leg-rows.js")
 
+# The first leg-cards CI run (17 Nov 2026) caught plan.js passing the page's
+# language to egfmt, which formats only 'en' and 'ar' and throws on 'ru': the
+# Russian planner then drew no stops at all. leg-cards.js must catch it again.
+case("the Russian planner breaks on a number format", "leg-cards.js", ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js", "F && ar ? F.num(n, 'ar', 0) : String(n)",
+                  "F ? F.num(n, document.documentElement.getAttribute('lang') || 'en', 0) : String(n)"),
+     lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
+
 
 print()
 # The shard's own count, for mutate-shards.py: ran + other_shard == seen.
