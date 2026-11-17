@@ -225,7 +225,7 @@ CADENCE = {  # workflow -> max days a file may age before the page is misciting
 }
 # Files compiled by hand from named sources (no workflow writes them), with the
 # number of days before each must be re-read against its sources.
-HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "opening-hours.json": 90}
+HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "arrival.json": 60, "opening-hours.json": 90}
 writers = {}
 for wf in posix_glob(".github/workflows/*.yml"):
     t = Path(wf).read_text(encoding="utf-8")
@@ -299,6 +299,15 @@ for name, limit in HAND_CURATED.items():
             if age > limit:
                 findings["price row past its re-check date"].append(
                     f"{name}: {r.get('key')} last checked {r['checked']}, {age}d ago (re-read every {limit}d)")
+            # A row that announces a change ("from 1 January 2027 the visa
+            # costs US$33") is wrong the day the change happens, however
+            # recently it was checked: the rows around it still give the old
+            # price as current. Once the date passes, someone must re-read the
+            # sources and rewrite the rows, then remove changes_on.
+            ch = re.fullmatch(r"(\d{4})-(\d\d)-(\d\d)", str(r.get("changes_on", "")))
+            if ch and datetime.date(*map(int, ch.groups())) <= TODAY:
+                findings["an announced change has taken effect"].append(
+                    f"{name}: {r.get('key')} announced a change on {r['changes_on']}: re-read the sources and update the rows")
 
 # ------------------------- opening hours belong to a site that has a page ---
 # visit.py shows a row of opening-hours.json on the visit page with the same

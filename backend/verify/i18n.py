@@ -40,6 +40,10 @@ WANT = {'en': 'ltr', 'ar': 'rtl', 'ru': 'ltr'}
 SAME = {'EgyBI', 'egybi.com', 'hello@egybi.com', 'aboutads.info/choices', 'Google AdSense',
         'Chronologie des pharaonischen Ägypten', 'SQL', 'Cinzel',
         'you@example.com',  # the e-mail field's example address
+        # official sites named by their address on arriving-in-egypt.html: a
+        # domain is the same in every language, and translating it would send
+        # a reader to a lookalike
+        'visa2egypt.gov.eg', 'visaonarrival.gov.eg', 'egymonuments.com', 'tickets.gem.eg',
         # product and database names, kept as their makers write them
         'Our World in Data', 'FAO AQUASTAT', 'QS Rankings'}
 CATS = {l: load_catalogue(l) for l in LANGS}

@@ -545,6 +545,11 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda: edit("site/data/fair-prices.json", '"published": "2024-12-04", "kind": "news report", "checked": "2026-11-17"',
                   '"published": "2024-12-04", "kind": "news report", "checked": "2025-01-02"'),
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
+# the visa rise announced for 1 January 2027 has happened but the page still
+# gives US$30 as the current fee (2026-11-17): moved to a date already past
+case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
+     lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)
 
 PY_CHECKS = f'"{sys.executable}" {HERE}/checks.py'
 
