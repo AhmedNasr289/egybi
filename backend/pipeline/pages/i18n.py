@@ -124,6 +124,10 @@ def script_keys() -> list:
 DATA_TEXT = {
     'fair-prices.json': {'top': ('note',), 'group': ('title', 'note'),
                          'row': ('item', 'unit', 'note', 'conflict', 'kind')},
+    # The planner's leg cards show a row's label and value (plan.js legHowHtml).
+    # Only the rows a leg names in getting-around.json are shown by script.
+    'arrival.json': {'top': (), 'group': (), 'row': ('label', 'value'),
+                     'only_leg_rows': 'getting-around.json'},
 }
 
 
@@ -132,10 +136,16 @@ def data_keys() -> list:
     keys = set()
     for name, f in DATA_TEXT.items():
         d = json.loads(read_text(os.path.join(SITE, 'data', name)))
+        only = None
+        if f.get('only_leg_rows'):
+            guide = json.loads(read_text(os.path.join(SITE, 'data', f['only_leg_rows'])))
+            only = {k for leg in guide.get('legs', []) for k in leg.get('rows', [])}
         keys.update(d[k] for k in f['top'] if d.get(k))
         for g in d.get('groups', []):
             keys.update(g[k] for k in f['group'] if g.get(k))
             for r in g.get('rows', []):
+                if only is not None and r.get('key') not in only:
+                    continue
                 keys.update(r[k] for k in f['row'] if r.get(k))
                 if r.get('source') and not r.get('source_url'):
                     keys.add(r['source'])

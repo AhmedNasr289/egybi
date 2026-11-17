@@ -31,6 +31,9 @@ on:
       - 'backend/verify/heat-warning.js'
       - 'site/assets/trip.js'
       - 'site/data/opening-hours.json'
+      - 'site/data/getting-around.json'
+      - 'site/data/arrival.json'
+      - 'backend/verify/leg-rows.js'
       - '.github/workflows/test-pipeline.yml'
   workflow_dispatch: {}
 
@@ -93,6 +96,14 @@ jobs:
         run: |
           set -o pipefail
           node backend/verify/heat-warning.js 2>&1 | tee -a /tmp/test-pipeline.log
+
+      # The planner's leg cards (trip.js legRows): which legs show cited
+      # arrival.json rows, on the real data files, without a page.
+      - name: Planner leg cards match their cases
+        shell: bash
+        run: |
+          set -o pipefail
+          node backend/verify/leg-rows.js 2>&1 | tee -a /tmp/test-pipeline.log
 
       # backend/ops/ also holds PHP run by Hostinger's cron (dispatch_daily.php),
       # which no other job exercises: verify-browser lints only site/**. The

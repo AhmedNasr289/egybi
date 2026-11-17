@@ -236,3 +236,16 @@ Please check:
 - the Russian city names: Думьят, Загазиг, Мансура, «города Суэцкого канала»;
 - the Careem row, which must say coverage is not confirmed, not that Careem
   is absent.
+
+## Planner leg cards (2026-11-17)
+
+One new line per language, shown between two stops in the planner, plus 8
+plain-text copies of lines already on arriving-in-egypt.html (the same
+translations, without the page's HTML around them).
+
+Please check:
+- «%n كم بخطّ مستقيم من %s» and «%n км по прямой от %s»: %s is a place name,
+  often in English (from OpenStreetMap); the number is written in the page's
+  digits;
+- that the train rows still read naturally out of their table, one per line:
+  «قطارات النوم إلى الأقصر وأسوان: تنطلق من محطة صعيد مصر (بشتيل) بالقاهرة».

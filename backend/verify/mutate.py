@@ -1440,6 +1440,15 @@ case("the planner warns a band too early", "heat-warning.js", ["site/assets/trip
                   "var top = BANDS[BANDS.length - 2], worst = null;"),
      lambda o: "FAIL below the top band" in o, f"node {HERE}/heat-warning.js")
 
+# ---- the planner's leg cards (2026-11-17) -------------------------------------
+# A leg is the same journey in either direction. If legRows matched only the
+# order getting-around.json lists, a trip planned Luxor first would lose the
+# Cairo sleeper rows; leg-rows.js's backwards case must catch it.
+case("a planner leg read backwards loses its rows", "leg-rows.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "return (w[0] === x && w[1] === y) || (w[0] === y && w[1] === x);",
+                  "return (w[0] === x && w[1] === y);"),
+     lambda o: "FAIL the same leg read backwards gives the same rows" in o, f"node {HERE}/leg-rows.js")
+
 
 print()
 # The shard's own count, for mutate-shards.py: ran + other_shard == seen.

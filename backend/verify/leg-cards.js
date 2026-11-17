@@ -1,0 +1,85 @@
+#!/usr/bin/env node
+/* The planner's leg cards in a real page (2026-11-17). leg-rows.js tests which
+   legs get rows; this tests what the reader sees. A saved Giza -> Karnak trip
+   must show, between the two stops:
+
+     1. ROWS: the three cited train rows (Bashtil sleepers, US-dollar fares,
+        where to buy), each linking its source and saying when it was checked.
+        LEG ROWS NOT SHOWN.
+     2. LANGUAGE: on ar/plan.html and ru/plan.html the distance line and the
+        rows read in that language, with the number in the page's digits.
+        LEG LEFT IN ENGLISH.
+     3. NOTHING GUESSED: a Karnak -> Philae trip (Luxor to Aswan, a leg no
+        cited row covers) shows the distance line and no rows.
+        ROWS INVENTED FOR AN UNCOVERED LEG.
+
+   Exits 1 on any failure. */
+const { chromium, executablePath, BASE } = require('./env');
+
+const KEY = 'egybi.trip.v1';
+const stop = (id, name, lat, lon) => ({ id, name, lat, lon, days: 1 });
+const GIZA = stop('site:giza', 'The Giza Pyramids', 29.9773, 31.1325);
+const KARNAK = stop('site:karnak', 'Karnak Temple', 25.7188, 32.6573);
+const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
+
+(async () => {
+  const b = await chromium.launch({ executablePath });
+  const ctx = await b.newContext();
+  await ctx.route('**/*', r => {
+    const u = r.request().url();
+    return (u.startsWith(BASE) || u.startsWith('data:') || u.startsWith('blob:')) ? r.continue() : r.abort();
+  });
+  const p = await ctx.newPage();
+  const errors = [];
+  p.on('pageerror', e => errors.push(String(e)));
+  let fails = 0;
+  const fail = (m) => { console.log('FAIL ' + m); fails++; };
+
+  async function legsOf(path, stops) {
+    await p.goto(BASE + '/plan.html');
+    await p.evaluate(([k, s]) => localStorage.setItem(k, JSON.stringify({ start: null, end: null, name: '', stops: s })), [KEY, stops]);
+    await p.goto(BASE + '/' + path);
+    await p.waitForFunction(n => document.querySelectorAll('#stopList .stop-n').length === n, stops.length, { timeout: 15000 })
+      .catch(() => {});
+    // The rows arrive with the data files; give them the same 15 s.
+    await p.waitForFunction(() => document.querySelector('#stopList p.leg'), null, { timeout: 15000 }).catch(() => {});
+    await p.waitForTimeout(500);
+    return p.evaluate(() => ({
+      leg: (document.querySelector('#stopList p.leg') || {}).textContent || '',
+      rows: Array.from(document.querySelectorAll('#stopList ul.leg-how li')).map(li => ({
+        text: li.textContent, href: (li.querySelector('a') || {}).href || '' })),
+    }));
+  }
+
+  // 1. English
+  const en = await legsOf('plan.html', [GIZA, KARNAK]);
+  const want = ['Bashtil', 'US dollars', 'agency'];
+  if (en.rows.length !== 3) fail(`LEG ROWS NOT SHOWN: Giza -> Karnak shows ${en.rows.length} row(s), wanted 3`);
+  else if (!want.every((w, i) => en.rows[i].text.includes(w))) fail('LEG ROWS NOT SHOWN: rows ' + JSON.stringify(en.rows.map(r => r.text)));
+  else if (!en.rows.every(r => r.href.startsWith('https://www.seat61.com/') && /checked 20\d\d-\d\d-\d\d/.test(r.text)))
+    fail('LEG ROWS NOT SHOWN with a source and a checked date: ' + JSON.stringify(en.rows));
+  else console.log('ok   Giza -> Karnak shows the 3 cited train rows, each with its source and date');
+  if (!/^\D*\d+ km in a straight line from The Giza Pyramids$/.test(en.leg.trim())) fail('distance line reads ' + JSON.stringify(en.leg));
+
+  // 2. Arabic and Russian
+  const ar = await legsOf('ar/plan.html', [GIZA, KARNAK]);
+  if (!/[٠-٩]+ كم بخطّ مستقيم من/.test(ar.leg) || /\d/.test(ar.leg.replace(/[٠-٩]/g, '')))
+    fail('LEG LEFT IN ENGLISH (ar): ' + JSON.stringify(ar.leg));
+  else if (ar.rows.length !== 3 || !ar.rows[0].text.includes('بشتيل')) fail('LEG LEFT IN ENGLISH (ar rows): ' + JSON.stringify(ar.rows.map(r => r.text)));
+  else console.log('ok   ar/plan.html: the distance in Arabic digits and the rows in Arabic');
+  const ru = await legsOf('ru/plan.html', [GIZA, KARNAK]);
+  if (!/\d+ км по прямой от/.test(ru.leg)) fail('LEG LEFT IN ENGLISH (ru): ' + JSON.stringify(ru.leg));
+  else if (ru.rows.length !== 3 || !ru.rows[0].text.includes('Баштиль')) fail('LEG LEFT IN ENGLISH (ru rows): ' + JSON.stringify(ru.rows.map(r => r.text)));
+  else console.log('ok   ru/plan.html: the distance and the rows in Russian');
+
+  // 3. An uncovered leg
+  const up = await legsOf('plan.html', [KARNAK, PHILAE]);
+  if (!up.leg.includes('km in a straight line')) fail('distance line missing on Karnak -> Philae: ' + JSON.stringify(up.leg));
+  else if (up.rows.length) fail('ROWS INVENTED FOR AN UNCOVERED LEG: ' + JSON.stringify(up.rows.map(r => r.text)));
+  else console.log('ok   Karnak -> Philae (no cited row) shows the distance alone');
+
+  if (errors.length) fail('page errors: ' + errors.join(' | '));
+  await b.close();
+  console.log(fails ? fails + ' failure(s)' : 'leg-cards: all checks pass');
+  process.exit(fails ? 1 : 0);
+})().catch(e => { console.error(e); process.exit(1); });

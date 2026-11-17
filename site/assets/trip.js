@@ -191,6 +191,32 @@
     return best && bestKm <= NEAR_KM ? { site: best, km: bestKm } : null;
   }
 
+  /* How to travel a planner leg (2026-11-17). getting-around.json names a few
+     areas by the measured sites they sit near, and the legs between areas that
+     a cited row of arrival.json describes. legRows returns that leg's row keys
+     for stops a and b, in either order, or [] when no cited row covers it, so
+     the planner never guesses a route. Pure functions, so
+     backend/verify/leg-rows.js can test them without a page. */
+  function areaOf(guide, climate, p) {
+    var sites = (climate && climate.sites) || [], hit = null;
+    ((guide && guide.areas) || []).forEach(function (ar) {
+      (ar.near || []).forEach(function (k) {
+        var s = sites.filter(function (x) { return x.key === k; })[0];
+        if (!hit && s && km(p, s) <= ar.radius_km) hit = ar.key;
+      });
+    });
+    return hit;
+  }
+  function legRows(guide, climate, a, b) {
+    var x = areaOf(guide, climate, a), y = areaOf(guide, climate, b);
+    if (!x || !y || x === y) return [];
+    var leg = ((guide && guide.legs) || []).filter(function (l) {
+      var w = l.between || [];
+      return (w[0] === x && w[1] === y) || (w[0] === y && w[1] === x);
+    })[0];
+    return leg ? (leg.rows || []).slice() : [];
+  }
+
   /* ---------------------------------------------------------- holidays ---
      Every event whose window overlaps the trip, lunar ones flagged as
      expected. Overlap uses the widest edge of each range, so an Eid that might
@@ -229,7 +255,7 @@
     parse: parse, iso: iso, addDays: addDays, today: today, nights: nights,
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow, heatWarning: heatWarning,
-    km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM,
+    km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM, areaOf: areaOf, legRows: legRows,
     eventsIn: eventsIn, rate: rate, rateText: rateText, money: money, whole: whole,
     MONTHS: MONTHS, SHORT: SHORT, esc: esc
   };

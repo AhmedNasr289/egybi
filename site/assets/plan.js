@@ -219,6 +219,31 @@
       (w.opens ? ' ' + esc(t('The site opens at %h, so you can visit before the afternoon heat.').replace('%h', w.opens)) : '') +
       '</p>';
   }
+  // The leg into a stop: its straight-line distance, then how to travel it
+  // when a cited row of arrival.json covers it (getting-around.json names
+  // which). Each row keeps its own source and the date it was checked.
+  function legText(a, b) {
+    var F = window.EGYBI && window.EGYBI.fmt, lang = document.documentElement.getAttribute('lang') || 'en';
+    var n = Math.round(T.km(a, b));
+    return t('%n km in a straight line from %s')
+      .replace('%n', F ? F.num(n, lang, 0) : String(n)).replace('%s', a.name);
+  }
+  function arrivalRow(k) {
+    var out = null;
+    ((D.arrival || {}).groups || []).forEach(function (g) {
+      (g.rows || []).forEach(function (r) { if (r.key === k) out = r; });
+    });
+    return out;
+  }
+  function legHowHtml(a, b) {
+    var rows = T.legRows(D.guide, D.climate, a, b).map(arrivalRow).filter(Boolean);
+    if (!rows.length) return '';
+    return '<ul class="leg leg-how" style="list-style:none;padding:0;margin-top:2px;">' + rows.map(function (r) {
+      return '<li><strong>' + esc(t(r.label)) + ':</strong> ' + esc(t(r.value)) + ' &middot; ' +
+        (r.source_url ? '<a href="' + esc(r.source_url) + '" rel="noopener">' + esc(r.source) + '</a>' : esc(t(r.source))) +
+        (r.checked ? ', ' + esc(t('checked')) + ' ' + esc(r.checked) : '') + '</li>';
+    }).join('') + '</ul>';
+  }
   function renderStops() {
     var ul = $('stopList'), sum = $('planSum');
     if (!ul) return;
@@ -228,7 +253,7 @@
     } else {
       ul.innerHTML = st.map(function (x, i) {
         var h = heatFor(x), first = h.rows[0], bd = first ? T.band(first.max) : null;
-        var leg = i > 0 ? '<p class="leg">&darr; ' + Math.round(T.km(st[i - 1], x)) + ' km in a straight line from ' + esc(st[i - 1].name) + '</p>' : '';
+        var leg = i > 0 ? '<p class="leg">&darr; ' + esc(legText(st[i - 1], x)) + '</p>' + legHowHtml(st[i - 1], x) : '';
         return leg + '<li class="sheet stop">' +
           '<span class="stop-n" aria-hidden="true">' + (i + 1) + '</span>' +
           '<div><h3>' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
@@ -286,7 +311,7 @@
       ' &middot; ' + st.length + ' stop' + (st.length === 1 ? '' : 's') + '</p></div>';
     var stops = st.map(function (x, i) {
       var h = heatFor(x), el = elevationFor(x);
-      var leg = i > 0 ? Math.round(T.km(st[i - 1], x)) + ' km in a straight line from ' + esc(st[i - 1].name) + '. ' : '';
+      var leg = i > 0 ? esc(legText(st[i - 1], x)) + '. ' : '';
       return '<div class="sheet" style="margin-top:16px;"><p class="kicker">Stop ' + (i + 1) + ' &middot; ' + (x.days || 1) + ' day' + ((x.days || 1) === 1 ? '' : 's') + '</p>' +
         '<h3 style="margin:0 0 8px;color:var(--blue-deep);">' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
         '<p style="margin:0 0 6px;">' + leg + esc(h.text) + (el != null ? ' Ground elevation ' + Math.round(el) + ' m (SRTM).' : '') + '</p>' +
@@ -488,9 +513,11 @@
     Promise.all([
       settle(T.getJSON('data/visit-climate.json')), settle(T.getJSON('data/visit-terrain.json')),
       settle(T.getJSON('data/geo-places.json')), settle(T.getJSON('data/calendar.json')),
-      settle(T.getJSON('data/opening-hours.json'))
+      settle(T.getJSON('data/opening-hours.json')), settle(T.getJSON('data/getting-around.json')),
+      settle(T.getJSON('data/arrival.json'))
     ]).then(function (r) {
       D.climate = r[0]; D.terrain = r[1]; D.places = r[2]; D.calendar = r[3]; D.hours = r[4];
+      D.guide = r[5]; D.arrival = r[6];
       initChips(); initSearch();
       var q = new URLSearchParams(location.search);
       if (q.get('add')) addSite(q.get('add'));
