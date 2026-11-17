@@ -9,7 +9,7 @@
   "note_ar": "أسعار استرشادية من السوق، وليست السعر الرسمي للبنك المركزي المصري."
  },
  "fetched_at": "2026-11-17",
- "as_of": "2026-11-16",
+ "as_of": "2026-11-17",
  "base": "EGP",
  "count": 10,
  "rates": [
@@ -17,71 +17,71 @@
    "code": "USD",
    "name_ar": "دولار أمريكي",
    "name_en": "US Dollar",
-   "egp": 53.5963,
-   "change_pct": 0.29
+   "egp": 53.6797,
+   "change_pct": 0.16
   },
   {
    "code": "EUR",
    "name_ar": "يورو",
    "name_en": "Euro",
-   "egp": 59.2557,
-   "change_pct": 0.4
+   "egp": 59.0807,
+   "change_pct": -0.3
   },
   {
    "code": "GBP",
    "name_ar": "جنيه إسترليني",
    "name_en": "British Pound",
-   "egp": 70.9471,
-   "change_pct": 0.36
+   "egp": 70.8165,
+   "change_pct": -0.18
   },
   {
    "code": "SAR",
    "name_ar": "ريال سعودي",
    "name_en": "Saudi Riyal",
-   "egp": 14.3314,
-   "change_pct": 0.57
+   "egp": 14.3152,
+   "change_pct": -0.11
   },
   {
    "code": "AED",
    "name_ar": "درهم إماراتي",
    "name_en": "UAE Dirham",
-   "egp": 14.6338,
-   "change_pct": 0.57
+   "egp": 14.6171,
+   "change_pct": -0.11
   },
   {
    "code": "KWD",
    "name_ar": "دينار كويتي",
    "name_en": "Kuwaiti Dinar",
-   "egp": 171.9986,
-   "change_pct": -0.09
+   "egp": 172.7713,
+   "change_pct": 0.45
   },
   {
    "code": "QAR",
    "name_ar": "ريال قطري",
    "name_en": "Qatari Riyal",
-   "egp": 14.7645,
-   "change_pct": 0.57
+   "egp": 14.7477,
+   "change_pct": -0.11
   },
   {
    "code": "CAD",
    "name_ar": "دولار كندي",
    "name_en": "Canadian Dollar",
-   "egp": 37.4686,
-   "change_pct": -0.06
+   "egp": 37.5488,
+   "change_pct": 0.21
   },
   {
    "code": "CNY",
    "name_ar": "يوان صيني",
    "name_en": "Chinese Yuan",
-   "egp": 8.0253,
-   "change_pct": 0.46
+   "egp": 8.037,
+   "change_pct": 0.15
   },
   {
    "code": "TRY",
    "name_ar": "ليرة تركية",
    "name_en": "Turkish Lira",
-   "egp": 1.0608,
-   "change_pct": -0.16
+   "egp": 1.0648,
+   "change_pct": 0.38
   }
  ]
 }
