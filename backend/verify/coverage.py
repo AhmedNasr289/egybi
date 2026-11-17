@@ -299,6 +299,12 @@ for name, limit in HAND_CURATED.items():
             if age > limit:
                 findings["price row past its re-check date"].append(
                     f"{name}: {r.get('key')} last checked {r['checked']}, {age}d ago (re-read every {limit}d)")
+            # A row with no link must say what was searched and when ("Searched
+            # 17 Nov 2026: no city list on careem.com"). A blank or bare source
+            # would read as a sourced fact with the source left off.
+            if not r.get("source_url") and not str(r.get("source", "")).startswith("Searched "):
+                findings["row with no source link that does not say what was searched"].append(
+                    f"{name}: {r.get('key')} has source={r.get('source')!r} and no source_url")
             # A row that announces a change ("from 1 January 2027 the visa
             # costs US$33") is wrong the day the change happens, however
             # recently it was checked: the rows around it still give the old
