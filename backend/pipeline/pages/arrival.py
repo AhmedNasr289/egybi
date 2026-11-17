@@ -28,6 +28,18 @@ from .common import SITE, SITE_URL, breadcrumb, chrome, esc, page, read_text, wr
 
 PAGE = 'arriving-in-egypt.html'
 DATA = os.path.join(SITE, 'data', 'arrival.json')
+# On a phone the three columns do not fit: until 2026-11-17 the source column
+# sat off-screen and every row had to be scrolled sideways to read where it
+# came from. Under 600px each row stacks: what, then the answer, then the
+# source. verify/overflow.js fails a .fp-stack table that is still wider than
+# the screen at 375px.
+CSS = """
+@media (max-width: 600px) {
+  .fp-table.fp-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .fp-table.fp-stack tr { display: block; padding: 10px 0; border-bottom: 1px solid var(--line-light); }
+  .fp-table.fp-stack th, .fp-table.fp-stack td { display: block; border: 0; padding: 3px 0; }
+}
+"""
 GLYPH = {'entry': 'ankh', 'money': 'scroll', 'rides': 'ra', 'emergency': 'maat', 'official': 'scroll'}
 
 
@@ -53,7 +65,7 @@ def group_html(g: dict, alt: bool) -> str:
   <div class="wrap" style="max-width:960px;">
     <div class="kicker"><span data-glyph="{GLYPH.get(g['key'], 'scroll')}"></span>{esc(g['title'])}</div>
     <div class="sheet fp-wrap">
-      <table class="fp-table">
+      <table class="fp-table fp-stack">
         <thead><tr><th scope="col">What</th><th scope="col">What it costs or says</th><th scope="col">Source</th></tr></thead>
         <tbody>{rows}</tbody>
       </table>
@@ -99,7 +111,7 @@ def build_arrival_page() -> list:
 </section>
 """
     nav, foot = chrome('')
-    html = page(title, desc, url, body, ld, prefix='', nav=nav, foot=foot,
+    html = page(title, desc, url, body, ld, extra_head=f'<style>{CSS}</style>', prefix='', nav=nav, foot=foot,
                 og_image=f"{SITE_URL}/og-visit.png?v=3")
     # A page in i18n.PAGES says its direction too (verify/i18n.py, LANG/DIR),
     # as the hand-written translated pages do; page() writes lang alone.

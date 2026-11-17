@@ -293,6 +293,11 @@ case("content clipped off-screen at 375px", "overflow.js", ["site/places.html"],
      lambda: edit("site/places.html", "</body>",
                   '<section><div style="width:900px;height:8px">wide</div></section></body>'),
      lambda o: "clipped off-screen: 1" in o, f"node {HERE}/overflow.js")
+# the phone layout of the arrival tables dropped: rows go back to three columns
+# and the source column needs sideways scrolling again (2026-11-17)
+case("a stacked table back to sideways scrolling on a phone", "overflow.js", ["site/arriving-in-egypt.html"],
+     lambda: edit("site/arriving-in-egypt.html", "@media (max-width: 600px) {", "@media (max-width: 1px) {"),
+     lambda o: "a stacked table still needs sideways scrolling" in o, f"node {HERE}/overflow.js")
 
 # ---- 9. page sweep: a sub-nav chip pointing at a section that is gone -------
 case("a temperature typed into visit.html's hand-written prose", "static-audit.py", ["site/visit.html"],
