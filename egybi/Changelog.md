@@ -2246,3 +2246,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - CI screenshots add `ar/visit.html` and `ru/places.html`.
   - A Russian title and description were shortened (seo.py).
 - **Review:** `backend/i18n/REVIEW.md` lists the four pages and what to read most carefully.
+## 2026-11-17 — The year strip's sentence test reads the non-breaking space
+- **What failed:** Test (pipeline) failed on #145's head (`1ba6d35`) and on every PR above it. `test_heat_calendar` stripped tags from the findings but not entities, so after #145 joined each figure to °C with `&nbsp;`, it looked for `42 °C` with a plain space. The browser checks were all green, and that workflow was the only one watched, so this was missed until #150.
+- **The fix:** the test now asserts the markup carries `42&nbsp;°C` and has no figure followed by a plain space and °C. It then unescapes the text and checks the sentences as a reader sees them. All 206 pipeline tests pass, and the test fails if the non-breaking space is removed (control run).
+- **And the habit:** a head counts as green only when every check run on it is green (read with the check-runs API), not only the browser workflow.

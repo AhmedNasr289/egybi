@@ -6,6 +6,7 @@ cells beside them, and a credit line that ran off the image.
 """
 from __future__ import annotations
 
+import html
 import json
 import math
 import re
@@ -80,7 +81,13 @@ class Findings(unittest.TestCase):
             [20, 21, 27, 30, 35, 39, 42, 41, 37, 31, 25, 21],
             [19, 20, 26, 29, 33, 36, 30, 30, 33, 29, 24, 20],
         ])
-        text = ' '.join(re.sub('<[^>]+>', '', s) for s in hc.findings(rows))
+        raw = ' '.join(re.sub('<[^>]+>', '', s) for s in hc.findings(rows))
+        # Every figure is tied to its unit with a non-breaking space, so a
+        # line never starts with a bare "°C" (2026-11-17, PR #145): check the
+        # markup carries it, then read the sentences as a reader sees them.
+        self.assertIn('42&nbsp;°C', raw)
+        self.assertNotRegex(raw, r'\d °C')
+        text = html.unescape(raw).replace('\xa0', ' ')
         # Both rows are under 28 in Jan, Feb, Mar, Nov and Dec (March: 27 and 26).
         self.assertIn('In January, February, March, November and December, 2 of 2 sites', text)
         self.assertIn('In April, May, June, July, August, September and October, none does', text)
