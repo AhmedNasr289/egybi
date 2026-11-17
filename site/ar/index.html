@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EgyBI — خطّط لمصر بصدق: حرارة حقيقية وعطلات وأسعار</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14110C">
+<script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/auth/*"}},{"not":{"href_matches":"/api/*"}},{"not":{"href_matches":"/account.html"}}]},"eagerness":"moderate"}]}</script>
+<meta name="description" content="اختر تواريخك: الحرارة المقيسة في أبرز مواقع مصر، والعطلات خلال رحلتك، وسعر الصرف اليوم والأسعار العادلة — وكل رقم موثّق المصدر.">
+<meta property="og:title" content="EgyBI — مصر بالخرائط والبيانات الموثّقة">
+<meta property="og:description" content="موسوعة عن مصر تُروى بالخرائط والبيانات المفتوحة. كل رقم يحمل مصدره وتاريخه.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://egybi.com/ar/">
+<meta property="og:image" content="https://egybi.com/og-image.png?v=3">
+<meta property="og:image:alt" content="EgyBI — مصر بالخرائط والبيانات الموثّقة">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- .js: motion.js may hide [data-aos] until it reveals them; without it, egybi.css shows everything (S1, S4). -->
+<script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.documentElement.classList.contains("mo-ready"))document.documentElement.classList.remove("js")},4000)</script>
+<link href="../assets/egybi.css?v=50" rel="stylesheet">
+<link href="../assets/site-map.css?v=1" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-1432845423481814">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1432845423481814"
+     crossorigin="anonymous"></script>
+  <link rel="canonical" href="https://egybi.com/ar/">
+  <meta name="twitter:title" content="EgyBI — مصر بالخرائط والبيانات الموثّقة">
+  <meta name="twitter:description" content="موسوعة عن مصر تُروى بالخرائط والبيانات المفتوحة — الجغرافيا والتراث والبنية التحتية والتاريخ، وكل رقم يمكن تتبّعه إلى مصدر مسمّى.">
+  <meta name="twitter:image" content="https://egybi.com/og-image.png?v=3">
+  <!-- ENTITY NOTE. Google resolves a brand name to an entity largely through
+       sameAs — the set of external profiles that assert the same identity.
+       EgyBI has none yet, which is why a search for "egybi" currently returns
+       an unrelated Cairo company called egabi rather than this site: Google has
+       no entity for the string and substitutes the nearest known one.
+       When the GitHub / LinkedIn / X / Crunchbase profiles exist, add them here
+       inside the Organization node, exactly as:
+         "sameAs":["https://github.com/...","https://www.linkedin.com/company/..."],
+       Add one to the #founder Person node too — a personal LinkedIn profile is
+       an already-trusted entity, so linking it is one of the cheapest ways to
+       lend that trust to a brand Google has never seen before.
+       PARTLY DONE 2026-08-12. github.com/AhmedNasr289 is verified public (20
+       public repos, name "Ahmed Nasr") so it is a real profile, not nothing,
+       and it is now on the #founder Person node exactly as prescribed below.
+       The Organization node still has no sameAs, correctly: there is no EgyBI
+       org profile anywhere — the repo is private under a personal account, and
+       a sameAs pointing at a 404 is worse than none.
+       ⚠️ ONE MANUAL STEP MAKES THIS WORK: sameAs is corroboration, and
+       corroboration has to run BOTH ways. Set the GitHub profile's Website
+       field to https://egybi.com — it is currently empty, so the profile
+       does not yet confirm the claim this node makes about it. Until it does,
+       the link is an assertion Google cannot check.
+       Pointing sameAs at nothing is worse than omitting it, so the
+       Organization node's absence is deliberate rather than an oversight.
+       foundingDate is included because
+       egabi was founded in 1999 — a different founding year is a small but real
+       disambiguation signal. -->
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","@id":"https://egybi.com/#org","name":"EgyBI",
+ "alternateName":["egybi","EgyBI.com","Egy BI"],
+ "url":"https://egybi.com/",
+ "logo":{"@type":"ImageObject","url":"https://egybi.com/icon-512.png","width":512,"height":512},
+ "email":"hello@egybi.com","foundingDate":"2026",
+ "knowsAbout":["Egypt","Egyptian open data","Geographic information systems","Cartography","Data journalism"],
+ "founder":{"@id":"https://egybi.com/#founder"},
+ "description":"EgyBI is a free encyclopaedia of Egypt told through maps and cited open data — places, geography, infrastructure and history, with every figure traceable to a named source."},
+{"@type":"Person","@id":"https://egybi.com/#founder","name":"Ahmed Nasr",
+ "description":"Civil engineer working in data; sole author of EgyBI.",
+ "url":"https://github.com/AhmedNasr289",
+ "sameAs":["https://github.com/AhmedNasr289"],
+ "knowsAbout":["Egypt","Civil engineering","Geographic information systems","Data engineering"]},
+{"@type":"WebSite","@id":"https://egybi.com/#site","url":"https://egybi.com/","name":"EgyBI",
+ "publisher":{"@id":"https://egybi.com/#org"},"inLanguage":"en"},
+{"@type":"Dataset","name":"Egypt open data on EgyBI",
+ "url":"https://egybi.com/explore.html",
+ "description":"Sourced Egyptian data on economy, population, land, heritage and infrastructure. Every figure carries its source and date.",
+ "isAccessibleForFree":true,"creator":{"@id":"https://egybi.com/#org"},
+ "license":"https://creativecommons.org/licenses/by/4.0/"}
+]}
+</script>
+  <!-- Egyptian Hieroglyphs (U+13000) are absent from system fonts on iOS,
+       Android and macOS, so these signs would be empty boxes for most
+       visitors. This loads ONLY the nine signs we use (~12 KB). -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+  <link rel="alternate" type="application/rss+xml" title="البردية — EgyBI" href="/feed.xml">
+<style>
+  /* featured-case strip (home) */
+  .case-strip { display:grid; grid-template-columns:1.55fr 1fr; gap:30px; align-items:center;
+                background:var(--papyrus-2); border:1px solid var(--line-light); border-left:5px solid var(--gold);
+                border-radius:var(--radius); padding:30px 32px; }
+  .case-strip h2 { margin:8px 0 10px; color:var(--blue-deep); font-size:var(--fs-h2); line-height:1.28; }
+  .case-strip .lead { margin:0; font-size:var(--fs-base); }
+  .cs-nums { display:flex; flex-direction:column; gap:12px; }
+  .csn { background:var(--papyrus); border:1px solid var(--line-light); border-radius:var(--radius); padding:14px 18px; text-align:center; }
+  .csn b { font-family:'Cinzel',serif; font-size:var(--fs-xl); display:block; line-height:1; }
+  .csn.down b { color:var(--danger); } .csn.up b { color:var(--success); }
+  .csn span { font-size:var(--fs-xs); color:var(--ink-soft); display:block; margin-top:6px; }
+  @media (max-width:820px){ .case-strip { grid-template-columns:1fr; }
+    .cs-nums { flex-direction:row; } .csn { flex:1; } }
+
+  /* hero background video - generated once (LTX-Video, open weights) and self-hosted, never
+     per visitor. Since the papyrus pass (2026-10-09) the film runs UNDER the papyrus: a sepia
+     filter and a papyrus scrim turn the lighthouse into a faint moving painting on the leaf.
+     The text sits on the scrim, so its contrast is the scrim's: at 0.86 minimum opacity, even
+     a black video pixel composites to ~#BFAA81 under the outer edge, which still holds the
+     hero's deep inks (#292420 body, #0E2A5E title) above 7:1. contrast.js measures the
+     painted pixel; re-measure if the scrim or the video changes. */
+  .hero-video-wrap { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .hero-video { width:100%; height:100%; object-fit:cover; display:block; filter:sepia(.7) saturate(.6) contrast(.9); }
+  .hero-video-scrim { position:absolute; inset:0;
+    background:radial-gradient(ellipse 110% 120% at 32% 30%, rgba(246,235,208,.92) 0%, rgba(235,217,178,.88) 62%, rgba(222,197,150,.86) 100%); }
+</style>
+<!-- I18N-HEAD:START - generated by backend/pipeline/pages/i18n.py; edit that, not this. -->
+<link rel="alternate" hreflang="en" href="https://egybi.com/">
+<link rel="alternate" hreflang="ar" href="https://egybi.com/ar/">
+<link rel="alternate" hreflang="ru" href="https://egybi.com/ru/">
+<link rel="alternate" hreflang="x-default" href="https://egybi.com/">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="../assets/i18n.css?v=1" rel="stylesheet">
+<script src="../assets/lang.js?v=1" defer></script>
+<!-- I18N-HEAD:END -->
+</head>
+<body>
+<a class="skip-link" href="#main">انتقل إلى المحتوى</a>
+
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
+      <a href="index.html" class="active">الرئيسية</a>
+      <a href="plan.html">الخطة</a>
+      <a href="../visit.html">متى تسافر</a>
+      <a href="fair-prices.html">الأسعار العادلة</a>
+      <a href="hieroglyphs.html">الهيروغليفية</a>
+      <a href="dossier.html">الملف</a>
+      <a href="../places.html">الأماكن</a>
+      <a href="../geospatial.html">الأطلس</a>
+      <a href="../stories.html">القصص</a>
+      <a href="../community.html">المجتمع</a>
+      <a href="../explore.html">البيانات</a>
+      <a href="about.html">من نحن</a>
+      <a class="nav-only-mobile" href="ask.html">مراجعة الخطة</a>
+      <a class="nav-only-mobile" href="#newsletter">النشرة البريدية</a>
+    <!-- LANG-LINKS:START --><a class="nav-only-mobile lang-link" href="../index.html" hreflang="en" lang="en" data-lang="en">English</a><a class="nav-only-mobile lang-link" href="../ru/index.html" hreflang="ru" lang="ru" data-lang="ru">Русский</a><!-- LANG-LINKS:END -->
+</nav>
+    <div class="nav-actions"><!-- LANG-SWITCH:START --><details class="lang-switch"><summary aria-label="اللغة: العربية"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> عربي</summary><div class="lang-menu"><a href="../index.html" hreflang="en" lang="en" data-lang="en">English</a><a href="index.html" hreflang="ar" lang="ar" data-lang="ar" aria-current="true">العربية</a><a href="../ru/index.html" hreflang="ru" lang="ru" data-lang="ru">Русский</a></div></details><!-- LANG-SWITCH:END --><a class="cta" href="ask.html">مراجعة الخطة</a></div>
+    <button class="nav-toggle" aria-label="القائمة" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="surface-hero hero-v2" style="position:relative;overflow:hidden;padding-top:74px;padding-bottom:62px;">
+  <!-- Decorative: no src until the script below decides motion is welcome (not for
+       prefers-reduced-motion or data saver), so those readers download only the poster. -->
+  <div class="hero-video-wrap" aria-hidden="true">
+    <video class="hero-video" muted loop playsinline preload="none" width="1248" height="704"
+           poster="../assets/video/hero-lighthouse.webp?v=4" data-src="../assets/video/hero-lighthouse.mp4?v=3"></video>
+    <div class="hero-video-scrim"></div>
+  </div>
+  <div id="hero-particles" class="hero-particles" aria-hidden="true" data-parallax="0.12"></div>
+  <div class="hero-inner wrap" data-mo-hero>
+   <div class="hero-layout">
+    <div>
+    <p class="hero-eyebrow"><span data-glyph="reed"></span> مصر، بصدق &middot; كل رقم موثّق المصدر &middot; بلا تسجيل <span data-glyph="scroll"></span></p>
+    <h1 class="hero-h1">متى ستسافر إلى مصر؟</h1>
+    <p class="lead hero-lead">اختر تواريخك. ستعرف ما تبلغه الحرارة المقيسة في فترة بعد ظهر عادية في كل موقع من ثمانية عشر موقعًا رئيسيًا، وأي العطلات تقع خلال رحلتك، وسعر الصرف اليوم، وكم ينبغي أن تكلّف الأشياء &mdash; وكل رقم مع مصدره وتاريخه.</p>
+
+    <form class="trip-form" id="tripForm" novalidate>
+      <label>Arriving<input type="date" id="tripStart" name="start" required></label>
+      <label>Leaving<input type="date" id="tripEnd" name="end" required></label>
+      <button type="submit" class="btn btn-primary" data-ev="home_brief">اعرض ملخّصي &larr;</button>
+    </form>
+    <p class="form-note" id="tripNote" role="status" aria-live="polite"></p>
+    </div>
+
+    <!-- role="img" makes this a single leaf in the accessibility tree, which is
+         correct for a graphic and is why nothing interactive may go inside it.
+         The caption sits OUTSIDE for that reason: its link has to stay
+         reachable. -->
+    <figure class="eg-flag-fig">
+      <div class="eg-flag" role="img" aria-label="الأشرطة الثلاثة للعلم المصري &mdash; الأحمر والأبيض والأسود &mdash; وعليها حدود مصر باللون الذهبي.">
+        <span class="eg-flag-pole" aria-hidden="true"></span>
+        <div class="eg-flag-cloth">
+          <img class="eg-flag-outline" src="../assets/egypt-silhouette.svg" alt="" width="113" height="100" decoding="async">
+          <span class="eg-flag-sheen" aria-hidden="true"></span>
+        </div>
+      </div>
+      <figcaption class="eg-flag-cap" data-geo-credit>ليست رسمًا &mdash; الحدود مستخرجة من الهندسة نفسها التي ترسمها خرائط الأطلس. <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>، <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>.</figcaption>
+    </figure>
+   </div>
+  </div>
+</section>
+
+<nav class="on-this-page" data-wayfinding aria-label="في هذه الصفحة"></nav>
+
+<!-- THE BRIEFING — rendered by assets/home.js from visit-climate.json,
+     calendar.json and fx-today.json. No figure is typed into this markup. -->
+<section class="surface-light" id="briefing" data-nav="ملخّصك">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="ra"></span>ملخّصك</div>
+    <h2 id="briefTitle">الحرارة، موقعًا موقعًا.</h2>
+    <div class="brief-top">
+      <div>
+        <p class="lead" id="briefLead">جارٍ تحميل السجل المناخي&hellip;</p>
+        <div class="heat-legend" id="heatLegend" aria-hidden="true"></div>
+      </div>
+      <!-- The briefing map: built by backend/pipeline/build_site_map.py; coloured
+           and brought in north to south by assets/site-map.js. Without JS it is
+           this image, every site in its place. -->
+      <figure class="site-map" id="siteMap">
+        <img src="../assets/egypt-sites.svg?v=1" alt="خريطة مصر بالمواقع الـ١٨ المقيسة أدناه، من الإسكندرية شمالًا إلى أبو سمبل جنوبًا" width="450" height="400" loading="lazy" decoding="async">
+        <figcaption class="chart-cap"><span id="siteMapSummary"></span>كل نقطة موقع من المواقع أدناه، عند إحداثياته الخاصة. الحدود: <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>، <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>.</figcaption>
+      </figure>
+    </div>
+    <div class="brief-grid" id="briefGrid"></div>
+    <p class="chart-cap" id="briefCap"></p>
+  </div>
+</section>
+
+<section class="surface-light-2" id="when" data-nav="العطلات وسعر الصرف">
+  <div class="wrap">
+    <div class="grid grid-2">
+      <div class="sheet">
+        <div class="kicker"><span data-glyph="scroll"></span>ضمن تواريخك</div>
+        <h3 style="margin:0 0 6px;color:var(--blue-deep);">عطلات وإغلاقات ينبغي معرفتها</h3>
+        <ul class="event-list" id="eventList"></ul>
+        <p class="chart-cap" id="eventCap"></p>
+      </div>
+      <div class="sheet">
+        <div class="kicker"><span data-glyph="maat"></span>سعر الصرف اليوم</div>
+        <h3 style="margin:0 0 6px;color:var(--blue-deep);">كم تساوي نقودك بالجنيه</h3>
+        <div id="rateBox"><p class="chart-cap">جارٍ تحميل سعر الصرف&hellip;</p></div>
+        <p style="margin-top:16px;"><a class="btn btn-blue btn-small" href="fair-prices.html" data-ev="home_to_prices">كم ينبغي أن تكلّف الأشياء &larr;</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="surface-deep" id="tools" data-nav="الأدوات">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="was"></span>أربع أدوات، رحلة واحدة</div>
+    <h2>خطّط لها بالبيانات نفسها.</h2>
+    <p class="lead">كل ما يلي يقرأ الملفات الموثّقة نفسها التي يقرؤها الملخّص أعلاه، ويتذكّر تواريخك على هذا الجهاز &mdash; لا يُرسل شيء إلى أي مكان إلا إذا اخترت حفظ رحلة في حساب مجاني، ولا شيء يحتاج إلى حساب.</p>
+    <div class="grid grid-2" style="margin-top:28px;">
+      <a class="card card-link" href="plan.html" data-ev="home_to_plan">
+        <span class="tag">مخطِّط المسار</span>
+        <h3>ضع محطاتك على الخريطة.</h3>
+        <p>اختر من بين ١٨ موقعًا رئيسيًا و٨٩٧ مكانًا على الخريطة، وحدّد الأيام في كلٍّ منها، وشاهد الحرارة المقيسة والمسافات المستقيمة. ثم اطبعها ملفًّا من «البردية».</p>
+      </a>
+      <a class="card card-link" href="fair-prices.html" data-ev="home_to_fair">
+        <span class="tag">الأسعار العادلة</span>
+        <h3>كم ينبغي أن يكلّف؟</h3>
+        <p>البقشيش ورسوم الدخول والتنقلات كما تنشرها أدلة مسمّاة، محوّلة بسعر الصرف اليوم &mdash; وحين يختلف مصدران، يُعرض الاثنان.</p>
+      </a>
+      <a class="card card-link" href="hieroglyphs.html" data-ev="home_to_glyphs">
+        <span class="tag">استوديو الأسماء</span>
+        <h3>اسمك بالهيروغليفية.</h3>
+        <p>يُكتب علامةً علامة من قائمة غاردنر، داخل خرطوش يمكنك حفظه &mdash; مع الصراحة بأنه نقل صوتي لا ترجمة.</p>
+      </a>
+      <a class="card card-link" href="ask.html" data-ev="home_to_ask">
+        <span class="tag">مراجعة الخطة</span>
+        <h3>اجعل شخصًا في القاهرة يقرأ خطتك.</h3>
+        <p>أرسل مسودة برنامجك؛ واحصل على مراجعة مكتوبة للحرارة والمسافات والعطلات والأسعار مقارنةً بالبيانات، خلال ٤٨ ساعة.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED CASE -->
+<section class="surface-light-2" id="featured-case">
+  <div class="wrap">
+    <div class="case-strip" data-aos="fade-up">
+      <div>
+        <div class="kicker"><span data-glyph="ra"></span>ابدأ من هنا &middot; نحو ١٠ دقائق</div>
+        <h2>انخفض الناتج المحلي الإجمالي لمصر ١٨٪ وارتفع ٦٨٪ &mdash; خلال العامين نفسيهما.</h2>
+        <p class="lead">الرقمان حقيقيان ومن المصدر نفسه. ولم يتغيّر شيء في البلد بينهما. اكتشف السبب بستة استعلامات SQL في متصفحك &mdash; بلا تسجيل ولا شيء لتثبيته.</p>
+        <div class="cta-row" style="margin-top:20px;"><a class="btn btn-primary" href="../case.html" data-ev="home_open_case">افتح القضية &larr;</a> <a class="btn btn-blue" href="../explore.html">أو استكشف مصر بالرسوم البيانية</a></div>
+      </div>
+      <div class="cs-nums" aria-hidden="true">
+        <div class="csn down"><b>&minus;١٨٫٤٪</b><span>بالدولار الأمريكي</span></div>
+        <div class="csn up"><b>+٦٧٫٩٪</b><span>بالجنيه المصري</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="surface-deep center">
+  <div class="wrap">
+    <h2 data-aos="fade-up">ما الذي تحصل عليه فعلًا.</h2>
+    <p class="lead" data-aos="fade-up"><strong>EgyBI</strong> موسوعة مجانية عن مصر تُروى بالخرائط والبيانات المفتوحة. كل صف خلف كل رسم بياني يحمل مصدرًا مسمّى وتاريخًا، وحين تختلف المصادر تقول الصفحة ذلك بدل أن تختار الرقم الأنسب.</p>
+    <div class="stat-grid" style="margin-top:40px;">
+      <div class="stat" data-aos="fade-up"><div class="num" data-count="27">27</div><div class="label">محافظات على الخريطة</div><div class="cap">السكان والكثافة ونسبة الحضر</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="61">61</div><div class="label">جداول من البيانات الموثّقة</div><div class="cap">كل صف يحمل مصدره</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="160"><div class="num" data-count="33">33</div><div class="label">مسلّات باقية</div><div class="cap">١٥ منها فقط ما زالت في مصر</div></div>
+      <div class="stat" data-aos="fade-up" data-aos-delay="240"><div class="num" data-count="0" data-raw="0">0</div><div class="label">تسجيل مطلوب</div><div class="cap">لا شيء لتثبيته أو للانضمام إليه</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INSIDE — the encyclopaedia's rooms.
+     No card names a count. An earlier draft of this block carried a comment
+     saying the numbers were filled from the published data at render time;
+     nothing did that, and the markup rendered its static fallback instead. A
+     comment describing behaviour the code does not have is worse than no
+     comment, so the hook is gone and the copy says what each room is for.
+     Fetching a 96 kB gazetteer on the homepage to print one number would not
+     have been worth it either. Where a count genuinely earns its place, it is
+     computed on the page that owns the data — see the entropy spread and the
+     dead-end finding on streets.html. -->
+<section class="surface-light-2" id="inside" data-nav="مصر بالأرقام">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>مصر بالبيانات</div>
+    <h2 data-aos="fade-up">ستة مداخل إلى البلد.</h2>
+    <p class="lead" data-aos="fade-up">مصر موضوع واسع، ولا يوجد باب صحيح واحد إليها. كل مدخل من هذه يجيب عن سؤال مختلف، وكلها تستند إلى البيانات الموثّقة نفسها.</p>
+    <div class="grid grid-3" style="margin-top:32px;">
+      <a class="card card-link" href="../visit.html" data-aos="fade-up" data-ev="home_to_visit">
+        <span class="tag">ابدأ من هنا</span>
+        <h3>التخطيط لزيارة.</h3>
+        <p>إلى أين تذهب، وما حقيقة كل مكان، وكيف يكون الطقس فعلًا في الشهر الذي تفكّر فيه &mdash; من السجلات المناخية، لا من كتيّب دعائي.</p>
+      </a>
+      <a class="card card-link" href="../geospatial.html" data-aos="fade-up" data-aos-delay="60" data-ev="home_to_atlas">
+        <span class="tag">الأطلس</span>
+        <h3>المحافظات الـ٢٧ كلها.</h3>
+        <p>السكان والكثافة ونسبة الحضر على خريطة واحدة، مع طبقات للصحة والمدارس ومواقع مصر في قائمة التراث العالمي لليونسكو.</p>
+      </a>
+      <a class="card card-link" href="../places.html" data-aos="fade-up" data-aos-delay="120" data-ev="home_to_places">
+        <span class="tag">الأماكن</span>
+        <h3>كل مكان على الخريطة، قابل للبحث.</h3>
+        <p>المدن والبلدات والمطارات والمواقع الأثرية، مع تصفيتها حسب المحافظة &mdash; النمط الجغرافي لما سجّلته OpenStreetMap.</p>
+      </a>
+      <a class="card card-link" href="../stories.html" data-aos="fade-up" data-aos-delay="180" data-ev="home_to_stories">
+        <span class="tag">قصص البيانات</span>
+        <h3>حجج، لا لوحات معلومات.</h3>
+        <p>تتحرك الخريطة وأنت تقرأ. لماذا تبدو مصر أكبر مما هي، وأين العيادات، وما الذي خلّفه قرن من تخطيط الشوارع.</p>
+      </a>
+      <a class="card card-link" href="../explore.html" data-aos="fade-up" data-aos-delay="240" data-ev="home_to_explore">
+        <span class="tag">الرسوم البيانية</span>
+        <h3>من الاقتصاد إلى العصور القديمة.</h3>
+        <p>الناتج المحلي الإجمالي وقناة السويس والسياحة والطاقة والزراعة والتسلسل الزمني القديم &mdash; وكل رقم بمصدر مسمّى وتاريخ.</p>
+      </a>
+      <a class="card card-link" href="../streets.html" data-aos="fade-up" data-aos-delay="300" data-ev="home_to_streets">
+        <span class="tag">هندسة الشوارع</span>
+        <h3>قرن من المخططات، بالقياس.</h3>
+        <p>كثافة التقاطعات والطرق المسدودة والتعرّج في أحياء تمتد من ستينيات القرن التاسع عشر إلى المدن الصحراوية الجديدة &mdash; بالقياس، لا بالادّعاء.</p>
+      </a>
+    </div>
+    <div class="cta-row" data-aos="fade-up"><a href="plan.html" class="btn btn-primary">خطّط لمسارك &larr;</a></div>
+  </div>
+</section>
+
+<!-- FEATURED DATA -->
+<section class="surface-light">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>استكشف بيانات مصر</div>
+    <h2 data-aos="fade-up">رسم بياني واحد، لترى كيف يبدو الباقي.</h2>
+    <p class="lead" data-aos="fade-up">تمتد قاعدة المعرفة من التسلسل الزمني القديم إلى الاقتصاد الحديث — الفراعنة والآثار والناتج المحلي الإجمالي وقناة السويس والسياحة والطاقة والسكان والمشروعات الكبرى. لاحظ أين يرفض التعليق أدناه رسم خط: هذا أسلوب الموقع، لا سهو.</p>
+    <div class="chart-card" style="margin-top:26px;" data-aos="zoom-in">
+      <h3>السياحة في مصر — الوافدون والإيرادات</h3>
+      <div class="chart-box"><canvas id="tourismChart"></canvas></div>
+      <p class="chart-cap">المصدر: وزارة السياحة والآثار، والبنك المركزي المصري، ومنظمة السياحة العالمية/البنك الدولي. تُركت إيرادات ٢٠٢١ فارغة لأن المصادر تختلف فعلًا. <a href="../explore.html">اعرض مستكشف البيانات الكامل ←</a></p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="glyph-rule" aria-hidden="false"><span data-glyph="ra"></span></div></div>
+<!-- TWO EXAMPLES — what "cited, and honest about disagreement" looks like in
+     practice, rather than as a claim. Both figures come from the shipped
+     database, and the second one exists precisely because the sources conflict. -->
+<section class="surface-light-2" id="for-egypt">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>مثالان</div>
+    <h2 data-aos="fade-up">كيف يبدو «كل رقم موثّق المصدر» في الواقع.</h2>
+    <p class="lead" data-aos="fade-up">ادّعاء الحرص على البيانات سهل. وهذان المدخلان هما ثمنه: أحدهما عدد يفاجئ الناس، والآخر رقم يختلف عليه مصدران محترمان &mdash; حيث تكون الخطوة المريحة اختيار أحدهما والسكوت.</p>
+
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="card" data-aos="fade-up">
+        <div class="kicker"><span data-glyph="was"></span>المسلّات</div>
+        <h3>بقيت ثلاث وثلاثون. خمس عشرة منها ما زالت في مصر.</h3>
+        <p>ثماني عشرة قائمة في الخارج، في سبع دول &mdash; تسع منها في إيطاليا وحدها. وأطول مسلّة مصرية قديمة قائمة في أي مكان ليست في الأقصر بل في روما. أما أكبر مسلّة قُطعت على الإطلاق فلم تُرفع قط: تشقّقت في محجر أسوان وما زالت ترقد فيه، نحو ٤٢ مترًا من الغرانيت غير المكتمل.</p>
+        <p class="card-meta"><a href="../papyrus/the-stones-that-left.html" data-ev="egypt_story_obelisks">اقرأ القصة كاملة &larr;</a></p>
+      </div>
+
+      <div class="card" data-aos="fade-up">
+        <div class="kicker"><span data-glyph="maat"></span>رقم يختلف عليه مصدران</div>
+        <h3>عدد سكان مصر ١١٦ مليونًا. أو ١٠٧ ملايين.</h3>
+        <p>قدّره البنك الدولي بـ١١٦٫٥ مليونًا في ٢٠٢٤. وأحصى الجهاز المركزي للتعبئة العامة والإحصاء نحو ١٠٧ ملايين في نوفمبر من العام نفسه. لا أحدهما مخطئ &mdash; فهما يقيسان أمرين مختلفين، أحدهما يعدّ المواطنين في الخارج والآخر المقيمين في الداخل. نحتفظ بالرقمين ونقول ذلك، بدل أن نختار الرقم الأنسب.</p>
+        <p class="card-meta"><a href="../papyrus/one-hundred-sixteen-million.html" data-ev="egypt_story_population">اقرأ القصة كاملة &larr;</a></p>
+      </div>
+    </div>
+
+    <div class="cta-row" data-aos="fade-up" style="margin-top:26px;"><a href="../blog.html" class="btn btn-primary" data-ev="egypt_read_papyrus">اقرأ «البردية» &larr;</a> <a href="../explore.html" class="btn btn-ghost" data-ev="egypt_browse_charts">تصفّح الرسوم البيانية &larr;</a> <a href="../places.html" class="btn btn-ghost" data-ev="egypt_open_places">ابحث عن مكان &larr;</a></div>
+  </div>
+</section>
+
+<!-- IDENTITY TEASER -->
+<section class="surface-light">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>الهوية</div>
+    <h2 data-aos="fade-up">التاريخ المصري هنا هو الموضوع، لا زينة فوقه.</h2>
+    <p class="lead" data-aos="fade-up">الدليل في «بيت الحياة» هو <strong>إيبي</strong>، تلميذ كاتب برأس أبي منجل على هيئة تحوت، حافظ السجلات. كانت مهمة الكاتب أن يدوّن ما أُحصي فعلًا &mdash; حتى حين كان الإحصاء غير مؤكد.</p>
+    <div class="callout" style="margin-top:26px;" data-aos="zoom-in">
+      <div class="label">ويبدو هذا هكذا</div>
+      <p>تنسب الرواية التقليدية إلى بيبي الثاني حكمًا دام ٩٤ عامًا &mdash; الأطول في التاريخ المدوّن &mdash; وفقًا لقائمة ملوك تورينو. ويرى معظم علماء المصريات اليوم أن الرقم نُسخ خطأً، ويرجّحون حكمًا أقرب إلى ٦٤ عامًا.</p>
+      <span class="src">نحتفظ بالقراءتين، لأن الخلاف جزء مما هو معروف. قائمة ملوك تورينو؛ وإجماع علماء المصريات وفقًا لبيكيراث، <em>Chronologie des pharaonischen Ägypten</em>.</span>
+    </div>
+    <div class="cta-row" data-aos="fade-up"><a href="about.html" class="btn btn-blue">تعرّف إلى إيبي و«بيت الحياة» ←</a></div>
+  </div>
+</section>
+
+<!-- NEWSLETTER: THE PAPYRUS -->
+<section class="surface-light-2" id="newsletter">
+  <div class="wrap" style="max-width:720px;">
+    <div class="papyrus-letter" data-mo>
+      <div class="pl-seal" aria-hidden="true"><span class="pl-seal-glyph" data-glyph="ankh"></span></div>
+      <p class="kicker" style="margin-bottom:6px;"><span data-glyph="scroll"></span> البردية &middot; قبل أن تسافر</p>
+      <h2 style="font-size:var(--fs-h2);margin:0 0 12px;">رسالة واحدة في الشهر، لكل من يخطّط لزيارة مصر.</h2>
+      <p class="lead" style="margin:0 0 18px;">الشهر القادم بالأرقام: الحرارة في المواقع، والعطلات المقبلة، وحركة الجنيه &mdash; وقصة قصيرة واحدة من البيانات تغيّر نظرتك إلى مكان ما.</p>
+
+      <blockquote class="pl-specimen"><span class="pl-specimen-label"><span data-glyph="scarab"></span> من العدد الأخير</span> بقيت ثلاث وثلاثون مسلّة مصرية قديمة. خمس عشرة منها فقط ما زالت في مصر. وأطولها قائمةً في أي مكان موجودة في روما، أما أكبر مسلّة قُطعت على الإطلاق فلم تُرفع قط &mdash; تشقّقت في محجر أسوان وما زالت ترقد فيه، بطول نحو ٤٢ مترًا.</blockquote>
+
+      <p style="font-size:var(--fs-sm);color:var(--ink-soft);margin:0 0 20px;">شهريًا، لا أكثر. كل رقم موثّق، والخلافات مُشار إليها. وإلغاء الاشتراك بنقرة واحدة.</p>
+
+      <form id="newsletterForm" class="newsletter-form nl-form" novalidate>
+        <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="sr-only" for="nlEmail">البريد الإلكتروني</label>
+        <input id="nlEmail" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+        <button type="submit" class="btn btn-primary" data-ev="newsletter_submit">أرسلوا لي «البردية»</button>
+      </form>
+      <p id="newsletterNote" class="form-note" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div>
+      <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+      <p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لمصر بصدق — حرارة حقيقية وعطلات وأسعار، وكل رقم بمصدره وتاريخه.</p>
+    </div>
+    <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط لمسارك</a><a href="../visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">الملف</a><a href="ask.html">مراجعة الخطة</a></div>
+    <div><h2 class="foot-h">مصر بالأرقام</h2><a href="../explore.html">بيانات مصر</a><a href="../geospatial.html">أطلس مصر</a><a href="../places.html">الأماكن</a><a href="../stories.html">قصص البيانات</a><a href="../streets.html">بطاقة تقييم الشوارع</a><a href="../prices.html">الأسعار اليومية</a><a href="../stocks.html">البورصة</a><a href="../invest.html">أين تبني مصر</a></div>
+    <div><h2 class="foot-h">المزيد</h2><a href="../blog.html">المدوّنة</a><a href="../community.html">المجتمع</a><a href="about.html">الهوية</a><a href="#newsletter">النشرة البريدية</a></div>
+    <div><h2 class="foot-h">مصادر البيانات</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">البنك الدولي</a><a href="../explore.html">قائمة المصادر الكاملة</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> كل رقم حقيقي وموثّق المصدر، وحين تختلف المصادر فعلًا يُعلَّم الخلاف بدلًا من إخفائه.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
+<p class="i18n-note">ترجم EgyBI هذه الصفحة، والترجمة بانتظار مراجعة متحدث أصلي باللغة العربية. <a href="../index.html" hreflang="en" lang="en">English</a></p>
+</footer>
+
+<script src="../assets/vendor/countUp.umd.js"></script>
+<script src="../assets/vendor/chart.umd.js"></script>
+<script src="../assets/egybi.js?v=4"></script>
+<script src="../assets/glyphs.js?v=3"></script>
+<script src="../assets/wayfinding.js?v=1"></script>
+<script src="../assets/egfmt.js?v=4"></script>
+<script src="../assets/trip.js?v=4"></script>
+<script src="../assets/home.js?v=4"></script>
+<script src="../assets/site-map.js?v=2"></script>
+<script>window.EGYBI_NEWSLETTER = { endpoint: '../api/newsletter.php' };</script>
+<script src="../assets/newsletter.js"></script>
+<script>
+  var reduceMotion = window.EGYBI.reduceMotion;
+
+  // Hero background video. Decorative, so it is skipped entirely under reduced motion or
+  // data saver (the poster stays), and it only plays while on screen in a visible tab.
+  (function () {
+    var v = document.querySelector('.hero-video');
+    if (!v) return;
+    var saveData = navigator.connection && navigator.connection.saveData;
+    if (reduceMotion || saveData) return;
+    var inView = true;
+    v.muted = true;
+    v.src = v.getAttribute('data-src');
+    function sync() {
+      if (inView && !document.hidden) {
+        var p = v.play();
+        if (p && p.catch) p.catch(function () { /* autoplay refused: the poster remains */ });
+      } else {
+        v.pause();
+      }
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { inView = es[0].isIntersecting; sync(); }).observe(v);
+    } else {
+      sync();
+    }
+    document.addEventListener('visibilitychange', sync);
+  })();
+
+  // (hero tagline is static now — a rotating headline delays comprehension)
+
+  // CountUp stats
+  (function () {
+    var CU = window.countUp && window.countUp.CountUp;
+    function run(el) {
+      var end = parseFloat(el.dataset.count);
+      var opts = { prefix: el.dataset.prefix||'', suffix: el.dataset.suffix||'', decimalPlaces: parseInt(el.dataset.decimals||'0',10), separator: el.dataset.sep?',':'', duration: 2.2 };
+      if (!CU || reduceMotion) { el.textContent = opts.prefix + (el.dataset.sep?end.toLocaleString('en-GB'):end) + opts.suffix; return; }
+      new window.countUp.CountUp(el, end, opts).start();
+    }
+    var nums = document.querySelectorAll('.num[data-count]');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } }); }, { threshold: 0.5 });
+      nums.forEach(function (n) { io.observe(n); });
+    } else { nums.forEach(run); }
+  })();
+
+  // Tourism chart
+  (function () {
+    if (!window.Chart) return;
+    new Chart(document.getElementById('tourismChart'), {
+      data: { labels: [2019,2020,2021,2022,2023,2024,2025], datasets: [
+        { type:'bar', label:'الوافدون (بالملايين)', data:[null,null,null,null,14.9,15.7,19.0], backgroundColor:'rgba(23,64,139,0.75)', yAxisID:'yA', borderRadius:4 },
+        { type:'line', label:'الإيرادات (بمليارات الدولارات)', data:[13.03,4.40,null,10.70,13.6,15.3,16.7], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.15)', yAxisID:'yR', tension:0.3, spanGaps:false, pointRadius:4, pointBackgroundColor:'#C9A227', fill:true }
+      ]},
+      options: { responsive:true, maintainAspectRatio:false, animation: reduceMotion?false:{duration:1200}, interaction:{intersect:false,mode:'index'}, plugins:{legend:{position:'top'}}, scales:{ yA:{position:'left',beginAtZero:true,title:{display:true,text:'Arrivals (M)'},grid:{display:false}}, yR:{position:'right',beginAtZero:true,title:{display:true,text:'Revenue ($B)'},grid:{drawOnChartArea:false}} } }
+    });
+  })();
+
+  // Newsletter ("The Papyrus") is wired by assets/newsletter.js
+
+</script>
+<script src="../assets/ads-config.js"></script>
+<script src="../assets/ads.js"></script>
+<script src="../assets/motion.js?v=5"></script>
+<script>window.EGYBI_AUTH = { base: '../auth/' };</script>
+  <script src="../assets/analytics.js?v=2" defer></script>
+</body>
+</html>

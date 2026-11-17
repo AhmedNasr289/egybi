@@ -29,7 +29,8 @@ import re
 from .common import SITE, SITE_URL, read_text, write_text
 from .i18n_units import norm, script_strings, units
 
-PAGES = ['about.html', 'privacy.html']
+PAGES = ['about.html', 'privacy.html', 'index.html', 'plan.html', 'fair-prices.html',
+         'hieroglyphs.html', 'dossier.html', 'ask.html']
 
 LANGS = {
     'ar': {'dir': 'rtl', 'label': 'العربية', 'short': 'عربي',
@@ -70,7 +71,14 @@ def load_catalogue(lang: str) -> dict:
 
 
 def _url(lang: str, page: str) -> str:
-    return f'{SITE_URL}/{page}' if lang == 'en' else f'{SITE_URL}/{lang}/{page}'
+    """A page's public address in one language. The home page is the folder
+    itself (egybi.com/, egybi.com/ar/), the address its canonical has always
+    named, so hreflang, canonical and sitemap all agree on one URL."""
+    path = '' if page == 'index.html' else page
+    return f'{SITE_URL}/{path}' if lang == 'en' else f'{SITE_URL}/{lang}/{path}'
+
+
+page_url = _url
 
 
 def head_block(page: str, lang: str) -> str:
@@ -171,12 +179,23 @@ def relocate(html: str, page: str, lang: str) -> str:
     # for this location already, and not absolute, root, fragment or mail links)
     def up(m):
         return f'{m.group(1)}="../{m.group(2)}'
-    html = re.sub(r'\b(href|src)="(?!https?:|#|/|\.\./|mailto:|tel:|data:|javascript:)([^"]*)', up, html)
+    # Every attribute that holds a site path, named in full. It was (href|src)
+    # with \b, which caught data-src only because \b matches after a hyphen,
+    # and missed poster: the home page's hero poster 404'd as ar/assets/...
+    # (twin-data.js, run 43987216476).
+    html = re.sub(r'(?<![\w-])((?:data-)?(?:href|src)|poster|action)="(?!https?:|#|/|\.\./|mailto:|tel:|data:|javascript:)([^"]*)',
+                  up, html)
     html = html.replace("base: 'auth/'", "base: '../auth/'")
+    html = html.replace("endpoint: 'api/", "endpoint: '../api/")
     # links to pages that have a twin stay in this language
     for p in PAGES:
         html = re.sub(r'(href=")\.\./' + re.escape(p) + r'([#"?])', r'\g<1>' + p + r'\2', html)
         html = html.replace(f'href="/{p}', f'href="/{lang}/{p}')
+    if page == 'index.html':
+        html = html.replace(f'<link rel="canonical" href="{SITE_URL}/">',
+                            f'<link rel="canonical" href="{_url(lang, page)}">')
+        html = html.replace(f'<meta property="og:url" content="{SITE_URL}">',
+                            f'<meta property="og:url" content="{_url(lang, page)}">')
     html = html.replace(f'"{SITE_URL}/{page}"', f'"{SITE_URL}/{lang}/{page}"')
     html = html.replace(f'"{SITE_URL}/{page}#', f'"{SITE_URL}/{lang}/{page}#')
     html = html.replace('"inLanguage": "en"', f'"inLanguage": "{lang}"')

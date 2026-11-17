@@ -28,7 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SITE = ROOT / 'site'
 sys.path.insert(0, str(ROOT / 'backend' / 'pipeline'))
-from pages.i18n import LANGS, PAGES, load_catalogue  # noqa: E402
+from pages.i18n import LANGS, PAGES, load_catalogue, page_url  # noqa: E402
 from pages.i18n_units import norm, prose, script_strings, units  # noqa: E402
 
 URL = 'https://egybi.com'
@@ -36,6 +36,7 @@ WANT = {'en': 'ltr', 'ar': 'rtl', 'ru': 'ltr'}
 # Unit texts that are the same in every language: names, addresses, codes.
 SAME = {'EgyBI', 'egybi.com', 'hello@egybi.com', 'aboutads.info/choices', 'Google AdSense',
         'Chronologie des pharaonischen Ägypten', 'SQL', 'Cinzel',
+        'you@example.com',  # the e-mail field's example address
         # product and database names, kept as their makers write them
         'Our World in Data', 'FAO AQUASTAT', 'QS Rankings'}
 CATS = {l: load_catalogue(l) for l in LANGS}
@@ -69,11 +70,12 @@ for page in PAGES:
         tag = m.group(0) if m else ''
         if f'lang="{lang}"' not in tag or f'dir="{WANT[lang]}"' not in tag:
             fail(f'LANG/DIR WRONG: {where} opens with {tag or "no <html> tag"}')
-        own = f'{URL}/{page}' if lang == 'en' else f'{URL}/{lang}/{page}'
+        own = page_url(lang, page)
         if f'<link rel="canonical" href="{own}">' not in h:
             fail(f'CANONICAL WRONG: {where} does not name {own} as its canonical')
         alts = dict(re.findall(r'<link rel="alternate" hreflang="([a-z-]+)" href="([^"]+)">', h))
-        want = {'en': f'{URL}/{page}', 'ar': f'{URL}/ar/{page}', 'ru': f'{URL}/ru/{page}', 'x-default': f'{URL}/{page}'}
+        want = {l: page_url(l, page) for l in ('en', 'ar', 'ru')}
+        want['x-default'] = page_url('en', page)
         if alts != want:
             fail(f'HREFLANG MISSING: {where} has {sorted(alts)} pointing at {sorted(set(alts.values()))}')
         sw = re.search(r'<details class="lang-switch">.*?</details>', h, flags=re.S)

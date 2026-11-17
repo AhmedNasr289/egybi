@@ -308,7 +308,7 @@
         if (d.ok) {
           S.trip.savedId = d.id; save();
           note.className = 'form-note ok';
-          note.innerHTML = 'Saved. <a href="account.html">See your trips</a>.';
+          note.innerHTML = 'Saved. <a href="' + T.url('account.html') + '">See your trips</a>.';
         } else if (r.status === 404 && S.trip.savedId) {
           // The saved copy was deleted elsewhere: save it as a new trip.
           delete S.trip.savedId; save(); doSave(A); return;

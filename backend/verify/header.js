@@ -23,7 +23,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SITE = path.join(__dirname, '..', '..', 'site');
-const PAGES = ['about.html', 'stories.html', 'visit/giza.html', 'community.html', 'ar/about.html', 'ru/about.html'];
+const PAGES = ['about.html', 'stories.html', 'visit/giza.html', 'community.html', 'ar/about.html', 'ru/about.html', 'ar/index.html', 'ru/plan.html'];
 // Each language's row from the width it fits at (assets/i18n.css): English
 // from 1280px, Arabic from 1440px, Russian from 1600px; the menu below.
 const WIDTHS = {

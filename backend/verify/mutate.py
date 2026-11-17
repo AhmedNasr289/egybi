@@ -165,6 +165,10 @@ print("mutation tests — each injects a defect the checker exists to catch\n")
 case("broken internal link", "static-audit.py", ["site/about.html"],
      lambda: edit("site/about.html", "</footer>", '<a href="no-such-page.html">x</a></footer>'),
      lambda o: "internal links that do not resolve" in o, PY_AUDIT)
+# a video poster is a file too: the Arabic home page's 404'd unseen (2026-11-17)
+case("video poster pointing at a missing file", "static-audit.py", ["site/index.html"],
+     lambda: edit("site/index.html", 'poster="assets/video/hero-lighthouse.webp', 'poster="assets/video/no-such-poster.webp'),
+     lambda o: "internal links that do not resolve" in o, PY_AUDIT)
 
 # ---- 2. static audit: an anchor whose id is not there -----------------------
 case("anchor to a missing id", "static-audit.py", ["site/about.html"],
@@ -1079,6 +1083,20 @@ case("English left in a Russian page's script-written cards", "i18n.py", ["site/
 case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
      lambda: edit("site/ar/about.html", "بيت الحياة.", "The House of Life."),
      lambda o: "ENGLISH LEAK" in o, I18N)
+# the home page's twins: the home page is the folder address, egybi.com/ar/
+case("the Arabic home page claiming the English home page as its canonical", "i18n.py", ["site/ar/index.html"],
+     lambda: edit("site/ar/index.html", '<link rel="canonical" href="https://egybi.com/ar/">',
+                  '<link rel="canonical" href="https://egybi.com/">'),
+     lambda o: "CANONICAL WRONG" in o, I18N)
+
+# ---- the translated copies load the site's data (2026-11-17) ----------------
+TWIN = f"node {HERE}/twin-data.js"
+case("translated pages fetching data relative to themselves", "twin-data.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "cache[path] = fetch(url(path), {", "cache[path] = fetch(path, {"),
+     lambda o: "TWIN DATA FROM WRONG FOLDER" in o, TWIN)
+case("a script link to an untranslated page left relative to the twin", "twin-data.js", ["site/assets/home.js"],
+     lambda: edit("site/assets/home.js", "' + T.url('visit.html#month') + '", "visit.html#month"),
+     lambda o: "TWIN LINK WRONG FOLDER" in o, TWIN)
 
 # ---- the year strip on When to go (2026-11-16) -------------------------------
 YEAR = f"node {HERE}/year-strip.js"
