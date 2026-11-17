@@ -223,10 +223,15 @@
   // when a cited row of arrival.json covers it (getting-around.json names
   // which). Each row keeps its own source and the date it was checked.
   function legText(a, b) {
-    var F = window.EGYBI && window.EGYBI.fmt, lang = document.documentElement.getAttribute('lang') || 'en';
+    // egfmt formats only 'en' and 'ar' and throws on anything else, which on
+    // ru/plan.html stopped the whole stop list drawing (leg-cards.js, CI run
+    // of 17 Nov 2026). Arabic gets its own digits; every other page gets the
+    // plain number, which Russian writes without a separator up to 9999.
+    var F = window.EGYBI && window.EGYBI.fmt;
     var n = Math.round(T.km(a, b));
+    var ar = document.documentElement.getAttribute('lang') === 'ar';
     return t('%n km in a straight line from %s')
-      .replace('%n', F ? F.num(n, lang, 0) : String(n)).replace('%s', a.name);
+      .replace('%n', F && ar ? F.num(n, 'ar', 0) : String(n)).replace('%s', a.name);
   }
   function arrivalRow(k) {
     var out = null;
