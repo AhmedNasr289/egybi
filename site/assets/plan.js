@@ -50,8 +50,8 @@
     s.value = S.trip.start; e.value = S.trip.end; n.value = S.trip.name || '';
     f.addEventListener('submit', function (ev) { ev.preventDefault(); });
     function apply() {
-      if (!T.parse(s.value) || !T.parse(e.value)) { note.className = 'form-note error'; note.textContent = 'Pick both dates.'; return; }
-      if (T.parse(e.value) < T.parse(s.value)) { note.className = 'form-note error'; note.textContent = 'The leaving date is before the arriving date.'; return; }
+      if (!T.parse(s.value) || !T.parse(e.value)) { note.className = 'form-note error'; note.textContent = t('Pick both dates.'); return; }
+      if (T.parse(e.value) < T.parse(s.value)) { note.className = 'form-note error'; note.textContent = t('The leaving date is before the arriving date.'); return; }
       note.className = 'form-note'; note.textContent = '';
       S.trip.start = s.value; S.trip.end = e.value; save(); renderAll();
     }
@@ -65,7 +65,7 @@
     var m = window.EGYBI.mapkit.create('planMap', {
       locator: window.EGYBI_EGYPT_GEO || null,
       credit: ['geoboundaries', 'osm', 'power'],
-      label: 'Map of Egypt showing the stops in your plan, numbered in order'
+      label: t('Map of Egypt showing the stops in your plan, numbered in order')
     });
     if (!m) return;
     mkx('outline')(m, window.EGYBI_EGYPT_GEO);
@@ -97,8 +97,9 @@
         radius: 7, weight: 2, color: '#fff', fillColor: bd ? bd.colour : '#8a8a8a', fillOpacity: 0.85
       });
       dot.bindTooltip('<strong>' + esc(site.name) + '</strong><br>' +
-        (r && r.t_daily_max != null ? T.MONTHS[mm] + ': about ' + Math.round(r.t_daily_max) + ' °C by day' : '') +
-        '<br>Click to add', { direction: 'top' });
+        (r && r.t_daily_max != null ? esc(t('%m: about %x °C by day').replace('%m', T.monthName(mm))
+          .replace('%x', pageDigits(Math.round(r.t_daily_max)))) : '') +
+        '<br>' + esc(t('Click to add')), { direction: 'top' });
       dot.on('click', function () { addSite(site.key); });
       S.sites.addLayer(dot);
     });
@@ -131,11 +132,11 @@
   }
   function addStop(st) {
     if (S.trip.stops.some(function (x) { return x.id === st.id; })) {
-      announce(st.name + ' is already in your plan.'); return;
+      announce(t('Already in your plan: %s.').replace('%s', st.name)); return;
     }
     st.days = st.days || 1;
     S.trip.stops.push(st); save(); renderAll();
-    announce(st.name + ' added as stop ' + S.trip.stops.length + '.');
+    announce(t('Added as stop %n: %s.').replace('%n', pageDigits(S.trip.stops.length)).replace('%s', st.name));
     track('plan_stop_added');
     if (S.trip.stops.length >= 2) track('plan_route_built');
   }
@@ -170,7 +171,7 @@
     }).join('');
     function go() {
       var p = S.byLabel[inp.value];
-      if (!p) { announce('Choose a place from the list as you type.'); return; }
+      if (!p) { announce(t('Choose a place from the list as you type.')); return; }
       addStop({ id: 'place:' + p.name + '@' + p.lat.toFixed(3) + ',' + p.lon.toFixed(3), name: p.name, name_ar: p.name_ar,
                 lat: p.lat, lon: p.lon, kind: p.kind, gov: p.gov, days: 1 });
       inp.value = '';
@@ -181,15 +182,17 @@
 
   function heatFor(st) {
     var near = T.nearestSite(D.climate, st), mm = T.monthsOf(S.trip.start, S.trip.end);
-    if (!near) return { text: 'No measured climate site within ' + T.NEAR_KM + ' km, so no heat figure is shown.', rows: [] };
+    if (!near) return { text: t('No measured climate site within %n km, so no heat figure is shown.').replace('%n', pageDigits(T.NEAR_KM)), rows: [] };
     var rows = mm.map(function (x) {
       var r = T.monthRow(near.site, x.month);
       return r ? { month: x.month, max: r.t_daily_max, min: r.t_daily_min, rain: r.rain_mm_day } : null;
     }).filter(Boolean);
-    var where = near.km < 3 ? '' : ' (measured at ' + near.site.name + ', ' + Math.round(near.km) + ' km away)';
+    var where = near.km < 3 ? '' : ' (' + t('measured at %s, %n km away').replace('%s', near.site.name)
+      .replace('%n', pageDigits(Math.round(near.km))) + ')';
     var text = rows.map(function (r) {
-      return T.MONTHS[r.month] + ': about ' + Math.round(r.max) + ' °C by day, ' + Math.round(r.min) + ' °C at night';
-    }).join('; ') + where + '.';
+      return t('%m: about %x °C by day, %y °C at night').replace('%m', T.monthName(r.month))
+        .replace('%x', pageDigits(Math.round(r.max))).replace('%y', pageDigits(Math.round(r.min)));
+    }).join(T.pageLang() === 'ar' ? '؛ ' : '; ') + where + '.';
     return { text: text, rows: rows, site: near.site };
   }
   // Opening hours for a stop that is one of the measured visitor sites
@@ -258,7 +261,7 @@
     if (!ul) return;
     var st = S.trip.stops;
     if (!st.length) {
-      ul.innerHTML = '<li class="sheet stop" style="display:block;"><p style="margin:0;">No stops yet. Click a site on the map, use the buttons above, or search the 897 mapped places.</p></li>';
+      ul.innerHTML = '<li class="sheet stop" style="display:block;"><p style="margin:0;">' + esc(t('No stops yet. Click a site on the map, use the buttons above, or search the 897 mapped places.')) + '</p></li>';
     } else {
       ul.innerHTML = st.map(function (x, i) {
         var h = heatFor(x), first = h.rows[0], bd = first ? T.band(first.max) : null;
@@ -266,13 +269,13 @@
         return leg + '<li class="sheet stop">' +
           '<span class="stop-n" aria-hidden="true">' + (i + 1) + '</span>' +
           '<div><h3>' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
-          (bd ? '<span class="heat-chip" style="background:' + bd.colour + ';color:' + T.inkOn(bd.colour) + '">' + Math.round(first.max) + '&nbsp;°C</span> ' : '') +
+          (bd ? '<span class="heat-chip" style="background:' + bd.colour + ';color:' + T.inkOn(bd.colour) + '">' + pageDigits(Math.round(first.max)) + '&nbsp;' + esc(t('°C')) + '</span> ' : '') +
           '<p>' + esc(h.text) + '</p>' + heatWarnHtml(h, x) + '</div>' +
-          '<div class="stop-ctl"><label class="sr-only" for="days' + i + '">Days at ' + esc(x.name) + '</label>' +
-          '<input id="days' + i + '" type="number" min="1" max="30" value="' + (x.days || 1) + '" data-days="' + i + '"> <span aria-hidden="true">days</span>' +
-          '<button type="button" class="icon-btn" data-up="' + i + '" aria-label="Move ' + esc(x.name) + ' earlier"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
-          '<button type="button" class="icon-btn" data-down="' + i + '" aria-label="Move ' + esc(x.name) + ' later"' + (i === st.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
-          '<button type="button" class="icon-btn" data-del="' + i + '" aria-label="Remove ' + esc(x.name) + '">&times;</button></div></li>';
+          '<div class="stop-ctl"><label class="sr-only" for="days' + i + '">' + esc(t('Days at %s').replace('%s', x.name)) + '</label>' +
+          '<input id="days' + i + '" type="number" min="1" max="30" value="' + (x.days || 1) + '" data-days="' + i + '"> <span aria-hidden="true">' + esc(t('days')) + '</span>' +
+          '<button type="button" class="icon-btn" data-up="' + i + '" aria-label="' + esc(t('Move %s earlier').replace('%s', x.name)) + '"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
+          '<button type="button" class="icon-btn" data-down="' + i + '" aria-label="' + esc(t('Move %s later').replace('%s', x.name)) + '"' + (i === st.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
+          '<button type="button" class="icon-btn" data-del="' + i + '" aria-label="' + esc(t('Remove %s').replace('%s', x.name)) + '">&times;</button></div></li>';
       }).join('');
     }
     var days = st.reduce(function (a, x) { return a + (+x.days || 0); }, 0);
@@ -292,7 +295,7 @@
       var b = e.target.closest('button');
       if (!b) return;
       var st = S.trip.stops, i;
-      if (b.hasAttribute('data-del')) { i = +b.getAttribute('data-del'); announce(st[i].name + ' removed.'); st.splice(i, 1); }
+      if (b.hasAttribute('data-del')) { i = +b.getAttribute('data-del'); announce(t('Removed: %s.').replace('%s', st[i].name)); st.splice(i, 1); }
       else if (b.hasAttribute('data-up')) { i = +b.getAttribute('data-up'); if (i > 0) st.splice(i - 1, 0, st.splice(i, 1)[0]); }
       else if (b.hasAttribute('data-down')) { i = +b.getAttribute('data-down'); if (i < st.length - 1) st.splice(i + 1, 0, st.splice(i, 1)[0]); }
       else return;
@@ -316,30 +319,32 @@
     var ev = T.eventsIn(D.calendar, S.trip.start, S.trip.end);
     var cover = '<div class="sheet dossier-cover" style="text-align:center;padding:34px 22px;">' +
       '<span class="seal" aria-hidden="true"><span data-glyph="ankh"></span></span>' +
-      '<p class="kicker">The Papyrus &middot; trip dossier</p>' +
+      '<p class="kicker">' + t('The Papyrus &middot; trip dossier') + '</p>' +
       (name && cart ? '<div style="margin:6px 0 14px;">' + cart.html(name, 'cartouche-lg') + '</div>' : '') +
-      '<h2 style="margin:0 0 6px;">' + (name ? esc(name) + '&rsquo;s Egypt' : 'Your Egypt') + '</h2>' +
+      '<h2 style="margin:0 0 6px;">' + (name ? t('%s&rsquo;s Egypt').replace('%s', esc(name)) : esc(t('Your Egypt'))) + '</h2>' +
       '<p style="margin:0;color:var(--ink-soft);">' + esc(T.fmtDate(S.trip.start)) + ' &ndash; ' + esc(T.fmtDate(S.trip.end)) +
-      ' &middot; ' + st.length + ' stop' + (st.length === 1 ? '' : 's') + '</p></div>';
+      ' &middot; ' + esc(t('Stops: %n').replace('%n', pageDigits(st.length))) + '</p></div>';
     var stops = st.map(function (x, i) {
       var h = heatFor(x), el = elevationFor(x);
       var leg = i > 0 ? esc(legText(st[i - 1], x)) + '. ' : '';
-      return '<div class="sheet" style="margin-top:16px;"><p class="kicker">Stop ' + (i + 1) + ' &middot; ' + (x.days || 1) + ' day' + ((x.days || 1) === 1 ? '' : 's') + '</p>' +
+      return '<div class="sheet" style="margin-top:16px;"><p class="kicker">' + esc(t('Stop %n').replace('%n', pageDigits(i + 1))) + ' &middot; ' +
+        esc(t('Days: %n').replace('%n', pageDigits(x.days || 1))) + '</p>' +
         '<h3 style="margin:0 0 8px;color:var(--blue-deep);">' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
-        '<p style="margin:0 0 6px;">' + leg + esc(h.text) + (el != null ? ' Ground elevation ' + Math.round(el) + ' m (SRTM).' : '') + '</p>' +
+        '<p style="margin:0 0 6px;">' + leg + esc(h.text) + (el != null ? ' ' + esc(t('Ground elevation %n m (SRTM).').replace('%n', pageDigits(Math.round(el)))) : '') + '</p>' +
         '<p class="chart-cap" style="margin:0;">' + x.lat.toFixed(4) + ', ' + x.lon.toFixed(4) + (x.gov ? ' &middot; ' + esc(gv(x.gov)) : '') + '</p></div>';
     }).join('');
-    var events = ev.length ? '<div class="sheet" style="margin-top:16px;"><p class="kicker">Inside your dates</p><ul class="event-list">' +
+    var events = ev.length ? '<div class="sheet" style="margin-top:16px;"><p class="kicker">' + esc(t('Inside your dates')) + '</p><ul class="event-list">' +
       ev.map(function (e) {
         return '<li><strong>' + esc(e.name) + '</strong> &middot; ' + esc(T.fmtDate(e.start)) +
           (e.start !== (e.end_latest || e.end) ? ' &ndash; ' + esc(T.fmtDate(e.end_latest || e.end)) : '') +
-          (e.status === 'expected' ? '<span class="expected">expected</span>' : '') + '</li>';
+          (e.status === 'expected' ? '<span class="expected">' + esc(t('expected')) + '</span>' : '') + '</li>';
       }).join('') + '</ul></div>' : '';
-    var sources = '<p class="chart-cap" style="margin-top:18px;">Heat: ' + esc((D.climate || {}).source || 'NASA POWER') +
-      ', mean daily maximum and minimum ' + esc((D.climate || {}).normal_window || '2001–2020') + ' — a long-run average, not a forecast. ' +
-      'Places: OpenStreetMap contributors (ODbL). Holidays: calendar.json, compiled ' + esc(T.fmtDate((D.calendar || {}).as_of)) +
-      ', Islamic dates expected. Distances are straight lines, not roads. Printed from egybi.com/plan.html.</p>';
-    host.innerHTML = cover + (st.length ? stops : '<p class="chart-cap" style="margin-top:14px;">Add stops above and they appear here, one sheet each.</p>') + events + sources;
+    var sources = '<p class="chart-cap" style="margin-top:18px;">' +
+      esc(t('Heat: %s, mean daily maximum and minimum %w — a long-run average, not a forecast.')
+        .replace('%s', (D.climate || {}).source || 'NASA POWER').replace('%w', pageDigits((D.climate || {}).normal_window || '2001–2020'))) + ' ' +
+      esc(t('Places: OpenStreetMap contributors (ODbL). Holidays: calendar.json, compiled %d, Islamic dates expected. Distances are straight lines, not roads. Printed from egybi.com/plan.html.')
+        .replace('%d', T.fmtDate((D.calendar || {}).as_of))) + '</p>';
+    host.innerHTML = cover + (st.length ? stops : '<p class="chart-cap" style="margin-top:14px;">' + esc(t('Add stops above and they appear here, one sheet each.')) + '</p>') + events + sources;
   }
 
   function renderAll() { renderStops(); paintMap(); renderDossier(); }
@@ -356,34 +361,34 @@
     function title() {
       var t = S.trip;
       if (t.name) return t.name.slice(0, 120);
-      if (t.start) return 'Trip from ' + T.fmtDate(t.start);
-      return 'My Egypt trip';
+      if (t.start) return window.EGYBI.t ? window.EGYBI.t('Trip from %d').replace('%d', T.fmtDate(t.start)) : 'Trip from ' + T.fmtDate(t.start);
+      return window.EGYBI.t ? window.EGYBI.t('My Egypt trip') : 'My Egypt trip';
     }
     function doSave(A) {
-      if (!S.trip.stops.length && !S.trip.start) { say('Add your dates or a stop first.', 'error'); return; }
-      btn.disabled = true; say('Saving…');
+      if (!S.trip.stops.length && !S.trip.start) { say(t('Add your dates or a stop first.'), 'error'); return; }
+      btn.disabled = true; say(t('Saving…'));
       var data = JSON.parse(JSON.stringify(S.trip)); delete data.savedId;
       A.api('trips-save', 'POST', { id: S.trip.savedId || '', title: title(), data: data }).then(function (r) {
         var d = r.data || {};
         if (d.ok) {
           S.trip.savedId = d.id; save();
           note.className = 'form-note ok';
-          note.innerHTML = 'Saved. <a href="' + T.url('account.html') + '">See your trips</a>.';
+          note.innerHTML = esc(t('Saved.')) + ' <a href="' + T.url('account.html') + '">' + esc(t('See your trips')) + '</a>.';
         } else if (r.status === 404 && S.trip.savedId) {
           // The saved copy was deleted elsewhere: save it as a new trip.
           delete S.trip.savedId; save(); doSave(A); return;
         } else {
-          say(d.message || 'Could not save the trip.', 'error');
+          say(d.message || t('Could not save the trip.'), 'error');
         }
         btn.disabled = false;
-      }).catch(function () { say('Could not reach the account service.', 'error'); btn.disabled = false; });
+      }).catch(function () { say(t('Could not reach the account service.'), 'error'); btn.disabled = false; });
     }
     btn.addEventListener('click', function () {
       window.EGYBI.account.load().then(function (A) {
         if (A.user) { doSave(A); return; }
         pending = true;
-        A.open('in', 'Sign in or create a free account to save this trip.');
-      }).catch(function () { say('The account service could not be reached. Please try again.', 'error'); });
+        A.open('in', t('Sign in or create a free account to save this trip.'));
+      }).catch(function () { say(t('The account service could not be reached. Please try again.'), 'error'); });
     });
     window.addEventListener('egybi:account', function (e) {
       if (pending && e.detail && e.detail.user) { pending = false; window.EGYBI.account.load().then(doSave); }
@@ -444,18 +449,18 @@
     if (!btn) return;
     function say(msg, kind) { note.textContent = msg; note.className = 'form-note' + (kind ? ' ' + kind : ''); }
     btn.addEventListener('click', function () {
-      if (!S.trip.stops.length) { say('Add a stop first, then share.', 'error'); return; }
+      if (!S.trip.stops.length) { say(t('Add a stop first, then share.'), 'error'); return; }
       var url = location.origin + location.pathname + '#t=' + encodeTrip(S.trip);
       if (navigator.share) {
-        navigator.share({ title: S.trip.name || 'My Egypt trip', text: 'My Egypt trip on EgyBI', url: url })
-          .then(function () { say('Shared.', 'ok'); })
+        navigator.share({ title: S.trip.name || t('My Egypt trip'), text: t('My Egypt trip on EgyBI'), url: url })
+          .then(function () { say(t('Shared.'), 'ok'); })
           .catch(function () { /* the reader closed the sheet */ });
       } else if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(function () {
-          say('Link copied. Anyone who opens it sees this trip; nothing is stored on EgyBI.', 'ok');
-        }, function () { say('Copy this link: ' + url); });
+          say(t('Link copied. Anyone who opens it sees this trip; nothing is stored on EgyBI.'), 'ok');
+        }, function () { say(t('Copy this link: %u').replace('%u', url)); });
       } else {
-        say('Copy this link: ' + url);
+        say(t('Copy this link: %u').replace('%u', url));
       }
     });
   }
@@ -466,7 +471,7 @@
     var shared = decodeTrip(m[1]);
     var banner = $('sharedBanner');
     history.replaceState(null, '', location.pathname + location.search);
-    if (!shared) { if (banner) { banner.hidden = false; banner.textContent = 'That shared link could not be read, so your own plan is unchanged.'; } return; }
+    if (!shared) { if (banner) { banner.hidden = false; banner.textContent = t('That shared link could not be read, so your own plan is unchanged.'); } return; }
     function apply() {
       S.trip = { start: shared.start, end: shared.end, name: shared.name, stops: shared.stops };
       save();
@@ -477,9 +482,9 @@
     if (!banner) return;
     banner.hidden = false; banner.textContent = '';
     var msg = document.createElement('p');
-    msg.textContent = 'Someone shared a trip with ' + shared.stops.length + ' stop' + (shared.stops.length === 1 ? '' : 's') + '. Open it in place of your own plan?';
-    var yes = document.createElement('button'); yes.type = 'button'; yes.className = 'btn btn-primary'; yes.textContent = 'Open the shared trip';
-    var no = document.createElement('button'); no.type = 'button'; no.className = 'btn btn-ghost'; no.textContent = 'Keep my plan';
+    msg.textContent = t('Someone shared a trip with you. Stops: %n. Open it in place of your own plan?').replace('%n', pageDigits(shared.stops.length));
+    var yes = document.createElement('button'); yes.type = 'button'; yes.className = 'btn btn-primary'; yes.textContent = t('Open the shared trip');
+    var no = document.createElement('button'); no.type = 'button'; no.className = 'btn btn-ghost'; no.textContent = t('Keep my plan');
     yes.addEventListener('click', function () { apply(); banner.hidden = true; });
     no.addEventListener('click', function () { banner.hidden = true; });
     var row = document.createElement('div'); row.className = 'cta-row'; row.appendChild(yes); row.appendChild(no);
@@ -502,7 +507,7 @@
             .filter(function (u) { return u.indexOf(mine + '/') === 0 && !/\/(auth|api)\//.test(u); }));
           navigator.serviceWorker.addEventListener('message', function (ev) {
             if (ev.data && ev.data.type === 'cached' && note) {
-              note.textContent = 'This planner now opens offline on this device, with your saved trip.';
+              note.textContent = t('This planner now opens offline on this device, with your saved trip.');
             }
           });
           var w = navigator.serviceWorker.controller || reg.active;
@@ -520,7 +525,7 @@
     initOffline();
     $('clearPlan').addEventListener('click', function () {
       if (!S.trip.stops.length) return;
-      S.trip.stops = []; save(); renderAll(); announce('All stops removed.');
+      S.trip.stops = []; save(); renderAll(); announce(t('All stops removed.'));
     });
     Promise.all([
       settle(T.getJSON('data/visit-climate.json')), settle(T.getJSON('data/visit-terrain.json')),

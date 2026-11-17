@@ -259,3 +259,16 @@ Please check:
 - «Остановок / Дней в плане / Ночей в поездке / По прямой между остановками»
   and «Это больше дней, чем есть в поездке.»;
 - that the summary reads as one line with « · » between the parts.
+
+## The rest of the planner (2026-11-18)
+
+51 lines from plan.js (stop cards, buttons, messages, the print dossier),
+plus month names and dates written by trip.js.
+
+Please check, in particular:
+- the heat line: «يوليو: نحو ٣٩ °م نهارًا و٢٦ °م ليلًا» and
+  «Июль: около 39 °C днём, 26 °C ночью»;
+- the dossier title for a named trip: «مصر كما يراها %s» and «Египет: %s»
+  (the English is "Ahmed's Egypt"); a better short form is welcome;
+- the Russian dates: «17 ноября 2026» (genitive month, no "г.");
+- «قدّم %s في الترتيب / أخّر %s في الترتيب» for the move-up and move-down buttons.

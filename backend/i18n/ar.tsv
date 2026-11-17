@@ -1120,3 +1120,54 @@ Days planned: %n	الأيام المخطّطة: %n
 Nights in the trip: %n	ليالي الرحلة: %n
 Straight-line distance between stops: %n km	المسافة بخطوط مستقيمة بين المحطات: %n كم
 That is more days than the trip has.	هذه أيام أكثر مما تتّسع له الرحلة.
+Pick both dates.	اختر تاريخَي الوصول والمغادرة.
+The leaving date is before the arriving date.	تاريخ المغادرة يسبق تاريخ الوصول.
+Map of Egypt showing the stops in your plan, numbered in order	خريطة مصر وعليها محطات خطتك مرقّمة بالترتيب
+%m: about %x °C by day	%m: نحو %x °م نهارًا
+Click to add	اضغط للإضافة
+Already in your plan: %s.	موجود بالفعل في خطتك: %s.
+Added as stop %n: %s.	أُضيف كمحطة رقم %n: %s.
+Choose a place from the list as you type.	اختر مكانًا من القائمة وأنت تكتب.
+No measured climate site within %n km, so no heat figure is shown.	لا توجد نقطة قياس مناخي في نطاق %n كم، لذلك لا نعرض أرقامًا للحرارة.
+measured at %s, %n km away	مقيسة في %s، على بُعد %n كم
+%m: about %x °C by day, %y °C at night	%m: نحو %x °م نهارًا و%y °م ليلًا
+No stops yet. Click a site on the map, use the buttons above, or search the 897 mapped places.	لا توجد محطات بعد. اضغط على موقع في الخريطة، أو استخدم الأزرار أعلاه، أو ابحث بين ٨٩٧ مكانًا على الخريطة.
+°C	°م
+Days at %s	عدد الأيام في %s
+days	أيام
+Move %s earlier	قدّم %s في الترتيب
+Move %s later	أخّر %s في الترتيب
+Remove %s	احذف %s
+Removed: %s.	حُذف: %s.
+The Papyrus &middot; trip dossier	البردية &middot; ملف الرحلة
+%s&rsquo;s Egypt	مصر كما يراها %s
+Your Egypt	مصرك
+Stop %n	المحطة %n
+Days: %n	الأيام: %n
+Ground elevation %n m (SRTM).	ارتفاع الأرض %n م (SRTM).
+Inside your dates	خلال مواعيدك
+expected	متوقَّع
+Heat: %s, mean daily maximum and minimum %w — a long-run average, not a forecast.	الحرارة: %s، متوسط العظمى والصغرى اليومية %w — متوسط طويل الأمد، وليس توقعًا للطقس.
+Places: OpenStreetMap contributors (ODbL). Holidays: calendar.json, compiled %d, Islamic dates expected. Distances are straight lines, not roads. Printed from egybi.com/plan.html.	الأماكن: مساهمو OpenStreetMap ‏(ODbL). العطلات: calendar.json، جُمعت في %d، والتواريخ الهجرية متوقَّعة. المسافات خطوط مستقيمة وليست طرقًا. طُبعت من egybi.com/plan.html.
+Add stops above and they appear here, one sheet each.	أضف محطات بالأعلى وستظهر هنا، صفحة لكل محطة.
+Trip from %d	رحلة تبدأ في %d
+My Egypt trip	رحلتي إلى مصر
+Add your dates or a stop first.	أضف مواعيدك أو محطة أولًا.
+Saving…	جارٍ الحفظ…
+Could not save the trip.	تعذّر حفظ الرحلة.
+Could not reach the account service.	تعذّر الوصول إلى خدمة الحسابات.
+Sign in or create a free account to save this trip.	سجّل الدخول أو أنشئ حسابًا مجانيًا لحفظ هذه الرحلة.
+The account service could not be reached. Please try again.	تعذّر الوصول إلى خدمة الحسابات. حاول مرة أخرى.
+Add a stop first, then share.	أضف محطة أولًا، ثم شارك.
+My Egypt trip on EgyBI	رحلتي إلى مصر على EgyBI
+Shared.	تمت المشاركة.
+Link copied. Anyone who opens it sees this trip; nothing is stored on EgyBI.	نُسخ الرابط. من يفتحه يرى هذه الرحلة، ولا يُحفظ شيء على EgyBI.
+Copy this link: %u	انسخ هذا الرابط: %u
+That shared link could not be read, so your own plan is unchanged.	تعذّرت قراءة الرابط المُشارَك، لذلك بقيت خطتك كما هي.
+Someone shared a trip with you. Stops: %n. Open it in place of your own plan?	شاركك أحدهم رحلة. المحطات: %n. هل تفتحها بدلًا من خطتك؟
+Open the shared trip	افتح الرحلة المُشارَكة
+Keep my plan	احتفظ بخطتي
+This planner now opens offline on this device, with your saved trip.	أصبح المخطِّط يعمل دون إنترنت على هذا الجهاز، مع رحلتك المحفوظة.
+All stops removed.	حُذفت كل المحطات.
+Saved.	تم الحفظ.
+See your trips	اعرض رحلاتك
