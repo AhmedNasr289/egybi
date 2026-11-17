@@ -2256,3 +2256,8 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **First strings:** the header button and account menu ("Sign in", "Sign out", "Your account", "Your trips and account", "Offline, try again") and the sticky "On this page" label. The header button's text is now set as text, not markup.
 - **Versions:** egybi.js v6, wayfinding.js v2 (on every page, through the generator), auth.js v5.
 - **Proof:** `twin-data.js` reads the sign-in button and the "On this page" label on every page it opens. They must be translated on Arabic and Russian pages and unchanged on English ones. Two mutation cases cover this: a page without its table, and a label left outside `t()`.
+## 2026-11-17 — Trilingual stage 2c: the data stories and the street report card in Arabic and Russian
+- **What is new:** Arabic and Russian copies of stories.html and streets.html. That adds 144 entries per language and 4 sitemap URLs (79 to 83).
+- **Data paths:** `stories.js` (four fetches) and `streets.js` load through `EGYBI.url`, so the copies read the site's `data/`. Versions bumped: stories.js v11, streets.js v14.
+- **A generator bug the check caught:** the rule that sets `lang` and `dir` on a copy matched only a bare `<html lang="en">` tag. stories.html also carries `class="no-js"`, so its first Arabic and Russian builds stayed `lang="en" dir="ltr"`, and `i18n.py` failed both with LANG/DIR WRONG. The rule now rewrites those two attributes on any `<html>` tag and keeps the rest.
+- **Checks:** `twin-data.js` also opens stories and streets in three languages. One Russian description was shortened (seo.py).

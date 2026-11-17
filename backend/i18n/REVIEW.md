@@ -53,6 +53,21 @@ once, on either page. 142 entries per language in stage 1.
 - the month abbreviations in the year strip (ينا، فبر… / янв, фев…), and the
   18 site names, which should match the planner's.
 
+## Stage 2c (2026-11-17): the data stories and the street report card
+
+| Page | Arabic | Russian | English source |
+|---|---|---|---|
+| Data stories | https://egybi.com/ar/stories.html | https://egybi.com/ru/stories.html | https://egybi.com/stories.html |
+| Street report card | https://egybi.com/ar/streets.html | https://egybi.com/ru/streets.html | https://egybi.com/streets.html |
+
+144 more entries per language. Please look especially at the technical terms
+on the street report card: intersection density, dead ends, circuity and
+orientation entropy (كثافة التقاطعات، الطرق المسدودة، التعرّج، إنتروبيا الاتجاه /
+плотность перекрёстков, тупики, извилистость, энтропия ориентации), and at
+Downtown Cairo's hand-drawn boundary paragraph, which names real streets.
+The figures the stories compute in the browser (populations, ratios) are
+still written by script in English digits until stage 4.
+
 ## Where the text lives
 
 - `backend/i18n/ar.tsv` and `backend/i18n/ru.tsv`: one line per unit,

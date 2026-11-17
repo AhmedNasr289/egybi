@@ -25,7 +25,8 @@
    Exits 1 on any failure. */
 const { chromium, executablePath, BASE } = require('./env');
 
-const PAGES = ['index.html', 'plan.html', 'fair-prices.html', 'visit.html', 'places.html', 'geospatial.html', 'community.html'];
+const PAGES = ['index.html', 'plan.html', 'fair-prices.html', 'visit.html', 'places.html', 'geospatial.html', 'community.html',
+               'stories.html', 'streets.html'];
 // the file each page must load, for the pages with no on-screen marker below
 const NEEDS = {
   'plan.html': '/data/visit-climate.json',
@@ -33,6 +34,8 @@ const NEEDS = {
   'places.html': '/data/geo-places.json',
   'geospatial.html': '/data/geo-health.json',
   'community.html': '/api/community.php',
+  'stories.html': '/data/geo-health.json',
+  'streets.html': '/data/streets-districts.json',
 };
 const LANGS = ['', 'ar/', 'ru/'];
 // pages a script links to that have no translated copy

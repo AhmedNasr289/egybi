@@ -261,7 +261,7 @@
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
     nameGovernorates(m, layer);
 
-    fetch('data/geo-health.json', { cache: 'no-cache' })
+    fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/geo-health.json') : 'data/geo-health.json'), { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (h) {
         if (!h) { put('hlNote', 'The health layer has not been built yet, so this story shows the map without it.'); return; }
@@ -334,8 +334,8 @@
     nameGovernorates(m, layer);
 
     Promise.all([
-      fetch('data/streets-districts.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }),
-      fetch('data/streets-boundaries.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; })
+      fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/streets-districts.json') : 'data/streets-districts.json'), { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }),
+      fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/streets-boundaries.json') : 'data/streets-boundaries.json'), { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; })
     ]).then(function (res) {
       var d = res[0], b = res[1];
       if (!d || !b) { put('stNote', 'The street report card has not been built yet, so this story shows the map without it.'); return; }
@@ -523,7 +523,7 @@
     setTimeout(function () { m.invalidateSize(); m.fitBounds(layer.getBounds(), { padding: [8, 8] }); }, 260);
     nameGovernorates(m, layer);
 
-    fetch('data/geo-places.json', { cache: 'no-cache' })
+    fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/geo-places.json') : 'data/geo-places.json'), { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (!data) { put('dgNote', 'The gazetteer has not been built yet, so this story shows the map without it.'); return; }
