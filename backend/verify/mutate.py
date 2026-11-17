@@ -506,6 +506,11 @@ case("footer nav link dropped from one page", "coverage.py", ["site/about.html"]
      lambda: edit("site/about.html", '<a href="stories.html">Data Stories</a>', ""),
      lambda o: "footer links differ" in o and "Data Stories" in o, COVERAGE)
 
+# opening hours keyed to a site that has no page are shown nowhere (2026-11-17)
+case("opening hours for a site with no visit page", "coverage.py", ["site/data/opening-hours.json"],
+     lambda: edit("site/data/opening-hours.json", '{ "key": "philae", "hours"', '{ "key": "philea", "hours"'),
+     lambda o: "opening hours for a site with no visit page" in o and "'philea'" in o, COVERAGE)
+
 # ---- 15. chrome drift: 404 links made relative ------------------------------
 # The same file answers /nonsense.html and /deep/path/nonsense.html; a relative
 # href sends a lost reader deeper into a directory that does not exist.

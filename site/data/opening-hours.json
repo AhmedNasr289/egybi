@@ -1,0 +1,41 @@
+{
+  "as_of": "2026-11-17",
+  "source": "The Ministry of Tourism and Antiquities: its booking site where it has a page for the site, otherwise its ticket price list of 5 Nov 2024; each row carries the date it was last checked",
+  "groups": [
+    {
+      "key": "sites", "title": "Opening hours",
+      "rows": [
+        { "key": "giza", "hours": "Opens 07:00, last entry 16:00",
+          "note": "During Ramadan it opens at 08:00, last entry 15:30. The Ministry's price list of 5 November 2024 gives 07:00 to 17:00.",
+          "source": "Ministry booking site: Pyramids of Giza", "source_url": "https://egymonuments.com/details/Pyramids", "checked": "2026-11-17" },
+        { "key": "karnak", "hours": "Opens 06:00, last entry 16:00",
+          "note": "The same in summer, winter and Ramadan. The Ministry's price list of 5 November 2024 gives 06:00 to 17:00.",
+          "source": "Ministry booking site: Karnak Temple", "source_url": "https://egymonuments.com/details/KarnakTemple", "checked": "2026-11-17" },
+        { "key": "valley-kings", "hours": "Opens 06:00, last entry 17:00 in summer and 16:00 in winter",
+          "note": "During Ramadan the last entry is 16:00.",
+          "source": "Ministry booking site: Valley of the Kings", "source_url": "https://egymonuments.com/details/ValleyOfKings", "checked": "2026-11-17" },
+        { "key": "abu-simbel", "hours": "Opens 06:00, last entry 16:00",
+          "note": "The same in summer, winter and Ramadan.",
+          "source": "Ministry booking site: Abu Simbel Temple", "source_url": "https://egymonuments.com/details/AbuSimbelTemple", "checked": "2026-11-17" },
+        { "key": "saqqara", "hours": "08:00 to 17:00",
+          "note": "",
+          "source": "Ministry of Tourism and Antiquities price list (5 Nov 2024): Saqqara Area", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "checked": "2026-11-17" },
+        { "key": "philae", "hours": "07:00 to 16:00",
+          "note": "",
+          "source": "Ministry of Tourism and Antiquities price list (5 Nov 2024): Temple of Philae", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "checked": "2026-11-17" },
+        { "key": "abydos", "hours": "07:00 to 17:00",
+          "note": "",
+          "source": "Ministry of Tourism and Antiquities price list (5 Nov 2024): Temple of Sety (Temple of Abydos)", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "checked": "2026-11-17" },
+        { "key": "dendera", "hours": "07:00 to 17:00",
+          "note": "",
+          "source": "Ministry of Tourism and Antiquities price list (5 Nov 2024): Temple of Dendara", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "checked": "2026-11-17" },
+        { "key": "abu-mena", "hours": "07:00 to 19:00",
+          "note": "",
+          "source": "Ministry of Tourism and Antiquities price list (5 Nov 2024): Abu Mena Archaeological Site", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "checked": "2026-11-17" },
+        { "key": "st-catherine", "hours": "The monastery: 08:45 to 12:45, closed on Sundays",
+          "note": "For Fridays the list prints 10:30 am to 11:30 pm, which looks like a misprint, so check the Friday hours locally.",
+          "source": "Ministry of Tourism and Antiquities price list (5 Nov 2024): St Catherine's Monastery", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "checked": "2026-11-17" }
+      ]
+    }
+  ]
+}
