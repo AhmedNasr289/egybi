@@ -272,3 +272,17 @@ Please check, in particular:
   (the English is "Ahmed's Egypt"); a better short form is welcome;
 - the Russian dates: «17 ноября 2026» (genitive month, no "г.");
 - «قدّم %s في الترتيب / أخّر %s في الترتيب» for the move-up and move-down buttons.
+
+## Arriving in Egypt: travelling alone, and Russia or Kazakhstan (2026-11-17)
+
+Two new sections (23 lines per language).
+
+Please check:
+- the safety rows, word by word against the English: they repeat the UK
+  government's advice and must not soften or add to it;
+- Arabic row "ركوب التاكسي وحدك": it addresses a woman («فأرسلي») because the
+  advice is for women travelling alone; confirm that reads right next to the
+  masculine form used elsewhere;
+- Russian «Если едете одна» and «когда вы одна»: feminine on purpose, for the
+  same reason;
+- Arabic «رابطة الدول المستقلة» for CIS, and «مير» for the Mir card.
