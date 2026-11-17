@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أطلس مصر — المحافظات والصحة والمدارس والتراث | EgyBI</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14110C">
+<script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/auth/*"}},{"not":{"href_matches":"/api/*"}},{"not":{"href_matches":"/account.html"}}]},"eagerness":"moderate"}]}</script>
+<meta name="description" content="خريطة تفاعلية موثّقة لمصر: ٢٧ محافظة ملوّنة بأرقام الجهاز المركزي للتعبئة العامة والإحصاء، ومستشفيات ومدارس OpenStreetMap، ومواقع التراث العالمي السبعة لليونسكو.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- .js: motion.js may hide [data-aos] until it reveals them; without it, egybi.css shows everything (S1, S4). -->
+<script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.documentElement.classList.contains("mo-ready"))document.documentElement.classList.remove("js")},4000)</script>
+<link href="../assets/vendor/leaflet.css" rel="stylesheet">
+<link href="../assets/egybi.css?v=50" rel="stylesheet">
+<style>
+  /* atlas map card */
+  .atlas-box { position: relative; height: clamp(340px, 56vw, 540px); border-radius: var(--radius); overflow: hidden; }
+  .atlas-note { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 12px 16px; margin: 14px 0 0; font-size: var(--fs-sm); color: var(--ink-soft); line-height: 1.6; }
+  .map-toggle:disabled { opacity: .45; cursor: not-allowed; }
+  .ov-toggle { font-size: var(--fs-sm); font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px dashed var(--line-light); background: var(--papyrus); color: var(--ink-soft); cursor: pointer; transition: all .15s; }
+  .ov-toggle:hover:not(:disabled), .ov-toggle:focus-visible { border-color: var(--gold); outline: none; }
+  .ov-toggle.on { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid var(--gold); }
+  .ov-toggle:disabled { opacity: .45; cursor: not-allowed; }
+  /* symbol key for the point overlays — the colour legend covers bins only */
+  .marker-key { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line-light); }
+  .mk-row { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .mk-item { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-xs); color: var(--ink-soft); }
+  .mk-dot { display: inline-block; border-radius: 50%; border: 1.5px solid #fff;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.18); flex: none; }
+
+  /* governorate detail panel */
+  .gov-detail { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; margin-top: 14px; }
+  .gov-detail h3 { margin: 0 0 10px; color: var(--blue-deep); font-size: var(--fs-md); }
+  .gd-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line-light); font-size: var(--fs-sm); color: var(--ink-soft); }
+  .gd-row:first-of-type { border-top: none; }
+  .gd-row strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .gd-note { font-size: var(--fs-xs); color: var(--ink-soft); margin: 10px 0 0; }
+
+  /* governorate table */
+  .gov-table-wrap { overflow-x: auto; }
+  .gov-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+  .gov-table th { text-align: left; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); padding: 9px 12px; border-bottom: 2px solid var(--line-light); white-space: nowrap; }
+  .gov-table td { padding: 8px 12px; border-bottom: 1px solid var(--line-light); color: var(--ink); font-variant-numeric: tabular-nums; }
+  .gov-table td:first-child { font-weight: 600; color: var(--blue-deep); }
+  .gov-table tr:hover td { background: var(--papyrus-2); }
+
+  /* heritage cards */
+  .wh-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); margin-top: 20px; }
+  .wh-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; transition: border-color .2s, box-shadow .2s; }
+  .wh-card:hover { border-color: var(--gold); box-shadow: var(--shadow-light); }
+  .wh-year { font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-ink); }
+  .wh-card h3 { margin: 6px 0 8px; color: var(--blue-deep); font-size: var(--fs-base); line-height: 1.4; }
+  .wh-coords { margin: 0; font-size: var(--fs-xs); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+</style>
+  <link rel="canonical" href="https://egybi.com/ar/geospatial.html">
+  <meta property="og:site_name" content="EgyBI">
+  <meta property="og:title" content="أطلس مصر — البلد على خريطة واحدة موثّقة · EgyBI">
+  <meta property="og:description" content="كل المحافظات الـ٢٧ ملوّنة بأرقام حقيقية، والمستشفيات والمدارس كما رسمتها OSM، ومواقع التراث العالمي السبعة لليونسكو — وكل طبقة موثّقة ومؤرّخة.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://egybi.com/ar/geospatial.html">
+  <meta property="og:image" content="https://egybi.com/og-geospatial.png?v=3">
+<meta property="og:image:alt" content="أطلس مصر — المحافظات والصحة والمدارس والتراث">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="أطلس مصر — البلد على خريطة واحدة موثّقة · EgyBI">
+  <meta name="twitter:image" content="https://egybi.com/og-geospatial.png?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://egybi.com/ar/geospatial.html#page", "url": "https://egybi.com/ar/geospatial.html", "name": "Egypt Atlas", "isPartOf": {"@id": "https://egybi.com/#site"}, "inLanguage": "ar"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Egypt Atlas", "item": "https://egybi.com/ar/geospatial.html"}]}]}
+</script>
+<!-- I18N-HEAD:START - generated by backend/pipeline/pages/i18n.py; edit that, not this. -->
+<link rel="alternate" hreflang="en" href="https://egybi.com/geospatial.html">
+<link rel="alternate" hreflang="ar" href="https://egybi.com/ar/geospatial.html">
+<link rel="alternate" hreflang="ru" href="https://egybi.com/ru/geospatial.html">
+<link rel="alternate" hreflang="x-default" href="https://egybi.com/geospatial.html">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html stories.html streets.html">
+<link href="../assets/i18n.css?v=1" rel="stylesheet">
+<script src="../assets/lang.js?v=1" defer></script>
+<script src="../assets/i18n/ar.js?v=8e2877a1"></script>
+<!-- I18N-HEAD:END -->
+</head>
+<body>
+<a class="skip-link" href="#main">انتقل إلى المحتوى</a>
+
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
+      <a href="index.html">الرئيسية</a>
+      <a href="plan.html">الخطة</a>
+      <a href="visit.html">متى تسافر</a>
+      <a href="fair-prices.html">الأسعار العادلة</a>
+      <a href="hieroglyphs.html">الهيروغليفية</a>
+      <a href="dossier.html">الملف</a>
+      <a href="places.html">الأماكن</a>
+      <a href="geospatial.html" class="active">الأطلس</a>
+      <a href="stories.html">القصص</a>
+      <a href="community.html">المجتمع</a>
+      <a href="../explore.html">البيانات</a>
+      <a href="about.html">من نحن</a>
+      <a class="nav-only-mobile" href="ask.html">مراجعة الخطة</a>
+      <a class="nav-only-mobile" href="/ar/index.html#newsletter">النشرة البريدية</a>
+    <!-- LANG-LINKS:START --><a class="nav-only-mobile lang-link" href="../geospatial.html" hreflang="en" lang="en" data-lang="en">English</a><a class="nav-only-mobile lang-link" href="../ru/geospatial.html" hreflang="ru" lang="ru" data-lang="ru">Русский</a><!-- LANG-LINKS:END -->
+</nav>
+    <div class="nav-actions"><!-- LANG-SWITCH:START --><details class="lang-switch"><summary aria-label="اللغة: العربية"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> عربي</summary><div class="lang-menu"><a href="../geospatial.html" hreflang="en" lang="en" data-lang="en">English</a><a href="geospatial.html" hreflang="ar" lang="ar" data-lang="ar" aria-current="true">العربية</a><a href="../ru/geospatial.html" hreflang="ru" lang="ru" data-lang="ru">Русский</a></div></details><!-- LANG-SWITCH:END --><a class="cta" href="ask.html">مراجعة الخطة</a></div>
+    <button class="nav-toggle" aria-label="القائمة" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="surface-hero center" id="top">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>الأطلس</div>
+    <h1 data-aos="fade-up">مصر، على خريطة واحدة موثّقة.</h1>
+    <p class="page-intro" data-aos="fade-up">كل طبقة على هذه الخريطة حقيقية وموثّقة ومؤرّخة: ٢٧ محافظة ملوّنة بالأرقام الرسمية، والمستشفيات والمدارس كما رسمها مجتمع OpenStreetMap، ومواقع التراث العالمي السبعة لليونسكو — للاستكشاف، لا للملاحة أو الطوارئ.</p>
+  </div>
+</section>
+
+<nav class="on-this-page" data-wayfinding aria-label="في هذه الصفحة"></nav>
+
+<!-- MAP -->
+<section class="surface-light" id="map" data-nav="الخريطة">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>الخريطة</div>
+    <h2 data-aos="fade-up">اختر عدسة، ثم انقر أي محافظة.</h2>
+    <p class="lead" data-aos="fade-up">أزرار الألوان تغيّر ما تقيسه الخريطة. والأزرار المتقطعة تُظهر طبقات النقاط وتخفيها. انقر محافظة لملفها الكامل.</p>
+    <div class="chart-card" style="margin-top:22px;" data-aos="zoom-in">
+      <div class="map-toolbar" role="group" aria-label="اختر مقياس الخريطة">
+        <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">التلوين حسب:</span>
+        <button type="button" class="map-toggle on" data-metric="population">السكان</button>
+        <button type="button" class="map-toggle" data-metric="density">الكثافة</button>
+        <button type="button" class="map-toggle" data-metric="urban_pct">نسبة الحضر</button>
+        <button type="button" class="map-toggle" data-metric="growth">النمو</button>
+        <button type="button" class="map-toggle" data-metric="area_km2">المساحة</button>
+        <button type="button" class="map-toggle" data-metric="health" disabled title="يظهر بعد أول بناء للطبقات">المنشآت الصحية</button>
+        <button type="button" class="map-toggle" data-metric="schools" disabled title="يظهر بعد أول بناء للطبقات">المدارس</button>
+      </div>
+      <div class="map-toolbar" role="group" aria-label="إظهار طبقات النقاط وإخفاؤها">
+        <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">الطبقات:</span>
+        <button type="button" class="ov-toggle" data-overlay="health" disabled title="يظهر بعد أول بناء للطبقات">المستشفيات والعيادات</button>
+        <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="يظهر بعد أول بناء للطبقات">مواقع التراث العالمي</button>
+      </div>
+      <section class="atlas-box" id="atlasMap" aria-label="خريطة تفاعلية لمحافظات مصر الـ٢٧ مع طبقات بيانات قابلة للاختيار"></section>
+      <!-- A way in that is not the map. Fourteen of the twenty-seven
+           governorates render under 24px wide on a 390px screen — Gharbia is
+           11x14 — so on a phone half the country cannot reliably be tapped, and
+           no amount of styling changes that: the shapes are the real shapes.
+           WCAG 2.5.8 allows a small target where an equivalent full-size
+           control does the same job on the same page. This is that control,
+           and it is visible rather than screen-reader-only, because the reader
+           who cannot hit Gharbia with a thumb is looking right at it. -->
+      <div class="map-toolbar" role="group" aria-label="افتح محافظة من قائمة">
+        <label for="govPick" style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">أو اختر واحدة:</label>
+        <select id="govPick" class="gov-pick"><option value="">اختر محافظة…</option></select>
+      </div>
+      <div class="map-legend" id="atlasLegend"></div>
+      <div class="map-legend marker-key" id="atlasKey" hidden></div>
+      <div class="gov-detail" id="govDetail" hidden></div>
+      <div class="atlas-note" id="layerNote">جارٍ تحميل الطبقات…</div>
+      <p class="chart-cap">الحدود: <strong>geoBoundaries.org</strong> (EGY ADM1، CC-BY 4.0)، مبسّطة ومرفقة دون اتصال — لا يُستدعى أي مزوّد خرائط خارجي. السكان والكثافة والمساحة: قاعدة معرفة EgyBI (<strong>الجهاز المركزي للتعبئة العامة والإحصاء</strong>، نوفمبر ٢٠٢٣)؛ والنمو مقارنةً بتعداد ٢٠١٧؛ ونسبة الحضر مؤشر تقريبي من الجهاز نحو ٢٠١٦ (±١–٢ نقطة). المستشفيات والعيادات والمدارس: <strong>© المساهمون في OpenStreetMap</strong> (ODbL) — رسمها المجتمع، فهي تُظهر <em>النمط</em> الجغرافي لا سجلًا رسميًا. مواقع التراث: <strong>مركز التراث العالمي لليونسكو</strong>. الألوان فئات تُبيعية (ست مجموعات متساوية العدد) ليبقى التفاوت الشديد مقروءًا.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GOVERNORATES -->
+<section class="surface-light-2" id="governorates" data-nav="المحافظات">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>الـ٢٧ جنبًا إلى جنب</div>
+    <h2 data-aos="fade-up">كل المحافظات في جدول واحد.</h2>
+    <p class="lead" data-aos="fade-up">مرتّبة حسب السكان. يمتلئ عمودا المنشآت والمدارس بعد بناء طبقات الخريطة، ويبقيان «—» حتى ذلك الحين بدل عرض صفر مختلق.</p>
+    <div class="chart-card gov-table-wrap" style="margin-top:22px;" data-aos="fade-up">
+      <table class="gov-table" data-query="governorates"
+         data-query-note="Coverage note: the queryable table holds the 10 most populous governorates, not all 27. The map and the table on this page use the full set — this slice is smaller, and saying so is the point."
+             data-query-sql="SELECT name, population_millions, area_km2,
+       ROUND(population_millions * 1000000.0 / area_km2) AS density_per_km2
+FROM governorates
+ORDER BY population_millions DESC;"
+             data-query-source="CAPMAS population estimates + governorate areas"
+             data-query-asof="2024"
+             data-query-json="data/geo-health.json">
+        <thead><tr><th scope="col">المحافظة</th><th scope="col">السكان</th><th scope="col">الكثافة /كم²</th><th scope="col">المنشآت الصحية (OSM)</th><th scope="col">المدارس (OSM)</th></tr></thead>
+        <tbody id="govTableBody"><tr><td colspan="5">جارٍ التحميل…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- HERITAGE -->
+<section class="surface-light" id="heritage" data-nav="التراث">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>سبعة مواقع، قائمة واحدة</div>
+    <h2 data-aos="fade-up">مصر في قائمة التراث العالمي.</h2>
+    <p class="lead" data-aos="fade-up">مواقع مصر المُدرجة في قائمة التراث العالمي لليونسكو، كما تسجّلها القائمة بالضبط — وكلٌّ منها أيضًا علامة ذهبية على الخريطة أعلاه.</p>
+    <div class="atlas-note" id="heritageEmpty" hidden>تظهر هذه القائمة تلقائيًا بعد أن يملأ أول تشغيل لـ«بناء طبقات الأطلس» ملف بيانات التراث.</div>
+    <div class="wh-grid" id="heritageCards"></div>
+    <p class="chart-cap" id="heritageMeta" style="margin-top:16px;"></p>
+  </div>
+</section>
+
+<!-- VISIT-GUIDES:START - generated by backend/pipeline/build_static_pages.py.
+     Crawlable links to every generated page; edit the generator, not this. -->
+<section class="surface-light-2" id="guides" data-nav="أدلة الزوار">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="ra"></span>أدلة الزوار</div>
+    <h2>١٨ موقعًا، لكلٍّ منها دليل شهرًا بشهر.</h2>
+    <p class="lead" style="max-width:68ch;">حرارة بعد الظهر، وبرد الليل، والمطر، وساعات الضوء الذهبي لكل شهر، مقيسة عند إحداثيات الموقع نفسه. وكل بطاقة تراث عالمي أعلاه ترتبط بالأدلة الواقعة ضمن ٢٠ كم منها.</p>
+    <div class="chip-row"><a class="chip" href="../visit/abu-mena.html" data-guide="abu-mena" data-lat="30.8419" data-lon="29.6647">أبو مينا</a><a class="chip" href="../visit/abu-simbel.html" data-guide="abu-simbel" data-lat="22.3372" data-lon="31.6258">أبو سمبل</a><a class="chip" href="../visit/abydos.html" data-guide="abydos" data-lat="26.1847" data-lon="31.9194">أبيدوس</a><a class="chip" href="../visit/alexandria.html" data-guide="alexandria" data-lat="31.2001" data-lon="29.9187">الإسكندرية</a><a class="chip" href="../visit/dahab.html" data-guide="dahab" data-lat="28.5091" data-lon="34.5136">دهب</a><a class="chip" href="../visit/dendera.html" data-guide="dendera" data-lat="26.1417" data-lon="32.6700">معبد دندرة</a><a class="chip" href="../visit/giza.html" data-guide="giza" data-lat="29.9773" data-lon="31.1325">أهرامات الجيزة</a><a class="chip" href="../visit/islamic-cairo.html" data-guide="islamic-cairo" data-lat="30.0444" data-lon="31.2620">القاهرة التاريخية</a><a class="chip" href="../visit/hurghada.html" data-guide="hurghada" data-lat="27.2579" data-lon="33.8116">الغردقة</a><a class="chip" href="../visit/karnak.html" data-guide="karnak" data-lat="25.7188" data-lon="32.6573">معبد الكرنك</a><a class="chip" href="../visit/philae.html" data-guide="philae" data-lat="24.0256" data-lon="32.8843">معبد فيلة</a><a class="chip" href="../visit/st-catherine.html" data-guide="st-catherine" data-lat="28.5559" data-lon="33.9760">دير سانت كاترين</a><a class="chip" href="../visit/saqqara.html" data-guide="saqqara" data-lat="29.8712" data-lon="31.2165">سقارة</a><a class="chip" href="../visit/siwa.html" data-guide="siwa" data-lat="29.2041" data-lon="25.5195">واحة سيوة</a><a class="chip" href="../visit/suez-canal.html" data-guide="suez-canal" data-lat="30.5852" data-lon="32.2715">قناة السويس عند الإسماعيلية</a><a class="chip" href="../visit/valley-kings.html" data-guide="valley-kings" data-lat="25.7402" data-lon="32.6014">وادي الملوك</a><a class="chip" href="../visit/wadi-al-hitan.html" data-guide="wadi-al-hitan" data-lat="29.2694" data-lon="30.0417">وادي الحيتان</a><a class="chip" href="../visit/white-desert.html" data-guide="white-desert" data-lat="27.2000" data-lon="28.1833">الصحراء البيضاء</a></div>
+  </div>
+</section>
+<!-- VISIT-GUIDES:END -->
+
+<!-- METHOD -->
+<section class="surface-light-2" id="method" data-nav="المنهج والمصادر">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>كيف تلتزم هذه الصفحة بالصدق</div>
+    <h2 data-aos="fade-up">المنهج والمصادر وما ليست عليه هذه الخريطة.</h2>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="chart-card" data-aos="fade-up">
+        <h3>من أين تأتي كل طبقة</h3>
+        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">حدود المحافظات من <strong>geoBoundaries.org</strong> (CC-BY 4.0)، مبسّطة ومرفقة بالصفحة فلا يُستدعى أي مزوّد خرائط خارجي أبدًا. الأرقام السكانية من قاعدة المعرفة نفسها المستندة إلى الجهاز المركزي للتعبئة العامة والإحصاء التي يستعلم عنها كل تمرين SQL على هذا الموقع. المستشفيات والعيادات والمدارس من <strong>OpenStreetMap</strong> (© المساهمون في OpenStreetMap، ODbL) — خريطة يحدّثها المجتمع، أي أن فيها فجوات تغطية حقيقية: هذه الطبقات تُظهر <em>ما رُسم على الخريطة</em>، وهذا ليس سجلًا رسميًا لكل ما هو موجود. مواقع التراث من القائمة العامة لـ<strong>مركز التراث العالمي لليونسكو</strong>. ويسجّل ملف كل طبقة تاريخ جلبه، المعروض على هذه الصفحة.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>ما ليست عليه هذه الخريطة</h3>
+        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">هذه الصفحة <strong>للمعلومات والتعليم فقط</strong>. طبقة الصحة ليست دليلًا للرعاية ولا تقول شيئًا عن الجودة أو السعة أو مواعيد العمل — للاحتياجات الطبية الحقيقية استخدم القنوات الرسمية لوزارة الصحة. تُحسب الأعداد لكل محافظة بحدود مبسّطة، فقد تُعدّ منشأة على الحد تمامًا في المحافظة المجاورة. لا شيء هنا نصيحة من أي نوع. وحيث يكون الرقم مؤشرًا تقريبيًا أو أقل من الواقع، يقول التعليق ذلك بدل إخفائه — وهي <span style="color:var(--gold-ink);font-weight:600;">قاعدة الصدق في البيانات الموثّقة</span> نفسها التي يقوم عليها الموقع كله.</p>
+      </div>
+    </div>
+    <div class="atlas-note" style="margin-top:18px;" data-aos="fade-up"><strong>قريبًا في الأطلس:</strong> طبقات يومية آلية — الزلازل فوق مصر والبحر الأحمر (USGS) وحركة الطيران المباشرة (OpenSky) — مبنية على خطوط الجلب والتحقق والحفظ نفسها التي تحدّث صفحتي الأسعار وأسعار الصرف كل صباح.</div>
+  </div>
+</section>
+
+<!-- NEXT STEPS -->
+<section class="surface-light next-steps center">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>إلى أين بعد ذلك</div>
+    <h2>تابع استكشاف البيانات.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;">
+      <a class="ns-card" href="../explore.html"><span class="ns-k">استكشف</span><h3>مصر بالرسوم البيانية &larr;</h3><p>نحو ٢٣ لوحة معلومات عن الاقتصاد والمجتمع والبنية التحتية.</p></a>
+      <a class="ns-card" href="../explore.html"><span class="ns-k">استكشف</span><h3>مصر بالرسوم البيانية &larr;</h3><p>نحو عشرين رسمًا بيانيًا موثّقًا عن الاقتصاد والمجتمع والأرض والتراث &mdash; وكل رقم موثّق ومؤرّخ.</p></a>
+      <a class="ns-card" href="../prices.html"><span class="ns-k">الأسعار</span><h3>أسعار اليوم &larr;</h3><p>أسعار التجزئة والجملة اليومية من البوابة الرسمية.</p></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لرحلتك إلى مصر بصدق — كل رقم بمصدره وتاريخه.</p></div>
+    <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط لمسارك</a><a href="visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">الملف</a><a href="ask.html">مراجعة الخطة</a></div>
+    <div><h2 class="foot-h">مصر بالأرقام</h2><a href="../explore.html">بيانات مصر</a><a href="geospatial.html">أطلس مصر</a><a href="places.html">الأماكن</a><a href="stories.html">قصص البيانات</a><a href="streets.html">بطاقة تقييم الشوارع</a><a href="../prices.html">الأسعار اليومية</a><a href="../stocks.html">البورصة</a><a href="../invest.html">أين تبني مصر</a></div>
+    <div><h2 class="foot-h">المزيد</h2><a href="../blog.html">المدوّنة</a><a href="community.html">المجتمع</a><a href="about.html">الهوية</a><a href="index.html#newsletter">النشرة البريدية</a></div>
+    <div><h2 class="foot-h">مصادر البيانات</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">البنك الدولي</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> كل رقم حقيقي وموثّق المصدر، وحين تختلف المصادر فعلًا يُعلَّم الخلاف بدلًا من إخفائه.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
+<p class="i18n-note">ترجم EgyBI هذه الصفحة، والترجمة بانتظار مراجعة متحدث أصلي باللغة العربية. <a href="../geospatial.html" hreflang="en" lang="en">English</a></p>
+</footer>
+
+<script src="../assets/vendor/leaflet.js"></script>
+<script src="../assets/mapkit.js?v=14"></script>
+<script src="../assets/egybi.js?v=7"></script>
+<script src="../assets/query.js?v=1"></script>
+<script src="../assets/glyphs.js?v=3"></script>
+<script src="../assets/wayfinding.js?v=2"></script>
+<script src="../assets/egypt-geo.js?v=2"></script>
+<script src="../assets/egfmt.js?v=4"></script>
+<script src="../assets/geospatial.js?v=13"></script>
+<script src="../assets/motion.js?v=5"></script>
+<script>window.EGYBI_AUTH = { base: '../auth/' };</script>
+  <script src="../assets/analytics.js?v=2" defer></script>
+</body>
+</html>

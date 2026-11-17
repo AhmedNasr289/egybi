@@ -14,6 +14,8 @@
   var ME = (document.currentScript && document.currentScript.src) || location.href;
   var BASE = CFG.base || new URL('../auth/', ME).href;
   var esc = (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml : function (s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; };
+  // the page's language for text this script writes (see EGYBI.t in egybi.js)
+  var t = (window.EGYBI && window.EGYBI.t) || function (s) { return s; };
   var csrf = null, user = null;
   var readyResolve;
   var ready = new Promise(function (r) { readyResolve = r; });
@@ -75,12 +77,12 @@
     if (!slot) { slot = document.createElement('span'); slot.id = 'acct-slot'; slot.className = 'acct-slot'; nav.appendChild(slot); }
     if (user) {
       var initial = (user.email || '?').charAt(0).toUpperCase();
-      slot.innerHTML = '<button type="button" class="acct-btn" id="acctBtn" aria-haspopup="true" aria-expanded="false" aria-controls="acctMenu" aria-label="Your account">' +
+      slot.innerHTML = '<button type="button" class="acct-btn" id="acctBtn" aria-haspopup="true" aria-expanded="false" aria-controls="acctMenu" aria-label="' + esc(t('Your account')) + '">' +
         '<span class="acct-av" aria-hidden="true">' + esc(initial) + '</span></button>' +
         '<div class="acct-menu" id="acctMenu" hidden>' +
         '<div class="acct-email">' + esc(user.email) + '</div>' +
-        '<a href="' + esc(accountUrl()) + '">Your trips and account</a>' +
-        '<button type="button" id="acctOut">Sign out</button></div>';
+        '<a href="' + esc(accountUrl()) + '">' + esc(t('Your trips and account')) + '</a>' +
+        '<button type="button" id="acctOut">' + esc(t('Sign out')) + '</button></div>';
       var btn = document.getElementById('acctBtn'), menu = document.getElementById('acctMenu');
       btn.addEventListener('click', function () {
         var open = menu.hasAttribute('hidden');
@@ -97,7 +99,7 @@
         });
       });
     } else {
-      slot.innerHTML = '<button type="button" class="acct-btn signin" id="signinBtn">Sign in</button>';
+      slot.innerHTML = '<button type="button" class="acct-btn signin" id="signinBtn">' + esc(t('Sign in')) + '</button>';
       document.getElementById('signinBtn').addEventListener('click', function () { openModal('in'); });
     }
   }
@@ -140,7 +142,7 @@
   function pwStrength(pw) {
     if (!pw) return { score: -1, label: '', hint: '' };
     var n = pw.length;
-    if (n < 8) return { score: 0, label: 'Too short', hint: 'Needs at least 8 characters.' };
+    if (n < 8) return { score: 0, label: t('Too short'), hint: t('Needs at least 8 characters.') };
     var classes = (/[a-z]/.test(pw) ? 1 : 0) + (/[A-Z]/.test(pw) ? 1 : 0) +
                   (/\d/.test(pw) ? 1 : 0) + (/[^A-Za-z0-9]/.test(pw) ? 1 : 0);
     var predictable = /^(?:password|passw0rd|qwerty|letmein|welcome|admin|iloveyou|egybi|123456)/i.test(pw) ||
@@ -151,11 +153,11 @@
     else if (n >= 12) score = classes >= 2 ? 3 : 2;
     else score = classes >= 3 ? 2 : 1;
     if (predictable) score = 1;
-    var label = ['Weak', 'Weak', 'Fair', 'Strong'][score];
-    var hint = predictable ? 'That pattern is one of the first things guessed.'
-             : score >= 3 ? 'Length is what makes this one hard to crack.'
-             : score === 2 ? 'Longer beats more symbols. Try a few words you will remember.'
-             : 'Short passwords fall fast. Aim for 12+ characters.';
+    var label = [t('Weak'), t('Weak'), t('Fair'), t('Strong')][score];
+    var hint = predictable ? t('That pattern is one of the first things guessed.')
+             : score >= 3 ? t('Length is what makes this one hard to crack.')
+             : score === 2 ? t('Longer beats more symbols. Try a few words you will remember.')
+             : t('Short passwords fall fast. Aim for 12+ characters.');
     return { score: score, label: label, hint: hint };
   }
 
@@ -181,33 +183,33 @@
       '<div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">' +
         '<aside class="auth-rail">' +
           '<span class="auth-rail-glyph" data-glyph="ankh"></span>' +
-          '<p class="auth-rail-kicker">Free and optional</p>' +
-          '<h2 class="auth-rail-h">Keep your trips on every device.</h2>' +
-          '<p class="auth-rail-sub">Everything on EgyBI works without an account. Sign in only to save a trip and come back to it.</p>' +
-          '<p class="auth-rail-safe"><span data-glyph="eye"></span> We keep your email and the trips you save. Delete it all from your account page at any time.</p>' +
+          '<p class="auth-rail-kicker">' + esc(t('Free and optional')) + '</p>' +
+          '<h2 class="auth-rail-h">' + esc(t('Keep your trips on every device.')) + '</h2>' +
+          '<p class="auth-rail-sub">' + esc(t('Everything on EgyBI works without an account. Sign in only to save a trip and come back to it.')) + '</p>' +
+          '<p class="auth-rail-safe"><span data-glyph="eye"></span> ' + esc(t('We keep your email and the trips you save. Delete it all from your account page at any time.')) + '</p>' +
         '</aside>' +
         '<div class="auth-panel">' +
-          '<button type="button" class="auth-x" aria-label="Close">' +
+          '<button type="button" class="auth-x" aria-label="' + esc(t('Close')) + '">' +
             '<svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' +
           '</button>' +
           '<div class="auth-body">' +
             '<h3 id="authTitle" class="auth-h"></h3>' +
             '<p class="auth-sub"></p>' +
             '<div class="auth-google" hidden></div>' +
-            '<div class="auth-or" hidden><span>or</span></div>' +
+            '<div class="auth-or" hidden><span>' + esc(t('or')) + '</span></div>' +
             '<form class="auth-form" novalidate>' +
               '<input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">' +
               '<div class="fld fld-email">' +
-                '<label for="authEmail">Email</label>' +
+                '<label for="authEmail">' + esc(t('Email')) + '</label>' +
                 '<input id="authEmail" type="email" name="email" autocomplete="email" spellcheck="false" aria-describedby="errEmail">' +
                 '<p class="fld-err" id="errEmail"></p>' +
               '</div>' +
               '<div class="fld fld-pw">' +
-                '<div class="fld-top"><label for="authPw">Password</label>' +
-                  '<button type="button" class="auth-forgot">Forgot?</button></div>' +
+                '<div class="fld-top"><label for="authPw">' + esc(t('Password')) + '</label>' +
+                  '<button type="button" class="auth-forgot">' + esc(t('Forgot?')) + '</button></div>' +
                 '<div class="pw-wrap">' +
                   '<input id="authPw" type="password" name="password" aria-describedby="errPw pwMeterNote">' +
-                  '<button type="button" class="pw-toggle" aria-pressed="false">Show</button>' +
+                  '<button type="button" class="pw-toggle" aria-pressed="false">' + esc(t('Show')) + '</button>' +
                 '</div>' +
                 '<div class="pw-meter" hidden><i></i><i></i><i></i></div>' +
                 '<p class="pw-note" id="pwMeterNote"></p>' +
@@ -271,26 +273,26 @@
       if (v === 'newpw') showEmail = false;
 
       if (v === 'in') {
-        title.textContent = 'Welcome back';
-        sub.textContent = 'Sign in to open your saved trips.';
-        lbl.textContent = 'Sign in';
+        title.textContent = t('Welcome back');
+        sub.textContent = t('Sign in to open your saved trips.');
+        lbl.textContent = t('Sign in');
         pwF.autocomplete = 'current-password';
-        alt.innerHTML = 'New here? <button type="button" data-go="up">Create an account</button>';
+        alt.innerHTML = esc(t('New here?')) + ' <button type="button" data-go="up">' + esc(t('Create an account')) + '</button>';
       } else if (v === 'up') {
-        title.textContent = 'Create your account';
-        sub.textContent = 'Free. You can delete it, and everything in it, at any time.';
-        lbl.textContent = 'Create account';
+        title.textContent = t('Create your account');
+        sub.textContent = t('Free. You can delete it, and everything in it, at any time.');
+        lbl.textContent = t('Create account');
         pwF.autocomplete = 'new-password';
-        alt.innerHTML = 'Already have one? <button type="button" data-go="in">Sign in</button>';
+        alt.innerHTML = esc(t('Already have one?')) + ' <button type="button" data-go="in">' + esc(t('Sign in')) + '</button>';
       } else if (v === 'forgot') {
-        title.textContent = 'Reset your password';
-        sub.textContent = 'We will email you a link to choose a new one.';
-        lbl.textContent = 'Send reset link';
-        alt.innerHTML = '<button type="button" data-go="in">Back to sign in</button>';
+        title.textContent = t('Reset your password');
+        sub.textContent = t('We will email you a link to choose a new one.');
+        lbl.textContent = t('Send reset link');
+        alt.innerHTML = '<button type="button" data-go="in">' + esc(t('Back to sign in')) + '</button>';
       } else {
-        title.textContent = 'Choose a new password';
-        sub.textContent = 'This signs you out everywhere else.';
-        lbl.textContent = 'Update password';
+        title.textContent = t('Choose a new password');
+        sub.textContent = t('This signs you out everywhere else.');
+        lbl.textContent = t('Update password');
         pwF.autocomplete = 'new-password';
         alt.innerHTML = '';
       }
@@ -375,9 +377,9 @@
           if (window.EGYBI_TRACK) EGYBI_TRACK('signup_completed');
           signedIn(d); close();
         } else {
-          fail((d && d.message) || 'Could not complete Google sign-in.');
+          fail((d && d.message) || t('Could not complete Google sign-in.'));
         }
-      }).catch(function () { fail('Could not reach the server.'); })
+      }).catch(function () { fail(t('Could not reach the server.')); })
         .finally(function () { setBusy(false); });
     }
 
@@ -386,7 +388,7 @@
       var v = emailF.value.trim();
       if (emailField.hidden) return;
       if (v && !emailLooksValid(v)) {
-        errEmail.textContent = 'That does not look like an email address.';
+        errEmail.textContent = t('That does not look like an email address.');
         emailF.setAttribute('aria-invalid', 'true');
       } else { errEmail.textContent = ''; emailF.removeAttribute('aria-invalid'); }
     });
@@ -399,7 +401,7 @@
       if (pwField.hidden) return;
       var v = pwF.value;
       if (v && v.length < 8) {
-        errPw.textContent = 'At least 8 characters.'; pwF.setAttribute('aria-invalid', 'true');
+        errPw.textContent = t('At least 8 characters.'); pwF.setAttribute('aria-invalid', 'true');
       } else { errPw.textContent = ''; pwF.removeAttribute('aria-invalid'); }
     });
     pwF.addEventListener('input', function () {
@@ -419,7 +421,7 @@
     wrap.querySelector('.pw-toggle').addEventListener('click', function () {
       var showing = pwF.type === 'text';
       pwF.type = showing ? 'password' : 'text';
-      this.textContent = showing ? 'Show' : 'Hide';
+      this.textContent = showing ? t('Show') : t('Hide');
       this.setAttribute('aria-pressed', showing ? 'false' : 'true');
       pwF.focus();
     });
@@ -440,11 +442,11 @@
 
       var email = emailF.value.trim(), pw = pwF.value;
       if (!emailField.hidden) {
-        if (!email) { errEmail.textContent = 'Enter your email.'; emailF.setAttribute('aria-invalid', 'true'); emailF.focus(); return; }
-        if (!emailLooksValid(email)) { errEmail.textContent = 'That does not look like an email address.'; emailF.setAttribute('aria-invalid', 'true'); emailF.focus(); return; }
+        if (!email) { errEmail.textContent = t('Enter your email.'); emailF.setAttribute('aria-invalid', 'true'); emailF.focus(); return; }
+        if (!emailLooksValid(email)) { errEmail.textContent = t('That does not look like an email address.'); emailF.setAttribute('aria-invalid', 'true'); emailF.focus(); return; }
       }
       if (!pwField.hidden) {
-        if (pw.length < 8) { errPw.textContent = 'At least 8 characters.'; pwF.setAttribute('aria-invalid', 'true'); pwF.focus(); return; }
+        if (pw.length < 8) { errPw.textContent = t('At least 8 characters.'); pwF.setAttribute('aria-invalid', 'true'); pwF.focus(); return; }
       }
 
       setBusy(true);
@@ -453,16 +455,16 @@
       if (mode === 'forgot') {
         api('request-reset', 'POST', { email: email }).then(function (res) {
           rememberReturn();
-          succeed((res.data && res.data.message) || 'If that email has an account, a reset link is on its way.');
-        }).catch(function () { fail('Could not reach the server.'); }).finally(done);
+          succeed((res.data && res.data.message) || t('If that email has an account, a reset link is on its way.'));
+        }).catch(function () { fail(t('Could not reach the server.')); }).finally(done);
         return;
       }
       if (mode === 'newpw') {
         api('reset', 'POST', { token: resetToken, password: pw }).then(function (res) {
           var d = res.data || {};
-          if (d.ok) { succeed(d.message || 'Password updated.'); setTimeout(function () { setView('in'); }, 1100); }
-          else fail(d.message || 'That link has expired.');
-        }).catch(function () { fail('Could not reach the server.'); }).finally(done);
+          if (d.ok) { succeed(d.message || t('Password updated.')); setTimeout(function () { setView('in'); }, 1100); }
+          else fail(d.message || t('That link has expired.'));
+        }).catch(function () { fail(t('Could not reach the server.')); }).finally(done);
         return;
       }
 
@@ -470,18 +472,18 @@
         var d = res.data || {};
         if (mode === 'up') {
           if (d.ok && window.EGYBI_TRACK) EGYBI_TRACK('signup_completed');
-          if (d.ok) { rememberReturn(); succeed(d.message || 'Check your email to verify your account.'); }
-          else fail(d.message || 'Could not create that account.');
+          if (d.ok) { rememberReturn(); succeed(d.message || t('Check your email to verify your account.')); }
+          else fail(d.message || t('Could not create that account.'));
         } else if (d.ok) {
           signedIn(d); close();
           // Arrived from a verification or reset email: go back to the page
           // they were on when they signed up or asked for the link.
           if (cameFromLink) { var to = takeReturn(); if (to) location.assign(to); }
         } else {
-          fail(d.message || 'Could not sign in.');
+          fail(d.message || t('Could not sign in.'));
         }
       }).catch(function () {
-        fail('The account service is not connected on this preview.');
+        fail(t('The account service is not connected on this preview.'));
       }).finally(done);
     });
 
@@ -570,10 +572,10 @@
             cleanUrl();
             if (j && j.ok) cameFromLink = true;
             setTimeout(function () {
-              openModal('in', j && j.ok ? (j.message || 'Email verified — you can sign in now.') : null);
+              openModal('in', j && j.ok ? (j.message || t('Email verified — you can sign in now.')) : null);
               if (j && !j.ok) {
                 var e = document.querySelector('#authModal .auth-err');
-                if (e) e.textContent = j.message || 'That link has expired or was already used.';
+                if (e) e.textContent = j.message || t('That link has expired or was already used.');
               }
             }, 60);
           }).catch(function () {});

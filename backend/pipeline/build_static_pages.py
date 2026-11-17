@@ -101,6 +101,7 @@ from pages.notfound import build_404  # noqa: E402
 from pages.papyrus import build_feed, build_link_indexes, build_posts  # noqa: E402
 from pages.retired import DEFAULT_DESTINATION, SECTOR_DESTINATION, build_challenges  # noqa: E402
 from pages.sitemap import build_sitemap  # noqa: E402
+from pages.i18n import build_i18n  # noqa: E402  (Arabic and Russian twins)
 from pages.visit import (GUIDE_PAGES, build_guide_links, build_site_months,  # noqa: E402
                          build_visit_index, build_weather_by_month)
 
@@ -119,7 +120,8 @@ def main():
     fu = build_food_prices_page()
     cu = build_currency_page()
     build_link_indexes(ch, posts)
-    total = build_sitemap(pu + vu + wu + hu + fu + cu)
+    iu = build_i18n()                   # site/ar/, site/ru/ twins of the pages in pages/i18n.py
+    total = build_sitemap(pu + vu + wu + hu + fu + cu + iu)
     nfeed = build_feed(posts)
     build_404()
     # Report the sector split so a mis-mapped sector is visible in the log

@@ -26,6 +26,14 @@ const PAGES = [
   'egyptian-pound-since-july.html',            // a data story with the <picture> phone chart
   'account.html',                              // the account page, signed out (no server in CI)
   'plan.html',                                 // the planner, with "Save to my account"
+  'visit.html',                                // When to go, with the year strip
+  'ar/about.html',                             // Arabic, right to left
+  'ru/about.html',                             // Russian
+  'ar/index.html',                             // Arabic home: briefing, map and tools, mirrored
+  'ru/index.html',                             // Russian home: the longest labels
+  'ar/plan.html',                              // Arabic planner: map, legend and buttons
+  'ar/visit.html',                             // Arabic When to go: the year strip, right to left
+  'ru/places.html',                            // Russian gazetteer: filters, legend, table
 ];
 const WIDTHS = [1280, 390];
 

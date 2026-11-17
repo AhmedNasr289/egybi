@@ -23,9 +23,15 @@ const fs = require('fs');
 const path = require('path');
 
 const SITE = path.join(__dirname, '..', '..', 'site');
-const PAGES = ['about.html', 'stories.html', 'visit/giza.html', 'community.html'];
-const DESKTOP = [1280, 1366, 1920];
-const MENU = [390, 1024, 1279];
+const PAGES = ['about.html', 'stories.html', 'visit/giza.html', 'community.html', 'ar/about.html', 'ru/about.html', 'ar/index.html', 'ru/plan.html'];
+// Each language's row from the width it fits at (assets/i18n.css): English
+// from 1280px, Arabic from 1440px, Russian from 1600px; the menu below.
+const WIDTHS = {
+  en: { desktop: [1280, 1366, 1920], menu: [390, 1024, 1279] },
+  ar: { desktop: [1440, 1920], menu: [390, 1279, 1439] },
+  ru: { desktop: [1600, 1920], menu: [390, 1279, 1599] },
+};
+const langOf = pg => (/^(ar|ru)\//.exec(pg) || [0, 'en'])[1];
 
 let fails = 0;
 const fail = m => { console.log('FAIL ' + m); fails++; };
@@ -49,7 +55,8 @@ for (const f of htmlFiles(SITE)) {
   navs++;
   const nav = t.slice(a, t.indexOf('</nav>', a));
   // Stories, then Community, as the next link.
-  if (!/stories\.html"[^>]*>Stories<\/a>\s*<a href="(?:\.\.\/|\/)?community\.html">Community<\/a>/.test(nav)) {
+  // Any label: the Arabic and Russian twins carry translated ones.
+  if (!/stories\.html"[^>]*>[^<]+<\/a>\s*<a href="(?:\.\.\/|\/)?community\.html">[^<]+<\/a>/.test(nav)) {
     missing.push(path.relative(SITE, f).replace(/\\/g, '/'));
   }
 }
@@ -63,6 +70,7 @@ else console.log(`ok   all ${navs} headers link Community right after Stories`);
   const { chromium, executablePath, BASE } = require('./env');
   const b = await chromium.launch({ executablePath });
   for (const pg of PAGES) {
+    const { desktop: DESKTOP, menu: MENU } = WIDTHS[langOf(pg)];
     for (const w of [...DESKTOP, ...MENU]) {
       const ctx = await b.newContext({ viewport: { width: w, height: 800 } });
       await ctx.route('**/*', r => {

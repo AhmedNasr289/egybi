@@ -2109,3 +2109,220 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **[[Trilingual Plan — English, Arabic, Russian]]:** the approved plan, its measured header widths, fonts, digits, five stages and the native review.
   - **[[Motion — What Moves and Why]]:** an honest inventory of every animation, and why each proposal was built, dropped or deferred.
 - **Notes only.** No site file changes, so nothing deploys.
+## 2026-11-16 — The year strip on When to go: every site, every month, the year filling in
+- **Why:** of the four motion proposals, this one carries the most for a first-time visitor. Every measured site's year is visible at once, so the reader learns at a glance which months are comfortable and which are too hot at each place. The fill from January to December shows the heat building into summer and easing off.
+- **Proposals not chosen, and why:**
+  - **Fair-price meter:** dropped, because `fair-prices.json` holds fair ranges but no "typical first quote", so the meter would need invented numbers.
+  - **Planner route:** left for later, because a first-time visitor has no stops yet.
+  - **Moving sun:** left for later, because it adds little to the sun path already shown.
+- **What a reader sees:**
+  - "Each site, all twelve months" on visit.html now opens with the table of all 18 sites by 12 months. It is the same table egypt-weather-by-month.html shows, built from the same rows: every cell coloured by the visit map's heat bands, with its number printed.
+  - Above it sits one sentence computed from the same rows: "In January, February and December, 18 of 18 sites have a normal afternoon under 28 °C … In July, August and September, none does."
+  - As soon as any of the table is on screen, the months come in January to December, 70 ms apart.
+- **The rules kept:**
+  - opacity and transform only;
+  - none of it under reduced motion;
+  - without JavaScript the full table is there.
+- **How:**
+  - `heat_calendar.table_html(..., sweep=True)` gives each cell its month. The default is off, so egypt-weather-by-month.html is byte-identical.
+  - `pages/visit.py` writes the block and generates `assets/heat-calendar.css` from `heat_calendar.CSS` and the new `SWEEP_CSS`, so the table's look has one source.
+  - `assets/year-strip.js` (v1) starts the sweep.
+- **`static-audit.py`:** its "figures typed into visit.html" rule now skips generator-owned `<!-- NAME:START … NAME:END -->` regions. Those are written from the data on every build and guarded by the regenerated-equals-committed check. The rule had no mutation case; it has one now: a temperature typed into the hand-written prose is caught. That was also tried locally (caught alone, then clean again).
+- **New check `backend/verify/year-strip.js`:**
+  - all sites by 12 months present;
+  - with 60 px of the table showing, the cells on screen are shown;
+  - the months start in order, at least 30 ms apart, animating opacity and transform only;
+  - every cell is shown after the sweep;
+  - reduced motion: no animation;
+  - no JavaScript: the whole table is shown.
+- **Mutation cases:** YEAR NOT IN ORDER, YEAR MOTION UNDER REDUCED MOTION (both guards removed), YEAR EMPTY ON SCREEN and YEAR HIDDEN WITHOUT JS.
+## 2026-11-16 — The briefing map shows its dots as soon as the map is on screen
+- **Why:** on the live home page at 1280x900 the map starts just below the fold (its top at 843 px). The sweep waited until 35% of the map was visible, so a reader who had scrolled only a little saw Egypt's north coast with no dots on it.
+- **What changed:**
+  - `assets/site-map.js` (v2) starts the sweep as soon as any part of the map is on screen (IntersectionObserver threshold 0), so the dots come in as the coast does.
+  - The motion itself is unchanged: opacity and transform only, none under reduced motion, a plain image without JavaScript.
+- **New case in `backend/verify/briefing-map.js`:** the page loads with the map entirely below the fold, scrolls until 60 px of it shows, and every dot on screen must be shown, or the check gives MAP EMPTY ON SCREEN.
+- **Mutation case:** the old 0.35 threshold restored must give MAP EMPTY ON SCREEN.
+## 2026-11-16 — auth-return.js case 4 waits for the login exchange and says what happened
+- **Why:** run 43947896555 reported SIGN-IN NEVER HAPPENED once in four runs of identical code (#140, #141 and #142 passed it). Its line gave no way to tell whether a login request was sent at all.
+- **What was ruled out:** a late startup "who is signed in?" answer undoing the sign-in. `EGYBI.account.open` waits for that answer before showing the dialog, so in case 4 it always arrives first, and the only other thing that clears the sign-in is signing out.
+- **What changed:** the case now waits for the login response (up to 10 s) instead of a fixed 2 s. If the sign-in still does not happen, the failure line records:
+  - whether a login request was sent, and its status;
+  - the dialog's error text and the field contents;
+  - the page the reader was on.
+
+  So the next occurrence names its own cause. Test-only; no site file changes.
+- **The cause, found by those lines** (run 43962669112): the email field held "t@example.orga long enough password" and the password field nothing. The dialog moves focus to its first field 60 ms after opening (`auth.js` `setView`), and the test typed inside that window, so the focus jump landed mid-fill and no login was sent. The test now waits until the focus is inside the dialog before typing, in all three places it opens it. A reader cannot type within 60 ms of the dialog appearing, so the site is unchanged.
+- **The verdict order, and why:** case 4 now judges the redirect first, and judges the sign-in by the login exchange as well as the flag. Run 43947896555's mutation pass missed UNASKED REDIRECT because the order was the other way round. The mutated sign-in did happen and did redirect, then community.html's own startup check received the stub's "nobody signed in" and cleared the flag, so the case read SIGN-IN NEVER HAPPENED instead.
+
+## 2026-11-16 — briefing-map.js: two sections that could not report what they guard
+- **What main's mutation pass found** (run 43948810613, 106 of 109 proven), two map cases went uncaught:
+  - **"hidden without JavaScript":** the no-JS section called Playwright's `scrollIntoViewIfNeeded` on the map image, which waits for it to become visible. With the image hidden it timed out and threw, so the section never printed MAP HIDDEN WITHOUT JS.
+  - **"moving under reduced motion":** that section read the map 300 ms after scrolling, so what it saw depended on when the sweep happened to run.
+- **Fixes:**
+  - the no-JS section scrolls with a plain script call;
+  - the reduced-motion section waits a whole sweep (2.6 s) and counts every recorded animation start, and prints what it saw;
+  - every section now runs inside its own guard, so a crash is a named failure (SECTION "..." CRASHED) and the following sections still run.
+
+## 2026-11-16 — Trilingual stage 1: Arabic and Russian twins of About and Privacy, and a language button
+- **Plan:** approved by the owner on 2026-11-16 as recommended. English stays at its addresses; the build writes `/ar/` and `/ru/` copies from one catalogue per language. Stage 1 proves the system on About and Privacy; later stages cover the other pages, the generated pages, then script text.
+- **How the twins are built** (`backend/pipeline/pages/i18n.py`, run by `build_static_pages.py`):
+  - `pages/i18n_units.py` finds every translatable unit of the finished English page: whole paragraphs, headings, list items, buttons and link labels, with their inline tags kept, so Arabic and Russian word order is not built from fragments.
+  - Each unit is replaced from `backend/i18n/ar.tsv` or `ru.tsv` (one `English<TAB>translation` line per unit; 142 per language).
+  - The build fails if a unit has no translation, if a translation's tags differ from the English, or if a translated attribute contains a quote.
+  - Each twin gets:
+    - `lang`/`dir` (Arabic right to left);
+    - relative paths one level up, and links between twins kept in the same language;
+    - its own canonical, og:url and JSON-LD url and language;
+    - hreflang en/ar/ru/x-default on all three versions;
+    - the language's fonts;
+    - a footer line saying the translation awaits a native review.
+  - Two builds give identical output.
+- **The language button** (`assets/i18n.css` v1, `assets/lang.js` v1):
+  - **Design:** a compact globe button with the current language (EN, عربي, RU) that opens English, العربية and Русский. It is built as `<details>` and plain links, so it works without JavaScript. On phones the other languages are links in the menu instead.
+  - **Memory:** the choice is remembered on the device; on a page in another language the reader is offered a link, never redirected.
+  - **Widths, measured on the live About page at 1280 px:**
+    - English: with links 12 px apart, it fits with 47 px to spare;
+    - Arabic: about 36 px in a substitute font, so the menu stays below 1440 px;
+    - Russian needs 1,340 px of a row capped at 1,320 px, so the menu stays below 1600 px, with a wider row above.
+- **Fonts** (Google Fonts only, on the pages that need them):
+  - **Arabic:** Noto Sans Arabic and Amiri, with letter-spacing removed so the letters join.
+  - **Russian:** Cormorant Garamond for headings, since Cinzel has no Cyrillic, and Inter for text.
+- **Arabic digits:** figures use Arabic-Indic digits, as `prices-ar.html` does.
+- **privacy.html, all three languages:** now says the chosen language is remembered in the browser and never leaves the device.
+- **Translations:** written by Claude, marked on every translated page as awaiting a native speaker's review. `backend/i18n/REVIEW.md` is the file to hand a reviewer, listing pages, conventions and known gaps. The About page's hieroglyph list is written by a script and stays English until stage 4.
+- **New check `backend/verify/i18n.py`** (static), with seven mutation cases, each tried locally (caught, then clean again):
+  - twins exist;
+  - `lang`/`dir`;
+  - self canonical;
+  - hreflang complete and reciprocal;
+  - a language button whose three links resolve;
+  - twins in the sitemap;
+  - no English sentence left on an Arabic or Russian page.
+- **`header.js`:** accepts translated labels, and measures the Arabic and Russian About pages at their own widths: one row from 1440 px and 1600 px, the menu below.
+- **`coverage.py`:** ignores language links when comparing headers. They point at each page's own twins, so they differ by design.
+- **Three translated descriptions** were shortened to fit search snippets (seo.py).
+- **CI screenshots:** `ar/about.html` and `ru/about.html` added at 1280 and 390 px.
+
+## 2026-11-17 — Trilingual stage 1: About's script-written cards and the section chips, translated and checked
+- **What the screenshots showed:** CI's 1280 px screenshot of the Arabic About page (run 43962750300) showed English that the leak check had passed:
+  - **The section chips** (Why Egypt, Signs…): built by a script from each section's `data-nav` attribute, which the extractor did not read.
+  - **The 12 sector cards and 6 fact cards:** text inside the page's inline script, which the extractor skipped.
+- **Fixes:**
+  - `i18n_units.py` reads `data-nav`, and has a small JavaScript string tokenizer (quotes, escapes, comments).
+  - The build translates a quoted string in an inline script when the catalogue has it, escaped for its quote.
+  - 55 more entries per language: card titles and texts, institution names, section labels. Product names such as Our World in Data stay as written.
+  - The leak check now also reads inline-script text.
+- **Proof:**
+  - the previous Arabic page now fails the check with 44 English units;
+  - English planted into a Russian card is caught;
+  - all eight translated inline scripts parse;
+  - a new mutation case covers script-written English.
+## 2026-11-17 — Year strip: figures stay on the same line as °C
+- **What the screenshots showed:** CI's screenshots of the year strip (run 43962750300) broke "under 28" from "°C" at 1280 and 390 px, leaving the unit alone at the start of a line.
+- **The fix:** `heat_calendar.findings()` joins every figure to its unit with a non-breaking space. That covers the year strip's sentence on visit.html and the same sentences on egypt-weather-by-month.html.
+## 2026-11-17 — The checks already on main that main's own mutation pass could not prove
+- **Why this is here:** main's mutation pass (run 43948810613) and this branch's own (run 43962643068) could not prove two briefing-map cases. The cases and the check are already on main, so this PR, the base of the train, must carry the fix to be green on its own head.
+- **The two cases:**
+  - **Hidden without JavaScript:** the no-JS section waited (`scrollIntoViewIfNeeded`) for a hidden image, threw, and never reported. It now scrolls with a plain script call.
+  - **Moving under reduced motion:** the section read 300 ms after scrolling. It now waits a full sweep and prints what it saw, and the mutation case removes all three locks (egybi.css's site-wide `* { animation: none !important }` under reduce, the script's check and the stylesheet's query); with two removed, the page stayed still and the case could never fire.
+- **Also:** every section runs inside its own guard, so a crash is a named failure and the rest still run.
+- **Verified:** the verdict-order fix in this PR is proven by run 43962643068, where "return after confirming fires on an ordinary sign-in" was caught.
+## 2026-11-17 — Trilingual stage 2a: the trip pages in Arabic and Russian
+- **What is new:** six pages have Arabic and Russian copies built from the same catalogue: Home (egybi.com/ar/, /ru/), the route planner, Fair prices, the name studio, the Papyrus dossier and Plan check. That adds 237 entries per language and 12 sitemap URLs (59 to 71).
+- **A bug found before it shipped:** the trip scripts fetched `data/visit-climate.json` relative to the page. From `ar/index.html` that is `ar/data/...`, a 404 and an empty briefing. The links they write to pages with no translated copy (visit.html, prices.html, account.html) would have pointed into `ar/` as well.
+  - **The fix:** `trip.js` resolves data paths and those links against its own address (always `assets/`), the way `analytics.js` already finds `api/`. The new `T.url()` is used by `home.js`, `plan.js` and `fair.js`.
+  - **The newsletter form's endpoint** in the page is moved up one folder by the generator, like the sign-in base.
+- **Home page addresses:** the home page's twins are `egybi.com/ar/` and `egybi.com/ru/`, the same folder form as the English canonical `egybi.com/`. Previously the twins inherited the English canonical, so the three would have competed in search. hreflang, canonical and sitemap now use one rule (`page_url`), shared by the builder and the check.
+- **Checks:**
+  - **`twin-data.js` (new):** opens home, planner and prices in all three languages and fails if any request 404s, data comes from the wrong folder, the data never reaches the page, or a script-written link points into `ar/` or `ru/`. Two mutation cases undo each half of the fix.
+  - **`i18n.py`:** reads the home page's folder address, and accepts the example e-mail address as language-neutral. A new mutation case catches the Arabic home page claiming the English canonical.
+  - **`seo.py`:** a folder address in the sitemap now counts as that folder's index page.
+  - **`header.js`:** also measures `ar/index.html` and `ru/plan.html`.
+  - **CI screenshots:** `ar/index.html`, `ru/index.html` and `ar/plan.html` at 1280 and 390 px.
+  - **Seven translated titles and one description** were shortened to fit search snippets.
+- **Still English on these pages, by design until stage 4:** text the scripts write after load (the briefing, the planner's cards, the price tables, the sign table). `backend/i18n/REVIEW.md` lists every page for the native reviewer.
+## 2026-11-17 — The briefing map's order check: measured from the schedule, not the frame
+- **What failed:** on this PR's head (run 43971112849) and the stage 1 head (run 43971142792), the mutation case "briefing map dots all at once" came back NOISY. It caught the defect, but the clean run after the file was restored reported MAP ORDER WRONG on a correct page. Three other runs of the same check were clean.
+- **The cause:** the check timed each dot with `performance.now()` when its `animationstart` event arrived. On a busy runner, starts scheduled 70 ms apart can be delivered in the same frame, which breaks the "at least 30 ms apart" rule. It also took the last 18 events as one sweep, so a replayed sweep could mix two.
+- **The fix:**
+  - Each dot's start is now its animation's scheduled start (start time plus delay), which does not depend on frame delivery.
+  - Only each dot's latest start is used.
+  - A failure prints the order and the gaps it measured.
+- **And the harness:** mutate.py now prints what a checker said for any case that is not a clean pass. Before, a NOISY verdict left only the word, and the cause could not be found without a re-run.
+## 2026-11-17 — The year strip's order check: the same scheduled-start timing
+- `year-strip.js` timed each month with `performance.now()` when its `animationstart` arrived, which is the same weakness that made the briefing map's order check flake. It now uses each cell's scheduled start (start time plus delay). It has not flaked yet; this removes the cause before it does.
+## 2026-11-17 — Trilingual stage 2b: When to go, Community, Places and the Atlas in Arabic and Russian
+- **What is new:** Arabic and Russian copies of visit.html, community.html, places.html and geospatial.html. That adds 315 entries per language and 8 sitemap URLs (71 to 79).
+- **One fix for every script, not one per script:** `egybi.js`, which every page loads first, now offers `EGYBI.url()`. It resolves the site's own paths (`data/`, `api/`, `auth/`) against its own address in `assets/`. `visit.js`, `places.js`, `geospatial.js`, `community.js` and `notes.js` fetch through it, so their translated copies load data instead of asking for `ar/data/...`. Six script versions are bumped, including `egybi.js` on all 197 pages, through the generator for the generated ones.
+- **The catalogue's tag rule, refined:** a translation must still carry exactly the English tags, but readable attribute values (`title`, `alt`, `aria-label`, `placeholder`) may be translated with the text around them. That is how the year strip's month abbreviations get tooltips in each language. The rule is tested both ways: a translated tooltip is accepted, and a changed `href`, `src` or `data-title` is still refused. The first draft let `data-title` through, because `\b` matches after a hyphen, and that control caught it.
+- **Checks:**
+  - `twin-data.js` now opens all seven data-loading pages in three languages, and treats `api/` and `auth/` requests like `data/`.
+  - A new mutation case breaks `EGYBI.url` and must be caught.
+  - CI screenshots add `ar/visit.html` and `ru/places.html`.
+  - A Russian title and description were shortened (seo.py).
+- **Review:** `backend/i18n/REVIEW.md` lists the four pages and what to read most carefully.
+## 2026-11-17 — Trilingual stage 4a: text the scripts write, starting with the header bar
+- **What was English:** on every Arabic and Russian page, CI's screenshots (run 43971142792) showed "Sign in" and "On this page" in English. Scripts write them after the page loads, so the page catalogue never saw them.
+- **The system:**
+  - A script asks for text as `t('English text')`, and `EGYBI.t()` in egybi.js looks it up in `EGYBI_STRINGS`.
+  - The generator finds every `t('…')` in the site's scripts. It refuses to build if any has no Arabic or Russian translation, and it writes `assets/i18n/ar.js` and `ru.js` from the same catalogues as the page text.
+  - Only translated pages load those files. Their `?v=` is a hash of the content, so a changed translation is never served stale.
+  - On English pages `t()` returns the English unchanged.
+- **First strings:** the header button and account menu ("Sign in", "Sign out", "Your account", "Your trips and account", "Offline, try again") and the sticky "On this page" label. The header button's text is now set as text, not markup.
+- **Versions:** egybi.js v6, wayfinding.js v2 (on every page, through the generator), auth.js v5.
+- **Proof:** `twin-data.js` reads the sign-in button and the "On this page" label on every page it opens. They must be translated on Arabic and Russian pages and unchanged on English ones. Two mutation cases cover this: a page without its table, and a label left outside `t()`.
+## 2026-11-17 — Trilingual stage 2c: the data stories and the street report card in Arabic and Russian
+- **What is new:** Arabic and Russian copies of stories.html and streets.html. That adds 144 entries per language and 4 sitemap URLs (79 to 83).
+- **Data paths:** `stories.js` (four fetches) and `streets.js` load through `EGYBI.url`, so the copies read the site's `data/`. Versions bumped: stories.js v11, streets.js v14.
+- **A generator bug the check caught:** the rule that sets `lang` and `dir` on a copy matched only a bare `<html lang="en">` tag. stories.html also carries `class="no-js"`, so its first Arabic and Russian builds stayed `lang="en" dir="ltr"`, and `i18n.py` failed both with LANG/DIR WRONG. The rule now rewrites those two attributes on any `<html>` tag and keeps the rest.
+- **Checks:** `twin-data.js` also opens stories and streets in three languages. One Russian description was shortened (seo.py).
+## 2026-11-17 — The year strip's sentence test reads the non-breaking space
+- **What failed:** Test (pipeline) failed on #145's head (`1ba6d35`) and on every PR above it. `test_heat_calendar` stripped tags from the findings but not entities, so after #145 joined each figure to °C with `&nbsp;`, it looked for `42 °C` with a plain space. The browser checks were all green, and that workflow was the only one watched, so this was missed until #150.
+- **The fix:** the test now asserts the markup carries `42&nbsp;°C` and has no figure followed by a plain space and °C. It then unescapes the text and checks the sentences as a reader sees them. All 206 pipeline tests pass, and the test fails if the non-breaking space is removed (control run).
+- **And the habit:** a head counts as green only when every check run on it is green (read with the check-runs API), not only the browser workflow.
+## 2026-11-17 — Trilingual stage 4b: the sign-in dialog in Arabic and Russian
+- **What is translated:** every string the sign-in dialog writes itself goes through `t()`. That covers the side panel, the email and password labels, Forgot, Show and Hide, the password-strength labels and hints, the four views (sign in, create account, reset, new password) and the dialog's own messages. It adds 49 strings per language, 55 in the tables.
+- **Not changed:** a message the server sends still wins over the dialog's own, so a server's specific English message shows as is. The verification and reset emails are untouched.
+- **Markup:** the two lines that mixed text and a button ("New here? Create an account") are now built from parts, with each part escaped. The generator refuses a script string, or its translation, that contains markup; the controls accept the real catalogue and refuse a planted `<b>`.
+- **Versions:** auth.js v6, and egybi.js v7, because it names auth.js's version.
+- **Proof:** on the home page in each language, `twin-data.js` opens the dialog and reads its title and email label. They must be translated in Arabic and Russian and unchanged in English. A mutation case leaves the title outside `t()`.
+## 2026-11-17 — The translated home pages' hero poster, and the audit that missed it
+- **What failed:** `twin-data.js` failed on #151's head (run 43987216476). On ar/index.html and ru/index.html the hero video's poster loaded as `/ar/assets/video/hero-lighthouse.webp`, which is a 404.
+- **The cause:** the generator moved `href` and `src` up one folder. Its `\b(href|src)` pattern caught `data-src` only because `\b` matches after a hyphen, and it never matched `poster`.
+- **The fix:** the rule names every attribute that holds a site path: `href`, `src`, `data-href`, `data-src`, `poster` and `action`.
+- **The audit's gap:** static-audit.py checked `href` and `src` but not `poster`, so the broken file passed unseen. It now reads `poster`. Before the rebuild it fails on both broken posters; after it, it is clean. A new mutation case plants a missing poster, and it is caught.
+## 2026-11-17 — Script links stay in the reader's language, and the notes board loads its data
+- **What failed:** `twin-data.js` on #152's head (run 43987223658) found two problems.
+  - **The notes board's climate fetch:** ar/community.html and ru/community.html fetched `/ar/data/visit-climate.json` (and `/ru/…`). `notes.js` routed its API paths through `EGYBI.url` but not its own `getJSON()`. Fixed: `getJSON()` goes through it too (notes.js v4).
+  - **The link check was out of date:** it flagged `/ar/visit.html` as a wrong folder because it assumed When to go had no Arabic copy, which it has since this stage. It also showed that the links scripts write ("Every month, every site") still sent Arabic and Russian readers to the English page.
+- **The fix:**
+  - Translated pages now carry `<meta name="egybi-twins">`, written by the generator, which lists the pages with a copy in that language. `T.url()` keeps a link to one of those pages in the reader's language and sends everything else to the root (trip.js v5). English pages carry no list, so their links are unchanged.
+  - The check now expects the in-language path when a copy exists and the root path when not.
+- **Mutation cases:**
+  - The "untranslated page" case now uses prices.html, because visit.html has a copy and the old case could no longer fail.
+  - A new case disables the in-language branch of `T.url()` and must be caught.
+## 2026-11-17 — English left on translated pages: labels with fields, and paragraphs with code
+- **What a reader saw:** the live Russian home page (checked in a browser after #150-#152 merged) showed "Arriving" and "Leaving" beside its date fields. The same gap left "Show amounts in", "A name, in Latin letters", the dossier-cover label and the planner's search label in English, and left half-English paragraphs on Privacy, Community, Stories and Streets, in both Arabic and Russian.
+- **The mechanism:** `i18n_units.py` takes an element as one unit only when everything inside it is inline.
+  - A `<label>` wrapping its `<input>` or `<select>` is not, and the fallback that collects loose text skipped every unit tag, so the label's text was never collected and never asked for.
+  - A paragraph containing `<code>` was refused the same way, because `code` is in the skip list (so nothing inside it is translated); only its links were translated and the rest stayed English.
+- **The fix:** `<code>` stays inside its sentence as the module's docstring always said, and loose text in any element that could not be taken whole is its own unit. The build then asked for 12 new strings per language, now in the catalogues (the brand name EgyBI is kept as is).
+- **Why the check missed it:** the English-leak check found text with the same `units()` function, so it could not see what the generator never found, and it ignored single words. It now also compares every visible text node of each twin with the English page, one word or many, with a short named list of things that stay in English (data sources, a licence, a book title, the language button's own label).
+  - Proved both ways: with the old pages it fails on ru/index.html ("Arriving") and ar/stories.html; with the old checker, a planted "Arriving" passes.
+  - Two new mutation cases plant an English label on a Russian and an Arabic page; both are caught.
+## 2026-11-17 — The check on the checks runs in three shards
+- **What failed:** the mutation job on #154 and #156 was cancelled at its 60-minute cap (runs 44054884507 and 44054899452, annotation "The job has exceeded the maximum execution time of 1h0m0s"). #153's pass had taken 53 minutes. No case failed; the suite (131+ cases, each running its checker three times) had outgrown one job, and a cancelled run proves nothing.
+- **Why not just raise the cap:** it was already raised from 45 to 60 the day before, and every stage adds cases. The time is spread across the suite (the translated-page checks were about 8 of #153's 52 minutes), so no single checker is the cause.
+- **The fix:**
+  - `mutate.py` takes `SHARD=k/n` and deals the cases round-robin in file order, so one checker's cases spread over every shard. Each shard writes `k n ran seen` to its logs.
+  - Verify (browser) runs three `mutation shard` jobs side by side, 40 minutes each, with their own logs.
+  - A final `mutation` job (the check keeps its name) fails unless every shard passed and, from their own records, all three reported and together ran every case exactly once. `mutate-shards.py` first runs a self-test showing it fails on a missing shard, a short count, mismatched totals, a duplicated shard and zero cases.
+- **Proved locally:** three shards over the six "english" cases ran 2 + 2 + 2 = 6; the aggregator passed, and failed when shard 2's record was removed.
+## 2026-11-17 — The Russian pages, edited to read like a person wrote them
+- **What changed:** all 955 lines of the Russian catalogue were read and 146 rewritten: calques (70), split terms (28), heavy rhythm (24), typography (14), names (7) and register (3). The Russian was already correct, and «вы» was already used throughout; the edit is about reading naturally.
+- **The term split:** "account" was «аккаунт» on 16 lines and «учётная запись» on 13, so the same button was named two ways. One word now, «аккаунт».
+- **One meaning fix:** the planner's heat line compared each day with "where the hours should move"; it now says we check the day against the measured heat and suggest which hours to shift.
+- **Names:** Бекерат (matching the other line), Эль-Дабаа, храм на острове Филе, and Eid as Ураза-байрам and Курбан-байрам (the holidays page lists both).
+- **Kept from drifting:** `backend/i18n/glossary-ru.tsv` names one Russian word per recurring term and, where a rejected variant existed, a pattern for it. `backend/verify/i18n.py` now fails with GLOSSARY TERM when a translation brings a rejected variant back. A new mutation case puts «учётная запись» back and is caught.
+- **For the native reviewer:** `backend/i18n/review-ru.md` lists the lines to check first: privacy, sign-in, safety notes, prices and names.

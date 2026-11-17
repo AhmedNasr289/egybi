@@ -47,11 +47,32 @@
     catch (e) { return false; }
   }
 
-  /* ------------------------------------------------------------- the data */
+  /* ------------------------------------------------------------- the data
+     Paths like 'data/visit-climate.json' are the SITE's, not the page's: the
+     Arabic and Russian copies live one folder down (ar/, ru/), where the bare
+     relative path would ask for ar/data/... - a 404, an empty briefing. So
+     they resolve against this script's own address, which is always assets/,
+     the way analytics.js finds api/. url() does the same for links the
+     scripts write to pages that have no translated copy. */
+  var ME = document.currentScript && document.currentScript.src;
+  var ROOT = ME ? new URL('../', ME).href : '';
+  // A translated page lists the pages that have a copy in its language
+  // (<meta name="egybi-twins">, written by the generator), so a link a
+  // script writes to one of them stays in the reader's language. English
+  // pages carry no list, and every link goes to the site root as before.
+  var TWINS_META = document.querySelector('meta[name="egybi-twins"]');
+  var TWINS = TWINS_META ? (TWINS_META.getAttribute('content') || '').split(/\s+/) : [];
+  var LANG = document.documentElement.getAttribute('lang') || 'en';
+  function url(path) {
+    if (!ROOT || /^([a-z]+:|\/|#)/i.test(path)) return path;
+    var file = path.split(/[?#]/)[0];
+    if (LANG !== 'en' && TWINS.indexOf(file) !== -1) return new URL(LANG + '/' + path, ROOT).href;
+    return new URL(path, ROOT).href;
+  }
   var cache = {};
   function getJSON(path) {
     if (!cache[path]) {
-      cache[path] = fetch(path, { cache: 'no-cache' }).then(function (r) {
+      cache[path] = fetch(url(path), { cache: 'no-cache' }).then(function (r) {
         if (!r.ok) throw new Error(path + ' ' + r.status);
         return r.json();
       });
@@ -189,7 +210,7 @@
 
   window.EGYBI = window.EGYBI || {};
   window.EGYBI.trip = {
-    load: load, save: save, blank: blank, getJSON: getJSON,
+    load: load, save: save, blank: blank, getJSON: getJSON, url: url,
     parse: parse, iso: iso, addDays: addDays, today: today, nights: nights,
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow,

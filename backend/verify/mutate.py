@@ -33,6 +33,18 @@ HERE = Path(__file__).resolve().parent
 WANT = os.environ.get("CASE", "").lower()
 results = []
 skipped = 0
+# SHARD=k/n runs every n-th case, starting at the k-th (2026-11-17). The whole
+# suite outgrew one 60-minute job: #154 and #156 were cancelled at the cap
+# after #153's run took 53 minutes, and a cancelled run proves nothing. CI
+# runs n shards side by side; each writes "k n ran seen" to
+# $VERIFY_LOG_DIR/mutate-shard.txt, and mutate-shards.py fails the run unless
+# every shard reported and together they ran every case. Cases are dealt
+# round-robin in file order, so one checker's cases spread over all shards.
+_shard = os.environ.get("SHARD", "1/1")
+SHARD_K, SHARD_N = (int(x) for x in _shard.split("/"))
+assert 1 <= SHARD_K <= SHARD_N, f"SHARD={_shard!r}: want k/n with 1 <= k <= n"
+seen = 0          # cases that passed the CASE filter, in file order
+other_shard = 0   # of those, dealt to another shard
 
 
 def sh(cmd, timeout=900):
@@ -78,6 +90,16 @@ def edit(path, old, new):
     p.write_text(t.replace(old, new, 1), encoding="utf-8")
 
 
+def edit_re(path, pattern, new):
+    """edit() for an anchor whose exact text changes by itself, such as a
+    content-hashed ?v= that moves whenever its file does."""
+    p = Path(path)
+    t = p.read_text(encoding="utf-8")
+    t2, n = re.subn(pattern, new, t, count=1)
+    assert n == 1, f"pattern not found in {path}: {pattern[:60]!r}"
+    p.write_text(t2, encoding="utf-8")
+
+
 def asset_tag(path, asset):
     """The page's own tag for a versioned asset (`motion.js`, `egybi.css`),
     whatever its ?v= is now. Hard-coding the version broke two cases the day
@@ -91,9 +113,13 @@ def asset_tag(path, asset):
 
 def case(name, tool, files, mutate, detects, cmd, timeout=900):
     """detects(output) -> bool : did the tool report THIS defect?"""
-    global skipped
+    global skipped, seen, other_shard
     if WANT and WANT not in name.lower():
         skipped += 1
+        return
+    seen += 1
+    if (seen - 1) % SHARD_N != SHARD_K - 1:
+        other_shard += 1
         return
     # 0. exact bytes, so the revert cannot depend on git knowing the file
     snap = snapshot(files)
@@ -142,6 +168,14 @@ def case(name, tool, files, mutate, detects, cmd, timeout=900):
     results.append((name, tool, verdict,
                     f"quiet-before={before_clean} caught={caught} quiet-after={after_clean}"))
     print(f"  {verdict:16} {name}")
+    # Say WHAT the checker printed. A NOISY verdict used to leave nothing but
+    # the word, so the flaky run could not be told from a real fault without a
+    # re-run (runs 43971112849, 43971142792).
+    if verdict != "PASS":
+        for label, rc, out in (("before", rc0, out0), ("mutated", rc1, out1), ("after", rc2, out2)):
+            lines = [l for l in out.splitlines() if l.strip()]
+            shown = [l for l in lines if "FAIL" in l] or lines[-6:]
+            print(f"      [{label}, exit {rc}] " + ("\n      ".join(shown[:8]) or "(no output)"))
 
 
 # sys.executable, not "python3": on Windows `python3` resolves to a Store
@@ -156,6 +190,10 @@ print("mutation tests — each injects a defect the checker exists to catch\n")
 # ---- 1. static audit: a link that does not resolve --------------------------
 case("broken internal link", "static-audit.py", ["site/about.html"],
      lambda: edit("site/about.html", "</footer>", '<a href="no-such-page.html">x</a></footer>'),
+     lambda o: "internal links that do not resolve" in o, PY_AUDIT)
+# a video poster is a file too: the Arabic home page's 404'd unseen (2026-11-17)
+case("video poster pointing at a missing file", "static-audit.py", ["site/index.html"],
+     lambda: edit("site/index.html", 'poster="assets/video/hero-lighthouse.webp', 'poster="assets/video/no-such-poster.webp'),
      lambda o: "internal links that do not resolve" in o, PY_AUDIT)
 
 # ---- 2. static audit: an anchor whose id is not there -----------------------
@@ -251,6 +289,10 @@ case("content clipped off-screen at 375px", "overflow.js", ["site/places.html"],
      lambda o: "clipped off-screen: 1" in o, f"node {HERE}/overflow.js")
 
 # ---- 9. page sweep: a sub-nav chip pointing at a section that is gone -------
+case("a temperature typed into visit.html's hand-written prose", "static-audit.py", ["site/visit.html"],
+     lambda: edit("site/visit.html", '<section class="surface-light" id="terrain"',
+                  '<p>Luxor reaches 41 °C in June.</p>\n<section class="surface-light" id="terrain"'),
+     lambda o: "figures typed into visit.html" in o, PY_AUDIT)
 case("section[data-nav] with no id", "all-pages.js", ["site/visit.html"],
      lambda: edit("site/visit.html", '<section class="surface-light" id="terrain" data-nav=',
                   '<section class="surface-light" data-nav='),
@@ -1040,6 +1082,101 @@ case("the current page no longer highlighted in the header", "header.js", ["site
      lambda: edit("site/assets/egybi.js", "if (target === here) a.classList.add('active');", "if (false) a.classList.add('active');"),
      lambda o: "NO ACTIVE HIGHLIGHT" in o, HEADER)
 
+# ---- trilingual stage 1: twins, language, hreflang, button, no English left --
+I18N = f'"{sys.executable}" {HERE}/i18n.py'
+case("a Russian twin missing", "i18n.py", ["site/ru/privacy.html"],
+     lambda: Path("site/ru/privacy.html").unlink(),
+     lambda o: "TWIN MISSING" in o, I18N)
+case("an Arabic page marked left to right", "i18n.py", ["site/ar/about.html"],
+     lambda: edit("site/ar/about.html", 'dir="rtl"', 'dir="ltr"'),
+     lambda o: "LANG/DIR WRONG" in o, I18N)
+case("a twin's canonical pointing at the English page", "i18n.py", ["site/ru/about.html"],
+     lambda: edit("site/ru/about.html", '<link rel="canonical" href="https://egybi.com/ru/about.html">',
+                  '<link rel="canonical" href="https://egybi.com/about.html">'),
+     lambda o: "CANONICAL WRONG" in o, I18N)
+case("an English page losing its Russian hreflang", "i18n.py", ["site/about.html"],
+     lambda: edit("site/about.html", '<link rel="alternate" hreflang="ru" href="https://egybi.com/ru/about.html">\n', ''),
+     lambda o: "HREFLANG MISSING" in o, I18N)
+case("a twin without the language button", "i18n.py", ["site/ru/privacy.html"],
+     lambda: edit("site/ru/privacy.html", '<details class="lang-switch">', '<details class="x-switch">'),
+     lambda o: "NO SWITCHER" in o, I18N)
+case("a twin left out of the sitemap", "i18n.py", ["site/sitemap.xml"],
+     lambda: edit("site/sitemap.xml", "https://egybi.com/ar/privacy.html", "https://egybi.com/ar/privacy-x.html"),
+     lambda o: "NOT IN SITEMAP" in o, I18N)
+case("English left in a Russian page's script-written cards", "i18n.py", ["site/ru/about.html"],
+     lambda: edit("site/ru/about.html", "'Суэцкий канал'", "'The Suez Canal'"),
+     lambda o: "ENGLISH LEAK" in o, I18N)
+case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
+     lambda: edit("site/ar/about.html", "بيت الحياة.", "The House of Life."),
+     lambda o: "ENGLISH LEAK" in o, I18N)
+# text the generator never collected (a <label> wrapping its <input>): the
+# units()-based check above is blind to it, the text-node instrument is not
+case("a Russian label left in English beside its input", "i18n.py", ["site/ru/index.html"],
+     lambda: edit("site/ru/index.html", "<label>Прибытие<input", "<label>Arriving<input"),
+     lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)
+# the Russian glossary (2026-11-17): "account" is «аккаунт»; the rejected
+# «учётная запись» coming back into the catalogue must fail
+case("a rejected Russian term back in the catalogue", "i18n.py", ["backend/i18n/ru.tsv"],
+     lambda: edit("backend/i18n/ru.tsv", " EgyBI: что мы собираем (аккаунт или ", " EgyBI: что мы собираем (учётная запись или "),
+     lambda o: "GLOSSARY TERM" in o and "ru.tsv" in o, I18N)
+case("an Arabic label left in English beside its select", "i18n.py", ["site/ar/fair-prices.html"],
+     lambda: edit("site/ar/fair-prices.html", "<label>اعرض المبالغ بـ<select", "<label>Show amounts in<select"),
+     lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)
+# the home page's twins: the home page is the folder address, egybi.com/ar/
+case("the Arabic home page claiming the English home page as its canonical", "i18n.py", ["site/ar/index.html"],
+     lambda: edit("site/ar/index.html", '<link rel="canonical" href="https://egybi.com/ar/">',
+                  '<link rel="canonical" href="https://egybi.com/">'),
+     lambda o: "CANONICAL WRONG" in o, I18N)
+
+# ---- the translated copies load the site's data (2026-11-17) ----------------
+TWIN = f"node {HERE}/twin-data.js"
+case("translated pages fetching data relative to themselves", "twin-data.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "cache[path] = fetch(url(path), {", "cache[path] = fetch(path, {"),
+     lambda o: "TWIN DATA FROM WRONG FOLDER" in o, TWIN)
+case("EGYBI.url resolving against the page, not the site", "twin-data.js", ["site/assets/egybi.js"],
+     lambda: edit("site/assets/egybi.js", "  var ROOT = ME ? new URL('../', ME).href : '';", "  var ROOT = '';"),
+     lambda o: "TWIN DATA FROM WRONG FOLDER" in o or "TWIN REQUEST FAILED" in o, TWIN)
+case("a translated page without its string table", "twin-data.js", ["site/ar/index.html"],
+     lambda: edit_re("site/ar/index.html", r'<script src="\.\./assets/i18n/ar\.js\?v=[0-9a-f]+"></script>\n', ""),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
+case("the sign-in dialog's title left out of t()", "twin-data.js", ["site/assets/auth.js"],
+     lambda: edit("site/assets/auth.js", "title.textContent = t('Welcome back');", "title.textContent = 'Welcome back';"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
+case("a script string left out of EGYBI.t", "twin-data.js", ["site/assets/wayfinding.js"],
+     lambda: edit("site/assets/wayfinding.js", "(window.EGYBI && window.EGYBI.t) ? window.EGYBI.t('On this page') : 'On this page'", "'On this page'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
+# prices.html has no translated copy, so a relative link from ar/ lands on a
+# page that does not exist (visit.html has one since 2b, so it no longer can)
+case("a script link to an untranslated page left relative to the twin", "twin-data.js", ["site/assets/home.js"],
+     lambda: edit("site/assets/home.js", "' + T.url('prices.html#fx-section') + '", "prices.html#fx-section"),
+     lambda o: "TWIN LINK WRONG FOLDER" in o, TWIN)
+case("a script link to a translated page sent to the English copy", "twin-data.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "if (LANG !== 'en' && TWINS.indexOf(file) !== -1)", "if (false)"),
+     lambda o: "TWIN LINK WRONG FOLDER" in o, TWIN)
+
+# ---- the year strip on When to go (2026-11-16) -------------------------------
+YEAR = f"node {HERE}/year-strip.js"
+case("year strip months all at once, not January to December", "year-strip.js", ["site/assets/heat-calendar.css"],
+     lambda: edit("site/assets/heat-calendar.css", "animation-delay: calc(var(--m, 0) * 70ms);", "animation-delay: 0ms;"),
+     lambda o: "YEAR NOT IN ORDER" in o, YEAR)
+# Reduced motion is locked THREE times: egybi.css's site-wide rule (under
+# reduce, * { animation: none !important }), the script's own check and the
+# stylesheet's no-preference query. Removing two left the site still, so the
+# case could never fire (runs 43948810613 and 43953866021); it removes all
+# three, to prove the check sees motion when nothing stops it.
+case("year strip moving for readers who asked for reduced motion", "year-strip.js",
+     ["site/assets/year-strip.js", "site/assets/heat-calendar.css", "site/assets/egybi.css"],
+     lambda: (edit("site/assets/year-strip.js", "if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;", ""),
+              edit("site/assets/heat-calendar.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {"),
+              edit("site/assets/egybi.css", "  * { animation: none !important; transition: none !important; }", "  * { }")),
+     lambda o: "YEAR MOTION UNDER REDUCED MOTION" in o, YEAR)
+case("year strip waits for a third of itself before showing a cell", "year-strip.js", ["site/assets/year-strip.js"],
+     lambda: edit("site/assets/year-strip.js", "}, { threshold: 0 });", "}, { threshold: 0.35 });"),
+     lambda o: "YEAR EMPTY ON SCREEN" in o, YEAR)
+case("year strip hidden without JavaScript", "year-strip.js", ["site/assets/heat-calendar.css"],
+     lambda: edit("site/assets/heat-calendar.css", "  .hc-table.is-waiting td { opacity: 0; }", "  .hc-table td { opacity: 0; }"),
+     lambda o: "YEAR HIDDEN WITHOUT JS" in o, YEAR)
+
 # ---- the briefing map: where the sites are and how hot (2026-11-16) ---------
 BMAP = f"node {HERE}/briefing-map.js"
 case("briefing map dots all one colour", "briefing-map.js", ["site/assets/site-map.js"],
@@ -1048,13 +1185,20 @@ case("briefing map dots all one colour", "briefing-map.js", ["site/assets/site-m
 case("briefing map dots all at once, not north to south", "briefing-map.js", ["site/assets/site-map.css"],
      lambda: edit("site/assets/site-map.css", "animation-delay: calc(var(--i, 0) * 70ms);", "animation-delay: 0ms;"),
      lambda o: "MAP ORDER WRONG" in o, BMAP)
-# Reduced motion is guarded twice, in the script and in the stylesheet; one
-# guard alone cannot be caught, so the case removes both.
+# Reduced motion is locked THREE times: egybi.css's site-wide rule (under
+# reduce, * { animation: none !important }), the script's own check and the
+# stylesheet's no-preference query. Removing two left the site still, so the
+# case could never fire (runs 43948810613 and 43953866021); it removes all
+# three, to prove the check sees motion when nothing stops it.
 case("briefing map moving for readers who asked for reduced motion", "briefing-map.js",
-     ["site/assets/site-map.js", "site/assets/site-map.css"],
+     ["site/assets/site-map.js", "site/assets/site-map.css", "site/assets/egybi.css"],
      lambda: (edit("site/assets/site-map.js", "var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;", "var reduce = false;"),
-              edit("site/assets/site-map.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {")),
+              edit("site/assets/site-map.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {"),
+              edit("site/assets/egybi.css", "  * { animation: none !important; transition: none !important; }", "  * { }")),
      lambda o: "MAP MOTION UNDER REDUCED MOTION" in o, BMAP)
+case("briefing map waits for a third of itself before showing any dot", "briefing-map.js", ["site/assets/site-map.js"],
+     lambda: edit("site/assets/site-map.js", "}, { threshold: 0 });", "}, { threshold: 0.35 });"),
+     lambda o: "MAP EMPTY ON SCREEN" in o, BMAP)
 case("briefing map hidden without JavaScript", "briefing-map.js", ["site/assets/site-map.css"],
      lambda: edit("site/assets/site-map.css", ".site-map img, .site-map svg { display: block;", ".site-map img { display: none; } .site-map svg { display: block;"),
      lambda o: "MAP HIDDEN WITHOUT JS" in o, BMAP)
@@ -1232,6 +1376,15 @@ case("asset changed under its old cache version", "cache-bump.py",
 
 
 print()
+# The shard's own count, for mutate-shards.py: ran + other_shard == seen.
+_log_dir = os.environ.get("VERIFY_LOG_DIR")
+if _log_dir:
+    Path(_log_dir).mkdir(parents=True, exist_ok=True)
+    (Path(_log_dir) / "mutate-shard.txt").write_text(
+        f"{SHARD_K} {SHARD_N} {len(results)} {seen}\n", encoding="utf-8")
+if SHARD_N > 1:
+    print(f"shard {SHARD_K}/{SHARD_N}: ran {len(results)} of {seen} case(s); "
+          f"{other_shard} belong to the other shard(s)")
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")
     sys.exit(2)

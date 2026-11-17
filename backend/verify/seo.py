@@ -250,6 +250,8 @@ else:
     locs = set(re.findall(r"<loc>([^<]+)</loc>", sm.read_text(encoding="utf-8")))
     listed = {u.replace(ORIGIN, "").lstrip("/") or "index.html" for u in locs}
     listed = {"index.html" if x in ("", "/") else x for x in listed}
+    # a folder address (egybi.com/ar/) is that folder's index page
+    listed = {x + "index.html" if x.endswith("/") else x for x in listed}
     for rel in live_pages:
         if rel not in listed:
             add("live page not in sitemap", rel)

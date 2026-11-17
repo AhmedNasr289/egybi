@@ -107,7 +107,7 @@
   function $(id) { return document.getElementById(id); }
   function esc(s) { return (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml(s) : String(s); }
   function load(u) {
-    return fetch(u, { cache: 'no-cache' }).then(function (r) {
+    return fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url(u) : u), { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status); return r.json();
     });
   }

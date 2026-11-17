@@ -73,10 +73,18 @@ Back to [[Home]] · related: [[Papyrus Design System]] · [[Frontend & Design Sy
 4. Script text, through `EGYBI.t()`: the generator writes `assets/i18n/<lang>.js` from the same catalogues and refuses a missing translation or markup. 4a (header bar) and 4b (sign-in dialog) are built. Still to do: the planner, briefing, notes and maps, number and date formatting, and the hieroglyph list on About, which `glyphs.js` writes.
 
    Found while building them: the trip scripts fetched `data/` relative to the page, so the twins would have loaded empty. Fixed with `T.url()` and `EGYBI.url()`, which resolve against the script's own address, and proven by `twin-data.js`.
-5. Fixes from the native review.
+5. **Reading like a person wrote it** (2026-11-17), after a full read of every translated page:
+   - Russian (PR #160, merged) and Arabic (PR #161) rewritten line by line, each with a glossary
+     (`backend/i18n/glossary-ru.tsv`, `glossary-ar.tsv`) that `i18n.py` enforces; Arabic is compared
+     without vowel marks;
+   - English (PR #162): 83 lines rewritten, with the Arabic and Russian for each rewritten to match,
+     and `static-audit.py` now refuses build language shown to visitors;
+   - the reviews are `backend/i18n/review-en.md`, `review-ar.md` and `review-ru.md`.
+6. Fixes from the native review.
 
 ## Native review
 
 Every Arabic and Russian text was written by Claude and is marked as awaiting
 a native speaker's review. `backend/i18n/REVIEW.md` is the file to hand a
-reviewer: pages, conventions to confirm and a checklist.
+reviewer: pages, conventions to confirm and a checklist; its last sections list
+the lines from the 2026-11-17 rewrite that most need a native speaker's eye.

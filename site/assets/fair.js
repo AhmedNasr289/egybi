@@ -75,7 +75,7 @@
       }).join('') + '</tbody></table></div>';
     var src = D.prices.source || {};
     $('fpMarketCap').innerHTML = 'Source: ' + esc(src.name_en) + ' (<a href="' + esc(src.url) + '" rel="noopener">agriprice.gov.eg</a>), retail prices dated ' +
-      esc(T.fmtDate(p.as_of)) + ', ' + p.count + ' items. These are what shops charge residents across Egypt&rsquo;s governorates &mdash; a floor for what a market stall should ask, not a tourist price. <a href="prices.html">All ' + p.count + ' items, daily &rarr;</a>';
+      esc(T.fmtDate(p.as_of)) + ', ' + p.count + ' items. These are what shops charge residents across Egypt&rsquo;s governorates &mdash; a floor for what a market stall should ask, not a tourist price. <a href="' + T.url('prices.html') + '">All ' + p.count + ' items, daily &rarr;</a>';
   }
 
   function renderRate() {
