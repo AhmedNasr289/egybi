@@ -44,7 +44,7 @@
     inner.className = 'otp-inner';
     var label = document.createElement('span');
     label.className = 'otp-label';
-    label.textContent = 'On this page';
+    label.textContent = (window.EGYBI && window.EGYBI.t) ? window.EGYBI.t('On this page') : 'On this page';
     inner.appendChild(label);
 
     var links = [];

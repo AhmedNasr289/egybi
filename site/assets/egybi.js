@@ -26,6 +26,18 @@
     return (ROOT && !/^([a-z]+:|\/|#)/i.test(path)) ? new URL(path, ROOT).href : path;
   };
 
+  // ---- text a script writes, in the page's language ----
+  // The Arabic and Russian pages load assets/i18n/<lang>.js first, which
+  // sets EGYBI_STRINGS from the same catalogue as the page text (built by
+  // backend/pipeline/pages/i18n.py, which refuses to build when a string
+  // a script asks for has no translation). On an English page there is no table and t() returns
+  // the English unchanged.
+  window.EGYBI.t = function (s) {
+    var d = window.EGYBI_STRINGS;
+    return d && Object.prototype.hasOwnProperty.call(d, s) ? d[s] : s;
+  };
+  var t = window.EGYBI.t;
+
   // ---- mobile nav toggle ----
   var toggle = document.querySelector('.nav-toggle');
   var links = document.querySelector('.nav-links');
@@ -84,7 +96,7 @@
     authPromise = new Promise(function (resolve, reject) {
       if (window.EGYBI_ACCOUNT) { resolve(window.EGYBI_ACCOUNT); return; }
       var s = document.createElement('script');
-      s.src = new URL('auth.js?v=4', acctBase).href;
+      s.src = new URL('auth.js?v=5', acctBase).href;
       s.onload = function () {
         if (window.EGYBI_ACCOUNT) window.EGYBI_ACCOUNT.ready.then(function () { resolve(window.EGYBI_ACCOUNT); });
         else reject(new Error('auth.js loaded but did not start'));
@@ -104,7 +116,8 @@
   if (actions && !document.getElementById('acct-slot')) {
     var slot = document.createElement('span');
     slot.id = 'acct-slot'; slot.className = 'acct-slot';
-    slot.innerHTML = '<button type="button" class="acct-btn signin" id="signinBtn">Sign in</button>';
+    slot.innerHTML = '<button type="button" class="acct-btn signin" id="signinBtn"></button>';
+    slot.firstChild.textContent = t('Sign in');
     actions.appendChild(slot);
     var signinBtn = document.getElementById('signinBtn');
     signinBtn.addEventListener('click', function () {
@@ -114,8 +127,8 @@
       }).catch(function () {
         // Say it in the button itself rather than a browser alert box.
         signinBtn.removeAttribute('aria-busy');
-        signinBtn.textContent = 'Offline, try again';
-        setTimeout(function () { signinBtn.textContent = 'Sign in'; }, 4000);
+        signinBtn.textContent = t('Offline, try again');
+        setTimeout(function () { signinBtn.textContent = t('Sign in'); }, 4000);
       });
     });
   }

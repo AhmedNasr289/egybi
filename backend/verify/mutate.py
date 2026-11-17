@@ -78,6 +78,16 @@ def edit(path, old, new):
     p.write_text(t.replace(old, new, 1), encoding="utf-8")
 
 
+def edit_re(path, pattern, new):
+    """edit() for an anchor whose exact text changes by itself, such as a
+    content-hashed ?v= that moves whenever its file does."""
+    p = Path(path)
+    t = p.read_text(encoding="utf-8")
+    t2, n = re.subn(pattern, new, t, count=1)
+    assert n == 1, f"pattern not found in {path}: {pattern[:60]!r}"
+    p.write_text(t2, encoding="utf-8")
+
+
 def asset_tag(path, asset):
     """The page's own tag for a versioned asset (`motion.js`, `egybi.css`),
     whatever its ?v= is now. Hard-coding the version broke two cases the day
@@ -1097,6 +1107,12 @@ case("translated pages fetching data relative to themselves", "twin-data.js", ["
 case("EGYBI.url resolving against the page, not the site", "twin-data.js", ["site/assets/egybi.js"],
      lambda: edit("site/assets/egybi.js", "  var ROOT = ME ? new URL('../', ME).href : '';", "  var ROOT = '';"),
      lambda o: "TWIN DATA FROM WRONG FOLDER" in o or "TWIN REQUEST FAILED" in o, TWIN)
+case("a translated page without its string table", "twin-data.js", ["site/ar/index.html"],
+     lambda: edit_re("site/ar/index.html", r'<script src="\.\./assets/i18n/ar\.js\?v=[0-9a-f]+"></script>\n', ""),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
+case("a script string left out of EGYBI.t", "twin-data.js", ["site/assets/wayfinding.js"],
+     lambda: edit("site/assets/wayfinding.js", "(window.EGYBI && window.EGYBI.t) ? window.EGYBI.t('On this page') : 'On this page'", "'On this page'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
 # prices.html has no translated copy, so a relative link from ar/ lands on a
 # page that does not exist (visit.html has one since 2b, so it no longer can)
 case("a script link to an untranslated page left relative to the twin", "twin-data.js", ["site/assets/home.js"],

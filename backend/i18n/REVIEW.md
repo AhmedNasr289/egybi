@@ -90,10 +90,11 @@ once, on either page. 142 entries per language in stage 1.
   English on the translated pages: the home briefing (heat, holidays, rate),
   the planner's stop cards and dossier, the price tables on Fair prices and
   the sign table on the name studio. Stage 4.
-- On every translated page, two labels in the shared header bar are still
-  English because scripts write them: "Sign in" (`assets/auth.js`) and "On
-  this page" (`assets/wayfinding.js`). Seen in CI's screenshots of the
-  Arabic and Russian About pages (run 43971142792). First in stage 4.
+- Stage 4a translated the header bar's script-written labels: "Sign in",
+  "Sign out", "Your trips and account", "Your account", "On this page" and
+  "Offline, try again" (تسجيل الدخول / Войти, and so on). They come from the
+  same catalogue, through `assets/i18n/ar.js` and `ru.js`. The sign-in
+  dialog itself is still English until stage 4b.
 - Menu links to pages that have no translation yet lead to the English page.
 - Verification and password-reset emails are unchanged and English only.
   Any translation of them needs the owner's approval of the exact text first.

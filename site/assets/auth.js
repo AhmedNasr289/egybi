@@ -14,6 +14,8 @@
   var ME = (document.currentScript && document.currentScript.src) || location.href;
   var BASE = CFG.base || new URL('../auth/', ME).href;
   var esc = (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml : function (s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; };
+  // the page's language for text this script writes (see EGYBI.t in egybi.js)
+  var t = (window.EGYBI && window.EGYBI.t) || function (s) { return s; };
   var csrf = null, user = null;
   var readyResolve;
   var ready = new Promise(function (r) { readyResolve = r; });
@@ -75,12 +77,12 @@
     if (!slot) { slot = document.createElement('span'); slot.id = 'acct-slot'; slot.className = 'acct-slot'; nav.appendChild(slot); }
     if (user) {
       var initial = (user.email || '?').charAt(0).toUpperCase();
-      slot.innerHTML = '<button type="button" class="acct-btn" id="acctBtn" aria-haspopup="true" aria-expanded="false" aria-controls="acctMenu" aria-label="Your account">' +
+      slot.innerHTML = '<button type="button" class="acct-btn" id="acctBtn" aria-haspopup="true" aria-expanded="false" aria-controls="acctMenu" aria-label="' + esc(t('Your account')) + '">' +
         '<span class="acct-av" aria-hidden="true">' + esc(initial) + '</span></button>' +
         '<div class="acct-menu" id="acctMenu" hidden>' +
         '<div class="acct-email">' + esc(user.email) + '</div>' +
-        '<a href="' + esc(accountUrl()) + '">Your trips and account</a>' +
-        '<button type="button" id="acctOut">Sign out</button></div>';
+        '<a href="' + esc(accountUrl()) + '">' + esc(t('Your trips and account')) + '</a>' +
+        '<button type="button" id="acctOut">' + esc(t('Sign out')) + '</button></div>';
       var btn = document.getElementById('acctBtn'), menu = document.getElementById('acctMenu');
       btn.addEventListener('click', function () {
         var open = menu.hasAttribute('hidden');
@@ -97,7 +99,7 @@
         });
       });
     } else {
-      slot.innerHTML = '<button type="button" class="acct-btn signin" id="signinBtn">Sign in</button>';
+      slot.innerHTML = '<button type="button" class="acct-btn signin" id="signinBtn">' + esc(t('Sign in')) + '</button>';
       document.getElementById('signinBtn').addEventListener('click', function () { openModal('in'); });
     }
   }

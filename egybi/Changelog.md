@@ -2246,6 +2246,16 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - CI screenshots add `ar/visit.html` and `ru/places.html`.
   - A Russian title and description were shortened (seo.py).
 - **Review:** `backend/i18n/REVIEW.md` lists the four pages and what to read most carefully.
+## 2026-11-17 — Trilingual stage 4a: text the scripts write, starting with the header bar
+- **What was English:** on every Arabic and Russian page, CI's screenshots (run 43971142792) showed "Sign in" and "On this page" in English. Scripts write them after the page loads, so the page catalogue never saw them.
+- **The system:**
+  - A script asks for text as `t('English text')`, and `EGYBI.t()` in egybi.js looks it up in `EGYBI_STRINGS`.
+  - The generator finds every `t('…')` in the site's scripts. It refuses to build if any has no Arabic or Russian translation, and it writes `assets/i18n/ar.js` and `ru.js` from the same catalogues as the page text.
+  - Only translated pages load those files. Their `?v=` is a hash of the content, so a changed translation is never served stale.
+  - On English pages `t()` returns the English unchanged.
+- **First strings:** the header button and account menu ("Sign in", "Sign out", "Your account", "Your trips and account", "Offline, try again") and the sticky "On this page" label. The header button's text is now set as text, not markup.
+- **Versions:** egybi.js v6, wayfinding.js v2 (on every page, through the generator), auth.js v5.
+- **Proof:** `twin-data.js` reads the sign-in button and the "On this page" label on every page it opens. They must be translated on Arabic and Russian pages and unchanged on English ones. Two mutation cases cover this: a page without its table, and a label left outside `t()`.
 ## 2026-11-17 — The year strip's sentence test reads the non-breaking space
 - **What failed:** Test (pipeline) failed on #145's head (`1ba6d35`) and on every PR above it. `test_heat_calendar` stripped tags from the findings but not entities, so after #145 joined each figure to °C with `&nbsp;`, it looked for `42 °C` with a plain space. The browser checks were all green, and that workflow was the only one watched, so this was missed until #150.
 - **The fix:** the test now asserts the markup carries `42&nbsp;°C` and has no figure followed by a plain space and °C. It then unescapes the text and checks the sentences as a reader sees them. All 206 pipeline tests pass, and the test fails if the non-breaking space is removed (control run).
