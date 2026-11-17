@@ -33,6 +33,18 @@ HERE = Path(__file__).resolve().parent
 WANT = os.environ.get("CASE", "").lower()
 results = []
 skipped = 0
+# SHARD=k/n runs every n-th case, starting at the k-th (2026-11-17). The whole
+# suite outgrew one 60-minute job: #154 and #156 were cancelled at the cap
+# after #153's run took 53 minutes, and a cancelled run proves nothing. CI
+# runs n shards side by side; each writes "k n ran seen" to
+# $VERIFY_LOG_DIR/mutate-shard.txt, and mutate-shards.py fails the run unless
+# every shard reported and together they ran every case. Cases are dealt
+# round-robin in file order, so one checker's cases spread over all shards.
+_shard = os.environ.get("SHARD", "1/1")
+SHARD_K, SHARD_N = (int(x) for x in _shard.split("/"))
+assert 1 <= SHARD_K <= SHARD_N, f"SHARD={_shard!r}: want k/n with 1 <= k <= n"
+seen = 0          # cases that passed the CASE filter, in file order
+other_shard = 0   # of those, dealt to another shard
 
 
 def sh(cmd, timeout=900):
@@ -101,9 +113,13 @@ def asset_tag(path, asset):
 
 def case(name, tool, files, mutate, detects, cmd, timeout=900):
     """detects(output) -> bool : did the tool report THIS defect?"""
-    global skipped
+    global skipped, seen, other_shard
     if WANT and WANT not in name.lower():
         skipped += 1
+        return
+    seen += 1
+    if (seen - 1) % SHARD_N != SHARD_K - 1:
+        other_shard += 1
         return
     # 0. exact bytes, so the revert cannot depend on git knowing the file
     snap = snapshot(files)
@@ -1344,6 +1360,15 @@ case("asset changed under its old cache version", "cache-bump.py",
 
 
 print()
+# The shard's own count, for mutate-shards.py: ran + other_shard == seen.
+_log_dir = os.environ.get("VERIFY_LOG_DIR")
+if _log_dir:
+    Path(_log_dir).mkdir(parents=True, exist_ok=True)
+    (Path(_log_dir) / "mutate-shard.txt").write_text(
+        f"{SHARD_K} {SHARD_N} {len(results)} {seen}\n", encoding="utf-8")
+if SHARD_N > 1:
+    print(f"shard {SHARD_K}/{SHARD_N}: ran {len(results)} of {seen} case(s); "
+          f"{other_shard} belong to the other shard(s)")
 if not results:
     print(f"CASE={WANT!r} matched none of the {skipped} cases — nothing was proven.")
     sys.exit(2)

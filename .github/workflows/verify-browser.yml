@@ -418,19 +418,32 @@ jobs:
   # failure. Here it runs in parallel with browser-checks, under its own
   # ceiling, with its own logs, so a slow mutation pass can never cancel the
   # checks that decide a merge, and a failure in one never hides the other.
-  mutation:
+  # Three shards side by side (2026-11-17): with the trilingual stages' cases the
+  # whole pass outgrew one job - #153's took 53 minutes and #154's and #156's
+  # were cancelled at 60 (runs 44054884507, 44054899452), proving nothing.
+  # mutate.py deals the cases round-robin (SHARD=k/n); the `mutation` job below
+  # fails unless all three reported and together ran every case.
+  mutation-shard:
     needs: gate
     if: needs.gate.outputs.run == 'true' && needs.gate.outputs.mutate == 'true'
     runs-on: ubuntu-latest
+    name: mutation shard ${{ matrix.shard }}/3
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     # 60, not 45 (2026-11-16): with the header and briefing-map cases added on
     # the PRs above, a run carrying platform.js's old 30 s hover timeouts took
     # 45 min 18 s and was stopped at the cap (run 43921085159). Those timeouts
     # are fixed; 60 leaves room for the case list to keep growing.
-    timeout-minutes: 60
+    # 40 per shard: a third of a pass that took 53 minutes whole, with room
+    # for the case list to keep growing before a fourth shard is needed.
+    timeout-minutes: 40
 
     env:
       BASE: http://localhost:8793
       VERIFY_LOG_DIR: ${{ github.workspace }}/verify-logs
+      SHARD: ${{ matrix.shard }}/3
 
     steps:
       - uses: actions/checkout@v4
@@ -461,7 +474,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: verify-logs-mutation
+          name: verify-logs-mutation-${{ matrix.shard }}
           path: ${{ env.VERIFY_LOG_DIR }}
           if-no-files-found: ignore
           retention-days: 14
@@ -488,3 +501,39 @@ jobs:
         uses: ./.github/actions/notify-failure
         with:
           reason: ${{ steps.why.outputs.text }}
+
+  # The shards, judged together: every shard green AND, from their own
+  # records, every case run exactly once between them. A shard that never
+  # started would otherwise leave the others green with a third of the
+  # checkers untested. Named `mutation` so the check keeps the name it had.
+  mutation:
+    needs: [gate, mutation-shard]
+    if: always() && needs.gate.outputs.run == 'true' && needs.gate.outputs.mutate == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: verify-logs-mutation-*
+          path: shards
+
+      # The aggregator first shows it can fail (a missing shard, a short count,
+      # mismatched totals, a duplicate, zero cases), then judges the real run.
+      - name: mutate-shards.py — every case run, in some shard
+        id: cover
+        run: |
+          python3 backend/verify/mutate-shards.py --selftest
+          python3 backend/verify/mutate-shards.py shards
+
+      - name: Every shard passed
+        run: |
+          echo "mutation-shard result: ${{ needs.mutation-shard.result }}"
+          test "${{ needs.mutation-shard.result }}" = success
+
+      - name: Alert on failure
+        if: failure()
+        uses: ./.github/actions/notify-failure
+        with:
+          reason: "mutation: shard result ${{ needs.mutation-shard.result }}; see each shard's 'Collect what the mutation pass said' and the mutate-shards.py step."
