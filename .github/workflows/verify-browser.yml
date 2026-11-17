@@ -508,7 +508,12 @@ jobs:
   # checkers untested. Named `mutation` so the check keeps the name it had.
   mutation:
     needs: [gate, mutation-shard]
-    if: always() && needs.gate.outputs.run == 'true' && needs.gate.outputs.mutate == 'true'
+    # !cancelled(), not always(): when a newer push to the same ref cancels this
+    # run (cancel-in-progress above), the aggregate must not run and alert on
+    # the cancelled shards (issue #155, 2026-11-17). A shard killed at its own
+    # timeout-minutes is a cancelled JOB in a run that was not cancelled, so
+    # this still runs, sees result != success, and alerts.
+    if: ${{ !cancelled() && needs.gate.outputs.run == 'true' && needs.gate.outputs.mutate == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
