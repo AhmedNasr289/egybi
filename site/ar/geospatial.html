@@ -121,7 +121,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>الأطلس</div>
     <h1 data-aos="fade-up">مصر، على خريطة واحدة موثّقة.</h1>
-    <p class="page-intro" data-aos="fade-up">كل طبقة على هذه الخريطة حقيقية وموثّقة ومؤرّخة: ٢٧ محافظة ملوّنة بالأرقام الرسمية، والمستشفيات والمدارس كما رسمها مجتمع OpenStreetMap، ومواقع التراث العالمي السبعة لليونسكو — للاستكشاف، لا للملاحة أو الطوارئ.</p>
+    <p class="page-intro" data-aos="fade-up">كل طبقة على هذه الخريطة حقيقية وموثّقة ومؤرّخة: محافظات مصر الـ٢٧ ملوّنة بالأرقام الرسمية، والمستشفيات والمدارس كما رسمها متطوعو OpenStreetMap، ومواقع التراث العالمي السبعة لليونسكو. الخريطة للاستكشاف، لا لمعرفة الطريق ولا للطوارئ.</p>
   </div>
 </section>
 
@@ -141,13 +141,13 @@
         <button type="button" class="map-toggle" data-metric="urban_pct">نسبة الحضر</button>
         <button type="button" class="map-toggle" data-metric="growth">النمو</button>
         <button type="button" class="map-toggle" data-metric="area_km2">المساحة</button>
-        <button type="button" class="map-toggle" data-metric="health" disabled title="يظهر بعد أول بناء للطبقات">المنشآت الصحية</button>
-        <button type="button" class="map-toggle" data-metric="schools" disabled title="يظهر بعد أول بناء للطبقات">المدارس</button>
+        <button type="button" class="map-toggle" data-metric="health" disabled title="ليست جاهزة بعد">المنشآت الصحية</button>
+        <button type="button" class="map-toggle" data-metric="schools" disabled title="ليست جاهزة بعد">المدارس</button>
       </div>
       <div class="map-toolbar" role="group" aria-label="إظهار طبقات النقاط وإخفاؤها">
         <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">الطبقات:</span>
-        <button type="button" class="ov-toggle" data-overlay="health" disabled title="يظهر بعد أول بناء للطبقات">المستشفيات والعيادات</button>
-        <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="يظهر بعد أول بناء للطبقات">مواقع التراث العالمي</button>
+        <button type="button" class="ov-toggle" data-overlay="health" disabled title="ليست جاهزة بعد">المستشفيات والعيادات</button>
+        <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="ليست جاهزة بعد">مواقع التراث العالمي</button>
       </div>
       <section class="atlas-box" id="atlasMap" aria-label="خريطة تفاعلية لمحافظات مصر الـ٢٧ مع طبقات بيانات قابلة للاختيار"></section>
       <!-- A way in that is not the map. Fourteen of the twenty-seven
@@ -166,7 +166,7 @@
       <div class="map-legend marker-key" id="atlasKey" hidden></div>
       <div class="gov-detail" id="govDetail" hidden></div>
       <div class="atlas-note" id="layerNote">جارٍ تحميل الطبقات…</div>
-      <p class="chart-cap">الحدود: <strong>geoBoundaries.org</strong> (EGY ADM1، CC-BY 4.0)، مبسّطة ومرفقة بالموقع للعمل دون اتصال — لا يُستدعى أي مزوّد خرائط خارجي. السكان والكثافة والمساحة: قاعدة معرفة EgyBI (<strong>الجهاز المركزي للتعبئة العامة والإحصاء</strong>، نوفمبر ٢٠٢٣)؛ والنمو مقارنةً بتعداد ٢٠١٧؛ ونسبة الحضر مؤشر تقريبي من بيانات الجهاز لعام ٢٠١٦ تقريبًا (±١–٢ نقطة). المستشفيات والعيادات والمدارس: <strong>© المساهمون في OpenStreetMap</strong> (ODbL) — رسمها المجتمع، فهي تُظهر <em>النمط</em> الجغرافي لا سجلًا رسميًا. مواقع التراث: <strong>مركز التراث العالمي لليونسكو</strong>. الألوان فئات مئينية (ست مجموعات متساوية العدد) ليبقى التفاوت الشديد مقروءًا.</p>
+      <p class="chart-cap">الحدود: <strong>geoBoundaries.org</strong> (EGY ADM1، CC-BY 4.0)، مبسّطة ومرفقة بالموقع للعمل دون اتصال — لا يُستدعى أي مزوّد خرائط خارجي. السكان والكثافة والمساحة: قاعدة معرفة EgyBI (<strong>الجهاز المركزي للتعبئة العامة والإحصاء</strong>، نوفمبر ٢٠٢٣)؛ والنمو مقارنةً بتعداد ٢٠١٧؛ ونسبة الحضر مؤشر تقريبي من بيانات الجهاز لعام ٢٠١٦ تقريبًا (±١–٢ نقطة). المستشفيات والعيادات والمدارس: <strong>© المساهمون في OpenStreetMap</strong> (ODbL) — رسمها المجتمع، فهي تُظهر <em>النمط</em> الجغرافي لا سجلًا رسميًا. مواقع التراث: <strong>مركز التراث العالمي لليونسكو</strong>. الألوان تقسم المحافظات إلى ست مجموعات متساوية العدد، كي لا تطغى قيم متطرفة قليلة على الباقي.</p>
     </div>
   </div>
 </section>
@@ -176,7 +176,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>الـ٢٧ جنبًا إلى جنب</div>
     <h2 data-aos="fade-up">كل المحافظات في جدول واحد.</h2>
-    <p class="lead" data-aos="fade-up">مرتّبة حسب السكان. يمتلئ عمودا المنشآت والمدارس بعد بناء طبقات الخريطة، ويبقيان «—» حتى ذلك الحين بدل عرض صفر مختلق.</p>
+    <p class="lead" data-aos="fade-up">مرتّبة حسب عدد السكان. وحيث لا تتوفّر بعدُ أعداد المنشآت الصحية أو المدارس، يظهر في العمود «—» بدل صفرٍ مختلَق.</p>
     <div class="chart-card gov-table-wrap" style="margin-top:22px;" data-aos="fade-up">
       <table class="gov-table" data-query="governorates"
          data-query-note="Coverage note: the queryable table holds the 10 most populous governorates, not all 27. The map and the table on this page use the full set — this slice is smaller, and saying so is the point."
@@ -200,7 +200,7 @@ ORDER BY population_millions DESC;"
     <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>سبعة مواقع، قائمة واحدة</div>
     <h2 data-aos="fade-up">مصر في قائمة التراث العالمي.</h2>
     <p class="lead" data-aos="fade-up">مواقع مصر المُدرجة في قائمة التراث العالمي لليونسكو، كما تسجّلها القائمة بالضبط — وكلٌّ منها أيضًا علامة ذهبية على الخريطة أعلاه.</p>
-    <div class="atlas-note" id="heritageEmpty" hidden>تظهر هذه القائمة تلقائيًا بعد أن يملأ أول تشغيل لـ«بناء طبقات الأطلس» ملف بيانات التراث.</div>
+    <div class="atlas-note" id="heritageEmpty" hidden>هذه القائمة ليست جاهزة بعد. عُد إلينا قريبًا.</div>
     <div class="wh-grid" id="heritageCards"></div>
     <p class="chart-cap" id="heritageMeta" style="margin-top:16px;"></p>
   </div>
@@ -212,7 +212,7 @@ ORDER BY population_millions DESC;"
   <div class="wrap">
     <div class="kicker"><span data-glyph="ra"></span>أدلة الزوار</div>
     <h2>١٨ موقعًا، لكلٍّ منها دليل شهرًا بشهر.</h2>
-    <p class="lead" style="max-width:68ch;">حرارة بعد الظهر، وبرد الليل، والمطر، وساعات الضوء الذهبي لكل شهر، مقيسة عند إحداثيات الموقع نفسه. وكل بطاقة تراث عالمي أعلاه ترتبط بالأدلة الواقعة ضمن ٢٠ كم منها.</p>
+    <p class="lead" style="max-width:68ch;">حرارة بعد الظهر، والحرارة الصغرى ليلًا، والمطر، وساعات الضوء الذهبي لكل شهر، مقيسة عند الإحداثيات الدقيقة لكل موقع. وكل بطاقة تراث عالمي أعلاه ترتبط بالأدلة الواقعة ضمن ٢٠ كم منها.</p>
     <div class="chip-row"><a class="chip" href="../visit/abu-mena.html" data-guide="abu-mena" data-lat="30.8419" data-lon="29.6647">أبو مينا</a><a class="chip" href="../visit/abu-simbel.html" data-guide="abu-simbel" data-lat="22.3372" data-lon="31.6258">أبو سمبل</a><a class="chip" href="../visit/abydos.html" data-guide="abydos" data-lat="26.1847" data-lon="31.9194">أبيدوس</a><a class="chip" href="../visit/alexandria.html" data-guide="alexandria" data-lat="31.2001" data-lon="29.9187">الإسكندرية</a><a class="chip" href="../visit/dahab.html" data-guide="dahab" data-lat="28.5091" data-lon="34.5136">دهب</a><a class="chip" href="../visit/dendera.html" data-guide="dendera" data-lat="26.1417" data-lon="32.6700">معبد دندرة</a><a class="chip" href="../visit/giza.html" data-guide="giza" data-lat="29.9773" data-lon="31.1325">أهرامات الجيزة</a><a class="chip" href="../visit/islamic-cairo.html" data-guide="islamic-cairo" data-lat="30.0444" data-lon="31.2620">القاهرة التاريخية</a><a class="chip" href="../visit/hurghada.html" data-guide="hurghada" data-lat="27.2579" data-lon="33.8116">الغردقة</a><a class="chip" href="../visit/karnak.html" data-guide="karnak" data-lat="25.7188" data-lon="32.6573">معبد الكرنك</a><a class="chip" href="../visit/philae.html" data-guide="philae" data-lat="24.0256" data-lon="32.8843">معبد فيلة</a><a class="chip" href="../visit/st-catherine.html" data-guide="st-catherine" data-lat="28.5559" data-lon="33.9760">دير سانت كاترين</a><a class="chip" href="../visit/saqqara.html" data-guide="saqqara" data-lat="29.8712" data-lon="31.2165">سقارة</a><a class="chip" href="../visit/siwa.html" data-guide="siwa" data-lat="29.2041" data-lon="25.5195">واحة سيوة</a><a class="chip" href="../visit/suez-canal.html" data-guide="suez-canal" data-lat="30.5852" data-lon="32.2715">قناة السويس عند الإسماعيلية</a><a class="chip" href="../visit/valley-kings.html" data-guide="valley-kings" data-lat="25.7402" data-lon="32.6014">وادي الملوك</a><a class="chip" href="../visit/wadi-al-hitan.html" data-guide="wadi-al-hitan" data-lat="29.2694" data-lon="30.0417">وادي الحيتان</a><a class="chip" href="../visit/white-desert.html" data-guide="white-desert" data-lat="27.2000" data-lon="28.1833">الصحراء البيضاء</a></div>
   </div>
 </section>
@@ -221,7 +221,7 @@ ORDER BY population_millions DESC;"
 <!-- METHOD -->
 <section class="surface-light-2" id="method" data-nav="المنهج والمصادر">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>كيف تلتزم هذه الصفحة بالصدق</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>من أين تأتي الخريطة</div>
     <h2 data-aos="fade-up">المنهج والمصادر وما لا تصلح له هذه الخريطة.</h2>
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="chart-card" data-aos="fade-up">
@@ -230,10 +230,10 @@ ORDER BY population_millions DESC;"
       </div>
       <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
         <h3>ما لا تصلح له هذه الخريطة</h3>
-        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">هذه الصفحة <strong>للمعلومات والتعليم فقط</strong>. طبقة الصحة ليست دليلًا لأماكن العلاج، ولا تقول شيئًا عن الجودة أو السعة أو مواعيد العمل — وعند الحاجة الطبية الفعلية ارجع إلى القنوات الرسمية لوزارة الصحة. تُحسب الأعداد لكل محافظة بحدود مبسّطة، فقد تُعدّ منشأة واقعة على الحد تمامًا ضمن المحافظة المجاورة. لا شيء هنا نصيحة من أي نوع. وحين يكون الرقم مؤشرًا تقريبيًا أو أقل من الواقع، يقول التعليق ذلك بدل إخفائه — وهي <span style="color:var(--gold-ink);font-weight:600;">قاعدة الصدق في البيانات الموثّقة</span> نفسها التي يقوم عليها الموقع كله.</p>
+        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">هذه الصفحة <strong>للمعلومات والتعلّم فقط</strong>. طبقة الصحة ليست قائمة بأماكن تلقي الرعاية، ولا تقول شيئًا عن الجودة أو السعة أو مواعيد العمل — وإن احتجت إلى مساعدة طبية، فاستخدم القنوات الرسمية لوزارة الصحة. تُحسب الأعداد لكل محافظة بحدود مبسّطة، فقد تُعدّ منشأة واقعة على الحد تمامًا ضمن المحافظة المجاورة. لا شيء هنا نصيحة من أي نوع. وحين يكون الرقم بديلًا تقريبيًا أو أقل من الواقع، يقول التعليق ذلك — وهي <span style="color:var(--gold-ink);font-weight:600;">قاعدة الصدق في البيانات الموثّقة</span> نفسها التي يقوم عليها الموقع كله.</p>
       </div>
     </div>
-    <div class="atlas-note" style="margin-top:18px;" data-aos="fade-up"><strong>قريبًا في الأطلس:</strong> طبقات يومية آلية — الزلازل فوق مصر والبحر الأحمر (USGS) وحركة الطيران المباشرة (OpenSky) — مبنية على خطوط الجلب والتحقق والحفظ نفسها التي تحدّث صفحتي الأسعار وأسعار الصرف كل صباح.</div>
+    <div class="atlas-note" style="margin-top:18px;" data-aos="fade-up"><strong>قريبًا في الأطلس:</strong> طبقات يومية تتجدّد تلقائيًا — الزلازل فوق مصر والبحر الأحمر (USGS) وحركة الطيران المباشرة (OpenSky) — بالطريقة نفسها التي تتجدّد بها صفحتا الأسعار وأسعار الصرف كل صباح.</div>
   </div>
 </section>
 
@@ -243,7 +243,7 @@ ORDER BY population_millions DESC;"
     <div class="kicker"><span data-glyph="scarab"></span>إلى أين بعد ذلك</div>
     <h2>تابع استكشاف البيانات.</h2>
     <div class="ns-grid" style="text-align:left;margin-top:22px;">
-      <a class="ns-card" href="../explore.html"><span class="ns-k">استكشف</span><h3>مصر بالرسوم البيانية &larr;</h3><p>نحو ٢٣ لوحة معلومات عن الاقتصاد والمجتمع والبنية التحتية.</p></a>
+      <a class="ns-card" href="../explore.html"><span class="ns-k">استكشف</span><h3>مصر بالرسوم البيانية &larr;</h3><p>نحو ٢٣ رسمًا بيانيًا عن الاقتصاد والمجتمع والبنية التحتية.</p></a>
       <a class="ns-card" href="../explore.html"><span class="ns-k">استكشف</span><h3>مصر بالرسوم البيانية &larr;</h3><p>قرابة أربعة وعشرين رسمًا بيانيًا موثّقًا عن الاقتصاد والمجتمع والأرض والتراث &mdash; وكل رقم موثّق ومؤرّخ.</p></a>
       <a class="ns-card" href="../prices.html"><span class="ns-k">الأسعار</span><h3>أسعار اليوم &larr;</h3><p>أسعار التجزئة والجملة اليومية من البوابة الرسمية.</p></a>
     </div>
@@ -260,7 +260,7 @@ ORDER BY population_millions DESC;"
     <div><h2 class="foot-h">المزيد</h2><a href="../blog.html">المدوّنة</a><a href="community.html">المجتمع</a><a href="about.html">الهوية</a><a href="index.html#newsletter">النشرة البريدية</a></div>
     <div><h2 class="foot-h">مصادر البيانات</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">البنك الدولي</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> كل رقم حقيقي وموثّق المصدر، وحين تختلف المصادر فعلًا ننبّه إلى الخلاف بدلًا من إخفائه.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> لكل رقم مصدره، وحين تختلف المصادر نعرض الاثنين.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
 <p class="i18n-note">ترجم EgyBI هذه الصفحة، والترجمة بانتظار مراجعة متحدث أصلي باللغة العربية. <a href="../geospatial.html" hreflang="en" lang="en">English</a></p>
 </footer>
 

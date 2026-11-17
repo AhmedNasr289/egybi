@@ -196,6 +196,12 @@ case("video poster pointing at a missing file", "static-audit.py", ["site/index.
      lambda: edit("site/index.html", 'poster="assets/video/hero-lighthouse.webp', 'poster="assets/video/no-such-poster.webp'),
      lambda o: "internal links that do not resolve" in o, PY_AUDIT)
 
+# an empty-state note that talks to the maintainer, not the traveller (2026-11-17)
+case("build language back in a visitor note", "static-audit.py", ["site/visit.html"],
+     lambda: edit("site/visit.html", "The cross-sections are not ready yet. Please check back soon.",
+                  "The cross-sections are not ready yet. Run the visitor-layer build to populate it."),
+     lambda o: "build language shown to visitors" in o and "visit.html" in o, PY_AUDIT)
+
 # ---- 2. static audit: an anchor whose id is not there -----------------------
 case("anchor to a missing id", "static-audit.py", ["site/about.html"],
      lambda: edit("site/about.html", "</footer>", '<a href="#no-such-anchor">x</a></footer>'),

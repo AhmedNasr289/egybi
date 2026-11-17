@@ -175,3 +175,20 @@ with the glossary, examples and every line still to check, is
   community posting (551, 607, 611), the paid service and prices (232, 333-335,
   405-426), safety and health (424, 692, 728, 771-785, 864-867) and the three
   technical renderings named in review-ar.md.
+
+## English rewrite, and the translations that follow it (2026-11-17)
+
+83 English lines were rewritten so they read like a person in Cairo talking to
+a first-time visitor (`backend/i18n/review-en.md` has the patterns and the
+style note for future writing). The Arabic and Russian for all 83 were
+rewritten to the new English, not patched.
+
+- The footer, on every page, now reads "Every figure has a source, and where
+  sources disagree, we show both."
+- Unfinished sections no longer show build language ("Run the visitor-layer
+  build"); they say the section is not ready yet.
+- Please check: the footer line in both languages; the "check back soon"
+  wording (Arabic «عُد إلينا قريبًا», Russian «Загляните чуть позже»); Atlas
+  line 692, where Russian glosses мухафаза as «(его провинций)» and Arabic
+  leaves محافظة unglossed; and line 356, where Arabic now says «أهل البلد»
+  for "a local".

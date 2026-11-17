@@ -10,7 +10,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#14110C">
 <script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/auth/*"}},{"not":{"href_matches":"/api/*"}},{"not":{"href_matches":"/account.html"}}]},"eagerness":"moderate"}]}</script>
-<meta name="description" content="Egypt's street networks measured, not asserted: intersection density, dead ends, circuity and orientation entropy, district by district across Cairo.">
+<meta name="description" content="Egypt's street networks, district by district across Cairo: intersection density, dead ends, circuity and orientation entropy, measured from open data.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
@@ -99,14 +99,14 @@
   <meta name="google-adsense-account" content="ca-pub-1432845423481814">
   <link rel="canonical" href="https://egybi.com/streets.html">
   <meta property="og:site_name" content="EgyBI">
-  <meta property="og:title" content="Street Report Card — Egypt's districts, measured not asserted">
+  <meta property="og:title" content="Street Report Card — Egypt's districts, measured">
   <meta property="og:description" content="Intersection density, dead ends, circuity and orientation entropy, district by district — from the khedivial grid to the desert new towns. Open data, open method.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://egybi.com/streets.html">
   <meta property="og:image" content="https://egybi.com/og-streets.png?v=3">
 <meta property="og:image:alt" content="Cairo measured street by street">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Street Report Card — Egypt's districts, measured not asserted">
+  <meta name="twitter:title" content="Street Report Card — Egypt's districts, measured">
   <meta name="twitter:image" content="https://egybi.com/og-streets.png?v=3">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&amp;text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&amp;display=swap" rel="stylesheet">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://egybi.com/streets.html#page", "url": "https://egybi.com/streets.html", "name": "Street Report Card", "isPartOf": {"@id": "https://egybi.com/#site"}, "publisher": {"@id": "https://egybi.com/#org"}, "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Street Report Card", "item": "https://egybi.com/streets.html"}]}]}</script>
@@ -155,7 +155,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Street report card</div>
     <h1 data-aos="fade-up">Cairo, measured street by street.</h1>
-    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Districts built across six planning eras &mdash; from Ismail&rsquo;s 1860s boulevards to the desert new towns. Not opinions about which is better planned: <strong>intersection density, dead-end share, circuity and orientation entropy</strong>, computed from open street data with the method written down.</p>
+    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Districts built across six planning eras &mdash; from Ismail&rsquo;s 1860s boulevards to the desert new towns. We do not judge which is better planned. We measure <strong>intersection density, dead-end share, circuity and orientation entropy</strong> from open street data, and the method is written down below.</p>
   </div>
 </section>
 
@@ -219,7 +219,7 @@
     <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Walking access</div>
     <h2 data-aos="fade-up">Can you walk to a hospital, school or pharmacy?</h2>
     <p class="lead" data-aos="fade-up">Walking time along the <em>actual street network</em> &mdash; not straight-line distance &mdash; at 80 metres a minute, roughly 4.8 km/h. The score is the share of walkable street that sits within fifteen minutes of a mapped facility.</p>
-    <div class="streets-note" id="accessEmpty" hidden>The walking-access layer has not been generated yet. It appears here after the first pipeline run that completes it.</div>
+    <div class="streets-note" id="accessEmpty" hidden>The walking-access scores are not ready yet. Please check back soon.</div>
     <div class="acc-grid" id="accessGrid"></div>
     <div class="streets-note" style="margin-top:20px;"><strong>Read this before you read the scores.</strong> Amenity coverage in OpenStreetMap is incomplete and uneven across Cairo. A low score can mean a district genuinely lacks facilities, <em>or</em> that its facilities simply have not been mapped &mdash; and this data cannot separate the two. It also says nothing about whether a facility is open, affordable, staffed, or any good. It is a map of what is mapped.</div>
   </div>
@@ -229,7 +229,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="eye"></span>How this was measured</div>
     <h2 data-aos="fade-up">The method, in the open.</h2>
-    <p class="lead" data-aos="fade-up">Five decisions shape every number on this page. They are written down here because a metric you cannot interrogate is a metric you should not trust.</p>
+    <p class="lead" data-aos="fade-up">Five decisions shape every number on this page. They are written down here so you can see exactly how each number was made.</p>
     <ul style="color:var(--ink-soft);line-height:1.9;margin-top:16px;max-width:78ch;">
       <li><strong>Boundaries come from OpenStreetMap, not a gazetteer.</strong> Egyptian district names are inconsistent in OSM, so each district is tried against several candidate names and every resolved polygon is area-checked before use. Anything implausible is dropped and named rather than quietly kept. Most of these outlines are mapper-drawn <code>place</code> polygons rather than official administrative limits — real, but not a cadastre.</li>
       <li><strong>Downtown Cairo&rsquo;s outline is ours, and it is the only one.</strong> OpenStreetMap has no polygon for Downtown at all. We tried nineteen name candidates across English, Arabic and <em>qism</em> spellings, and every one that returned a shape returned a landmark <em>inside</em> downtown &mdash; Abdeen Palace, the Qasr el-Nil theatre, Azbakeya Garden, the Central Bank building &mdash; rather than the district. Then we asked OSM directly what it holds over the area: twenty-five small neighbourhood polygons of the districts <em>around</em> khedivial Cairo, and nothing administrative between Cairo governorate at 3,006&nbsp;km² and unnamed 0.5&ndash;5&nbsp;km² fragments. So Downtown&rsquo;s 7.1&nbsp;km² extent is drawn by hand from its known edges: the Nile, Ramses, Port Said Street and Sayyida Zeinab. It is labelled as hand-drawn everywhere it appears, it is area-checked exactly like a geocoded boundary, and it is used <em>only</em> after every OSM lookup fails &mdash; so the day OSM gains a real Downtown polygon, this quietly stops being used.</li>
@@ -263,7 +263,7 @@
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h2 class="foot-h">Data sources</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure has a source, and where sources disagree, we show both.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
 </footer>
 <script src="assets/egybi.js?v=7"></script>
 <script src="assets/glyphs.js?v=3"></script>

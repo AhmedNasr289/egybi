@@ -295,6 +295,34 @@ for script, out in GENERATED:
         if out.read_bytes() != before:
             out.write_bytes(before)
 
+# ------------------------------------------------- build language ----
+# Since 2026-11-17: empty-state notes told visitors to "Run the visitor-layer
+# build to populate it" and that columns "fill in once the map layers are
+# built" - instructions for the maintainer, shown to a traveller. Hidden notes
+# count: they are exactly the ones a visitor sees when the data is missing.
+# Scope is what a visitor can read (text and the title/aria-label/alt/
+# placeholder/content attributes), not scripts, styles or comments. The
+# Russian and Arabic patterns are the two phrasings the catalogues used;
+# community.html describes the project's own tooling on purpose, so words
+# such as "конвейер" stay allowed.
+BUILD_LANG = re.compile("|".join([
+    r"\bpipeline runs?\b", r"\blayer builds?\b", r"\bvisitor-layer\b",
+    r"\bhas not been generated\b", r"\bnot (?:been )?generated yet\b",
+    r"\bpopulates?\b(?! of)", r"\bonce the [^.<]{0,30}\b(?:are|is) built\b",
+    r"\bfirst\b[^.<]{0,40}\brun\b", r"\bBuild Atlas\b",
+    r"\brun the\b[^.<]{0,30}\b(?:build|pipeline|script)\b",
+    r"после сборки", r"بعد بناء طبقات",
+]), re.I)
+_vis_attr = re.compile(r'\s(?:title|aria-label|alt|placeholder|content)\s*=\s*"([^"]*)"', re.I)
+for p in pages:
+    t = p.read_text(encoding="utf-8", errors="replace")
+    t = re.sub(r"<!--.*?-->", " ", t, flags=re.S)
+    t = re.sub(r"<(script|style)\b.*?</\1>", " ", t, flags=re.S | re.I)
+    for blob in [re.sub(r"<[^>]+>", " ", t)] + _vis_attr.findall(t):
+        for m in BUILD_LANG.finditer(blob):
+            ctx = " ".join(blob[max(0, m.start() - 40): m.end() + 40].split())
+            fails["build language shown to visitors"].append(f"{p}: …{ctx}…")
+
 print(f"\npages    : {len(pages)}  ({len(list(SITE.glob('*.html')))} top-level, "
       f"{len(list((SITE/'practice').glob('*.html')))} challenge, "
       f"{len(list((SITE/'papyrus').glob('*.html')))} story)")
