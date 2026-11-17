@@ -340,7 +340,7 @@ OpenStreetMap	OpenStreetMap
 Fair Prices in Egypt — Tips, Entry and Rides, Sourced | EgyBI	الأسعار العادلة في مصر — البقشيش والدخول والتنقلات | EgyBI
 What tips, entry and rides in Egypt should cost, as named guides publish them, beside official daily market prices — converted at today&rsquo;s rate.	كم ينبغي أن يكلّف البقشيش ورسوم الدخول والتنقلات في مصر كما تنشرها أدلة سياحية نذكرها بالاسم، إلى جانب أسعار السوق الرسمية اليومية — محوّلة بسعر الصرف اليوم.
 <span data-glyph="maat"></span> Fair prices &middot; converted at today&rsquo;s rate &middot; every figure attributed	<span data-glyph="maat"></span> الأسعار العادلة &middot; محوّلة بسعر الصرف اليوم &middot; كل رقم منسوب إلى مصدره
-There is no official price list for a camel ride or a tip. So this page shows what named guides publish, who they are, when they said it and where they disagree &mdash; next to the official market prices Egypt&rsquo;s Cabinet publishes every day.	لا توجد قائمة أسعار رسمية لركوب الجمل أو للبقشيش. لذلك تعرض هذه الصفحة ما تنشره أدلة سياحية نذكرها بالاسم، ومن هي، ومتى قالت ذلك، وأين تختلف &mdash; إلى جانب أسعار السوق الرسمية التي ينشرها مجلس الوزراء المصري كل يوم.
+Entry tickets have an official price, and we quote the Ministry&rsquo;s own list. A camel ride or a tip has none, so for those this page shows what named guides publish, who they are, when they said it and where they disagree. Below them are the official market prices Egypt&rsquo;s Cabinet publishes every day.	لتذاكر الدخول سعر رسمي، وننقل قائمة الوزارة نفسها. أما ركوب الجمل والبقشيش فلا سعر رسميًا لهما، لذلك تعرض هذه الصفحة ما تنشره أدلة سياحية نذكرها بالاسم، ومن هي، ومتى قالت ذلك، وأين تختلف. وتحتها أسعار السوق الرسمية التي ينشرها مجلس الوزراء المصري كل يوم.
 Tips, entry, rides	البقشيش والدخول والتنقلات
 <span data-glyph="scroll"></span>Traveller prices	<span data-glyph="scroll"></span>أسعار المسافرين
 Tips, entry and rides.	البقشيش ورسوم الدخول والتنقلات.
@@ -953,3 +953,82 @@ A name, in Latin letters	اسم بالحروف اللاتينية
 <strong>Propose it</strong> as a new <code>seed_vN.sql</code> section plus its schema, and we review it against the accuracy rules before it lands.	<strong>اقترحها</strong> قسمًا جديدًا في <code>seed_vN.sql</code> مع مخططه، ونراجعها وفق قواعد الدقة قبل اعتمادها.
 <strong>Sources.</strong> Archaeological sites: OpenStreetMap via Overpass (<code>historic=archaeological_site</code> with a name), fetched <strong id="dgAsOf2">—</strong>, ODbL. Governorate boundaries, areas and populations: geoBoundaries EGY ADM1 (CC BY 4.0) with CAPMAS attributes. Every count, density and ratio on this page is computed in the browser from those two files. <strong>What this cannot tell you:</strong> anything about how much archaeology exists. A site is counted here only if someone has recorded it in OpenStreetMap with a name, so the entire story is about recording. Assigning a site to a governorate uses the simplified boundaries, so a site near a border may be counted on the wrong side.	<strong>المصادر.</strong> المواقع الأثرية: OpenStreetMap عبر Overpass (<code>historic=archaeological_site</code> مع اسم)، جُلبت في <strong id="dgAsOf2">—</strong>، ODbL. حدود المحافظات ومساحاتها وسكانها: geoBoundaries EGY ADM1 (CC BY 4.0) مع خصائص الجهاز المركزي للتعبئة العامة والإحصاء. كل عدد وكثافة ونسبة في هذه الصفحة تُحسب في المتصفح من هذين الملفين. <strong>ما لا يمكن أن يخبرك به هذا:</strong> أي شيء عن مقدار الآثار الموجودة فعلًا. لا يُعدّ الموقع هنا إلا إذا سجّله أحد في OpenStreetMap باسم، فالقصة كلها قصة تسجيل. ويعتمد إسناد الموقع إلى محافظة على الحدود المبسّطة، لذا قد يُحسب موقع قريب من الحدود على الجانب الخطأ.
 <strong>Boundaries come from OpenStreetMap, not a gazetteer.</strong> Egyptian district names are inconsistent in OSM, so each district is tried against several candidate names and every resolved polygon is area-checked before use. Anything implausible is dropped and named rather than quietly kept. Most of these outlines are mapper-drawn <code>place</code> polygons rather than official administrative limits — real, but not a cadastre.	<strong>الحدود من OpenStreetMap، لا من دليل أماكن رسمي.</strong> أسماء الأحياء المصرية غير متسقة في OSM، لذا يُجرَّب كل حي مقابل عدة أسماء مرشّحة، ويُتحقق من مساحة كل مضلّع يُعثر عليه قبل استخدامه. وكل ما هو غير معقول يُستبعد ويُذكر اسمه بدلًا من إبقائه بصمت. ومعظم هذه الحدود مضلّعات <code>place</code> رسمها المساهمون في الخريطة، لا حدود إدارية رسمية — حقيقية، لكنها ليست سجلًا مساحيًا.
+A broad comparison figure, not a fare table. The honest anchor for any street taxi is the fare the Uber or Careem app quotes for the same trip — open it before you agree a price, even if you then take a street taxi. Aswan has a documented airport-taxi overcharging pattern.	رقم تقريبي للمقارنة، وليس جدول أجرة. أفضل مرجع لأي تاكسي في الشارع هو الأجرة التي يعرضها تطبيق Uber أو Careem للمشوار نفسه، فافتح التطبيق قبل أن تتفق على السعر، حتى لو ركبت بعدها تاكسي من الشارع. وفي أسوان شكاوى موثّقة من مبالغة تاكسيات المطار في الأجرة.
+A ride across a city by taxi or ride-hailing app	مشوار داخل المدينة بالتاكسي أو بالتطبيق
+Abu Simbel temples, adult foreign visitor	معابد أبو سمبل، زائر أجنبي بالغ
+All %n items, updated daily	كل الأصناف (%n)، تُحدَّث يوميًا
+As published	كما نُشر
+Average in %s	المتوسط (%s)
+Average, EGP	المتوسط بالجنيه
+Camel or horse handler, after the ride	صاحب الجمل أو الحصان، بعد الركوب
+Camel ride at Giza	ركوب الجمل في الجيزة
+Compiled	جُمعت البيانات في
+Egyptian Museum, Tahrir, adult foreign visitor	المتحف المصري بالتحرير، زائر أجنبي بالغ
+Entry to the main sites	دخول أبرز المواقع
+Felucca captain	ريّس الفلوكة
+Foreign students pay 750 EGP. The new price applies from 1 January 2025.	يدفع الطلاب الأجانب ٧٥٠ جنيهًا. ويُطبَّق السعر الجديد منذ ١ يناير ٢٠٢٥.
+Foreign students with a valid card pay 250 EGP.	يدفع الطلاب الأجانب الذين يحملون بطاقة طالب سارية ٢٥٠ جنيهًا.
+Foreign students with a valid card pay 275 EGP.	يدفع الطلاب الأجانب الذين يحملون بطاقة طالب سارية ٢٧٥ جنيهًا.
+Foreign students with a valid card pay 300 EGP.	يدفع الطلاب الأجانب الذين يحملون بطاقة طالب سارية ٣٠٠ جنيه.
+Foreign students with a valid card pay 350 EGP. Going inside a pyramid is a separate ticket.	يدفع الطلاب الأجانب الذين يحملون بطاقة طالب سارية ٣٥٠ جنيهًا. ودخول أي هرم من الداخل بتذكرة منفصلة.
+Foreign students with a valid card pay 375 EGP. Tutankhamun's tomb is a separate ticket (700 EGP on the same list).	يدفع الطلاب الأجانب الذين يحملون بطاقة طالب سارية ٣٧٥ جنيهًا. ومقبرة توت عنخ آمون بتذكرة منفصلة (٧٠٠ جنيه في القائمة نفسها).
+Giza pyramids plateau entry, adult foreign visitor	دخول هضبة الأهرامات بالجيزة، زائر أجنبي بالغ
+Grand Egyptian Museum, adult foreign visitor	المتحف المصري الكبير، زائر أجنبي بالغ
+Hotel housekeeping	عامل نظافة الغرف بالفندق
+In %s today	اليوم (%s)
+Inside the Great Pyramid (Khufu), adult foreign visitor	داخل الهرم الأكبر (خوفو)، زائر أجنبي بالغ
+Item	الصنف
+Karnak temples, Luxor, adult foreign visitor	معابد الكرنك بالأقصر، زائر أجنبي بالغ
+Left daily, because the person who cleaned the room on Tuesday may not be working on Thursday.	يُترك يوميًا، لأن من نظّف الغرفة يوم الثلاثاء قد لا يكون في عمله يوم الخميس.
+Luxor Temple, adult foreign visitor	معبد الأقصر، زائر أجنبي بالغ
+Nile cruise crew (pooled envelope)	طاقم الباخرة النيلية (ظرف مشترك)
+No source we could check publishes a reliable figure, and no official price list turned up. What every guide agrees on: agree the TOTAL, the duration and the return leg before you get on.	لم نجد مصدرًا يمكن التحقق منه ينشر رقمًا موثوقًا، ولا قائمة أسعار رسمية. وما تتفق عليه كل الأدلة: اتفق على المبلغ الإجمالي والمدة ومشوار العودة قبل أن تركب.
+Official prices for an adult foreign visitor, in Egyptian pounds. Since 1 January 2026 visitors from Arab countries pay these foreign prices too (a Supreme Council of Antiquities decision, reported by Scene Now on 10 July 2025). Buy only on the Ministry's own sites: egymonuments.com, and tickets.gem.eg for the Grand Egyptian Museum.	الأسعار الرسمية للزائر الأجنبي البالغ، بالجنيه المصري. ومنذ ١ يناير ٢٠٢٦ يدفع الزوار القادمون من الدول العربية هذه الأسعار الأجنبية أيضًا (بقرار من المجلس الأعلى للآثار، كما أورد موقع Scene Now في ١٠ يوليو ٢٠٢٥). اشترِ تذاكرك من مواقع الوزارة نفسها فقط: egymonuments.com، وtickets.gem.eg للمتحف المصري الكبير.
+Official site:	الموقع الرسمي:
+On the sun-alignment days, 22 February and 22 October, the list prints 1,200 EGP and the booking site 1,272 EGP.	وفي يومي تعامد الشمس، ٢٢ فبراير و٢٢ أكتوبر، تذكر القائمة ١٬٢٠٠ جنيه، ويذكر موقع الحجز ١٬٢٧٢ جنيهًا.
+On top of the ride price, not part of it.	يُضاف إلى سعر الركوب وليس جزءًا منه.
+Prices went up on 1 November 2026. The museum's own ticket site shows the new prices only once you start a booking, and we found no published figure we could check, so buy on tickets.gem.eg and nowhere else.	ارتفعت الأسعار في ١ نوفمبر ٢٠٢٦. ولا يعرض موقع تذاكر المتحف الأسعار الجديدة إلا بعد أن تبدأ الحجز، ولم نجد رقمًا منشورًا يمكن التحقق منه، لذا اشترِ من tickets.gem.eg وحده.
+Range across the country, EGP	النطاق على مستوى البلاد، بالجنيه
+Retail prices dated %d, %n items.	أسعار التجزئة بتاريخ %d، وعدد الأصناف %n.
+Rides and transport	الركوب والمواصلات
+Searched 2026-10-09: no verifiable published price	بحثنا في 2026-10-09: لا يوجد سعر منشور يمكن التحقق منه
+Source:	المصدر:
+Sources disagree:	المصادر تختلف:
+The Ministry's list of 5 November 2024 prints 750 EGP; its booking site showed 822 EGP on 17 November 2026. We show both rather than guess which one you will be charged.	تذكر قائمة الوزارة الصادرة في ٥ نوفمبر ٢٠٢٤ سعر ٧٥٠ جنيهًا، بينما عرض موقع الحجز التابع لها ٨٢٢ جنيهًا في ١٧ نوفمبر ٢٠٢٦. نعرض الرقمين بدل أن نخمّن أيهما ستدفع.
+The Ministry's list of 5 November 2024 still printed 1,000 EGP, while this report gives the old price as 900 EGP. The Ministry's booking site has no page for this ticket, so we could not confirm 1,500 there.	كانت قائمة الوزارة الصادرة في ٥ نوفمبر ٢٠٢٤ لا تزال تذكر ١٬٠٠٠ جنيه، بينما يذكر هذا التقرير أن السعر القديم كان ٩٠٠ جنيه. ولا توجد صفحة لهذه التذكرة على موقع الحجز التابع للوزارة، فلم نتمكن من التأكد من سعر ١٬٥٠٠ جنيه هناك.
+The market prices could not be loaded.	تعذّر تحميل أسعار السوق.
+The price sheet could not be loaded.	تعذّر تحميل جدول الأسعار.
+The same guide also gives 10% of a half-day tour's price and 20% of a full-day or private one; Mara House Luxor suggests US$25 or more per day on multi-day tours. The three rules give very different answers — the flat figure is the lowest.	ويقترح الدليل نفسه أيضًا ١٠٪ من سعر جولة نصف اليوم و٢٠٪ من سعر جولة اليوم الكامل أو الجولة الخاصة، ويقترح فندق Mara House Luxor أن تدفع ٢٥ دولارًا أو أكثر في اليوم في الرحلات التي تمتد عدة أيام. والقواعد الثلاث تعطي إجابات مختلفة جدًا، والرقم الثابت هو الأقل.
+The same guide suggests more for longer sunset sails.	ويقترح الدليل نفسه مبلغًا أكبر لرحلات الغروب الأطول.
+The same operator's own Egypt travel guide says $25–40 in total for the whole trip — for a four-night cruise the nightly figure comes to $40–60, well above that. Ask the cruise operator.	ويقول دليل السفر إلى مصر الصادر عن الشركة نفسها إن المبلغ من ٢٥ إلى ٤٠ دولارًا للرحلة كلها، بينما يصل الرقم الليلي في رحلة من أربع ليالٍ إلى ما بين ٤٠ و٦٠ دولارًا، وهو أعلى من ذلك بكثير. اسأل شركة الرحلة النيلية.
+These are what shops charge residents across Egypt’s governorates. Treat them as a floor for what a market stall should ask, not as a tourist price.	هذه الأسعار التي تتقاضاها المحلات من السكان في محافظات مصر. اعتبرها حدًّا أدنى لما ينبغي أن يطلبه بائع في السوق، لا سعرًا للسياح.
+Tipping	البقشيش
+Tour guide, multi-day tour	المرشد السياحي، رحلة عدة أيام
+Tour guide, standard tour	المرشد السياحي، جولة عادية
+Valley of the Kings, adult foreign visitor	وادي الملوك، زائر أجنبي بالغ
+What	البند
+What things should cost a visitor in Egypt. Entry tickets have an official price, and those rows quote the Ministry's own list. Tips, taxis and rides have no official price, so those figures come from named travel guides and tour operators, which is weaker evidence. Every row says who gave the figure and when we last checked it, shows a range where sources give one, and shows both figures where two sources disagree. Where we found no figure we could check, the row says so. Prices in other currencies are converted at today's market rate, so they move each day; the price underneath does not.	كم ينبغي أن تكلّف الأشياء الزائر في مصر. لتذاكر الدخول سعر رسمي، ونقلناه في صفوفها من قائمة الوزارة نفسها. أما البقشيش والتاكسي والمشاوير فليس لها سعر رسمي، فأرقامها مأخوذة من أدلة سفر وشركات سياحة محدّدة بالاسم، وهذا دليل أضعف. يذكر كل صف من أعطى الرقم ومتى راجعناه آخر مرة، ويعرض نطاقًا حين تعطي المصادر نطاقًا، ويعرض الرقمين حين يختلف مصدران. وحين لم نجد رقمًا يمكن التحقق منه يقول الصف ذلك. وتُحوَّل الأسعار إلى العملات الأخرى بسعر صرف السوق اليوم، فتتغير كل يوم، أما السعر الأصلي فلا يتغير.
+Who says so	المصدر
+checked	رُوجع في
+each	للواحدة
+news report	خبر صحفي
+no checkable figure	لا رقم يمكن التحقق منه
+none	بلا مصدر
+official	مصدر رسمي
+per carton	للكرتونة
+per day, or more	في اليوم أو أكثر
+per egg	للبيضة
+per kg	للكيلو
+per litre	للتر
+per one-hour sail, total (not per person)	لكل ساعة إبحار، للمركب كله وليس للفرد
+per person	للفرد
+per person per night	للفرد في الليلة
+per person, on top of the plateau ticket	للفرد، إضافةً إلى تذكرة الهضبة
+per ride	للجولة
+per ride, typical	للمشوار عادةً
+per room per day	لكل غرفة في اليوم
+per tour, by length	لكل جولة، حسب مدتها
+tour operator	شركة سياحة
+travel blog	مدوّنة سفر
+travel guide	دليل سفر
+undated	بلا تاريخ

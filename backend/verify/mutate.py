@@ -535,6 +535,12 @@ case("hand-curated calendar overdue for re-reading", "coverage.py", ["site/data/
      lambda: age_data_file("calendar.json", 150),
      lambda o: "calendar.json: 150d old, hand review" in o, COVERAGE)
 
+# one price row left unread while the rest of the sheet was refreshed (2026-11-17)
+case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-prices.json"],
+     lambda: edit("site/data/fair-prices.json", '"published": "2024-12-04", "kind": "news report", "checked": "2026-11-17"',
+                  '"published": "2024-12-04", "kind": "news report", "checked": "2025-01-02"'),
+     lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
+
 PY_CHECKS = f'"{sys.executable}" {HERE}/checks.py'
 
 # ---- 15d. a CSS class nothing uses ------------------------------------------
