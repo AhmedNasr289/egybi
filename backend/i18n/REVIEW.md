@@ -208,3 +208,19 @@ Please check:
   солнце освещает святилище»;
 - the Grand Egyptian Museum note, which tells the reader to buy only on
   tickets.gem.eg: the wording must not read as a guarantee about that site.
+
+## Arriving in Egypt (2026-11-17)
+
+A new page, arriving-in-egypt.html, in all three languages (54 lines per
+language, plus two link lines on Plan and Fair prices).
+
+Please check:
+- the visa rows: Arabic «التأشيرة عند الوصول», «التأشيرة الرقمية عند الوصول»,
+  Russian «Виза по прилёте», «Электронная виза по прилёте»;
+- the Sinai row, which must keep the four named resorts and the 15 days;
+- the Russian card row: it must say cards are sometimes declined, not always
+  (the source says «иногда отклоняют»);
+- the Cairo ride-hail row, which reports what travellers describe and must
+  not read as a statement about all drivers;
+- the closing note: the visa rules are for British passports, and other
+  passports can differ.
