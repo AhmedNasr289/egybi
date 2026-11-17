@@ -1437,6 +1437,15 @@ case("asset changed under its old cache version", "cache-bump.py",
                   "(function () {\n  'use strict'; // changed"),
      lambda o: "FAIL  saveplace.js changed, and site/visit/giza.html still requests ?v=1" in o, PY_CACHE)
 
+# ---- the planner's heat warning (2026-11-17) ----------------------------------
+# heatWarning warns only in the top band (39 °C or more). Lowering it one band
+# would warn for every Cairo spring stop at 34 °C, which the weather page does
+# not call extreme; heat-warning.js's band-edge cases must catch it.
+case("the planner warns a band too early", "heat-warning.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "var top = BANDS[BANDS.length - 1], worst = null;",
+                  "var top = BANDS[BANDS.length - 2], worst = null;"),
+     lambda o: "FAIL below the top band" in o, f"node {HERE}/heat-warning.js")
+
 
 print()
 # The shard's own count, for mutate-shards.py: ran + other_shard == seen.
