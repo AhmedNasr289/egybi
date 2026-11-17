@@ -2270,3 +2270,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The cause:** the generator moved `href` and `src` up one folder. Its `\b(href|src)` pattern caught `data-src` only because `\b` matches after a hyphen, and it never matched `poster`.
 - **The fix:** the rule names every attribute that holds a site path: `href`, `src`, `data-href`, `data-src`, `poster` and `action`.
 - **The audit's gap:** static-audit.py checked `href` and `src` but not `poster`, so the broken file passed unseen. It now reads `poster`. Before the rebuild it fails on both broken posters; after it, it is clean. A new mutation case plants a missing poster, and it is caught.
+## 2026-11-17 — Script links stay in the reader's language, and the notes board loads its data
+- **What failed:** `twin-data.js` on #152's head (run 43987223658) found two problems.
+  - **The notes board's climate fetch:** ar/community.html and ru/community.html fetched `/ar/data/visit-climate.json` (and `/ru/…`). `notes.js` routed its API paths through `EGYBI.url` but not its own `getJSON()`. Fixed: `getJSON()` goes through it too (notes.js v4).
+  - **The link check was out of date:** it flagged `/ar/visit.html` as a wrong folder because it assumed When to go had no Arabic copy, which it has since this stage. It also showed that the links scripts write ("Every month, every site") still sent Arabic and Russian readers to the English page.
+- **The fix:**
+  - Translated pages now carry `<meta name="egybi-twins">`, written by the generator, which lists the pages with a copy in that language. `T.url()` keeps a link to one of those pages in the reader's language and sends everything else to the root (trip.js v5). English pages carry no list, so their links are unchanged.
+  - The check now expects the in-language path when a copy exists and the root path when not.
+- **Mutation cases:**
+  - The "untranslated page" case now uses prices.html, because visit.html has a copy and the old case could no longer fail.
+  - A new case disables the in-language branch of `T.url()` and must be caught.
