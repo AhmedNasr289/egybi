@@ -2093,6 +2093,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
 - **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.
 
+## 2026-11-16 — The briefing map shows its dots as soon as the map is on screen
+- **Why:** on the live home page at 1280x900 the map starts just below the fold (its top at 843 px). The sweep waited until 35% of the map was visible, so a reader who had scrolled only a little saw Egypt's north coast with no dots on it.
+- **What changed:**
+  - `assets/site-map.js` (v2) starts the sweep as soon as any part of the map is on screen (IntersectionObserver threshold 0), so the dots come in as the coast does.
+  - The motion itself is unchanged: opacity and transform only, none under reduced motion, a plain image without JavaScript.
+- **New case in `backend/verify/briefing-map.js`:** the page loads with the map entirely below the fold, scrolls until 60 px of it shows, and every dot on screen must be shown, or the check gives MAP EMPTY ON SCREEN.
+- **Mutation case:** the old 0.35 threshold restored must give MAP EMPTY ON SCREEN.
 ## 2026-11-16 — auth-return.js case 4 waits for the login exchange and says what happened
 - **Why:** run 43947896555 reported SIGN-IN NEVER HAPPENED once in four runs of identical code (#140, #141 and #142 passed it). Its line gave no way to tell whether a login request was sent at all.
 - **What was ruled out:** a late startup "who is signed in?" answer undoing the sign-in. `EGYBI.account.open` waits for that answer before showing the dialog, so in case 4 it always arrives first, and the only other thing that clears the sign-in is signing out.
@@ -2105,6 +2112,14 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The cause, found by those lines** (run 43962669112): the email field held "t@example.orga long enough password" and the password field nothing. The dialog moves focus to its first field 60 ms after opening (`auth.js` `setView`), and the test typed inside that window, so the focus jump landed mid-fill and no login was sent. The test now waits until the focus is inside the dialog before typing, in all three places it opens it. A reader cannot type within 60 ms of the dialog appearing, so the site is unchanged.
 - **The verdict order, and why:** case 4 now judges the redirect first, and judges the sign-in by the login exchange as well as the flag. Run 43947896555's mutation pass missed UNASKED REDIRECT because the order was the other way round. The mutated sign-in did happen and did redirect, then community.html's own startup check received the stub's "nobody signed in" and cleared the flag, so the case read SIGN-IN NEVER HAPPENED instead.
 
+## 2026-11-16 — briefing-map.js: two sections that could not report what they guard
+- **What main's mutation pass found** (run 43948810613, 106 of 109 proven), two map cases went uncaught:
+  - **"hidden without JavaScript":** the no-JS section called Playwright's `scrollIntoViewIfNeeded` on the map image, which waits for it to become visible. With the image hidden it timed out and threw, so the section never printed MAP HIDDEN WITHOUT JS.
+  - **"moving under reduced motion":** that section read the map 300 ms after scrolling, so what it saw depended on when the sweep happened to run.
+- **Fixes:**
+  - the no-JS section scrolls with a plain script call;
+  - the reduced-motion section waits a whole sweep (2.6 s) and counts every recorded animation start, and prints what it saw;
+  - every section now runs inside its own guard, so a crash is a named failure (SECTION "..." CRASHED) and the following sections still run.
 ## 2026-11-17 — The checks already on main that main's own mutation pass could not prove
 - **Why this is here:** main's mutation pass (run 43948810613) and this branch's own (run 43962643068) could not prove two briefing-map cases. The cases and the check are already on main, so this PR, the base of the train, must carry the fix to be green on its own head.
 - **The two cases:**
@@ -2112,3 +2127,11 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - **Moving under reduced motion:** the section read 300 ms after scrolling. It now waits a full sweep and prints what it saw, and the mutation case removes all three locks (egybi.css's site-wide `* { animation: none !important }` under reduce, the script's check and the stylesheet's query); with two removed, the page stayed still and the case could never fire.
 - **Also:** every section runs inside its own guard, so a crash is a named failure and the rest still run.
 - **Verified:** the verdict-order fix in this PR is proven by run 43962643068, where "return after confirming fires on an ordinary sign-in" was caught.
+## 2026-11-17 — The briefing map's order check: measured from the schedule, not the frame
+- **What failed:** on this PR's head (run 43971112849) and the stage 1 head (run 43971142792), the mutation case "briefing map dots all at once" came back NOISY. It caught the defect, but the clean run after the file was restored reported MAP ORDER WRONG on a correct page. Three other runs of the same check were clean.
+- **The cause:** the check timed each dot with `performance.now()` when its `animationstart` event arrived. On a busy runner, starts scheduled 70 ms apart can be delivered in the same frame, which breaks the "at least 30 ms apart" rule. It also took the last 18 events as one sweep, so a replayed sweep could mix two.
+- **The fix:**
+  - Each dot's start is now its animation's scheduled start (start time plus delay), which does not depend on frame delivery.
+  - Only each dot's latest start is used.
+  - A failure prints the order and the gaps it measured.
+- **And the harness:** mutate.py now prints what a checker said for any case that is not a clean pass. Before, a NOISY verdict left only the word, and the cause could not be found without a re-run.

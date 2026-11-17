@@ -67,9 +67,14 @@
   function watch() {
     if (reduce) { seen = true; return; }
     if (!('IntersectionObserver' in window)) { seen = true; play(); return; }
+    // Threshold 0, not 0.35 (2026-11-16): at 1280x900 the map starts just
+    // below the fold, and waiting for a third of it to show left a reader
+    // looking at Egypt's north coast with no dots on it. The sweep now starts
+    // as soon as any of the map is on screen, so the dots come in as the coast
+    // does.
     var io = new IntersectionObserver(function (es) {
-      if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); seen = true; play(); }
-    }, { threshold: 0.35 });
+      if (es.some(function (e) { return e.isIntersecting || e.intersectionRatio > 0; })) { io.disconnect(); seen = true; play(); }
+    }, { threshold: 0 });
     io.observe(fig);
   }
 

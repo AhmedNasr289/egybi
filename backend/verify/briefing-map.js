@@ -33,7 +33,7 @@ const { chromium, executablePath, BASE } = require('./env');
   // that hides the map without JavaScript went uncaught. A crash is now a
   // named failure and the next section still runs.
   const section = async (name, fn) => {
-    try { await fn(); } catch (e) { fail(`SECTION "${name}" CRASHED: ${String(e).split(String.fromCharCode(10))[0]}`); }
+    try { await fn(); } catch (e) { fail(`SECTION "${name}" CRASHED: ${String(e).split('\n')[0]}`); }
   };
   const block = async ctx => ctx.route('**/*', r => {
     const u = r.request().url();
@@ -66,7 +66,13 @@ const { chromium, executablePath, BASE } = require('./env');
       if (!c || !c.matches || !c.matches('#siteMap circle.s')) return;
       const a = c.getAnimations()[0];
       const props = a ? [...new Set((a.effect.getKeyframes() || []).flatMap(k => Object.keys(k)))] : [];
-      window.__mapStarts.push({ key: c.getAttribute('data-key'), order: +c.getAttribute('data-order'), t: performance.now(), props });
+      // t is when the animation was SCHEDULED to start (its start time plus
+      // its delay), not when this event happened to be delivered: on a busy
+      // runner two starts 70 ms apart can arrive in the same frame, which read
+      // as "all at once" on a correct page (runs 43971112849, 43971142792).
+      const sched = a && a.startTime != null ? a.startTime + (a.effect.getTiming().delay || 0) : null;
+      window.__mapStarts.push({ key: c.getAttribute('data-key'), order: +c.getAttribute('data-order'),
+                                t: sched != null ? sched : performance.now(), at: performance.now(), props });
     }, true);
   };
   const compare = (exp, act) => Object.keys(exp.colours).filter(k => exp.colours[k] && (act[k] || '').toLowerCase() !== exp.colours[k].toLowerCase());
@@ -97,13 +103,18 @@ const { chromium, executablePath, BASE } = require('./env');
       else console.log(`ok   every dot animated (${starts.length} starts recorded, ${Math.round(starts.length / 18)} sweep(s))`);
       // The last sweep: its 18 starts, in time order, must run north to south,
       // one after another (at least 30 ms apart; they are set 70 ms apart).
-      const last = starts.slice(-18).sort((x, y) => x.t - y.t);
+      // the latest start of each dot, so a sweep that replays cannot mix in
+      const latest = {};
+      starts.forEach(s => { if (!latest[s.key] || s.at >= latest[s.key].at) latest[s.key] = s; });
+      const last = Object.values(latest).sort((x, y) => x.t - y.t);
       const lat = await p.evaluate(() => { const o = {}; window.EGYBI.heat.sites.forEach(s => { o[s.key] = s.lat; }); return o; });
       const inOrder = last.length === 18 && last.every((s, i) => i === 0 || s.order > last[i - 1].order);
       const spaced = last.length === 18 && last.every((s, i) => i === 0 || s.t - last[i - 1].t >= 30);
       const byOrder = last.slice().sort((x, y) => x.order - y.order);
       const latOk = byOrder.every((s, i) => i === 0 || lat[s.key] <= lat[byOrder[i - 1].key]);
-      if (!inOrder || !spaced || !latOk) fail(`MAP ORDER WRONG: started in order ${inOrder}, one after another ${spaced}, north to south ${latOk}`);
+      const gaps = last.slice(1).map((s, i) => Math.round(s.t - last[i].t));
+      if (!inOrder || !spaced || !latOk) fail(`MAP ORDER WRONG: started in order ${inOrder}, one after another ${spaced}, north to south ${latOk}; ` +
+        `${last.length} dots, orders ${last.map(s => s.order).join(',')}, gaps ms ${gaps.join(',')}`);
       else console.log(`ok   north to south, one after another (${Math.round(last[17].t - last[0].t)} ms from first to last)`);
       const bad = [...new Set(starts.flatMap(s => s.props))].filter(x => !['offset', 'easing', 'composite', 'computedOffset', 'opacity', 'transform'].includes(x));
       if (bad.length) fail('MAP ANIMATES LAYOUT: ' + bad.join(', '));
@@ -134,6 +145,36 @@ const { chromium, executablePath, BASE } = require('./env');
       if (wrong.length) fail(`MAP NOT UPDATED: ${wrong.length} dots keep the old colours for July`);
       else console.log('ok   July dates recolour every dot');
     }
+    await ctx.close();
+  });
+
+  // ---- 1b. a map just showing above the fold ------------------------------------
+  // At 1280x900 the map starts below the fold. A reader who has scrolled until
+  // only its top edge shows must see the dots on that edge, not an empty coast
+  // (the first version waited for 35% of the map). Load with the map entirely
+  // below the fold, bring 60px of it into view, and every dot on screen must
+  // be shown: MAP EMPTY ON SCREEN.
+  await section('fold', async () => {
+    const ctx = await b.newContext({ reducedMotion: 'no-preference', viewport: { width: 1280, height: 420 } });
+    await block(ctx);
+    const p = await ctx.newPage();
+    await p.goto(BASE + '/index.html');
+    try { await p.waitForSelector('#siteMap svg circle.s', { state: 'attached', timeout: 10000 }); } catch (e) { /* counted below */ }
+    const below = await p.evaluate(() => document.getElementById('siteMap').getBoundingClientRect().top - innerHeight);
+    await p.evaluate(() => { const f = document.getElementById('siteMap'); window.scrollTo({ top: f.getBoundingClientRect().top + scrollY - innerHeight + 60, behavior: 'instant' }); });
+    // 'instant': the site scrolls smoothly (egybi.css); a gliding scroll
+    // brings the map into view late and the reading would see half a sweep.
+    await p.waitForTimeout(2600);
+    const r = await p.evaluate(() => {
+      const cs = [...document.querySelectorAll('#siteMap svg circle.s')];
+      const on = cs.filter(c => { const b = c.getBoundingClientRect(); return b.height > 0 && b.bottom > 0 && b.top < innerHeight; });
+      return { on: on.length, hidden: on.filter(c => +getComputedStyle(c).opacity < 0.99).length,
+               peek: Math.round(innerHeight - document.getElementById('siteMap').getBoundingClientRect().top) };
+    });
+    if (below <= 0) fail(`MAP EMPTY ON SCREEN: could not set the case up, the map was already on screen at load (${Math.round(below)}px)`);
+    else if (!r.on) fail(`MAP EMPTY ON SCREEN: no dot came into view with ${r.peek}px of the map showing`);
+    else if (r.hidden) fail(`MAP EMPTY ON SCREEN: with ${r.peek}px of the map showing, ${r.hidden} of the ${r.on} dots on screen stay hidden`);
+    else console.log(`ok   with ${r.peek}px of the map showing, its ${r.on} dots on screen are shown`);
     await ctx.close();
   });
 
