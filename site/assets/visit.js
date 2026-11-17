@@ -94,7 +94,7 @@
   }
 
   function load(path) {
-    return fetch(path, { cache: 'no-store' }).then(function (r) {
+    return fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url(path) : path), { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error(path + ' ' + r.status);
       return r.json();
     });

@@ -2236,6 +2236,16 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **And the harness:** mutate.py now prints what a checker said for any case that is not a clean pass. Before, a NOISY verdict left only the word, and the cause could not be found without a re-run.
 ## 2026-11-17 — The year strip's order check: the same scheduled-start timing
 - `year-strip.js` timed each month with `performance.now()` when its `animationstart` arrived, which is the same weakness that made the briefing map's order check flake. It now uses each cell's scheduled start (start time plus delay). It has not flaked yet; this removes the cause before it does.
+## 2026-11-17 — Trilingual stage 2b: When to go, Community, Places and the Atlas in Arabic and Russian
+- **What is new:** Arabic and Russian copies of visit.html, community.html, places.html and geospatial.html. That adds 315 entries per language and 8 sitemap URLs (71 to 79).
+- **One fix for every script, not one per script:** `egybi.js`, which every page loads first, now offers `EGYBI.url()`. It resolves the site's own paths (`data/`, `api/`, `auth/`) against its own address in `assets/`. `visit.js`, `places.js`, `geospatial.js`, `community.js` and `notes.js` fetch through it, so their translated copies load data instead of asking for `ar/data/...`. Six script versions are bumped, including `egybi.js` on all 197 pages, through the generator for the generated ones.
+- **The catalogue's tag rule, refined:** a translation must still carry exactly the English tags, but readable attribute values (`title`, `alt`, `aria-label`, `placeholder`) may be translated with the text around them. That is how the year strip's month abbreviations get tooltips in each language. The rule is tested both ways: a translated tooltip is accepted, and a changed `href`, `src` or `data-title` is still refused. The first draft let `data-title` through, because `\b` matches after a hyphen, and that control caught it.
+- **Checks:**
+  - `twin-data.js` now opens all seven data-loading pages in three languages, and treats `api/` and `auth/` requests like `data/`.
+  - A new mutation case breaks `EGYBI.url` and must be caught.
+  - CI screenshots add `ar/visit.html` and `ru/places.html`.
+  - A Russian title and description were shortened (seo.py).
+- **Review:** `backend/i18n/REVIEW.md` lists the four pages and what to read most carefully.
 ## 2026-11-17 — The year strip's sentence test reads the non-breaking space
 - **What failed:** Test (pipeline) failed on #145's head (`1ba6d35`) and on every PR above it. `test_heat_calendar` stripped tags from the findings but not entities, so after #145 joined each figure to °C with `&nbsp;`, it looked for `42 °C` with a plain space. The browser checks were all green, and that workflow was the only one watched, so this was missed until #150.
 - **The fix:** the test now asserts the markup carries `42&nbsp;°C` and has no figure followed by a plain space and °C. It then unescapes the text and checks the sentences as a reader sees them. All 206 pipeline tests pass, and the test fails if the non-breaking space is removed (control run).
@@ -2245,3 +2255,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The cause:** the generator moved `href` and `src` up one folder. Its `\b(href|src)` pattern caught `data-src` only because `\b` matches after a hyphen, and it never matched `poster`.
 - **The fix:** the rule names every attribute that holds a site path: `href`, `src`, `data-href`, `data-src`, `poster` and `action`.
 - **The audit's gap:** static-audit.py checked `href` and `src` but not `poster`, so the broken file passed unseen. It now reads `poster`. Before the rebuild it fails on both broken posters; after it, it is clean. A new mutation case plants a missing poster, and it is caught.
+## 2026-11-17 — Script links stay in the reader's language, and the notes board loads its data
+- **What failed:** `twin-data.js` on #152's head (run 43987223658) found two problems.
+  - **The notes board's climate fetch:** ar/community.html and ru/community.html fetched `/ar/data/visit-climate.json` (and `/ru/…`). `notes.js` routed its API paths through `EGYBI.url` but not its own `getJSON()`. Fixed: `getJSON()` goes through it too (notes.js v4).
+  - **The link check was out of date:** it flagged `/ar/visit.html` as a wrong folder because it assumed When to go had no Arabic copy, which it has since this stage. It also showed that the links scripts write ("Every month, every site") still sent Arabic and Russian readers to the English page.
+- **The fix:**
+  - Translated pages now carry `<meta name="egybi-twins">`, written by the generator, which lists the pages with a copy in that language. `T.url()` keeps a link to one of those pages in the reader's language and sends everything else to the root (trip.js v5). English pages carry no list, so their links are unchanged.
+  - The check now expects the in-language path when a copy exists and the root path when not.
+- **Mutation cases:**
+  - The "untranslated page" case now uses prices.html, because visit.html has a copy and the old case could no longer fail.
+  - A new case disables the in-language branch of `T.url()` and must be caught.

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Атлас Египта — мухафазы, медицина, школы и наследие | EgyBI</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14110C">
+<script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/auth/*"}},{"not":{"href_matches":"/api/*"}},{"not":{"href_matches":"/account.html"}}]},"eagerness":"moderate"}]}</script>
+<meta name="description" content="Интерактивная карта Египта с источниками: 27 мухафаз по цифрам CAPMAS, больницы и школы из OpenStreetMap и семь объектов Всемирного наследия ЮНЕСКО.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- .js: motion.js may hide [data-aos] until it reveals them; without it, egybi.css shows everything (S1, S4). -->
+<script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.documentElement.classList.contains("mo-ready"))document.documentElement.classList.remove("js")},4000)</script>
+<link href="../assets/vendor/leaflet.css" rel="stylesheet">
+<link href="../assets/egybi.css?v=50" rel="stylesheet">
+<style>
+  /* atlas map card */
+  .atlas-box { position: relative; height: clamp(340px, 56vw, 540px); border-radius: var(--radius); overflow: hidden; }
+  .atlas-note { background: var(--papyrus-2); border: 1px solid var(--line-light); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 12px 16px; margin: 14px 0 0; font-size: var(--fs-sm); color: var(--ink-soft); line-height: 1.6; }
+  .map-toggle:disabled { opacity: .45; cursor: not-allowed; }
+  .ov-toggle { font-size: var(--fs-sm); font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px dashed var(--line-light); background: var(--papyrus); color: var(--ink-soft); cursor: pointer; transition: all .15s; }
+  .ov-toggle:hover:not(:disabled), .ov-toggle:focus-visible { border-color: var(--gold); outline: none; }
+  .ov-toggle.on { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid var(--gold); }
+  .ov-toggle:disabled { opacity: .45; cursor: not-allowed; }
+  /* symbol key for the point overlays — the colour legend covers bins only */
+  .marker-key { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line-light); }
+  .mk-row { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .mk-item { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-xs); color: var(--ink-soft); }
+  .mk-dot { display: inline-block; border-radius: 50%; border: 1.5px solid #fff;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.18); flex: none; }
+
+  /* governorate detail panel */
+  .gov-detail { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; margin-top: 14px; }
+  .gov-detail h3 { margin: 0 0 10px; color: var(--blue-deep); font-size: var(--fs-md); }
+  .gd-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--line-light); font-size: var(--fs-sm); color: var(--ink-soft); }
+  .gd-row:first-of-type { border-top: none; }
+  .gd-row strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .gd-note { font-size: var(--fs-xs); color: var(--ink-soft); margin: 10px 0 0; }
+
+  /* governorate table */
+  .gov-table-wrap { overflow-x: auto; }
+  .gov-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+  .gov-table th { text-align: left; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); padding: 9px 12px; border-bottom: 2px solid var(--line-light); white-space: nowrap; }
+  .gov-table td { padding: 8px 12px; border-bottom: 1px solid var(--line-light); color: var(--ink); font-variant-numeric: tabular-nums; }
+  .gov-table td:first-child { font-weight: 600; color: var(--blue-deep); }
+  .gov-table tr:hover td { background: var(--papyrus-2); }
+
+  /* heritage cards */
+  .wh-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); margin-top: 20px; }
+  .wh-card { background: var(--papyrus-2); border: 1px solid var(--line-light); border-radius: var(--radius); padding: 18px 20px; transition: border-color .2s, box-shadow .2s; }
+  .wh-card:hover { border-color: var(--gold); box-shadow: var(--shadow-light); }
+  .wh-year { font-size: var(--fs-xs); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-ink); }
+  .wh-card h3 { margin: 6px 0 8px; color: var(--blue-deep); font-size: var(--fs-base); line-height: 1.4; }
+  .wh-coords { margin: 0; font-size: var(--fs-xs); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+</style>
+  <link rel="canonical" href="https://egybi.com/ru/geospatial.html">
+  <meta property="og:site_name" content="EgyBI">
+  <meta property="og:title" content="Атлас Египта — страна на одной карте с источниками · EgyBI">
+  <meta property="og:description" content="Все 27 мухафаз по реальным цифрам, больницы и школы из OSM и семь объектов Всемирного наследия ЮНЕСКО — у каждого слоя источник и дата.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://egybi.com/ru/geospatial.html">
+  <meta property="og:image" content="https://egybi.com/og-geospatial.png?v=3">
+<meta property="og:image:alt" content="Атлас Египта — мухафазы, здравоохранение, школы и наследие">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Атлас Египта — страна на одной карте с источниками · EgyBI">
+  <meta name="twitter:image" content="https://egybi.com/og-geospatial.png?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://egybi.com/ru/geospatial.html#page", "url": "https://egybi.com/ru/geospatial.html", "name": "Egypt Atlas", "isPartOf": {"@id": "https://egybi.com/#site"}, "inLanguage": "ru"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Egypt Atlas", "item": "https://egybi.com/ru/geospatial.html"}]}]}
+</script>
+<!-- I18N-HEAD:START - generated by backend/pipeline/pages/i18n.py; edit that, not this. -->
+<link rel="alternate" hreflang="en" href="https://egybi.com/geospatial.html">
+<link rel="alternate" hreflang="ar" href="https://egybi.com/ar/geospatial.html">
+<link rel="alternate" hreflang="ru" href="https://egybi.com/ru/geospatial.html">
+<link rel="alternate" hreflang="x-default" href="https://egybi.com/geospatial.html">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html">
+<link href="../assets/i18n.css?v=1" rel="stylesheet">
+<script src="../assets/lang.js?v=1" defer></script>
+<!-- I18N-HEAD:END -->
+</head>
+<body>
+<a class="skip-link" href="#main">Перейти к содержанию</a>
+
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks" aria-label="Основная навигация">
+      <a href="index.html">Главная</a>
+      <a href="plan.html">Маршрут</a>
+      <a href="visit.html">Когда ехать</a>
+      <a href="fair-prices.html">Честные цены</a>
+      <a href="hieroglyphs.html">Иероглифы</a>
+      <a href="dossier.html">Досье</a>
+      <a href="places.html">Места</a>
+      <a href="geospatial.html" class="active">Атлас</a>
+      <a href="../stories.html">Истории</a>
+      <a href="community.html">Сообщество</a>
+      <a href="../explore.html">Данные</a>
+      <a href="about.html">О проекте</a>
+      <a class="nav-only-mobile" href="ask.html">Проверка плана</a>
+      <a class="nav-only-mobile" href="/ru/index.html#newsletter">Рассылка</a>
+    <!-- LANG-LINKS:START --><a class="nav-only-mobile lang-link" href="../geospatial.html" hreflang="en" lang="en" data-lang="en">English</a><a class="nav-only-mobile lang-link" href="../ar/geospatial.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><!-- LANG-LINKS:END -->
+</nav>
+    <div class="nav-actions"><!-- LANG-SWITCH:START --><details class="lang-switch"><summary aria-label="Язык: Русский"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> RU</summary><div class="lang-menu"><a href="../geospatial.html" hreflang="en" lang="en" data-lang="en">English</a><a href="../ar/geospatial.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><a href="geospatial.html" hreflang="ru" lang="ru" data-lang="ru" aria-current="true">Русский</a></div></details><!-- LANG-SWITCH:END --><a class="cta" href="ask.html">Проверка плана</a></div>
+    <button class="nav-toggle" aria-label="Меню" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="surface-hero center" id="top">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Атлас</div>
+    <h1 data-aos="fade-up">Египет на одной карте с источниками.</h1>
+    <p class="page-intro" data-aos="fade-up">Каждый слой этой карты настоящий, с источником и датой: 27 мухафаз, окрашенных по официальным цифрам, больницы и школы так, как их нанесло сообщество OpenStreetMap, и семь объектов Всемирного наследия ЮНЕСКО — для изучения, а не для навигации или экстренных случаев.</p>
+  </div>
+</section>
+
+<nav class="on-this-page" data-wayfinding aria-label="На этой странице"></nav>
+
+<!-- MAP -->
+<section class="surface-light" id="map" data-nav="Карта">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Карта</div>
+    <h2 data-aos="fade-up">Выберите показатель и нажмите на мухафазу.</h2>
+    <p class="lead" data-aos="fade-up">Цветные кнопки меняют то, что показывает карта. Пунктирные кнопки включают и выключают точечные слои. Нажмите на мухафазу, чтобы открыть её полный профиль.</p>
+    <div class="chart-card" style="margin-top:22px;" data-aos="zoom-in">
+      <div class="map-toolbar" role="group" aria-label="Выберите показатель карты">
+        <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Цвет по:</span>
+        <button type="button" class="map-toggle on" data-metric="population">Население</button>
+        <button type="button" class="map-toggle" data-metric="density">Плотность</button>
+        <button type="button" class="map-toggle" data-metric="urban_pct">Доля горожан</button>
+        <button type="button" class="map-toggle" data-metric="growth">Рост</button>
+        <button type="button" class="map-toggle" data-metric="area_km2">Площадь</button>
+        <button type="button" class="map-toggle" data-metric="health" disabled title="Появится после первой сборки слоёв">Медучреждения</button>
+        <button type="button" class="map-toggle" data-metric="schools" disabled title="Появится после первой сборки слоёв">Школы</button>
+      </div>
+      <div class="map-toolbar" role="group" aria-label="Включить или выключить точечные слои">
+        <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Слои:</span>
+        <button type="button" class="ov-toggle" data-overlay="health" disabled title="Появится после первой сборки слоёв">Больницы и поликлиники</button>
+        <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="Появится после первой сборки слоёв">Объекты Всемирного наследия</button>
+      </div>
+      <section class="atlas-box" id="atlasMap" aria-label="Интерактивная карта 27 мухафаз Египта с выбираемыми слоями данных"></section>
+      <!-- A way in that is not the map. Fourteen of the twenty-seven
+           governorates render under 24px wide on a 390px screen — Gharbia is
+           11x14 — so on a phone half the country cannot reliably be tapped, and
+           no amount of styling changes that: the shapes are the real shapes.
+           WCAG 2.5.8 allows a small target where an equivalent full-size
+           control does the same job on the same page. This is that control,
+           and it is visible rather than screen-reader-only, because the reader
+           who cannot hit Gharbia with a thumb is looking right at it. -->
+      <div class="map-toolbar" role="group" aria-label="Открыть мухафазу из списка">
+        <label for="govPick" style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Или выберите:</label>
+        <select id="govPick" class="gov-pick"><option value="">Выберите мухафазу…</option></select>
+      </div>
+      <div class="map-legend" id="atlasLegend"></div>
+      <div class="map-legend marker-key" id="atlasKey" hidden></div>
+      <div class="gov-detail" id="govDetail" hidden></div>
+      <div class="atlas-note" id="layerNote">Загружаем слои…</div>
+      <p class="chart-cap">Границы: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), упрощены и встроены для работы офлайн — никакие внешние картографические сервисы не вызываются. Население, плотность и площадь: база знаний EgyBI (<strong>CAPMAS</strong>, ноябрь 2023); рост — в сравнении с переписью 2017 года; доля горожан — приближённая оценка CAPMAS около 2016 года (±1–2 пункта). Больницы, поликлиники и школы: <strong>© участники OpenStreetMap</strong> (ODbL) — нанесены сообществом, поэтому показывают географическую <em>картину</em>, а не официальный реестр. Объекты наследия: <strong>Центр всемирного наследия ЮНЕСКО</strong>. Цвета — квантильные группы (шесть групп равной численности), чтобы сильный перекос оставался читаемым.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GOVERNORATES -->
+<section class="surface-light-2" id="governorates" data-nav="Мухафазы">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Все 27 рядом</div>
+    <h2 data-aos="fade-up">Все мухафазы в одной таблице.</h2>
+    <p class="lead" data-aos="fade-up">Отсортировано по населению. Столбцы медучреждений и школ заполняются после сборки слоёв карты, а до тех пор показывают «—», а не выдуманный ноль.</p>
+    <div class="chart-card gov-table-wrap" style="margin-top:22px;" data-aos="fade-up">
+      <table class="gov-table" data-query="governorates"
+         data-query-note="Coverage note: the queryable table holds the 10 most populous governorates, not all 27. The map and the table on this page use the full set — this slice is smaller, and saying so is the point."
+             data-query-sql="SELECT name, population_millions, area_km2,
+       ROUND(population_millions * 1000000.0 / area_km2) AS density_per_km2
+FROM governorates
+ORDER BY population_millions DESC;"
+             data-query-source="CAPMAS population estimates + governorate areas"
+             data-query-asof="2024"
+             data-query-json="data/geo-health.json">
+        <thead><tr><th scope="col">Мухафаза</th><th scope="col">Население</th><th scope="col">Плотность /км²</th><th scope="col">Медучреждения (OSM)</th><th scope="col">Школы (OSM)</th></tr></thead>
+        <tbody id="govTableBody"><tr><td colspan="5">Загрузка…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- HERITAGE -->
+<section class="surface-light" id="heritage" data-nav="Наследие">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>Семь объектов, один список</div>
+    <h2 data-aos="fade-up">Египет в списке Всемирного наследия.</h2>
+    <p class="lead" data-aos="fade-up">Объекты Египта, внесённые в список Всемирного наследия ЮНЕСКО, — ровно так, как они записаны в списке; каждый из них также отмечен золотым маркером на карте выше.</p>
+    <div class="atlas-note" id="heritageEmpty" hidden>Этот список появится автоматически после того, как первый запуск «Build Atlas geo layers» заполнит файл данных о наследии.</div>
+    <div class="wh-grid" id="heritageCards"></div>
+    <p class="chart-cap" id="heritageMeta" style="margin-top:16px;"></p>
+  </div>
+</section>
+
+<!-- VISIT-GUIDES:START - generated by backend/pipeline/build_static_pages.py.
+     Crawlable links to every generated page; edit the generator, not this. -->
+<section class="surface-light-2" id="guides" data-nav="Путеводители">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="ra"></span>Путеводители</div>
+    <h2>18 мест, у каждого — путеводитель по месяцам.</h2>
+    <p class="lead" style="max-width:68ch;">Дневная жара, ночной холод, осадки и часы золотого света для каждого месяца, измеренные в координатах самого места. Каждая карточка объекта наследия выше ведёт к путеводителям в пределах 20 км от него.</p>
+    <div class="chip-row"><a class="chip" href="../visit/abu-mena.html" data-guide="abu-mena" data-lat="30.8419" data-lon="29.6647">Абу-Мена</a><a class="chip" href="../visit/abu-simbel.html" data-guide="abu-simbel" data-lat="22.3372" data-lon="31.6258">Абу-Симбел</a><a class="chip" href="../visit/abydos.html" data-guide="abydos" data-lat="26.1847" data-lon="31.9194">Абидос</a><a class="chip" href="../visit/alexandria.html" data-guide="alexandria" data-lat="31.2001" data-lon="29.9187">Александрия</a><a class="chip" href="../visit/dahab.html" data-guide="dahab" data-lat="28.5091" data-lon="34.5136">Дахаб</a><a class="chip" href="../visit/dendera.html" data-guide="dendera" data-lat="26.1417" data-lon="32.6700">Храм в Дендере</a><a class="chip" href="../visit/giza.html" data-guide="giza" data-lat="29.9773" data-lon="31.1325">Пирамиды Гизы</a><a class="chip" href="../visit/islamic-cairo.html" data-guide="islamic-cairo" data-lat="30.0444" data-lon="31.2620">Исторический Каир</a><a class="chip" href="../visit/hurghada.html" data-guide="hurghada" data-lat="27.2579" data-lon="33.8116">Хургада</a><a class="chip" href="../visit/karnak.html" data-guide="karnak" data-lat="25.7188" data-lon="32.6573">Карнакский храм</a><a class="chip" href="../visit/philae.html" data-guide="philae" data-lat="24.0256" data-lon="32.8843">Храм Филы</a><a class="chip" href="../visit/st-catherine.html" data-guide="st-catherine" data-lat="28.5559" data-lon="33.9760">Монастырь Святой Екатерины</a><a class="chip" href="../visit/saqqara.html" data-guide="saqqara" data-lat="29.8712" data-lon="31.2165">Саккара</a><a class="chip" href="../visit/siwa.html" data-guide="siwa" data-lat="29.2041" data-lon="25.5195">Оазис Сива</a><a class="chip" href="../visit/suez-canal.html" data-guide="suez-canal" data-lat="30.5852" data-lon="32.2715">Суэцкий канал у Исмаилии</a><a class="chip" href="../visit/valley-kings.html" data-guide="valley-kings" data-lat="25.7402" data-lon="32.6014">Долина царей</a><a class="chip" href="../visit/wadi-al-hitan.html" data-guide="wadi-al-hitan" data-lat="29.2694" data-lon="30.0417">Вади-аль-Хитан</a><a class="chip" href="../visit/white-desert.html" data-guide="white-desert" data-lat="27.2000" data-lon="28.1833">Белая пустыня</a></div>
+  </div>
+</section>
+<!-- VISIT-GUIDES:END -->
+
+<!-- METHOD -->
+<section class="surface-light-2" id="method" data-nav="Метод и источники">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>В чём честность этой страницы</div>
+    <h2 data-aos="fade-up">Метод, источники и чем эта карта не является.</h2>
+    <div class="grid grid-2" style="margin-top:26px;">
+      <div class="chart-card" data-aos="fade-up">
+        <h3>Откуда каждый слой</h3>
+        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">Границы мухафаз — <strong>geoBoundaries.org</strong> (CC-BY 4.0), упрощены и встроены в страницу, поэтому никакие внешние картографические сервисы не вызываются. Демографические цифры взяты из той же базы знаний на данных CAPMAS, к которой обращается каждая SQL-задача на сайте. Больницы, поликлиники и школы — из <strong>OpenStreetMap</strong> (© участники OpenStreetMap, ODbL), карты, которую ведёт сообщество, а значит, с реальными пробелами в охвате: эти слои показывают, <em>что нанесено на карту</em>, а это не то же самое, что официальный реестр всего существующего. Объекты наследия — из открытого списка <strong>Центра всемирного наследия ЮНЕСКО</strong>. Файл каждого слоя хранит дату своей загрузки, она показана на этой странице.</p>
+      </div>
+      <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>Чем эта карта не является</h3>
+        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">Эта страница носит <strong>исключительно информационный и образовательный характер</strong>. Слой здравоохранения — не справочник медицинской помощи и ничего не говорит о качестве, вместимости или часах работы; при реальной медицинской необходимости обращайтесь к официальным каналам министерства здравоохранения. Подсчёты по мухафазам сделаны по упрощённым границам, поэтому учреждение прямо на границе может попасть в соседнюю мухафазу. Ничто здесь не является советом. Если цифра приблизительна или занижена, подпись говорит об этом, а не скрывает, — это то же <span style="color:var(--gold-ink);font-weight:600;">правило честности данных с источниками</span>, на котором держится весь сайт.</p>
+      </div>
+    </div>
+    <div class="atlas-note" style="margin-top:18px;" data-aos="fade-up"><strong>Скоро в Атласе:</strong> автоматические ежедневные слои — землетрясения в Египте и Красном море (USGS) и воздушное движение в реальном времени (OpenSky) — на тех же конвейерах загрузки, проверки и фиксации, которые уже каждое утро обновляют страницы цен и курсов.</div>
+  </div>
+</section>
+
+<!-- NEXT STEPS -->
+<section class="surface-light next-steps center">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Куда дальше</div>
+    <h2>Продолжайте изучать данные.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;">
+      <a class="ns-card" href="../explore.html"><span class="ns-k">Обзор</span><h3>Египет в графиках &rarr;</h3><p>Около 23 BI-дашбордов об экономике, обществе и инфраструктуре.</p></a>
+      <a class="ns-card" href="../explore.html"><span class="ns-k">Обзор</span><h3>Египет в графиках &rarr;</h3><p>Два десятка графиков с источниками об экономике, обществе, земле и наследии &mdash; у каждой цифры источник и дата.</p></a>
+      <a class="ns-card" href="../prices.html"><span class="ns-k">Цены</span><h3>Цены сегодня &rarr;</h3><p>Ежедневные розничные и оптовые цены с официального портала.</p></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Планируйте Египет честно — каждая цифра с источником и датой.</p></div>
+    <div><h2 class="foot-h">Спланировать поездку</h2><a href="plan.html">Составить маршрут</a><a href="visit.html">Когда ехать</a><a href="fair-prices.html">Честные цены</a><a href="hieroglyphs.html">Ваше имя иероглифами</a><a href="dossier.html">Досье</a><a href="ask.html">Проверка плана</a></div>
+    <div><h2 class="foot-h">Египет в данных</h2><a href="../explore.html">Данные о Египте</a><a href="geospatial.html">Атлас Египта</a><a href="places.html">Места</a><a href="../stories.html">Истории в данных</a><a href="../streets.html">Оценка улиц</a><a href="../prices.html">Цены за день</a><a href="../stocks.html">Фондовый рынок</a><a href="../invest.html">Где строит Египет</a></div>
+    <div><h2 class="foot-h">Ещё</h2><a href="../blog.html">Блог</a><a href="community.html">Сообщество</a><a href="about.html">Идея и образ</a><a href="index.html#newsletter">Рассылка</a></div>
+    <div><h2 class="foot-h">Источники данных</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">Всемирный банк</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Каждая цифра настоящая и с источником, а там, где источники действительно расходятся, спор отмечен, а не сглажен.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Конфиденциальность и cookie</a></div>
+<p class="i18n-note">Эту страницу перевёл EgyBI; перевод ждёт проверки носителем языка. <a href="../geospatial.html" hreflang="en" lang="en">English</a></p>
+</footer>
+
+<script src="../assets/vendor/leaflet.js"></script>
+<script src="../assets/mapkit.js?v=14"></script>
+<script src="../assets/egybi.js?v=5"></script>
+<script src="../assets/query.js?v=1"></script>
+<script src="../assets/glyphs.js?v=3"></script>
+<script src="../assets/wayfinding.js?v=1"></script>
+<script src="../assets/egypt-geo.js?v=2"></script>
+<script src="../assets/egfmt.js?v=4"></script>
+<script src="../assets/geospatial.js?v=13"></script>
+<script src="../assets/motion.js?v=5"></script>
+<script>window.EGYBI_AUTH = { base: '../auth/' };</script>
+  <script src="../assets/analytics.js?v=2" defer></script>
+</body>
+</html>

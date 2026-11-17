@@ -8,6 +8,8 @@
 (function () {
   var CFG = window.EGYBI_COMMUNITY || {};
   var ENDPOINT = CFG.endpoint || 'api/community.php';
+  // the site's path, not the page's (the page may be ar/community.html)
+  if (window.EGYBI && window.EGYBI.url) ENDPOINT = window.EGYBI.url(ENDPOINT);
 
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
   function fmt(ts) {

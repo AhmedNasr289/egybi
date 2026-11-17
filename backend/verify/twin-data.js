@@ -11,7 +11,10 @@
    For each of index, plan and fair-prices, in English, Arabic and Russian,
    every other host blocked:
    - no same-origin request answers 400 or more: TWIN REQUEST FAILED;
-   - every data/*.json request goes to the site's data/ folder:
+   (since 2b also visit, places, geospatial and community, whose scripts go
+   through EGYBI.url in egybi.js)
+   - every data/*.json and api/*.php request goes to the site's own data/,
+     api/ or auth/ folder:
      TWIN DATA FROM WRONG FOLDER;
    - each page's data reached the page (home: the rate table and the
      briefing; prices: the price groups; planner: the climate file):
@@ -20,12 +23,26 @@
      the site root's copy: TWIN LINK WRONG FOLDER.
 
    Exits 1 on any failure. */
+const fs = require('fs');
+const path = require('path');
 const { chromium, executablePath, BASE } = require('./env');
+const SITE = path.join(__dirname, '..', '..', 'site');
 
-const PAGES = ['index.html', 'plan.html', 'fair-prices.html'];
+const PAGES = ['index.html', 'plan.html', 'fair-prices.html', 'visit.html', 'places.html', 'geospatial.html', 'community.html'];
+// the file each page must load, for the pages with no on-screen marker below
+const NEEDS = {
+  'plan.html': '/data/visit-climate.json',
+  'visit.html': '/data/visit-climate.json',
+  'places.html': '/data/geo-places.json',
+  'geospatial.html': '/data/geo-health.json',
+  'community.html': '/api/community.php',
+};
 const LANGS = ['', 'ar/', 'ru/'];
 // pages a script links to that have no translated copy
+// pages the scripts write links to; a link must stay in the reader's
+// language when that page has a copy there, and go to the root when not
 const ROOTED = ['visit.html', 'prices.html', 'account.html'];
+const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, name));
 
 (async () => {
   const b = await chromium.launch({ executablePath });
@@ -45,13 +62,13 @@ const ROOTED = ['visit.html', 'prices.html', 'account.html'];
         const u = r.url();
         if (!u.startsWith(BASE)) return;
         if (r.status() >= 400) bad.push(r.status() + ' ' + u.slice(BASE.length));
-        if (/\.json(\?|$)/.test(u)) data.push({ path: new URL(u).pathname, status: r.status() });
+        if (/\.(json|php)(\?|$)/.test(u)) data.push({ path: new URL(u).pathname, status: r.status() });
       });
       await p.goto(`${BASE}/${lang}${page}`, { waitUntil: 'load' });
       await p.waitForLoadState('networkidle').catch(() => {});
 
       if (bad.length) fail(`TWIN REQUEST FAILED: ${where} got ${bad.slice(0, 4).join(', ')}`);
-      const wrong = data.filter(d => !d.path.startsWith('/data/'));
+      const wrong = data.filter(d => !/^\/(data|api|auth)\//.test(d.path));
       if (wrong.length) fail(`TWIN DATA FROM WRONG FOLDER: ${where} asked for ${wrong.map(d => d.path).join(', ')}`);
 
       let loaded;
@@ -67,14 +84,17 @@ const ROOTED = ['visit.html', 'prices.html', 'account.html'];
           return !!g && g.children.length > 0;
         }, null, { timeout: 8000 }).then(() => true, () => false);
       } else {
-        loaded = data.some(d => d.path === '/data/visit-climate.json' && d.status === 200);
+        loaded = data.some(d => d.path === NEEDS[page] && d.status === 200);
       }
       if (!loaded) fail(`TWIN DATA NOT LOADED: ${where} (data requests: ${data.map(d => d.status + ' ' + d.path).join(', ') || 'none'})`);
 
       const links = await p.evaluate(rooted => [...document.querySelectorAll('main a[href]')]
         .map(a => a.href)
         .filter(h => rooted.some(n => new URL(h).pathname.endsWith('/' + n))), ROOTED);
-      const off = links.filter(h => !ROOTED.some(n => new URL(h).pathname === '/' + n));
+      const off = links.filter(h => {
+        const p = new URL(h).pathname, name = p.split('/').pop();
+        return p !== (hasTwin(lang, name) ? '/' + lang + name : '/' + name);
+      });
       if (off.length) fail(`TWIN LINK WRONG FOLDER: ${where} links to ${off.map(h => new URL(h).pathname).join(', ')}`);
 
       console.log(`${where}: ${data.length} data file(s), ${links.length} rooted link(s), ${bad.length} failed request(s)`);
