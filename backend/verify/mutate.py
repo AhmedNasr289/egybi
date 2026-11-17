@@ -915,6 +915,19 @@ case("a cron workflow whose alert misses a timeout", "workflow-audit.py",
      lambda o: "refresh-streets: fires unattended" in o and "CANCELLED" in o,
      PY_WF)
 
+# ---- 42b. a self-cancelling workflow that alerts on its superseded runs ------
+# The other side of 42. On 2026-11-17 the #167 merge cancelled main's #166 run;
+# Verify's `mutation` job, gated `always() && ...`, still ran on the cancelled
+# shards and alerted on issue #155. Putting always() back has to turn the
+# audit red.
+case("a self-cancelling workflow that alerts on superseded runs", "workflow-audit.py",
+     [".github/workflows/verify-browser.yml"],
+     lambda: edit(".github/workflows/verify-browser.yml",
+                  "if: ${{ !cancelled() && needs.gate.outputs.run == 'true' && needs.gate.outputs.mutate == 'true' }}",
+                  "if: ${{ always() && needs.gate.outputs.run == 'true' && needs.gate.outputs.mutate == 'true' }}"),
+     lambda o: "verify-browser: cancels superseded runs" in o,
+     PY_WF)
+
 
 # ---- 41. a committing workflow whose push guards moved into a script -------
 # On 2026-11-04 build-pages and refresh-prices began committing through

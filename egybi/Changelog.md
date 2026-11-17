@@ -2371,3 +2371,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the sleepers to Luxor and Aswan leave from the Upper Egypt (Bashtil) station, opened in October 2024;
   - Aswan to Abu Simbel is 275 km by road, with a daily bus at 08:00.
 - **A row with no link must say what was searched.** `coverage.py` fails a hand-curated row with no `source_url` unless its source begins "Searched". New mutation case: "a row with no source link that does not say what was searched".
+## 2026-11-17 — No failure alert for a run that a newer push cancelled
+- **What happened:** the #167 merge pushed to main two minutes after the #166 merge. Verify (browser) cancels a superseded run on the same branch, so the #166 run was cancelled. Its `mutation` job is gated `if: always() && ...`, so it still ran on the cancelled shards, failed, and posted an alert on issue #155. Nothing was broken: the newer run covers both merges.
+- **The fix:** the job is now gated `!cancelled()`. A run cancelled by a newer push skips it. A shard killed at its own 40-minute limit is a cancelled job in a run that was not cancelled, so the job still runs and still alerts, which is the case the alert exists for.
+- **Check:** `workflow-audit.py` now fails a workflow that cancels superseded runs yet has an alert that can run on a cancelled run. It flagged exactly this job before the fix. New mutation case: "a self-cancelling workflow that alerts on superseded runs".
