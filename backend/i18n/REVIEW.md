@@ -236,3 +236,17 @@ Please check:
 - the Russian city names: Думьят, Загазиг, Мансура, «города Суэцкого канала»;
 - the Careem row, which must say coverage is not confirmed, not that Careem
   is absent.
+
+## Arriving in Egypt: travelling alone, and Russia or Kazakhstan (2026-11-17)
+
+Two new sections (23 lines per language).
+
+Please check:
+- the safety rows, word by word against the English: they repeat the UK
+  government's advice and must not soften or add to it;
+- Arabic row "ركوب التاكسي وحدك": it addresses a woman («فأرسلي») because the
+  advice is for women travelling alone; confirm that reads right next to the
+  masculine form used elsewhere;
+- Russian «Если едете одна» and «когда вы одна»: feminine on purpose, for the
+  same reason;
+- Arabic «رابطة الدول المستقلة» for CIS, and «مير» for the Mir card.

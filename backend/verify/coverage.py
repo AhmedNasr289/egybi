@@ -226,6 +226,9 @@ CADENCE = {  # workflow -> max days a file may age before the page is misciting
 # Files compiled by hand from named sources (no workflow writes them), with the
 # number of days before each must be re-read against its sources.
 HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "arrival.json": 60, "opening-hours.json": 90}
+# Governments' own travel advice for Egypt, the only sources a safety row may
+# cite: UK, US, Australia, Canada, Ireland.
+OFFICIAL_ADVICE = {"gov.uk", "travel.state.gov", "smartraveller.gov.au", "travel.gc.ca", "ireland.ie", "dfa.ie"}
 writers = {}
 for wf in posix_glob(".github/workflows/*.yml"):
     t = Path(wf).read_text(encoding="utf-8")
@@ -299,6 +302,14 @@ for name, limit in HAND_CURATED.items():
             if age > limit:
                 findings["price row past its re-check date"].append(
                     f"{name}: {r.get('key')} last checked {r['checked']}, {age}d ago (re-read every {limit}d)")
+            # Safety advice is the costliest thing to get wrong, so a row in a
+            # "travelling alone" group must cite a government's own travel
+            # advice, never a blog or a forum (2026-11-17).
+            if g.get("key") == "alone":
+                host = re.sub(r"^https?://(www\.)?", "", str(r.get("source_url") or "")).split("/")[0]
+                if host not in OFFICIAL_ADVICE:
+                    findings["safety row not sourced from official travel advice"].append(
+                        f"{name}: {r.get('key')} cites {host or 'nothing'}")
             # A row with no link must say what was searched and when ("Searched
             # 17 Nov 2026: no city list on careem.com"). A blank or bare source
             # would read as a sourced fact with the source left off.
