@@ -296,6 +296,6 @@ Please check:
 - «الحرارة في كل موقع خلال %m.» and «Жара по каждому месту: %m.»;
 - the Russian lead «… в месяце «%m» …», which quotes the month name to
   avoid declining it; a smoother wording is welcome;
-- «%m: %n يوم» for "July, days: 3": «يوم» after numbers 3 to 10 should be
-  «أيام»; if this reads wrong, say which form you would use;
+- «عدد الأيام في %m: %n» for "July, days: 3" (worded to avoid number-noun
+  agreement, which would need a different noun form for 1, 2, 3-10 and 11+);
 - the heat legend bands, «٢١ °م أو أقل» … «٣٩ °م أو أكثر».
