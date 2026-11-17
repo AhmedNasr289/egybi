@@ -340,7 +340,7 @@ OpenStreetMap	OpenStreetMap
 Fair Prices in Egypt — Tips, Entry and Rides, Sourced | EgyBI	Честные цены в Египте — чаевые, билеты и поездки | EgyBI
 What tips, entry and rides in Egypt should cost, as named guides publish them, beside official daily market prices — converted at today&rsquo;s rate.	Сколько в Египте должны стоить чаевые, входные билеты и поездки по данным названных путеводителей, рядом с официальными рыночными ценами — по курсу на сегодня.
 <span data-glyph="maat"></span> Fair prices &middot; converted at today&rsquo;s rate &middot; every figure attributed	<span data-glyph="maat"></span> Честные цены &middot; по сегодняшнему курсу &middot; у каждой цифры указан источник
-There is no official price list for a camel ride or a tip. So this page shows what named guides publish, who they are, when they said it and where they disagree &mdash; next to the official market prices Egypt&rsquo;s Cabinet publishes every day.	Официального прейскуранта на прогулку на верблюде или чаевые нет. Поэтому эта страница показывает, что публикуют названные путеводители, кто они, когда это сказано и в чём они расходятся, &mdash; рядом с официальными рыночными ценами, которые Кабинет министров Египта публикует каждый день.
+Entry tickets have an official price, and we quote the Ministry&rsquo;s own list. A camel ride or a tip has none, so for those this page shows what named guides publish, who they are, when they said it and where they disagree. Below them are the official market prices Egypt&rsquo;s Cabinet publishes every day.	У входных билетов есть официальная цена, и мы приводим список самого министерства. У прогулки на верблюде или чаевых её нет, поэтому для них эта страница показывает, что публикуют конкретные путеводители, кто они, когда это сказано и в чём они расходятся. Ниже — официальные рыночные цены, которые Кабинет министров Египта публикует каждый день.
 Tips, entry, rides	Чаевые, билеты, поездки
 <span data-glyph="scroll"></span>Traveller prices	<span data-glyph="scroll"></span>Цены для путешественников
 Tips, entry and rides.	Чаевые, входные билеты и поездки.
@@ -953,3 +953,82 @@ A name, in Latin letters	Имя латинскими буквами
 <strong>Propose it</strong> as a new <code>seed_vN.sql</code> section plus its schema, and we review it against the accuracy rules before it lands.	<strong>Предложите</strong> их как новый раздел <code>seed_vN.sql</code> вместе со схемой, и мы проверим его по правилам точности, прежде чем он будет принят.
 <strong>Sources.</strong> Archaeological sites: OpenStreetMap via Overpass (<code>historic=archaeological_site</code> with a name), fetched <strong id="dgAsOf2">—</strong>, ODbL. Governorate boundaries, areas and populations: geoBoundaries EGY ADM1 (CC BY 4.0) with CAPMAS attributes. Every count, density and ratio on this page is computed in the browser from those two files. <strong>What this cannot tell you:</strong> anything about how much archaeology exists. A site is counted here only if someone has recorded it in OpenStreetMap with a name, so the entire story is about recording. Assigning a site to a governorate uses the simplified boundaries, so a site near a border may be counted on the wrong side.	<strong>Источники.</strong> Археологические памятники: OpenStreetMap через Overpass (<code>historic=archaeological_site</code> с названием), загружено <strong id="dgAsOf2">—</strong>, ODbL. Границы, площади и население мухафаз: geoBoundaries EGY ADM1 (CC BY 4.0) с данными CAPMAS. Каждый подсчёт, плотность и соотношение на этой странице вычисляются в браузере из этих двух файлов. <strong>Чего это сказать не может:</strong> ничего о том, сколько археологических памятников существует. Памятник учитывается здесь, только если кто-то внёс его в OpenStreetMap с названием, так что вся эта история — о том, что нанесено на карту. Памятники привязаны к мухафазам по упрощённым границам, поэтому памятник у границы может быть засчитан не на той стороне.
 <strong>Boundaries come from OpenStreetMap, not a gazetteer.</strong> Egyptian district names are inconsistent in OSM, so each district is tried against several candidate names and every resolved polygon is area-checked before use. Anything implausible is dropped and named rather than quietly kept. Most of these outlines are mapper-drawn <code>place</code> polygons rather than official administrative limits — real, but not a cadastre.	<strong>Границы взяты из OpenStreetMap, а не из официального реестра.</strong> Названия районов Египта в OSM непоследовательны, поэтому каждый район проверяется по нескольким вариантам названия, а площадь каждого найденного полигона проверяется перед использованием. Всё неправдоподобное отбрасывается и указывается по имени, а не сохраняется втихую. Большинство этих контуров — полигоны <code>place</code>, нарисованные участниками картографирования, а не официальные административные границы: настоящие, но не кадастр.
+A broad comparison figure, not a fare table. The honest anchor for any street taxi is the fare the Uber or Careem app quotes for the same trip — open it before you agree a price, even if you then take a street taxi. Aswan has a documented airport-taxi overcharging pattern.	Это ориентир для сравнения, а не тарифная сетка. Лучшая точка отсчёта для любого уличного такси — цена, которую покажет приложение Uber или Careem за ту же поездку: откройте его, прежде чем договариваться, даже если потом поедете на обычном такси. В Асуане задокументированы случаи, когда таксисты в аэропорту сильно завышают цену.
+A ride across a city by taxi or ride-hailing app	Поездка по городу на такси или через приложение
+Abu Simbel temples, adult foreign visitor	Храмы Абу-Симбел, взрослый иностранный посетитель
+All %n items, updated daily	Все позиции (%n), обновляются ежедневно
+As published	Как опубликовано
+Average in %s	Среднее, %s
+Average, EGP	Средняя цена, EGP
+Camel or horse handler, after the ride	Погонщик верблюда или лошади, после прогулки
+Camel ride at Giza	Прогулка на верблюде в Гизе
+Compiled	Данные собраны
+Egyptian Museum, Tahrir, adult foreign visitor	Египетский музей на площади Тахрир, взрослый иностранный посетитель
+Entry to the main sites	Входные билеты в главные места
+Felucca captain	Капитан фелуки
+Foreign students pay 750 EGP. The new price applies from 1 January 2025.	Иностранные студенты платят 750 фунтов. Новая цена действует с 1 января 2025 года.
+Foreign students with a valid card pay 250 EGP.	Иностранные студенты с действующим студенческим билетом платят 250 фунтов.
+Foreign students with a valid card pay 275 EGP.	Иностранные студенты с действующим студенческим билетом платят 275 фунтов.
+Foreign students with a valid card pay 300 EGP.	Иностранные студенты с действующим студенческим билетом платят 300 фунтов.
+Foreign students with a valid card pay 350 EGP. Going inside a pyramid is a separate ticket.	Иностранные студенты с действующим студенческим билетом платят 350 фунтов. Вход внутрь пирамиды — по отдельному билету.
+Foreign students with a valid card pay 375 EGP. Tutankhamun's tomb is a separate ticket (700 EGP on the same list).	Иностранные студенты с действующим студенческим билетом платят 375 фунтов. Гробница Тутанхамона — по отдельному билету (700 фунтов в том же списке).
+Giza pyramids plateau entry, adult foreign visitor	Вход на плато пирамид в Гизе, взрослый иностранный посетитель
+Grand Egyptian Museum, adult foreign visitor	Большой Египетский музей, взрослый иностранный посетитель
+Hotel housekeeping	Горничная в отеле
+In %s today	Сегодня в %s
+Inside the Great Pyramid (Khufu), adult foreign visitor	Внутри пирамиды Хеопса (Хуфу), взрослый иностранный посетитель
+Item	Товар
+Karnak temples, Luxor, adult foreign visitor	Карнакский храмовый комплекс, Луксор, взрослый иностранный посетитель
+Left daily, because the person who cleaned the room on Tuesday may not be working on Thursday.	Оставляйте каждый день: тот, кто убирал номер во вторник, в четверг может не работать.
+Luxor Temple, adult foreign visitor	Луксорский храм, взрослый иностранный посетитель
+Nile cruise crew (pooled envelope)	Команда круизного теплохода по Нилу (общий конверт)
+No source we could check publishes a reliable figure, and no official price list turned up. What every guide agrees on: agree the TOTAL, the duration and the return leg before you get on.	Ни один источник, который можно проверить, не даёт надёжной цифры, и официального прейскуранта мы не нашли. В одном сходятся все путеводители: до посадки договоритесь об ОБЩЕЙ сумме, длительности и обратном пути.
+Official prices for an adult foreign visitor, in Egyptian pounds. Since 1 January 2026 visitors from Arab countries pay these foreign prices too (a Supreme Council of Antiquities decision, reported by Scene Now on 10 July 2025). Buy only on the Ministry's own sites: egymonuments.com, and tickets.gem.eg for the Grand Egyptian Museum.	Официальные цены для взрослого иностранного посетителя, в египетских фунтах. С 1 января 2026 года по этим ценам платят и гости из арабских стран (решение Высшего совета по делам древностей; 10 июля 2025 года о нём сообщил Scene Now). Покупайте билеты только на сайтах министерства: egymonuments.com, а в Большой Египетский музей — на tickets.gem.eg.
+Official site:	Официальный сайт:
+On the sun-alignment days, 22 February and 22 October, the list prints 1,200 EGP and the booking site 1,272 EGP.	В дни, когда солнце освещает святилище, 22 февраля и 22 октября, в списке указано 1 200 фунтов, а на сайте бронирования — 1 272 фунта.
+On top of the ride price, not part of it.	Сверх стоимости прогулки, а не в её счёт.
+Prices went up on 1 November 2026. The museum's own ticket site shows the new prices only once you start a booking, and we found no published figure we could check, so buy on tickets.gem.eg and nowhere else.	Цены выросли 1 ноября 2026 года. Официальный сайт музея показывает новые цены, только когда вы начинаете бронирование, а опубликованной цифры, которую можно проверить, мы не нашли. Поэтому покупайте билеты на tickets.gem.eg и больше нигде.
+Range across the country, EGP	Разброс по стране, EGP
+Retail prices dated %d, %n items.	Розничные цены на %d, позиций: %n.
+Rides and transport	Поездки и транспорт
+Searched 2026-10-09: no verifiable published price	Искали 2026-10-09: проверяемой опубликованной цены нет
+Source:	Источник:
+Sources disagree:	Источники расходятся:
+The Ministry's list of 5 November 2024 prints 750 EGP; its booking site showed 822 EGP on 17 November 2026. We show both rather than guess which one you will be charged.	В списке министерства от 5 ноября 2024 года указано 750 фунтов, а его сайт бронирования 17 ноября 2026 года показывал 822 фунта. Мы приводим обе цифры, а не гадаем, какую с вас возьмут.
+The Ministry's list of 5 November 2024 still printed 1,000 EGP, while this report gives the old price as 900 EGP. The Ministry's booking site has no page for this ticket, so we could not confirm 1,500 there.	В списке министерства от 5 ноября 2024 года ещё стояло 1 000 фунтов, а в этой статье старой ценой названо 900 фунтов. На сайте бронирования министерства страницы для этого билета нет, поэтому подтвердить там цену 1 500 фунтов мы не смогли.
+The market prices could not be loaded.	Не удалось загрузить рыночные цены.
+The price sheet could not be loaded.	Не удалось загрузить таблицу цен.
+The same guide also gives 10% of a half-day tour's price and 20% of a full-day or private one; Mara House Luxor suggests US$25 or more per day on multi-day tours. The three rules give very different answers — the flat figure is the lowest.	Тот же путеводитель предлагает также 10 % от цены полудневной экскурсии и 20 % от цены дневной или индивидуальной, а Mara House Luxor — от 25 долларов США в день на многодневных турах. Три правила дают очень разные ответы, и фиксированная сумма — самая низкая.
+The same guide suggests more for longer sunset sails.	Тот же путеводитель советует давать больше за долгие прогулки на закате.
+The same operator's own Egypt travel guide says $25–40 in total for the whole trip — for a four-night cruise the nightly figure comes to $40–60, well above that. Ask the cruise operator.	А в собственном путеводителе той же компании по Египту названо 25–40 долларов на всю поездку; за четыре ночи круиза ночная ставка даёт 40–60 долларов — гораздо больше. Уточните у круизной компании.
+These are what shops charge residents across Egypt’s governorates. Treat them as a floor for what a market stall should ask, not as a tourist price.	Столько магазины берут с местных жителей по мухафазам Египта. Считайте это нижней планкой для цены на рынке, а не туристической ценой.
+Tipping	Чаевые
+Tour guide, multi-day tour	Гид, многодневный тур
+Tour guide, standard tour	Гид, обычная экскурсия
+Valley of the Kings, adult foreign visitor	Долина царей, взрослый иностранный посетитель
+What	Что
+What things should cost a visitor in Egypt. Entry tickets have an official price, and those rows quote the Ministry's own list. Tips, taxis and rides have no official price, so those figures come from named travel guides and tour operators, which is weaker evidence. Every row says who gave the figure and when we last checked it, shows a range where sources give one, and shows both figures where two sources disagree. Where we found no figure we could check, the row says so. Prices in other currencies are converted at today's market rate, so they move each day; the price underneath does not.	Сколько что должно стоить путешественнику в Египте. У входных билетов есть официальная цена, и в этих строках мы приводим список самого министерства. У чаевых, такси и поездок официальной цены нет, поэтому эти цифры взяты из конкретных путеводителей и у туроператоров, а это более слабые источники. В каждой строке сказано, кто назвал цифру и когда мы её в последний раз проверяли; если источники дают диапазон, показан диапазон, а если два источника расходятся — обе цифры. Если проверяемой цифры мы не нашли, так и написано. Цены в других валютах пересчитываются по сегодняшнему рыночному курсу, поэтому меняются каждый день; сама исходная цена не меняется.
+Who says so	Источник
+checked	проверено
+each	за штуку
+news report	новостная статья
+no checkable figure	нет проверяемой цифры
+none	без источника
+official	официальный источник
+per carton	за упаковку
+per day, or more	в день или больше
+per egg	за яйцо
+per kg	за кг
+per litre	за литр
+per one-hour sail, total (not per person)	за час плавания, на всех, а не с человека
+per person	с человека
+per person per night	с человека за ночь
+per person, on top of the plateau ticket	с человека, сверх билета на плато
+per ride	за прогулку
+per ride, typical	за поездку, обычно
+per room per day	за номер в день
+per tour, by length	за экскурсию, в зависимости от длительности
+tour operator	туроператор
+travel blog	тревел-блог
+travel guide	путеводитель
+undated	без даты

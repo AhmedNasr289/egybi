@@ -277,6 +277,29 @@ for f in sorted(posix_glob("site/data/*.json")):
         findings["data older than its pipeline's cadence"].append(
             f"{name}: {age}d old, {wf} runs at most every {limit}d")
 
+# ------------------------------ each price row's own re-check date (2026-11-17) ---
+# The file's as_of moves whenever ANY row is re-read, so a stamp from today
+# can sit on a tipping range nobody has looked at for a year. Every row of a
+# hand-curated sheet with rows carries "checked": the day its figure was last
+# read against its source. Each row is held to the file's review interval.
+for name, limit in HAND_CURATED.items():
+    p = Path("site/data") / name
+    try:
+        d = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        continue
+    for g in d.get("groups", []) if isinstance(d, dict) else []:
+        for r in g.get("rows", []):
+            m = re.fullmatch(r"(\d{4})-(\d\d)-(\d\d)", str(r.get("checked", "")))
+            if not m:
+                findings["price row with no date it was last checked"].append(
+                    f"{name}: {r.get('key')} has checked={r.get('checked')!r}")
+                continue
+            age = (TODAY - datetime.date(*map(int, m.groups()))).days
+            if age > limit:
+                findings["price row past its re-check date"].append(
+                    f"{name}: {r.get('key')} last checked {r['checked']}, {age}d ago (re-read every {limit}d)")
+
 print(f"pages checked : {len(pages)}")
 print(f"distinct titles: {len(titles)}   distinct descriptions: {len(descs)}")
 print(f"data files     : {len(posix_glob('site/data/*.json'))}")
@@ -294,3 +317,8 @@ else:
             print("   ", x)
         if len(v) > 8:
             print(f"    … and {len(v)-8} more")
+    # Since 2026-11-17 a finding fails the step. Until then this script only
+    # printed, so CI stayed green over every stale-data and missing-title
+    # finding it ever made; its mutation cases passed because they read the
+    # output, not the exit code. A check that cannot fail the build is a log.
+    sys.exit(1)

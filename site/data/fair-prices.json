@@ -1,38 +1,68 @@
 {
-  "as_of": "2026-10-09",
-  "fetched_at": "2026-10-09",
-  "source": "Hand-compiled from the sources named on each row; read 2026-10-09",
-  "note": "What travellers are told things should cost in Egypt. These are NOT official prices: almost none exist for taxis, rides or tips, and every figure below comes from a named travel guide or tour operator, which is the best published evidence there is and is weaker than this site's usual sources. So every row carries who said it and when, a range rather than a single number, and — where two sources disagree — both. Where no source gives a figure we could check, the row says so instead of guessing. EGP amounts are converted at the day's market rate on the page; the conversion moves daily, the underlying quote does not.",
+  "as_of": "2026-11-17",
+  "fetched_at": "2026-11-17",
+  "source": "Hand-compiled from the sources named on each row; each row carries the date it was last checked",
+  "note": "What things should cost a visitor in Egypt. Entry tickets have an official price, and those rows quote the Ministry's own list. Tips, taxis and rides have no official price, so those figures come from named travel guides and tour operators, which is weaker evidence. Every row says who gave the figure and when we last checked it, shows a range where sources give one, and shows both figures where two sources disagree. Where we found no figure we could check, the row says so. Prices in other currencies are converted at today's market rate, so they move each day; the price underneath does not.",
   "groups": [
     {
       "key": "tips", "title": "Tipping",
       "rows": [
         { "key": "tip-camel", "item": "Camel or horse handler, after the ride", "low": 50, "high": 100, "currency": "EGP", "unit": "per ride",
           "note": "On top of the ride price, not part of it.",
-          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator" },
+          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator", "checked": "2026-10-09" },
         { "key": "tip-felucca", "item": "Felucca captain", "low": 100, "high": 200, "currency": "EGP", "unit": "per one-hour sail, total (not per person)",
           "note": "The same guide suggests more for longer sunset sails.",
-          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator" },
+          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator", "checked": "2026-10-09" },
         { "key": "tip-housekeeping", "item": "Hotel housekeeping", "low": 50, "high": 100, "currency": "EGP", "unit": "per room per day",
           "note": "Left daily, because the person who cleaned the room on Tuesday may not be working on Thursday.",
-          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator" },
+          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator", "checked": "2026-10-09" },
         { "key": "tip-cruise", "item": "Nile cruise crew (pooled envelope)", "low": 10, "high": 15, "currency": "USD", "unit": "per person per night",
           "conflict": "The same operator's own Egypt travel guide says $25–40 in total for the whole trip — for a four-night cruise the nightly figure comes to $40–60, well above that. Ask the cruise operator.",
-          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator" },
+          "source": "Pyramids Land — Tipping in Egypt (2026 guide)", "source_url": "https://www.pyramidsland.com/blog/tipping-in-egypt", "published": "2026", "kind": "tour operator", "checked": "2026-10-09" },
         { "key": "tip-guide-flat", "item": "Tour guide, standard tour", "low": 100, "high": 200, "currency": "EGP", "unit": "per tour, by length",
           "conflict": "The same guide also gives 10% of a half-day tour's price and 20% of a full-day or private one; Mara House Luxor suggests US$25 or more per day on multi-day tours. The three rules give very different answers — the flat figure is the lowest.",
-          "source": "Travelling King — Tipping guide for Egypt", "source_url": "https://www.travellingking.com/tipping-guide-for-egypt/", "published": "undated", "kind": "travel blog" },
+          "source": "Travelling King — Tipping guide for Egypt", "source_url": "https://www.travellingking.com/tipping-guide-for-egypt/", "published": "undated", "kind": "travel blog", "checked": "2026-10-09" },
         { "key": "tip-guide-day", "item": "Tour guide, multi-day tour", "low": 25, "high": null, "currency": "USD", "unit": "per day, or more",
-          "source": "Mara House Luxor — Tipping in Egypt", "source_url": "https://marahouseluxor.com/tipping-in-egypt/", "published": "undated", "kind": "tour operator" }
+          "source": "Mara House Luxor — Tipping in Egypt", "source_url": "https://marahouseluxor.com/tipping-in-egypt/", "published": "undated", "kind": "tour operator", "checked": "2026-10-09" }
       ]
     },
     {
-      "key": "entry", "title": "Entry",
+      "key": "entry", "title": "Entry to the main sites",
+      "note": "Official prices for an adult foreign visitor, in Egyptian pounds. Since 1 January 2026 visitors from Arab countries pay these foreign prices too (a Supreme Council of Antiquities decision, reported by Scene Now on 10 July 2025). Buy only on the Ministry's own sites: egymonuments.com, and tickets.gem.eg for the Grand Egyptian Museum.",
       "rows": [
-        { "key": "giza-entry", "item": "Giza Plateau entry, adult foreign visitor", "low": 700, "high": 700, "currency": "EGP", "unit": "per person",
-          "note": "Students with an international student card pay half (350 EGP). Entering the Great Pyramid itself is a separate ticket. Ticket prices change without notice — the Ministry's own ticketing site is the authority.",
-          "official_url": "https://egymonuments.gov.eg/",
-          "source": "trvlogue — Giza Pyramids guide 2026 (Japanese edition), prices as of March 2026", "source_url": "https://www.trvlogue.com/ja/giza-pyramids-guide", "published": "2026-03", "kind": "travel guide" }
+        { "key": "giza-entry", "item": "Giza pyramids plateau entry, adult foreign visitor", "low": 700, "high": 700, "currency": "EGP", "unit": "per person",
+          "note": "Foreign students with a valid card pay 350 EGP. Going inside a pyramid is a separate ticket.",
+          "official_url": "https://egymonuments.com/details/Pyramids",
+          "source": "Ministry of Tourism and Antiquities — ticket price list (5 Nov 2024)", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "published": "2024-11-05", "kind": "official", "checked": "2026-11-17" },
+        { "key": "khufu-interior", "item": "Inside the Great Pyramid (Khufu), adult foreign visitor", "low": 1500, "high": 1500, "currency": "EGP", "unit": "per person, on top of the plateau ticket",
+          "note": "Foreign students pay 750 EGP. The new price applies from 1 January 2025.",
+          "conflict": "The Ministry's list of 5 November 2024 still printed 1,000 EGP, while this report gives the old price as 900 EGP. The Ministry's booking site has no page for this ticket, so we could not confirm 1,500 there.",
+          "source": "Egypt Independent — Here is when the new prices for Khufu Pyramid tickets take effect (4 Dec 2024)", "source_url": "https://www.egyptindependent.com/here-is-when-the-new-prices-for-khufu-pyramid-tickets-take-effect/", "published": "2024-12-04", "kind": "news report", "checked": "2026-11-17" },
+        { "key": "egyptian-museum", "item": "Egyptian Museum, Tahrir, adult foreign visitor", "low": 550, "high": 550, "currency": "EGP", "unit": "per person",
+          "note": "Foreign students with a valid card pay 275 EGP.",
+          "official_url": "https://egymonuments.com/details/EgyptianMuseum",
+          "source": "Ministry of Tourism and Antiquities — ticket price list (5 Nov 2024)", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "published": "2024-11-05", "kind": "official", "checked": "2026-11-17" },
+        { "key": "karnak", "item": "Karnak temples, Luxor, adult foreign visitor", "low": 600, "high": 600, "currency": "EGP", "unit": "per person",
+          "note": "Foreign students with a valid card pay 300 EGP.",
+          "official_url": "https://egymonuments.com/details/KarnakTemple",
+          "source": "Ministry of Tourism and Antiquities — ticket price list (5 Nov 2024)", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "published": "2024-11-05", "kind": "official", "checked": "2026-11-17" },
+        { "key": "luxor-temple", "item": "Luxor Temple, adult foreign visitor", "low": 500, "high": 500, "currency": "EGP", "unit": "per person",
+          "note": "Foreign students with a valid card pay 250 EGP.",
+          "official_url": "https://egymonuments.com/details/LuxorTemple",
+          "source": "Ministry of Tourism and Antiquities — ticket price list (5 Nov 2024)", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "published": "2024-11-05", "kind": "official", "checked": "2026-11-17" },
+        { "key": "valley-kings", "item": "Valley of the Kings, adult foreign visitor", "low": 750, "high": 750, "currency": "EGP", "unit": "per person",
+          "note": "Foreign students with a valid card pay 375 EGP. Tutankhamun's tomb is a separate ticket (700 EGP on the same list).",
+          "official_url": "https://egymonuments.com/details/ValleyOfKings",
+          "source": "Ministry of Tourism and Antiquities — ticket price list (5 Nov 2024)", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "published": "2024-11-05", "kind": "official", "checked": "2026-11-17" },
+        { "key": "abu-simbel", "item": "Abu Simbel temples, adult foreign visitor", "low": 750, "high": 822, "currency": "EGP", "unit": "per person",
+          "note": "On the sun-alignment days, 22 February and 22 October, the list prints 1,200 EGP and the booking site 1,272 EGP.",
+          "conflict": "The Ministry's list of 5 November 2024 prints 750 EGP; its booking site showed 822 EGP on 17 November 2026. We show both rather than guess which one you will be charged.",
+          "official_url": "https://egymonuments.com/details/AbuSimbelTemple",
+          "source": "Ministry of Tourism and Antiquities — ticket price list (5 Nov 2024)", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf", "published": "2024-11-05", "kind": "official", "checked": "2026-11-17" },
+        { "key": "gem-entry", "item": "Grand Egyptian Museum, adult foreign visitor", "low": null, "high": null, "currency": "EGP", "unit": "per person",
+          "note": "Prices went up on 1 November 2026. The museum's own ticket site shows the new prices only once you start a booking, and we found no published figure we could check, so buy on tickets.gem.eg and nowhere else.",
+          "official_url": "https://tickets.gem.eg/",
+          "source": "Egypt Independent — Grand Egyptian Museum ticket prices to increase starting November 1 (18 Oct 2026)", "source_url": "https://www.egyptindependent.com/grand-egyptian-museum-ticket-prices-to-increase-starting-november-1/", "published": "2026-10-18", "kind": "news report", "checked": "2026-11-17" }
       ]
     },
     {
@@ -40,10 +70,10 @@
       "rows": [
         { "key": "camel-ride", "item": "Camel ride at Giza", "low": null, "high": null, "currency": "EGP", "unit": "per ride",
           "note": "No source we could check publishes a reliable figure, and no official price list turned up. What every guide agrees on: agree the TOTAL, the duration and the return leg before you get on.",
-          "source": "Searched 2026-10-09: no verifiable published price", "source_url": null, "published": null, "kind": "none" },
+          "source": "Searched 2026-10-09: no verifiable published price", "source_url": null, "published": null, "kind": "none", "checked": "2026-10-09" },
         { "key": "app-ride", "item": "A ride across a city by taxi or ride-hailing app", "low": 1, "high": 3, "currency": "USD", "unit": "per ride, typical",
           "note": "A broad comparison figure, not a fare table. The honest anchor for any street taxi is the fare the Uber or Careem app quotes for the same trip — open it before you agree a price, even if you then take a street taxi. Aswan has a documented airport-taxi overcharging pattern.",
-          "source": "tabiji — Morocco vs Egypt (2026 comparison) and Aswan scam guide", "source_url": "https://tabiji.ai/compare/morocco-vs-egypt/", "published": "2026", "kind": "travel guide" }
+          "source": "tabiji — Morocco vs Egypt (2026 comparison) and Aswan scam guide", "source_url": "https://tabiji.ai/compare/morocco-vs-egypt/", "published": "2026", "kind": "travel guide", "checked": "2026-10-09" }
       ]
     }
   ]

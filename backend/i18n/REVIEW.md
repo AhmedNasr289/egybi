@@ -192,3 +192,19 @@ rewritten to the new English, not patched.
   line 692, where Russian glosses мухафаза as «(его провинций)» and Arabic
   leaves محافظة unglossed; and line 356, where Arabic now says «أهل البلد»
   for "a local".
+
+## Fair prices: official entry prices and the price sheet in Arabic and Russian (2026-11-17)
+
+The price table on Fair prices was English on the Arabic and Russian pages. Its
+rows now go through the catalogues (79 new lines in each language, the last of
+them "undated"), so the whole sheet reads in the page's language. Publication
+titles stay as published, in English.
+
+Please check:
+- the Arabic counted nouns after numbers (٣٠٠ جنيه, ٣٥٠ جنيهًا, ١٬٢٧٢ جنيهًا);
+- the Russian «Входные билеты в главные места» as the group title, and
+  «с человека» for "per person";
+- the sun-alignment note: Arabic «يومي تعامد الشمس», Russian «дни, когда
+  солнце освещает святилище»;
+- the Grand Egyptian Museum note, which tells the reader to buy only on
+  tickets.gem.eg: the wording must not read as a guarantee about that site.

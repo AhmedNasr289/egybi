@@ -14,10 +14,29 @@
   var T = window.EGYBI && window.EGYBI.trip;
   if (!T) return;
   var esc = T.esc;
+  // Strings from fair-prices.json go through t() too: the build adds every
+  // visible field of that file to the Arabic and Russian tables
+  // (backend/pipeline/pages/i18n.py, data_keys), so a translated page shows
+  // the whole sheet in its own language. tt() passes null and '' through.
+  var t = (window.EGYBI && window.EGYBI.t) || function (s) { return s; };
+  function tt(s) { return s ? t(s) : s; }
   function $(id) { return document.getElementById(id); }
   var D = { fp: null, prices: null, fx: null }, CUR = 'USD';
   var BASKET = ['idsc-2', 'idsc-1', 'idsc-82', 'idsc-188', 'idsc-79', 'idsc-65', 'idsc-63', 'idsc-880', 'idsc-326'];
   var UNIT = { 'كيلو': 'kg', 'لتر': 'litre', 'بيضة': 'one egg', 'واحدة': 'each', 'كرتونة': 'carton' };
+  // Literal t() calls, so the build can find and require each translation.
+  // The names come from the daily feed and can change, so they are not
+  // translated here; a unit outside this list shows in English.
+  function per(u) {
+    switch (UNIT[u] || u) {
+      case 'kg': return t('per kg');
+      case 'litre': return t('per litre');
+      case 'one egg': return t('per egg');
+      case 'each': return t('each');
+      case 'carton': return t('per carton');
+      default: return 'per ' + (UNIT[u] || u);
+    }
+  }
   function settle(p) { return p.then(function (v) { return v; }, function () { return null; }); }
 
   function conv(n, from) {
@@ -36,46 +55,57 @@
   function renderGroups() {
     var host = $('fpGroups');
     if (!host) return;
-    if (!D.fp) { host.innerHTML = '<p class="chart-cap">The price sheet could not be loaded.</p>'; return; }
+    if (!D.fp) { host.innerHTML = '<p class="chart-cap">' + esc(t('The price sheet could not be loaded.')) + '</p>'; return; }
     host.innerHTML = D.fp.groups.map(function (g) {
-      return '<div class="sheet" style="margin-top:18px;"><h3 style="margin:0 0 10px;color:var(--blue-deep);">' + esc(g.title) + '</h3>' +
-        '<div class="fp-wrap"><table class="fp-table"><thead><tr><th scope="col">What</th><th scope="col" class="num">As published</th>' +
-        '<th scope="col" class="num">In ' + esc(CUR) + ' today</th><th scope="col">Who says so</th></tr></thead><tbody>' +
+      return '<div class="sheet" style="margin-top:18px;"><h3 style="margin:0 0 10px;color:var(--blue-deep);">' + esc(tt(g.title)) + '</h3>' +
+        (g.note ? '<p class="chart-cap" style="margin:0 0 10px;">' + esc(tt(g.note)) + '</p>' : '') +
+        '<div class="fp-wrap"><table class="fp-table"><thead><tr><th scope="col">' + esc(t('What')) + '</th><th scope="col" class="num">' + esc(t('As published')) + '</th>' +
+        '<th scope="col" class="num">' + esc(t('In %s today').replace('%s', CUR)) + '</th><th scope="col">' + esc(t('Who says so')) + '</th></tr></thead><tbody>' +
         g.rows.map(function (r) {
           var pub = range(r.low, r.high, r.currency);
           var mine = pub == null || CUR === r.currency ? (pub == null ? null : '—') : range(conv(r.low, r.currency), conv(r.high, r.currency), CUR);
-          return '<tr><td><strong>' + esc(r.item) + '</strong><span class="fp-src">' + esc(r.unit) + '</span>' +
-            (r.note ? '<span class="fp-src">' + esc(r.note) + '</span>' : '') +
-            (r.conflict ? '<span class="fp-conflict">Sources disagree: ' + esc(r.conflict) + '</span>' : '') +
-            (r.official_url ? '<span class="fp-src">Official: <a href="' + esc(r.official_url) + '" rel="noopener">' + esc(r.official_url.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></span>' : '') + '</td>' +
-            '<td class="num">' + (pub == null ? '<span class="fp-none">no checkable figure</span>' : esc(pub)) + '</td>' +
+          return '<tr data-row="' + esc(r.key) + '"><td><strong>' + esc(tt(r.item)) + '</strong><span class="fp-src">' + esc(tt(r.unit)) + '</span>' +
+            (r.note ? '<span class="fp-src">' + esc(tt(r.note)) + '</span>' : '') +
+            (r.conflict ? '<span class="fp-conflict">' + esc(t('Sources disagree:')) + ' ' + esc(tt(r.conflict)) + '</span>' : '') +
+            (r.official_url ? '<span class="fp-src">' + esc(t('Official site:')) + ' <a href="' + esc(r.official_url) + '" rel="noopener">' + esc(r.official_url.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></span>' : '') + '</td>' +
+            '<td class="num">' + (pub == null ? '<span class="fp-none">' + esc(t('no checkable figure')) + '</span>' : esc(pub)) + '</td>' +
             '<td class="num">' + (mine == null ? '—' : esc(mine)) + '</td>' +
-            '<td>' + (r.source_url ? '<a href="' + esc(r.source_url) + '" rel="noopener">' + esc(r.source) + '</a>' : esc(r.source)) +
-            '<span class="fp-src">' + esc(r.kind || '') + (r.published ? ' &middot; ' + esc(r.published) : '') + '</span></td></tr>';
+            '<td>' + (r.source_url ? '<a href="' + esc(r.source_url) + '" rel="noopener">' + esc(r.source) + '</a>' : esc(tt(r.source))) +
+            '<span class="fp-src">' + esc(tt(r.kind || '')) + (r.published ? ' &middot; ' + esc(r.published === 'undated' ? t('undated') : r.published) : '') +
+            (r.checked ? ' &middot; ' + esc(t('checked')) + ' ' + esc(r.checked) : '') + '</span></td></tr>';
         }).join('') + '</tbody></table></div></div>';
     }).join('');
-    $('fpCap').textContent = 'Compiled ' + T.fmtDate(D.fp.as_of) + '. ' + D.fp.note;
+    $('fpCap').textContent = t('Compiled') + ' ' + T.fmtDate(D.fp.as_of) + '. ' + tt(D.fp.note);
   }
 
   function renderMarket() {
     var host = $('fpMarket');
     if (!host) return;
     var p = D.prices && D.prices.retail;
-    if (!p) { host.innerHTML = '<p class="chart-cap">The market prices could not be loaded.</p>'; return; }
+    if (!p) { host.innerHTML = '<p class="chart-cap">' + esc(t('The market prices could not be loaded.')) + '</p>'; return; }
     var by = {};
     p.items.forEach(function (i) { by[i.slug] = i; });
     var rows = BASKET.map(function (k) { return by[k]; }).filter(Boolean);
-    host.innerHTML = '<div class="fp-wrap"><table class="fp-table"><thead><tr><th scope="col">Item</th><th scope="col" class="num">Average, EGP</th>' +
-      '<th scope="col" class="num">Range across the country, EGP</th><th scope="col" class="num">Average in ' + esc(CUR) + '</th></tr></thead><tbody>' +
+    var arPage = document.documentElement.lang === 'ar';
+    host.innerHTML = '<div class="fp-wrap"><table class="fp-table"><thead><tr><th scope="col">' + esc(t('Item')) + '</th><th scope="col" class="num">' + esc(t('Average, EGP')) + '</th>' +
+      '<th scope="col" class="num">' + esc(t('Range across the country, EGP')) + '</th><th scope="col" class="num">' + esc(t('Average in %s').replace('%s', CUR)) + '</th></tr></thead><tbody>' +
       rows.map(function (i) {
-        return '<tr><td><strong>' + esc(i.name_en) + '</strong> <span lang="ar" dir="rtl" class="fp-src" style="display:inline;">' + esc(i.name_ar) + '</span>' +
-          '<span class="fp-src">per ' + esc(UNIT[i.unit] || i.unit) + '</span></td>' +
+        // The Arabic page shows the Cabinet's own Arabic name alone; the
+        // others keep the English name with the Arabic beside it.
+        return '<tr><td>' + (arPage ? '<strong>' + esc(i.name_ar) + '</strong>'
+          : '<strong>' + esc(i.name_en) + '</strong> <span lang="ar" dir="rtl" class="fp-src" style="display:inline;">' + esc(i.name_ar) + '</span>') +
+          '<span class="fp-src">' + esc(per(i.unit)) + '</span></td>' +
           '<td class="num">' + esc(T.money(i.avg, 'EGP')) + '</td><td class="num">' + esc(T.money(i.min, 'EGP') + '–' + T.money(i.max, 'EGP').replace('EGP ', '')) + '</td>' +
           '<td class="num">' + (CUR === 'EGP' ? '—' : esc(T.money(conv(i.avg, 'EGP'), CUR))) + '</td></tr>';
       }).join('') + '</tbody></table></div>';
     var src = D.prices.source || {};
-    $('fpMarketCap').innerHTML = 'Source: ' + esc(src.name_en) + ' (<a href="' + esc(src.url) + '" rel="noopener">agriprice.gov.eg</a>), retail prices dated ' +
-      esc(T.fmtDate(p.as_of)) + ', ' + p.count + ' items. These are what shops charge residents across Egypt&rsquo;s governorates &mdash; a floor for what a market stall should ask, not a tourist price. <a href="' + T.url('prices.html') + '">All ' + p.count + ' items, daily &rarr;</a>';
+    // Built from plain-text pieces so each can go through t() (a translated
+    // string may not carry markup); the links are added around them here.
+    $('fpMarketCap').innerHTML = esc(t('Source:')) + ' ' + esc(arPage && src.name_ar ? src.name_ar : src.name_en) +
+      ' (<a href="' + esc(src.url) + '" rel="noopener">agriprice.gov.eg</a>). ' +
+      esc(t('Retail prices dated %d, %n items.').replace('%d', T.fmtDate(p.as_of)).replace('%n', p.count)) + ' ' +
+      esc(t('These are what shops charge residents across Egypt’s governorates. Treat them as a floor for what a market stall should ask, not as a tourist price.')) +
+      ' <a href="' + T.url('prices.html') + '">' + esc(t('All %n items, updated daily').replace('%n', p.count)) + ' &rarr;</a>';
   }
 
   function renderRate() {

@@ -117,8 +117,33 @@ def script_keys() -> list:
     return sorted(keys)
 
 
+# Data files whose visible text a script passes through t() as it renders
+# them, with the fields that are shown. Sources that have a link are
+# publication titles and stay as published; a source with no link is our own
+# words ("Searched ...: no verifiable published price"), so it is translated.
+DATA_TEXT = {
+    'fair-prices.json': {'top': ('note',), 'group': ('title', 'note'),
+                         'row': ('item', 'unit', 'note', 'conflict', 'kind')},
+}
+
+
+def data_keys() -> list:
+    """Every visible string in DATA_TEXT's files, sorted."""
+    keys = set()
+    for name, f in DATA_TEXT.items():
+        d = json.loads(read_text(os.path.join(SITE, 'data', name)))
+        keys.update(d[k] for k in f['top'] if d.get(k))
+        for g in d.get('groups', []):
+            keys.update(g[k] for k in f['group'] if g.get(k))
+            for r in g.get('rows', []):
+                keys.update(r[k] for k in f['row'] if r.get(k))
+                if r.get('source') and not r.get('source_url'):
+                    keys.add(r['source'])
+    return sorted(keys)
+
+
 def write_strings(cats: dict) -> None:
-    keys = script_keys()
+    keys = sorted(set(script_keys()) | set(data_keys()))
     for lang in LANGS:
         missing = [k for k in keys if norm(k) not in cats[lang]]
         if missing:
