@@ -21,6 +21,9 @@
   var T = window.EGYBI && window.EGYBI.trip;
   if (!T) return;
   var esc = T.esc;
+  // Translated text for what this script writes; the build collects every
+  // quoted call to it here into the Arabic and Russian tables (pages/i18n.py).
+  var t = (window.EGYBI && window.EGYBI.t) || function (s) { return s; };
   function $(id) { return document.getElementById(id); }
   function mkx(name) {
     var mk = window.EGYBI && window.EGYBI.mapkit;
@@ -189,6 +192,16 @@
     }).join('; ') + where + '.';
     return { text: text, rows: rows, site: near.site };
   }
+  // Opening hours for a stop that is one of the measured visitor sites
+  // (id 'site:<key>'), from opening-hours.json; null when none are known.
+  function hoursFor(st) {
+    if (!D.hours || st.id.indexOf('site:') !== 0) return null;
+    var k = st.id.slice(5), out = null;
+    (D.hours.groups || []).forEach(function (g) {
+      (g.rows || []).forEach(function (r) { if (r.key === k) out = r.hours; });
+    });
+    return out;
+  }
   function elevationFor(st) {
     if (!D.terrain || st.id.indexOf('site:') !== 0) return null;
     var k = st.id.slice(5);
@@ -196,6 +209,16 @@
     return t ? t.elevation_m : null;
   }
 
+  // A stop whose hottest trip month reaches the top heat band gets one line
+  // saying so, and when the gates open, so an early visit can be planned.
+  function heatWarnHtml(h, st) {
+    var w = T.heatWarning(h.rows, hoursFor(st));
+    if (!w) return '';
+    return '<p class="heat-warn"><strong>' +
+      esc(t('Very hot for your dates: a normal afternoon here reaches about %t °C.').replace('%t', w.t)) + '</strong>' +
+      (w.opens ? ' ' + esc(t('The site opens at %h, so you can visit before the afternoon heat.').replace('%h', w.opens)) : '') +
+      '</p>';
+  }
   function renderStops() {
     var ul = $('stopList'), sum = $('planSum');
     if (!ul) return;
@@ -210,7 +233,7 @@
           '<span class="stop-n" aria-hidden="true">' + (i + 1) + '</span>' +
           '<div><h3>' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
           (bd ? '<span class="heat-chip" style="background:' + bd.colour + ';color:' + T.inkOn(bd.colour) + '">' + Math.round(first.max) + '&nbsp;°C</span> ' : '') +
-          '<p>' + esc(h.text) + '</p></div>' +
+          '<p>' + esc(h.text) + '</p>' + heatWarnHtml(h, x) + '</div>' +
           '<div class="stop-ctl"><label class="sr-only" for="days' + i + '">Days at ' + esc(x.name) + '</label>' +
           '<input id="days' + i + '" type="number" min="1" max="30" value="' + (x.days || 1) + '" data-days="' + i + '"> <span aria-hidden="true">days</span>' +
           '<button type="button" class="icon-btn" data-up="' + i + '" aria-label="Move ' + esc(x.name) + ' earlier"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
@@ -464,9 +487,10 @@
     });
     Promise.all([
       settle(T.getJSON('data/visit-climate.json')), settle(T.getJSON('data/visit-terrain.json')),
-      settle(T.getJSON('data/geo-places.json')), settle(T.getJSON('data/calendar.json'))
+      settle(T.getJSON('data/geo-places.json')), settle(T.getJSON('data/calendar.json')),
+      settle(T.getJSON('data/opening-hours.json'))
     ]).then(function (r) {
-      D.climate = r[0]; D.terrain = r[1]; D.places = r[2]; D.calendar = r[3];
+      D.climate = r[0]; D.terrain = r[1]; D.places = r[2]; D.calendar = r[3]; D.hours = r[4];
       initChips(); initSearch();
       var q = new URLSearchParams(location.search);
       if (q.get('add')) addSite(q.get('add'));

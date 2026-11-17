@@ -28,6 +28,9 @@ on:
       - 'site/assets/challenges.js'
       - 'site/assets/egfmt.js'
       - 'backend/verify/egfmt-cases.js'
+      - 'backend/verify/heat-warning.js'
+      - 'site/assets/trip.js'
+      - 'site/data/opening-hours.json'
       - '.github/workflows/test-pipeline.yml'
   workflow_dispatch: {}
 
@@ -82,6 +85,14 @@ jobs:
         run: |
           set -o pipefail
           node backend/verify/egfmt-cases.js 2>&1 | tee -a /tmp/test-pipeline.log
+
+      # The planner's heat warning (trip.js heatWarning): the band edge, the
+      # opening-time pick, and the real Karnak data, without a page.
+      - name: Planner heat warning matches its cases
+        shell: bash
+        run: |
+          set -o pipefail
+          node backend/verify/heat-warning.js 2>&1 | tee -a /tmp/test-pipeline.log
 
       # backend/ops/ also holds PHP run by Hostinger's cron (dispatch_daily.php),
       # which no other job exercises: verify-browser lints only site/**. The
