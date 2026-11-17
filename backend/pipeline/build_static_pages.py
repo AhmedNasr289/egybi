@@ -59,6 +59,7 @@ own module under pages/ (split 2026-11-06):
                        egypt-weather-by-month.html and its chart
     pages/sitemap.py   sitemap.xml
     pages/holidays.py  egypt-public-holidays.html and its chart
+    pages/arrival.py   arriving-in-egypt.html, from data/arrival.json
     pages/foodprices.py egypt-food-prices.html and its chart
     pages/currencystory.py egyptian-pound-since-july.html and its charts
     pages/notfound.py  404.html
@@ -93,6 +94,7 @@ _force_utf8_output()
 # Import the sibling modules by path, so this works however the script is run
 # (python -I / -P does not put the script's own folder on sys.path).
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pages.arrival import build_arrival_page  # noqa: E402
 from pages.common import load_js  # noqa: E402
 from pages.foodprices import build_food_prices_page  # noqa: E402
 from pages.currencystory import build_currency_page  # noqa: E402
@@ -119,9 +121,10 @@ def main():
     hu = build_holidays_page()
     fu = build_food_prices_page()
     cu = build_currency_page()
+    au = build_arrival_page()
     build_link_indexes(ch, posts)
     iu = build_i18n()                   # site/ar/, site/ru/ twins of the pages in pages/i18n.py
-    total = build_sitemap(pu + vu + wu + hu + fu + cu + iu)
+    total = build_sitemap(pu + vu + wu + hu + fu + cu + au + iu)
     nfeed = build_feed(posts)
     build_404()
     # Report the sector split so a mis-mapped sector is visible in the log
@@ -144,6 +147,7 @@ def main():
     print(f"holidays page   : {'written' if hu else 'skipped (no calendar data)'}")
     print(f"food prices page: {'written' if fu else 'skipped (too little price history)'}")
     print(f"currency story  : {'written' if cu else 'skipped (too little FX history)'}")
+    print(f"arrival page    : {'written' if au else 'skipped (no arrival data)'}")
     print(f"sitemap URLs    : {total}")
     print(f"RSS feed items  : {nfeed}")
     print("404 page        : written (root-relative, noindex)")

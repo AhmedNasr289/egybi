@@ -34,7 +34,7 @@ from .i18n_units import norm, script_strings, units
 PAGES = ['about.html', 'privacy.html', 'index.html', 'plan.html', 'fair-prices.html',
          'hieroglyphs.html', 'dossier.html', 'ask.html',
          'visit.html', 'community.html', 'places.html', 'geospatial.html',
-         'stories.html', 'streets.html']
+         'stories.html', 'streets.html', 'arriving-in-egypt.html']
 
 LANGS = {
     'ar': {'dir': 'rtl', 'label': 'العربية', 'short': 'عربي',
