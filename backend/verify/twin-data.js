@@ -88,7 +88,22 @@ const ROOTED = ['visit.html', 'prices.html', 'account.html'];
       const off = links.filter(h => !ROOTED.some(n => new URL(h).pathname === '/' + n));
       if (off.length) fail(`TWIN LINK WRONG FOLDER: ${where} links to ${off.map(h => new URL(h).pathname).join(', ')}`);
 
-      console.log(`${where}: ${data.length} data file(s), ${links.length} rooted link(s), ${bad.length} failed request(s)`);
+      // Text the header scripts write (stage 4a): in Arabic and Russian it
+      // comes from assets/i18n/<lang>.js; in English it stays English.
+      const chromeText = await p.evaluate(() => {
+        const s = document.getElementById('signinBtn'), o = document.querySelector('.otp-label');
+        return { signin: s ? s.textContent.trim() : null, otp: o ? o.textContent.trim() : null };
+      });
+      const english = { signin: 'Sign in', otp: 'On this page' };
+      for (const k of Object.keys(english)) {
+        const v = chromeText[k];
+        if (v === null) continue;
+        if (lang && v === english[k]) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} shows "${v}"`);
+        if (!lang && v !== english[k]) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English ${page} shows "${v}" for "${english[k]}"`);
+      }
+      if (lang && chromeText.signin === null) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} has no sign-in button to check`);
+
+      console.log(`${where}: ${data.length} data file(s), ${links.length} rooted link(s), ${bad.length} failed request(s), sign-in "${chromeText.signin}", on-this-page "${chromeText.otp}"`);
       await ctx.close();
     }
   }

@@ -151,9 +151,9 @@ def page(title, desc, canonical, body, ld=None, extra_head='', prefix='../',
 </main>
 
 {foot if foot is not None else FOOT}
-<script src="{prefix}assets/egybi.js?v=5"></script>
+<script src="{prefix}assets/egybi.js?v=6"></script>
 <script src="{prefix}assets/glyphs.js?v=3"></script>
-<script src="{prefix}assets/wayfinding.js?v=1"></script>
+<script src="{prefix}assets/wayfinding.js?v=2"></script>
 <script src="{prefix}assets/ads.js"></script>
 <script src="{prefix}assets/analytics.js?v=2"></script>{extra_foot}
 </body>
