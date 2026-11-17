@@ -70,6 +70,19 @@ class Counting(unittest.TestCase):
         self.assertIn('Ramadan, the month of fasting', text)
         self.assertIn('February', text.split('Months with no public holiday:')[1])
 
+    def test_a_dated_event_that_is_not_a_holiday_is_left_out(self):
+        sun = ev('abu-simbel-sun-feb', '2027-02-22', name='Abu Simbel sun alignment')
+        sun['not_holiday'] = True
+        rows = hol.holidays({'events': [sun, ev('labour', '2027-05-01', name='Labour Day')]})
+        self.assertEqual([r['key'] for r in rows], ['labour'])
+        self.assertIn('1 public holiday', plain(hol.findings(rows)))
+
+    def test_the_real_calendars_sun_alignment_days_are_not_holidays(self):
+        cal = json.loads(CAL.read_text(encoding='utf-8'))
+        flagged = {e['key'] for e in cal['events'] if e.get('not_holiday')}
+        self.assertEqual(flagged, {'abu-simbel-sun-feb', 'abu-simbel-sun-oct'})
+        self.assertFalse(flagged & {r['key'] for r in hol.holidays(cal)})
+
     def test_weekend_dates_are_named(self):
         rows = hol.holidays({'events': [ev('labour', '2027-05-01', name='Labour Day'),
                                         ev('july', '2027-07-23', name='23 July'),

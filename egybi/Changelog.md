@@ -2371,3 +2371,8 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the sleepers to Luxor and Aswan leave from the Upper Egypt (Bashtil) station, opened in October 2024;
   - Aswan to Abu Simbel is 275 km by road, with a daily bus at 08:00.
 - **A row with no link must say what was searched.** `coverage.py` fails a hand-curated row with no `source_url` unless its source begins "Searched". New mutation case: "a row with no source link that does not say what was searched".
+## 2026-11-17 — The Abu Simbel sun-alignment days in the calendar
+- **Two dated events, 22 February and 22 October 2027,** are now in `calendar.json`, so a trip that covers them shows them on the home page and in the planner. Each says it is not a public holiday. The Ministry's ticket list (5 Nov 2024) prices the sun-alignment day at 1,200 EGP for a foreign adult, against 750 on other days, and its booking site showed 1,272 EGP on 17 November 2026.
+- **The holidays page is unchanged.** Events marked `not_holiday` are left out of `holidays()`, so the page still counts only days off.
+- **Tests:** two new holiday tests, one built on a sample calendar and one on the real file. New mutation case: "a dated event that is not a holiday counted as one". It removes the skip, and the holiday tests must then fail. It is the first mutation case that runs a pipeline test file.
+- **Not in this PR:** Ramadan opening hours. The Ministry's booking site gives them for only four sites, and they are already on those sites' visit pages in #166.
