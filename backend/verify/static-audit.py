@@ -200,7 +200,14 @@ if rel:
 # A number typed into markup becomes a false claim the first time a pipeline
 # reruns. Flag temperatures and elevations hardcoded in visit.html.
 vt = (SITE / "visit.html").read_text(encoding="utf-8")
-body = re.sub(r"<!--.*?-->", "", vt, flags=re.S)
+# Generator-owned regions (<!-- NAME:START ... NAME:END -->) are written from
+# the data by build_static_pages.py on every build, and the pipeline job's
+# regenerated-equals-committed check fails if they ever disagree with it, so a
+# figure inside one cannot go stale unnoticed. The year strip (2026-11-16) put
+# its band labels and computed lead sentence there; this rule is for figures
+# typed into the hand-written rest of the page.
+body = re.sub(r"<!-- ([A-Z][A-Z0-9-]*):START.*?<!-- \1:END -->", "", vt, flags=re.S)
+body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
 hard = re.findall(r"(\d[\d,]*(?:\.\d+)?)\s*(?:&deg;|°)\s*C", body)
 hard += re.findall(r"(?<![\w-])(\d{2,4})\s*(?:&nbsp;)?m\b(?!ap|ean|onth|etre)", body)
 if hard:

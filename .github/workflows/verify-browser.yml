@@ -170,6 +170,10 @@ jobs:
       - name: static-audit.py
         run: backend/verify/ci-step.sh static-audit python3 backend/verify/static-audit.py
 
+      - name: i18n.py
+        if: always()
+        run: backend/verify/ci-step.sh i18n python3 backend/verify/i18n.py
+
       - name: coverage.py
         run: backend/verify/ci-step.sh coverage python3 backend/verify/coverage.py
 
@@ -288,6 +292,10 @@ jobs:
       - name: header.js
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh header node backend/verify/header.js
+
+      - name: year-strip.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh year-strip node backend/verify/year-strip.js
 
       - name: briefing-map.js
         if: always() && needs.gate.outputs.browser == 'true'

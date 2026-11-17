@@ -259,6 +259,10 @@ case("content clipped off-screen at 375px", "overflow.js", ["site/places.html"],
      lambda o: "clipped off-screen: 1" in o, f"node {HERE}/overflow.js")
 
 # ---- 9. page sweep: a sub-nav chip pointing at a section that is gone -------
+case("a temperature typed into visit.html's hand-written prose", "static-audit.py", ["site/visit.html"],
+     lambda: edit("site/visit.html", '<section class="surface-light" id="terrain"',
+                  '<p>Luxor reaches 41 °C in June.</p>\n<section class="surface-light" id="terrain"'),
+     lambda o: "figures typed into visit.html" in o, PY_AUDIT)
 case("section[data-nav] with no id", "all-pages.js", ["site/visit.html"],
      lambda: edit("site/visit.html", '<section class="surface-light" id="terrain" data-nav=',
                   '<section class="surface-light" data-nav='),
@@ -1047,6 +1051,57 @@ case("the desktop header row kept below 1280px, where it overflows", "header.js"
 case("the current page no longer highlighted in the header", "header.js", ["site/assets/egybi.js"],
      lambda: edit("site/assets/egybi.js", "if (target === here) a.classList.add('active');", "if (false) a.classList.add('active');"),
      lambda o: "NO ACTIVE HIGHLIGHT" in o, HEADER)
+
+# ---- trilingual stage 1: twins, language, hreflang, button, no English left --
+I18N = f'"{sys.executable}" {HERE}/i18n.py'
+case("a Russian twin missing", "i18n.py", ["site/ru/privacy.html"],
+     lambda: Path("site/ru/privacy.html").unlink(),
+     lambda o: "TWIN MISSING" in o, I18N)
+case("an Arabic page marked left to right", "i18n.py", ["site/ar/about.html"],
+     lambda: edit("site/ar/about.html", 'dir="rtl"', 'dir="ltr"'),
+     lambda o: "LANG/DIR WRONG" in o, I18N)
+case("a twin's canonical pointing at the English page", "i18n.py", ["site/ru/about.html"],
+     lambda: edit("site/ru/about.html", '<link rel="canonical" href="https://egybi.com/ru/about.html">',
+                  '<link rel="canonical" href="https://egybi.com/about.html">'),
+     lambda o: "CANONICAL WRONG" in o, I18N)
+case("an English page losing its Russian hreflang", "i18n.py", ["site/about.html"],
+     lambda: edit("site/about.html", '<link rel="alternate" hreflang="ru" href="https://egybi.com/ru/about.html">\n', ''),
+     lambda o: "HREFLANG MISSING" in o, I18N)
+case("a twin without the language button", "i18n.py", ["site/ru/privacy.html"],
+     lambda: edit("site/ru/privacy.html", '<details class="lang-switch">', '<details class="x-switch">'),
+     lambda o: "NO SWITCHER" in o, I18N)
+case("a twin left out of the sitemap", "i18n.py", ["site/sitemap.xml"],
+     lambda: edit("site/sitemap.xml", "https://egybi.com/ar/privacy.html", "https://egybi.com/ar/privacy-x.html"),
+     lambda o: "NOT IN SITEMAP" in o, I18N)
+case("English left in a Russian page's script-written cards", "i18n.py", ["site/ru/about.html"],
+     lambda: edit("site/ru/about.html", "'Суэцкий канал'", "'The Suez Canal'"),
+     lambda o: "ENGLISH LEAK" in o, I18N)
+case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
+     lambda: edit("site/ar/about.html", "بيت الحياة.", "The House of Life."),
+     lambda o: "ENGLISH LEAK" in o, I18N)
+
+# ---- the year strip on When to go (2026-11-16) -------------------------------
+YEAR = f"node {HERE}/year-strip.js"
+case("year strip months all at once, not January to December", "year-strip.js", ["site/assets/heat-calendar.css"],
+     lambda: edit("site/assets/heat-calendar.css", "animation-delay: calc(var(--m, 0) * 70ms);", "animation-delay: 0ms;"),
+     lambda o: "YEAR NOT IN ORDER" in o, YEAR)
+# Reduced motion is locked THREE times: egybi.css's site-wide rule (under
+# reduce, * { animation: none !important }), the script's own check and the
+# stylesheet's no-preference query. Removing two left the site still, so the
+# case could never fire (runs 43948810613 and 43953866021); it removes all
+# three, to prove the check sees motion when nothing stops it.
+case("year strip moving for readers who asked for reduced motion", "year-strip.js",
+     ["site/assets/year-strip.js", "site/assets/heat-calendar.css", "site/assets/egybi.css"],
+     lambda: (edit("site/assets/year-strip.js", "if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;", ""),
+              edit("site/assets/heat-calendar.css", "@media (prefers-reduced-motion: no-preference) {", "@media all {"),
+              edit("site/assets/egybi.css", "  * { animation: none !important; transition: none !important; }", "  * { }")),
+     lambda o: "YEAR MOTION UNDER REDUCED MOTION" in o, YEAR)
+case("year strip waits for a third of itself before showing a cell", "year-strip.js", ["site/assets/year-strip.js"],
+     lambda: edit("site/assets/year-strip.js", "}, { threshold: 0 });", "}, { threshold: 0.35 });"),
+     lambda o: "YEAR EMPTY ON SCREEN" in o, YEAR)
+case("year strip hidden without JavaScript", "year-strip.js", ["site/assets/heat-calendar.css"],
+     lambda: edit("site/assets/heat-calendar.css", "  .hc-table.is-waiting td { opacity: 0; }", "  .hc-table td { opacity: 0; }"),
+     lambda o: "YEAR HIDDEN WITHOUT JS" in o, YEAR)
 
 # ---- the briefing map: where the sites are and how hot (2026-11-16) ---------
 BMAP = f"node {HERE}/briefing-map.js"
