@@ -249,3 +249,40 @@ Please check:
   digits;
 - that the train rows still read naturally out of their table, one per line:
   «قطارات النوم إلى الأقصر وأسوان: تنطلق من محطة صعيد مصر (بشتيل) بالقاهرة».
+
+## Planner summary (2026-11-18)
+
+Five short labelled lines replace an English sentence under the planner map.
+
+Please check:
+- «المحطات / الأيام المخطّطة / ليالي الرحلة» and «هذه أيام أكثر مما تتّسع له الرحلة.»;
+- «Остановок / Дней в плане / Ночей в поездке / По прямой между остановками»
+  and «Это больше дней, чем есть в поездке.»;
+- that the summary reads as one line with « · » between the parts.
+
+## The rest of the planner (2026-11-18)
+
+51 lines from plan.js (stop cards, buttons, messages, the print dossier),
+plus month names and dates written by trip.js.
+
+Please check, in particular:
+- the heat line: «يوليو: نحو ٣٩ °م نهارًا و٢٦ °م ليلًا» and
+  «Июль: около 39 °C днём, 26 °C ночью»;
+- the dossier title for a named trip: «مصر كما يراها %s» and «Египет: %s»
+  (the English is "Ahmed's Egypt"); a better short form is welcome;
+- the Russian dates: «17 ноября 2026» (genitive month, no "г.");
+- «قدّم %s في الترتيب / أخّر %s في الترتيب» for the move-up and move-down buttons.
+
+## Arriving in Egypt: travelling alone, and Russia or Kazakhstan (2026-11-17)
+
+Two new sections (23 lines per language).
+
+Please check:
+- the safety rows, word by word against the English: they repeat the UK
+  government's advice and must not soften or add to it;
+- Arabic row "ركوب التاكسي وحدك": it addresses a woman («فأرسلي») because the
+  advice is for women travelling alone; confirm that reads right next to the
+  masculine form used elsewhere;
+- Russian «Если едете одна» and «когда вы одна»: feminine on purpose, for the
+  same reason;
+- Arabic «رابطة الدول المستقلة» for CIS, and «مير» for the Mir card.

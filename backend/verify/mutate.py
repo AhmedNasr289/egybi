@@ -575,6 +575,12 @@ case("an announced visa change that has taken effect", "coverage.py", ["site/dat
 case("a row with no source link that does not say what was searched", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"source": "Searched 17 Nov 2026: no city list on careem.com"', '"source": ""'),
      lambda o: "does not say what was searched" in o and "careem-cities" in o, COVERAGE)
+# a safety row re-sourced to a blog: the plan's rule is official advice only
+# for anything about personal safety (2026-11-17)
+case("a safety row not sourced from official travel advice", "coverage.py", ["site/data/arrival.json"],
+     lambda: edit_re("site/data/arrival.json",
+                     r'("key": "alone-hotel"[\s\S]*?"source_url": ")https://www\.gov\.uk/[^"]*', r'\1https://example-travel-blog.com/egypt-tips'),
+     lambda o: "safety row not sourced from official travel advice" in o and "alone-hotel cites example-travel-blog.com" in o, COVERAGE)
 
 PY_CHECKS = f'"{sys.executable}" {HERE}/checks.py'
 
@@ -1461,8 +1467,8 @@ case("a planner leg read backwards loses its rows", "leg-rows.js", ["site/assets
 # language to egfmt, which formats only 'en' and 'ar' and throws on 'ru': the
 # Russian planner then drew no stops at all. leg-cards.js must catch it again.
 case("the Russian planner breaks on a number format", "leg-cards.js", ["site/assets/plan.js"],
-     lambda: edit("site/assets/plan.js", "F && ar ? F.num(n, 'ar', 0) : String(n)",
-                  "F ? F.num(n, document.documentElement.getAttribute('lang') || 'en', 0) : String(n)"),
+     lambda: edit("site/assets/plan.js", "return F && ar ? F.digits(String(x), 'ar') : String(x);",
+                  "return F ? F.digits(String(x), document.documentElement.getAttribute('lang') || 'en') : String(x);"),
      lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
 
 

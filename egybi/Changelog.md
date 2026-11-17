@@ -2371,6 +2371,17 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the sleepers to Luxor and Aswan leave from the Upper Egypt (Bashtil) station, opened in October 2024;
   - Aswan to Abu Simbel is 275 km by road, with a daily bus at 08:00.
 - **A row with no link must say what was searched.** `coverage.py` fails a hand-curated row with no `source_url` unless its source begins "Searched". New mutation case: "a row with no source link that does not say what was searched".
+## 2026-11-17 — Arriving in Egypt: travelling alone, and paying from Russia or Kazakhstan
+- **Travelling alone,** from the UK government's safety advice (updated 12 Nov 2026):
+  - take care in taxis alone, especially at night, and share the driver's details, the route and your live location;
+  - most sexual assaults reported to the British Embassy happened in Red Sea resorts, often by someone the victim had already met, including hotel and excursion staff, so do not let hotel staff into your room when you are alone;
+  - scammers and touts at tourist sites target foreign visitors.
+- **From Russia or Kazakhstan:**
+  - VTB QR payments since 22 Apr 2026: in roubles, up to 25,000 a payment and 350,000 a day, large shops only;
+  - old or damaged dollar notes are often refused, in Sharm el-Sheikh everywhere;
+  - Visa and Mastercard from other CIS banks work, and Mir does not (Tourdom, 22 Apr 2026);
+  - Kazakh citizens get a visa on arrival only for the Sharm el-Sheikh zone, and package travellers going on to Cairo or Luxor need a tour-operator invitation at least four days ahead (Digital Business KZ, 6 Oct 2026, citing Kazakhstan's foreign ministry).
+- **Safety rows must cite official advice.** `coverage.py` fails any row in a "travelling alone" group whose source is not a government's own travel advice (gov.uk, travel.state.gov, smartraveller.gov.au, travel.gc.ca, ireland.ie, dfa.ie). New mutation case: "a safety row not sourced from official travel advice".
 ## 2026-11-17 — The planner warns when a stop is very hot, and says when the gates open
 - **What changed:** a stop whose hottest trip month reaches the top heat band (39 °C or more, the band the weather page colours darkest) now carries one line in the planner. It reads: "Very hot for your dates: a normal afternoon here reaches about N °C." When the site's opening hours are known (`opening-hours.json`, #166), it adds: "The site opens at 06:00, so you can visit before the afternoon heat."
 - **How:** `trip.js` gained `heatWarning(rows, hours)`, a pure function. `plan.js` loads the opening hours and calls it for each stop. The two lines go through `t()`, with Arabic and Russian translations, so the warning reads in the page's language.
@@ -2396,3 +2407,13 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **One source for both:** the lines come from the same `getting-around.json` the planner's leg cards read, so a visit page and the planner cannot give different routes. Legs with the same rows are said once ("Between here and Luxor or Aswan"). A site no cited leg covers (Alexandria, Siwa, Dahab, Abydos, Dendera) gets no line.
 - **Language:** the visit pages are English-only today, so no translations were added.
 - **Checks:** `backend/pipeline/tests/test_visit_legs.py` (5 tests on the real data files). New mutation case: "a visit page repeats the same leg rows".
+## 2026-11-18 — The planner's summary and numbers in the reader's language
+- **Found on the live site:** after #171 shipped, the Arabic planner showed its heat warning with Western digits ("39 °م", "07:00") inside Arabic text, and the trip summary under the map was entirely English on the Arabic and Russian pages ("2 stops · 3 days assigned to a trip of 4 nights ...").
+- **The fix:** one helper, `pageDigits`, writes every number the planner inserts in the page's own digits (Arabic-Indic on Arabic pages). The summary is now four short labelled parts ("Stops: 2 · Days planned: 3 · Nights in the trip: 4 · Straight-line distance between stops: 497 km"), each translated. English plurals would have read wrongly at most counts in Arabic and Russian.
+- **Check:** `leg-cards.js` now plans a July trip on the Arabic and Russian planners and fails if the summary has English in it or the Arabic summary or heat warning has a Western digit.
+- **Still English in the planner:** screen-reader announcements, the print header and the shared-trip banner. They are listed for the planner pass in Part 2.
+## 2026-11-18 — The whole planner in Arabic and Russian
+- **What was still English** on ar/plan.html and ru/plan.html: each stop's month-by-month heat line ("July: about 39 °C by day ..."), the map tooltips, the date-check messages, the stop buttons' labels for screen readers, the announcements, the print dossier (cover, stop sheets, sources), the save and share messages, the shared-trip banner and the offline note. 51 lines now go through `t()`, each with an Arabic and a Russian translation.
+- **Dates and months follow the page:** `trip.js` `fmtDate` writes "١٧ نوفمبر ٢٠٢٦" on Arabic pages and "17 ноября 2026" on Russian ones (genitive month), and `monthName` gives the month on its own. This also localises the dates the home, prices, account and ask pages write on their Arabic and Russian copies.
+- **Plurals:** counts are written as labels ("Stops: 2", "Days: 3"), so no English plural rule is applied to Arabic or Russian.
+- **Check:** `leg-cards.js` now also fails if a stop card's heat line on the Arabic or Russian planner is not in that language, or has a Western digit on the Arabic page.
