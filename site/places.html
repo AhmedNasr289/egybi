@@ -114,9 +114,7 @@
   <div class="wrap">
     <p class="hero-eyebrow"><span data-glyph="reed"></span> The gazetteer</p>
     <h1 style="font-size:var(--fs-h1);margin:0 0 14px;">Every place in Egypt, on one map.</h1>
-    <p class="lead" style="margin:0;max-width:70ch;">Cities, towns, airports and ancient
-    sites, exactly as the OpenStreetMap community has recorded them. Search by name, narrow to a
-    governorate, and open any place for what the open data actually says &mdash; and does not say. Every place also carries a <strong>Going there</strong> block: the OpenStreetMap record, photographs, video and places to stay, each as a live search rather than a quoted price or opening time that would be stale before you read it.</p>
+    <p class="lead" style="margin:0;max-width:70ch;">Cities, towns, airports and ancient sites, as OpenStreetMap volunteers have mapped them. Search by name, narrow to a governorate, and open any place to see what the open data says about it &mdash; and what it leaves out. Every place also has a <strong>Going there</strong> block with its OpenStreetMap record, photos, video and places to stay. Each is a live search, because a price or opening time copied here would be out of date before you read it.</p>
   </div>
 </section>
 
@@ -124,7 +122,7 @@
 
 <section class="surface-light" id="map" data-nav="Map">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Tile-free, like every map here</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Built into the page, like every map here</div>
     <h2 data-aos="fade-up">Pick what to show, then click a place.</h2>
     <p class="lead" data-aos="fade-up" id="placesMeta">Loading the gazetteer&hellip;</p>
     <div class="atlas-note" id="placesEmpty" hidden></div>
@@ -171,7 +169,7 @@
   <div class="wrap">
     <div class="kicker"><span data-glyph="ra"></span>Visitor guides</div>
     <h2>18 sites, each with a month-by-month guide.</h2>
-    <p class="lead" style="max-width:68ch;">Afternoon heat, night cold, rain and the hours of golden light for every month, measured at the site's own coordinates. A place within 5 km of one of these sites opens with a link to its guide.</p>
+    <p class="lead" style="max-width:68ch;">Afternoon heat, night-time lows, rain and the hours of golden light for every month, measured at each site's exact location. A place within 5 km of one of these sites opens with a link to its guide.</p>
     <div class="chip-row"><a class="chip" href="visit/abu-mena.html" data-guide="abu-mena" data-lat="30.8419" data-lon="29.6647">Abu Mena</a><a class="chip" href="visit/abu-simbel.html" data-guide="abu-simbel" data-lat="22.3372" data-lon="31.6258">Abu Simbel</a><a class="chip" href="visit/abydos.html" data-guide="abydos" data-lat="26.1847" data-lon="31.9194">Abydos</a><a class="chip" href="visit/alexandria.html" data-guide="alexandria" data-lat="31.2001" data-lon="29.9187">Alexandria</a><a class="chip" href="visit/dahab.html" data-guide="dahab" data-lat="28.5091" data-lon="34.5136">Dahab</a><a class="chip" href="visit/dendera.html" data-guide="dendera" data-lat="26.1417" data-lon="32.6700">Dendera Temple</a><a class="chip" href="visit/giza.html" data-guide="giza" data-lat="29.9773" data-lon="31.1325">The Giza Pyramids</a><a class="chip" href="visit/islamic-cairo.html" data-guide="islamic-cairo" data-lat="30.0444" data-lon="31.2620">Historic Cairo</a><a class="chip" href="visit/hurghada.html" data-guide="hurghada" data-lat="27.2579" data-lon="33.8116">Hurghada</a><a class="chip" href="visit/karnak.html" data-guide="karnak" data-lat="25.7188" data-lon="32.6573">Karnak Temple</a><a class="chip" href="visit/philae.html" data-guide="philae" data-lat="24.0256" data-lon="32.8843">Philae Temple</a><a class="chip" href="visit/st-catherine.html" data-guide="st-catherine" data-lat="28.5559" data-lon="33.9760">Saint Catherine&#x27;s Monastery</a><a class="chip" href="visit/saqqara.html" data-guide="saqqara" data-lat="29.8712" data-lon="31.2165">Saqqara</a><a class="chip" href="visit/siwa.html" data-guide="siwa" data-lat="29.2041" data-lon="25.5195">Siwa Oasis</a><a class="chip" href="visit/suez-canal.html" data-guide="suez-canal" data-lat="30.5852" data-lon="32.2715">The Suez Canal at Ismailia</a><a class="chip" href="visit/valley-kings.html" data-guide="valley-kings" data-lat="25.7402" data-lon="32.6014">Valley of the Kings</a><a class="chip" href="visit/wadi-al-hitan.html" data-guide="wadi-al-hitan" data-lat="29.2694" data-lon="30.0417">Wadi al-Hitan</a><a class="chip" href="visit/white-desert.html" data-guide="white-desert" data-lat="27.2000" data-lon="28.1833">The White Desert</a></div>
   </div>
 </section>
@@ -188,15 +186,11 @@
       <li><strong>This is what OpenStreetMap contains, not an official gazetteer.</strong> Places are
       missing, and the set is denser where the mapping community is more active. Treat it as the
       geographic pattern of what has been recorded rather than a complete list of Egyptian places.</li>
-      <li><strong>Nothing here is sorted into categories we invented.</strong> There is no &ldquo;oases&rdquo;
-      or &ldquo;Red Sea resorts&rdquo; grouping, because that would be our classification sitting among
-      sourced facts and reading as though it were one. Each place carries only what OSM records.</li>
+      <li><strong>We do not add our own categories.</strong> There is no &ldquo;oases&rdquo; or &ldquo;Red Sea resorts&rdquo; grouping, because our own labels could be mistaken for sourced facts. Each place carries only what OpenStreetMap records.</li>
       <li><strong>Population is an OSM tag, not a census.</strong> It is community-maintained, often
       years old, and present for only some places. It is shown where it exists and captioned every time.</li>
-      <li><strong>Governorate is computed, not fetched.</strong> Each point is tested against the bundled
-      governorate boundaries, so a place just offshore can come back unassigned rather than guessed.</li>
-      <li><strong>No map service is contacted.</strong> The outlines ship with the site and the places come
-      from a file in the repository. This page makes zero runtime requests to any tile or map provider.</li>
+      <li><strong>We work out each place&rsquo;s governorate ourselves.</strong> Each point is checked against the governorate boundaries that come with the site, so a place just offshore may show no governorate rather than a guessed one.</li>
+      <li><strong>No outside map service is used.</strong> The outlines come with the site and the places come from a file published with it, so this page never contacts a tile or map provider.</li>
     </ul>
   </div>
 </section>
@@ -228,7 +222,7 @@
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h2 class="foot-h">Data sources</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure has a source, and where sources disagree, we show both.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
 </footer>
 
 <script src="assets/vendor/leaflet.js"></script>

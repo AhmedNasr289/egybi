@@ -297,8 +297,8 @@ def build_guide_links(urls):
             '  <div class="wrap">\n'
             '    <div class="kicker"><span data-glyph="ra"></span>Visitor guides</div>\n'
             f'    <h2>{len(sites)} sites, each with a month-by-month guide.</h2>\n'
-            '    <p class="lead" style="max-width:68ch;">Afternoon heat, night cold, rain and the hours '
-            'of golden light for every month, measured at the site\'s own coordinates. '
+            '    <p class="lead" style="max-width:68ch;">Afternoon heat, night-time lows, rain and the hours '
+            'of golden light for every month, measured at each site\'s exact location. '
             f'{how}</p>\n'
             f'    <div class="chip-row">{links}</div>\n'
             '  </div>\n</section>')

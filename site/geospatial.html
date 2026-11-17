@@ -120,7 +120,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>The Atlas</div>
     <h1 data-aos="fade-up">Egypt, on one cited map.</h1>
-    <p class="page-intro" data-aos="fade-up">Every layer on this map is real, sourced and dated: 27 governorates coloured by official figures, hospitals and schools as the OpenStreetMap community has mapped them, and the seven UNESCO World Heritage sites — for exploring, not for navigation or emergencies.</p>
+    <p class="page-intro" data-aos="fade-up">Every layer on this map is real, sourced and dated: Egypt&rsquo;s 27 governorates (its provinces) coloured by official figures, hospitals and schools as OpenStreetMap volunteers have mapped them, and the seven UNESCO World Heritage sites. It is for exploring, not for finding your way or for emergencies.</p>
   </div>
 </section>
 
@@ -140,13 +140,13 @@
         <button type="button" class="map-toggle" data-metric="urban_pct">Urban %</button>
         <button type="button" class="map-toggle" data-metric="growth">Growth</button>
         <button type="button" class="map-toggle" data-metric="area_km2">Area</button>
-        <button type="button" class="map-toggle" data-metric="health" disabled title="Appears after the first layer build">Health facilities</button>
-        <button type="button" class="map-toggle" data-metric="schools" disabled title="Appears after the first layer build">Schools</button>
+        <button type="button" class="map-toggle" data-metric="health" disabled title="Not ready yet">Health facilities</button>
+        <button type="button" class="map-toggle" data-metric="schools" disabled title="Not ready yet">Schools</button>
       </div>
       <div class="map-toolbar" role="group" aria-label="Toggle point overlays">
         <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Overlays:</span>
-        <button type="button" class="ov-toggle" data-overlay="health" disabled title="Appears after the first layer build">Hospitals &amp; clinics</button>
-        <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="Appears after the first layer build">World Heritage sites</button>
+        <button type="button" class="ov-toggle" data-overlay="health" disabled title="Not ready yet">Hospitals &amp; clinics</button>
+        <button type="button" class="ov-toggle" data-overlay="heritage" disabled title="Not ready yet">World Heritage sites</button>
       </div>
       <section class="atlas-box" id="atlasMap" aria-label="Interactive map of Egypt's 27 governorates with selectable data layers"></section>
       <!-- A way in that is not the map. Fourteen of the twenty-seven
@@ -165,7 +165,7 @@
       <div class="map-legend marker-key" id="atlasKey" hidden></div>
       <div class="gov-detail" id="govDetail" hidden></div>
       <div class="atlas-note" id="layerNote">Loading layers…</div>
-      <p class="chart-cap">Boundaries: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), simplified &amp; bundled offline — no external map service is called. Population, density &amp; area: EgyBI knowledge base (<strong>CAPMAS</strong>, Nov 2023); growth compares the 2017 census; urban % is a CAPMAS ~2016 proxy (±1–2 points). Hospitals, clinics &amp; schools: <strong>© OpenStreetMap contributors</strong> (ODbL) — community-mapped, so they show the geographic <em>pattern</em>, not an official registry. Heritage sites: <strong>UNESCO World Heritage Centre</strong>. Colours are quantile bins (six equal-count groups) so extreme skew stays readable.</p>
+      <p class="chart-cap">Boundaries: <strong>geoBoundaries.org</strong> (EGY ADM1, CC-BY 4.0), simplified &amp; bundled offline — no external map service is called. Population, density &amp; area: EgyBI knowledge base (<strong>CAPMAS</strong>, Nov 2023); growth compares the 2017 census; urban % is a CAPMAS ~2016 proxy (±1–2 points). Hospitals, clinics &amp; schools: <strong>© OpenStreetMap contributors</strong> (ODbL) — community-mapped, so they show the geographic <em>pattern</em>, not an official registry. Heritage sites: <strong>UNESCO World Heritage Centre</strong>. Colours split the governorates into six groups of equal size, so a few extreme values do not wash out the rest.</p>
     </div>
   </div>
 </section>
@@ -199,7 +199,7 @@ ORDER BY population_millions DESC;"
     <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>Seven sites, one list</div>
     <h2 data-aos="fade-up">Egypt on the World Heritage List.</h2>
     <p class="lead" data-aos="fade-up">Egypt's inscribed UNESCO World Heritage sites, exactly as the list records them — each one is also a gold marker on the map above.</p>
-    <div class="atlas-note" id="heritageEmpty" hidden>This list appears automatically after the first “Build Atlas geo layers” run populates the heritage data file.</div>
+    <div class="atlas-note" id="heritageEmpty" hidden>This list is not ready yet. Please check back soon.</div>
     <div class="wh-grid" id="heritageCards"></div>
     <p class="chart-cap" id="heritageMeta" style="margin-top:16px;"></p>
   </div>
@@ -211,7 +211,7 @@ ORDER BY population_millions DESC;"
   <div class="wrap">
     <div class="kicker"><span data-glyph="ra"></span>Visitor guides</div>
     <h2>18 sites, each with a month-by-month guide.</h2>
-    <p class="lead" style="max-width:68ch;">Afternoon heat, night cold, rain and the hours of golden light for every month, measured at the site's own coordinates. Each World Heritage card above links to the guides within 20 km of it.</p>
+    <p class="lead" style="max-width:68ch;">Afternoon heat, night-time lows, rain and the hours of golden light for every month, measured at each site's exact location. Each World Heritage card above links to the guides within 20 km of it.</p>
     <div class="chip-row"><a class="chip" href="visit/abu-mena.html" data-guide="abu-mena" data-lat="30.8419" data-lon="29.6647">Abu Mena</a><a class="chip" href="visit/abu-simbel.html" data-guide="abu-simbel" data-lat="22.3372" data-lon="31.6258">Abu Simbel</a><a class="chip" href="visit/abydos.html" data-guide="abydos" data-lat="26.1847" data-lon="31.9194">Abydos</a><a class="chip" href="visit/alexandria.html" data-guide="alexandria" data-lat="31.2001" data-lon="29.9187">Alexandria</a><a class="chip" href="visit/dahab.html" data-guide="dahab" data-lat="28.5091" data-lon="34.5136">Dahab</a><a class="chip" href="visit/dendera.html" data-guide="dendera" data-lat="26.1417" data-lon="32.6700">Dendera Temple</a><a class="chip" href="visit/giza.html" data-guide="giza" data-lat="29.9773" data-lon="31.1325">The Giza Pyramids</a><a class="chip" href="visit/islamic-cairo.html" data-guide="islamic-cairo" data-lat="30.0444" data-lon="31.2620">Historic Cairo</a><a class="chip" href="visit/hurghada.html" data-guide="hurghada" data-lat="27.2579" data-lon="33.8116">Hurghada</a><a class="chip" href="visit/karnak.html" data-guide="karnak" data-lat="25.7188" data-lon="32.6573">Karnak Temple</a><a class="chip" href="visit/philae.html" data-guide="philae" data-lat="24.0256" data-lon="32.8843">Philae Temple</a><a class="chip" href="visit/st-catherine.html" data-guide="st-catherine" data-lat="28.5559" data-lon="33.9760">Saint Catherine&#x27;s Monastery</a><a class="chip" href="visit/saqqara.html" data-guide="saqqara" data-lat="29.8712" data-lon="31.2165">Saqqara</a><a class="chip" href="visit/siwa.html" data-guide="siwa" data-lat="29.2041" data-lon="25.5195">Siwa Oasis</a><a class="chip" href="visit/suez-canal.html" data-guide="suez-canal" data-lat="30.5852" data-lon="32.2715">The Suez Canal at Ismailia</a><a class="chip" href="visit/valley-kings.html" data-guide="valley-kings" data-lat="25.7402" data-lon="32.6014">Valley of the Kings</a><a class="chip" href="visit/wadi-al-hitan.html" data-guide="wadi-al-hitan" data-lat="29.2694" data-lon="30.0417">Wadi al-Hitan</a><a class="chip" href="visit/white-desert.html" data-guide="white-desert" data-lat="27.2000" data-lon="28.1833">The White Desert</a></div>
   </div>
 </section>
@@ -220,7 +220,7 @@ ORDER BY population_millions DESC;"
 <!-- METHOD -->
 <section class="surface-light-2" id="method" data-nav="Method &amp; sources">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>How this page is honest</div>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>Where the map comes from</div>
     <h2 data-aos="fade-up">Method, sources &amp; what this map is not.</h2>
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="chart-card" data-aos="fade-up">
@@ -229,10 +229,10 @@ ORDER BY population_millions DESC;"
       </div>
       <div class="chart-card" data-aos="fade-up" data-aos-delay="100">
         <h3>What this map is not</h3>
-        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">This page is <strong>informational and educational only</strong>. The health layer is not a care directory and says nothing about quality, capacity or opening hours — for real medical needs use official health-ministry channels. Per-governorate counts are assigned using simplified boundaries, so facilities right on a border can be counted one governorate over. Nothing here is advice of any kind. Where a number is a proxy or an undercount, the caption says so instead of hiding it — that's the same <span style="color:var(--gold-ink);font-weight:600;">cited-data honesty rule</span> the whole site runs on.</p>
+        <p style="color:var(--ink-soft);font-size:var(--fs-sm);line-height:1.7;">This page is <strong>for information and learning only</strong>. The health layer is not a list of where to get care, and says nothing about quality, capacity or opening hours — if you need medical help, use the official health-ministry channels. Per-governorate counts use simplified boundaries, so a facility right on a border can be counted one governorate over. Nothing here is advice of any kind. Where a number is a stand-in or an undercount, the caption says so — the same <span style="color:var(--gold-ink);font-weight:600;">cited-data honesty rule</span> the whole site runs on.</p>
       </div>
     </div>
-    <div class="atlas-note" style="margin-top:18px;" data-aos="fade-up"><strong>Coming next on the Atlas:</strong> automated daily layers — earthquakes over Egypt and the Red Sea (USGS) and live air traffic (OpenSky) — built on the same fetch-validate-commit pipelines that already refresh the Prices and FX pages every morning.</div>
+    <div class="atlas-note" style="margin-top:18px;" data-aos="fade-up"><strong>Coming next on the Atlas:</strong> daily layers that update themselves — earthquakes over Egypt and the Red Sea (USGS) and live air traffic (OpenSky) — the same way the Prices and FX pages already refresh every morning.</div>
   </div>
 </section>
 
@@ -242,7 +242,7 @@ ORDER BY population_millions DESC;"
     <div class="kicker"><span data-glyph="scarab"></span>Where to next</div>
     <h2>Keep exploring the data.</h2>
     <div class="ns-grid" style="text-align:left;margin-top:22px;">
-      <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt, charted &rarr;</h3><p>~23 BI dashboards on the economy, society and infrastructure.</p></a>
+      <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt, charted &rarr;</h3><p>~23 charts on the economy, society and infrastructure.</p></a>
       <a class="ns-card" href="explore.html"><span class="ns-k">Explore</span><h3>Egypt in charts &rarr;</h3><p>Two dozen sourced charts on economy, society, land and heritage &mdash; every figure cited and dated.</p></a>
       <a class="ns-card" href="prices.html"><span class="ns-k">Prices</span><h3>Today's prices &rarr;</h3><p>Daily retail &amp; wholesale prices from the official portal.</p></a>
     </div>
@@ -259,7 +259,7 @@ ORDER BY population_millions DESC;"
     <div><h2 class="foot-h">More</h2><a href="blog.html">Blog</a><a href="community.html">Community</a><a href="about.html">The Identity</a><a href="index.html#newsletter">Newsletter</a></div>
     <div><h2 class="foot-h">Data sources</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">World Bank</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure is real and cited, and where sources genuinely disagree the dispute is flagged rather than smoothed away.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Every figure has a source, and where sources disagree, we show both.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Privacy &amp; cookies</a></div>
 </footer>
 
 <script src="assets/vendor/leaflet.js"></script>
