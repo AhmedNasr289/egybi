@@ -67,7 +67,15 @@ const TOL = 2;   // sub-pixel rounding and 1px borders are not overflow
                      (typeof el.className === 'string' && el.className ? '.' + el.className.split(' ')[0] : ''),
                    over: Math.round(over), text: (el.innerText || '').trim().slice(0, 40) });
       });
-      return { vw, out };
+      // A table marked .fp-stack promises to stack its rows on a phone, so it
+      // must fit without the sideways scrolling the check above allows for
+      // ordinary tables (2026-11-17: arriving-in-egypt.html's source column
+      // sat off-screen at 375px).
+      const stack = [...document.querySelectorAll('table.fp-stack')]
+        .filter(t => t.scrollWidth > t.parentElement.clientWidth + tol)
+        .map(t => ({ tag: 'table.fp-stack', over: Math.round(t.scrollWidth - t.parentElement.clientWidth),
+                     text: 'a stacked table still needs sideways scrolling: ' + (t.closest('section') || {}).id }));
+      return { vw, out: out.concat(stack) };
     }, TOL);
     if (r.out.length) {
       bad++;
