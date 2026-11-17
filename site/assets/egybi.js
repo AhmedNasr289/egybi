@@ -96,7 +96,7 @@
     authPromise = new Promise(function (resolve, reject) {
       if (window.EGYBI_ACCOUNT) { resolve(window.EGYBI_ACCOUNT); return; }
       var s = document.createElement('script');
-      s.src = new URL('auth.js?v=5', acctBase).href;
+      s.src = new URL('auth.js?v=6', acctBase).href;
       s.onload = function () {
         if (window.EGYBI_ACCOUNT) window.EGYBI_ACCOUNT.ready.then(function () { resolve(window.EGYBI_ACCOUNT); });
         else reject(new Error('auth.js loaded but did not start'));

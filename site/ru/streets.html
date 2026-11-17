@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оценка улиц — районы Египта в измерениях | EgyBI</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#14110C">
+<script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/auth/*"}},{"not":{"href_matches":"/api/*"}},{"not":{"href_matches":"/account.html"}}]},"eagerness":"moderate"}]}</script>
+<meta name="description" content="Уличные сети Египта — измерено, а не заявлено: плотность перекрёстков, тупики, извилистость и энтропия ориентации, район за районом по Каиру.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- .js: motion.js may hide [data-aos] until it reveals them; without it, egybi.css shows everything (S1, S4). -->
+<script>document.documentElement.classList.add("js");setTimeout(function(){if(!document.documentElement.classList.contains("mo-ready"))document.documentElement.classList.remove("js")},4000)</script>
+<link href="../assets/vendor/leaflet.css" rel="stylesheet">
+<link href="../assets/egybi.css?v=50" rel="stylesheet">
+<style>
+  .streets-box { position:relative; height:clamp(340px,54vw,520px); border-radius:var(--radius); overflow:hidden; }
+  .metric-toggle { font-size:var(--fs-xs); font-weight:600; padding:7px 14px; border-radius:999px; border:1px solid var(--line-light);
+                   background:var(--papyrus-2); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .metric-toggle:hover { border-color:var(--gold); }
+  /* Explicit ring: when .on, the border is already blue, so the old
+     outline:none + border-change made focus invisible on the active toggle. */
+  .metric-toggle:focus-visible { border-color:var(--gold); outline:2px solid var(--gold-bright); outline-offset:2px; }
+  .metric-toggle.on { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .ramp-row { display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  .ramp-sw { width:34px; height:13px; display:inline-block; border:1px solid rgba(0,0,0,.08); }
+  .ramp-sw:first-of-type { border-radius:4px 0 0 4px; } .ramp-sw:last-of-type { border-radius:0 4px 4px 0; }
+  .ramp-end { font-size:var(--fs-xs); color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .ramp-note { font-size:var(--fs-sm); color:var(--ink-soft); line-height:1.6; margin:10px 0 0; max-width:76ch; }
+
+  /* orientation roses */
+  .rose-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:18px; margin-top:22px; }
+  .rose-card { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius);
+               padding:14px 12px 12px; margin:0; text-align:center; cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s; }
+  .rose-card:hover, .rose-card:focus-visible, .rose-card.on { border-color:var(--gold); box-shadow:var(--shadow-light); outline:none; transform:translateY(-3px); }
+  .rose { width:100%; height:auto; display:block; }
+  .rose-ring { fill:none; stroke:var(--line-light); stroke-width:1; }
+  .rose-card figcaption { margin-top:8px; display:flex; flex-direction:column; gap:2px; }
+  .rose-card figcaption strong { color:var(--blue-deep); font-size:var(--fs-base); }
+  .rc-era { font-size:var(--fs-xs); color:var(--ink-soft); }
+  .rc-h { font-size:var(--fs-xs); color:var(--gold-ink); font-weight:700; font-variant-numeric:tabular-nums; }
+
+  /* comparison table */
+  .card-wrap { overflow-x:auto; }
+  .card-table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); min-width:760px; }
+  .card-table th { text-align:left; font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft);
+                   padding:9px 11px; border-bottom:2px solid var(--line-light); white-space:nowrap; }
+  .card-table td { padding:9px 11px; border-bottom:1px solid var(--line-light); color:var(--ink); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .card-table td:first-child { font-weight:600; color:var(--blue-deep); white-space:normal; }
+  .card-table tr { cursor:pointer; } .card-table tr:hover td, .card-table tr.on td { background:var(--papyrus-2); }
+  .td-era { display:block; font-size:var(--fs-xs); color:var(--ink-soft); font-weight:400; }
+
+  /* drill-down */
+  .dd { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:5px solid var(--gold);
+        border-radius:var(--radius); padding:24px 26px; margin-top:20px; }
+  .dd h3 { margin:0 0 4px; color:var(--blue-deep); font-size:var(--fs-lg); }
+  .dd h4 { margin:22px 0 10px; color:var(--blue-deep); font-size:var(--fs-base); }
+  .dd-ar { font-weight:400; color:var(--ink-soft); font-size:var(--fs-base); }
+  .dd-era { margin:0 0 10px; font-size:var(--fs-sm); color:var(--gold-ink); font-weight:700; }
+  .dd-why { margin:0 0 16px; color:var(--ink-soft); line-height:1.75; font-size:var(--fs-base); max-width:72ch; }
+  .dd-split { display:grid; grid-template-columns:220px 1fr; gap:24px; align-items:start; }
+  .dd-metrics { display:grid; gap:2px; }
+  .dd-row { display:flex; justify-content:space-between; gap:14px; padding:7px 0; border-top:1px solid var(--line-light); font-size:var(--fs-sm); color:var(--ink-soft); }
+  .dd-row:first-child { border-top:none; }
+  .dd-row strong { color:var(--ink); font-variant-numeric:tabular-nums; }
+  .dd-note { font-size:var(--fs-xs); color:var(--ink-soft); line-height:1.65; margin:10px 0 0; }
+  /* The one hand-drawn boundary on the page. Marked, not buried. */
+  .dd-drawn { border-left:3px solid var(--gold); padding:8px 0 8px 12px; background:var(--papyrus-2); border-radius:0 6px 6px 0; }
+  .dd-drawn strong { color:var(--gold-ink); }
+  .dd-access { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; }
+  .acc-cell { background:var(--papyrus); border:1px solid var(--line-light); border-radius:var(--radius); padding:12px 14px; text-align:center; }
+  .ac-k { display:block; font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); }
+  .acc-cell strong { display:block; font-family:'Cinzel',serif; font-size:var(--fs-xl); color:var(--blue-deep); line-height:1.2; margin:4px 0 2px; }
+  .ac-s { font-size:var(--fs-xs); color:var(--ink-soft); }
+  .dd-ai { background:var(--papyrus); border:1px solid var(--line-light); border-radius:var(--radius);
+           padding:14px 16px; color:var(--ink); line-height:1.75; font-size:var(--fs-sm); margin:0; }
+  .ai-tag { font-size:var(--fs-xs); font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--gold-ink);
+            background:var(--gold-soft); border-radius:999px; padding:3px 9px; vertical-align:middle; margin-left:6px; }
+
+  /* access bars */
+  .acc-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-top:20px; }
+  .acc-card { background:var(--papyrus-2); border:1px solid var(--line-light); border-radius:var(--radius); padding:16px 18px; cursor:pointer; transition:border-color .2s,box-shadow .2s; }
+  .acc-card:hover { border-color:var(--gold); box-shadow:var(--shadow-light); }
+  .acc-name { font-weight:700; color:var(--blue-deep); font-size:var(--fs-base); }
+  .acc-bar { height:9px; background:var(--papyrus); border:1px solid var(--line-light); border-radius:999px; overflow:hidden; margin:10px 0 6px; }
+  .acc-bar span { display:block; height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-bright)); }
+  .acc-pct { font-family:'Cinzel',serif; font-size:var(--fs-xl); color:var(--blue-deep); line-height:1; }
+  .acc-sub { font-size:var(--fs-xs); color:var(--ink-soft); line-height:1.5; margin-top:4px; }
+
+  .streets-note { background:var(--papyrus-2); border:1px solid var(--line-light); border-left:4px solid var(--gold);
+                  border-radius:var(--radius); padding:13px 16px; margin:16px 0 0; font-size:var(--fs-sm); color:var(--ink-soft); line-height:1.65; }
+  @media (max-width:720px){ .dd-split { grid-template-columns:1fr; } }
+</style>
+  <meta name="google-adsense-account" content="ca-pub-1432845423481814">
+  <link rel="canonical" href="https://egybi.com/ru/streets.html">
+  <meta property="og:site_name" content="EgyBI">
+  <meta property="og:title" content="Оценка улиц — районы Египта, измерено, а не заявлено">
+  <meta property="og:description" content="Плотность перекрёстков, тупики, извилистость и энтропия ориентации, район за районом — от хедивской сетки до новых городов в пустыне. Открытые данные, открытый метод.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://egybi.com/ru/streets.html">
+  <meta property="og:image" content="https://egybi.com/og-streets.png?v=3">
+<meta property="og:image:alt" content="Каир, измеренный улица за улицей">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Оценка улиц — районы Египта, измерено, а не заявлено">
+  <meta name="twitter:image" content="https://egybi.com/og-streets.png?v=3">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Egyptian+Hieroglyphs&amp;text=%F0%93%8B%B9%F0%93%80%80%F0%93%82%80%F0%93%86%84%F0%93%86%A3%F0%93%87%8B%F0%93%87%B3%F0%93%8C%80%F0%93%8F%9B&amp;display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://egybi.com/ru/streets.html#page", "url": "https://egybi.com/ru/streets.html", "name": "Street Report Card", "isPartOf": {"@id": "https://egybi.com/#site"}, "publisher": {"@id": "https://egybi.com/#org"}, "inLanguage": "ru"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "EgyBI", "item": "https://egybi.com/"}, {"@type": "ListItem", "position": 2, "name": "Street Report Card", "item": "https://egybi.com/ru/streets.html"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "Egypt street-network metrics by district", "description": "Intersection density, dead-end share, circuity and orientation entropy for Egyptian districts, computed from OpenStreetMap road geometry via OSMnx — from khedivial Downtown Cairo to the desert new towns. Coverage is uneven where OpenStreetMap is incomplete, and the pages say so.", "url": "https://egybi.com/ru/streets.html", "creator": {"@type": "Organization", "name": "EgyBI", "url": "https://egybi.com/"}, "isAccessibleForFree": true, "inLanguage": "ru", "spatialCoverage": {"@type": "Place", "name": "Egypt"}, "keywords": ["Egypt", "Cairo", "street network", "intersection density", "orientation entropy", "circuity", "urban morphology", "OSMnx"], "license": "https://opendatacommons.org/licenses/odbl/1-0/"}</script>
+<!-- I18N-HEAD:START - generated by backend/pipeline/pages/i18n.py; edit that, not this. -->
+<link rel="alternate" hreflang="en" href="https://egybi.com/streets.html">
+<link rel="alternate" hreflang="ar" href="https://egybi.com/ar/streets.html">
+<link rel="alternate" hreflang="ru" href="https://egybi.com/ru/streets.html">
+<link rel="alternate" hreflang="x-default" href="https://egybi.com/streets.html">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html stories.html streets.html">
+<link href="../assets/i18n.css?v=1" rel="stylesheet">
+<script src="../assets/lang.js?v=1" defer></script>
+<script src="../assets/i18n/ru.js?v=489bcab9"></script>
+<!-- I18N-HEAD:END -->
+</head>
+<body>
+<a class="skip-link" href="#main">Перейти к содержанию</a>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
+    <nav class="nav-links" id="navLinks" aria-label="Основная навигация">
+      <a href="index.html">Главная</a>
+      <a href="plan.html">Маршрут</a>
+      <a href="visit.html">Когда ехать</a>
+      <a href="fair-prices.html">Честные цены</a>
+      <a href="hieroglyphs.html">Иероглифы</a>
+      <a href="dossier.html">Досье</a>
+      <a href="places.html">Места</a>
+      <a href="geospatial.html">Атлас</a>
+      <a href="stories.html">Истории</a>
+      <a href="community.html">Сообщество</a>
+      <a href="../explore.html">Данные</a>
+      <a href="about.html">О проекте</a>
+      <a class="nav-only-mobile" href="ask.html">Проверка плана</a>
+      <a class="nav-only-mobile" href="/ru/index.html#newsletter">Рассылка</a>
+    <!-- LANG-LINKS:START --><a class="nav-only-mobile lang-link" href="../streets.html" hreflang="en" lang="en" data-lang="en">English</a><a class="nav-only-mobile lang-link" href="../ar/streets.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><!-- LANG-LINKS:END -->
+</nav>
+    <div class="nav-actions"><!-- LANG-SWITCH:START --><details class="lang-switch"><summary aria-label="Язык: Русский"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> RU</summary><div class="lang-menu"><a href="../streets.html" hreflang="en" lang="en" data-lang="en">English</a><a href="../ar/streets.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><a href="streets.html" hreflang="ru" lang="ru" data-lang="ru" aria-current="true">Русский</a></div></details><!-- LANG-SWITCH:END --><a class="cta" href="ask.html">Проверка плана</a></div>
+    <button class="nav-toggle" aria-label="Меню" aria-expanded="false" aria-controls="navLinks">☰</button>
+  </div>
+</header>
+
+<main id="main">
+<section class="surface-hero center" id="top">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>Оценка улиц</div>
+    <h1 data-aos="fade-up">Каир, измеренный улица за улицей.</h1>
+    <p class="page-intro" style="margin-left:auto;margin-right:auto;" data-aos="fade-up">Районы, построенные в шесть эпох планировки, &mdash; от бульваров Исмаила 1860-х годов до новых городов в пустыне. Не мнения о том, какой спланирован лучше, а <strong>плотность перекрёстков, доля тупиков, извилистость и энтропия ориентации</strong>, вычисленные по открытым данным об улицах с записанным методом.</p>
+  </div>
+</section>
+
+<nav class="on-this-page" data-wayfinding aria-label="На этой странице"></nav>
+
+<section class="surface-light" id="map" data-nav="Карта">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scarab"></span>Каждый район, по одному показателю</div>
+    <h2 data-aos="fade-up">Где оказывается каждый район.</h2>
+    <div id="cardEmpty" class="streets-note" hidden></div>
+    <div id="mapSection">
+      <div class="chart-card" style="margin-top:20px;">
+        <div class="map-toolbar" role="group" aria-label="Выберите показатель">
+          <span style="font-size:var(--fs-sm);color:var(--ink-soft);font-weight:600;">Цвет по:</span>
+          <button type="button" class="metric-toggle on" data-metric="intersection_density_km2">Плотность перекрёстков</button>
+          <button type="button" class="metric-toggle" data-metric="dead_end_share_pct">Тупики</button>
+          <button type="button" class="metric-toggle" data-metric="street_density_km_km2">Плотность улиц</button>
+          <button type="button" class="metric-toggle" data-metric="mean_street_length_m">Средний отрезок</button>
+          <button type="button" class="metric-toggle" data-metric="streets_per_node_avg">Улиц на перекрёсток</button>
+          <button type="button" class="metric-toggle" data-metric="circuity_avg">Извилистость</button>
+          <button type="button" class="metric-toggle" data-metric="orientation_entropy">Энтропия ориентации</button>
+        </div>
+        <section class="streets-box" id="streetsMap" aria-label="Карта измеренных районов Египта, окрашенная по выбранному показателю уличной сети"></section>
+        <div class="map-legend" id="streetsLegend"></div>
+        <div class="dd" id="districtDetail" hidden></div>
+        <div class="streets-note" id="streetsMeta"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="surface-light-2" id="grid" data-nav="Куда смотрят улицы">
+  <div class="wrap" id="roseSection">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="scroll"></span>Ориентация</div>
+    <h2 data-aos="fade-up">Куда смотрят улицы?</h2>
+    <p class="lead" data-aos="fade-up">Каждая роза показывает, какая длина улиц обращена к каждому направлению компаса. Число под ней — <strong>энтропия ориентации</strong>, и она измеряет только одно: <strong>насколько эти направления сосредоточены в немногих румбах</strong>. Прямоугольная сетка вкладывает почти всю длину в две противоположные пары и даёт около <strong>1,39</strong>; улицы, глядящие во все стороны, приближаются к <strong>3,58</strong>.</p>
+    <div class="rose-grid" id="roseGrid"></div>
+    <p class="chart-cap" style="margin-top:18px;" id="roseSpread"></p>
+    <p class="chart-cap"><strong>Высокое значение не означает неспланированный район.</strong> Сосредоточенность — не то же, что регулярность. Радиальный план &mdash; проспекты, сходящиеся к круглым площадям-майданам, османовская идея, которую Исмаил привёз в Каир, &mdash; строго спланирован и <em>намеренно</em> распределяет направления по многим секторам, поэтому получает высокое значение по той же причине, что и путаница переулков. Это число их не различает; роза над ним различает, потому что звезда выглядит иначе, чем размытое пятно. Читайте их вместе.</p>
+    <p class="chart-cap">Направления вычисляются по непроецированным координатам, потому что это румбы компаса, и взвешиваются по длине отрезка, чтобы длинный проспект весил больше короткого переулка. Нажмите на любую розу, чтобы открыть полную карточку района.</p>
+  </div>
+</section>
+
+<section class="surface-light" id="table" data-nav="Цифры">
+  <div class="wrap" id="reportCardBody">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>Оценка</div>
+    <h2 data-aos="fade-up">Все показатели рядом.</h2>
+    <p class="lead" data-aos="fade-up">Отсортировано по плотности перекрёстков &mdash; лучшему однострочному показателю связности уличной сети. Нажмите на строку, чтобы открыть полную карточку района.</p>
+    <div class="card-wrap" style="margin-top:20px;">
+      <table class="card-table">
+        <thead><tr><th>Район</th><th>Перекрёстки</th><th>Тупики</th><th>Плотность улиц</th><th>Средний отрезок</th><th>Улиц/перекрёсток</th><th>Извилистость</th><th>Энтропия</th></tr></thead>
+        <tbody id="cardTableBody"></tbody>
+      </table>
+    </div>
+    <p class="chart-cap" style="margin-top:18px;" id="deadEndFinding"></p>
+  </div>
+</section>
+
+<section class="surface-light-2" id="access" data-nav="Город 15 минут">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="reed"></span>Пешая доступность</div>
+    <h2 data-aos="fade-up">Можно ли дойти пешком до больницы, школы или аптеки?</h2>
+    <p class="lead" data-aos="fade-up">Время пешком по <em>реальной уличной сети</em> &mdash; а не по прямой &mdash; при скорости 80 метров в минуту, около 4,8 км/ч. Оценка — доля пешеходных улиц в пределах пятнадцати минут от нанесённого на карту учреждения.</p>
+    <div class="streets-note" id="accessEmpty" hidden>Слой пешей доступности ещё не построен. Он появится здесь после первого завершённого запуска конвейера.</div>
+    <div class="acc-grid" id="accessGrid"></div>
+    <div class="streets-note" style="margin-top:20px;"><strong>Прочтите это, прежде чем смотреть оценки.</strong> Охват объектов в OpenStreetMap неполон и неравномерен по Каиру. Низкая оценка может означать, что в районе действительно не хватает учреждений, <em>или</em> что их просто не нанесли на карту, &mdash; и эти данные не могут разделить одно и другое. Они также ничего не говорят о том, работает ли учреждение, доступно ли по цене, укомплектовано ли и хорошее ли оно. Это карта того, что нанесено на карту.</div>
+  </div>
+</section>
+
+<section class="surface-light" id="method" data-nav="Метод">
+  <div class="wrap">
+    <div class="kicker" data-aos="fade-up"><span data-glyph="eye"></span>Как это измерено</div>
+    <h2 data-aos="fade-up">Метод — открыто.</h2>
+    <p class="lead" data-aos="fade-up">Пять решений определяют каждое число на этой странице. Они записаны здесь, потому что показателю, который нельзя проверить, не стоит доверять.</p>
+    <ul style="color:var(--ink-soft);line-height:1.9;margin-top:16px;max-width:78ch;">
+      <li><strong>Границы взяты из OpenStreetMap, а не из официального реестра.</strong> Названия районов Египта в OSM непоследовательны, поэтому каждый район проверяется по нескольким вариантам названия, а площадь каждого найденного полигона проверяется перед использованием. Всё неправдоподобное отбрасывается и называется, а не остаётся молча. Большинство этих контуров — полигоны <code>place</code>, нарисованные участниками картографирования, а не официальные административные границы: настоящие, но не кадастр.</li>
+      <li><strong>Контур центра Каира нарисован нами, и он единственный такой.</strong> В OpenStreetMap вообще нет полигона для центра. Мы перепробовали девятнадцать вариантов названия в английском, арабском написании и в форме <em>кисм</em>, и каждый, что возвращал фигуру, возвращал достопримечательность <em>внутри</em> центра &mdash; дворец Абдин, театр Каср-эн-Нил, сад Эзбекия, здание Центрального банка, &mdash; а не сам район. Тогда мы прямо спросили OSM, что у неё есть над этой областью: двадцать пять маленьких полигонов кварталов <em>вокруг</em> хедивского Каира и ничего административного между мухафазой Каир площадью 3006&nbsp;км² и безымянными фрагментами по 0,5&ndash;5&nbsp;км². Поэтому границы центра площадью 7,1&nbsp;км² нарисованы вручную по его известным краям: Нил, Рамсес, улица Порт-Саид и Сайида-Зейнаб. Везде, где он появляется, он помечен как нарисованный вручную, его площадь проверяется так же, как у геокодированной границы, и он используется <em>только</em> после того, как все поиски в OSM не дали результата, &mdash; так что в тот день, когда в OSM появится настоящий полигон центра, этот тихо перестанет использоваться.</li>
+      <li><strong>Всё проецируется до измерения.</strong> Длины и извилистость, вычисленные по сырым широте и долготе, бессмысленны; каждая сеть сначала проецируется в UTM.</li>
+      <li><strong>Количества приводятся к квадратному километру.</strong> Город 6-го Октября намного больше центра, поэтому сырые суммы сравнивали бы размер, а не планировку.</li>
+      <li><strong>Автомобильная и пешеходная сети разделены.</strong> Оценка использует автомобильную сеть, потому что её и создаёт планировка улиц. Оценка доступности использует пешеходную сеть, потому что город пятнадцати минут — про ходьбу. Смешав их, мы не ответили бы ни на один вопрос.</li>
+      <li><strong>Направления вычисляются без проекции и взвешиваются по длине</strong>, потому что это румбы компаса и потому что двухкилометровый проспект должен весить больше пятидесятиметрового переулка.</li>
+    </ul>
+    <div class="streets-note" style="margin-top:18px;">Геометрия улиц — одни из лучше всего картографированных данных в OpenStreetMap, и именно поэтому сравнение обосновано. Но это всё равно данные сообщества, описывающие <em>то, что есть в OSM</em>, а не официальный кадастр, &mdash; и границы районов здесь взяты из OSM и не всегда совпадают с административными. Источник: <strong>&copy; участники OpenStreetMap</strong> (ODbL), через OSMnx.</div>
+  </div>
+</section>
+
+<section class="surface-light-2 next-steps center">
+  <div class="wrap">
+    <div class="kicker"><span data-glyph="scarab"></span>Куда дальше</div>
+    <h2>Ещё больше Египта в измерениях.</h2>
+    <div class="ns-grid" style="text-align:left;margin-top:22px;">
+      <a class="ns-card" href="geospatial.html"><span class="ns-k">Атлас</span><h3>Все 27 мухафаз &rarr;</h3><p>Население, плотность, больницы, школы и семь объектов Всемирного наследия на одной карте с источниками.</p></a>
+      <a class="ns-card" href="../case.html"><span class="ns-k">Дело</span><h3>Раскрыть дело на SQL &rarr;</h3><p>ВВП Египта упал на 18&nbsp;% и вырос на 68&nbsp;% за одни и те же два года. Шесть запросов, десять минут, без регистрации.</p></a>
+      <a class="ns-card" href="geospatial.html"><span class="ns-k">Атлас</span><h3>Посмотреть на карте &rarr;</h3><p>27 мухафаз Египта, медицинские учреждения, школы и семь объектов Всемирного наследия &mdash; у каждого слоя есть источник и дата.</p></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="cols">
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Планируйте Египет честно — каждая цифра с источником и датой.</p></div>
+    <div><h2 class="foot-h">Спланировать поездку</h2><a href="plan.html">Составить маршрут</a><a href="visit.html">Когда ехать</a><a href="fair-prices.html">Честные цены</a><a href="hieroglyphs.html">Ваше имя иероглифами</a><a href="dossier.html">Досье</a><a href="ask.html">Проверка плана</a></div>
+    <div><h2 class="foot-h">Египет в данных</h2><a href="../explore.html">Данные о Египте</a><a href="geospatial.html">Атлас Египта</a><a href="places.html">Места</a><a href="stories.html">Истории в данных</a><a href="streets.html">Оценка улиц</a><a href="../prices.html">Цены за день</a><a href="../stocks.html">Фондовый рынок</a><a href="../invest.html">Где строит Египет</a></div>
+    <div><h2 class="foot-h">Ещё</h2><a href="../blog.html">Блог</a><a href="community.html">Сообщество</a><a href="about.html">Идея и образ</a><a href="index.html#newsletter">Рассылка</a></div>
+    <div><h2 class="foot-h">Источники данных</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">Всемирный банк</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
+  </div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> Каждая цифра настоящая и с источником, а там, где источники действительно расходятся, спор отмечен, а не сглажен.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">Конфиденциальность и cookie</a></div>
+<p class="i18n-note">Эту страницу перевёл EgyBI; перевод ждёт проверки носителем языка. <a href="../streets.html" hreflang="en" lang="en">English</a></p>
+</footer>
+<script src="../assets/egybi.js?v=7"></script>
+<script src="../assets/glyphs.js?v=3"></script>
+<script src="../assets/wayfinding.js?v=2"></script>
+<script src="../assets/vendor/leaflet.js"></script>
+<script src="../assets/egypt-geo.js?v=2"></script>
+<script src="../assets/mapkit.js?v=14"></script>
+<script src="../assets/egfmt.js?v=4"></script>
+<script src="../assets/streets.js?v=14"></script>
+<script src="../assets/ads.js"></script>
+<script src="../assets/motion.js?v=5"></script>
+<script src="../assets/analytics.js?v=2" defer></script>
+</body>
+</html>

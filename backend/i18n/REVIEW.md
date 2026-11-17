@@ -53,6 +53,21 @@ once, on either page. 142 entries per language in stage 1.
 - the month abbreviations in the year strip (ينا، فبر… / янв, фев…), and the
   18 site names, which should match the planner's.
 
+## Stage 2c (2026-11-17): the data stories and the street report card
+
+| Page | Arabic | Russian | English source |
+|---|---|---|---|
+| Data stories | https://egybi.com/ar/stories.html | https://egybi.com/ru/stories.html | https://egybi.com/stories.html |
+| Street report card | https://egybi.com/ar/streets.html | https://egybi.com/ru/streets.html | https://egybi.com/streets.html |
+
+144 more entries per language. Please look especially at the technical terms
+on the street report card: intersection density, dead ends, circuity and
+orientation entropy (كثافة التقاطعات، الطرق المسدودة، التعرّج، إنتروبيا الاتجاه /
+плотность перекрёстков, тупики, извилистость, энтропия ориентации), and at
+Downtown Cairo's hand-drawn boundary paragraph, which names real streets.
+The figures the stories compute in the browser (populations, ratios) are
+still written by script in English digits until stage 4.
+
 ## Where the text lives
 
 - `backend/i18n/ar.tsv` and `backend/i18n/ru.tsv`: one line per unit,
@@ -93,8 +108,21 @@ once, on either page. 142 entries per language in stage 1.
 - Stage 4a translated the header bar's script-written labels: "Sign in",
   "Sign out", "Your trips and account", "Your account", "On this page" and
   "Offline, try again" (تسجيل الدخول / Войти, and so on). They come from the
-  same catalogue, through `assets/i18n/ar.js` and `ru.js`. The sign-in
-  dialog itself is still English until stage 4b.
+  same catalogue, through `assets/i18n/ar.js` and `ru.js`.
+- Stage 4b translated the sign-in dialog: its titles, labels, buttons, the
+  password-strength notes and the messages it writes itself (49 strings).
+  Please read the line under the dialog's side panel closely: "We keep your
+  email and the trips you save. Delete it all from your account page at
+  any time." It is a privacy statement, so its meaning must match exactly.
+  Messages the server sends (for example a rejected password) are still
+  English, and the verification and reset emails are unchanged.
+- Twelve more strings per language (2026-11-17), text the generator had
+  missed: the date labels "Arriving" / "Leaving", "Show amounts in", "A name,
+  in Latin letters", "Name for the dossier cover", "Or search 897 mapped
+  places", and whole paragraphs on Privacy (the account bullet), Community
+  (two bullets), Stories (the sources note) and Streets (the boundaries
+  note). The Privacy bullet describes what an account stores; please check
+  its meaning matches the English exactly.
 - Menu links to pages that have no translation yet lead to the English page.
 - Verification and password-reset emails are unchanged and English only.
   Any translation of them needs the owner's approval of the exact text first.

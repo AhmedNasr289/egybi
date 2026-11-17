@@ -1109,6 +1109,14 @@ case("English left in a Russian page's script-written cards", "i18n.py", ["site/
 case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
      lambda: edit("site/ar/about.html", "بيت الحياة.", "The House of Life."),
      lambda o: "ENGLISH LEAK" in o, I18N)
+# text the generator never collected (a <label> wrapping its <input>): the
+# units()-based check above is blind to it, the text-node instrument is not
+case("a Russian label left in English beside its input", "i18n.py", ["site/ru/index.html"],
+     lambda: edit("site/ru/index.html", "<label>Прибытие<input", "<label>Arriving<input"),
+     lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)
+case("an Arabic label left in English beside its select", "i18n.py", ["site/ar/fair-prices.html"],
+     lambda: edit("site/ar/fair-prices.html", "<label>اعرض المبالغ بـ<select", "<label>Show amounts in<select"),
+     lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)
 # the home page's twins: the home page is the folder address, egybi.com/ar/
 case("the Arabic home page claiming the English home page as its canonical", "i18n.py", ["site/ar/index.html"],
      lambda: edit("site/ar/index.html", '<link rel="canonical" href="https://egybi.com/ar/">',
@@ -1125,6 +1133,9 @@ case("EGYBI.url resolving against the page, not the site", "twin-data.js", ["sit
      lambda o: "TWIN DATA FROM WRONG FOLDER" in o or "TWIN REQUEST FAILED" in o, TWIN)
 case("a translated page without its string table", "twin-data.js", ["site/ar/index.html"],
      lambda: edit_re("site/ar/index.html", r'<script src="\.\./assets/i18n/ar\.js\?v=[0-9a-f]+"></script>\n', ""),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
+case("the sign-in dialog's title left out of t()", "twin-data.js", ["site/assets/auth.js"],
+     lambda: edit("site/assets/auth.js", "title.textContent = t('Welcome back');", "title.textContent = 'Welcome back';"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
 case("a script string left out of EGYBI.t", "twin-data.js", ["site/assets/wayfinding.js"],
      lambda: edit("site/assets/wayfinding.js", "(window.EGYBI && window.EGYBI.t) ? window.EGYBI.t('On this page') : 'On this page'", "'On this page'"),

@@ -127,6 +127,12 @@ class _P(HTMLParser):
 
 def _all_inline(n: _Node) -> bool:
     for c in n.children:
+        # <code> stays inside its sentence, untranslated, as the docstring
+        # says; rejecting it (it is in SKIP so nothing INSIDE it becomes a
+        # unit) dropped the whole paragraph around it, half-English twins
+        # (2026-11-17: privacy, community, stories, streets)
+        if c.tag == 'code':
+            continue
         if c.tag in SKIP:
             return False
         if c.tag not in INLINE and c.tag != 'img':
@@ -157,9 +163,12 @@ def units(src: str):
                     and _has_letters(src, c)):
                 out.append((c.inner_start, c.inner_end, src[c.inner_start:c.inner_end]))
                 continue
-            # loose text directly inside a container (rare): its own unit
+            # loose text directly inside a container: its own unit. That
+            # includes a unit tag that could not be taken whole - a <label>
+            # wrapping its <input> ("Arriving"), a <button> with an icon -
+            # whose text was otherwise dropped without a word (2026-11-17)
             for pos, data in c.text:
-                if LETTER.search(data) and c.tag not in UNIT_TAGS | {'html', 'head', 'body'}:
+                if LETTER.search(data) and c.tag not in {'html', 'head', 'body'}:
                     s = pos + (len(data) - len(data.lstrip()))
                     e = pos + len(data.rstrip())
                     out.append((s, e, src[s:e]))

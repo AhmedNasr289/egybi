@@ -121,10 +121,10 @@
 <link rel="alternate" hreflang="ru" href="https://egybi.com/ru/">
 <link rel="alternate" hreflang="x-default" href="https://egybi.com/">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html">
+<meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html stories.html streets.html">
 <link href="../assets/i18n.css?v=1" rel="stylesheet">
 <script src="../assets/lang.js?v=1" defer></script>
-<script src="../assets/i18n/ar.js?v=1da284de"></script>
+<script src="../assets/i18n/ar.js?v=8e2877a1"></script>
 <!-- I18N-HEAD:END -->
 </head>
 <body>
@@ -143,7 +143,7 @@
       <a href="dossier.html">الملف</a>
       <a href="places.html">الأماكن</a>
       <a href="geospatial.html">الأطلس</a>
-      <a href="../stories.html">القصص</a>
+      <a href="stories.html">القصص</a>
       <a href="community.html">المجتمع</a>
       <a href="../explore.html">البيانات</a>
       <a href="about.html">من نحن</a>
@@ -176,8 +176,8 @@
     <p class="lead hero-lead">اختر تواريخك. ستعرف ما تبلغه الحرارة المقيسة في فترة بعد ظهر عادية في كل موقع من ثمانية عشر موقعًا رئيسيًا، وأي العطلات تقع خلال رحلتك، وسعر الصرف اليوم، وكم ينبغي أن تكلّف الأشياء &mdash; وكل رقم مع مصدره وتاريخه.</p>
 
     <form class="trip-form" id="tripForm" novalidate>
-      <label>Arriving<input type="date" id="tripStart" name="start" required></label>
-      <label>Leaving<input type="date" id="tripEnd" name="end" required></label>
+      <label>الوصول<input type="date" id="tripStart" name="start" required></label>
+      <label>المغادرة<input type="date" id="tripEnd" name="end" required></label>
       <button type="submit" class="btn btn-primary" data-ev="home_brief">اعرض ملخّصي &larr;</button>
     </form>
     <p class="form-note" id="tripNote" role="status" aria-live="polite"></p>
@@ -338,7 +338,7 @@
         <h3>كل مكان على الخريطة، قابل للبحث.</h3>
         <p>المدن والبلدات والمطارات والمواقع الأثرية، مع تصفيتها حسب المحافظة &mdash; النمط الجغرافي لما سجّلته OpenStreetMap.</p>
       </a>
-      <a class="card card-link" href="../stories.html" data-aos="fade-up" data-aos-delay="180" data-ev="home_to_stories">
+      <a class="card card-link" href="stories.html" data-aos="fade-up" data-aos-delay="180" data-ev="home_to_stories">
         <span class="tag">قصص البيانات</span>
         <h3>حجج، لا لوحات معلومات.</h3>
         <p>تتحرك الخريطة وأنت تقرأ. لماذا تبدو مصر أكبر مما هي، وأين العيادات، وما الذي خلّفه قرن من تخطيط الشوارع.</p>
@@ -348,7 +348,7 @@
         <h3>من الاقتصاد إلى العصور القديمة.</h3>
         <p>الناتج المحلي الإجمالي وقناة السويس والسياحة والطاقة والزراعة والتسلسل الزمني القديم &mdash; وكل رقم بمصدر مسمّى وتاريخ.</p>
       </a>
-      <a class="card card-link" href="../streets.html" data-aos="fade-up" data-aos-delay="300" data-ev="home_to_streets">
+      <a class="card card-link" href="streets.html" data-aos="fade-up" data-aos-delay="300" data-ev="home_to_streets">
         <span class="tag">هندسة الشوارع</span>
         <h3>قرن من المخططات، بالقياس.</h3>
         <p>كثافة التقاطعات والطرق المسدودة والتعرّج في أحياء تمتد من ستينيات القرن التاسع عشر إلى المدن الصحراوية الجديدة &mdash; بالقياس، لا بالادّعاء.</p>
@@ -450,7 +450,7 @@
       <p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لمصر بصدق — حرارة حقيقية وعطلات وأسعار، وكل رقم بمصدره وتاريخه.</p>
     </div>
     <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط لمسارك</a><a href="visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">الملف</a><a href="ask.html">مراجعة الخطة</a></div>
-    <div><h2 class="foot-h">مصر بالأرقام</h2><a href="../explore.html">بيانات مصر</a><a href="geospatial.html">أطلس مصر</a><a href="places.html">الأماكن</a><a href="../stories.html">قصص البيانات</a><a href="../streets.html">بطاقة تقييم الشوارع</a><a href="../prices.html">الأسعار اليومية</a><a href="../stocks.html">البورصة</a><a href="../invest.html">أين تبني مصر</a></div>
+    <div><h2 class="foot-h">مصر بالأرقام</h2><a href="../explore.html">بيانات مصر</a><a href="geospatial.html">أطلس مصر</a><a href="places.html">الأماكن</a><a href="stories.html">قصص البيانات</a><a href="streets.html">بطاقة تقييم الشوارع</a><a href="../prices.html">الأسعار اليومية</a><a href="../stocks.html">البورصة</a><a href="../invest.html">أين تبني مصر</a></div>
     <div><h2 class="foot-h">المزيد</h2><a href="../blog.html">المدوّنة</a><a href="community.html">المجتمع</a><a href="about.html">الهوية</a><a href="#newsletter">النشرة البريدية</a></div>
     <div><h2 class="foot-h">مصادر البيانات</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">البنك الدولي</a><a href="../explore.html">قائمة المصادر الكاملة</a></div>
   </div>
@@ -460,7 +460,7 @@
 
 <script src="../assets/vendor/countUp.umd.js"></script>
 <script src="../assets/vendor/chart.umd.js"></script>
-<script src="../assets/egybi.js?v=6"></script>
+<script src="../assets/egybi.js?v=7"></script>
 <script src="../assets/glyphs.js?v=3"></script>
 <script src="../assets/wayfinding.js?v=2"></script>
 <script src="../assets/egfmt.js?v=4"></script>

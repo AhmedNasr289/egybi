@@ -28,7 +28,8 @@ const path = require('path');
 const { chromium, executablePath, BASE } = require('./env');
 const SITE = path.join(__dirname, '..', '..', 'site');
 
-const PAGES = ['index.html', 'plan.html', 'fair-prices.html', 'visit.html', 'places.html', 'geospatial.html', 'community.html'];
+const PAGES = ['index.html', 'plan.html', 'fair-prices.html', 'visit.html', 'places.html', 'geospatial.html', 'community.html',
+               'stories.html', 'streets.html'];
 // the file each page must load, for the pages with no on-screen marker below
 const NEEDS = {
   'plan.html': '/data/visit-climate.json',
@@ -36,6 +37,8 @@ const NEEDS = {
   'places.html': '/data/geo-places.json',
   'geospatial.html': '/data/geo-health.json',
   'community.html': '/api/community.php',
+  'stories.html': '/data/geo-health.json',
+  'streets.html': '/data/streets-districts.json',
 };
 const LANGS = ['', 'ar/', 'ru/'];
 // pages a script links to that have no translated copy
@@ -111,6 +114,19 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         if (!lang && v !== english[k]) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English ${page} shows "${v}" for "${english[k]}"`);
       }
       if (lang && chromeText.signin === null) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} has no sign-in button to check`);
+
+      // The sign-in dialog (stage 4b), opened on the home page in each language.
+      if (page === 'index.html') {
+        const dlg = await p.click('#signinBtn').then(() => p.waitForFunction(() => {
+          const h = document.getElementById('authTitle');
+          return h && h.textContent.trim() ? { title: h.textContent.trim(),
+            email: (document.querySelector('label[for="authEmail"]') || {}).textContent || '' } : null;
+        }, null, { timeout: 8000 })).then(h => h.jsonValue(), () => null);
+        if (!dlg) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} - the sign-in dialog did not open`);
+        else if (lang && (dlg.title === 'Welcome back' || dlg.email === 'Email')) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} dialog shows "${dlg.title}" / "${dlg.email}"`);
+        else if (!lang && (dlg.title !== 'Welcome back' || dlg.email !== 'Email')) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English dialog shows "${dlg.title}" / "${dlg.email}"`);
+        else console.log(`${where}: sign-in dialog "${dlg.title}" / "${dlg.email}"`);
+      }
 
       console.log(`${where}: ${data.length} data file(s), ${links.length} rooted link(s), ${bad.length} failed request(s), sign-in "${chromeText.signin}", on-this-page "${chromeText.otp}"`);
       await ctx.close();

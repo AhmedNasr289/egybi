@@ -2256,10 +2256,21 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **First strings:** the header button and account menu ("Sign in", "Sign out", "Your account", "Your trips and account", "Offline, try again") and the sticky "On this page" label. The header button's text is now set as text, not markup.
 - **Versions:** egybi.js v6, wayfinding.js v2 (on every page, through the generator), auth.js v5.
 - **Proof:** `twin-data.js` reads the sign-in button and the "On this page" label on every page it opens. They must be translated on Arabic and Russian pages and unchanged on English ones. Two mutation cases cover this: a page without its table, and a label left outside `t()`.
+## 2026-11-17 — Trilingual stage 2c: the data stories and the street report card in Arabic and Russian
+- **What is new:** Arabic and Russian copies of stories.html and streets.html. That adds 144 entries per language and 4 sitemap URLs (79 to 83).
+- **Data paths:** `stories.js` (four fetches) and `streets.js` load through `EGYBI.url`, so the copies read the site's `data/`. Versions bumped: stories.js v11, streets.js v14.
+- **A generator bug the check caught:** the rule that sets `lang` and `dir` on a copy matched only a bare `<html lang="en">` tag. stories.html also carries `class="no-js"`, so its first Arabic and Russian builds stayed `lang="en" dir="ltr"`, and `i18n.py` failed both with LANG/DIR WRONG. The rule now rewrites those two attributes on any `<html>` tag and keeps the rest.
+- **Checks:** `twin-data.js` also opens stories and streets in three languages. One Russian description was shortened (seo.py).
 ## 2026-11-17 — The year strip's sentence test reads the non-breaking space
 - **What failed:** Test (pipeline) failed on #145's head (`1ba6d35`) and on every PR above it. `test_heat_calendar` stripped tags from the findings but not entities, so after #145 joined each figure to °C with `&nbsp;`, it looked for `42 °C` with a plain space. The browser checks were all green, and that workflow was the only one watched, so this was missed until #150.
 - **The fix:** the test now asserts the markup carries `42&nbsp;°C` and has no figure followed by a plain space and °C. It then unescapes the text and checks the sentences as a reader sees them. All 206 pipeline tests pass, and the test fails if the non-breaking space is removed (control run).
 - **And the habit:** a head counts as green only when every check run on it is green (read with the check-runs API), not only the browser workflow.
+## 2026-11-17 — Trilingual stage 4b: the sign-in dialog in Arabic and Russian
+- **What is translated:** every string the sign-in dialog writes itself goes through `t()`. That covers the side panel, the email and password labels, Forgot, Show and Hide, the password-strength labels and hints, the four views (sign in, create account, reset, new password) and the dialog's own messages. It adds 49 strings per language, 55 in the tables.
+- **Not changed:** a message the server sends still wins over the dialog's own, so a server's specific English message shows as is. The verification and reset emails are untouched.
+- **Markup:** the two lines that mixed text and a button ("New here? Create an account") are now built from parts, with each part escaped. The generator refuses a script string, or its translation, that contains markup; the controls accept the real catalogue and refuse a planted `<b>`.
+- **Versions:** auth.js v6, and egybi.js v7, because it names auth.js's version.
+- **Proof:** on the home page in each language, `twin-data.js` opens the dialog and reads its title and email label. They must be translated in Arabic and Russian and unchanged in English. A mutation case leaves the title outside `t()`.
 ## 2026-11-17 — The translated home pages' hero poster, and the audit that missed it
 - **What failed:** `twin-data.js` failed on #151's head (run 43987216476). On ar/index.html and ru/index.html the hero video's poster loaded as `/ar/assets/video/hero-lighthouse.webp`, which is a 404.
 - **The cause:** the generator moved `href` and `src` up one folder. Its `\b(href|src)` pattern caught `data-src` only because `\b` matches after a hyphen, and it never matched `poster`.
@@ -2275,6 +2286,15 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Mutation cases:**
   - The "untranslated page" case now uses prices.html, because visit.html has a copy and the old case could no longer fail.
   - A new case disables the in-language branch of `T.url()` and must be caught.
+## 2026-11-17 — English left on translated pages: labels with fields, and paragraphs with code
+- **What a reader saw:** the live Russian home page (checked in a browser after #150-#152 merged) showed "Arriving" and "Leaving" beside its date fields. The same gap left "Show amounts in", "A name, in Latin letters", the dossier-cover label and the planner's search label in English, and left half-English paragraphs on Privacy, Community, Stories and Streets, in both Arabic and Russian.
+- **The mechanism:** `i18n_units.py` takes an element as one unit only when everything inside it is inline.
+  - A `<label>` wrapping its `<input>` or `<select>` is not, and the fallback that collects loose text skipped every unit tag, so the label's text was never collected and never asked for.
+  - A paragraph containing `<code>` was refused the same way, because `code` is in the skip list (so nothing inside it is translated); only its links were translated and the rest stayed English.
+- **The fix:** `<code>` stays inside its sentence as the module's docstring always said, and loose text in any element that could not be taken whole is its own unit. The build then asked for 12 new strings per language, now in the catalogues (the brand name EgyBI is kept as is).
+- **Why the check missed it:** the English-leak check found text with the same `units()` function, so it could not see what the generator never found, and it ignored single words. It now also compares every visible text node of each twin with the English page, one word or many, with a short named list of things that stay in English (data sources, a licence, a book title, the language button's own label).
+  - Proved both ways: with the old pages it fails on ru/index.html ("Arriving") and ar/stories.html; with the old checker, a planted "Arriving" passes.
+  - Two new mutation cases plant an English label on a Russian and an Arabic page; both are caught.
 ## 2026-11-17 — The check on the checks runs in three shards
 - **What failed:** the mutation job on #154 and #156 was cancelled at its 60-minute cap (runs 44054884507 and 44054899452, annotation "The job has exceeded the maximum execution time of 1h0m0s"). #153's pass had taken 53 minutes. No case failed; the suite (131+ cases, each running its checker three times) had outgrown one job, and a cancelled run proves nothing.
 - **Why not just raise the cap:** it was already raised from 45 to 60 the day before, and every stage adds cases. The time is spread across the suite (the translated-page checks were about 8 of #153's 52 minutes), so no single checker is the cause.
