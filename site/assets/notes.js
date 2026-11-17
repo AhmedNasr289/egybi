@@ -38,7 +38,7 @@
   }
   function tell(msg, kind) { say.textContent = msg || ''; say.className = 'form-note' + (kind ? ' ' + kind : ''); }
   function getJSON(url) {
-    return fetch(url, { credentials: 'same-origin' }).then(function (r) {
+    return fetch(site(url), { credentials: 'same-origin' }).then(function (r) {
       return r.json().then(function (j) { return { status: r.status, data: j }; });
     });
   }

@@ -23,7 +23,10 @@
      the site root's copy: TWIN LINK WRONG FOLDER.
 
    Exits 1 on any failure. */
+const fs = require('fs');
+const path = require('path');
 const { chromium, executablePath, BASE } = require('./env');
+const SITE = path.join(__dirname, '..', '..', 'site');
 
 const PAGES = ['index.html', 'plan.html', 'fair-prices.html', 'visit.html', 'places.html', 'geospatial.html', 'community.html'];
 // the file each page must load, for the pages with no on-screen marker below
@@ -36,7 +39,10 @@ const NEEDS = {
 };
 const LANGS = ['', 'ar/', 'ru/'];
 // pages a script links to that have no translated copy
+// pages the scripts write links to; a link must stay in the reader's
+// language when that page has a copy there, and go to the root when not
 const ROOTED = ['visit.html', 'prices.html', 'account.html'];
+const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, name));
 
 (async () => {
   const b = await chromium.launch({ executablePath });
@@ -85,7 +91,10 @@ const ROOTED = ['visit.html', 'prices.html', 'account.html'];
       const links = await p.evaluate(rooted => [...document.querySelectorAll('main a[href]')]
         .map(a => a.href)
         .filter(h => rooted.some(n => new URL(h).pathname.endsWith('/' + n))), ROOTED);
-      const off = links.filter(h => !ROOTED.some(n => new URL(h).pathname === '/' + n));
+      const off = links.filter(h => {
+        const p = new URL(h).pathname, name = p.split('/').pop();
+        return p !== (hasTwin(lang, name) ? '/' + lang + name : '/' + name);
+      });
       if (off.length) fail(`TWIN LINK WRONG FOLDER: ${where} links to ${off.map(h => new URL(h).pathname).join(', ')}`);
 
       console.log(`${where}: ${data.length} data file(s), ${links.length} rooted link(s), ${bad.length} failed request(s)`);
