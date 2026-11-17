@@ -93,3 +93,9 @@ Back to [[Home]] · related: [[Automation & CI Pipelines]] · [[Changelog]]
   - main's own run must pass;
   - the live files must match main.
 - **A version-tagged asset can look stale at its bare URL:** the CDN may serve a week-old copy of `egybi.css` without `?v=`. Pages request `?v=50`, which is current. Compare the versioned URL.
+- **A stacked PR merges into whatever its base is at that moment:** on 2026-11-17, #145 and #147 merged into `r6/map-fold` and `r6/year-strip`, not main, because the base changes between merges did not take effect. Recovered with #150, from the tested head to main.
+  - **Rule:** base every PR in a train on main from the start. Each branch already contains the ones below it, so merging in order lands each on main.
+- **One green workflow is not a green head:** #145 was merged with Test (pipeline) failing. Only Verify (browser) was being watched, and a sentence test still expected `42 °C` after the year strip switched to `42&nbsp;°C`.
+  - **Rule:** read every check run on the exact head (`commits/<sha>/check-runs`) before calling a PR green.
+- **A path rewrite that lists attributes misses the ones it does not list:** the translated home pages' video poster 404'd. The rewrite covered `href` and `src` (and `data-src` only by accident of `\b`), and the static audit did not read `poster` either.
+  - **Rule:** name every attribute that holds a path, and give the audit the same list. A browser check that fails on any 404 found what both static rules missed.

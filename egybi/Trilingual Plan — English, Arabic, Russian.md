@@ -1,8 +1,11 @@
 # Trilingual Plan — English, Arabic, Russian
 
-Approved by the owner on 2026-11-16, as recommended. Status at the end of that
-day: **stage 1 built and committed on branch `r6/i18n-stage1`, not yet
-merged.**
+Approved by the owner on 2026-11-16, as recommended. **Status, 2026-11-17 01:00 UTC:**
+stage 1 (About, Privacy), 2a (home, planner, prices, name studio, dossier, plan check),
+2b (When to go, Community, Places, Atlas), 2c (data stories, street report card),
+4a (header text written by scripts) and 4b (the sign-in dialog) are built and open as
+PRs #150–#154 and #156, all based on main, to merge in that order. That is 14 pages
+in each language. None of them is merged yet.
 
 Back to [[Home]] · related: [[Papyrus Design System]] · [[Frontend & Design System]] · [[Lessons — Checks That Measured the Wrong Thing]]
 
@@ -64,10 +67,12 @@ Back to [[Home]] · related: [[Papyrus Design System]] · [[Frontend & Design Sy
    - the check (`backend/verify/i18n.py`, seven mutation cases);
    - `header.js` measuring the twins.
 
-   *Built 2026-11-16, not merged.*
-2. The other top-level pages.
+   *Built 2026-11-16; PR #150 after #147 merged into a stacked base by mistake.*
+2. The other top-level pages: 2a, 2b and 2c built (12 pages). Explore, stocks, invest, case, blog, prices and the four data pages are left.
 3. Visit pages and stories, through the generator.
-4. Script text: the planner, briefing, notes, account dialog and maps, and number and date formatting. This includes the hieroglyph list on About, which `glyphs.js` writes.
+4. Script text, through `EGYBI.t()`: the generator writes `assets/i18n/<lang>.js` from the same catalogues and refuses a missing translation or markup. 4a (header bar) and 4b (sign-in dialog) are built. Still to do: the planner, briefing, notes and maps, number and date formatting, and the hieroglyph list on About, which `glyphs.js` writes.
+
+   Found while building them: the trip scripts fetched `data/` relative to the page, so the twins would have loaded empty. Fixed with `T.url()` and `EGYBI.url()`, which resolve against the script's own address, and proven by `twin-data.js`.
 5. Fixes from the native review.
 
 ## Native review
