@@ -70,7 +70,7 @@ for f in sorted(WF.glob("*.yml")):
     # Does the alert actually SAY anything? Read the step rather than grepping
     # the file: "reason" appears in prose comments all over these workflows, and
     # a rule satisfied by a comment is not a rule.
-    alert_steps, reasoned, blind_to_timeout = 0, 0, 0
+    alert_steps, reasoned, blind_to_timeout, alerts_superseded = 0, 0, 0, 0
     # A workflow that cancels its own superseded runs (cancel-in-progress) sees
     # routine cancellations; one that never does sees a cancellation only when
     # a person cancels it or the job hits timeout-minutes.
@@ -89,6 +89,16 @@ for f in sorted(WF.glob("*.yml")):
                 cond = str(s.get("if", ""))
                 if not self_cancels and not re.search(r"cancelled\(\)|always\(\)", cond):
                     blind_to_timeout += 1
+                # In a workflow that cancels its own superseded runs, an alert
+                # that can run on a cancelled run (a step `if` with always() or
+                # cancelled(), or a job gated by always()) opens an issue for
+                # every routine supersede. Verify (browser) did on 2026-11-17:
+                # the #167 merge cancelled the #166 run on main, and its
+                # `mutation` job, gated `if: always() && ...`, still ran and
+                # alerted on issue #155.
+                if self_cancels and (re.search(r"always\(\)|(?<!!)cancelled\(\)", cond)
+                                     or re.search(r"always\(\)", str(j.get("if", "")))):
+                    alerts_superseded += 1
 
     raw = f.read_text(encoding="utf-8")
     # `git push` is the honest marker for a workflow that writes back — a
@@ -101,7 +111,8 @@ for f in sorted(WF.glob("*.yml")):
     rows.append(dict(name=f.name.replace(".yml", ""), trig=",".join(sorted(trig)),
                      paths=len(paths), cron=";".join(cron) or "-",
                      timeout=timeout or "NONE", conc=conc, writes=writes, alerts=alerts,
-                     alert_steps=alert_steps, reasoned=reasoned, blind_to_timeout=blind_to_timeout))
+                     alert_steps=alert_steps, reasoned=reasoned, blind_to_timeout=blind_to_timeout,
+                     alerts_superseded=alerts_superseded))
 
 w = max(len(r["name"]) for r in rows)
 print(f"{'workflow':<{w}}  {'triggers':<34} {'paths':>5} {'timeout':>7}  {'conc':<5} {'push':<5} {'alert':<5} {'why':<4} cron")
@@ -159,6 +170,11 @@ for r in rows:
         gaps.append(f"{r['name']}: fires unattended ({', '.join(fires)}) and its alert runs "
                     "only on failure() — a job killed at timeout-minutes is CANCELLED and "
                     "would alert nobody (use `if: failure() || cancelled()`)")
+for r in rows:
+    if r["alerts_superseded"]:
+        gaps.append(f"{r['name']}: cancels superseded runs (cancel-in-progress) yet "
+                    f"{r['alerts_superseded']} alert step(s) can run on a cancelled run, so every "
+                    "newer push would open an issue (gate the job with `!cancelled()`, not `always()`)")
 if gaps:
     print("\nGaps:")
     for g in gaps:
