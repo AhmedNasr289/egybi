@@ -143,6 +143,21 @@
     for (var i = 0; i < BANDS.length; i++) if (t < BANDS[i].max) return BANDS[i];
     return BANDS[BANDS.length - 1];
   }
+  /* The planner's heat warning (2026-11-17). Given a stop's month rows
+     ({month, max}) for the trip, returns the hottest month's afternoon when it
+     reaches the TOP band (39 °C or more, the band the weather page colours
+     darkest), with the time the site's gates open if its opening hours are
+     known: { t: 41, opens: '06:00' }. Otherwise null. A pure function, so
+     backend/verify/heat-warning.js can test it without a page. */
+  function heatWarning(rows, hours) {
+    var top = BANDS[BANDS.length - 1], worst = null;
+    (rows || []).forEach(function (r) {
+      if (r && r.max != null && (worst == null || r.max > worst.max)) worst = r;
+    });
+    if (!worst || band(worst.max) !== top) return null;
+    var m = /\b\d\d:\d\d\b/.exec(String(hours || ''));
+    return { t: whole(worst.max), opens: m ? m[0] : null };
+  }
   /* Text on a band: white only where it clears AA, as visit.js measured. */
   function inkOn(colour) {
     return (colour === '#2C6FAD' || colour === '#B23A0F') ? '#fff' : '#1C1C1C';
@@ -213,7 +228,7 @@
     load: load, save: save, blank: blank, getJSON: getJSON, url: url,
     parse: parse, iso: iso, addDays: addDays, today: today, nights: nights,
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
-    BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow,
+    BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow, heatWarning: heatWarning,
     km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM,
     eventsIn: eventsIn, rate: rate, rateText: rateText, money: money, whole: whole,
     MONTHS: MONTHS, SHORT: SHORT, esc: esc
