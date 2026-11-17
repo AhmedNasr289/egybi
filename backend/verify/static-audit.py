@@ -25,7 +25,9 @@ pages = sorted(SITE.rglob("*.html"))
 fails = defaultdict(list)
 
 # ---------------------------------------------------------------- links ----
-href_re = re.compile(r'(?:href|src)\s*=\s*"([^"]+)"', re.I)
+# poster since 2026-11-17: a video poster is a file the page loads like any
+# src, and the Arabic home page's broken one passed this audit unseen.
+href_re = re.compile(r'(?:href|src|poster)\s*=\s*"([^"]+)"', re.I)
 ids_by_page, links = {}, []
 for p in pages:
     t = p.read_text(encoding="utf-8", errors="replace")

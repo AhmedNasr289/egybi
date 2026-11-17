@@ -242,7 +242,12 @@ def relocate(html: str, page: str, lang: str) -> str:
     # for this location already, and not absolute, root, fragment or mail links)
     def up(m):
         return f'{m.group(1)}="../{m.group(2)}'
-    html = re.sub(r'\b(href|src)="(?!https?:|#|/|\.\./|mailto:|tel:|data:|javascript:)([^"]*)', up, html)
+    # Every attribute that holds a site path, named in full. It was (href|src)
+    # with \b, which caught data-src only because \b matches after a hyphen,
+    # and missed poster: the home page's hero poster 404'd as ar/assets/...
+    # (twin-data.js, run 43987216476).
+    html = re.sub(r'(?<![\w-])((?:data-)?(?:href|src)|poster|action)="(?!https?:|#|/|\.\./|mailto:|tel:|data:|javascript:)([^"]*)',
+                  up, html)
     html = html.replace("base: 'auth/'", "base: '../auth/'")
     html = html.replace("endpoint: 'api/", "endpoint: '../api/")
     # links to pages that have a twin stay in this language

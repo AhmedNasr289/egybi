@@ -2271,3 +2271,8 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Markup:** the two lines that mixed text and a button ("New here? Create an account") are now built from parts, with each part escaped. The generator refuses a script string, or its translation, that contains markup; the controls accept the real catalogue and refuse a planted `<b>`.
 - **Versions:** auth.js v6, and egybi.js v7, because it names auth.js's version.
 - **Proof:** on the home page in each language, `twin-data.js` opens the dialog and reads its title and email label. They must be translated in Arabic and Russian and unchanged in English. A mutation case leaves the title outside `t()`.
+## 2026-11-17 — The translated home pages' hero poster, and the audit that missed it
+- **What failed:** `twin-data.js` failed on #151's head (run 43987216476). On ar/index.html and ru/index.html the hero video's poster loaded as `/ar/assets/video/hero-lighthouse.webp`, which is a 404.
+- **The cause:** the generator moved `href` and `src` up one folder. Its `(href|src)` pattern caught `data-src` only because `` matches after a hyphen, and it never matched `poster`.
+- **The fix:** the rule names every attribute that holds a site path: `href`, `src`, `data-href`, `data-src`, `poster` and `action`.
+- **The audit's gap:** static-audit.py checked `href` and `src` but not `poster`, so the broken file passed unseen. It now reads `poster`. Before the rebuild it fails on both broken posters; after it, it is clean. A new mutation case plants a missing poster, and it is caught.
