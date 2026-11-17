@@ -1116,8 +1116,13 @@ case("the sign-in dialog's title left out of t()", "twin-data.js", ["site/assets
 case("a script string left out of EGYBI.t", "twin-data.js", ["site/assets/wayfinding.js"],
      lambda: edit("site/assets/wayfinding.js", "(window.EGYBI && window.EGYBI.t) ? window.EGYBI.t('On this page') : 'On this page'", "'On this page'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
+# prices.html has no translated copy, so a relative link from ar/ lands on a
+# page that does not exist (visit.html has one since 2b, so it no longer can)
 case("a script link to an untranslated page left relative to the twin", "twin-data.js", ["site/assets/home.js"],
-     lambda: edit("site/assets/home.js", "' + T.url('visit.html#month') + '", "visit.html#month"),
+     lambda: edit("site/assets/home.js", "' + T.url('prices.html#fx-section') + '", "prices.html#fx-section"),
+     lambda o: "TWIN LINK WRONG FOLDER" in o, TWIN)
+case("a script link to a translated page sent to the English copy", "twin-data.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "if (LANG !== 'en' && TWINS.indexOf(file) !== -1)", "if (false)"),
      lambda o: "TWIN LINK WRONG FOLDER" in o, TWIN)
 
 # ---- the year strip on When to go (2026-11-16) -------------------------------
