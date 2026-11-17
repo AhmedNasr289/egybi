@@ -2353,3 +2353,11 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Sources read for it on 17 Nov 2026:** the UK government's Egypt entry requirements page (updated 12 Nov 2026) and its getting-help page; ATTA on the visa rise; Sravni (updated 2 Nov 2026) on Russian cards; a One Mile at a Time thread (August 2025) on Cairo drivers; tickets.gem.eg on itself. The page says the visa rules are for British passports and that other passports can differ.
 - **The January 2027 rise is shown with its date**, US$33, or US$39 at Cairo's kiosks, and `coverage.py` now fails once a row's `changes_on` date has passed, so the page cannot keep calling US$30 current after the rise. New mutation case: "an announced visa change that has taken effect".
 - **Built like the rest:** `backend/pipeline/pages/arrival.py` writes the page from `site/data/arrival.json`, which is re-read every 60 days (each row has `checked`). The page is in `i18n.PAGES`, and the four official domains are on the i18n check's same-in-every-language list. Plan and Fair prices link to it.
+## 2026-11-17 — Getting around: ride apps by city, and the train rules for foreign visitors
+- **Ride apps, city by city**, on `arriving-in-egypt.html`: the cities on Uber's own Egypt list are Cairo, Alexandria, Hurghada, the Canal Cities, Mansoura, Tanta, Zagazig and Damietta. Luxor, Aswan and Sharm el-Sheikh are not on it. Careem publishes no city list we could find, and the reports disagree about Luxor and Aswan, so the row says "coverage not confirmed".
+- **Trains between cities** (Seat61, updated 14 Sep 2026):
+  - foreigner fares are in US dollars or euros, and the railway's own site and app sell only to Egyptian citizens;
+  - the Arab and Foreign Reservation Office at Cairo Ramses sells foreigner tickets for all trains (cards accepted, 2.5% fee);
+  - the sleepers to Luxor and Aswan leave from the Upper Egypt (Bashtil) station, opened in October 2024;
+  - Aswan to Abu Simbel is 275 km by road, with a daily bus at 08:00.
+- **A row with no link must say what was searched.** `coverage.py` fails a hand-curated row with no `source_url` unless its source begins "Searched". New mutation case: "a row with no source link that does not say what was searched".

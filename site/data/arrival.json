@@ -39,11 +39,34 @@
       ]
     },
     {
-      "key": "rides", "title": "Getting around Cairo",
+      "key": "rides", "title": "Ride apps, city by city",
       "rows": [
+        { "key": "uber-cities", "label": "Cities where Uber says it operates", "value": "Cairo, Alexandria, Hurghada, the Canal Cities, Mansoura, Tanta, Zagazig and Damietta",
+          "detail": "Luxor, Aswan and Sharm el-Sheikh are not on Uber's own list. The airports it lists are Cairo, Hurghada, Sphinx (west of Cairo) and Borg El Arab (Alexandria).",
+          "source": "Uber: cities in Egypt", "source_url": "https://www.uber.com/global/en/r/egypt/cities/", "checked": "2026-11-17" },
+        { "key": "careem-cities", "label": "Careem", "value": "Coverage not confirmed",
+          "detail": "We found no city list from Careem itself, and the lists in news reports and directories disagree about Luxor and Aswan. Open the app in the city before you count on it.",
+          "source": "Searched 17 Nov 2026: no city list on careem.com", "source_url": null, "checked": "2026-11-17" },
         { "key": "ride-hail-cash", "label": "Uber and Careem in Cairo", "value": "Drivers may ask for extra cash",
           "detail": "In a 2025 forum thread, several travellers describe Cairo drivers asking for more money before the ride, or cancelling in the app so they could be paid in cash. You do not have to agree: you can decline and book another car.",
           "source": "One Mile at a Time forum: Uber fares in Cairo (August 2025 replies)", "source_url": "https://onemileatatime.com/community/travel-tools/apparently-uber-fares-in-cairo-are-negotiable-i-will-need-extra-money/", "checked": "2026-11-17" }
+      ]
+    },
+    {
+      "key": "trains", "title": "Trains between cities",
+      "rows": [
+        { "key": "train-fares", "label": "Fares for foreign visitors", "value": "Priced in US dollars",
+          "detail": "Since December 2022, visitors who are not Egyptian pay foreigner fares, in US dollars or euros. The railway's own website and app sell tickets only to Egyptian citizens.",
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-17" },
+        { "key": "train-tickets", "label": "Where to buy", "value": "At the station, or through an agency",
+          "detail": "In Cairo, the Arab and Foreign Reservation Office upstairs at Ramses station sells foreigner tickets for all trains and takes cards, with a 2.5% fee. Agencies can book ahead and deliver paper tickets to your hotel.",
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-17" },
+        { "key": "train-bashtil", "label": "Sleeper trains to Luxor and Aswan", "value": "Leave from Cairo Upper Egypt (Bashtil) station",
+          "detail": "The station opened in October 2024, about 7 km west of Ramses. The sleepers no longer leave from Ramses.",
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-17" },
+        { "key": "abu-simbel-road", "label": "Aswan to Abu Simbel", "value": "275 km by desert road",
+          "detail": "A daily bus leaves Aswan at 08:00 and arrives at 12:00; the return leaves at 13:00 and reaches Aswan at 16:00. Most day tours leave Aswan very early, for example at 04:00.",
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-17" }
       ]
     },
     {
