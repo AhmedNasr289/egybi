@@ -2303,3 +2303,10 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - Verify (browser) runs three `mutation shard` jobs side by side, 40 minutes each, with their own logs.
   - A final `mutation` job (the check keeps its name) fails unless every shard passed and, from their own records, all three reported and together ran every case exactly once. `mutate-shards.py` first runs a self-test showing it fails on a missing shard, a short count, mismatched totals, a duplicated shard and zero cases.
 - **Proved locally:** three shards over the six "english" cases ran 2 + 2 + 2 = 6; the aggregator passed, and failed when shard 2's record was removed.
+## 2026-11-17 — The Russian pages, edited to read like a person wrote them
+- **What changed:** all 955 lines of the Russian catalogue were read and 146 rewritten: calques (70), split terms (28), heavy rhythm (24), typography (14), names (7) and register (3). The Russian was already correct, and «вы» was already used throughout; the edit is about reading naturally.
+- **The term split:** "account" was «аккаунт» on 16 lines and «учётная запись» on 13, so the same button was named two ways. One word now, «аккаунт».
+- **One meaning fix:** the planner's heat line compared each day with "where the hours should move"; it now says we check the day against the measured heat and suggest which hours to shift.
+- **Names:** Бекерат (matching the other line), Эль-Дабаа, храм на острове Филе, and Eid as Ураза-байрам and Курбан-байрам (the holidays page lists both).
+- **Kept from drifting:** `backend/i18n/glossary-ru.tsv` names one Russian word per recurring term and, where a rejected variant existed, a pattern for it. `backend/verify/i18n.py` now fails with GLOSSARY TERM when a translation brings a rejected variant back. A new mutation case puts «учётная запись» back and is caught.
+- **For the native reviewer:** `backend/i18n/review-ru.md` lists the lines to check first: privacy, sign-in, safety notes, prices and names.

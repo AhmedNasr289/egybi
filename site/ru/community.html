@@ -68,7 +68,7 @@
 <meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html stories.html streets.html">
 <link href="../assets/i18n.css?v=1" rel="stylesheet">
 <script src="../assets/lang.js?v=1" defer></script>
-<script src="../assets/i18n/ru.js?v=489bcab9"></script>
+<script src="../assets/i18n/ru.js?v=27656023"></script>
 <!-- I18N-HEAD:END -->
 </head>
 <body>
@@ -91,11 +91,11 @@
       <a href="community.html">Сообщество</a>
       <a href="../explore.html">Данные</a>
       <a href="about.html">О проекте</a>
-      <a class="nav-only-mobile" href="ask.html">Проверка плана</a>
+      <a class="nav-only-mobile" href="ask.html">Проверка маршрута</a>
       <a class="nav-only-mobile" href="/ru/index.html#newsletter">Рассылка</a>
     <!-- LANG-LINKS:START --><a class="nav-only-mobile lang-link" href="../community.html" hreflang="en" lang="en" data-lang="en">English</a><a class="nav-only-mobile lang-link" href="../ar/community.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><!-- LANG-LINKS:END -->
 </nav>
-    <div class="nav-actions"><!-- LANG-SWITCH:START --><details class="lang-switch"><summary aria-label="Язык: Русский"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> RU</summary><div class="lang-menu"><a href="../community.html" hreflang="en" lang="en" data-lang="en">English</a><a href="../ar/community.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><a href="community.html" hreflang="ru" lang="ru" data-lang="ru" aria-current="true">Русский</a></div></details><!-- LANG-SWITCH:END --><a class="cta" href="ask.html">Проверка плана</a></div>
+    <div class="nav-actions"><!-- LANG-SWITCH:START --><details class="lang-switch"><summary aria-label="Язык: Русский"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> RU</summary><div class="lang-menu"><a href="../community.html" hreflang="en" lang="en" data-lang="en">English</a><a href="../ar/community.html" hreflang="ar" lang="ar" data-lang="ar">العربية</a><a href="community.html" hreflang="ru" lang="ru" data-lang="ru" aria-current="true">Русский</a></div></details><!-- LANG-SWITCH:END --><a class="cta" href="ask.html">Проверка маршрута</a></div>
     <button class="nav-toggle" aria-label="Меню" aria-expanded="false" aria-controls="navLinks">☰</button>
   </div>
 </header>
@@ -106,7 +106,7 @@
   <div class="wrap">
     <div class="kicker"><span data-glyph="scribe"></span>Сообщество</div>
     <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">Помогите строить Дом жизни.</h1>
-    <p class="lead" style="margin:0 auto;">EgyBI растёт благодаря данным с источниками и хорошим задачам. Если у вас есть настоящий набор данных о Египте, поправка или исправление — здесь для вас есть место.</p>
+    <p class="lead" style="margin:0 auto;">EgyBI растёт благодаря данным с источниками и хорошим задачам. Если у вас есть настоящий набор данных о Египте, поправка к данным или исправление ошибки — здесь для вас есть место.</p>
   </div>
 </section>
 
@@ -118,7 +118,7 @@
   <div class="wrap" style="max-width:860px;">
     <div class="kicker"><span data-glyph="scroll"></span> Заметки путешественников</div>
     <h2>Как всё было на самом деле.</h2>
-    <p class="lead">Короткие заметки тех, кто уже побывал: чего ожидать, что бы они сделали иначе, что того стоило. Заметки новых аккаунтов читаются перед публикацией, и показывается только ваше отображаемое имя.</p>
+    <p class="lead">Короткие заметки тех, кто уже побывал: чего ожидать, что бы они сделали иначе, что того стоило. Заметки от новых аккаунтов мы читаем перед публикацией, а показывается только ваше отображаемое имя.</p>
     <div class="notes-bar">
       <label for="notesSite" class="sr-only">Показать заметки о</label>
       <select id="notesSite" class="notes-site"><option value="">Все места</option></select>
@@ -157,7 +157,7 @@
         <h3>Предложите набор данных с источником</h3>
         <div class="steps" style="margin-top:14px;">
           <div class="step"><strong>Найдите настоящие открытые данные</strong> о Египте из надёжного источника (Всемирный банк, ФАО, CAPMAS, ЮНЕСКО, SIPRI, официальные министерства).</div>
-          <div class="step"><strong>Подготовьте их</strong> в виде небольшой таблицы — одна строка на факт, <code>source_url</code> в каждой строке и <code>note</code>, отмечающее всё спорное, приблизительное или прогнозное.</div>
+          <div class="step"><strong>Подготовьте их</strong> в виде небольшой таблицы — одна строка на факт, <code>source_url</code> в каждой строке и поле <code>note</code>, где отмечено всё спорное, приблизительное или прогнозное.</div>
           <div class="step"><strong>Предложите</strong> их как новый раздел <code>seed_vN.sql</code> вместе со схемой, и мы проверим его по правилам точности, прежде чем он будет принят.</div>
         </div>
       </div>
@@ -167,7 +167,7 @@
         <div class="steps" style="margin-top:14px;">
           <div class="step"><strong>Найдите аргумент</strong> &mdash; что-то верное о Египте, что может показать карта или график, но не абзац текста. «Половина страны живёт на 2,4&nbsp;% территории» — это история; «вот карта Египта» — нет.</div>
           <div class="step"><strong>Назовите данные</strong>, на которых она основана, с источником и датой. Если цифру нельзя проследить до опубликованного набора данных, ей не место на сайте, как бы хорошо ни звучала фраза.</div>
-          <div class="step"><strong>Скажите, чего она не может сообщить.</strong> Каждая история здесь заканчивается своими ограничениями &mdash; пробелом в охвате, спорной цифрой, тем, что данные просто не измеряют.</div>
+          <div class="step"><strong>Укажите, чего она не может показать.</strong> Каждая история здесь заканчивается своими ограничениями &mdash; пробелом в охвате, спорной цифрой, тем, что данные просто не измеряют.</div>
         </div>
       </div>
     </div>
@@ -179,9 +179,9 @@
   <div class="wrap" style="max-width:860px;">
     <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>Правила точности</div>
     <h2 data-aos="fade-up">Обязательны для всех.</h2>
-    <p class="lead" data-aos="fade-up">Именно они делают EgyBI заслуживающим доверия. Вклад, нарушающий любое из них, не будет принят.</p>
+    <p class="lead" data-aos="fade-up">Именно они делают EgyBI заслуживающим доверия. Материал, нарушающий хотя бы одно из них, не будет принят.</p>
     <div style="margin-top:24px;" data-aos="fade-up">
-      <div class="rule-item"><span class="mk">✓</span><span><strong>Каждый факт настоящий и с источником.</strong> Ссылка на источник в каждой строке — без исключений и без «примерно» без источника.</span></div>
+      <div class="rule-item"><span class="mk">✓</span><span><strong>Каждый факт настоящий и с источником.</strong> Ссылка на источник в каждой строке — без исключений; никаких «примерно» без источника.</span></div>
       <div class="rule-item"><span class="mk">✓</span><span><strong>Расхождение — тоже данные.</strong> Если надёжные источники расходятся (место в рейтинге, состояние, религиозный состав), храните оба значения и отметьте это в примечании — никогда не сглаживайте их в одну удобную цифру.</span></div>
       <div class="rule-item"><span class="mk">✓</span><span><strong>Только оригинальный контент.</strong> Наборы данных общедоступны и юридически чисты; задачи и тексты пишутся с нуля и никогда не копируются.</span></div>
       <div class="rule-item"><span class="mk">✓</span><span><strong>Прогнозы помечены.</strong> Цели, прогнозы и цифры «к 2030 году» отмечены как таковые и не выдаются за достигнутые.</span></div>
@@ -201,7 +201,7 @@
       <div class="road-item"><span class="badge done">Готово</span><span>База знаний из 58 таблиц с источниками, интерактивная карта Египта без тайлов, Атлас и оценка улиц Каира.</span></div>
       <div class="road-item"><span class="badge done">Готово</span><span>Автоматический конвейер обновления данных Всемирного банка с обязательной проверкой человеком и скрипт сборки карты.</span></div>
       <div class="road-item"><span class="badge done">Готово</span><span>Рассылка <strong>«Папирус»</strong> с настоящей подпиской, защищённой от спама.</span></div>
-      <div class="road-item"><span class="badge now">Сейчас</span><span>Углубление каждой отрасли до 2026 года — бизнес, оборона, логистика, спорт, экономика культуры — и вывод этого в графики.</span></div>
+      <div class="road-item"><span class="badge now">Сейчас</span><span>Расширяем данные по всем отраслям до 2026 года — бизнес, оборона, логистика, спорт, экономика культуры — и выводим их в графики.</span></div>
       <div class="road-item"><span class="badge next">Дальше</span><span>Слои высот и климата в Атласе, чтобы место можно было оценить по рельефу и сезону, а не только по населению.</span></div>
       <div class="road-item"><span class="badge next">Дальше</span><span>Больше районов в оценке улиц и больше мухафаз в справочнике мест по мере заполнения OpenStreetMap.</span></div>
     </div>
@@ -212,7 +212,7 @@
 <section class="surface-deep" id="automations" data-nav="Автоматизация">
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="was"></span>Как это устроено</div>
-    <h2 data-aos="fade-up">Автоматизация, которая держит всё в честности.</h2>
+    <h2 data-aos="fade-up">Автоматизация, которая следит за честностью данных.</h2>
     <div class="grid grid-3" style="margin-top:26px;">
       <div class="card" data-aos="fade-up"><span class="tag">Конвейер</span><h3>Обновление данных Всемирного банка</h3><p>Забирает отобранный список показателей, превращает его в исходный SQL с источниками и сравнивает с рабочими данными, чтобы каждое изменение одобрил человек.</p></div>
       <div class="card" data-aos="fade-up" data-aos-delay="80"><span class="tag">Сборка</span><h3>Генератор карты</h3><p>Пересобирает офлайн-карту Египта из границ и свежих данных по мухафазам при каждом изменении цифры.</p></div>
@@ -246,7 +246,7 @@
         </div>
       </div>
     </form>
-    <p style="font-size:var(--fs-xs);color:var(--ink-soft);margin-top:10px;">Публикуя, вы соглашаетесь, что запись может быть показана публично после проверки. Пожалуйста, пишите конструктивно и по теме. См. наше <a href="privacy.html" style="color:var(--gold-ink);font-weight:600;">уведомление о конфиденциальности</a>.</p>
+    <p style="font-size:var(--fs-xs);color:var(--ink-soft);margin-top:10px;">Публикуя, вы соглашаетесь, что запись может быть показана публично после проверки. Пожалуйста, пишите конструктивно и по теме. Подробнее — в нашем <a href="privacy.html" style="color:var(--gold-ink);font-weight:600;">уведомлении о конфиденциальности</a>.</p>
 
     <h3 style="color:var(--blue-deep);font-size:var(--fs-md);margin:34px 0 14px;border-top:1px solid var(--line-light);padding-top:26px;">От сообщества</h3>
     <div id="communityList" aria-live="polite"><p style="color:var(--ink-soft);font-size:var(--fs-sm);">Загружаем записи…</p></div>
@@ -259,8 +259,8 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Планируйте Египет честно — каждая цифра с источником и датой.</p></div>
-    <div><h2 class="foot-h">Спланировать поездку</h2><a href="plan.html">Составить маршрут</a><a href="visit.html">Когда ехать</a><a href="fair-prices.html">Честные цены</a><a href="hieroglyphs.html">Ваше имя иероглифами</a><a href="dossier.html">Досье</a><a href="ask.html">Проверка плана</a></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">Планируйте поездку в Египет честно — у каждой цифры есть источник и дата.</p></div>
+    <div><h2 class="foot-h">Спланировать поездку</h2><a href="plan.html">Составить маршрут</a><a href="visit.html">Когда ехать</a><a href="fair-prices.html">Честные цены</a><a href="hieroglyphs.html">Ваше имя иероглифами</a><a href="dossier.html">Досье</a><a href="ask.html">Проверка маршрута</a></div>
     <div><h2 class="foot-h">Египет в данных</h2><a href="../explore.html">Данные о Египте</a><a href="geospatial.html">Атлас Египта</a><a href="places.html">Места</a><a href="stories.html">Истории в данных</a><a href="streets.html">Оценка улиц</a><a href="../prices.html">Цены за день</a><a href="../stocks.html">Фондовый рынок</a><a href="../invest.html">Где строит Египет</a></div>
     <div><h2 class="foot-h">Ещё</h2><a href="../blog.html">Блог</a><a href="community.html">Сообщество</a><a href="about.html">Идея и образ</a><a href="index.html#newsletter">Рассылка</a></div>
     <div><h2 class="foot-h">Источники данных</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">Всемирный банк</a><a href="https://www.sipri.org/databases/armstransfers" target="_blank" rel="noopener">SIPRI</a></div>

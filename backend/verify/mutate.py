@@ -1114,6 +1114,11 @@ case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
 case("a Russian label left in English beside its input", "i18n.py", ["site/ru/index.html"],
      lambda: edit("site/ru/index.html", "<label>Прибытие<input", "<label>Arriving<input"),
      lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)
+# the Russian glossary (2026-11-17): "account" is «аккаунт»; the rejected
+# «учётная запись» coming back into the catalogue must fail
+case("a rejected Russian term back in the catalogue", "i18n.py", ["backend/i18n/ru.tsv"],
+     lambda: edit("backend/i18n/ru.tsv", " EgyBI: что мы собираем (аккаунт или ", " EgyBI: что мы собираем (учётная запись или "),
+     lambda o: "GLOSSARY TERM" in o and "ru.tsv" in o, I18N)
 case("an Arabic label left in English beside its select", "i18n.py", ["site/ar/fair-prices.html"],
      lambda: edit("site/ar/fair-prices.html", "<label>اعرض المبالغ بـ<select", "<label>Show amounts in<select"),
      lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)

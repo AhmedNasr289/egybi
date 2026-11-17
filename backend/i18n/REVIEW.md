@@ -134,3 +134,23 @@ still written by script in English digits until stage 4.
 - [ ] Russian: reads naturally; terms consistent
 - [ ] Both: every number and date matches the English
 - [ ] Both: privacy page meaning matches the English exactly
+
+## Russian editing pass (2026-11-17)
+
+All 955 lines of ru.tsv were read in full and 146 rewritten. The full review,
+with the glossary, before-and-after examples and every line still to check, is
+`backend/i18n/review-ru.md`.
+
+- The Russian was already correct, and every line already used a lower-case
+  «вы». The rewrites fix calques (70 lines), split terms (28), heavy rhythm
+  (24), typography (14: non-breaking spaces before units and in «49 $»),
+  names (7) and register (3).
+- "Account" was «аккаунт» on 16 lines and «учётная запись» on 13, so the same
+  button was named two ways. It is now «аккаунт» everywhere.
+- Line 419 changed meaning: it used to compare each day *with* where the hours
+  should move; it now says the day is checked against the measured heat and
+  we suggest which hours to shift.
+- Please check first: the privacy lines (96-131, 951), sign-in and passwords
+  (895-942), the safety and medical notes (424, 692, 728, 784, 785, 867), the
+  prices and payment timing (333, 405, 409, 412, 418, 423, 426) and the names
+  listed in review-ru.md.
