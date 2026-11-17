@@ -2366,3 +2366,14 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the sleepers to Luxor and Aswan leave from the Upper Egypt (Bashtil) station, opened in October 2024;
   - Aswan to Abu Simbel is 275 km by road, with a daily bus at 08:00.
 - **A row with no link must say what was searched.** `coverage.py` fails a hand-curated row with no `source_url` unless its source begins "Searched". New mutation case: "a row with no source link that does not say what was searched".
+## 2026-11-17 — Arriving in Egypt: travelling alone, and paying from Russia or Kazakhstan
+- **Travelling alone,** from the UK government's safety advice (updated 12 Nov 2026):
+  - take care in taxis alone, especially at night, and share the driver's details, the route and your live location;
+  - most sexual assaults reported to the British Embassy happened in Red Sea resorts, often by someone the victim had already met, including hotel and excursion staff, so do not let hotel staff into your room when you are alone;
+  - scammers and touts at tourist sites target foreign visitors.
+- **From Russia or Kazakhstan:**
+  - VTB QR payments since 22 Apr 2026: in roubles, up to 25,000 a payment and 350,000 a day, large shops only;
+  - old or damaged dollar notes are often refused, in Sharm el-Sheikh everywhere;
+  - Visa and Mastercard from other CIS banks work, and Mir does not (Tourdom, 22 Apr 2026);
+  - Kazakh citizens get a visa on arrival only for the Sharm el-Sheikh zone, and package travellers going on to Cairo or Luxor need a tour-operator invitation at least four days ahead (Digital Business KZ, 6 Oct 2026, citing Kazakhstan's foreign ministry).
+- **Safety rows must cite official advice.** `coverage.py` fails any row in a "travelling alone" group whose source is not a government's own travel advice (gov.uk, travel.state.gov, smartraveller.gov.au, travel.gc.ca, ireland.ie, dfa.ie). New mutation case: "a safety row not sourced from official travel advice".

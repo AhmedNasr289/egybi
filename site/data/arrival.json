@@ -83,6 +83,40 @@
       ]
     },
     {
+      "key": "alone", "title": "Travelling alone",
+      "rows": [
+        { "key": "alone-taxis", "label": "Taking a taxi alone, especially at night", "value": "Share the trip",
+          "detail": "The UK government advises women travelling alone to take care, particularly at night in taxis. If you take one alone, send a friend the driver's details, your route and your live location.",
+          "source": "UK government travel advice: Egypt, safety and security (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" },
+        { "key": "alone-hotel", "label": "Hotel staff and your room", "value": "Not when you are alone",
+          "detail": "Most sexual assaults reported to the British Embassy took place in Red Sea resorts, often by someone the victim had already met, including hotel and excursion staff. The UK government advises not letting hotel staff into your room when you are alone.",
+          "source": "UK government travel advice: Egypt, safety and security (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" },
+        { "key": "alone-touts", "label": "Touts at tourist sites", "value": "Be cautious",
+          "detail": "The UK government warns that scammers and touts at tourist sites target foreign visitors.",
+          "source": "UK government travel advice: Egypt, safety and security (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" }
+      ]
+    },
+    {
+      "key": "from-russia", "title": "From Russia or Kazakhstan",
+      "rows": [
+        { "key": "vtb-qr", "label": "Paying by QR code with VTB", "value": "Large shops only",
+          "detail": "Since 22 April 2026 the VTB Online app pays by QR code in Egypt, in roubles converted to pounds: up to 25,000 roubles a payment and 350,000 a day, with no commission, the bank says.",
+          "source": "Tourdom: QR payments in Egypt through VTB (22 Apr 2026, in Russian)", "source_url": "https://www.tourdom.ru/news/turisty-v-egipte-teper-mogut-rasplachivatsya-po-qr-kodu.html", "checked": "2026-11-17" },
+        { "key": "old-dollars", "label": "Old or damaged US dollar notes", "value": "Often refused",
+          "detail": "Shops in Hurghada take them reluctantly, and in Sharm el-Sheikh one traveller found them refused everywhere, even by cash machines. Bring clean, undamaged notes.",
+          "source": "Tourdom: QR payments in Egypt through VTB (22 Apr 2026, in Russian)", "source_url": "https://www.tourdom.ru/news/turisty-v-egipte-teper-mogut-rasplachivatsya-po-qr-kodu.html", "checked": "2026-11-17" },
+        { "key": "cis-cards", "label": "Visa and Mastercard from banks in other CIS countries", "value": "Work",
+          "detail": "Cards from banks in other CIS countries work in Egypt; Mir cards do not.",
+          "source": "Tourdom: QR payments in Egypt through VTB (22 Apr 2026, in Russian)", "source_url": "https://www.tourdom.ru/news/turisty-v-egipte-teper-mogut-rasplachivatsya-po-qr-kodu.html", "checked": "2026-11-17" },
+        { "key": "kz-visa", "label": "Kazakh citizens", "value": "Visa on arrival only for the Sharm el-Sheikh zone",
+          "detail": "Citizens over 21 can get a visa on arrival for a trip of up to 15 days that stays in the Sharm el-Sheikh zone. Cairo, Hurghada and other cities need a visa from the Egyptian embassy before you travel, Kazakhstan's foreign ministry says.",
+          "source": "Digital Business KZ: the 4-day rule for Egypt (6 Oct 2026, in Russian)", "source_url": "https://digitalbusiness.kz/2026-10-06/kaspikz-napomnil-kazahstantsam-o-pravile-4-dney-dlya-poezdki-v-egipet/", "checked": "2026-11-17" },
+        { "key": "kz-invitation", "label": "Kazakh package travellers going on to Cairo or Luxor", "value": "Invitation at least 4 days ahead",
+          "detail": "Ask your tour operator for an invitation at least four days before you fly. Travellers under 21 can enter only with a parent.",
+          "source": "Digital Business KZ: the 4-day rule for Egypt (6 Oct 2026, in Russian)", "source_url": "https://digitalbusiness.kz/2026-10-06/kaspikz-napomnil-kazahstantsam-o-pravile-4-dney-dlya-poezdki-v-egipet/", "checked": "2026-11-17" }
+      ]
+    },
+    {
       "key": "official", "title": "Buy only on official sites",
       "rows": [
         { "key": "site-evisa", "label": "e-Visa", "value": "visa2egypt.gov.eg", "detail": "The government portal the UK government's advice links to.",
