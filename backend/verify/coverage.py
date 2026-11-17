@@ -225,7 +225,7 @@ CADENCE = {  # workflow -> max days a file may age before the page is misciting
 }
 # Files compiled by hand from named sources (no workflow writes them), with the
 # number of days before each must be re-read against its sources.
-HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90}
+HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "opening-hours.json": 90}
 writers = {}
 for wf in posix_glob(".github/workflows/*.yml"):
     t = Path(wf).read_text(encoding="utf-8")
@@ -299,6 +299,21 @@ for name, limit in HAND_CURATED.items():
             if age > limit:
                 findings["price row past its re-check date"].append(
                     f"{name}: {r.get('key')} last checked {r['checked']}, {age}d ago (re-read every {limit}d)")
+
+# ------------------------- opening hours belong to a site that has a page ---
+# visit.py shows a row of opening-hours.json on the visit page with the same
+# key. A row whose key matches no measured site (a typo, a renamed site) is
+# shown nowhere, and nothing else would notice the hours had gone missing.
+try:
+    _hours = json.loads(Path("site/data/opening-hours.json").read_text(encoding="utf-8"))
+    _sites = {x["key"] for x in json.loads(Path("site/data/visit-climate.json").read_text(encoding="utf-8")).get("sites", [])}
+except Exception:  # noqa: BLE001
+    _hours, _sites = {}, set()
+for g in _hours.get("groups", []):
+    for r in g.get("rows", []):
+        if r.get("key") not in _sites:
+            findings["opening hours for a site with no visit page"].append(
+                f"opening-hours.json: {r.get('key')!r} is not a site in visit-climate.json")
 
 print(f"pages checked : {len(pages)}")
 print(f"distinct titles: {len(titles)}   distinct descriptions: {len(descs)}")
