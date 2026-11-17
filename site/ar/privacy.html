@@ -10,7 +10,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#14110C">
 <script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/auth/*"}},{"not":{"href_matches":"/api/*"}},{"not":{"href_matches":"/account.html"}}]},"eagerness":"moderate"}]}</script>
-<meta name="description" content="سياسة الخصوصية في EgyBI: ما نجمعه (حساب اختياري، بريد للنشرة، عدّ للزيارات دون ملفات ارتباط، سجلات الخادم)، والإعلانات، وخياراتك.">
+<meta name="description" content="سياسة الخصوصية في EgyBI: ما نجمعه (حساب اختياري أو بريد للنشرة، وإحصاء زيارات بلا ملفات تعريف ارتباط، وسجلات الخادم)، وكيف تعمل ملفات الإعلانات، وخياراتك.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -56,7 +56,7 @@
 <meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html stories.html streets.html">
 <link href="../assets/i18n.css?v=1" rel="stylesheet">
 <script src="../assets/lang.js?v=1" defer></script>
-<script src="../assets/i18n/ar.js?v=8e2877a1"></script>
+<script src="../assets/i18n/ar.js?v=f10c00ec"></script>
 <!-- I18N-HEAD:END -->
 </head>
 <body>
@@ -68,11 +68,11 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
     <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
       <a href="index.html">الرئيسية</a>
-      <a href="plan.html">الخطة</a>
+      <a href="plan.html">خطّط رحلتك</a>
       <a href="visit.html">متى تسافر</a>
       <a href="fair-prices.html">الأسعار العادلة</a>
       <a href="hieroglyphs.html">الهيروغليفية</a>
-      <a href="dossier.html">الملف</a>
+      <a href="dossier.html">ملف الرحلة</a>
       <a href="places.html">الأماكن</a>
       <a href="geospatial.html">الأطلس</a>
       <a href="stories.html">القصص</a>
@@ -94,7 +94,7 @@
   <div class="wrap">
     <div class="kicker"><span data-glyph="eye"></span>الخصوصية وملفات تعريف الارتباط</div>
     <h1 style="font-size:var(--fs-h1);margin:0 0 10px;">ما نجمعه، وما لا نجمعه.</h1>
-    <p class="lead" style="margin:0 auto;">EgyBI موقع تعليمي للبيانات. نُبقي جمع البيانات في حدّه الأدنى، ونخبرك بوضوح بما يحدث.</p>
+    <p class="lead" style="margin:0 auto;">EgyBI دليل مجاني إلى مصر مبني على البيانات المفتوحة. نجمع أقل ما يمكن من البيانات، ونخبرك بوضوح بما يحدث لها.</p>
   </div>
 </section>
 
@@ -107,7 +107,7 @@
 </section>
 <section class="surface-light" id="short" data-nav="باختصار"><div class="wrap" style="max-width:860px;">
     <h2><span data-glyph="maat"></span> باختصار</h2>
-    <p>إن لم تشترك في نشرتنا البريدية ولم تنشئ حسابًا، فلا يجمع EgyBI أي معلومات شخصية تحدّد هويتك. أداة التخطيط والرسوم البيانية والخرائط كلها تعمل في متصفحك. الحساب مجاني واختياري، ويمكنك حذفه بكل ما فيه في أي وقت. ولا نبيع بياناتك أبدًا.</p>
+    <p>إن لم تشترك في نشرتنا البريدية ولم تنشئ حسابًا، فلا يجمع EgyBI أي معلومات شخصية تحدّد هويتك. مخطِّط الرحلة والرسوم البيانية والخرائط كلها تعمل في متصفحك. الحساب مجاني واختياري، ويمكنك حذفه بكل ما فيه في أي وقت. ولا نبيع بياناتك أبدًا.</p>
 
     </div></section>
 <section class="surface-light" id="collect" data-nav="ما نجمعه"><div class="wrap" style="max-width:860px;">
@@ -116,15 +116,15 @@
       <li><strong>بريد النشرة</strong> — فقط إن اشتركت في <em>«البردية»</em>. نحفظ عنوان بريدك ووقت اشتراكك لنرسل إليك النشرة. لا شيء غير ذلك. ويمكنك أن تطلب حذفه في أي وقت. وإن كان لديك حساب أكّدت بريده، يمكنك أيضًا الاشتراك وإلغاء الاشتراك من صفحة حسابك؛ ولا تُرسل حينها رسالة تأكيد، لأن تأكيد الحساب أثبت مسبقًا أن العنوان لك.</li>
       <li><strong>سجلات الخادم المعتادة</strong> — كمعظم المواقع، يسجّل مزوّد الاستضافة طلبات تقنية أساسية (عنوان IP، ونوع المتصفح، والصفحات المطلوبة) لأغراض الأمان والاعتمادية. ولا تُستخدم لبناء ملف تعريفي عنك.</li>
       <li><strong>حساب، فقط إن أنشأته</strong> — بريدك الإلكتروني، وصيغة محوَّلة لا يمكن عكسها من كلمة مرورك (لا كلمة المرور نفسها أبدًا)، وتاريخ انضمامك، والرحلات التي تختار حفظها والأماكن التي تحفظها. وإن سجّلت الدخول عبر Google نحتفظ أيضًا برقم حسابك لدى Google، كي يُدخلك حساب Google نفسه في المرة القادمة؛ ولا نتلقى من Google سوى بريدك الإلكتروني. يضع تسجيل الدخول ملف تعريف ارتباط واحدًا، <code>egybi_sess</code>، يُبقيك مسجّلًا لمدة تصل إلى ٣٠ يومًا ولا يُستخدم لأي شيء آخر.</li>
-      <li><strong>ملاحظات المسافرين، فقط إن استخدمتها</strong> &mdash; إن كتبت ملاحظة: نصّها، والأماكن والشهر الذي تحدّده، ووقت كتابتها. وإن وصفت ملاحظة بأنها مفيدة أو أبلغت عن واحدة: أي ملاحظة، ومتى، والسبب الذي اخترته من القائمة. تُظهر الملاحظة اسم العرض الخاص بك ولا شيء آخر عنك؛ ولا يُعرض بريدك الإلكتروني أبدًا. اسم العرض الافتراضي للحساب الجديد عشوائي، ولا يُؤخذ من أي شيء يخصّك. ولمنع الإساءة، تترك كل ملاحظة أو علامة أو بلاغ عدّادًا قصير العمر مرتبطًا بحسابك وصيغة مشوَّشة من عنوان شبكتك؛ وتُحذف هذه بعد مرور يوم واحد عليها. ويسجّل سجلٌّ متى ينشر المحرّر ملاحظة أو يخفيها أو يحذفها، ومتى يحذف كاتبٌ ملاحظته. ملاحظات الحسابات الجديدة يقرؤها المحرّر قبل ظهورها، والملاحظة التي يبلّغ عنها قرّاء من أكثر من اتصال واحد تُخفى إلى أن تُراجع.</li>
-      <li><strong>عدّ مشاهدات الصفحات</strong> — كل مشاهدة صفحة ترسل عنوان الصفحة والموقع الذي أتيت منه. لا نضع ملف تعريف ارتباط لذلك ولا نحفظ عنوان IP: يُعدّ الزائر برمز مشوَّش أحادي الاتجاه يتغيّر كل يوم، فلا يمكن ربط الزيارات عبر الأيام ولا تتبّعها إليك. ويتوقف ذلك إن طلب متصفحك من المواقع ألّا تتتبّعه.</li>
-      <li><strong>التخزين المحلي في متصفحك</strong> — تحفظ أداة تخطيط الرحلة تواريخك ومحطاتك واسم ملفك في التخزين المحلي لمتصفحك. ولا تغادر جهازك إلا إذا سجّلت الدخول وضغطت <em>احفظ في حسابي</em>. وإن اخترت لغة من زر اللغة، يتذكّر الموقع اختيارك هناك أيضًا ليعرض عليك الصفحة بلغتك في المرة القادمة؛ ولا يغادر جهازك أبدًا.</li>
-      <li><strong>موقعك، فقط إن ضغطت <em>بالقرب مني</em></strong> — في صفحة الأماكن، يطلب متصفحك إذنك ثم يعطي الصفحة موقعك التقريبي، فتستخدمه لترتيب الأماكن من الأقرب. لا يُحفظ، ولا يُرسل إلينا، ولا يوضع في أي رابط؛ والضغط على <em>توقّف عن استخدام موقعي</em>، أو مغادرة الصفحة، يُنسيه.</li>
-      <li><strong>صفحات محفوظة للاستخدام دون اتصال</strong> — بمجرد أن تفتح EgyBI، يحتفظ متصفحك بنسخة من الصفحات والأنماط وملفات البيانات التي تفتحها هنا، لتُفتح حتى دون إشارة. تبقى النسخ على جهازك ولا تُرسل إلى أي مكان؛ ولا تُحفظ صفحات الحساب ولا أي شيء يتطلب تسجيل الدخول. ومسح بيانات هذا الموقع في متصفحك يزيلها.</li>
+      <li><strong>ملاحظات المسافرين، فقط إن استخدمتها</strong> &mdash; إن كتبت ملاحظة: نصّها، والأماكن والشهر الذي تحدّده لها، ووقت كتابتها. وإن وصفت ملاحظة بأنها مفيدة أو أبلغت عن واحدة: أي ملاحظة، ومتى، والسبب الذي اخترته من القائمة. لا تُظهر الملاحظة عنك سوى اسمك الظاهر؛ ولا يُعرض بريدك الإلكتروني أبدًا. والاسم الظاهر الافتراضي للحساب الجديد عشوائي، ولا يُؤخذ من أي معلومة تخصّك. ولمنع الإساءة، تترك كل ملاحظة أو علامة أو بلاغ عدّادًا مؤقتًا مرتبطًا بحسابك ونسخة مموَّهة من عنوان شبكتك؛ ويُحذف كلاهما بعد مرور يوم واحد. ونحتفظ بسجلّ لمواعيد نشر المحرّر للملاحظات أو إخفائها أو حذفها، ولمواعيد حذف الكتّاب ملاحظاتهم. ويقرأ المحرّر ملاحظات الحسابات الجديدة قبل ظهورها، والملاحظة التي يبلّغ عنها قرّاء من أكثر من اتصال واحد تُخفى إلى أن تُراجع.</li>
+      <li><strong>إحصاء مشاهدات الصفحات</strong> — ترسل كل مشاهدة صفحة عنوانَ الصفحة والموقعَ الذي أتيت منه. لا نضع ملف تعريف ارتباط لذلك ولا نحفظ عنوان IP: يُحتسب الزائر برمز مموَّه لا يمكن عكسه ويتغيّر كل يوم، فلا يمكن ربط الزيارات عبر الأيام ولا تتبّعها إليك. ولا يُحتسب أصلًا إن كان متصفحك يطلب من المواقع عدم تتبّعه.</li>
+      <li><strong>التخزين المحلي في متصفحك</strong> — يحفظ مخطِّط الرحلة تواريخك ومحطاتك واسم ملف رحلتك في التخزين المحلي لمتصفحك. ولا تغادر جهازك إلا إذا سجّلت الدخول وضغطت <em>احفظ في حسابي</em>. وإن اخترت لغة من زر اللغة، يتذكّر الموقع اختيارك هناك أيضًا ليعرض عليك الصفحة بلغتك في المرة القادمة؛ ولا يغادر هذا الاختيار جهازك أبدًا.</li>
+      <li><strong>موقعك، فقط إن ضغطت <em>بالقرب مني</em></strong> — في صفحة الأماكن، يطلب متصفحك إذنك ثم يعطي الصفحة موقعك التقريبي، فتستخدمه لترتيب الأماكن من الأقرب إلى الأبعد. لا يُحفظ، ولا يُرسل إلينا، ولا يوضع في أي رابط؛ وإذا ضغطت <em>توقّف عن استخدام موقعي</em> أو غادرت الصفحة، يُمحى.</li>
+      <li><strong>صفحات محفوظة للاستخدام دون اتصال</strong> — بمجرد أن تفتح EgyBI، يحتفظ متصفحك بنسخة من الصفحات والأنماط وملفات البيانات التي تفتحها هنا، لتُفتح حتى بلا شبكة. تبقى النسخ على جهازك ولا تُرسل إلى أي مكان؛ ولا تُحفظ صفحات الحساب ولا أي شيء يتطلب تسجيل الدخول. ويزيلها مسحُ بيانات هذا الموقع من متصفحك.</li>
     </ul>
 
     </div></section>
-<section class="surface-light" id="cookies" data-nav="ملفات الارتباط"><div class="wrap" style="max-width:860px;">
+<section class="surface-light" id="cookies" data-nav="ملفات تعريف الارتباط"><div class="wrap" style="max-width:860px;">
     <h2><span data-glyph="eye"></span> ملفات تعريف الارتباط والإعلانات</h2>
     <p>قد يعرض EgyBI إعلانات عبر <strong>Google AdSense</strong> للمساعدة في تغطية تكاليف الاستضافة. حين تكون الإعلانات مفعّلة:</p>
     <ul>
@@ -138,7 +138,7 @@
     </div></section>
 <section class="surface-light" id="account-data" data-nav="حسابك">
 <div class="wrap" style="max-width:860px;">
-    <h2><span data-glyph="ankh"></span> حسابك، واختيارك</h2>
+    <h2><span data-glyph="ankh"></span> حسابك، والقرار لك</h2>
     <ul>
       <li><strong>اطّلع عليه ونزّله.</strong> <a href="../account.html">صفحة حسابك</a> تعرض رحلاتك المحفوظة وفيها زر <em>نزّل بياناتي</em> الذي يعطيك كل ما نحتفظ به عنك في ملف واحد.</li>
       <li><strong>احذفه.</strong> الصفحة نفسها تحذف حسابك. وتُحذف معه رحلاتك وأماكنك المحفوظة وملاحظات المسافرين وعلامات «مفيد» والبلاغات التي قدّمتها وعدّادات منع الإساءة المرتبطة بحسابك وجلسات تسجيل دخولك، فورًا ونهائيًا. ويشمل <em>نزّل بياناتي</em> ملاحظاتك وعلاماتك وبلاغاتك. أما الاشتراك في النشرة فمنفصل ويحتفظ برابط إلغاء الاشتراك الخاص به.</li>
@@ -154,7 +154,7 @@
     </div></section>
 <section class="surface-light" id="children" data-nav="الأطفال"><div class="wrap" style="max-width:860px;">
     <h2><span data-glyph="ankh"></span> الأطفال</h2>
-    <p>EgyBI موجّه لجمهور عام يتعلّم مهارات البيانات ويتعرّف إلى مصر. وليس موجّهًا للأطفال دون ١٣ عامًا، ولا نجمع معلوماتهم عن علم.</p>
+    <p>EgyBI موجّه لجمهور عام يتعرّف إلى مصر وإلى البيانات. وليس موجّهًا للأطفال دون ١٣ عامًا، ولا نجمع معلوماتهم عن علم.</p>
 
     </div></section>
 <section class="surface-light" id="changes" data-nav="التغييرات"><div class="wrap" style="max-width:860px;">
@@ -170,7 +170,7 @@
     <h2>عودة إلى المحتوى الممتع.</h2>
     <div class="ns-grid" style="text-align:left;margin-top:22px;">
       <a class="ns-card" href="index.html"><span class="ns-k">الرئيسية</span><h3>ابدأ من الصفحة الرئيسية &larr;</h3><p>ما هو EgyBI، وتحدٍّ حيّ في SQL يمكنك تجربته الآن.</p></a>
-      <a class="ns-card" href="../explore.html"><span class="ns-k">استكشف</span><h3>مصر بالرسوم البيانية &larr;</h3><p>نحو ٢٣ لوحة معلومات موثّقة وخريطة تفاعلية للمحافظات.</p></a>
+      <a class="ns-card" href="../explore.html"><span class="ns-k">استكشف</span><h3>مصر بالرسوم البيانية &larr;</h3><p>نحو ٢٣ رسمًا بيانيًا موثّق المصدر وخريطة تفاعلية لمحافظات مصر.</p></a>
       <a class="ns-card" href="geospatial.html"><span class="ns-k">الأطلس</span><h3>شاهدها على الخريطة &larr;</h3><p>محافظات مصر الـ٢٧ ومنشآتها الصحية ومدارسها ومواقع التراث العالمي السبعة &mdash; كل طبقة موثّقة المصدر ومؤرَّخة.</p></a>
     </div>
   </div>
@@ -180,13 +180,13 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لرحلتك إلى مصر بصدق — كل رقم بمصدره وتاريخه.</p></div>
-    <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط لمسارك</a><a href="visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">الملف</a><a href="ask.html">مراجعة الخطة</a></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لرحلتك إلى مصر بأرقام صادقة — كل رقم بمصدره وتاريخه.</p></div>
+    <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط مسار رحلتك</a><a href="visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">ملف الرحلة</a><a href="ask.html">مراجعة الخطة</a></div>
     <div><h2 class="foot-h">مصر بالأرقام</h2><a href="../explore.html">بيانات مصر</a><a href="geospatial.html">أطلس مصر</a><a href="places.html">الأماكن</a><a href="stories.html">قصص البيانات</a><a href="streets.html">بطاقة تقييم الشوارع</a><a href="../prices.html">الأسعار اليومية</a><a href="../stocks.html">البورصة</a><a href="../invest.html">أين تبني مصر</a></div>
     <div><h2 class="foot-h">المزيد</h2><a href="../blog.html">المدوّنة</a><a href="community.html">المجتمع</a><a href="about.html">الهوية</a><a href="index.html#newsletter">النشرة البريدية</a></div>
     <div><h2 class="foot-h">قانوني</h2><a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> كل رقم حقيقي وموثّق المصدر، وحين تختلف المصادر فعلًا يُعلَّم الخلاف بدلًا من إخفائه.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> لكل رقم مصدره، وحين تختلف المصادر نعرض الاثنين.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
 <p class="i18n-note">ترجم EgyBI هذه الصفحة، والترجمة بانتظار مراجعة متحدث أصلي باللغة العربية. <a href="../privacy.html" hreflang="en" lang="en">English</a></p>
 </footer>
 
