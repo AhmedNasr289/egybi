@@ -120,7 +120,7 @@
 <meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html stories.html streets.html">
 <link href="../assets/i18n.css?v=1" rel="stylesheet">
 <script src="../assets/lang.js?v=1" defer></script>
-<script src="../assets/i18n/ar.js?v=8e2877a1"></script>
+<script src="../assets/i18n/ar.js?v=f10c00ec"></script>
 <!-- I18N-HEAD:END -->
 </head>
 <body>
@@ -131,11 +131,11 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
     <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
       <a href="index.html">الرئيسية</a>
-      <a href="plan.html">الخطة</a>
+      <a href="plan.html">خطّط رحلتك</a>
       <a href="visit.html">متى تسافر</a>
       <a href="fair-prices.html">الأسعار العادلة</a>
       <a href="hieroglyphs.html">الهيروغليفية</a>
-      <a href="dossier.html">الملف</a>
+      <a href="dossier.html">ملف الرحلة</a>
       <a href="places.html">الأماكن</a>
       <a href="geospatial.html">الأطلس</a>
       <a href="stories.html">القصص</a>
@@ -174,7 +174,7 @@
           <button type="button" class="metric-toggle on" data-metric="intersection_density_km2">كثافة التقاطعات</button>
           <button type="button" class="metric-toggle" data-metric="dead_end_share_pct">الطرق المسدودة</button>
           <button type="button" class="metric-toggle" data-metric="street_density_km_km2">كثافة الشوارع</button>
-          <button type="button" class="metric-toggle" data-metric="mean_street_length_m">متوسط المقطع</button>
+          <button type="button" class="metric-toggle" data-metric="mean_street_length_m">متوسط طول المقطع</button>
           <button type="button" class="metric-toggle" data-metric="streets_per_node_avg">الشوارع لكل تقاطع</button>
           <button type="button" class="metric-toggle" data-metric="circuity_avg">التعرّج</button>
           <button type="button" class="metric-toggle" data-metric="orientation_entropy">إنتروبيا الاتجاه</button>
@@ -196,7 +196,7 @@
     <div class="rose-grid" id="roseGrid"></div>
     <p class="chart-cap" style="margin-top:18px;" id="roseSpread"></p>
     <p class="chart-cap"><strong>الدرجة العالية لا تعني حيًّا غير مخطط.</strong> التركّز ليس انتظامًا. التخطيط الشعاعي &mdash; جادّات تلتقي عند ميادين دائرية، وهي فكرة هوسمان التي جلبها إسماعيل إلى القاهرة &mdash; مخطط بدقة ويوزّع اتجاهاته على قطاعات كثيرة <em>عن قصد</em>، فيسجّل درجة عالية للسبب نفسه الذي تسجّلها به متاهة من الأزقة. هذا الرقم لا يميّز بين الحالتين؛ أما الوردة فوقه فتميّز، لأن النجمة تبدو مختلفة عن اللطخة. اقرأهما معًا.</p>
-    <p class="chart-cap">تُحسب الاتجاهات على إحداثيات غير مُسقطة لأنها اتجاهات بوصلة، وتُرجَّح بطول المقطع ليُحسب الشارع الطويل أكثر من الزقاق القصير. انقر أي وردة لبطاقة ذلك الحي الكاملة.</p>
+    <p class="chart-cap">تُحسب الاتجاهات على إحداثيات غير مُسقطة لأنها اتجاهات بوصلة، وتُرجَّح بطول المقطع ليُحسب الشارع الطويل أكثر من الزقاق القصير. انقر أي وردة لتعرض بطاقة ذلك الحي كاملة.</p>
   </div>
 </section>
 
@@ -204,10 +204,10 @@
   <div class="wrap" id="reportCardBody">
     <div class="kicker" data-aos="fade-up"><span data-glyph="maat"></span>بطاقة التقييم</div>
     <h2 data-aos="fade-up">كل المقاييس، جنبًا إلى جنب.</h2>
-    <p class="lead" data-aos="fade-up">مرتّبة حسب كثافة التقاطعات &mdash; أفضل ملخص برقم واحد لمدى ترابط شبكة الشوارع. انقر صفًّا لبطاقة الحي الكاملة.</p>
+    <p class="lead" data-aos="fade-up">مرتّبة حسب كثافة التقاطعات &mdash; أفضل ملخص برقم واحد لمدى ترابط شبكة الشوارع. انقر صفًّا لتعرض بطاقة الحي كاملة.</p>
     <div class="card-wrap" style="margin-top:20px;">
       <table class="card-table">
-        <thead><tr><th>الحي</th><th>التقاطعات</th><th>الطرق المسدودة</th><th>كثافة الشوارع</th><th>متوسط المقطع</th><th>شوارع/تقاطع</th><th>التعرّج</th><th>الإنتروبيا</th></tr></thead>
+        <thead><tr><th>الحي</th><th>التقاطعات</th><th>الطرق المسدودة</th><th>كثافة الشوارع</th><th>متوسط طول المقطع</th><th>شوارع/تقاطع</th><th>التعرّج</th><th>الإنتروبيا</th></tr></thead>
         <tbody id="cardTableBody"></tbody>
       </table>
     </div>
@@ -222,20 +222,20 @@
     <p class="lead" data-aos="fade-up">زمن المشي على امتداد <em>شبكة الشوارع الفعلية</em> &mdash; لا المسافة المستقيمة &mdash; بسرعة ٨٠ مترًا في الدقيقة، أي نحو ٤٫٨ كم/س. والدرجة هي نسبة الشوارع الصالحة للمشي التي تقع ضمن خمس عشرة دقيقة من منشأة مرسومة.</p>
     <div class="streets-note" id="accessEmpty" hidden>لم تُولَّد طبقة الوصول مشيًا بعد. وستظهر هنا بعد أول تشغيل لخط المعالجة يُكملها.</div>
     <div class="acc-grid" id="accessGrid"></div>
-    <div class="streets-note" style="margin-top:20px;"><strong>اقرأ هذا قبل أن تقرأ الدرجات.</strong> تغطية المرافق في OpenStreetMap ناقصة وغير متساوية في أنحاء القاهرة. قد تعني الدرجة المنخفضة أن الحي يفتقر فعلًا إلى المرافق، <em>أو</em> أن مرافقه لم تُرسم ببساطة &mdash; وهذه البيانات لا تستطيع الفصل بين الأمرين. ولا تقول شيئًا عن كون المرفق مفتوحًا أو ميسور التكلفة أو مزودًا بطاقم أو جيدًا. إنها خريطة لما رُسم.</div>
+    <div class="streets-note" style="margin-top:20px;"><strong>اقرأ هذا قبل أن تقرأ الدرجات.</strong> تغطية المرافق في OpenStreetMap ناقصة وغير متساوية في أنحاء القاهرة. قد تعني الدرجة المنخفضة أن الحي يفتقر فعلًا إلى المرافق، <em>أو</em> أن مرافقه لم تُرسم على الخريطة بعد &mdash; وهذه البيانات لا تستطيع الفصل بين الأمرين. ولا تقول شيئًا عن كون المرفق مفتوحًا أو ميسور التكلفة أو مزودًا بطاقم أو جيدًا. إنها خريطة لما رُسم.</div>
   </div>
 </section>
 
 <section class="surface-light" id="method" data-nav="المنهج">
   <div class="wrap">
-    <div class="kicker" data-aos="fade-up"><span data-glyph="eye"></span>كيف قيس هذا</div>
-    <h2 data-aos="fade-up">المنهج، علنًا.</h2>
+    <div class="kicker" data-aos="fade-up"><span data-glyph="eye"></span>كيف قسنا ذلك</div>
+    <h2 data-aos="fade-up">المنهج، مكشوفًا للجميع.</h2>
     <p class="lead" data-aos="fade-up">خمسة قرارات تشكّل كل رقم على هذه الصفحة. ودُوّنت هنا لأن المقياس الذي لا تستطيع مساءلته مقياس لا ينبغي أن تثق به.</p>
     <ul style="color:var(--ink-soft);line-height:1.9;margin-top:16px;max-width:78ch;">
       <li><strong>الحدود من OpenStreetMap، لا من دليل أماكن رسمي.</strong> أسماء الأحياء المصرية غير متسقة في OSM، لذا يُجرَّب كل حي مقابل عدة أسماء مرشّحة، ويُتحقق من مساحة كل مضلّع يُعثر عليه قبل استخدامه. وكل ما هو غير معقول يُستبعد ويُذكر اسمه بدلًا من إبقائه بصمت. ومعظم هذه الحدود مضلّعات <code>place</code> رسمها المساهمون في الخريطة، لا حدود إدارية رسمية — حقيقية، لكنها ليست سجلًا مساحيًا.</li>
       <li><strong>حدود وسط القاهرة من رسمنا نحن، وهي الوحيدة كذلك.</strong> لا تحوي OpenStreetMap مضلّعًا لوسط البلد إطلاقًا. جرّبنا تسعة عشر اسمًا محتملًا بتهجئات إنجليزية وعربية وبصيغة <em>القسم</em>، وكل اسم أعاد شكلًا أعاد معلمًا <em>داخل</em> وسط البلد &mdash; قصر عابدين، ومسرح قصر النيل، وحديقة الأزبكية، ومبنى البنك المركزي &mdash; لا الحي نفسه. ثم سألنا OSM مباشرة عمّا تحويه فوق المنطقة: خمسة وعشرون مضلّعًا صغيرًا لأحياء <em>حول</em> القاهرة الخديوية، ولا شيء إداري بين محافظة القاهرة بمساحة ٣٬٠٠٦&nbsp;كم² وقطع بلا أسماء بين ٠٫٥ و٥&nbsp;كم². لذا رُسم امتداد وسط البلد البالغ ٧٫١&nbsp;كم² يدويًا من حدوده المعروفة: النيل، ورمسيس، وشارع بورسعيد، والسيدة زينب. ويُوسم بأنه مرسوم يدويًا في كل مكان يظهر فيه، وتُفحص مساحته تمامًا كأي حدود مأخوذة من الترميز الجغرافي، ولا يُستخدم <em>إلا</em> بعد فشل كل بحث في OSM &mdash; فيوم تحصل OSM على مضلّع حقيقي لوسط البلد، يتوقف استخدامه بهدوء.</li>
       <li><strong>كل شيء يُسقط قبل القياس.</strong> الأطوال والتعرّج المحسوبة على خطوط العرض والطول الخام بلا معنى؛ لذا تُسقط كل شبكة على UTM أولًا.</li>
-      <li><strong>الأعداد معايَرة لكل كيلومتر مربع.</strong> مدينة السادس من أكتوبر أكبر بكثير من وسط البلد، فالمجاميع الخام كانت ستقارن الحجم لا التصميم.</li>
+      <li><strong>الأعداد منسوبة إلى كل كيلومتر مربع.</strong> مدينة السادس من أكتوبر أكبر بكثير من وسط البلد، فالمجاميع الخام كانت ستقارن الحجم لا التصميم.</li>
       <li><strong>شبكتا القيادة والمشي منفصلتان.</strong> تستخدم بطاقة التقييم شبكة القيادة لأنها ما ينتجه تصميم الشوارع. وتستخدم درجة الوصول شبكة المشي لأن مدينة الخمس عشرة دقيقة تتعلق بالمشي. والخلط بينهما لن يجيب عن أي من السؤالين.</li>
       <li><strong>تُحسب الاتجاهات دون إسقاط وتُرجَّح بالطول</strong>، لأنها اتجاهات بوصلة، ولأن جادّة طولها كيلومتران ينبغي أن تُحسب أكثر من زقاق طوله خمسون مترًا.</li>
     </ul>
@@ -249,7 +249,7 @@
     <h2>مزيد من مصر، بالقياس.</h2>
     <div class="ns-grid" style="text-align:left;margin-top:22px;">
       <a class="ns-card" href="geospatial.html"><span class="ns-k">الأطلس</span><h3>المحافظات الـ٢٧ كلها &larr;</h3><p>السكان والكثافة والمستشفيات والمدارس ومواقع التراث العالمي السبعة على خريطة واحدة موثّقة.</p></a>
-      <a class="ns-card" href="../case.html"><span class="ns-k">القضية</span><h3>حُلّ واحدة بـSQL &larr;</h3><p>انخفض الناتج المحلي الإجمالي لمصر ١٨٪ وارتفع ٦٨٪ خلال العامين نفسيهما. ستة استعلامات، وعشر دقائق، بلا تسجيل.</p></a>
+      <a class="ns-card" href="../case.html"><span class="ns-k">القضية</span><h3>حُلّ قضية بلغة SQL &larr;</h3><p>انخفض الناتج المحلي الإجمالي لمصر ١٨٪ وارتفع ٦٨٪ خلال العامين نفسيهما. ستة استعلامات، وعشر دقائق، بلا تسجيل.</p></a>
       <a class="ns-card" href="geospatial.html"><span class="ns-k">الأطلس</span><h3>شاهدها على الخريطة &larr;</h3><p>محافظات مصر الـ٢٧ ومنشآتها الصحية ومدارسها ومواقع التراث العالمي السبعة &mdash; كل طبقة موثّقة المصدر ومؤرَّخة.</p></a>
     </div>
   </div>
@@ -258,13 +258,13 @@
 
 <footer class="site-footer">
   <div class="cols">
-    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لرحلتك إلى مصر بصدق — كل رقم بمصدره وتاريخه.</p></div>
-    <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط لمسارك</a><a href="visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">الملف</a><a href="ask.html">مراجعة الخطة</a></div>
+    <div><a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a><p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لرحلتك إلى مصر بأرقام صادقة — كل رقم بمصدره وتاريخه.</p></div>
+    <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط مسار رحلتك</a><a href="visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">ملف الرحلة</a><a href="ask.html">مراجعة الخطة</a></div>
     <div><h2 class="foot-h">مصر بالأرقام</h2><a href="../explore.html">بيانات مصر</a><a href="geospatial.html">أطلس مصر</a><a href="places.html">الأماكن</a><a href="stories.html">قصص البيانات</a><a href="streets.html">بطاقة تقييم الشوارع</a><a href="../prices.html">الأسعار اليومية</a><a href="../stocks.html">البورصة</a><a href="../invest.html">أين تبني مصر</a></div>
     <div><h2 class="foot-h">المزيد</h2><a href="../blog.html">المدوّنة</a><a href="community.html">المجتمع</a><a href="about.html">الهوية</a><a href="index.html#newsletter">النشرة البريدية</a></div>
     <div><h2 class="foot-h">مصادر البيانات</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">البنك الدولي</a><a href="https://www.geoboundaries.org/" target="_blank" rel="noopener">geoBoundaries</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> كل رقم حقيقي وموثّق المصدر، وحين تختلف المصادر فعلًا يُعلَّم الخلاف بدلًا من إخفائه.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> كل رقم حقيقي وموثّق المصدر، وحين تختلف المصادر فعلًا ننبّه إلى الخلاف بدلًا من إخفائه.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
 <p class="i18n-note">ترجم EgyBI هذه الصفحة، والترجمة بانتظار مراجعة متحدث أصلي باللغة العربية. <a href="../streets.html" hreflang="en" lang="en">English</a></p>
 </footer>
 <script src="../assets/egybi.js?v=7"></script>

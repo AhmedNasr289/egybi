@@ -166,6 +166,7 @@ for page in PAGES:
 # existed, a pattern for it. "Account" was once «аккаунт» on 16 lines and
 # «учётная запись» on 13; a reader met both on the same screen. A translation
 # that brings a rejected variant back fails here.
+TASHKEEL = re.compile('[ً-ْٰ]')
 for lang in LANGS:
     gpath = ROOT / 'backend' / 'i18n' / f'glossary-{lang}.tsv'
     if not gpath.exists():
@@ -176,9 +177,14 @@ for lang in LANGS:
         cols = gline.split('\t')
         if len(cols) < 3 or not cols[2].strip():
             continue
-        avoid = re.compile(cols[2].strip())
+        # Arabic vowel marks (tashkeel) are combining characters that \w does
+        # not match, and a word may be written with or without them, so both
+        # the pattern and the text are compared with the marks removed. The
+        # first Arabic rule missed «مصدرًا مسمّى» until this (its mutation case).
+        bare = (lambda s: TASHKEEL.sub('', s)) if lang == 'ar' else (lambda s: s)
+        avoid = re.compile(bare(cols[2].strip()))
         for en, tr in CATS[lang].items():
-            if avoid.search(tr):
+            if avoid.search(bare(tr)):
                 fail(f'GLOSSARY TERM: {lang}.tsv uses a rejected variant for "{cols[0]}" '
                      f'(the glossary says {cols[1]!r}): "{tr[:70]}"')
                 break

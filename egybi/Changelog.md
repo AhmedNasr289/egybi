@@ -2310,3 +2310,11 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Names:** Бекерат (matching the other line), Эль-Дабаа, храм на острове Филе, and Eid as Ураза-байрам and Курбан-байрам (the holidays page lists both).
 - **Kept from drifting:** `backend/i18n/glossary-ru.tsv` names one Russian word per recurring term and, where a rejected variant existed, a pattern for it. `backend/verify/i18n.py` now fails with GLOSSARY TERM when a translation brings a rejected variant back. A new mutation case puts «учётная запись» back and is caught.
 - **For the native reviewer:** `backend/i18n/review-ru.md` lists the lines to check first: privacy, sign-in, safety notes, prices and names.
+## 2026-11-17 — The Arabic pages, edited to read like a person wrote them
+- **What changed:** all 955 lines of the Arabic catalogue were read and 157 rewritten: calques (56), heavy rhythm (49) and terms rendered several ways (44). "Planner" had four forms and is now مخطِّط الرحلة everywhere; "dossier" is ملف الرحلة; "named source" is مصدر محدّد instead of the calque مصدر مسمّى.
+- **Four meaning fixes:** the $49 page title had dropped "data"; "two dozen" had become "about twenty"; "tidier number" had become "the most suitable number"; and the water line called the sources contested where the English says the models are.
+- **Address:** the reader as أنت with singular imperatives on buttons; the site speaks as نحن.
+- **Lengths:** three rewrites ran past the SEO limits (two titles at 76 and 78 characters, a description at 173) and were shortened; `seo.py` reports no findings.
+- **The glossary check needed a fix of its own:** its first Arabic rule did not fire on the planted «مصدرًا مسمّى», because Arabic vowel marks are combining characters that `\w` does not match. The checker now compares Arabic with the marks removed; that exposed one rule written too broadly (it matched «معلمًا», a landmark, not "flagged"), which was narrowed. Each Arabic rule was then shown firing on the old phrasing it targets.
+- **Kept from drifting:** `backend/i18n/glossary-ar.tsv`; a new mutation case puts «مصدر مسمّى» back and is caught.
+- **For the native reviewer:** `backend/i18n/review-ar.md`.
