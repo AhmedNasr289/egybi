@@ -249,3 +249,13 @@ Please check:
   digits;
 - that the train rows still read naturally out of their table, one per line:
   «قطارات النوم إلى الأقصر وأسوان: تنطلق من محطة صعيد مصر (بشتيل) بالقاهرة».
+
+## Planner summary (2026-11-18)
+
+Five short labelled lines replace an English sentence under the planner map.
+
+Please check:
+- «المحطات / الأيام المخطّطة / ليالي الرحلة» and «هذه أيام أكثر مما تتّسع له الرحلة.»;
+- «Остановок / Дней в плане / Ночей в поездке / По прямой между остановками»
+  and «Это больше дней, чем есть в поездке.»;
+- that the summary reads as one line with « · » between the parts.

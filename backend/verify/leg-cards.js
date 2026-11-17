@@ -12,6 +12,9 @@
      3. NOTHING GUESSED: a Karnak -> Philae trip (Luxor to Aswan, a leg no
         cited row covers) shows the distance line and no rows.
         ROWS INVENTED FOR AN UNCOVERED LEG.
+     4. SUMMARY AND DIGITS: the trip summary under the map is in the page's
+        language, and on ar/plan.html the summary and a July heat warning use
+        Arabic-Indic digits only. SUMMARY LEFT IN ENGLISH / WESTERN DIGITS.
 
    Exits 1 on any failure. */
 const { chromium, executablePath, BASE } = require('./env');
@@ -35,9 +38,10 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
   let fails = 0;
   const fail = (m) => { console.log('FAIL ' + m); fails++; };
 
-  async function legsOf(path, stops) {
+  async function legsOf(path, stops, start, end) {
     await p.goto(BASE + '/plan.html');
-    await p.evaluate(([k, s]) => localStorage.setItem(k, JSON.stringify({ start: null, end: null, name: '', stops: s })), [KEY, stops]);
+    await p.evaluate(([k, s, a, z]) => localStorage.setItem(k, JSON.stringify({ start: a, end: z, name: '', stops: s })),
+      [KEY, stops, start || null, end || null]);
     await p.goto(BASE + '/' + path);
     await p.waitForFunction(n => document.querySelectorAll('#stopList .stop-n').length === n, stops.length, { timeout: 15000 })
       .catch(() => {});
@@ -48,6 +52,8 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
       leg: (document.querySelector('#stopList p.leg') || {}).textContent || '',
       rows: Array.from(document.querySelectorAll('#stopList ul.leg-how li')).map(li => ({
         text: li.textContent, href: (li.querySelector('a') || {}).href || '' })),
+      sum: (document.getElementById('planSum') || {}).textContent || '',
+      heat: Array.from(document.querySelectorAll('#stopList .heat-warn')).map(e => e.textContent),
     }));
   }
 
@@ -71,6 +77,17 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
   if (!/\d+ км по прямой от/.test(ru.leg)) fail('LEG LEFT IN ENGLISH (ru): ' + JSON.stringify(ru.leg));
   else if (ru.rows.length !== 3 || !ru.rows[0].text.includes('Баштиль')) fail('LEG LEFT IN ENGLISH (ru rows): ' + JSON.stringify(ru.rows.map(r => r.text)));
   else console.log('ok   ru/plan.html: the distance and the rows in Russian');
+
+  // 4. The summary and the digits. Karnak in July reaches the top heat band,
+  // so the warning (with its opening time) is on the page to be read.
+  const arJuly = await legsOf('ar/plan.html', [GIZA, KARNAK], '2027-07-10', '2027-07-14');
+  const western = (x) => /[0-9A-Za-z]/.test(x.replace(/The Giza Pyramids|Karnak Temple/g, ''));
+  if (!arJuly.sum || western(arJuly.sum)) fail('SUMMARY LEFT IN ENGLISH / WESTERN DIGITS (ar): ' + JSON.stringify(arJuly.sum));
+  else if (!arJuly.heat.length || arJuly.heat.some(western)) fail('WESTERN DIGITS in the Arabic heat warning: ' + JSON.stringify(arJuly.heat));
+  else console.log('ok   ar/plan.html: summary and heat warning in Arabic with Arabic-Indic digits');
+  const ruJuly = await legsOf('ru/plan.html', [GIZA, KARNAK], '2027-07-10', '2027-07-14');
+  if (!/Остановок: 2/.test(ruJuly.sum) || /[A-Za-z]/.test(ruJuly.sum)) fail('SUMMARY LEFT IN ENGLISH (ru): ' + JSON.stringify(ruJuly.sum));
+  else console.log('ok   ru/plan.html: summary in Russian');
 
   // 3. An uncovered leg
   const up = await legsOf('plan.html', [KARNAK, PHILAE]);

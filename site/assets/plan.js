@@ -211,27 +211,31 @@
 
   // A stop whose hottest trip month reaches the top heat band gets one line
   // saying so, and when the gates open, so an early visit can be planned.
+  // A number or clock time written into the page's language: Arabic pages
+  // get Arabic-Indic digits, like the rest of the Arabic site; other pages
+  // get the plain digits. egfmt formats only 'en' and 'ar' and throws on
+  // anything else, so the page's lang is never handed to it directly.
+  function pageDigits(x) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    var ar = document.documentElement.getAttribute('lang') === 'ar';
+    return F && ar ? F.digits(String(x), 'ar') : String(x);
+  }
   function heatWarnHtml(h, st) {
     var w = T.heatWarning(h.rows, hoursFor(st));
     if (!w) return '';
     return '<p class="heat-warn"><strong>' +
-      esc(t('Very hot for your dates: a normal afternoon here reaches about %t °C.').replace('%t', w.t)) + '</strong>' +
-      (w.opens ? ' ' + esc(t('The site opens at %h, so you can visit before the afternoon heat.').replace('%h', w.opens)) : '') +
+      esc(t('Very hot for your dates: a normal afternoon here reaches about %t °C.').replace('%t', pageDigits(w.t))) + '</strong>' +
+      (w.opens ? ' ' + esc(t('The site opens at %h, so you can visit before the afternoon heat.').replace('%h', pageDigits(w.opens))) : '') +
       '</p>';
   }
   // The leg into a stop: its straight-line distance, then how to travel it
   // when a cited row of arrival.json covers it (getting-around.json names
   // which). Each row keeps its own source and the date it was checked.
   function legText(a, b) {
-    // egfmt formats only 'en' and 'ar' and throws on anything else, which on
-    // ru/plan.html stopped the whole stop list drawing (leg-cards.js, CI run
-    // of 17 Nov 2026). Arabic gets its own digits; every other page gets the
-    // plain number, which Russian writes without a separator up to 9999.
-    var F = window.EGYBI && window.EGYBI.fmt;
-    var n = Math.round(T.km(a, b));
-    var ar = document.documentElement.getAttribute('lang') === 'ar';
+    // pageDigits, never egfmt with the page's lang: that threw on 'ru' and
+    // stopped the Russian stop list drawing (leg-cards.js, 17 Nov 2026).
     return t('%n km in a straight line from %s')
-      .replace('%n', F && ar ? F.num(n, 'ar', 0) : String(n)).replace('%s', a.name);
+      .replace('%n', pageDigits(Math.round(T.km(a, b)))).replace('%s', a.name);
   }
   function arrivalRow(k) {
     var out = null;
@@ -274,10 +278,13 @@
     var days = st.reduce(function (a, x) { return a + (+x.days || 0); }, 0);
     var nights = T.nights(S.trip.start, S.trip.end);
     var total = st.length > 1 ? st.slice(1).reduce(function (a, x, i) { return a + T.km(st[i], x); }, 0) : 0;
-    sum.textContent = st.length + ' stop' + (st.length === 1 ? '' : 's') + ' · ' + days + ' day' + (days === 1 ? '' : 's') +
-      ' assigned to a trip of ' + nights + ' night' + (nights === 1 ? '' : 's') +
-      (total ? ' · ' + Math.round(total).toLocaleString('en-US') + ' km of straight lines between them' : '') +
-      (days > nights + 1 ? ' — that is more days than the trip has.' : '.');
+    // Labelled parts ("Stops: 2") rather than an English sentence with an
+    // English plural, so Arabic and Russian read naturally at any count.
+    var parts = [t('Stops: %n').replace('%n', pageDigits(st.length)),
+                 t('Days planned: %n').replace('%n', pageDigits(days)),
+                 t('Nights in the trip: %n').replace('%n', pageDigits(nights))];
+    if (total) parts.push(t('Straight-line distance between stops: %n km').replace('%n', pageDigits(Math.round(total))));
+    sum.textContent = parts.join(' · ') + (days > nights + 1 ? ' ' + t('That is more days than the trip has.') : '');
   }
   function initStopEvents() {
     var ul = $('stopList');

@@ -1115,3 +1115,8 @@ Sleeper trains to Luxor and Aswan	قطارات النوم إلى الأقصر و
 Leave from Cairo Upper Egypt (Bashtil) station	تنطلق من محطة صعيد مصر (بشتيل) بالقاهرة
 Aswan to Abu Simbel	من أسوان إلى أبو سمبل
 275 km by desert road	٢٧٥ كيلومترًا عبر طريق صحراوي
+Stops: %n	المحطات: %n
+Days planned: %n	الأيام المخطّطة: %n
+Nights in the trip: %n	ليالي الرحلة: %n
+Straight-line distance between stops: %n km	المسافة بخطوط مستقيمة بين المحطات: %n كم
+That is more days than the trip has.	هذه أيام أكثر مما تتّسع له الرحلة.

@@ -1453,8 +1453,8 @@ case("a planner leg read backwards loses its rows", "leg-rows.js", ["site/assets
 # language to egfmt, which formats only 'en' and 'ar' and throws on 'ru': the
 # Russian planner then drew no stops at all. leg-cards.js must catch it again.
 case("the Russian planner breaks on a number format", "leg-cards.js", ["site/assets/plan.js"],
-     lambda: edit("site/assets/plan.js", "F && ar ? F.num(n, 'ar', 0) : String(n)",
-                  "F ? F.num(n, document.documentElement.getAttribute('lang') || 'en', 0) : String(n)"),
+     lambda: edit("site/assets/plan.js", "return F && ar ? F.digits(String(x), 'ar') : String(x);",
+                  "return F ? F.digits(String(x), document.documentElement.getAttribute('lang') || 'en') : String(x);"),
      lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
 
 
