@@ -4,10 +4,10 @@
   "source": "Each leg names rows of arrival.json; the facts, their sources and the dates they were checked live there",
   "note": "Only legs that a cited row describes are listed. Every other leg shows its straight-line distance alone.",
   "areas": [
-    {"key": "cairo", "near": ["giza", "saqqara", "islamic-cairo"], "radius_km": 30},
-    {"key": "luxor", "near": ["karnak", "valley-kings"], "radius_km": 30},
-    {"key": "aswan", "near": ["philae"], "radius_km": 30},
-    {"key": "abu-simbel", "near": ["abu-simbel"], "radius_km": 15}
+    {"key": "cairo", "name": "Cairo", "near": ["giza", "saqqara", "islamic-cairo"], "radius_km": 30},
+    {"key": "luxor", "name": "Luxor", "near": ["karnak", "valley-kings"], "radius_km": 30},
+    {"key": "aswan", "name": "Aswan", "near": ["philae"], "radius_km": 30},
+    {"key": "abu-simbel", "name": "Abu Simbel", "near": ["abu-simbel"], "radius_km": 15}
   ],
   "legs": [
     {"between": ["cairo", "luxor"], "rows": ["train-bashtil", "train-fares", "train-tickets"]},
