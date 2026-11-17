@@ -2093,6 +2093,22 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
 - **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.
 
+## 2026-11-16 — Vault notes: lessons, the trilingual plan, and the motion inventory
+- **Why:** the owner asked for this session's memory to live in the Obsidian vault rather than only in the assistant's own notes, so anyone opening the vault finds it.
+- **Three new notes, linked from [[Home]]:**
+  - **[[Lessons — Checks That Measured the Wrong Thing]]:** every check that reported something false in Round 5 and the trilingual stage 1, and the rule that stops it recurring. Covers:
+    - service workers going around request blocking;
+    - headless cross-fades;
+    - finished animations;
+    - smooth scrolling;
+    - waiting on hidden elements;
+    - verdict order;
+    - heredoc backslashes;
+    - CI log handling;
+    - merging before green.
+  - **[[Trilingual Plan — English, Arabic, Russian]]:** the approved plan, its measured header widths, fonts, digits, five stages and the native review.
+  - **[[Motion — What Moves and Why]]:** an honest inventory of every animation, and why each proposal was built, dropped or deferred.
+- **Notes only.** No site file changes, so nothing deploys.
 ## 2026-11-16 — The year strip on When to go: every site, every month, the year filling in
 - **Why:** of the four motion proposals, this one carries the most for a first-time visitor. Every measured site's year is visible at once, so the reader learns at a glance which months are comfortable and which are too hot at each place. The fill from January to December shows the heat building into summer and easing off.
 - **Proposals not chosen, and why:**
