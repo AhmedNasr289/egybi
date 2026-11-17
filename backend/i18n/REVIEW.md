@@ -224,3 +224,15 @@ Please check:
   not read as a statement about all drivers;
 - the closing note: the visa rules are for British passports, and other
   passports can differ.
+
+## Arriving in Egypt: ride apps and trains (2026-11-17)
+
+Two new sections on arriving-in-egypt.html (20 lines per language, 3 of them
+replacing lines that no longer appear).
+
+Please check:
+- the Arabic names of the stations: «محطة صعيد مصر (بشتيل)» and «مكتب حجز
+  العرب والأجانب» at Ramses; Russian «вокзал Верхнего Египта (Баштиль)»;
+- the Russian city names: Думьят, Загазиг, Мансура, «города Суэцкого канала»;
+- the Careem row, which must say coverage is not confirmed, not that Careem
+  is absent.

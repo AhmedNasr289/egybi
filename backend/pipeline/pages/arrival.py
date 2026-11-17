@@ -40,7 +40,7 @@ CSS = """
   .fp-table.fp-stack th, .fp-table.fp-stack td { display: block; border: 0; padding: 3px 0; }
 }
 """
-GLYPH = {'entry': 'ankh', 'money': 'scroll', 'rides': 'ra', 'emergency': 'maat', 'official': 'scroll'}
+GLYPH = {'entry': 'ankh', 'money': 'scroll', 'rides': 'ra', 'trains': 'reed', 'emergency': 'maat', 'official': 'scroll'}
 
 
 def load() -> dict:
@@ -52,9 +52,13 @@ def row_html(r: dict) -> str:
     if r.get('link'):
         value = f'<a href="{esc(r["link"])}" rel="noopener">{value}</a>'
     detail = f'<span class="fp-src">{esc(r["detail"])}</span>' if r.get('detail') else ''
+    # A row with no link names what was searched instead (coverage.py holds
+    # it to that), so the source cell is plain text rather than a dead link.
+    src = (f'<a href="{esc(r["source_url"])}" rel="noopener">{esc(r["source"])}</a>'
+           if r.get('source_url') else esc(r['source']))
     return (f'<tr data-row="{esc(r["key"])}"><th scope="row">{esc(r["label"])}{detail}</th>'
             f'<td><strong>{value}</strong></td>'
-            f'<td><a href="{esc(r["source_url"])}" rel="noopener">{esc(r["source"])}</a>'
+            f'<td>{src}'
             f'<span class="fp-src">Checked {egfmt.time_tag(r["checked"], "en", "prose")}</span></td></tr>')
 
 
@@ -94,7 +98,7 @@ def build_arrival_page() -> list:
     <p class="hero-eyebrow"><span data-glyph="ra"></span> <a href="plan.html">Plan a trip</a> &middot; your first two days &middot; every line sourced</p>
     <h1 style="font-size:var(--fs-h1);margin:0 0 12px;">Arriving in Egypt.</h1>
     <p class="lead" style="margin:0;max-width:68ch;">What to sort out before you land and in your first two days:
-    which visa to buy and how to pay for it, the cash rules, getting a car in Cairo, and the numbers to call
+    which visa to buy and how to pay for it, the cash rules, ride apps and trains, and the numbers to call
     if something goes wrong. Each line says where it comes from and when we last checked it.</p>
   </div>
 </section>

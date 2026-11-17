@@ -550,6 +550,11 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)
+# a fact row whose source was dropped: no link, and nothing saying what was
+# searched (2026-11-17), as the Careem row would read with its search note gone
+case("a row with no source link that does not say what was searched", "coverage.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"source": "Searched 17 Nov 2026: no city list on careem.com"', '"source": ""'),
+     lambda o: "does not say what was searched" in o and "careem-cities" in o, COVERAGE)
 
 PY_CHECKS = f'"{sys.executable}" {HERE}/checks.py'
 

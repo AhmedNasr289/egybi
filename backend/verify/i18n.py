@@ -65,6 +65,7 @@ def text(s: str) -> str:
 # language button's own label, and data sources, licences and a book title
 # named as their owners write them.
 NODE_SAME = SAME | {'English', 'geoBoundaries', 'geoBoundaries.org', 'OpenStreetMap', 'SIPRI', 'CAPMAS',
+                    'Careem',  # the ride app's own name, kept in Latin script in Russian (arriving-in-egypt.html)
                     'SIL Open Font License 1.1',
                     'Egyptian Grammar'}  # Gardiner's book, cited by title on the hieroglyphs page
 NODE_SKIP = {'script', 'style', 'svg', 'code', 'pre', 'noscript', 'template', 'math'}

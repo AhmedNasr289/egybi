@@ -2358,3 +2358,11 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **What changed:** under 600 px each row now stacks: what, then the answer, then the source. The header row is hidden visually but stays readable to screen readers. The rule is a small `<style>` block written by `backend/pipeline/pages/arrival.py`, so `egybi.css` and every other page are untouched.
 - **Measured on the live page with the rule injected:** all 16 rows stacked, every table fitted with 52 px to spare, and the smallest text stayed 12 px.
 - **Check:** `overflow.js` now fails any `table.fp-stack` still wider than its wrapper at 375 px. New mutation case: "a stacked table back to sideways scrolling on a phone".
+## 2026-11-17 — Getting around: ride apps by city, and the train rules for foreign visitors
+- **Ride apps, city by city**, on `arriving-in-egypt.html`: the cities on Uber's own Egypt list are Cairo, Alexandria, Hurghada, the Canal Cities, Mansoura, Tanta, Zagazig and Damietta. Luxor, Aswan and Sharm el-Sheikh are not on it. Careem publishes no city list we could find, and the reports disagree about Luxor and Aswan, so the row says "coverage not confirmed".
+- **Trains between cities** (Seat61, updated 14 Sep 2026):
+  - foreigner fares are in US dollars or euros, and the railway's own site and app sell only to Egyptian citizens;
+  - the Arab and Foreign Reservation Office at Cairo Ramses sells foreigner tickets for all trains (cards accepted, 2.5% fee);
+  - the sleepers to Luxor and Aswan leave from the Upper Egypt (Bashtil) station, opened in October 2024;
+  - Aswan to Abu Simbel is 275 km by road, with a daily bus at 08:00.
+- **A row with no link must say what was searched.** `coverage.py` fails a hand-curated row with no `source_url` unless its source begins "Searched". New mutation case: "a row with no source link that does not say what was searched".
