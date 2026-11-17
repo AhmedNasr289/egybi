@@ -1194,3 +1194,29 @@ This planner now opens offline on this device, with your saved trip.	Тепер�
 All stops removed.	Все остановки удалены.
 Saved.	Сохранено.
 See your trips	Ваши поездки
+The climate record could not be loaded, so this section is empty rather than showing invented figures.	Не удалось загрузить климатические данные, поэтому раздел пуст — мы не показываем выдуманных цифр.
+Pick your dates above.	Выберите даты выше.
+The heat, site by site, in %m.	Жара по каждому месту: %m.
+Arriving %a, leaving %l.	Приезд %a, отъезд %l.
+Nights: %n.	Ночей: %n.
+%m, days: %n	%m, дней: %n
+Below is what a normal afternoon and night reach in %m at each site: a long-run average, not a forecast.	Ниже — до скольких градусов обычно прогреваются день и ночь в каждом месте в месяце «%m»: это многолетнее среднее, а не прогноз.
+21 °C or less	21 °C и ниже
+22–27 °C	22–27 °C
+28–33 °C	28–33 °C
+34–38 °C	34–38 °C
+39 °C or more	39 °C и выше
+by day — the mean daily maximum	днём — средний дневной максимум
+night %t	ночью %t
+In your plan ✓	В вашем плане ✓
++ Add to my plan	+ Добавить в план
+Source: %s, mean daily maximum and minimum averaged over %w; checked against published station normals before publication. Layer dated %d.	Источник: %s, средние дневные максимумы и минимумы за %w; перед публикацией сверены с опубликованными нормами метеостанций. Данные от %d.
+Every month, every site	Каждый месяц, каждое место
+The holiday calendar could not be loaded.	Не удалось загрузить календарь праздников.
+No public holiday in this calendar falls inside these dates.	На эти даты не приходится ни одного праздника из этого календаря.
+This calendar covers %a to %b only; dates outside it are not checked.	Календарь охватывает только период с %a по %b; даты за его пределами не проверяются.
+Islamic dates follow the moon and are confirmed only by the official sighting, so they are shown as expected ranges. Compiled %d.	Даты по исламскому календарю зависят от луны и подтверждаются только официальным наблюдением, поэтому показаны как ожидаемые диапазоны. Составлено %d.
+The rate could not be loaded.	Не удалось загрузить курс.
+%s, dated %d.	%s, на %d.
+Market rates	Рыночные курсы
+The rate, daily	Курс по дням

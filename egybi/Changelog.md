@@ -2412,3 +2412,9 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Dates and months follow the page:** `trip.js` `fmtDate` writes "١٧ نوفمبر ٢٠٢٦" on Arabic pages and "17 ноября 2026" on Russian ones (genitive month), and `monthName` gives the month on its own. This also localises the dates the home, prices, account and ask pages write on their Arabic and Russian copies.
 - **Plurals:** counts are written as labels ("Stops: 2", "Days: 3"), so no English plural rule is applied to Arabic or Russian.
 - **Check:** `leg-cards.js` now also fails if a stop card's heat line on the Arabic or Russian planner is not in that language, or has a Western digit on the Arabic page.
+## 2026-11-18 — The home page briefing in Arabic and Russian
+- **What was English** on ar/index.html and ru/index.html: the whole trip briefing the home page writes once dates are picked (its title, the arriving and leaving line, the heat legend, each site's night temperature and its add button, the source line), the holiday list's labels and notes, and the exchange-rate caption. 26 lines now go through `t()`.
+- **English is unchanged:** on the English page the briefing keeps its exact sentences. Arabic and Russian get labelled counts ("Nights: 4") where English uses a plural, because their plurals do not follow English rules.
+- **Digits:** every number the briefing writes uses the page's digits (`trip.js` `pageDigits`, now shared by the planner and the home page).
+- **Also fixed:** `home.js` used `t` as the name of a saved trip inside the add-button handler; it is now `tr`, so `t()` means the translation everywhere in the file.
+- **Check:** `twin-data.js` reads the briefing's title, lead and first add button on every home page: English words in Arabic or Russian fail, and so does a changed English briefing. New mutation case: "the home briefing title back in English".

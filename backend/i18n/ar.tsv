@@ -1194,3 +1194,29 @@ This planner now opens offline on this device, with your saved trip.	أصبح ا
 All stops removed.	حُذفت كل المحطات.
 Saved.	تم الحفظ.
 See your trips	اعرض رحلاتك
+The climate record could not be loaded, so this section is empty rather than showing invented figures.	تعذّر تحميل سجل المناخ، لذلك تُركت هذه الفقرة فارغة بدل عرض أرقام مختلَقة.
+Pick your dates above.	اختر مواعيدك بالأعلى.
+The heat, site by site, in %m.	الحرارة في كل موقع خلال %m.
+Arriving %a, leaving %l.	الوصول %a، والمغادرة %l.
+Nights: %n.	عدد الليالي: %n.
+%m, days: %n	%m: %n يوم
+Below is what a normal afternoon and night reach in %m at each site: a long-run average, not a forecast.	وفيما يلي ما تبلغه الحرارة عادةً بعد الظهر وفي الليل خلال %m في كل موقع: متوسط طويل الأمد، وليس توقعًا للطقس.
+21 °C or less	٢١ °م أو أقل
+22–27 °C	٢٢–٢٧ °م
+28–33 °C	٢٨–٣٣ °م
+34–38 °C	٣٤–٣٨ °م
+39 °C or more	٣٩ °م أو أكثر
+by day — the mean daily maximum	نهارًا — متوسط العظمى اليومية
+night %t	ليلًا %t
+In your plan ✓	في خطتك ✓
++ Add to my plan	+ أضف إلى خطتي
+Source: %s, mean daily maximum and minimum averaged over %w; checked against published station normals before publication. Layer dated %d.	المصدر: %s، متوسط العظمى والصغرى اليومية للفترة %w؛ رُوجعت قبل النشر مقابل المعدلات المنشورة للمحطات. تاريخ الطبقة %d.
+Every month, every site	كل شهر، كل موقع
+The holiday calendar could not be loaded.	تعذّر تحميل تقويم العطلات.
+No public holiday in this calendar falls inside these dates.	لا تقع أي عطلة رسمية من هذا التقويم ضمن هذه المواعيد.
+This calendar covers %a to %b only; dates outside it are not checked.	يغطي هذا التقويم الفترة من %a إلى %b فقط؛ ولا نتحقق من المواعيد خارجها.
+Islamic dates follow the moon and are confirmed only by the official sighting, so they are shown as expected ranges. Compiled %d.	تتبع التواريخ الهجرية القمر ولا تُعتمد إلا بعد الرؤية الرسمية، لذلك نعرضها فترات متوقَّعة. جُمع التقويم في %d.
+The rate could not be loaded.	تعذّر تحميل سعر الصرف.
+%s, dated %d.	%s، بتاريخ %d.
+Market rates	أسعار السوق
+The rate, daily	سعر الصرف يومًا بيوم

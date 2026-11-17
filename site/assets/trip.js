@@ -34,6 +34,13 @@
     var l = (document.documentElement && document.documentElement.getAttribute('lang')) || 'en';
     return l === 'ar' || l === 'ru' ? l : 'en';
   }
+  /* A number or clock time in the page's own digits: Arabic-Indic on Arabic
+     pages, plain elsewhere. egfmt formats only 'en' and 'ar', so the page's
+     lang is never handed to it directly. */
+  function pageDigits(x) {
+    var f = F();
+    return pageLang() === 'ar' && f ? f.digits(String(x), 'ar') : String(x);
+  }
   /* A month's name (0 = January) in the page's language. */
   function monthName(i) {
     var l = pageLang(), f = F();
@@ -280,6 +287,6 @@
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow, heatWarning: heatWarning,
     km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM, areaOf: areaOf, legRows: legRows,
     eventsIn: eventsIn, rate: rate, rateText: rateText, money: money, whole: whole,
-    MONTHS: MONTHS, SHORT: SHORT, esc: esc, monthName: monthName, pageLang: pageLang
+    MONTHS: MONTHS, SHORT: SHORT, esc: esc, monthName: monthName, pageLang: pageLang, pageDigits: pageDigits
   };
 }());

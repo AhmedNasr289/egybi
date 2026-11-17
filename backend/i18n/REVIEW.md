@@ -286,3 +286,16 @@ Please check:
 - Russian «Если едете одна» and «когда вы одна»: feminine on purpose, for the
   same reason;
 - Arabic «رابطة الدول المستقلة» for CIS, and «مير» for the Mir card.
+
+## Home page briefing (2026-11-18)
+
+26 lines from home.js: the trip briefing, the holiday list labels and the
+exchange-rate caption.
+
+Please check:
+- «الحرارة في كل موقع خلال %m.» and «Жара по каждому месту: %m.»;
+- the Russian lead «… в месяце «%m» …», which quotes the month name to
+  avoid declining it; a smoother wording is welcome;
+- «%m: %n يوم» for "July, days: 3": «يوم» after numbers 3 to 10 should be
+  «أيام»; if this reads wrong, say which form you would use;
+- the heat legend bands, «٢١ °م أو أقل» … «٣٩ °م أو أكثر».
