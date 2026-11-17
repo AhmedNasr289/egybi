@@ -2265,3 +2265,11 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **Mutation cases:**
   - The "untranslated page" case now uses prices.html, because visit.html has a copy and the old case could no longer fail.
   - A new case disables the in-language branch of `T.url()` and must be caught.
+## 2026-11-17 — The check on the checks runs in three shards
+- **What failed:** the mutation job on #154 and #156 was cancelled at its 60-minute cap (runs 44054884507 and 44054899452, annotation "The job has exceeded the maximum execution time of 1h0m0s"). #153's pass had taken 53 minutes. No case failed; the suite (131+ cases, each running its checker three times) had outgrown one job, and a cancelled run proves nothing.
+- **Why not just raise the cap:** it was already raised from 45 to 60 the day before, and every stage adds cases. The time is spread across the suite (the translated-page checks were about 8 of #153's 52 minutes), so no single checker is the cause.
+- **The fix:**
+  - `mutate.py` takes `SHARD=k/n` and deals the cases round-robin in file order, so one checker's cases spread over every shard. Each shard writes `k n ran seen` to its logs.
+  - Verify (browser) runs three `mutation shard` jobs side by side, 40 minutes each, with their own logs.
+  - A final `mutation` job (the check keeps its name) fails unless every shard passed and, from their own records, all three reported and together ran every case exactly once. `mutate-shards.py` first runs a self-test showing it fails on a missing shard, a short count, mismatched totals, a duplicated shard and zero cases.
+- **Proved locally:** three shards over the six "english" cases ran 2 + 2 + 2 = 6; the aggregator passed, and failed when shard 2's record was removed.
