@@ -2093,6 +2093,33 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The cause:** at 1280x900 the map is on screen at load, so the sweep played before the check scrolled to it. The check read the running animations at one instant, and a finished animation is no longer listed.
 - **The fix:** `briefing-map.js` now records every dot's `animationstart` from page load. It judges the last full sweep: all 18 dots start, in north-to-south order, at least 30 ms apart, animating opacity and transform only. Under reduced motion, no start may be recorded at all.
 
+## 2026-11-16 — The year strip on When to go: every site, every month, the year filling in
+- **Why:** of the four motion proposals, this one carries the most for a first-time visitor. Every measured site's year is visible at once, so the reader learns at a glance which months are comfortable and which are too hot at each place. The fill from January to December shows the heat building into summer and easing off.
+- **Proposals not chosen, and why:**
+  - **Fair-price meter:** dropped, because `fair-prices.json` holds fair ranges but no "typical first quote", so the meter would need invented numbers.
+  - **Planner route:** left for later, because a first-time visitor has no stops yet.
+  - **Moving sun:** left for later, because it adds little to the sun path already shown.
+- **What a reader sees:**
+  - "Each site, all twelve months" on visit.html now opens with the table of all 18 sites by 12 months. It is the same table egypt-weather-by-month.html shows, built from the same rows: every cell coloured by the visit map's heat bands, with its number printed.
+  - Above it sits one sentence computed from the same rows: "In January, February and December, 18 of 18 sites have a normal afternoon under 28 °C … In July, August and September, none does."
+  - As soon as any of the table is on screen, the months come in January to December, 70 ms apart.
+- **The rules kept:**
+  - opacity and transform only;
+  - none of it under reduced motion;
+  - without JavaScript the full table is there.
+- **How:**
+  - `heat_calendar.table_html(..., sweep=True)` gives each cell its month. The default is off, so egypt-weather-by-month.html is byte-identical.
+  - `pages/visit.py` writes the block and generates `assets/heat-calendar.css` from `heat_calendar.CSS` and the new `SWEEP_CSS`, so the table's look has one source.
+  - `assets/year-strip.js` (v1) starts the sweep.
+- **`static-audit.py`:** its "figures typed into visit.html" rule now skips generator-owned `<!-- NAME:START … NAME:END -->` regions. Those are written from the data on every build and guarded by the regenerated-equals-committed check. The rule had no mutation case; it has one now: a temperature typed into the hand-written prose is caught. That was also tried locally (caught alone, then clean again).
+- **New check `backend/verify/year-strip.js`:**
+  - all sites by 12 months present;
+  - with 60 px of the table showing, the cells on screen are shown;
+  - the months start in order, at least 30 ms apart, animating opacity and transform only;
+  - every cell is shown after the sweep;
+  - reduced motion: no animation;
+  - no JavaScript: the whole table is shown.
+- **Mutation cases:** YEAR NOT IN ORDER, YEAR MOTION UNDER REDUCED MOTION (both guards removed), YEAR EMPTY ON SCREEN and YEAR HIDDEN WITHOUT JS.
 ## 2026-11-16 — The briefing map shows its dots as soon as the map is on screen
 - **Why:** on the live home page at 1280x900 the map starts just below the fold (its top at 843 px). The sweep waited until 35% of the map was visible, so a reader who had scrolled only a little saw Egypt's north coast with no dots on it.
 - **What changed:**
@@ -2120,6 +2147,10 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the no-JS section scrolls with a plain script call;
   - the reduced-motion section waits a whole sweep (2.6 s) and counts every recorded animation start, and prints what it saw;
   - every section now runs inside its own guard, so a crash is a named failure (SECTION "..." CRASHED) and the following sections still run.
+
+## 2026-11-17 — Year strip: figures stay on the same line as °C
+- **What the screenshots showed:** CI's screenshots of the year strip (run 43962750300) broke "under 28" from "°C" at 1280 and 390 px, leaving the unit alone at the start of a line.
+- **The fix:** `heat_calendar.findings()` joins every figure to its unit with a non-breaking space. That covers the year strip's sentence on visit.html and the same sentences on egypt-weather-by-month.html.
 ## 2026-11-17 — The checks already on main that main's own mutation pass could not prove
 - **Why this is here:** main's mutation pass (run 43948810613) and this branch's own (run 43962643068) could not prove two briefing-map cases. The cases and the check are already on main, so this PR, the base of the train, must carry the fix to be green on its own head.
 - **The two cases:**
@@ -2135,3 +2166,5 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - Only each dot's latest start is used.
   - A failure prints the order and the gaps it measured.
 - **And the harness:** mutate.py now prints what a checker said for any case that is not a clean pass. Before, a NOISY verdict left only the word, and the cause could not be found without a re-run.
+## 2026-11-17 — The year strip's order check: the same scheduled-start timing
+- `year-strip.js` timed each month with `performance.now()` when its `animationstart` arrived, which is the same weakness that made the briefing map's order check flake. It now uses each cell's scheduled start (start time plus delay). It has not flaked yet; this removes the cause before it does.
