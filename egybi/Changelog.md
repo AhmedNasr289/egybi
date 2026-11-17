@@ -2148,6 +2148,60 @@ The last of the plan's account items: the newsletter choice beside saved trips a
   - the reduced-motion section waits a whole sweep (2.6 s) and counts every recorded animation start, and prints what it saw;
   - every section now runs inside its own guard, so a crash is a named failure (SECTION "..." CRASHED) and the following sections still run.
 
+## 2026-11-16 — Trilingual stage 1: Arabic and Russian twins of About and Privacy, and a language button
+- **Plan:** approved by the owner on 2026-11-16 as recommended. English stays at its addresses; the build writes `/ar/` and `/ru/` copies from one catalogue per language. Stage 1 proves the system on About and Privacy; later stages cover the other pages, the generated pages, then script text.
+- **How the twins are built** (`backend/pipeline/pages/i18n.py`, run by `build_static_pages.py`):
+  - `pages/i18n_units.py` finds every translatable unit of the finished English page: whole paragraphs, headings, list items, buttons and link labels, with their inline tags kept, so Arabic and Russian word order is not built from fragments.
+  - Each unit is replaced from `backend/i18n/ar.tsv` or `ru.tsv` (one `English<TAB>translation` line per unit; 142 per language).
+  - The build fails if a unit has no translation, if a translation's tags differ from the English, or if a translated attribute contains a quote.
+  - Each twin gets:
+    - `lang`/`dir` (Arabic right to left);
+    - relative paths one level up, and links between twins kept in the same language;
+    - its own canonical, og:url and JSON-LD url and language;
+    - hreflang en/ar/ru/x-default on all three versions;
+    - the language's fonts;
+    - a footer line saying the translation awaits a native review.
+  - Two builds give identical output.
+- **The language button** (`assets/i18n.css` v1, `assets/lang.js` v1):
+  - **Design:** a compact globe button with the current language (EN, عربي, RU) that opens English, العربية and Русский. It is built as `<details>` and plain links, so it works without JavaScript. On phones the other languages are links in the menu instead.
+  - **Memory:** the choice is remembered on the device; on a page in another language the reader is offered a link, never redirected.
+  - **Widths, measured on the live About page at 1280 px:**
+    - English: with links 12 px apart, it fits with 47 px to spare;
+    - Arabic: about 36 px in a substitute font, so the menu stays below 1440 px;
+    - Russian needs 1,340 px of a row capped at 1,320 px, so the menu stays below 1600 px, with a wider row above.
+- **Fonts** (Google Fonts only, on the pages that need them):
+  - **Arabic:** Noto Sans Arabic and Amiri, with letter-spacing removed so the letters join.
+  - **Russian:** Cormorant Garamond for headings, since Cinzel has no Cyrillic, and Inter for text.
+- **Arabic digits:** figures use Arabic-Indic digits, as `prices-ar.html` does.
+- **privacy.html, all three languages:** now says the chosen language is remembered in the browser and never leaves the device.
+- **Translations:** written by Claude, marked on every translated page as awaiting a native speaker's review. `backend/i18n/REVIEW.md` is the file to hand a reviewer, listing pages, conventions and known gaps. The About page's hieroglyph list is written by a script and stays English until stage 4.
+- **New check `backend/verify/i18n.py`** (static), with seven mutation cases, each tried locally (caught, then clean again):
+  - twins exist;
+  - `lang`/`dir`;
+  - self canonical;
+  - hreflang complete and reciprocal;
+  - a language button whose three links resolve;
+  - twins in the sitemap;
+  - no English sentence left on an Arabic or Russian page.
+- **`header.js`:** accepts translated labels, and measures the Arabic and Russian About pages at their own widths: one row from 1440 px and 1600 px, the menu below.
+- **`coverage.py`:** ignores language links when comparing headers. They point at each page's own twins, so they differ by design.
+- **Three translated descriptions** were shortened to fit search snippets (seo.py).
+- **CI screenshots:** `ar/about.html` and `ru/about.html` added at 1280 and 390 px.
+
+## 2026-11-17 — Trilingual stage 1: About's script-written cards and the section chips, translated and checked
+- **What the screenshots showed:** CI's 1280 px screenshot of the Arabic About page (run 43962750300) showed English that the leak check had passed:
+  - **The section chips** (Why Egypt, Signs…): built by a script from each section's `data-nav` attribute, which the extractor did not read.
+  - **The 12 sector cards and 6 fact cards:** text inside the page's inline script, which the extractor skipped.
+- **Fixes:**
+  - `i18n_units.py` reads `data-nav`, and has a small JavaScript string tokenizer (quotes, escapes, comments).
+  - The build translates a quoted string in an inline script when the catalogue has it, escaped for its quote.
+  - 55 more entries per language: card titles and texts, institution names, section labels. Product names such as Our World in Data stay as written.
+  - The leak check now also reads inline-script text.
+- **Proof:**
+  - the previous Arabic page now fails the check with 44 English units;
+  - English planted into a Russian card is caught;
+  - all eight translated inline scripts parse;
+  - a new mutation case covers script-written English.
 ## 2026-11-17 — Year strip: figures stay on the same line as °C
 - **What the screenshots showed:** CI's screenshots of the year strip (run 43962750300) broke "under 28" from "°C" at 1280 and 390 px, leaving the unit alone at the start of a line.
 - **The fix:** `heat_calendar.findings()` joins every figure to its unit with a non-breaking space. That covers the year strip's sentence on visit.html and the same sentences on egypt-weather-by-month.html.

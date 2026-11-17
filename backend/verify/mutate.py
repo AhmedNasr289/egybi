@@ -1052,6 +1052,34 @@ case("the current page no longer highlighted in the header", "header.js", ["site
      lambda: edit("site/assets/egybi.js", "if (target === here) a.classList.add('active');", "if (false) a.classList.add('active');"),
      lambda o: "NO ACTIVE HIGHLIGHT" in o, HEADER)
 
+# ---- trilingual stage 1: twins, language, hreflang, button, no English left --
+I18N = f'"{sys.executable}" {HERE}/i18n.py'
+case("a Russian twin missing", "i18n.py", ["site/ru/privacy.html"],
+     lambda: Path("site/ru/privacy.html").unlink(),
+     lambda o: "TWIN MISSING" in o, I18N)
+case("an Arabic page marked left to right", "i18n.py", ["site/ar/about.html"],
+     lambda: edit("site/ar/about.html", 'dir="rtl"', 'dir="ltr"'),
+     lambda o: "LANG/DIR WRONG" in o, I18N)
+case("a twin's canonical pointing at the English page", "i18n.py", ["site/ru/about.html"],
+     lambda: edit("site/ru/about.html", '<link rel="canonical" href="https://egybi.com/ru/about.html">',
+                  '<link rel="canonical" href="https://egybi.com/about.html">'),
+     lambda o: "CANONICAL WRONG" in o, I18N)
+case("an English page losing its Russian hreflang", "i18n.py", ["site/about.html"],
+     lambda: edit("site/about.html", '<link rel="alternate" hreflang="ru" href="https://egybi.com/ru/about.html">\n', ''),
+     lambda o: "HREFLANG MISSING" in o, I18N)
+case("a twin without the language button", "i18n.py", ["site/ru/privacy.html"],
+     lambda: edit("site/ru/privacy.html", '<details class="lang-switch">', '<details class="x-switch">'),
+     lambda o: "NO SWITCHER" in o, I18N)
+case("a twin left out of the sitemap", "i18n.py", ["site/sitemap.xml"],
+     lambda: edit("site/sitemap.xml", "https://egybi.com/ar/privacy.html", "https://egybi.com/ar/privacy-x.html"),
+     lambda o: "NOT IN SITEMAP" in o, I18N)
+case("English left in a Russian page's script-written cards", "i18n.py", ["site/ru/about.html"],
+     lambda: edit("site/ru/about.html", "'Суэцкий канал'", "'The Suez Canal'"),
+     lambda o: "ENGLISH LEAK" in o, I18N)
+case("English left on an Arabic page", "i18n.py", ["site/ar/about.html"],
+     lambda: edit("site/ar/about.html", "بيت الحياة.", "The House of Life."),
+     lambda o: "ENGLISH LEAK" in o, I18N)
+
 # ---- the year strip on When to go (2026-11-16) -------------------------------
 YEAR = f"node {HERE}/year-strip.js"
 case("year strip months all at once, not January to December", "year-strip.js", ["site/assets/heat-calendar.css"],
