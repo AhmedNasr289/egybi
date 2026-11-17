@@ -2242,6 +2242,6 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **And the habit:** a head counts as green only when every check run on it is green (read with the check-runs API), not only the browser workflow.
 ## 2026-11-17 — The translated home pages' hero poster, and the audit that missed it
 - **What failed:** `twin-data.js` failed on #151's head (run 43987216476). On ar/index.html and ru/index.html the hero video's poster loaded as `/ar/assets/video/hero-lighthouse.webp`, which is a 404.
-- **The cause:** the generator moved `href` and `src` up one folder. Its `(href|src)` pattern caught `data-src` only because `` matches after a hyphen, and it never matched `poster`.
+- **The cause:** the generator moved `href` and `src` up one folder. Its `\b(href|src)` pattern caught `data-src` only because `\b` matches after a hyphen, and it never matched `poster`.
 - **The fix:** the rule names every attribute that holds a site path: `href`, `src`, `data-href`, `data-src`, `poster` and `action`.
 - **The audit's gap:** static-audit.py checked `href` and `src` but not `poster`, so the broken file passed unseen. It now reads `poster`. Before the rebuild it fails on both broken posters; after it, it is clean. A new mutation case plants a missing poster, and it is caught.
