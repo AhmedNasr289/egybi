@@ -106,6 +106,19 @@ const ROOTED = ['visit.html', 'prices.html', 'account.html'];
       }
       if (lang && chromeText.signin === null) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} has no sign-in button to check`);
 
+      // The sign-in dialog (stage 4b), opened on the home page in each language.
+      if (page === 'index.html') {
+        const dlg = await p.click('#signinBtn').then(() => p.waitForFunction(() => {
+          const h = document.getElementById('authTitle');
+          return h && h.textContent.trim() ? { title: h.textContent.trim(),
+            email: (document.querySelector('label[for="authEmail"]') || {}).textContent || '' } : null;
+        }, null, { timeout: 8000 })).then(h => h.jsonValue(), () => null);
+        if (!dlg) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} - the sign-in dialog did not open`);
+        else if (lang && (dlg.title === 'Welcome back' || dlg.email === 'Email')) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} dialog shows "${dlg.title}" / "${dlg.email}"`);
+        else if (!lang && (dlg.title !== 'Welcome back' || dlg.email !== 'Email')) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English dialog shows "${dlg.title}" / "${dlg.email}"`);
+        else console.log(`${where}: sign-in dialog "${dlg.title}" / "${dlg.email}"`);
+      }
+
       console.log(`${where}: ${data.length} data file(s), ${links.length} rooted link(s), ${bad.length} failed request(s), sign-in "${chromeText.signin}", on-this-page "${chromeText.otp}"`);
       await ctx.close();
     }

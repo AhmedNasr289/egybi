@@ -1106,6 +1106,9 @@ case("EGYBI.url resolving against the page, not the site", "twin-data.js", ["sit
 case("a translated page without its string table", "twin-data.js", ["site/ar/index.html"],
      lambda: edit_re("site/ar/index.html", r'<script src="\.\./assets/i18n/ar\.js\?v=[0-9a-f]+"></script>\n', ""),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
+case("the sign-in dialog's title left out of t()", "twin-data.js", ["site/assets/auth.js"],
+     lambda: edit("site/assets/auth.js", "title.textContent = t('Welcome back');", "title.textContent = 'Welcome back';"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
 case("a script string left out of EGYBI.t", "twin-data.js", ["site/assets/wayfinding.js"],
      lambda: edit("site/assets/wayfinding.js", "(window.EGYBI && window.EGYBI.t) ? window.EGYBI.t('On this page') : 'On this page'", "'On this page'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o, TWIN)
