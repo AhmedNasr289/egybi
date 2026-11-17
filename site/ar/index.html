@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EgyBI — خطّط لمصر بصدق: حرارة حقيقية وعطلات وأسعار</title>
+<title>EgyBI — خطّط لمصر بصدق: الحرارة والعطلات والأسعار الحقيقية</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -30,7 +30,7 @@
      crossorigin="anonymous"></script>
   <link rel="canonical" href="https://egybi.com/ar/">
   <meta name="twitter:title" content="EgyBI — مصر بالخرائط والبيانات الموثّقة">
-  <meta name="twitter:description" content="موسوعة عن مصر تُروى بالخرائط والبيانات المفتوحة — الجغرافيا والتراث والبنية التحتية والتاريخ، وكل رقم يمكن تتبّعه إلى مصدر مسمّى.">
+  <meta name="twitter:description" content="موسوعة عن مصر تُروى بالخرائط والبيانات المفتوحة — الجغرافيا والتراث والبنية التحتية والتاريخ، وكل رقم يمكن تتبّعه إلى مصدر محدّد.">
   <meta name="twitter:image" content="https://egybi.com/og-image.png?v=3">
   <!-- ENTITY NOTE. Google resolves a brand name to an entity largely through
        sameAs — the set of external profiles that assert the same identity.
@@ -124,7 +124,7 @@
 <meta name="egybi-twins" content="about.html privacy.html index.html plan.html fair-prices.html hieroglyphs.html dossier.html ask.html visit.html community.html places.html geospatial.html stories.html streets.html">
 <link href="../assets/i18n.css?v=1" rel="stylesheet">
 <script src="../assets/lang.js?v=1" defer></script>
-<script src="../assets/i18n/ar.js?v=8e2877a1"></script>
+<script src="../assets/i18n/ar.js?v=f10c00ec"></script>
 <!-- I18N-HEAD:END -->
 </head>
 <body>
@@ -136,11 +136,11 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
     <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
       <a href="index.html" class="active">الرئيسية</a>
-      <a href="plan.html">الخطة</a>
+      <a href="plan.html">خطّط رحلتك</a>
       <a href="visit.html">متى تسافر</a>
       <a href="fair-prices.html">الأسعار العادلة</a>
       <a href="hieroglyphs.html">الهيروغليفية</a>
-      <a href="dossier.html">الملف</a>
+      <a href="dossier.html">ملف الرحلة</a>
       <a href="places.html">الأماكن</a>
       <a href="geospatial.html">الأطلس</a>
       <a href="stories.html">القصص</a>
@@ -173,7 +173,7 @@
     <div>
     <p class="hero-eyebrow"><span data-glyph="reed"></span> مصر، بصدق &middot; كل رقم موثّق المصدر &middot; بلا تسجيل <span data-glyph="scroll"></span></p>
     <h1 class="hero-h1">متى ستسافر إلى مصر؟</h1>
-    <p class="lead hero-lead">اختر تواريخك. ستعرف ما تبلغه الحرارة المقيسة في فترة بعد ظهر عادية في كل موقع من ثمانية عشر موقعًا رئيسيًا، وأي العطلات تقع خلال رحلتك، وسعر الصرف اليوم، وكم ينبغي أن تكلّف الأشياء &mdash; وكل رقم مع مصدره وتاريخه.</p>
+    <p class="lead hero-lead">اختر تواريخك. ستعرف كم تبلغ الحرارة المقيسة عادةً بعد الظهر في كل موقع من ثمانية عشر موقعًا رئيسيًا، وأي العطلات تقع خلال رحلتك، وسعر الصرف اليوم، وكم ينبغي أن تكلّف الأشياء &mdash; وكل رقم مع مصدره وتاريخه.</p>
 
     <form class="trip-form" id="tripForm" novalidate>
       <label>الوصول<input type="date" id="tripStart" name="start" required></label>
@@ -195,7 +195,7 @@
           <span class="eg-flag-sheen" aria-hidden="true"></span>
         </div>
       </div>
-      <figcaption class="eg-flag-cap" data-geo-credit>ليست رسمًا &mdash; الحدود مستخرجة من الهندسة نفسها التي ترسمها خرائط الأطلس. <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>، <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>.</figcaption>
+      <figcaption class="eg-flag-cap" data-geo-credit>ليست رسمًا يدويًا &mdash; الحدود مستخلصة من البيانات الجغرافية نفسها التي تُرسم بها خرائط الأطلس. <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>، <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>.</figcaption>
     </figure>
    </div>
   </div>
@@ -219,7 +219,7 @@
            this image, every site in its place. -->
       <figure class="site-map" id="siteMap">
         <img src="../assets/egypt-sites.svg?v=1" alt="خريطة مصر بالمواقع الـ١٨ المقيسة أدناه، من الإسكندرية شمالًا إلى أبو سمبل جنوبًا" width="450" height="400" loading="lazy" decoding="async">
-        <figcaption class="chart-cap"><span id="siteMapSummary"></span>كل نقطة موقع من المواقع أدناه، عند إحداثياته الخاصة. الحدود: <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>، <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>.</figcaption>
+        <figcaption class="chart-cap"><span id="siteMapSummary"></span>كل نقطة موقع من المواقع أدناه، في موضعه الجغرافي الفعلي. الحدود: <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a>، <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener">CC&nbsp;BY&nbsp;4.0</a>.</figcaption>
       </figure>
     </div>
     <div class="brief-grid" id="briefGrid"></div>
@@ -250,26 +250,26 @@
   <div class="wrap">
     <div class="kicker"><span data-glyph="was"></span>أربع أدوات، رحلة واحدة</div>
     <h2>خطّط لها بالبيانات نفسها.</h2>
-    <p class="lead">كل ما يلي يقرأ الملفات الموثّقة نفسها التي يقرؤها الملخّص أعلاه، ويتذكّر تواريخك على هذا الجهاز &mdash; لا يُرسل شيء إلى أي مكان إلا إذا اخترت حفظ رحلة في حساب مجاني، ولا شيء يحتاج إلى حساب.</p>
+    <p class="lead">كل ما يلي يقرأ الملفات الموثّقة نفسها التي يقرؤها الملخّص أعلاه، ويتذكّر تواريخك على هذا الجهاز &mdash; لا يُرسل شيء إلى أي مكان إلا إذا اخترت حفظ رحلة في حساب مجاني، ولا تحتاج أيّ أداة منها إلى حساب.</p>
     <div class="grid grid-2" style="margin-top:28px;">
       <a class="card card-link" href="plan.html" data-ev="home_to_plan">
-        <span class="tag">مخطِّط المسار</span>
+        <span class="tag">مخطِّط الرحلة</span>
         <h3>ضع محطاتك على الخريطة.</h3>
-        <p>اختر من بين ١٨ موقعًا رئيسيًا و٨٩٧ مكانًا على الخريطة، وحدّد الأيام في كلٍّ منها، وشاهد الحرارة المقيسة والمسافات المستقيمة. ثم اطبعها ملفًّا من «البردية».</p>
+        <p>اختر من بين ١٨ موقعًا رئيسيًا و٨٩٧ مكانًا على الخريطة، وحدّد الأيام في كلٍّ منها، وشاهد الحرارة المقيسة والمسافات المستقيمة. ثم اطبعها في ملف «البردية».</p>
       </a>
       <a class="card card-link" href="fair-prices.html" data-ev="home_to_fair">
         <span class="tag">الأسعار العادلة</span>
         <h3>كم ينبغي أن يكلّف؟</h3>
-        <p>البقشيش ورسوم الدخول والتنقلات كما تنشرها أدلة مسمّاة، محوّلة بسعر الصرف اليوم &mdash; وحين يختلف مصدران، يُعرض الاثنان.</p>
+        <p>البقشيش ورسوم الدخول والتنقلات كما تنشرها أدلة سياحية نذكرها بالاسم، محوّلة بسعر الصرف اليوم &mdash; وحين يختلف مصدران، نعرض الاثنين.</p>
       </a>
       <a class="card card-link" href="hieroglyphs.html" data-ev="home_to_glyphs">
         <span class="tag">استوديو الأسماء</span>
         <h3>اسمك بالهيروغليفية.</h3>
-        <p>يُكتب علامةً علامة من قائمة غاردنر، داخل خرطوش يمكنك حفظه &mdash; مع الصراحة بأنه نقل صوتي لا ترجمة.</p>
+        <p>يُكتب علامةً علامة من قائمة غاردنر، داخل خرطوش يمكنك حفظه &mdash; ونصارحك بأنه نقل صوتي لا ترجمة.</p>
       </a>
       <a class="card card-link" href="ask.html" data-ev="home_to_ask">
         <span class="tag">مراجعة الخطة</span>
-        <h3>اجعل شخصًا في القاهرة يقرأ خطتك.</h3>
+        <h3>اعرض خطتك على شخص في القاهرة ليراجعها.</h3>
         <p>أرسل مسودة برنامجك؛ واحصل على مراجعة مكتوبة للحرارة والمسافات والعطلات والأسعار مقارنةً بالبيانات، خلال ٤٨ ساعة.</p>
       </a>
     </div>
@@ -297,7 +297,7 @@
 <section class="surface-deep center">
   <div class="wrap">
     <h2 data-aos="fade-up">ما الذي تحصل عليه فعلًا.</h2>
-    <p class="lead" data-aos="fade-up"><strong>EgyBI</strong> موسوعة مجانية عن مصر تُروى بالخرائط والبيانات المفتوحة. كل صف خلف كل رسم بياني يحمل مصدرًا مسمّى وتاريخًا، وحين تختلف المصادر تقول الصفحة ذلك بدل أن تختار الرقم الأنسب.</p>
+    <p class="lead" data-aos="fade-up"><strong>EgyBI</strong> موسوعة مجانية عن مصر تُروى بالخرائط والبيانات المفتوحة. كل صف خلف كل رسم بياني يحمل مصدرًا محدّدًا وتاريخًا، وحين تختلف المصادر تقول الصفحة ذلك بدل أن تختار الرقم المريح.</p>
     <div class="stat-grid" style="margin-top:40px;">
       <div class="stat" data-aos="fade-up"><div class="num" data-count="27">27</div><div class="label">محافظات على الخريطة</div><div class="cap">السكان والكثافة ونسبة الحضر</div></div>
       <div class="stat" data-aos="fade-up" data-aos-delay="80"><div class="num" data-count="61">61</div><div class="label">جداول من البيانات الموثّقة</div><div class="cap">كل صف يحمل مصدره</div></div>
@@ -346,7 +346,7 @@
       <a class="card card-link" href="../explore.html" data-aos="fade-up" data-aos-delay="240" data-ev="home_to_explore">
         <span class="tag">الرسوم البيانية</span>
         <h3>من الاقتصاد إلى العصور القديمة.</h3>
-        <p>الناتج المحلي الإجمالي وقناة السويس والسياحة والطاقة والزراعة والتسلسل الزمني القديم &mdash; وكل رقم بمصدر مسمّى وتاريخ.</p>
+        <p>الناتج المحلي الإجمالي وقناة السويس والسياحة والطاقة والزراعة والتسلسل الزمني القديم &mdash; وكل رقم بمصدر محدّد وتاريخ.</p>
       </a>
       <a class="card card-link" href="streets.html" data-aos="fade-up" data-aos-delay="300" data-ev="home_to_streets">
         <span class="tag">هندسة الشوارع</span>
@@ -354,7 +354,7 @@
         <p>كثافة التقاطعات والطرق المسدودة والتعرّج في أحياء تمتد من ستينيات القرن التاسع عشر إلى المدن الصحراوية الجديدة &mdash; بالقياس، لا بالادّعاء.</p>
       </a>
     </div>
-    <div class="cta-row" data-aos="fade-up"><a href="plan.html" class="btn btn-primary">خطّط لمسارك &larr;</a></div>
+    <div class="cta-row" data-aos="fade-up"><a href="plan.html" class="btn btn-primary">خطّط مسار رحلتك &larr;</a></div>
   </div>
 </section>
 
@@ -380,7 +380,7 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ra"></span>مثالان</div>
     <h2 data-aos="fade-up">كيف يبدو «كل رقم موثّق المصدر» في الواقع.</h2>
-    <p class="lead" data-aos="fade-up">ادّعاء الحرص على البيانات سهل. وهذان المدخلان هما ثمنه: أحدهما عدد يفاجئ الناس، والآخر رقم يختلف عليه مصدران محترمان &mdash; حيث تكون الخطوة المريحة اختيار أحدهما والسكوت.</p>
+    <p class="lead" data-aos="fade-up">ادّعاء الحرص على البيانات سهل. وهذان المدخلان يبيّنان ثمنه: أحدهما عدد يفاجئ الناس، والآخر رقم يختلف عليه مصدران محترمان &mdash; وكان الأسهل أن نختار أحدهما ونسكت.</p>
 
     <div class="grid grid-2" style="margin-top:26px;">
       <div class="card" data-aos="fade-up">
@@ -393,7 +393,7 @@
       <div class="card" data-aos="fade-up">
         <div class="kicker"><span data-glyph="maat"></span>رقم يختلف عليه مصدران</div>
         <h3>عدد سكان مصر ١١٦ مليونًا. أو ١٠٧ ملايين.</h3>
-        <p>قدّره البنك الدولي بـ١١٦٫٥ مليونًا في ٢٠٢٤. وأحصى الجهاز المركزي للتعبئة العامة والإحصاء نحو ١٠٧ ملايين في نوفمبر من العام نفسه. لا أحدهما مخطئ &mdash; فهما يقيسان أمرين مختلفين، أحدهما يعدّ المواطنين في الخارج والآخر المقيمين في الداخل. نحتفظ بالرقمين ونقول ذلك، بدل أن نختار الرقم الأنسب.</p>
+        <p>قدّره البنك الدولي بـ١١٦٫٥ مليونًا في ٢٠٢٤. وأحصى الجهاز المركزي للتعبئة العامة والإحصاء نحو ١٠٧ ملايين في نوفمبر من العام نفسه. وليس أيٌّ منهما خاطئًا &mdash; فهما يقيسان أمرين مختلفين: أحدهما يحتسب المواطنين في الخارج، والآخر المقيمين في الداخل. نحتفظ بالرقمين ونوضّح ذلك، بدل أن نختار الرقم المريح.</p>
         <p class="card-meta"><a href="../papyrus/one-hundred-sixteen-million.html" data-ev="egypt_story_population">اقرأ القصة كاملة &larr;</a></p>
       </div>
     </div>
@@ -407,11 +407,11 @@
   <div class="wrap">
     <div class="kicker" data-aos="fade-up"><span data-glyph="ankh"></span>الهوية</div>
     <h2 data-aos="fade-up">التاريخ المصري هنا هو الموضوع، لا زينة فوقه.</h2>
-    <p class="lead" data-aos="fade-up">الدليل في «بيت الحياة» هو <strong>إيبي</strong>، تلميذ كاتب برأس أبي منجل على هيئة تحوت، حافظ السجلات. كانت مهمة الكاتب أن يدوّن ما أُحصي فعلًا &mdash; حتى حين كان الإحصاء غير مؤكد.</p>
+    <p class="lead" data-aos="fade-up">مرشدك في «بيت الحياة» هو <strong>إيبي</strong>، تلميذ كاتب برأس أبي منجل، مستوحى من تحوت حافظ السجلات. كانت مهمة الكاتب أن يدوّن ما أُحصي فعلًا &mdash; حتى حين كان الإحصاء غير مؤكد.</p>
     <div class="callout" style="margin-top:26px;" data-aos="zoom-in">
-      <div class="label">ويبدو هذا هكذا</div>
-      <p>تنسب الرواية التقليدية إلى بيبي الثاني حكمًا دام ٩٤ عامًا &mdash; الأطول في التاريخ المدوّن &mdash; وفقًا لقائمة ملوك تورينو. ويرى معظم علماء المصريات اليوم أن الرقم نُسخ خطأً، ويرجّحون حكمًا أقرب إلى ٦٤ عامًا.</p>
-      <span class="src">نحتفظ بالقراءتين، لأن الخلاف جزء مما هو معروف. قائمة ملوك تورينو؛ وإجماع علماء المصريات وفقًا لبيكيراث، <em>Chronologie des pharaonischen Ägypten</em>.</span>
+      <div class="label">وهكذا يبدو ذلك عمليًا</div>
+      <p>تنسب الرواية التقليدية إلى بيبي الثاني حكمًا دام ٩٤ عامًا &mdash; الأطول في التاريخ المدوّن &mdash; وفقًا لبردية تورينو الملكية. ويرى معظم علماء المصريات اليوم أن الرقم نُسخ خطأً، ويرجّحون حكمًا أقرب إلى ٦٤ عامًا.</p>
+      <span class="src">نحتفظ بالقراءتين، لأن الخلاف جزء مما هو معروف. بردية تورينو الملكية؛ وإجماع علماء المصريات وفقًا لبيكيراث، <em>Chronologie des pharaonischen Ägypten</em>.</span>
     </div>
     <div class="cta-row" data-aos="fade-up"><a href="about.html" class="btn btn-blue">تعرّف إلى إيبي و«بيت الحياة» ←</a></div>
   </div>
@@ -428,7 +428,7 @@
 
       <blockquote class="pl-specimen"><span class="pl-specimen-label"><span data-glyph="scarab"></span> من العدد الأخير</span> بقيت ثلاث وثلاثون مسلّة مصرية قديمة. خمس عشرة منها فقط ما زالت في مصر. وأطولها قائمةً في أي مكان موجودة في روما، أما أكبر مسلّة قُطعت على الإطلاق فلم تُرفع قط &mdash; تشقّقت في محجر أسوان وما زالت ترقد فيه، بطول نحو ٤٢ مترًا.</blockquote>
 
-      <p style="font-size:var(--fs-sm);color:var(--ink-soft);margin:0 0 20px;">شهريًا، لا أكثر. كل رقم موثّق، والخلافات مُشار إليها. وإلغاء الاشتراك بنقرة واحدة.</p>
+      <p style="font-size:var(--fs-sm);color:var(--ink-soft);margin:0 0 20px;">شهريًا، لا أكثر. كل رقم موثّق، مع التنبيه إلى الخلافات. وإلغاء الاشتراك بنقرة واحدة.</p>
 
       <form id="newsletterForm" class="newsletter-form nl-form" novalidate>
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -447,14 +447,14 @@
   <div class="cols">
     <div>
       <a class="brand" href="index.html"><svg viewBox="0 0 100 100" style="width:24px;height:24px;" aria-hidden="true"><path d="M50 47 C50 47 34 33 34 20.5 C34 10.5 42 3.5 50 3.5 C58 3.5 66 10.5 66 20.5 C66 33 50 47 50 47 Z" fill="none" stroke="#C9A227" stroke-width="8" stroke-linejoin="round"/><path d="M18 48.25 L82 48.25 L82 55.75 L18 55.75 Z" fill="#C9A227"/><path d="M18 46.65 L21.5 48.25 L21.5 55.75 L18 57.35 Z" fill="#C9A227"/><path d="M82 46.65 L78.5 48.25 L78.5 55.75 L82 57.35 Z" fill="#C9A227"/><path d="M46 50 L54 50 L54 88 L58 96 L42 96 L46 88 Z" fill="#C9A227"/></svg> EgyBI</a>
-      <p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لمصر بصدق — حرارة حقيقية وعطلات وأسعار، وكل رقم بمصدره وتاريخه.</p>
+      <p style="color:var(--on-dark-soft);font-size:var(--fs-sm);max-width:34ch;margin:0;">خطّط لرحلتك إلى مصر بأرقام صادقة — حرارة حقيقية وعطلات وأسعار، وكل رقم بمصدره وتاريخه.</p>
     </div>
-    <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط لمسارك</a><a href="visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">الملف</a><a href="ask.html">مراجعة الخطة</a></div>
+    <div><h2 class="foot-h">خطّط لرحلة</h2><a href="plan.html">خطّط مسار رحلتك</a><a href="visit.html">متى تسافر</a><a href="fair-prices.html">الأسعار العادلة</a><a href="hieroglyphs.html">اسمك بالهيروغليفية</a><a href="dossier.html">ملف الرحلة</a><a href="ask.html">مراجعة الخطة</a></div>
     <div><h2 class="foot-h">مصر بالأرقام</h2><a href="../explore.html">بيانات مصر</a><a href="geospatial.html">أطلس مصر</a><a href="places.html">الأماكن</a><a href="stories.html">قصص البيانات</a><a href="streets.html">بطاقة تقييم الشوارع</a><a href="../prices.html">الأسعار اليومية</a><a href="../stocks.html">البورصة</a><a href="../invest.html">أين تبني مصر</a></div>
     <div><h2 class="foot-h">المزيد</h2><a href="../blog.html">المدوّنة</a><a href="community.html">المجتمع</a><a href="about.html">الهوية</a><a href="#newsletter">النشرة البريدية</a></div>
     <div><h2 class="foot-h">مصادر البيانات</h2><a href="https://data.worldbank.org/country/egypt-arab-rep" target="_blank" rel="noopener">البنك الدولي</a><a href="../explore.html">قائمة المصادر الكاملة</a></div>
   </div>
-  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> كل رقم حقيقي وموثّق المصدر، وحين تختلف المصادر فعلًا يُعلَّم الخلاف بدلًا من إخفائه.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
+  <div class="colophon"><span class="colo-brand">EgyBI</span> &middot; egybi.com &middot; <span data-glyph="maat"></span> كل رقم حقيقي وموثّق المصدر، وحين تختلف المصادر فعلًا ننبّه إلى الخلاف بدلًا من إخفائه.&nbsp;&middot;&nbsp;<a href="mailto:hello@egybi.com">hello@egybi.com</a>&nbsp;&middot;&nbsp;<span data-glyph="eye"></span> <a href="privacy.html">الخصوصية وملفات تعريف الارتباط</a></div>
 <p class="i18n-note">ترجم EgyBI هذه الصفحة، والترجمة بانتظار مراجعة متحدث أصلي باللغة العربية. <a href="../index.html" hreflang="en" lang="en">English</a></p>
 </footer>
 

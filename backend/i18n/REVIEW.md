@@ -154,3 +154,24 @@ with the glossary, before-and-after examples and every line still to check, is
   (895-942), the safety and medical notes (424, 692, 728, 784, 785, 867), the
   prices and payment timing (333, 405, 409, 412, 418, 423, 426) and the names
   listed in review-ru.md.
+
+## Arabic editing pass (2026-11-17)
+
+All 955 lines of ar.tsv were read in full and 157 rewritten. The full review,
+with the glossary, examples and every line still to check, is
+`backend/i18n/review-ar.md`.
+
+- The Arabic was already correct: Arabic punctuation, « » quotes, mirrored
+  arrows and Arabic-Indic digits throughout. The rewrites remove calques (56),
+  heavy rhythm (49) and terms rendered several ways (44); "planner" alone had
+  four forms and is now مخطِّط الرحلة everywhere.
+- Address: the reader as أنت with singular imperatives (اختر، احفظ، خطّط); the
+  site as نحن.
+- Four meaning fixes: the $49 page title had dropped "data" (Cairo *data*
+  analyst); "two dozen" had become "about twenty"; "tidier number" had become
+  "the most suitable number"; and the water line called the *sources*
+  contested where the English says the *models* are.
+- Please check first: privacy (96-131, 951), account and passwords (895-942),
+  community posting (551, 607, 611), the paid service and prices (232, 333-335,
+  405-426), safety and health (424, 692, 728, 771-785, 864-867) and the three
+  technical renderings named in review-ar.md.

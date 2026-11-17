@@ -1,0 +1,33 @@
+# Arabic glossary for EgyBI (2026-11-17). One English term per line, the Arabic the
+# site uses for it, and optionally a pattern (Python regex) for a variant that must
+# not come back. backend/verify/i18n.py fails with GLOSSARY TERM when any translation
+# in ar.tsv matches an "avoid" pattern. Address the reader as أنت (singular imperatives
+# on buttons: اختر، احفظ، خطّط); the site speaks as نحن. Arabic-Indic digits.
+# english	arabic	avoid
+planner / trip planner / route planner	مخطِّط الرحلة (in context: المخطِّط)	مخطِّط المسار|مخطط المسار|أداة التخطيط
+Plan (menu)	خطّط رحلتك
+dossier	ملف الرحلة
+Papyrus dossier	ملف «البردية»
+The Papyrus (newsletter)	«البردية»
+briefing	ملخّص
+Plan check	مراجعة الخطة
+fair prices	الأسعار العادلة
+governorate	محافظة
+sourced / cited	موثّق المصدر / موثّق
+named source	مصدر محدّد	مصدر\w*\s+مسم
+flagged (a dispute)	ننبّه إليه	الخلاف\w* معلم|معلم\w* بأن
+tidy number	الرقم المريح	الرقم الأنسب
+measured heat	الحرارة المقيسة
+what a normal afternoon reaches	ما تبلغه الحرارة عادةً بعد الظهر
+tile-free map	خريطة مرسومة داخل الصفحة	بلا بلاطات
+gazetteer	دليل الأماكن
+display name	الاسم الظاهر
+scrambled (one-way hashed)	مموَّه
+cookies	ملفات تعريف الارتباط
+Turin King List	بردية تورينو الملكية	قائمة تورين
+hepatitis C	التهاب الكبد الوبائي سي
+Hollywood on the Nile	هوليوود الشرق
+Upper Egypt	الصعيد
+plural "you" addressing the reader	أنت (singular)	\bأنتم\b
+Abu Simbel, Luxor, Aswan, Giza, Saqqara, Valley of the Kings, Siwa, Dahab, Hurghada, Karnak, Dendera, Philae, Abydos	أبو سمبل، الأقصر، أسوان، الجيزة، سقارة، وادي الملوك، سيوة، دهب، الغردقة، الكرنك، دندرة، فيلة، أبيدوس
+EgyBI, OpenStreetMap, Google, SIPRI, NASA POWER, SRTM	as written, in Latin script

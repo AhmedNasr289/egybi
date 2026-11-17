@@ -1119,6 +1119,11 @@ case("a Russian label left in English beside its input", "i18n.py", ["site/ru/in
 case("a rejected Russian term back in the catalogue", "i18n.py", ["backend/i18n/ru.tsv"],
      lambda: edit("backend/i18n/ru.tsv", " EgyBI: что мы собираем (аккаунт или ", " EgyBI: что мы собираем (учётная запись или "),
      lambda o: "GLOSSARY TERM" in o and "ru.tsv" in o, I18N)
+# the Arabic glossary (2026-11-17): "named source" is «مصدر محدّد»; the
+# calque «مصدر مسمّى» coming back into the catalogue must fail
+case("a rejected Arabic term back in the catalogue", "i18n.py", ["backend/i18n/ar.tsv"],
+     lambda: edit("backend/i18n/ar.tsv", "يحمل مصدرًا محدّدًا وتاريخًا", "يحمل مصدرًا مسمّى وتاريخًا"),
+     lambda o: "GLOSSARY TERM" in o and "ar.tsv" in o, I18N)
 case("an Arabic label left in English beside its select", "i18n.py", ["site/ar/fair-prices.html"],
      lambda: edit("site/ar/fair-prices.html", "<label>اعرض المبالغ بـ<select", "<label>Show amounts in<select"),
      lambda o: "ENGLISH LEAK" in o and "text node" in o, I18N)
