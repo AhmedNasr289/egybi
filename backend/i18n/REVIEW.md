@@ -298,3 +298,13 @@ Please check:
 - the record-extremes sentence, which must keep saying these are the most
   extreme hours ever measured, not a typical day;
 - «محافظة %g» / «мухафаза %g» for "Giza governorate".
+## Places page (2026-11-18)
+
+58 lines from places.js: the place card, its links, the list, "Near me" and
+the summary.
+
+Please check:
+- the OpenStreetMap cautions on opening hours, step-free access and
+  population: they must stay as cautious as the English;
+- «الذهاب إلى هناك» and «Как туда попасть» for "Going there";
+- «Ближайший объект Всемирного наследия» and «أقرب موقع تراث عالمي».

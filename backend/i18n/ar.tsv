@@ -1226,3 +1226,61 @@ Gaps in a curve are points the model has no value for, drawn as gaps rather than
 no elevation at this point: the model has no value here, so nothing is drawn	لا ارتفاع عند هذه النقطة: لا قيمة لها في النموذج، فلا يُرسم شيء
 ground at %n m	سطح الأرض على %n م
 below sea level	تحت سطح البحر
+City or town	مدينة أو بلدة
+Airport	مطار
+Ancient site	موقع أثري
+Museum	متحف
+Cities & towns	المدن والبلدات
+Map of Egypt showing mapped places. Nearby places group into a cluster; open a cluster to see them.	خريطة مصر وعليها الأماكن المرسومة. تتجمّع الأماكن المتقاربة في مجموعة؛ افتح المجموعة لترى ما فيها.
+Open in OpenStreetMap	افتح في OpenStreetMap
+The record this page is built from, at these coordinates.	السجل الذي بُنيت عليه هذه الصفحة، عند هذه الإحداثيات.
+Read on Wikipedia	اقرأ في ويكيبيديا
+The article OpenStreetMap links to for this place.	المقالة التي يربطها OpenStreetMap بهذا المكان.
+Search Wikipedia	ابحث في ويكيبيديا
+OpenStreetMap carries no article link for this place, so this is a search.	لا يحمل OpenStreetMap رابط مقالة لهذا المكان، لذلك هذا بحث.
+Photographs on Wikimedia Commons	صور على ويكيميديا كومنز
+The openly licensed category OpenStreetMap links to.	التصنيف ذو الترخيص المفتوح الذي يربطه OpenStreetMap.
+Search Wikimedia Commons	ابحث في ويكيميديا كومنز
+Openly licensed photographs, searched by name.	صور بترخيص مفتوح، يُبحث عنها بالاسم.
+Search YouTube	ابحث في يوتيوب
+A search rather than a chosen video — a link to one video is a link that eventually goes nowhere.	بحث بدل فيديو مختار — فرابط فيديو واحد ينتهي عادةً إلى لا شيء.
+Find stays on Booking.com	ابحث عن إقامة على Booking.com
+A search near these coordinates. No price or availability is shown here, because either would be out of date before you read it.	بحث قرب هذه الإحداثيات. لا نعرض هنا سعرًا ولا توفّرًا، لأن كليهما يتغيّر قبل أن تقرأه.
+Find stays on Airbnb	ابحث عن إقامة على Airbnb
+A search by place name, for the same reason.	بحث باسم المكان، للسبب نفسه.
+Official website	الموقع الرسمي
+The website OpenStreetMap records for this place.	الموقع الإلكتروني الذي يسجّله OpenStreetMap لهذا المكان.
+Opening hours	مواعيد الفتح
+As recorded in OpenStreetMap on %d, in OSM’s own notation. Community-maintained and changed without notice — confirm before you travel.	كما سُجّلت في OpenStreetMap في %d، بصيغة OSM نفسها. يحرّرها متطوعون وقد تتغيّر دون إشعار — تأكّد قبل أن تذهب.
+Step-free access	دخول بلا درج
+OpenStreetMap’s wheelchair tag as of %d. “limited” means partly accessible; an absent tag means nobody has surveyed it, not that access is poor.	وسم wheelchair في OpenStreetMap حتى %d. «limited» تعني أن الوصول جزئي؛ وغياب الوسم يعني أن أحدًا لم يتحقق، لا أن الوصول سيئ.
++ Add to my trip plan	+ أضف إلى خطة رحلتي
+Going there	الذهاب إلى هناك
+not assigned	غير محددة
+Coordinates	الإحداثيات
+IATA code	رمز IATA
+As tagged in OpenStreetMap. Community-maintained and often years out of date — not an official census figure.	كما هو موسوم في OpenStreetMap. يحرّره متطوعون وكثيرًا ما يكون قديمًا بسنوات — وليس رقمًا رسميًا من التعداد.
+Nearest World Heritage site	أقرب موقع تراث عالمي
+%n km	%n كم
+%n m	%n م
+Straight-line distance, not travel distance.	مسافة بخط مستقيم، لا مسافة الطريق.
+Visitor guide	دليل الزائر
+%s by month	%s شهرًا بشهر
+Measured at this point: afternoon heat, rain and the hours of golden light for each month.	مقيسة عند هذه النقطة: حرارة الظهيرة والمطر وساعات الضوء الذهبي لكل شهر.
+Measured at the site %n km from this point: afternoon heat, rain and the hours of golden light for each month.	مقيسة في الموقع على بُعد %n كم من هذه النقطة: حرارة الظهيرة والمطر وساعات الضوء الذهبي لكل شهر.
+Source: OpenStreetMap, as of %d. Governorate computed by point-in-polygon against the bundled boundaries. The links above are searches run against each destination when you click them, so nothing here quotes a price, an opening time or a room that may no longer exist.	المصدر: OpenStreetMap، حتى %d. حُدّدت المحافظة بمطابقة النقطة مع حدود المحافظات المرفقة. الروابط أعلاه عمليات بحث تجري عند الضغط عليها، لذلك لا شيء هنا يذكر سعرًا أو موعد فتح أو غرفة ربما لم تعد موجودة.
+Showing the first 300 of %n. Narrow it with the search box or a governorate.	نعرض أول ٣٠٠ من %n. ضيّق القائمة بمربع البحث أو باختيار محافظة.
+Asking your browser for your location…	نطلب موقعك من المتصفح…
+Stop using my location	توقّف عن استخدام موقعي
+Nearest first, by straight-line distance, not travel distance.	الأقرب أولًا، بالمسافة المستقيمة لا بمسافة الطريق.
+You seem to be outside Egypt, so these are far away. Nearest first, by straight-line distance, not travel distance.	يبدو أنك خارج مصر، لذلك هذه الأماكن بعيدة. الأقرب أولًا، بالمسافة المستقيمة لا بمسافة الطريق.
+Your location stays in this browser; EgyBI never receives it.	يبقى موقعك في هذا المتصفح؛ ولا يصل إلى EgyBI أبدًا.
+You are here (approximate)	أنت هنا (تقريبًا)
+Location permission was not given, so the list keeps its usual order.	لم يُمنح إذن الموقع، لذلك تبقى القائمة بترتيبها المعتاد.
+Your location could not be found just now, so the list keeps its usual order.	تعذّر تحديد موقعك الآن، لذلك تبقى القائمة بترتيبها المعتاد.
+The map library did not load, so this page cannot draw Egypt.	لم تُحمَّل مكتبة الخرائط، لذلك لا تستطيع هذه الصفحة رسم مصر.
+OpenStreetMap, as of %d	OpenStreetMap، حتى %d
+%a of %b benchmark cities are in this gazetteer.	%a من %b مدينة مرجعية موجودة في دليل الأماكن هذا.
+Absent right now:	غائبة الآن:
+None are missing at this build.	لا ينقص أيٌّ منها في هذا الإصدار.
+The places layer has not been generated yet. It appears automatically after the next “Build Atlas geo layers” run. The map of Egypt above already works.	لم تُولَّد طبقة الأماكن بعد. ستظهر تلقائيًا بعد التشغيل التالي لـ«Build Atlas geo layers». خريطة مصر أعلاه تعمل بالفعل.

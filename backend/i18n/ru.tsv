@@ -1226,3 +1226,61 @@ Gaps in a curve are points the model has no value for, drawn as gaps rather than
 no elevation at this point: the model has no value here, so nothing is drawn	нет высоты в этой точке: в модели здесь нет значения, поэтому ничего не нарисовано
 ground at %n m	поверхность на %n м
 below sea level	ниже уровня моря
+City or town	Город или посёлок
+Airport	Аэропорт
+Ancient site	Древний памятник
+Museum	Музей
+Cities & towns	Города и посёлки
+Map of Egypt showing mapped places. Nearby places group into a cluster; open a cluster to see them.	Карта Египта с нанесёнными местами. Соседние места собраны в группы; откройте группу, чтобы их увидеть.
+Open in OpenStreetMap	Открыть в OpenStreetMap
+The record this page is built from, at these coordinates.	Запись, на которой построена эта страница, по этим координатам.
+Read on Wikipedia	Читать в Википедии
+The article OpenStreetMap links to for this place.	Статья, на которую OpenStreetMap ссылается для этого места.
+Search Wikipedia	Искать в Википедии
+OpenStreetMap carries no article link for this place, so this is a search.	У OpenStreetMap нет ссылки на статью об этом месте, поэтому здесь поиск.
+Photographs on Wikimedia Commons	Фотографии на Викискладе
+The openly licensed category OpenStreetMap links to.	Категория со свободной лицензией, на которую ссылается OpenStreetMap.
+Search Wikimedia Commons	Искать на Викискладе
+Openly licensed photographs, searched by name.	Фотографии со свободной лицензией, поиск по названию.
+Search YouTube	Искать на YouTube
+A search rather than a chosen video — a link to one video is a link that eventually goes nowhere.	Поиск, а не выбранное видео: ссылка на одно видео рано или поздно перестаёт работать.
+Find stays on Booking.com	Найти жильё на Booking.com
+A search near these coordinates. No price or availability is shown here, because either would be out of date before you read it.	Поиск рядом с этими координатами. Цены и наличие мест здесь не показаны: они устареют раньше, чем вы их прочтёте.
+Find stays on Airbnb	Найти жильё на Airbnb
+A search by place name, for the same reason.	Поиск по названию места — по той же причине.
+Official website	Официальный сайт
+The website OpenStreetMap records for this place.	Сайт, указанный для этого места в OpenStreetMap.
+Opening hours	Часы работы
+As recorded in OpenStreetMap on %d, in OSM’s own notation. Community-maintained and changed without notice — confirm before you travel.	Как записано в OpenStreetMap на %d, в собственной записи OSM. Данные ведут добровольцы, и они меняются без предупреждения — уточните перед поездкой.
+Step-free access	Доступ без ступенек
+OpenStreetMap’s wheelchair tag as of %d. “limited” means partly accessible; an absent tag means nobody has surveyed it, not that access is poor.	Тег wheelchair в OpenStreetMap на %d. «limited» значит «частично доступно»; если тега нет, это значит, что никто не проверял, а не что доступ плохой.
++ Add to my trip plan	+ Добавить в план поездки
+Going there	Как туда попасть
+not assigned	не указана
+Coordinates	Координаты
+IATA code	Код IATA
+As tagged in OpenStreetMap. Community-maintained and often years out of date — not an official census figure.	Как отмечено в OpenStreetMap. Данные ведут добровольцы, они часто устаревают на годы — это не официальная перепись.
+Nearest World Heritage site	Ближайший объект Всемирного наследия
+%n km	%n км
+%n m	%n м
+Straight-line distance, not travel distance.	Расстояние по прямой, а не по дороге.
+Visitor guide	Путеводитель
+%s by month	%s по месяцам
+Measured at this point: afternoon heat, rain and the hours of golden light for each month.	Замеры в этой точке: дневная жара, осадки и время «золотого часа» по месяцам.
+Measured at the site %n km from this point: afternoon heat, rain and the hours of golden light for each month.	Замеры в месте в %n км отсюда: дневная жара, осадки и время «золотого часа» по месяцам.
+Source: OpenStreetMap, as of %d. Governorate computed by point-in-polygon against the bundled boundaries. The links above are searches run against each destination when you click them, so nothing here quotes a price, an opening time or a room that may no longer exist.	Источник: OpenStreetMap, на %d. Мухафаза определена по попаданию точки в границы из прилагаемого файла. Ссылки выше — это поиск, который выполняется при нажатии, поэтому здесь нет цен, часов работы или номеров, которых может уже не быть.
+Showing the first 300 of %n. Narrow it with the search box or a governorate.	Показаны первые 300 из %n. Сузьте список поиском или выбором мухафазы.
+Asking your browser for your location…	Запрашиваем у браузера ваше местоположение…
+Stop using my location	Не использовать моё местоположение
+Nearest first, by straight-line distance, not travel distance.	Сначала ближайшие, по прямой, а не по дороге.
+You seem to be outside Egypt, so these are far away. Nearest first, by straight-line distance, not travel distance.	Похоже, вы не в Египте, поэтому все места далеко. Сначала ближайшие, по прямой, а не по дороге.
+Your location stays in this browser; EgyBI never receives it.	Ваше местоположение остаётся в этом браузере; EgyBI его не получает.
+You are here (approximate)	Вы здесь (примерно)
+Location permission was not given, so the list keeps its usual order.	Доступ к местоположению не дан, поэтому список остаётся в обычном порядке.
+Your location could not be found just now, so the list keeps its usual order.	Сейчас не удалось определить ваше местоположение, поэтому список остаётся в обычном порядке.
+The map library did not load, so this page cannot draw Egypt.	Не загрузилась библиотека карт, поэтому страница не может нарисовать Египет.
+OpenStreetMap, as of %d	OpenStreetMap, на %d
+%a of %b benchmark cities are in this gazetteer.	%a из %b контрольных городов есть в этом справочнике мест.
+Absent right now:	Сейчас отсутствуют:
+None are missing at this build.	В этой сборке не отсутствует ни один.
+The places layer has not been generated yet. It appears automatically after the next “Build Atlas geo layers” run. The map of Egypt above already works.	Слой мест ещё не создан. Он появится автоматически после следующего запуска «Build Atlas geo layers». Карта Египта выше уже работает.
