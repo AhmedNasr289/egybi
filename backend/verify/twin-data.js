@@ -106,12 +106,23 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         await p.waitForFunction(() => document.querySelector('#placeList tr[data-k]'), null, { timeout: 8000 }).catch(() => {});
         const row = await p.$('#placeList tr[data-k]');
         if (row) await row.click();
-        const card = await p.evaluate(() => ({
-          meta: (document.getElementById('placesMeta') || {}).textContent || '',
-          card: (document.getElementById('placeDetail') || {}).textContent || '',
-        }));
+        // Only the text places.js writes: the summary, the row labels, the
+        // kind value, the "Going there" heading and the link labels with their
+        // notes. The card's heading and some values are names from the data
+        // (an English OpenStreetMap name such as "Abu Rudeis Airport"), so the
+        // whole card text cannot be tested for English words.
+        const card = await p.evaluate(() => {
+          const d = document.getElementById('placeDetail');
+          const pick = (sel) => d ? Array.from(d.querySelectorAll(sel)).map(e => e.textContent.trim()) : [];
+          return {
+            meta: (document.getElementById('placesMeta') || {}).textContent || '',
+            card: d ? d.textContent : '',
+            written: [].concat(pick('.pd-row > span'), pick('.pd-row strong').slice(0, 1),
+                               pick('.pd-going h4'), pick('.pd-links a'), pick('.pd-links li > span')).join(' | '),
+          };
+        });
         const eng = /OpenStreetMap, as of|Going there|Governorate|Coordinates|Open in OpenStreetMap|\+ Add to my trip plan|Cities & towns|Airports?\b|Ancient sites?\b|Museums?\b|City or town|(January|February|March|April|May|June|July|August|September|October|November|December) 20\d\d/;
-        const all = card.meta + ' | ' + card.card;
+        const all = card.meta + ' | ' + card.written;
         if (!card.card) fail(`TWIN DATA NOT LOADED: ${where} - no place card opened`);
         else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card reads "${all.slice(0, 160)}"`);
         else if (!lang && !/Going there/.test(card.card)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English place card changed to "${card.card.slice(0, 160)}"`);
