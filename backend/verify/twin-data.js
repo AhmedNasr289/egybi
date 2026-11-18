@@ -136,8 +136,15 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
             card: d ? d.textContent : '',
             written: [].concat(pick('.pd-row > span'), pick('.pd-row strong').slice(0, 1),
                                pick('.pd-going h4'), pick('.pd-links a'), pick('.pd-links li > span')).join(' | '),
+            // the card's second row is the governorate (Kind, Governorate, ...)
+            gov: (d && d.querySelectorAll('.pd-row strong')[1] || {}).textContent || '',
           };
         });
+        // Governorate names in the page's language (2026-11-18, egfmt.govName).
+        const script = { ar: /[\u0600-\u06FF]/, ru: /[\u0400-\u04FF]/ };
+        const lg = lang.replace('/', '');
+        if (lang && card.gov && !script[lg].test(card.gov))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card governorate reads "${card.gov}"`);
         const eng = /OpenStreetMap, as of|Going there|Governorate|Coordinates|Open in OpenStreetMap|\+ Add to my trip plan|Cities & towns|Airports?\b|Ancient sites?\b|Museums?\b|City or town|(January|February|March|April|May|June|July|August|September|October|November|December) 20\d\d/;
         const all = card.meta + ' | ' + card.written;
         if (!card.card) fail(`TWIN DATA NOT LOADED: ${where} - no place card opened`);

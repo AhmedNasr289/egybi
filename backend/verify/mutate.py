@@ -211,6 +211,14 @@ case("a visit page repeats the same leg rows", "test_visit_legs.py", ["backend/p
      lambda o: "FAIL" in o and "test_cairo_legs_with_the_same_rows_are_said_once" in o,
      f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_visit_legs.py -v')
 
+# Governorate names in Arabic and Russian (2026-11-18). Dropping one from the
+# Arabic map would show that governorate in English on every Arabic page;
+# test_gov_names.py must catch it.
+case("a governorate with no Arabic name", "test_gov_names.py", ["backend/pipeline/pages/egfmt.py"],
+     lambda: edit("backend/pipeline/pages/egfmt.py", '"South Sinai": "جنوب سيناء", ', ''),
+     lambda o: "FAIL" in o and "test_every_governorate_has_an_arabic_and_a_russian_name" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_gov_names.py -v')
+
 # an empty-state note that talks to the maintainer, not the traveller (2026-11-17)
 case("build language back in a visitor note", "static-audit.py", ["site/visit.html"],
      lambda: edit("site/visit.html", "The cross-sections are not ready yet. Please check back soon.",

@@ -308,3 +308,12 @@ Please check:
   population: they must stay as cautious as the English;
 - «الذهاب إلى هناك» and «Как туда попасть» for "Going there";
 - «Ближайший объект Всемирного наследия» and «أقرب موقع تراث عالمي».
+
+## Governorate names (2026-11-18)
+
+The 27 names in `backend/pipeline/pages/egfmt.py` (GOV_NAMES_AR, GOV_NAMES_RU),
+taken from Arabic and Russian Wikipedia.
+
+Please check the Russian choices where Wikipedia's main form differs from
+everyday usage: «Эль-Гиза» (Giza), «Эль-Файюм» (Fayoum), «Эль-Минья» (Minya),
+«Вади-эль-Гедид» (New Valley), «Красное Море» (Red Sea).
