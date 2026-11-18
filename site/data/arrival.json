@@ -130,7 +130,10 @@
           "source": "egymonuments.com (Ministry of Tourism and Antiquities)", "source_url": "https://egymonuments.com/", "checked": "2026-11-17" },
         { "key": "site-gem", "label": "Grand Egyptian Museum tickets", "value": "tickets.gem.eg", "detail": "The museum says this is the only official website for its tickets.",
           "link": "https://tickets.gem.eg/",
-          "source": "Grand Egyptian Museum: official ticketing website", "source_url": "https://tickets.gem.eg/", "checked": "2026-11-17" }
+          "source": "Grand Egyptian Museum: official ticketing website", "source_url": "https://tickets.gem.eg/", "checked": "2026-11-17" },
+        { "key": "gem-hours", "label": "Grand Egyptian Museum opening hours", "value": "Galleries 9:00 to 18:00; to 21:00 on Wednesday and Saturday",
+          "detail": "The museum complex opens at 8:30 and closes at 19:00, or at 22:00 on Wednesday and Saturday. Last entry is one hour before the galleries close. Tickets are for a time slot, booked on the site.",
+          "source": "Grand Egyptian Museum: official ticketing website", "source_url": "https://tickets.gem.eg/", "checked": "2026-11-18" }
       ]
     }
   ]

@@ -2463,3 +2463,6 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The fix:** each label is now a literal translate call where it is defined, and the page writes Russian dates itself («3 ноября 2026»).
 - **Check:** `twin-data.js` now also fails the kind labels and an English month name on the Arabic or Russian card and summary. New mutation case: "a place kind label not collected for translation".
 - **Still English:** governorate names ("South Sinai") and World Heritage site names come from the data in English only; translating them needs a sourced list of their Arabic and Russian names.
+## 2026-11-18 — The Grand Egyptian Museum's opening hours
+- **New row on the arrival page, in all three languages**, beside the museum's official ticket site: the galleries open 9:00 to 18:00, and to 21:00 on Wednesday and Saturday; the complex opens at 8:30 and closes at 19:00, or 22:00 on those two days; last entry is one hour before the galleries close; tickets are for a time slot. From tickets.gem.eg, read 18 Nov 2026. The daily visitor cap is not stated there, so this row gives none.
+- **Check:** `test_gem_hours.py` fails if the row stops citing the museum's own site or loses the late days. New mutation case: "the museum's hours cited away from its own site".

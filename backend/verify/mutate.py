@@ -588,6 +588,15 @@ case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-
      lambda: edit("site/data/made-in-egypt.json", '"maker_url": "https://kiliim.com/"', '"maker_url": "https://kiliim.com/?ref=egybi"'),
      lambda o: "maker link that is not a plain https link" in o and "kiliim" in o, COVERAGE)
 
+# The Grand Egyptian Museum's hours come from its own ticketing site
+# (2026-11-18). Re-citing them elsewhere must make test_gem_hours.py fail.
+case("the museum's hours cited away from its own site", "test_gem_hours.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json",
+                  '"source_url": "https://tickets.gem.eg/", "checked": "2026-11-18"',
+                  '"source_url": "https://example-tours.com/gem-hours", "checked": "2026-11-18"'),
+     lambda o: "FAIL" in o and "test_hours_come_from_the_museum" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_gem_hours.py -v')
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)
