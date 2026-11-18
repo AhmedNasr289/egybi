@@ -23,6 +23,24 @@
                 'August', 'September', 'October', 'November', 'December'];
   var SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
                'Oct', 'Nov', 'Dec'];
+  /* Russian month names: nominative for a month on its own ("Июль: ..."),
+     genitive inside a date ("17 ноября 2026"). Arabic names come from
+     egfmt.js (MONTHS_AR), which also writes Arabic dates. */
+  var MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль',
+                   'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  var MONTHS_RU_OF = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля',
+                      'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  function pageLang() {
+    var l = (document.documentElement && document.documentElement.getAttribute('lang')) || 'en';
+    return l === 'ar' || l === 'ru' ? l : 'en';
+  }
+  /* A month's name (0 = January) in the page's language. */
+  function monthName(i) {
+    var l = pageLang(), f = F();
+    if (l === 'ar' && f && f.MONTHS_AR) return f.MONTHS_AR[i];
+    if (l === 'ru') return MONTHS_RU[i];
+    return MONTHS[i];
+  }
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -98,7 +116,12 @@
      assets/egfmt.js) when it has loaded, and the old local format if not. */
   function F() { return window.EGYBI && window.EGYBI.fmt; }
   function fmtDate(d) {
-    if (F() && typeof d === 'string' && d) return F().dateOrRaw(d, 'en', 'compact');
+    var l = pageLang();
+    if (l === 'ru' && typeof d === 'string') {
+      var m = /^(\d{4})-(\d\d)-(\d\d)/.exec(d);
+      if (m) return (+m[3]) + ' ' + MONTHS_RU_OF[+m[2] - 1] + ' ' + m[1];
+    }
+    if (F() && typeof d === 'string' && d) return F().dateOrRaw(d, l === 'ar' ? 'ar' : 'en', 'compact');
     var ms = parse(d);
     if (ms == null) return '';
     var x = new Date(ms);
@@ -191,6 +214,32 @@
     return best && bestKm <= NEAR_KM ? { site: best, km: bestKm } : null;
   }
 
+  /* How to travel a planner leg (2026-11-17). getting-around.json names a few
+     areas by the measured sites they sit near, and the legs between areas that
+     a cited row of arrival.json describes. legRows returns that leg's row keys
+     for stops a and b, in either order, or [] when no cited row covers it, so
+     the planner never guesses a route. Pure functions, so
+     backend/verify/leg-rows.js can test them without a page. */
+  function areaOf(guide, climate, p) {
+    var sites = (climate && climate.sites) || [], hit = null;
+    ((guide && guide.areas) || []).forEach(function (ar) {
+      (ar.near || []).forEach(function (k) {
+        var s = sites.filter(function (x) { return x.key === k; })[0];
+        if (!hit && s && km(p, s) <= ar.radius_km) hit = ar.key;
+      });
+    });
+    return hit;
+  }
+  function legRows(guide, climate, a, b) {
+    var x = areaOf(guide, climate, a), y = areaOf(guide, climate, b);
+    if (!x || !y || x === y) return [];
+    var leg = ((guide && guide.legs) || []).filter(function (l) {
+      var w = l.between || [];
+      return (w[0] === x && w[1] === y) || (w[0] === y && w[1] === x);
+    })[0];
+    return leg ? (leg.rows || []).slice() : [];
+  }
+
   /* ---------------------------------------------------------- holidays ---
      Every event whose window overlaps the trip, lunar ones flagged as
      expected. Overlap uses the widest edge of each range, so an Eid that might
@@ -229,8 +278,8 @@
     parse: parse, iso: iso, addDays: addDays, today: today, nights: nights,
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow, heatWarning: heatWarning,
-    km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM,
+    km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM, areaOf: areaOf, legRows: legRows,
     eventsIn: eventsIn, rate: rate, rateText: rateText, money: money, whole: whole,
-    MONTHS: MONTHS, SHORT: SHORT, esc: esc
+    MONTHS: MONTHS, SHORT: SHORT, esc: esc, monthName: monthName, pageLang: pageLang
   };
 }());

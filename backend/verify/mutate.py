@@ -1446,6 +1446,23 @@ case("the planner warns a band too early", "heat-warning.js", ["site/assets/trip
                   "var top = BANDS[BANDS.length - 2], worst = null;"),
      lambda o: "FAIL below the top band" in o, f"node {HERE}/heat-warning.js")
 
+# ---- the planner's leg cards (2026-11-17) -------------------------------------
+# A leg is the same journey in either direction. If legRows matched only the
+# order getting-around.json lists, a trip planned Luxor first would lose the
+# Cairo sleeper rows; leg-rows.js's backwards case must catch it.
+case("a planner leg read backwards loses its rows", "leg-rows.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "return (w[0] === x && w[1] === y) || (w[0] === y && w[1] === x);",
+                  "return (w[0] === x && w[1] === y);"),
+     lambda o: "FAIL the same leg read backwards gives the same rows" in o, f"node {HERE}/leg-rows.js")
+
+# The first leg-cards CI run (17 Nov 2026) caught plan.js passing the page's
+# language to egfmt, which formats only 'en' and 'ar' and throws on 'ru': the
+# Russian planner then drew no stops at all. leg-cards.js must catch it again.
+case("the Russian planner breaks on a number format", "leg-cards.js", ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js", "return F && ar ? F.digits(String(x), 'ar') : String(x);",
+                  "return F ? F.digits(String(x), document.documentElement.getAttribute('lang') || 'en') : String(x);"),
+     lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
+
 
 print()
 # The shard's own count, for mutate-shards.py: ran + other_shard == seen.

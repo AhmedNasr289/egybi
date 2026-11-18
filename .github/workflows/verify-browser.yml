@@ -317,6 +317,10 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh share-link node backend/verify/share-link.js
 
+      - name: leg-cards.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh leg-cards node backend/verify/leg-cards.js
+
       - name: today-sun.js
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh today-sun node backend/verify/today-sun.js

@@ -1129,3 +1129,68 @@ Kazakh package travellers going on to Cairo or Luxor<span class="fp-src">Ask you
 <strong>Invitation at least 4 days ahead</strong>	<strong>Приглашение не позднее чем за 4 дня</strong>
 Very hot for your dates: a normal afternoon here reaches about %t °C.	В ваши даты очень жарко: обычный день здесь прогревается примерно до %t °C.
 The site opens at %h, so you can visit before the afternoon heat.	Объект открывается в %h, так что можно успеть до дневной жары.
+%n km in a straight line from %s	%n км по прямой от %s
+Fares for foreign visitors	Тарифы для иностранцев
+Priced in US dollars	Цены в долларах США
+Where to buy	Где купить
+At the station, or through an agency	На вокзале или через агентство
+Sleeper trains to Luxor and Aswan	Спальные поезда в Луксор и Асуан
+Leave from Cairo Upper Egypt (Bashtil) station	Отправляются с каирского вокзала Верхнего Египта (Баштиль)
+Aswan to Abu Simbel	Из Асуана в Абу-Симбел
+275 km by desert road	275 км по пустынной дороге
+Stops: %n	Остановок: %n
+Days planned: %n	Дней в плане: %n
+Nights in the trip: %n	Ночей в поездке: %n
+Straight-line distance between stops: %n km	По прямой между остановками: %n км
+That is more days than the trip has.	Это больше дней, чем есть в поездке.
+Pick both dates.	Выберите обе даты.
+The leaving date is before the arriving date.	Дата отъезда раньше даты приезда.
+Map of Egypt showing the stops in your plan, numbered in order	Карта Египта с остановками вашего плана, пронумерованными по порядку
+%m: about %x °C by day	%m: около %x °C днём
+Click to add	Нажмите, чтобы добавить
+Already in your plan: %s.	Уже есть в вашем плане: %s.
+Added as stop %n: %s.	Добавлено как остановка %n: %s.
+Choose a place from the list as you type.	Выберите место из списка, пока печатаете.
+No measured climate site within %n km, so no heat figure is shown.	В пределах %n км нет точки климатических замеров, поэтому температура не показана.
+measured at %s, %n km away	по замерам: %s, в %n км отсюда
+%m: about %x °C by day, %y °C at night	%m: около %x °C днём, %y °C ночью
+No stops yet. Click a site on the map, use the buttons above, or search the 897 mapped places.	Остановок пока нет. Нажмите на место на карте, воспользуйтесь кнопками выше или найдите одно из 897 мест на карте.
+°C	°C
+Days at %s	Сколько дней: %s
+days	дн.
+Move %s earlier	Переместить выше: %s
+Move %s later	Переместить ниже: %s
+Remove %s	Удалить: %s
+Removed: %s.	Удалено: %s.
+The Papyrus &middot; trip dossier	Папирус &middot; досье поездки
+%s&rsquo;s Egypt	Египет: %s
+Your Egypt	Ваш Египет
+Stop %n	Остановка %n
+Days: %n	Дней: %n
+Ground elevation %n m (SRTM).	Высота над уровнем моря: %n м (SRTM).
+Inside your dates	В ваши даты
+expected	ожидается
+Heat: %s, mean daily maximum and minimum %w — a long-run average, not a forecast.	Жара: %s, средние дневные максимумы и минимумы за %w — многолетнее среднее, а не прогноз.
+Places: OpenStreetMap contributors (ODbL). Holidays: calendar.json, compiled %d, Islamic dates expected. Distances are straight lines, not roads. Printed from egybi.com/plan.html.	Места: участники OpenStreetMap (ODbL). Праздники: calendar.json, составлено %d, даты по исламскому календарю ожидаемые. Расстояния — по прямой, а не по дорогам. Распечатано с egybi.com/plan.html.
+Add stops above and they appear here, one sheet each.	Добавьте остановки выше — они появятся здесь, по листу на каждую.
+Trip from %d	Поездка с %d
+My Egypt trip	Моя поездка в Египет
+Add your dates or a stop first.	Сначала добавьте даты или остановку.
+Saving…	Сохраняем…
+Could not save the trip.	Не удалось сохранить поездку.
+Could not reach the account service.	Не удалось связаться со службой аккаунтов.
+Sign in or create a free account to save this trip.	Войдите или создайте бесплатный аккаунт, чтобы сохранить поездку.
+The account service could not be reached. Please try again.	Служба аккаунтов недоступна. Попробуйте ещё раз.
+Add a stop first, then share.	Сначала добавьте остановку, потом делитесь.
+My Egypt trip on EgyBI	Моя поездка в Египет на EgyBI
+Shared.	Отправлено.
+Link copied. Anyone who opens it sees this trip; nothing is stored on EgyBI.	Ссылка скопирована. Кто её откроет, увидит эту поездку; на EgyBI ничего не сохраняется.
+Copy this link: %u	Скопируйте ссылку: %u
+That shared link could not be read, so your own plan is unchanged.	Не удалось прочитать ссылку, поэтому ваш план не изменился.
+Someone shared a trip with you. Stops: %n. Open it in place of your own plan?	С вами поделились поездкой. Остановок: %n. Открыть её вместо вашего плана?
+Open the shared trip	Открыть присланную поездку
+Keep my plan	Оставить мой план
+This planner now opens offline on this device, with your saved trip.	Теперь планировщик открывается без интернета на этом устройстве, вместе с сохранённой поездкой.
+All stops removed.	Все остановки удалены.
+Saved.	Сохранено.
+See your trips	Ваши поездки

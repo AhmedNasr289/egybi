@@ -225,7 +225,8 @@ CADENCE = {  # workflow -> max days a file may age before the page is misciting
 }
 # Files compiled by hand from named sources (no workflow writes them), with the
 # number of days before each must be re-read against its sources.
-HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "arrival.json": 60, "opening-hours.json": 90}
+HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "arrival.json": 60, "opening-hours.json": 90,
+                "getting-around.json": 60}
 # Governments' own travel advice for Egypt, the only sources a safety row may
 # cite: UK, US, Australia, Canada, Ireland.
 OFFICIAL_ADVICE = {"gov.uk", "travel.state.gov", "smartraveller.gov.au", "travel.gc.ca", "ireland.ie", "dfa.ie"}
@@ -340,6 +341,33 @@ for g in _hours.get("groups", []):
         if r.get("key") not in _sites:
             findings["opening hours for a site with no visit page"].append(
                 f"opening-hours.json: {r.get('key')!r} is not a site in visit-climate.json")
+
+# ------------------- planner legs point at real, cited rows (2026-11-17) ---
+# getting-around.json holds no facts of its own: each leg names rows of
+# arrival.json, and each area names measured sites. A row key that is not in
+# arrival.json (a typo, a row renamed or removed) would make the planner show
+# nothing for that leg, silently. So would an area whose site was renamed.
+try:
+    _guide = json.loads(Path("site/data/getting-around.json").read_text(encoding="utf-8"))
+    _arr = json.loads(Path("site/data/arrival.json").read_text(encoding="utf-8"))
+except Exception:  # noqa: BLE001
+    _guide, _arr = {}, {}
+_arr_rows = {r.get("key") for g in _arr.get("groups", []) for r in g.get("rows", [])}
+_areas = {a.get("key") for a in _guide.get("areas", [])}
+for a in _guide.get("areas", []):
+    for k in a.get("near", []):
+        if k not in _sites:
+            findings["planner leg that points at nothing"].append(
+                f"getting-around.json: area {a.get('key')!r} is near {k!r}, which is not a site in visit-climate.json")
+for leg in _guide.get("legs", []):
+    for k in leg.get("between", []):
+        if k not in _areas:
+            findings["planner leg that points at nothing"].append(
+                f"getting-around.json: leg {leg.get('between')} names area {k!r}, which is not defined")
+    for k in leg.get("rows", []):
+        if k not in _arr_rows:
+            findings["planner leg that points at nothing"].append(
+                f"getting-around.json: leg {leg.get('between')} names row {k!r}, which is not in arrival.json")
 
 print(f"pages checked : {len(pages)}")
 print(f"distinct titles: {len(titles)}   distinct descriptions: {len(descs)}")
