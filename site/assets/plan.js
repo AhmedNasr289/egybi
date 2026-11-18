@@ -238,7 +238,9 @@
     // pageDigits, never egfmt with the page's lang: that threw on 'ru' and
     // stopped the Russian stop list drawing (leg-cards.js, 17 Nov 2026).
     return t('%n km in a straight line from %s')
-      .replace('%n', pageDigits(Math.round(T.km(a, b)))).replace('%s', a.name);
+      .replace('%n', pageDigits(Math.round(T.km(a, b))))
+      // An Arabic page names the stop in Arabic when the data has the name.
+      .replace('%s', T.pageLang() === 'ar' && a.name_ar ? a.name_ar : a.name);
   }
   function arrivalRow(k) {
     var out = null;
@@ -253,7 +255,9 @@
     return '<ul class="leg leg-how" style="list-style:none;padding:0;margin-top:2px;">' + rows.map(function (r) {
       return '<li><strong>' + esc(t(r.label)) + ':</strong> ' + esc(t(r.value)) + ' &middot; ' +
         (r.source_url ? '<a href="' + esc(r.source_url) + '" rel="noopener">' + esc(r.source) + '</a>' : esc(t(r.source))) +
-        (r.checked ? ', ' + esc(t('checked')) + ' ' + esc(r.checked) : '') + '</li>';
+        // The check date as the page writes dates ("17 ноября 2026", Arabic digits
+        // on Arabic pages), after the page's own comma.
+        (r.checked ? (T.pageLang() === 'ar' ? '، ' : ', ') + esc(t('checked')) + ' ' + esc(T.fmtDate(r.checked)) : '') + '</li>';
     }).join('') + '</ul>';
   }
   function renderStops() {

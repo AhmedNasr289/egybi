@@ -22,7 +22,7 @@ const { chromium, executablePath, BASE } = require('./env');
 
 const KEY = 'egybi.trip.v1';
 const stop = (id, name, lat, lon) => ({ id, name, lat, lon, days: 1 });
-const GIZA = stop('site:giza', 'The Giza Pyramids', 29.9773, 31.1325);
+const GIZA = Object.assign(stop('site:giza', 'The Giza Pyramids', 29.9773, 31.1325), { name_ar: 'أهرامات الجيزة' });
 const KARNAK = stop('site:karnak', 'Karnak Temple', 25.7188, 32.6573);
 const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
 
@@ -64,7 +64,7 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
   const want = ['Bashtil', 'US dollars', 'agency'];
   if (en.rows.length !== 3) fail(`LEG ROWS NOT SHOWN: Giza -> Karnak shows ${en.rows.length} row(s), wanted 3`);
   else if (!want.every((w, i) => en.rows[i].text.includes(w))) fail('LEG ROWS NOT SHOWN: rows ' + JSON.stringify(en.rows.map(r => r.text)));
-  else if (!en.rows.every(r => r.href.startsWith('https://www.seat61.com/') && /checked 20\d\d-\d\d-\d\d/.test(r.text)))
+  else if (!en.rows.every(r => r.href.startsWith('https://www.seat61.com/') && /checked \d{1,2} [A-Z][a-z]{2} 20\d\d/.test(r.text)))
     fail('LEG ROWS NOT SHOWN with a source and a checked date: ' + JSON.stringify(en.rows));
   else console.log('ok   Giza -> Karnak shows the 3 cited train rows, each with its source and date');
   if (!/^\D*\d+ km in a straight line from The Giza Pyramids$/.test(en.leg.trim())) fail('distance line reads ' + JSON.stringify(en.leg));
@@ -74,6 +74,8 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
   if (!/[٠-٩]+ كم بخطّ مستقيم من/.test(ar.leg) || /\d/.test(ar.leg.replace(/[٠-٩]/g, '')))
     fail('LEG LEFT IN ENGLISH (ar): ' + JSON.stringify(ar.leg));
   else if (ar.rows.length !== 3 || !ar.rows[0].text.includes('بشتيل')) fail('LEG LEFT IN ENGLISH (ar rows): ' + JSON.stringify(ar.rows.map(r => r.text)));
+  else if (!ar.leg.includes('أهرامات الجيزة') || /\d{4}-\d\d-\d\d/.test(ar.rows.map(r => r.text).join(' ')))
+    fail('LEG LEFT IN ENGLISH (ar): the stop name or the check date is not in Arabic: ' + JSON.stringify([ar.leg, ar.rows[0] && ar.rows[0].text]));
   else console.log('ok   ar/plan.html: the distance in Arabic digits and the rows in Arabic');
   const ru = await legsOf('ru/plan.html', [GIZA, KARNAK]);
   if (!/\d+ км по прямой от/.test(ru.leg)) fail('LEG LEFT IN ENGLISH (ru): ' + JSON.stringify(ru.leg));
