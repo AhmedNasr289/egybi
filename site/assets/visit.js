@@ -89,9 +89,33 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  var LANG = document.documentElement.getAttribute('lang') || 'en';
+  // Translated text for what this script writes; the build collects every
+  // quoted call to it into the Arabic and Russian tables (pages/i18n.py).
+  // Inside functions that use t for a temperature or a transect, the local
+  // is named tC or rt so it does not hide this.
+  var t = (window.EGYBI && window.EGYBI.t) || function (x) { return x; };
+  // A number in the page's own form: Arabic-Indic digits on Arabic pages,
+  // Russian grouping and decimal comma on Russian ones.
   function fmt(n, d) {
-    return n == null ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: d == null ? 0 : d });
+    if (n == null) return '—';
+    var opts = { maximumFractionDigits: d == null ? 0 : d };
+    if (LANG === 'ar') {
+      var F = window.EGYBI && window.EGYBI.fmt;
+      if (F) return F.num(Number(n), 'ar', d == null ? 0 : d);
+    }
+    return Number(n).toLocaleString(LANG === 'ru' ? 'ru-RU' : 'en-US', opts);
   }
+  var MONTHS_AR = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو',
+                   'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+  var MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль',
+                   'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  var SHORT_RU = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+  function monthName(i) { return LANG === 'ar' ? MONTHS_AR[i] : LANG === 'ru' ? MONTHS_RU[i] : MONTHS[i]; }
+  // The month buttons: Arabic month names are short enough to show whole.
+  function monthShort(i) { return LANG === 'ar' ? MONTHS_AR[i] : LANG === 'ru' ? SHORT_RU[i] : SHORT[i]; }
+  function deg(n) { return fmt(n, 0) + NB_ + t('°C'); }
+  var NB_ = '\u00a0';
 
   function load(path) {
     return fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url(path) : path), { cache: 'no-store' }).then(function (r) {
@@ -106,8 +130,8 @@
       locator: window.EGYBI_EGYPT_GEO || null,
       credit: ['geoboundaries', 'srtm', 'power'],
       label: id === 'reliefMap'
-        ? 'Map of Egypt showing where the selected elevation line runs'
-        : 'Map of Egypt showing the major visitor sites'
+        ? t('Map of Egypt showing where the selected elevation line runs')
+        : t('Map of Egypt showing the major visitor sites')
     });
     if (!m) return null;
     // The visitor map keeps its warm sand palette rather than the blue-grey
@@ -216,15 +240,15 @@
     var g = L.layerGroup();
     S.climate.sites.forEach(function (site) {
       var m = monthOf(site, S.month);
-      var t = dayTemp(m).v;
+      var tC = dayTemp(m).v;
       var mk = L.circleMarker([site.lat, site.lon], {
         radius: 8, weight: 2, color: '#fff', opacity: 1,
-        fillColor: heatColour(t), fillOpacity: 0.95
+        fillColor: heatColour(tC), fillOpacity: 0.95
       });
       mk.bindTooltip(
         '<strong>' + esc(site.name) + '</strong><br>' +
-        (t == null ? 'no reading for this month'
-                   : MONTHS[S.month] + ' reaches about ' + fmt(t, 0) + ' °C by day'),
+        esc(tC == null ? t('no reading for this month')
+                       : t('%m reaches about %x by day').replace('%m', monthName(S.month)).replace('%x', deg(tC))),
         { direction: 'top' });
       mk.on('click', function () { select(site.key); });
       g.addLayer(mk);
@@ -238,7 +262,7 @@
     if (!host) return;
     host.innerHTML = SHORT.map(function (m, i) {
       return '<button type="button" class="mo-btn' + (i === S.month ? ' on' : '') +
-             '" data-m="' + i + '" aria-pressed="' + (i === S.month) + '">' + m + '</button>';
+             '" data-m="' + i + '" aria-pressed="' + (i === S.month) + '">' + esc(monthShort(i)) + '</button>';
     }).join('');
     host.querySelectorAll('.mo-btn').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -273,7 +297,7 @@
           (r.t == null ? '—' : fmt(r.t, 0) + '°') + '</span></td>' +
         '<td class="num">' + (r.night == null ? '—' : fmt(r.night, 0) + '°') + '</td>' +
         '<td class="num">' + (r.rain == null ? '—' : fmt(r.rain, 1)) + '</td>' +
-        '<td>' + (r.s.unesco ? '<span class="v-un">World Heritage</span>' : '') + '</td>' +
+        '<td>' + (r.s.unesco ? '<span class="v-un">' + esc(t('World Heritage')) + '</span>' : '') + '</td>' +
         '</tr>';
     }).join('');
     tb.querySelectorAll('tr').forEach(function (tr) {
@@ -285,12 +309,11 @@
       if (hot.length) {
         var hi = hot[0], lo = hot[hot.length - 1];
         var fellBack = hot.some(function (r) { return r.kind === 'all-day-mean'; });
-        cap.innerHTML = 'In <strong>' + MONTHS[S.month] + '</strong>, a normal afternoon ' +
-          'across these ' + hot.length + ' sites runs from <strong>' + fmt(lo.t, 0) + ' °C</strong> at ' +
-          esc(lo.s.name) + ' to <strong>' + fmt(hi.t, 0) + ' °C</strong> at ' + esc(hi.s.name) +
-          ' — a spread of ' + fmt(hi.t - lo.t, 0) + ' degrees within one country, on the same day of the year.' +
-          (fellBack ? ' <em>Some sites have no daily normal yet and are showing their all-day mean, ' +
-                      'which reads lower; those fill in on the next pipeline run.</em>' : '');
+        cap.innerHTML = esc(t('In %m, a normal afternoon across these %n sites runs from %lo at %a to %hi at %b: a spread of %d degrees within one country, on the same day of the year.')
+            .replace('%m', monthName(S.month)).replace('%n', fmt(hot.length, 0))
+            .replace('%lo', deg(lo.t)).replace('%a', lo.s.name).replace('%hi', deg(hi.t)).replace('%b', hi.s.name)
+            .replace('%d', fmt(hi.t - lo.t, 0))) +
+          (fellBack ? ' <em>' + esc(t('Some sites have no daily normal yet and are showing their all-day mean, which reads lower; those fill in on the next pipeline run.')) + '</em>' : '');
       }
     }
   }
@@ -332,53 +355,48 @@
     }
 
     var bars = site.months.map(function (m) {
-      var t = dayTemp(m).v;
-      var h = t == null ? 2 : Math.max(2, Math.round((t - 10) / 35 * 100));
+      var tC = dayTemp(m).v;
+      var h = tC == null ? 2 : Math.max(2, Math.round((tC - 10) / 35 * 100));
       return '<div class="v-bar' + (m.month - 1 === S.month ? ' on' : '') + '" title="' +
-             MONTHS[m.month - 1] + ': ' + (t == null ? 'no reading' : fmt(t, 0) + ' °C') + '">' +
-             '<span style="height:' + h + '%;background:' + heatColour(t) + '"></span>' +
-             '<em>' + SHORT[m.month - 1][0] + '</em></div>';
+             esc(monthName(m.month - 1) + ': ' + (tC == null ? t('no reading') : deg(tC))) + '">' +
+             '<span style="height:' + h + '%;background:' + heatColour(tC) + '"></span>' +
+             '<em>' + esc(monthShort(m.month - 1)[0]) + '</em></div>';
     }).join('');
 
     var now = monthOf(site, S.month);
     el.hidden = false;
     el.innerHTML =
       '<h3>' + esc(site.name) + ' <span class="v-ar">' + esc(site.name_ar || '') + '</span></h3>' +
-      '<p class="v-sub">' + esc(gv(site.gov)) + ' governorate &middot; ' +
+      '<p class="v-sub">' + esc(t('%g governorate').replace('%g', gv(site.gov))) + ' &middot; ' +
         site.lat.toFixed(4) + '°N, ' + site.lon.toFixed(4) + '°E' +
-        (terr ? ' &middot; ' + fmt(terr.elevation_m, 0) + ' m above sea level' : '') +
-        (listed === true ? ' &middot; <strong>UNESCO World Heritage</strong>' : '') +
+        (terr ? ' &middot; ' + esc(t('%n m above sea level').replace('%n', fmt(terr.elevation_m, 0))) : '') +
+        (listed === true ? ' &middot; <strong>' + esc(t('UNESCO World Heritage')) + '</strong>' : '') +
       '</p>' +
       '<div class="v-year">' + bars + '</div>' +
-      '<p class="v-cap">' + (dayTemp(now).kind === 'daily-max'
-          ? 'Mean daily maximum, by month. ' : 'All-day mean, by month. ') +
+      '<p class="v-cap">' + esc(dayTemp(now).kind === 'daily-max'
+          ? t('Mean daily maximum, by month.') : t('All-day mean, by month.')) + ' ' +
         (now && dayTemp(now).v != null
-          ? '<strong>' + MONTHS[S.month] +
+          ? '<strong>' + esc(
             (dayTemp(now).kind === 'daily-max'
-              ? ' reaches about ' + fmt(dayTemp(now).v, 0) + ' °C by day' +
-                (nightTemp(now) != null ? ', dropping to ' + fmt(nightTemp(now), 0) + ' °C at night' : '') +
-                (now.t_mean != null ? ', averaging ' + fmt(now.t_mean, 0) + ' °C across the whole day' : '')
+              ? t('%m: about %x by day').replace('%m', monthName(S.month)).replace('%x', deg(dayTemp(now).v)) +
+                (nightTemp(now) != null ? t(', dropping to %x at night').replace('%x', deg(nightTemp(now))) : '') +
+                (now.t_mean != null ? t(', averaging %x across the whole day').replace('%x', deg(now.t_mean)) : '')
               // No daily normal for this site yet, so print ONE figure under its
               // real name rather than the same number twice under two labels.
-              : ' averages ' + fmt(dayTemp(now).v, 0) + ' °C across the whole day') +
-            (now.rain_mm_day != null ? ', with ' + fmt(now.rain_mm_day, 1) + ' mm of rain a day' : '') +
-            '.</strong>' +
+              : t('%m: an average of %x across the whole day').replace('%m', monthName(S.month)).replace('%x', deg(dayTemp(now).v))) +
+            (now.rain_mm_day != null ? t(', with %r mm of rain a day').replace('%r', fmt(now.rain_mm_day, 1)) : '') +
+            '.') + '</strong>' +
             (recMax(now) != null
-              ? ' Across the whole record the extremes for this month reach <strong>' +
-                fmt(recMax(now), 0) + ' °C</strong> and drop to <strong>' +
-                fmt(recMin(now), 0) + ' °C</strong> &mdash; those are the hottest and coldest ' +
-                'hours ever measured here in ' + MONTHS[S.month] + ', not a typical day.'
+              ? ' ' + esc(t('Across the whole record the extremes for this month reach %hi and drop to %lo. Those are the hottest and coldest hours ever measured here in %m, not a typical day.')
+                  .replace('%hi', deg(recMax(now))).replace('%lo', deg(recMin(now))).replace('%m', monthName(S.month)))
               : '')
-          : 'No reading for the selected month.') +
+          : esc(t('No reading for the selected month.'))) +
       '</p>' +
-      '<p class="v-note">These are modelled long-run averages from NASA POWER, not a forecast and ' +
-        'not station readings. They describe what the month is usually like here; they say nothing ' +
-        'about the day you travel.' +
-        (dayTemp(now).kind === 'daily-max'
-          ? ' The day and night figures are the 2001&ndash;2020 mean daily maximum and minimum.'
-          : ' No mean daily maximum has been published for this site yet, so the figure above is the ' +
-            'all-day mean and a real afternoon will run several degrees warmer.') +
-        (terr ? ' Elevation is sampled from NASA SRTM 30 m at this site&rsquo;s own coordinates.' : '') +
+      '<p class="v-note">' + esc(t('These are modelled long-run averages from NASA POWER, not a forecast and not station readings. They describe what the month is usually like here; they say nothing about the day you travel.')) + ' ' +
+        esc(dayTemp(now).kind === 'daily-max'
+          ? t('The day and night figures are the 2001–2020 mean daily maximum and minimum.')
+          : t('No mean daily maximum has been published for this site yet, so the figure above is the all-day mean and a real afternoon will run several degrees warmer.')) +
+        (terr ? ' ' + esc(t('Elevation is sampled from NASA SRTM 30 m at this site’s own coordinates.')) : '') +
       '</p>';
   }
 
@@ -393,18 +411,16 @@
     var hi = rows[0], lo = rows[rows.length - 1];
     var span = hi.elevation_m - lo.elevation_m;
     if (lead) {
-      lead.innerHTML = 'Across these ' + rows.length + ' sites the ground rises from <strong>' +
-        fmt(lo.elevation_m, 0) + ' m</strong> at ' + esc(lo.name) + ' to <strong>' +
-        fmt(hi.elevation_m, 0) + ' m</strong> at ' + esc(hi.name) + ' &mdash; ' + fmt(span, 0) +
-        ' metres of relief. Every figure is a radar measurement of the actual land surface, ' +
-        'not a rendering of it.';
+      lead.innerHTML = esc(t('Across these %n sites the ground rises from %lo m at %a to %hi m at %b: %s metres of relief. Every figure is a radar measurement of the actual land surface, not a rendering of it.')
+        .replace('%n', fmt(rows.length, 0)).replace('%lo', fmt(lo.elevation_m, 0)).replace('%a', lo.name)
+        .replace('%hi', fmt(hi.elevation_m, 0)).replace('%b', hi.name).replace('%s', fmt(span, 0)));
     }
     host.innerHTML = rows.map(function (r) {
       var w = Math.max(1.5, (r.elevation_m - Math.min(0, lo.elevation_m)) / (span || 1) * 100);
       return '<div class="v-terr" data-key="' + esc(r.key) + '">' +
         '<span class="v-tn">' + esc(r.name) + '</span>' +
         '<span class="v-tb"><i style="width:' + w.toFixed(1) + '%"></i></span>' +
-        '<span class="v-tv">' + fmt(r.elevation_m, 0) + ' m</span></div>';
+        '<span class="v-tv">' + esc(t('%n m').replace('%n', fmt(r.elevation_m, 0))) + '</span></div>';
     }).join('');
     host.querySelectorAll('.v-terr').forEach(function (d) {
       d.addEventListener('click', function () { select(d.dataset.key); });
@@ -477,9 +493,9 @@
 
     var cap = $('reliefCap');
     if (cap) {
-      cap.innerHTML = 'Elevation in metres above sea level against distance along the line, from ' +
-        esc(S.relief.source) + '. ' + esc(S.relief.license) + '. Built ' + esc(asOf(S.relief.as_of)) +
-        '. Gaps in a curve are points the model has no value for, drawn as gaps rather than as zero.';
+      cap.innerHTML = esc(t('Elevation in metres above sea level against distance along the line, from %s.').replace('%s', S.relief.source)) +
+        ' ' + esc(S.relief.license) + '. ' + esc(t('Built %d.').replace('%d', asOf(S.relief.as_of))) + ' ' +
+        esc(t('Gaps in a curve are points the model has no value for, drawn as gaps rather than as zero.'));
     }
     selectTransect(0);
   }
@@ -549,13 +565,13 @@
   }
 
   function moveTo(idx) {
-    var t = R.t;
-    if (!t) return;
-    var s = t.samples[Math.min(Math.max(idx, 0), t.samples.length - 1)];
+    var rt = R.t;
+    if (!rt) return;
+    var s = rt.samples[Math.min(Math.max(idx, 0), rt.samples.length - 1)];
     if (!s) return;
     var svg = $('reliefChart').querySelector('svg');
     if (svg) {
-      var g = reliefPath(t, 720, 300);
+      var g = reliefPath(rt, 720, 300);
       var cx = g.x(s.km);
       var cur = svg.querySelector('#reliefCursor'), knob = svg.querySelector('#reliefKnob');
       if (cur) { cur.setAttribute('x1', cx.toFixed(1)); cur.setAttribute('x2', cx.toFixed(1)); }
@@ -567,11 +583,9 @@
     if (R.dot) R.dot.setLatLng([s.lat, s.lon]);
     var out = $('reliefReadout');
     if (out) {
-      out.innerHTML = '<b>' + fmt(s.km, 1) + ' km</b> along the line &middot; ' +
-        (s.m == null ? '<b>no elevation</b> at this point &mdash; the model has no value here, ' +
-                       'so nothing is drawn'
-                     : 'ground at <b>' + fmt(s.m, 0) + ' m</b>' +
-                       (s.m < 0 ? ' &mdash; below sea level' : '')) +
+      out.innerHTML = esc(t('%n km along the line').replace('%n', fmt(s.km, 1))) + ' &middot; ' +
+        esc(s.m == null ? t('no elevation at this point: the model has no value here, so nothing is drawn')
+                        : t('ground at %n m').replace('%n', fmt(s.m, 0)) + (s.m < 0 ? ' — ' + t('below sea level') : '')) +
         '<br><span style="opacity:.7">' + s.lat.toFixed(4) + '&deg;N, ' +
         s.lon.toFixed(4) + '&deg;E</span>';
     }
