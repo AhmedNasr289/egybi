@@ -11,6 +11,7 @@ once per function (and once per URL in _site_name, as it used to be).
 import datetime as _dt
 import functools
 import json
+import math
 import os
 
 import heat_calendar
@@ -118,6 +119,75 @@ def hours_fact(h: dict) -> str:
             f"{esc(h['source'])}</a>, checked {egfmt.time_tag(h['checked'], 'en', 'prose')}.")
 
 
+def _km(a: dict, b: dict) -> float:
+    """Straight-line distance, the same formula as trip.js km()."""
+    r = math.pi / 180
+    dlat, dlon = (b['lat'] - a['lat']) * r, (b['lon'] - a['lon']) * r
+    h = (math.sin(dlat / 2) ** 2 +
+         math.cos(a['lat'] * r) * math.cos(b['lat'] * r) * math.sin(dlon / 2) ** 2)
+    return 2 * 6371 * math.asin(math.sqrt(h))
+
+
+def leg_facts(site: dict, sites: list, guide: dict, arrival: dict) -> list:
+    """How to travel between this site and the other areas a cited row covers.
+
+    getting-around.json names areas by the measured sites they sit near and
+    points each leg at rows of arrival.json; the planner's leg cards read the
+    same file (trip.js legRows), so the two cannot disagree. A site in no area,
+    or in an area no leg names, gets nothing: a route we could not cite is
+    left out. Legs that share the same rows are said once ("Luxor or Aswan")."""
+    by_key = {x['key']: x for x in sites}
+    area = None
+    for a in guide.get('areas', []):
+        if any(k in by_key and _km(site, by_key[k]) <= a['radius_km'] for k in a.get('near', [])):
+            area = a
+            break
+    if not area:
+        return []
+    names = {a['key']: a.get('name', a['key']) for a in guide.get('areas', [])}
+    rows = {r['key']: r for g in arrival.get('groups', []) for r in g.get('rows', [])}
+    groups = []  # (row keys, [other area names]) in file order
+    for leg in guide.get('legs', []):
+        w = leg.get('between', [])
+        if area['key'] not in w or len(w) != 2:
+            continue
+        other = w[1] if w[0] == area['key'] else w[0]
+        keys = tuple(leg.get('rows', []))
+        for g in groups:
+            if g[0] == keys:
+                g[1].append(names.get(other, other))
+                break
+        else:
+            groups.append((keys, [names.get(other, other)]))
+    out = []
+    for keys, others in groups:
+        rs = [rows[k] for k in keys if k in rows]
+        if not rs:
+            continue
+        # One row per line: a phone reader scans for the row they need.
+        lines = '<br>'.join(f"<em>{esc(r['label'])}:</em> {esc(r['value'])}." +
+                            (f" {esc(r['detail'])}" if r.get('detail') else '') for r in rs)
+        srcs = []
+        for r in rs:
+            src = (r.get('source', ''), r.get('source_url'), r.get('checked'))
+            if src not in srcs:
+                srcs.append(src)
+        cite = '; '.join(
+            (f"<a href=\"{esc(u)}\" rel=\"noopener\">{esc(n)}</a>" if u else esc(n)) +
+            (f", checked {egfmt.time_tag(c, 'en', 'prose')}" if c else '') for n, u, c in srcs)
+        out.append(f"<strong>Between here and {esc(' or '.join(others))}:</strong><br>{lines}<br>"
+                   f"Source: {cite}.")
+    return out
+
+
+def load_guide() -> tuple:
+    """getting-around.json and arrival.json, or empty dicts when absent."""
+    out = []
+    for n in ('getting-around.json', 'arrival.json'):
+        path = os.path.join(SITE, 'data', n)
+        out.append(json.loads(read_text(path)) if os.path.isfile(path) else {})
+    return tuple(out)
+
 def build_site_months():
     """One page per measured visitor site: its twelve months, as measured.
 
@@ -137,6 +207,7 @@ def build_site_months():
         return []
     clim = load_climate()
     hours = load_hours()
+    guide, arrival = load_guide()
     terr = {}
     if os.path.isfile(tpath):
         terr = {x['key']: x for x in json.loads(read_text(tpath)).get('sites', [])}
@@ -177,6 +248,7 @@ def build_site_months():
             facts.append("A normal afternoon reaches 30 °C or more in every month of the year.")
         if key in hours:
             facts.append(hours_fact(hours[key]))
+        facts.extend(leg_facts(site, sites, guide, arrival))
         if el is not None:
             facts.append(f"The ground at the site's coordinates sits {el:.0f} m above sea level (NASA SRTM).")
         if site.get('unesco'):

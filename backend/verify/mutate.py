@@ -203,6 +203,14 @@ case("a dated event that is not a holiday counted as one", "test_holidays.py", [
      lambda o: "FAIL" in o and "test_a_dated_event_that_is_not_a_holiday_is_left_out" in o,
      f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_holidays.py -v')
 
+# a visit page's "Between here and ..." lines said once per leg (2026-11-17).
+# Without the grouping, Giza would say the same three train rows twice, once
+# for Luxor and once for Aswan; test_visit_legs.py must catch it.
+case("a visit page repeats the same leg rows", "test_visit_legs.py", ["backend/pipeline/pages/visit.py"],
+     lambda: edit("backend/pipeline/pages/visit.py", "            if g[0] == keys:\n", "            if False:\n"),
+     lambda o: "FAIL" in o and "test_cairo_legs_with_the_same_rows_are_said_once" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_visit_legs.py -v')
+
 # an empty-state note that talks to the maintainer, not the traveller (2026-11-17)
 case("build language back in a visitor note", "static-audit.py", ["site/visit.html"],
      lambda: edit("site/visit.html", "The cross-sections are not ready yet. Please check back soon.",
