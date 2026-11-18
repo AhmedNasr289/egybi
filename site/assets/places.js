@@ -25,6 +25,7 @@
 */
 (function () {
   'use strict';
+  var LANG = (document.documentElement.getAttribute('lang') || 'en');
   /* A governorate's name as the site spells it ("Fayoum"), for DISPLAY
      only; the data's own spelling stays the join key. */
   function gv(n) {
@@ -36,8 +37,13 @@
      value as written if egfmt.js did not load. */
   function asOf(v) {
     var F = window.EGYBI && window.EGYBI.fmt;
-    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+    // Arabic pages get the Arabic date; other pages the English form (Russian
+    // dates are written by trip.js, which this page does not load).
+    return F ? F.dateOrRaw(v, LANG === 'ar' ? 'ar' : 'en', 'prose') : (v == null ? '' : String(v));
   }
+  // Translated text for what this script writes; the build collects every
+  // quoted call to it into the Arabic and Russian tables (pages/i18n.py).
+  var t = (window.EGYBI && window.EGYBI.t) || function (x) { return x; };
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -74,10 +80,10 @@
   // One colour per kind, chosen to stay distinguishable on the pale governorate
   // fill and to survive the site's dark/light surface alternation.
   var KIND = {
-    settlement: { label: 'Cities & towns', colour: BLUE,      r: 4 },
-    airport:    { label: 'Airports',       colour: '#0F7B6C', r: 5 },
-    antiquity:  { label: 'Ancient sites',  colour: '#B23A0F', r: 3.5 },
-    museum:     { label: 'Museums',        colour: '#6B3FA0', r: 4 }
+    settlement: { label: 'Cities & towns', one: 'City or town', colour: BLUE,      r: 4 },
+    airport:    { label: 'Airports',       one: 'Airport',      colour: '#0F7B6C', r: 5 },
+    antiquity:  { label: 'Ancient sites',  one: 'Ancient site', colour: '#B23A0F', r: 3.5 },
+    museum:     { label: 'Museums',        one: 'Museum',       colour: '#6B3FA0', r: 4 }
   };
 
   var CLUSTER_CLASS = {
@@ -125,15 +131,25 @@
   function $(id) { return document.getElementById(id); }
   function esc(s) { return (window.EGYBI && EGYBI.escapeHtml) ? EGYBI.escapeHtml(s) : String(s == null ? '' : s); }
 
-  function fmt(n) { return typeof n === 'number' ? n.toLocaleString('en-US') : '—'; }
+  // A count in the page's own form: Arabic-Indic digits and separators on
+  // Arabic pages, a thin-space grouping on Russian ones, 1,234 in English.
+  function fmt(n) {
+    if (typeof n !== 'number') return '—';
+    var F = window.EGYBI && window.EGYBI.fmt;
+    if (LANG === 'ar' && F) return F.num(n, 'ar', 0);
+    return n.toLocaleString(LANG === 'ru' ? 'ru-RU' : 'en-US');
+  }
+  function digits(x) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return LANG === 'ar' && F ? F.digits(String(x), 'ar') : String(x);
+  }
 
   function initMap() {
     if (!window.L || !window.EGYBI_EGYPT_GEO) return false;
     S.map = window.EGYBI.mapkit.create('placesMap', {
       locator: window.EGYBI_EGYPT_GEO,
       credit: ['geoboundaries', 'osm'],
-      label: 'Map of Egypt showing mapped places. '
-           + 'Nearby places group into a cluster; open a cluster to see them.'
+      label: t('Map of Egypt showing mapped places. Nearby places group into a cluster; open a cluster to see them.')
     });
     if (!S.map) return false;
     // Points must sit above the governorate polygons even while one is hovered
@@ -286,49 +302,47 @@
     var lat = p.lat.toFixed(5), lon = p.lon.toFixed(5);
     var links = [];
 
-    links.push(['Open in OpenStreetMap',
+    links.push([t('Open in OpenStreetMap'),
       'https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lon + '#map=15/' + lat + '/' + lon,
-      'The record this page is built from, at these coordinates.']);
+      t('The record this page is built from, at these coordinates.')]);
 
     if (p.wikipedia_title && p.wikipedia_lang) {
-      links.push(['Read on Wikipedia',
+      links.push([t('Read on Wikipedia'),
         'https://' + encodeURIComponent(p.wikipedia_lang) + '.wikipedia.org/wiki/'
           + encodeURIComponent(p.wikipedia_title.replace(/ /g, '_')),
-        'The article OpenStreetMap links to for this place.']);
+        t('The article OpenStreetMap links to for this place.')]);
     } else {
-      links.push(['Search Wikipedia',
+      links.push([t('Search Wikipedia'),
         'https://en.wikipedia.org/w/index.php?search=' + q,
-        'OpenStreetMap carries no article link for this place, so this is a search.']);
+        t('OpenStreetMap carries no article link for this place, so this is a search.')]);
     }
 
     if (p.commons) {
-      links.push(['Photographs on Wikimedia Commons',
+      links.push([t('Photographs on Wikimedia Commons'),
         'https://commons.wikimedia.org/wiki/' + encodeURIComponent(p.commons),
-        'The openly licensed category OpenStreetMap links to.']);
+        t('The openly licensed category OpenStreetMap links to.')]);
     } else {
-      links.push(['Search Wikimedia Commons',
+      links.push([t('Search Wikimedia Commons'),
         'https://commons.wikimedia.org/w/index.php?search=' + q + '&title=Special:MediaSearch&type=image',
-        'Openly licensed photographs, searched by name.']);
+        t('Openly licensed photographs, searched by name.')]);
     }
 
-    links.push(['Search YouTube',
+    links.push([t('Search YouTube'),
       'https://www.youtube.com/results?search_query=' + q,
-      'A search rather than a chosen video — a link to one video is a link that '
-      + 'eventually goes nowhere.']);
+      t('A search rather than a chosen video — a link to one video is a link that eventually goes nowhere.')]);
 
-    links.push(['Find stays on Booking.com',
+    links.push([t('Find stays on Booking.com'),
       'https://www.booking.com/searchresults.html?ss=' + q
         + '&latitude=' + lat + '&longitude=' + lon,
-      'A search near these coordinates. No price or availability is shown here, '
-      + 'because either would be out of date before you read it.']);
+      t('A search near these coordinates. No price or availability is shown here, because either would be out of date before you read it.')]);
 
-    links.push(['Find stays on Airbnb',
+    links.push([t('Find stays on Airbnb'),
       'https://www.airbnb.com/s/' + encodeURIComponent(p.name + ', Egypt') + '/homes',
-      'A search by place name, for the same reason.']);
+      t('A search by place name, for the same reason.')]);
 
     if (p.website) {
-      links.push(['Official website', p.website,
-        'The website OpenStreetMap records for this place.']);
+      links.push([t('Official website'), p.website,
+        t('The website OpenStreetMap records for this place.')]);
     }
     return links;
   }
@@ -380,18 +394,14 @@
     // travel with it every single time — an opening time without them is a
     // promise this site cannot keep.
     if (p.opening_hours) {
-      out.push('<div class="pd-row"><span>Opening hours</span><strong>'
+      out.push('<div class="pd-row"><span>' + esc(t('Opening hours')) + '</span><strong>'
         + esc(p.opening_hours) + '</strong></div>'
-        + '<p class="pd-note">As recorded in OpenStreetMap on ' + osmDate
-        + ', in OSM’s own notation. Community-maintained and changed without '
-        + 'notice — confirm before you travel.</p>');
+        + '<p class="pd-note">' + esc(t('As recorded in OpenStreetMap on %d, in OSM’s own notation. Community-maintained and changed without notice — confirm before you travel.')).replace('%d', osmDate) + '</p>');
     }
     if (p.wheelchair) {
-      out.push('<div class="pd-row"><span>Step-free access</span><strong>'
+      out.push('<div class="pd-row"><span>' + esc(t('Step-free access')) + '</span><strong>'
         + esc(p.wheelchair) + '</strong></div>'
-        + '<p class="pd-note">OpenStreetMap’s <code>wheelchair</code> tag as of '
-        + osmDate + '. &ldquo;limited&rdquo; means partly accessible; an absent tag '
-        + 'means nobody has surveyed it, not that access is poor.</p>');
+        + '<p class="pd-note">' + esc(t('OpenStreetMap’s wheelchair tag as of %d. “limited” means partly accessible; an absent tag means nobody has surveyed it, not that access is poor.')).replace('%d', osmDate) + '</p>');
     }
 
     var links = refLinks(p);
@@ -401,32 +411,31 @@
     var planHref = 'plan.html?place=' + encodeURIComponent(p.name) + '&lat=' + p.lat.toFixed(5) +
       '&lon=' + p.lon.toFixed(5) + (p.gov ? '&gov=' + encodeURIComponent(p.gov) : '') +
       (p.kind ? '&kind=' + encodeURIComponent(p.kind) : '');
-    out.push('<p style="margin:0 0 10px;"><a class="btn btn-blue btn-small" href="' + esc(planHref) + '">+ Add to my trip plan</a></p>');
+    out.push('<p style="margin:0 0 10px;"><a class="btn btn-blue btn-small" href="' + esc(planHref) + '">' + esc(t('+ Add to my trip plan')) + '</a></p>');
     out.push('<ul class="pd-links">' + links.map(function (l) {
       return '<li><a href="' + esc(l[1]) + '" target="_blank" rel="noopener">'
-        + esc(l[0]) + '</a><span>' + l[2] + '</span></li>';
+        + esc(l[0]) + '</a><span>' + esc(l[2]) + '</span></li>';
     }).join('') + '</ul>');
-    return '<div class="pd-going"><h4>Going there</h4>' + out.join('') + '</div>';
+    return '<div class="pd-going"><h4>' + esc(t('Going there')) + '</h4>' + out.join('') + '</div>';
   }
 
   function select(p) {
     S.sel = p;
     var el = $('placeDetail'); if (!el) return;
-    var spec = KIND[p.kind] || { label: p.kind };
+    var spec = KIND[p.kind] || { label: p.kind, one: p.kind };
     var bits = [];
-    bits.push('<div class="pd-row"><span>Kind</span><strong>' +
-      esc(spec.label.replace(/s$/, '')) + (p.place ? ' · ' + esc(p.place) : '') + '</strong></div>');
-    bits.push('<div class="pd-row"><span>Governorate</span><strong>' +
-      (p.gov ? esc(gv(p.gov)) : 'not assigned') + '</strong></div>');
-    bits.push('<div class="pd-row"><span>Coordinates</span><strong>' +
+    bits.push('<div class="pd-row"><span>' + esc(t('Kind')) + '</span><strong>' +
+      esc(t(spec.one || spec.label)) + (p.place ? ' · ' + esc(p.place) : '') + '</strong></div>');
+    bits.push('<div class="pd-row"><span>' + esc(t('Governorate')) + '</span><strong>' +
+      (p.gov ? esc(gv(p.gov)) : esc(t('not assigned'))) + '</strong></div>');
+    bits.push('<div class="pd-row"><span>' + esc(t('Coordinates')) + '</span><strong>' +
       p.lat.toFixed(4) + ', ' + p.lon.toFixed(4) + '</strong></div>');
-    if (p.iata) bits.push('<div class="pd-row"><span>IATA code</span><strong>' + esc(p.iata) + '</strong></div>');
+    if (p.iata) bits.push('<div class="pd-row"><span>' + esc(t('IATA code')) + '</span><strong>' + esc(p.iata) + '</strong></div>');
     if (typeof p.population_osm === 'number') {
       // Always with the caveat attached — this is a community-maintained tag,
       // not a census figure, and presenting it bare would be a false precision.
-      bits.push('<div class="pd-row"><span>Population</span><strong>' + fmt(p.population_osm) +
-        '</strong></div><p class="pd-note">As tagged in OpenStreetMap. Community-maintained and ' +
-        'often years out of date — not an official census figure.</p>');
+      bits.push('<div class="pd-row"><span>' + esc(t('Population')) + '</span><strong>' + fmt(p.population_osm) +
+        '</strong></div><p class="pd-note">' + esc(t('As tagged in OpenStreetMap. Community-maintained and often years out of date — not an official census figure.')) + '</p>');
     }
 
     // Nearest World Heritage site, computed from the Atlas layer if it is
@@ -440,29 +449,27 @@
         if (!best || d < best.d) best = { h: h, d: d };
       });
       if (best) {
-        bits.push('<div class="pd-row"><span>Nearest World Heritage site</span><strong>' +
-          esc(best.h.name.split('–')[0].trim()) + ' · ' + Math.round(best.d) + ' km</strong></div>' +
-          '<p class="pd-note">Straight-line distance, not travel distance.</p>');
+        bits.push('<div class="pd-row"><span>' + esc(t('Nearest World Heritage site')) + '</span><strong>' +
+          esc(best.h.name.split('–')[0].trim()) + ' · ' + esc(t('%n km').replace('%n', digits(Math.round(best.d)))) + '</strong></div>' +
+          '<p class="pd-note">' + esc(t('Straight-line distance, not travel distance.')) + '</p>');
       }
     }
 
     var near = nearestGuide(p);
     if (near) {
-      bits.push('<div class="pd-row"><span>Visitor guide</span><strong><a href="' + esc(near.g.href) + '">' +
-        esc(near.g.name) + ' by month &rarr;</a></strong></div>' +
-        '<p class="pd-note">' + (near.d < 0.1 ? 'Measured at this point' :
-          'Measured at the site ' + near.d.toFixed(1) + ' km from this point') +
-        ': afternoon heat, rain and the hours of golden light for each month.</p>');
+      bits.push('<div class="pd-row"><span>' + esc(t('Visitor guide')) + '</span><strong><a href="' + esc(near.g.href) + '">' +
+        esc(t('%s by month').replace('%s', near.g.name)) + ' &rarr;</a></strong></div>' +
+        '<p class="pd-note">' + esc(near.d < 0.1
+          ? t('Measured at this point: afternoon heat, rain and the hours of golden light for each month.')
+          : t('Measured at the site %n km from this point: afternoon heat, rain and the hours of golden light for each month.')
+              .replace('%n', digits(near.d.toFixed(1)))) + '</p>');
     }
 
     el.innerHTML = '<h3>' + esc(p.name) + (p.name_ar ? ' <span class="pd-ar">' + esc(p.name_ar) + '</span>' : '') + '</h3>' +
       '<div class="pd-grid">' + bits.join('') + '</div>' +
       goingThere(p) +
-      '<p class="pd-note">Source: OpenStreetMap, as of ' + esc(asOf(S.data.as_of)) +
-      '. Governorate computed by point-in-polygon against the bundled boundaries. ' +
-      'The links above are searches run against each destination when you click ' +
-      'them, so nothing here quotes a price, an opening time or a room that may ' +
-      'no longer exist.</p>';
+      '<p class="pd-note">' + esc(t('Source: OpenStreetMap, as of %d. Governorate computed by point-in-polygon against the bundled boundaries. The links above are searches run against each destination when you click them, so nothing here quotes a price, an opening time or a room that may no longer exist.')
+        .replace('%d', asOf(S.data.as_of))) + '</p>';
     el.hidden = false;
     // Zoom 9, not 8, and the number is not arbitrary: 9 is
     // disableClusteringAtZoom, which is also where the name layer engages.
@@ -491,17 +498,17 @@
       out.sort(function (a, b) { return dist.get(a) - dist.get(b); });
     }
     var th = $('distTh'); if (th) th.hidden = !me;
-    $('placeCount').textContent = out.length.toLocaleString('en-US');
+    $('placeCount').textContent = fmt(out.length);
     body.innerHTML = out.slice(0, 300).map(function (p) {
       return '<tr data-k="' + esc(p.kind) + '"><td>' + esc(p.name) + '</td>' +
-        '<td>' + esc((KIND[p.kind] || {}).label || p.kind) + '</td>' +
-        '<td>' + (p.gov ? esc(p.gov) : '—') + '</td>' +
+        '<td>' + esc(t((KIND[p.kind] || {}).one || p.kind)) + '</td>' +
+        '<td>' + (p.gov ? esc(gv(p.gov)) : '—') + '</td>' +
         '<td class="num">' + (typeof p.population_osm === 'number' ? fmt(p.population_osm) : '—') + '</td>' +
         (me ? '<td class="num">' + kmText(dist.get(p)) + '</td>' : '') + '</tr>';
     }).join('');
     if (out.length > 300) {
-      body.innerHTML += '<tr><td colspan="' + (me ? 5 : 4) + '" class="pd-note">Showing the first 300 of ' +
-        out.length.toLocaleString('en-US') + '. Narrow it with the search box or a governorate.</td></tr>';
+      body.innerHTML += '<tr><td colspan="' + (me ? 5 : 4) + '" class="pd-note">' +
+        esc(t('Showing the first 300 of %n. Narrow it with the search box or a governorate.').replace('%n', fmt(out.length)).replace('300', digits(300))) + '</td></tr>';
     }
     Array.prototype.forEach.call(body.querySelectorAll('tr[data-k]'), function (tr, i) {
       tr.addEventListener('click', function () { select(out[i]); });
@@ -515,8 +522,8 @@
      EgyBI, and not put in any URL. Distances are straight lines, labelled so.
      Permissions-Policy allows geolocation for this origin only (.htaccess). */
   function kmText(d) {
-    if (d < 1) return Math.round(d * 1000).toLocaleString('en-US') + ' m';
-    return (d < 10 ? d.toFixed(1) : Math.round(d).toLocaleString('en-US')) + ' km';
+    if (d < 1) return t('%n m').replace('%n', fmt(Math.round(d * 1000)));
+    return t('%n km').replace('%n', d < 10 ? digits(d.toFixed(1)) : fmt(Math.round(d)));
   }
   function wireNearMe() {
     var btn = $('nearMe'), note = $('nearNote');
@@ -524,32 +531,33 @@
     btn.hidden = false;
     function say(msg, kind) { note.textContent = msg; note.className = 'form-note' + (kind ? ' ' + kind : ''); }
     function off() {
-      S.me = null; btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); btn.textContent = 'Near me';
+      S.me = null; btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); btn.textContent = t('Near me');
       if (S.meMark && S.map) { S.map.removeLayer(S.meMark); S.meMark = null; }
       say(''); renderList();
     }
     btn.addEventListener('click', function () {
       if (S.me) { off(); return; }
-      say('Asking your browser for your location…');
+      say(t('Asking your browser for your location…'));
       btn.disabled = true;
       navigator.geolocation.getCurrentPosition(function (pos) {
         btn.disabled = false;
         S.me = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-        btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Stop using my location';
+        btn.classList.add('on'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = t('Stop using my location');
         var inEgypt = S.me.lat > 21 && S.me.lat < 32.5 && S.me.lon > 24 && S.me.lon < 37.5;
-        say((inEgypt ? 'Nearest first' : 'You seem to be outside Egypt, so these are far away, nearest first') +
-            ', by straight-line distance, not travel distance. Your location stays in this browser; EgyBI never receives it.', 'ok');
+        say((inEgypt ? t('Nearest first, by straight-line distance, not travel distance.')
+                     : t('You seem to be outside Egypt, so these are far away. Nearest first, by straight-line distance, not travel distance.')) +
+            ' ' + t('Your location stays in this browser; EgyBI never receives it.'), 'ok');
         if (S.map && window.L) {
           if (S.meMark) S.map.removeLayer(S.meMark);
           S.meMark = L.circleMarker([S.me.lat, S.me.lon], { radius: 8, color: '#14110C', weight: 3, fillColor: '#C9A227', fillOpacity: 1 })
-            .bindTooltip('You are here (approximate)').addTo(S.map);
+            .bindTooltip(esc(t('You are here (approximate)'))).addTo(S.map);
           if (inEgypt) S.map.setView([S.me.lat, S.me.lon], Math.max(S.map.getZoom(), 9));
         }
         renderList();
       }, function (err) {
         btn.disabled = false;
-        say(err && err.code === 1 ? 'Location permission was not given, so the list keeps its usual order.'
-                                  : 'Your location could not be found just now, so the list keeps its usual order.', 'error');
+        say(err && err.code === 1 ? t('Location permission was not given, so the list keeps its usual order.')
+                                  : t('Your location could not be found just now, so the list keeps its usual order.'), 'error');
       }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
     });
   }
@@ -604,7 +612,7 @@
   }
 
   function start() {
-    if (!initMap()) { empty('The map library did not load, so this page cannot draw Egypt.'); return; }
+    if (!initMap()) { empty(t('The map library did not load, so this page cannot draw Egypt.')); return; }
     // Heritage is optional context for the "nearest site" line; the page works
     // without it, so its failure is swallowed rather than surfaced.
     fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/geo-heritage.json') : 'data/geo-heritage.json'), { cache: 'no-cache' })
@@ -622,18 +630,20 @@
         // this line went on summarising the gazetteer as cities, airports and
         // ancient sites — a page silently under-reporting its own contents.
         // Anything the pipeline starts counting now appears here by itself.
-        var LABELS = { settlement: 'cities and towns', airport: 'airports',
-                       antiquity: 'ancient sites', museum: 'museums' };
+        // Labelled counts ("Airports: 12"), so no English plural reaches
+        // Arabic or Russian.
+        var LABELS = { settlement: 'Cities & towns', airport: 'Airports',
+                       antiquity: 'Ancient sites', museum: 'Museums' };
         var parts = Object.keys(LABELS)
           .filter(function (k) { return c[k]; })
-          .map(function (k) { return fmt(c[k]) + ' ' + LABELS[k]; });
+          .map(function (k) { return t(LABELS[k]) + ': ' + fmt(c[k]); });
         // A kind the data has but this list does not name still gets counted,
         // under its own key, rather than being dropped for want of a phrasing.
         Object.keys(c).forEach(function (k) {
-          if (!LABELS[k] && c[k]) parts.push(fmt(c[k]) + ' ' + k);
+          if (!LABELS[k] && c[k]) parts.push(k + ': ' + fmt(c[k]));
         });
         $('placesMeta').innerHTML =
-          'OpenStreetMap, as of ' + esc(asOf(d.as_of)) + ' · ' + parts.join(' · ');
+          esc(t('OpenStreetMap, as of %d').replace('%d', asOf(d.as_of))) + ' · ' + esc(parts.join(' · '));
         $('placesNote').textContent = d.note || '';
         // Coverage gap, stated where a reader will see it. The pipeline checks
         // a fixed list of major Egyptian cities on every build and ships the
@@ -641,11 +651,11 @@
         // Older files predate the check, hence the guard.
         var cov = d.coverage_check, ce = $('placesCoverage');
         if (ce && cov) {
-          ce.innerHTML = '<strong>' + cov.present_n + ' of ' + cov.benchmark_n +
-            ' benchmark cities are in this gazetteer.</strong> ' +
+          ce.innerHTML = '<strong>' + esc(t('%a of %b benchmark cities are in this gazetteer.')
+              .replace('%a', digits(cov.present_n)).replace('%b', digits(cov.benchmark_n))) + '</strong> ' +
             (cov.absent && cov.absent.length
-              ? 'Absent right now: <em>' + cov.absent.map(esc).join(', ') + '</em>. ' + esc(cov.note)
-              : 'None are missing at this build.');
+              ? esc(t('Absent right now:')) + ' <em>' + cov.absent.map(esc).join(', ') + '</em>. ' + esc(cov.note)
+              : esc(t('None are missing at this build.')));
           ce.hidden = false;
         }
         $('placesPopNote').textContent = d.population_note || '';
@@ -654,8 +664,7 @@
         renderList();
       })
       .catch(function () {
-        empty('The places layer has not been generated yet. It appears automatically after the ' +
-              'next “Build Atlas geo layers” run. The map of Egypt above already works.');
+        empty(t('The places layer has not been generated yet. It appears automatically after the next “Build Atlas geo layers” run. The map of Egypt above already works.'));
       });
   }
 

@@ -302,3 +302,13 @@ Please check:
 - the 14 holiday names and 8 notes from calendar.json, especially the Russian
   «Солнце в святилище Абу-Симбела» for the sun alignment day, and the Arabic
   figures in the museum capacity line («١٥٬٠٠٠» … «٦٠٪»).
+## Places page (2026-11-18)
+
+58 lines from places.js: the place card, its links, the list, "Near me" and
+the summary.
+
+Please check:
+- the OpenStreetMap cautions on opening hours, step-free access and
+  population: they must stay as cautious as the English;
+- «الذهاب إلى هناك» and «Как туда попасть» for "Going there";
+- «Ближайший объект Всемирного наследия» and «أقرب موقع تراث عالمي».
