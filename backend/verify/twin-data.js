@@ -110,7 +110,7 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
           meta: (document.getElementById('placesMeta') || {}).textContent || '',
           card: (document.getElementById('placeDetail') || {}).textContent || '',
         }));
-        const eng = /OpenStreetMap, as of|Going there|Governorate|Coordinates|Open in OpenStreetMap|\+ Add to my trip plan/;
+        const eng = /OpenStreetMap, as of|Going there|Governorate|Coordinates|Open in OpenStreetMap|\+ Add to my trip plan|Cities & towns|Airports?\b|Ancient sites?\b|Museums?\b|City or town|(January|February|March|April|May|June|July|August|September|October|November|December) 20\d\d/;
         const all = card.meta + ' | ' + card.card;
         if (!card.card) fail(`TWIN DATA NOT LOADED: ${where} - no place card opened`);
         else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card reads "${all.slice(0, 160)}"`);
