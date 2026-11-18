@@ -59,11 +59,27 @@ GOV_NAMES = {'Faiyum': 'Fayoum', 'Fayyum': 'Fayoum', 'Al Fayyum': 'Fayoum', 'Al-
              'El Fayoum': 'Fayoum', 'Al Fayoum': 'Fayoum'}
 
 
-def gov_name(name) -> str:
-    """A governorate's name as the site spells it, for display."""
+# The 27 governorates in Arabic and Russian, keyed by the English display
+# name above. Read on 18 November 2026 from https://ar.wikipedia.org/wiki/محافظات_مصر
+# and https://ru.wikipedia.org/wiki/Мухафазы_Египта (the Russian article's main forms,
+# without its parenthetical transliterations). site/assets/egfmt.js holds
+# the same two maps; backend/verify/egfmt-cases.js runs both on one case file.
+GOV_NAMES_AR = {"Alexandria": "الإسكندرية", "Aswan": "أسوان", "Asyut": "أسيوط", "Beheira": "البحيرة", "Beni Suef": "بني سويف", "Cairo": "القاهرة", "Dakahlia": "الدقهلية", "Damietta": "دمياط", "Fayoum": "الفيوم", "Gharbia": "الغربية", "Giza": "الجيزة", "Ismailia": "الإسماعيلية", "Kafr El Sheikh": "كفر الشيخ", "Luxor": "الأقصر", "Matrouh": "مطروح", "Minya": "المنيا", "Monufia": "المنوفية", "New Valley": "الوادي الجديد", "North Sinai": "شمال سيناء", "Port Said": "بورسعيد", "Qalyubia": "القليوبية", "Qena": "قنا", "Red Sea": "البحر الأحمر", "Sharqia": "الشرقية", "Sohag": "سوهاج", "South Sinai": "جنوب سيناء", "Suez": "السويس"}
+GOV_NAMES_RU = {"Alexandria": "Александрия", "Aswan": "Асуан", "Asyut": "Асьют", "Beheira": "Бухейра", "Beni Suef": "Бени-Суэйф", "Cairo": "Каир", "Dakahlia": "Дакахлия", "Damietta": "Думьят", "Fayoum": "Эль-Файюм", "Gharbia": "Гарбия", "Giza": "Эль-Гиза", "Ismailia": "Исмаилия", "Kafr El Sheikh": "Кафр-эш-Шейх", "Luxor": "Луксор", "Matrouh": "Матрух", "Minya": "Эль-Минья", "Monufia": "Минуфия", "New Valley": "Вади-эль-Гедид", "North Sinai": "Северный Синай", "Port Said": "Порт-Саид", "Qalyubia": "Кальюбия", "Qena": "Кена", "Red Sea": "Красное Море", "Sharqia": "Шаркия", "Sohag": "Сохаг", "South Sinai": "Южный Синай", "Suez": "Суэц"}
+
+
+def gov_name(name, lang: str = 'en') -> str:
+    """A governorate's name as the site spells it, for display, in lang
+    ('en', 'ar' or 'ru'). A name with no translation stays as the site
+    spells it in English."""
     if name is None:
         return ''
-    return GOV_NAMES.get(str(name).strip(), str(name))
+    en = GOV_NAMES.get(str(name).strip(), str(name))
+    if lang == 'ar':
+        return GOV_NAMES_AR.get(en, en)
+    if lang == 'ru':
+        return GOV_NAMES_RU.get(en, en)
+    return en
 
 
 def isolate(s: str) -> str:

@@ -109,7 +109,14 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         const card = await p.evaluate(() => ({
           meta: (document.getElementById('placesMeta') || {}).textContent || '',
           card: (document.getElementById('placeDetail') || {}).textContent || '',
+          // the card's second row is the governorate (Kind, Governorate, ...)
+          gov: ((document.querySelectorAll('#placeDetail .pd-row strong')[1]) || {}).textContent || '',
         }));
+        // Governorate names in the page's language (2026-11-18, egfmt.govName).
+        const script = { ar: /[\u0600-\u06FF]/, ru: /[\u0400-\u04FF]/ };
+        const lg = lang.replace('/', '');
+        if (lang && card.gov && !script[lg].test(card.gov))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card governorate reads "${card.gov}"`);
         const eng = /OpenStreetMap, as of|Going there|Governorate|Coordinates|Open in OpenStreetMap|\+ Add to my trip plan/;
         const all = card.meta + ' | ' + card.card;
         if (!card.card) fail(`TWIN DATA NOT LOADED: ${where} - no place card opened`);

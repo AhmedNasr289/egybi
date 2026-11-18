@@ -30,7 +30,7 @@
      only; the data's own spelling stays the join key. */
   function gv(n) {
     var F = window.EGYBI && window.EGYBI.fmt;
-    return F ? F.govName(n) : (n == null ? '' : String(n));
+    return F ? F.govName(n, document.documentElement.getAttribute('lang') || 'en') : (n == null ? '' : String(n));
   }
   /* A dataset's date, written as the site writes dates ("3 November 2026",
      EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
