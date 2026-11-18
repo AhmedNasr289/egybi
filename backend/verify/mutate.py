@@ -1471,6 +1471,14 @@ case("the Russian planner breaks on a number format", "leg-cards.js", ["site/ass
                   "return F ? F.digits(String(x), document.documentElement.getAttribute('lang') || 'en') : String(x);"),
      lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
 
+# The places page in Arabic and Russian (2026-11-18). Putting the card's
+# "Going there" heading back as an English literal must make twin-data.js
+# report the place card.
+case("the place card heading back in English", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "'<div class=\"pd-going\"><h4>' + esc(t('Going there')) + '</h4>'",
+                  "'<div class=\"pd-going\"><h4>Going there</h4>'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
+
 
 print()
 # The shard's own count, for mutate-shards.py: ran + other_shard == seen.

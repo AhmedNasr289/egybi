@@ -286,3 +286,14 @@ Please check:
 - Russian «Если едете одна» and «когда вы одна»: feminine on purpose, for the
   same reason;
 - Arabic «رابطة الدول المستقلة» for CIS, and «مير» for the Mir card.
+
+## Places page (2026-11-18)
+
+58 lines from places.js: the place card, its links, the list, "Near me" and
+the summary.
+
+Please check:
+- the OpenStreetMap cautions on opening hours, step-free access and
+  population: they must stay as cautious as the English;
+- «الذهاب إلى هناك» and «Как туда попасть» for "Going there";
+- «Ближайший объект Всемирного наследия» and «أقرب موقع تراث عالمي».
