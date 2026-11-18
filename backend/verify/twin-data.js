@@ -107,9 +107,10 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
           title: (document.getElementById('briefTitle') || {}).textContent || '',
           lead: (document.getElementById('briefLead') || {}).textContent || '',
           btn: ((document.querySelector('#briefGrid [data-add]') || {}).textContent || '').trim(),
+          legend: (document.getElementById('heatLegend') || {}).textContent || '',
         }));
-        const eng = /The heat, site by site|Arriving |\+ Add to my plan|In your plan/;
-        const all = brief.title + ' | ' + brief.lead + ' | ' + brief.btn;
+        const eng = /The heat, site by site|Arriving |\+ Add to my plan|In your plan|or less|or more|by day/;
+        const all = brief.title + ' | ' + brief.lead + ' | ' + brief.btn + ' | ' + brief.legend;
         if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} briefing reads "${all.slice(0, 160)}"`);
         else if (!lang && !(/^The heat, site by site, in /.test(brief.title) && /^Arriving /.test(brief.lead)))
           fail(`TWIN SCRIPT TEXT IN ENGLISH: the English briefing changed to "${all.slice(0, 160)}"`);

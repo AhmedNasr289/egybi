@@ -14,6 +14,13 @@
   // Translated text for what this script writes; the build collects every
   // quoted call to it into the Arabic and Russian tables (pages/i18n.py).
   var t = (window.EGYBI && window.EGYBI.t) || function (s) { return s; };
+  // The heat bands' labels live in trip.js. The build collects only literal
+  // strings inside the translate call, so each label is written out here;
+  // passed in as a variable it would never reach the translation table.
+  var BAND_LABEL = {
+    '21 °C or less': t('21 °C or less'), '22–27 °C': t('22–27 °C'), '28–33 °C': t('28–33 °C'),
+    '34–38 °C': t('34–38 °C'), '39 °C or more': t('39 °C or more')
+  };
   function $(id) { return document.getElementById(id); }
 
   var trip = T.load();
@@ -88,7 +95,7 @@
           .replace('%m', T.monthName(main)));
     }
     leg.innerHTML = T.BANDS.map(function (b) {
-      return '<span><i style="background:' + b.colour + '"></i>' + esc(t(b.label)) + '</span>';
+      return '<span><i style="background:' + b.colour + '"></i>' + esc(BAND_LABEL[b.label] || b.label) + '</span>';
     }).join('') + '<span>' + esc(t('by day — the mean daily maximum')) + '</span>';
 
     var stops = (T.load().stops || []).map(function (x) { return x.id; });
