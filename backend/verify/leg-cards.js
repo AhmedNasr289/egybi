@@ -3,7 +3,7 @@
    legs get rows; this tests what the reader sees. A saved Giza -> Karnak trip
    must show, between the two stops:
 
-     1. ROWS: the three cited train rows (Bashtil sleepers, US-dollar fares,
+     1. ROWS: the four cited train rows (Bashtil sleepers, sleeper fares, US-dollar fares,
         where to buy), each linking its source and saying when it was checked.
         LEG ROWS NOT SHOWN.
      2. LANGUAGE: on ar/plan.html and ru/plan.html the distance line and the
@@ -61,23 +61,23 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
 
   // 1. English
   const en = await legsOf('plan.html', [GIZA, KARNAK]);
-  const want = ['Bashtil', 'US dollars', 'agency'];
-  if (en.rows.length !== 3) fail(`LEG ROWS NOT SHOWN: Giza -> Karnak shows ${en.rows.length} row(s), wanted 3`);
+  const want = ['Bashtil', 'US$110', 'US dollars', 'agency'];
+  if (en.rows.length !== 4) fail(`LEG ROWS NOT SHOWN: Giza -> Karnak shows ${en.rows.length} row(s), wanted 4`);
   else if (!want.every((w, i) => en.rows[i].text.includes(w))) fail('LEG ROWS NOT SHOWN: rows ' + JSON.stringify(en.rows.map(r => r.text)));
   else if (!en.rows.every(r => r.href.startsWith('https://www.seat61.com/') && /checked 20\d\d-\d\d-\d\d/.test(r.text)))
     fail('LEG ROWS NOT SHOWN with a source and a checked date: ' + JSON.stringify(en.rows));
-  else console.log('ok   Giza -> Karnak shows the 3 cited train rows, each with its source and date');
+  else console.log('ok   Giza -> Karnak shows the 4 cited train rows, each with its source and date');
   if (!/^\D*\d+ km in a straight line from The Giza Pyramids$/.test(en.leg.trim())) fail('distance line reads ' + JSON.stringify(en.leg));
 
   // 2. Arabic and Russian
   const ar = await legsOf('ar/plan.html', [GIZA, KARNAK]);
   if (!/[٠-٩]+ كم بخطّ مستقيم من/.test(ar.leg) || /\d/.test(ar.leg.replace(/[٠-٩]/g, '')))
     fail('LEG LEFT IN ENGLISH (ar): ' + JSON.stringify(ar.leg));
-  else if (ar.rows.length !== 3 || !ar.rows[0].text.includes('بشتيل')) fail('LEG LEFT IN ENGLISH (ar rows): ' + JSON.stringify(ar.rows.map(r => r.text)));
+  else if (ar.rows.length !== 4 || !ar.rows[0].text.includes('بشتيل')) fail('LEG LEFT IN ENGLISH (ar rows): ' + JSON.stringify(ar.rows.map(r => r.text)));
   else console.log('ok   ar/plan.html: the distance in Arabic digits and the rows in Arabic');
   const ru = await legsOf('ru/plan.html', [GIZA, KARNAK]);
   if (!/\d+ км по прямой от/.test(ru.leg)) fail('LEG LEFT IN ENGLISH (ru): ' + JSON.stringify(ru.leg));
-  else if (ru.rows.length !== 3 || !ru.rows[0].text.includes('Баштиль')) fail('LEG LEFT IN ENGLISH (ru rows): ' + JSON.stringify(ru.rows.map(r => r.text)));
+  else if (ru.rows.length !== 4 || !ru.rows[0].text.includes('Баштиль')) fail('LEG LEFT IN ENGLISH (ru rows): ' + JSON.stringify(ru.rows.map(r => r.text)));
   else console.log('ok   ru/plan.html: the distance and the rows in Russian');
 
   // 4. The summary and the digits. Karnak in July reaches the top heat band,
