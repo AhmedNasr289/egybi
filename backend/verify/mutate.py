@@ -575,6 +575,13 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
 # the visa rise announced for 1 January 2027 has happened but the page still
 # gives US$30 as the current fee (2026-11-17): moved to a date already past
+# The Cairo legs carry the sleeper fares (2026-11-18). Dropping the
+# row from the leg must make leg-rows.js report the leg's rows as wrong.
+case("the sleeper fares dropped from the Cairo-Luxor leg", "leg-rows.js", ["site/data/getting-around.json"],
+     lambda: edit("site/data/getting-around.json", '"luxor"], "rows": ["train-bashtil", "train-sleeper", "train-fares"',
+                  '"luxor"], "rows": ["train-bashtil", "train-fares"'),
+     lambda o: "FAIL Giza to Karnak takes the Cairo-Luxor sleeper rows" in o, f"node {HERE}/leg-rows.js")
+
 # made-in-egypt.html says EgyBI takes no payment from any maker (2026-11-18).
 # A referral tag on a maker link would make that untrue; coverage.py must refuse it.
 case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-egypt.json"],

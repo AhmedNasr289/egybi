@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-17",
+  "as_of": "2026-11-18",
   "source": "Hand-compiled from the sources named on each row; each row carries the date it was last checked",
   "note": "The visa rules are the UK government's reading of Egypt's rules for British passports. Rules for other passports can differ, so check your own country's travel advice.",
   "groups": [
@@ -8,19 +8,19 @@
       "rows": [
         { "key": "visa-on-arrival", "label": "Visa on arrival", "value": "US$30, cash only",
           "detail": "Sold at kiosks before the immigration counters at approved airports. Valid for up to 30 days.",
-          "source": "UK government travel advice: Egypt, entry requirements (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
+          "source": "UK government travel advice: Egypt, entry requirements (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
         { "key": "cairo-digital-visa", "label": "Digital visa on arrival, Cairo airport only", "value": "US$36, card only",
           "detail": "Since 1 August 2026, from self-service machines or the Visa on Arrival portal, visaonarrival.gov.eg. The price includes a US$6 digital service fee.",
-          "source": "UK government travel advice: Egypt, entry requirements (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
+          "source": "UK government travel advice: Egypt, entry requirements (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
         { "key": "e-visa", "label": "e-Visa, before you fly", "value": "US$30 single entry, US$65 multiple entry",
           "detail": "Apply on the government portal, visa2egypt.gov.eg. The UK government says a tourist e-visa is valid for up to 3 months and can save time at the airport.",
-          "source": "ATTA: Egypt to raise single-entry visa fee to $33 from January 2027", "source_url": "https://atta.travel/resource/egypt-to-raise-single-entry-visa-fee-to-33-from-january-2027.html", "checked": "2026-11-17" },
+          "source": "Egypt e-Visa portal: frequently asked questions", "source_url": "https://visa2egypt.gov.eg/eVisa/FAQ", "checked": "2026-11-18" },
         { "key": "sinai-stamp", "label": "Flying into Sharm el-Sheikh for the Sinai resorts only", "value": "Free entry stamp, up to 15 days",
           "detail": "Covers Sharm el-Sheikh, Dahab, Nuweiba and Taba. To travel beyond those resorts, or to stay longer, you need a visa.",
-          "source": "UK government travel advice: Egypt, entry requirements (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
+          "source": "UK government travel advice: Egypt, entry requirements (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
         { "key": "visa-agents", "label": "Visa agents in the arrivals hall", "value": "You do not need one",
           "detail": "Agents often charge more than the US$30 fee. If one harasses you, report it to the tourist police in the terminal.",
-          "source": "UK government travel advice: Egypt, entry requirements (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
+          "source": "UK government travel advice: Egypt, entry requirements (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
         { "key": "visa-2027", "label": "From 1 January 2027", "value": "US$33, or US$39 at Cairo's digital kiosks",
           "detail": "A Cabinet decision of 13 August 2026 raises the single-entry visa by US$3. When we checked, the e-Visa portal still showed the old price.",
           "changes_on": "2027-01-01",
@@ -32,7 +32,7 @@
       "rows": [
         { "key": "egp-limit", "label": "Egyptian pounds in or out of the country", "value": "Up to 5,000 EGP",
           "detail": "There is no limit on foreign currency, but you must declare more than US$10,000 when you arrive.",
-          "source": "UK government travel advice: Egypt, entry requirements (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
+          "source": "UK government travel advice: Egypt, entry requirements (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
         { "key": "russian-cards", "label": "Cards issued by Russian banks", "value": "Not reliable",
           "detail": "Mir and UnionPay cards work in only a few places, and Russian cards are sometimes declined because of sanctions. Bring US dollars or euros in cash and change them in Egypt, at a bank or an exchange office.",
           "source": "Sravni: Currency in Egypt (updated 2 Nov 2026, in Russian)", "source_url": "https://www.sravni.ru/vzr/info/valyuta-v-egipte/", "checked": "2026-11-17" }
@@ -57,16 +57,19 @@
       "rows": [
         { "key": "train-fares", "label": "Fares for foreign visitors", "value": "Priced in US dollars",
           "detail": "Since December 2022, visitors who are not Egyptian pay foreigner fares, in US dollars or euros. The railway's own website and app sell tickets only to Egyptian citizens.",
-          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-17" },
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-18" },
         { "key": "train-tickets", "label": "Where to buy", "value": "At the station, or through an agency",
           "detail": "In Cairo, the Arab and Foreign Reservation Office upstairs at Ramses station sells foreigner tickets for all trains and takes cards, with a 2.5% fee. Agencies can book ahead and deliver paper tickets to your hotel.",
-          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-17" },
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-18" },
         { "key": "train-bashtil", "label": "Sleeper trains to Luxor and Aswan", "value": "Leave from Cairo Upper Egypt (Bashtil) station",
           "detail": "The station opened in October 2024, about 7 km west of Ramses. The sleepers no longer leave from Ramses.",
-          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-17" },
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-18" },
+        { "key": "train-sleeper", "label": "Sleeper fares from Cairo to Luxor or Aswan", "value": "From US$110 a person, sharing a cabin",
+          "detail": "The sleepers are run by Abela, which sells them on abelatrains.com; agencies sell them too. Elite cabins cost US$125 a person sharing a two-berth cabin, or US$170 alone; standard cabins US$110 and US$150. Booking opens 4 to 5 months ahead.",
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-18" },
         { "key": "abu-simbel-road", "label": "Aswan to Abu Simbel", "value": "275 km by desert road",
           "detail": "A daily bus leaves Aswan at 08:00 and arrives at 12:00; the return leaves at 13:00 and reaches Aswan at 16:00. Most day tours leave Aswan very early, for example at 04:00.",
-          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-17" }
+          "source": "Seat61: Train travel in Egypt (updated 14 Sep 2026)", "source_url": "https://www.seat61.com/Egypt.htm", "checked": "2026-11-18" }
       ]
     },
     {
@@ -87,13 +90,13 @@
       "rows": [
         { "key": "alone-taxis", "label": "Taking a taxi alone, especially at night", "value": "Share the trip",
           "detail": "The UK government advises women travelling alone to take care, particularly at night in taxis. If you take one alone, send a friend the driver's details, your route and your live location.",
-          "source": "UK government travel advice: Egypt, safety and security (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" },
+          "source": "UK government travel advice: Egypt, safety and security (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" },
         { "key": "alone-hotel", "label": "Hotel staff and your room", "value": "Not when you are alone",
           "detail": "Most sexual assaults reported to the British Embassy took place in Red Sea resorts, often by someone the victim had already met, including hotel and excursion staff. The UK government advises not letting hotel staff into your room when you are alone.",
-          "source": "UK government travel advice: Egypt, safety and security (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" },
+          "source": "UK government travel advice: Egypt, safety and security (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" },
         { "key": "alone-touts", "label": "Touts at tourist sites", "value": "Be cautious",
           "detail": "The UK government warns that scammers and touts at tourist sites target foreign visitors.",
-          "source": "UK government travel advice: Egypt, safety and security (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" }
+          "source": "UK government travel advice: Egypt, safety and security (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security", "checked": "2026-11-17" }
       ]
     },
     {
@@ -121,7 +124,7 @@
       "rows": [
         { "key": "site-evisa", "label": "e-Visa", "value": "visa2egypt.gov.eg", "detail": "The government portal the UK government's advice links to.",
           "link": "https://visa2egypt.gov.eg/",
-          "source": "UK government travel advice: Egypt, entry requirements (updated 12 Nov 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
+          "source": "UK government travel advice: Egypt, entry requirements (updated 27 Oct 2026)", "source_url": "https://www.gov.uk/foreign-travel-advice/egypt/entry-requirements", "checked": "2026-11-17" },
         { "key": "site-monuments", "label": "Tickets for sites and museums", "value": "egymonuments.com", "detail": "The Ministry of Tourism and Antiquities' booking site.",
           "link": "https://egymonuments.com/",
           "source": "egymonuments.com (Ministry of Tourism and Antiquities)", "source_url": "https://egymonuments.com/", "checked": "2026-11-17" },
