@@ -211,6 +211,14 @@ case("a visit page repeats the same leg rows", "test_visit_legs.py", ["backend/p
      lambda o: "FAIL" in o and "test_cairo_legs_with_the_same_rows_are_said_once" in o,
      f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_visit_legs.py -v')
 
+# Governorate names in Arabic and Russian (2026-11-18). Dropping one from the
+# Arabic map would show that governorate in English on every Arabic page;
+# test_gov_names.py must catch it.
+case("a governorate with no Arabic name", "test_gov_names.py", ["backend/pipeline/pages/egfmt.py"],
+     lambda: edit("backend/pipeline/pages/egfmt.py", '"South Sinai": "جنوب سيناء", ', ''),
+     lambda o: "FAIL" in o and "test_every_governorate_has_an_arabic_and_a_russian_name" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_gov_names.py -v')
+
 # an empty-state note that talks to the maintainer, not the traveller (2026-11-17)
 case("build language back in a visitor note", "static-audit.py", ["site/visit.html"],
      lambda: edit("site/visit.html", "The cross-sections are not ready yet. Please check back soon.",
@@ -1477,6 +1485,13 @@ case("the Russian planner breaks on a number format", "leg-cards.js", ["site/ass
                   "return F ? F.digits(String(x), document.documentElement.getAttribute('lang') || 'en') : String(x);"),
      lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
 
+# The home briefing in Arabic and Russian (2026-11-18). Putting its title back
+# as an English literal must make twin-data.js report the briefing.
+case("the home briefing title back in English", "twin-data.js", ["site/assets/home.js"],
+     lambda: edit("site/assets/home.js", "title.textContent = t('The heat, site by site, in %m.').replace('%m', T.monthName(main));",
+                  "title.textContent = 'The heat, site by site, in ' + T.MONTHS[main] + '.';"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "briefing" in o, f"node {HERE}/twin-data.js")
+
 # The visit page in Arabic and Russian (2026-11-18). Writing the month
 # caption back as an English sentence must make twin-data.js report it.
 case("the visit month caption back in English", "twin-data.js", ["site/assets/visit.js"],
@@ -1485,12 +1500,26 @@ case("the visit month caption back in English", "twin-data.js", ["site/assets/vi
                   "cap.innerHTML = esc(('In %m, a normal afternoon across these %n sites"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "month caption" in o, f"node {HERE}/twin-data.js")
 
+# The Arabic month caption names the sites in Arabic (2026-11-18). Using the
+# English name again must make twin-data.js report it.
+case("the Arabic month caption names a site in English", "twin-data.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js", ".replace('%a', siteName(lo.s))", ".replace('%a', lo.s.name)"),
+     lambda o: "names a site in English" in o, f"node {HERE}/twin-data.js")
+
 # The places page in Arabic and Russian (2026-11-18). Putting the card's
 # "Going there" heading back as an English literal must make twin-data.js
 # report the place card.
 case("the place card heading back in English", "twin-data.js", ["site/assets/places.js"],
      lambda: edit("site/assets/places.js", "'<div class=\"pd-going\"><h4>' + esc(t('Going there')) + '</h4>'",
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
+
+# A kind label passed to t() as a variable is never collected into the
+# translation table, so it stayed English on the live Arabic and Russian
+# pages (2026-11-18). Writing one back as a plain string must be caught.
+case("a place kind label not collected for translation", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "airport:    { label: t('Airports'),       one: t('Airport'),",
+                  "airport:    { label: 'Airports',       one: 'Airport',"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
 
 

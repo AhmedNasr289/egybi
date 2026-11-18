@@ -131,6 +131,11 @@ DATA_TEXT = {
     # The planner's stop cards name the items made near a stop (plan.js madeNearHtml).
     # Only items made near a site appear there (rows with a "near" list).
     'made-in-egypt.json': {'top': (), 'group': (), 'row': ('item',), 'no_sources': True, 'only_near': True},
+
+    # Holiday names and notes, and the capacity facts, shown by the home page
+    # and the planner (home.js renderEvents, plan.js renderDossier).
+    'calendar.json': {'top': (), 'group': (), 'row': (),
+                      'lists': {'events': ('name', 'note'), 'capacity': ('place', 'fact')}},
 }
 
 
@@ -154,6 +159,9 @@ def data_keys() -> list:
                 keys.update(r[k] for k in f['row'] if r.get(k))
                 if r.get('source') and not r.get('source_url') and not f.get('no_sources'):
                     keys.add(r['source'])
+        for lname, fields in f.get('lists', {}).items():
+            for item in d.get(lname, []):
+                keys.update(item[k] for k in fields if item.get(k))
     return sorted(keys)
 
 

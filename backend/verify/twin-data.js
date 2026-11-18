@@ -100,6 +100,23 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
       });
       if (off.length) fail(`TWIN LINK WRONG FOLDER: ${where} links to ${off.map(h => new URL(h).pathname).join(', ')}`);
 
+      // The home briefing home.js writes (2026-11-18): its title, lead and
+      // add buttons read in the page's language; English stays English.
+      if (page === 'index.html' && loaded) {
+        const brief = await p.evaluate(() => ({
+          title: (document.getElementById('briefTitle') || {}).textContent || '',
+          lead: (document.getElementById('briefLead') || {}).textContent || '',
+          btn: ((document.querySelector('#briefGrid [data-add]') || {}).textContent || '').trim(),
+          legend: (document.getElementById('heatLegend') || {}).textContent || '',
+        }));
+        const eng = /The heat, site by site|Arriving |\+ Add to my plan|In your plan|or less|or more|by day/;
+        const all = brief.title + ' | ' + brief.lead + ' | ' + brief.btn + ' | ' + brief.legend;
+        if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} briefing reads "${all.slice(0, 160)}"`);
+        else if (!lang && !(/^The heat, site by site, in /.test(brief.title) && /^Arriving /.test(brief.lead)))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: the English briefing changed to "${all.slice(0, 160)}"`);
+        else console.log(`${where}: briefing "${brief.title}"`);
+      }
+
       // The visit page (2026-11-18): the month caption visit.js writes reads
       // in the page's language; English stays English.
       if (page === 'visit.html' && loaded) {
@@ -110,6 +127,9 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         const eng = /a normal afternoon|degrees within one country|sites runs from/;
         if (!cap) fail(`TWIN DATA NOT LOADED: ${where} - the month caption stayed empty`);
         else if (lang && eng.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption reads "${cap.slice(0, 160)}"`);
+        // On Arabic pages the site names come from the climate file's name_ar,
+        // so the caption has no Latin letter at all (2026-11-18).
+        else if (lang === 'ar/' && /[A-Za-z]/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption names a site in English: "${cap.slice(0, 160)}"`);
         else if (!lang && !/^In \w+, a normal afternoon/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English month caption changed to "${cap.slice(0, 160)}"`);
         else console.log(`${where}: month caption in the page's language`);
       }
@@ -120,12 +140,30 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         await p.waitForFunction(() => document.querySelector('#placeList tr[data-k]'), null, { timeout: 8000 }).catch(() => {});
         const row = await p.$('#placeList tr[data-k]');
         if (row) await row.click();
-        const card = await p.evaluate(() => ({
-          meta: (document.getElementById('placesMeta') || {}).textContent || '',
-          card: (document.getElementById('placeDetail') || {}).textContent || '',
-        }));
-        const eng = /OpenStreetMap, as of|Going there|Governorate|Coordinates|Open in OpenStreetMap|\+ Add to my trip plan/;
-        const all = card.meta + ' | ' + card.card;
+        // Only the text places.js writes: the summary, the row labels, the
+        // kind value, the "Going there" heading and the link labels with their
+        // notes. The card's heading and some values are names from the data
+        // (an English OpenStreetMap name such as "Abu Rudeis Airport"), so the
+        // whole card text cannot be tested for English words.
+        const card = await p.evaluate(() => {
+          const d = document.getElementById('placeDetail');
+          const pick = (sel) => d ? Array.from(d.querySelectorAll(sel)).map(e => e.textContent.trim()) : [];
+          return {
+            meta: (document.getElementById('placesMeta') || {}).textContent || '',
+            card: d ? d.textContent : '',
+            written: [].concat(pick('.pd-row > span'), pick('.pd-row strong').slice(0, 1),
+                               pick('.pd-going h4'), pick('.pd-links a'), pick('.pd-links li > span')).join(' | '),
+            // the card's second row is the governorate (Kind, Governorate, ...)
+            gov: (d && d.querySelectorAll('.pd-row strong')[1] || {}).textContent || '',
+          };
+        });
+        // Governorate names in the page's language (2026-11-18, egfmt.govName).
+        const script = { ar: /[\u0600-\u06FF]/, ru: /[\u0400-\u04FF]/ };
+        const lg = lang.replace('/', '');
+        if (lang && card.gov && !script[lg].test(card.gov))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card governorate reads "${card.gov}"`);
+        const eng = /OpenStreetMap, as of|Going there|Governorate|Coordinates|Open in OpenStreetMap|\+ Add to my trip plan|Cities & towns|Airports?\b|Ancient sites?\b|Museums?\b|City or town|(January|February|March|April|May|June|July|August|September|October|November|December) 20\d\d/;
+        const all = card.meta + ' | ' + card.written;
         if (!card.card) fail(`TWIN DATA NOT LOADED: ${where} - no place card opened`);
         else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card reads "${all.slice(0, 160)}"`);
         else if (!lang && !/Going there/.test(card.card)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English place card changed to "${card.card.slice(0, 160)}"`);
