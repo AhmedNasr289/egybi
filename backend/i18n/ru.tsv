@@ -1283,3 +1283,22 @@ OpenStreetMap, as of %d	OpenStreetMap, на %d
 Absent right now:	Сейчас отсутствуют:
 None are missing at this build.	В этой сборке не отсутствует ни один.
 The places layer has not been generated yet. It appears automatically after the next “Build Atlas geo layers” run. The map of Egypt above already works.	Слой мест ещё не создан. Он появится автоматически после следующего запуска «Build Atlas geo layers». Карта Египта выше уже работает.
+The Giza Pyramids	Пирамиды Гизы
+Saqqara	Саккара
+Karnak Temple	Карнакский храм
+Valley of the Kings	Долина Царей
+Abu Simbel	Абу-Симбел
+Philae Temple	Храм на острове Филе
+Abydos	Абидос
+Dendera Temple	Храм в Дендере
+Historic Cairo	Исторический Каир
+Alexandria	Александрия
+Siwa Oasis	Оазис Сива
+The White Desert	Белая пустыня
+Saint Catherine's Monastery	Монастырь Святой Екатерины
+Dahab	Дахаб
+Hurghada	Хургада
+Wadi al-Hitan	Вади-аль-Хитан
+Abu Mena	Абу-Мена
+The Suez Canal at Ismailia	Суэцкий канал у Исмаилии
+%a°N, %b°E	%a° с. ш., %b° в. д.

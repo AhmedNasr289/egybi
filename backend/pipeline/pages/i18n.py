@@ -128,6 +128,10 @@ DATA_TEXT = {
     # Only the rows a leg names in getting-around.json are shown by script.
     'arrival.json': {'top': (), 'group': (), 'row': ('label', 'value'),
                      'only_leg_rows': 'getting-around.json'},
+    # The heat page names the measured sites in the page's language (visit.js
+    # siteName, 2026-11-18): Russian pages through this table; Arabic pages
+    # use the file's own name_ar, and the Arabic table repeats it.
+    'visit-climate.json': {'top': (), 'group': (), 'row': (), 'list': ('sites', 'name')},
 }
 
 
@@ -140,6 +144,9 @@ def data_keys() -> list:
         if f.get('only_leg_rows'):
             guide = json.loads(read_text(os.path.join(SITE, 'data', f['only_leg_rows'])))
             only = {k for leg in guide.get('legs', []) for k in leg.get('rows', [])}
+        if f.get('list'):
+            lk, fk = f['list']
+            keys.update(x[fk] for x in d.get(lk, []) if x.get(fk))
         keys.update(d[k] for k in f['top'] if d.get(k))
         for g in d.get('groups', []):
             keys.update(g[k] for k in f['group'] if g.get(k))

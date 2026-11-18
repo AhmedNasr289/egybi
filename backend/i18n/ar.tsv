@@ -1283,3 +1283,22 @@ OpenStreetMap, as of %d	OpenStreetMap، حتى %d
 Absent right now:	غائبة الآن:
 None are missing at this build.	لا ينقص أيٌّ منها في هذا الإصدار.
 The places layer has not been generated yet. It appears automatically after the next “Build Atlas geo layers” run. The map of Egypt above already works.	لم تُولَّد طبقة الأماكن بعد. ستظهر تلقائيًا بعد التشغيل التالي لـ«Build Atlas geo layers». خريطة مصر أعلاه تعمل بالفعل.
+The Giza Pyramids	أهرامات الجيزة
+Saqqara	سقارة
+Karnak Temple	معبد الكرنك
+Valley of the Kings	وادي الملوك
+Abu Simbel	أبو سمبل
+Philae Temple	معبد فيلة
+Abydos	أبيدوس
+Dendera Temple	معبد دندرة
+Historic Cairo	القاهرة التاريخية
+Alexandria	الإسكندرية
+Siwa Oasis	واحة سيوة
+The White Desert	الصحراء البيضاء
+Saint Catherine's Monastery	دير سانت كاترين
+Dahab	دهب
+Hurghada	الغردقة
+Wadi al-Hitan	وادي الحيتان
+Abu Mena	أبو مينا
+The Suez Canal at Ismailia	قناة السويس
+%a°N, %b°E	%a° شمالًا، %b° شرقًا
