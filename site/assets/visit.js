@@ -115,6 +115,19 @@
   // The month buttons: Arabic month names are short enough to show whole.
   function monthShort(i) { return LANG === 'ar' ? MONTHS_AR[i] : LANG === 'ru' ? SHORT_RU[i] : SHORT[i]; }
   function deg(n) { return fmt(n, 0) + NB_ + t('°C'); }
+  // A site's name in the page's language: the Arabic name the climate file
+  // carries on Arabic pages (the elevation file has none, so it is looked up
+  // by key), the English name elsewhere. Found on the live site 2026-11-18,
+  // where the Arabic caption read "... في Abu Mena".
+  function siteName(s) {
+    if (!s) return '';
+    if (LANG === 'ar') {
+      if (s.name_ar) return s.name_ar;
+      var c = ((S.climate && S.climate.sites) || []).filter(function (x) { return x.key === s.key; })[0];
+      if (c && c.name_ar) return c.name_ar;
+    }
+    return s.name;
+  }
   var NB_ = '\u00a0';
 
   function load(path) {
@@ -246,7 +259,7 @@
         fillColor: heatColour(tC), fillOpacity: 0.95
       });
       mk.bindTooltip(
-        '<strong>' + esc(site.name) + '</strong><br>' +
+        '<strong>' + esc(siteName(site)) + '</strong><br>' +
         esc(tC == null ? t('no reading for this month')
                        : t('%m reaches about %x by day').replace('%m', monthName(S.month)).replace('%x', deg(tC))),
         { direction: 'top' });
@@ -291,7 +304,7 @@
     });
     tb.innerHTML = rows.map(function (r) {
       return '<tr data-key="' + esc(r.s.key) + '">' +
-        '<td>' + esc(r.s.name) + '<span class="v-gov">' + esc(gv(r.s.gov)) + '</span></td>' +
+        '<td>' + esc(siteName(r.s)) + '<span class="v-gov">' + esc(gv(r.s.gov)) + '</span></td>' +
         '<td class="num"><span class="v-chip" style="background:' + heatColour(r.t) +
           ';color:' + readableOn(heatColour(r.t)) + '">' +
           (r.t == null ? '—' : fmt(r.t, 0) + '°') + '</span></td>' +
@@ -311,7 +324,7 @@
         var fellBack = hot.some(function (r) { return r.kind === 'all-day-mean'; });
         cap.innerHTML = esc(t('In %m, a normal afternoon across these %n sites runs from %lo at %a to %hi at %b: a spread of %d degrees within one country, on the same day of the year.')
             .replace('%m', monthName(S.month)).replace('%n', fmt(hot.length, 0))
-            .replace('%lo', deg(lo.t)).replace('%a', lo.s.name).replace('%hi', deg(hi.t)).replace('%b', hi.s.name)
+            .replace('%lo', deg(lo.t)).replace('%a', siteName(lo.s)).replace('%hi', deg(hi.t)).replace('%b', siteName(hi.s))
             .replace('%d', fmt(hi.t - lo.t, 0))) +
           (fellBack ? ' <em>' + esc(t('Some sites have no daily normal yet and are showing their all-day mean, which reads lower; those fill in on the next pipeline run.')) + '</em>' : '');
       }
@@ -412,13 +425,13 @@
     var span = hi.elevation_m - lo.elevation_m;
     if (lead) {
       lead.innerHTML = esc(t('Across these %n sites the ground rises from %lo m at %a to %hi m at %b: %s metres of relief. Every figure is a radar measurement of the actual land surface, not a rendering of it.')
-        .replace('%n', fmt(rows.length, 0)).replace('%lo', fmt(lo.elevation_m, 0)).replace('%a', lo.name)
-        .replace('%hi', fmt(hi.elevation_m, 0)).replace('%b', hi.name).replace('%s', fmt(span, 0)));
+        .replace('%n', fmt(rows.length, 0)).replace('%lo', fmt(lo.elevation_m, 0)).replace('%a', siteName(lo))
+        .replace('%hi', fmt(hi.elevation_m, 0)).replace('%b', siteName(hi)).replace('%s', fmt(span, 0)));
     }
     host.innerHTML = rows.map(function (r) {
       var w = Math.max(1.5, (r.elevation_m - Math.min(0, lo.elevation_m)) / (span || 1) * 100);
       return '<div class="v-terr" data-key="' + esc(r.key) + '">' +
-        '<span class="v-tn">' + esc(r.name) + '</span>' +
+        '<span class="v-tn">' + esc(siteName(r)) + '</span>' +
         '<span class="v-tb"><i style="width:' + w.toFixed(1) + '%"></i></span>' +
         '<span class="v-tv">' + esc(t('%n m').replace('%n', fmt(r.elevation_m, 0))) + '</span></div>';
     }).join('');
