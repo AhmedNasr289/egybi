@@ -1194,6 +1194,38 @@ This planner now opens offline on this device, with your saved trip.	أصبح ا
 All stops removed.	حُذفت كل المحطات.
 Saved.	تم الحفظ.
 See your trips	اعرض رحلاتك
+Map of Egypt showing where the selected elevation line runs	خريطة مصر تُظهر مسار خط الارتفاع المختار
+no reading for this month	لا قراءة لهذا الشهر
+%m reaches about %x by day	يصل %m إلى نحو %x نهارًا
+World Heritage	تراث عالمي
+In %m, a normal afternoon across these %n sites runs from %lo at %a to %hi at %b: a spread of %d degrees within one country, on the same day of the year.	في %m، تتراوح الحرارة المعتادة بعد الظهر في هذه المواقع الـ%n بين %lo في %a و%hi في %b: فارق %d درجة داخل بلد واحد، في اليوم نفسه من السنة.
+Some sites have no daily normal yet and are showing their all-day mean, which reads lower; those fill in on the next pipeline run.	بعض المواقع ليس لها معدل يومي بعد، فتظهر بمتوسط اليوم كله، وهو أقل؛ وتكتمل في التشغيل التالي لخط المعالجة.
+no reading	لا قراءة
+%g governorate	محافظة %g
+%n m above sea level	%n م فوق سطح البحر
+UNESCO World Heritage	تراث عالمي لليونسكو
+Mean daily maximum, by month.	متوسط العظمى اليومية، شهرًا بشهر.
+All-day mean, by month.	متوسط اليوم كله، شهرًا بشهر.
+%m: about %x by day	%m: نحو %x نهارًا
+, dropping to %x at night	، وتنخفض إلى %x ليلًا
+, averaging %x across the whole day	، بمتوسط %x على مدار اليوم
+%m: an average of %x across the whole day	%m: متوسط %x على مدار اليوم
+, with %r mm of rain a day	، مع %r مم من المطر يوميًا
+Across the whole record the extremes for this month reach %hi and drop to %lo. Those are the hottest and coldest hours ever measured here in %m, not a typical day.	على مدى السجل كله تبلغ القيم القصوى لهذا الشهر %hi وتنخفض إلى %lo. هذه أحرّ وأبرد ساعات قيست هنا في %m، وليست يومًا عاديًا.
+No reading for the selected month.	لا قراءة للشهر المختار.
+These are modelled long-run averages from NASA POWER, not a forecast and not station readings. They describe what the month is usually like here; they say nothing about the day you travel.	هذه متوسطات طويلة الأمد محسوبة بنموذج NASA POWER، وليست توقعًا للطقس ولا قراءات محطات. تصف كيف يكون الشهر عادةً هنا، ولا تقول شيئًا عن يوم سفرك.
+The day and night figures are the 2001–2020 mean daily maximum and minimum.	أرقام النهار والليل هي متوسط العظمى والصغرى اليومية للفترة ٢٠٠١–٢٠٢٠.
+No mean daily maximum has been published for this site yet, so the figure above is the all-day mean and a real afternoon will run several degrees warmer.	لم يُنشر بعد متوسط للعظمى اليومية لهذا الموقع، لذلك الرقم أعلاه متوسط اليوم كله، وستكون الظهيرة الفعلية أحرّ بعدة درجات.
+Elevation is sampled from NASA SRTM 30 m at this site’s own coordinates.	الارتفاع مأخوذ من بيانات NASA SRTM بدقة ٣٠ م عند إحداثيات الموقع نفسه.
+Across these %n sites the ground rises from %lo m at %a to %hi m at %b: %s metres of relief. Every figure is a radar measurement of the actual land surface, not a rendering of it.	في هذه المواقع الـ%n يرتفع سطح الأرض من %lo م في %a إلى %hi م في %b: فارق تضاريس قدره %s مترًا. كل رقم قياس راداري لسطح الأرض الفعلي، وليس رسمًا له.
+%n m	%n م
+Elevation in metres above sea level against distance along the line, from %s.	الارتفاع بالأمتار فوق سطح البحر مقابل المسافة على طول الخط، من %s.
+Built %d.	أُعدّ في %d.
+Gaps in a curve are points the model has no value for, drawn as gaps rather than as zero.	الفجوات في المنحنى نقاط لا قيمة لها في النموذج، تُرسم فجوات لا أصفارًا.
+%n km along the line	%n كم على طول الخط
+no elevation at this point: the model has no value here, so nothing is drawn	لا ارتفاع عند هذه النقطة: لا قيمة لها في النموذج، فلا يُرسم شيء
+ground at %n m	سطح الأرض على %n م
+below sea level	تحت سطح البحر
 City or town	مدينة أو بلدة
 Airport	مطار
 Ancient site	موقع أثري
@@ -1230,7 +1262,6 @@ IATA code	رمز IATA
 As tagged in OpenStreetMap. Community-maintained and often years out of date — not an official census figure.	كما هو موسوم في OpenStreetMap. يحرّره متطوعون وكثيرًا ما يكون قديمًا بسنوات — وليس رقمًا رسميًا من التعداد.
 Nearest World Heritage site	أقرب موقع تراث عالمي
 %n km	%n كم
-%n m	%n م
 Straight-line distance, not travel distance.	مسافة بخط مستقيم، لا مسافة الطريق.
 Visitor guide	دليل الزائر
 %s by month	%s شهرًا بشهر
