@@ -35,10 +35,14 @@
   /* A dataset's date, written as the site writes dates ("3 November 2026",
      EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
      value as written if egfmt.js did not load. */
+  var MONTHS_RU_OF = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля',
+                      'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   function asOf(v) {
     var F = window.EGYBI && window.EGYBI.fmt;
-    // Arabic pages get the Arabic date; other pages the English form (Russian
-    // dates are written by trip.js, which this page does not load).
+    // Arabic pages get egfmt's Arabic date, Russian pages "3 ноября 2026"
+    // (genitive month, as trip.js writes it; this page does not load trip.js).
+    var m = LANG === 'ru' && /^(\d{4})-(\d\d)-(\d\d)/.exec(String(v || ''));
+    if (m) return (+m[3]) + ' ' + MONTHS_RU_OF[+m[2] - 1] + ' ' + m[1];
     return F ? F.dateOrRaw(v, LANG === 'ar' ? 'ar' : 'en', 'prose') : (v == null ? '' : String(v));
   }
   // Translated text for what this script writes; the build collects every
@@ -80,10 +84,13 @@
   // One colour per kind, chosen to stay distinguishable on the pale governorate
   // fill and to survive the site's dark/light surface alternation.
   var KIND = {
-    settlement: { label: 'Cities & towns', one: 'City or town', colour: BLUE,      r: 4 },
-    airport:    { label: 'Airports',       one: 'Airport',      colour: '#0F7B6C', r: 5 },
-    antiquity:  { label: 'Ancient sites',  one: 'Ancient site', colour: '#B23A0F', r: 3.5 },
-    museum:     { label: 'Museums',        one: 'Museum',       colour: '#6B3FA0', r: 4 }
+    // Each label is a literal string inside the translate call: the build
+    // collects only those into assets/i18n/<lang>.js, so a label passed in
+    // as a variable was never translated (found on the live site, 2026-11-18).
+    settlement: { label: t('Cities & towns'), one: t('City or town'), colour: BLUE,      r: 4 },
+    airport:    { label: t('Airports'),       one: t('Airport'),      colour: '#0F7B6C', r: 5 },
+    antiquity:  { label: t('Ancient sites'),  one: t('Ancient site'), colour: '#B23A0F', r: 3.5 },
+    museum:     { label: t('Museums'),        one: t('Museum'),       colour: '#6B3FA0', r: 4 }
   };
 
   var CLUSTER_CLASS = {
@@ -425,7 +432,7 @@
     var spec = KIND[p.kind] || { label: p.kind, one: p.kind };
     var bits = [];
     bits.push('<div class="pd-row"><span>' + esc(t('Kind')) + '</span><strong>' +
-      esc(t(spec.one || spec.label)) + (p.place ? ' · ' + esc(p.place) : '') + '</strong></div>');
+      esc(spec.one || spec.label) + (p.place ? ' · ' + esc(p.place) : '') + '</strong></div>');
     bits.push('<div class="pd-row"><span>' + esc(t('Governorate')) + '</span><strong>' +
       (p.gov ? esc(gv(p.gov)) : esc(t('not assigned'))) + '</strong></div>');
     bits.push('<div class="pd-row"><span>' + esc(t('Coordinates')) + '</span><strong>' +
@@ -501,7 +508,7 @@
     $('placeCount').textContent = fmt(out.length);
     body.innerHTML = out.slice(0, 300).map(function (p) {
       return '<tr data-k="' + esc(p.kind) + '"><td>' + esc(p.name) + '</td>' +
-        '<td>' + esc(t((KIND[p.kind] || {}).one || p.kind)) + '</td>' +
+        '<td>' + esc((KIND[p.kind] || {}).one || p.kind) + '</td>' +
         '<td>' + (p.gov ? esc(gv(p.gov)) : '—') + '</td>' +
         '<td class="num">' + (typeof p.population_osm === 'number' ? fmt(p.population_osm) : '—') + '</td>' +
         (me ? '<td class="num">' + kmText(dist.get(p)) + '</td>' : '') + '</tr>';
@@ -632,11 +639,11 @@
         // Anything the pipeline starts counting now appears here by itself.
         // Labelled counts ("Airports: 12"), so no English plural reaches
         // Arabic or Russian.
-        var LABELS = { settlement: 'Cities & towns', airport: 'Airports',
-                       antiquity: 'Ancient sites', museum: 'Museums' };
+        var LABELS = { settlement: KIND.settlement.label, airport: KIND.airport.label,
+                       antiquity: KIND.antiquity.label, museum: KIND.museum.label };
         var parts = Object.keys(LABELS)
           .filter(function (k) { return c[k]; })
-          .map(function (k) { return t(LABELS[k]) + ': ' + fmt(c[k]); });
+          .map(function (k) { return LABELS[k] + ': ' + fmt(c[k]); });
         // A kind the data has but this list does not name still gets counted,
         // under its own key, rather than being dropped for want of a phrasing.
         Object.keys(c).forEach(function (k) {

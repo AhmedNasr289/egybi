@@ -1487,12 +1487,26 @@ case("the visit month caption back in English", "twin-data.js", ["site/assets/vi
                   "cap.innerHTML = esc(('In %m, a normal afternoon across these %n sites"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "month caption" in o, f"node {HERE}/twin-data.js")
 
+# The Arabic month caption names the sites in Arabic (2026-11-18). Using the
+# English name again must make twin-data.js report it.
+case("the Arabic month caption names a site in English", "twin-data.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js", ".replace('%a', siteName(lo.s))", ".replace('%a', lo.s.name)"),
+     lambda o: "names a site in English" in o, f"node {HERE}/twin-data.js")
+
 # The places page in Arabic and Russian (2026-11-18). Putting the card's
 # "Going there" heading back as an English literal must make twin-data.js
 # report the place card.
 case("the place card heading back in English", "twin-data.js", ["site/assets/places.js"],
      lambda: edit("site/assets/places.js", "'<div class=\"pd-going\"><h4>' + esc(t('Going there')) + '</h4>'",
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
+
+# A kind label passed to t() as a variable is never collected into the
+# translation table, so it stayed English on the live Arabic and Russian
+# pages (2026-11-18). Writing one back as a plain string must be caught.
+case("a place kind label not collected for translation", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "airport:    { label: t('Airports'),       one: t('Airport'),",
+                  "airport:    { label: 'Airports',       one: 'Airport',"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
 
 
