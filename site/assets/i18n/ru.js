@@ -109,7 +109,7 @@ window.EGYBI_STRINGS = {
  "Hotel housekeeping": "Горничная в отеле",
  "IATA code": "Код IATA",
  "If that email has an account, a reset link is on its way.": "Если с этим адресом связан аккаунт, ссылка для сброса уже отправлена.",
- "In %m, a normal afternoon across these %n sites runs from %lo at %a to %hi at %b: a spread of %d degrees within one country, on the same day of the year.": "В месяце «%m» обычная дневная температура в этих %n местах — от %lo (%a) до %hi (%b): разброс в %d градусов в одной стране в один и тот же день года.",
+ "In %m, a normal afternoon across these %n sites runs from %lo at %a to %hi at %b: a spread of %d degrees within one country, on the same day of the year.": "В месяце «%m» обычная дневная температура в этих %n местах — от %lo (%a) до %hi (%b): разброс %d °C в одной стране в один и тот же день года.",
  "In %s today": "Сегодня в %s",
  "Inside the Great Pyramid (Khufu), adult foreign visitor": "Внутри пирамиды Хеопса (Хуфу), взрослый иностранный посетитель",
  "Inside your dates": "В ваши даты",

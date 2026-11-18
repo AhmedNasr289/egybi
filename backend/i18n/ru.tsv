@@ -1198,7 +1198,7 @@ Map of Egypt showing where the selected elevation line runs	Карта Егип�
 no reading for this month	нет данных за этот месяц
 %m reaches about %x by day	%m: днём около %x
 World Heritage	Всемирное наследие
-In %m, a normal afternoon across these %n sites runs from %lo at %a to %hi at %b: a spread of %d degrees within one country, on the same day of the year.	В месяце «%m» обычная дневная температура в этих %n местах — от %lo (%a) до %hi (%b): разброс в %d градусов в одной стране в один и тот же день года.
+In %m, a normal afternoon across these %n sites runs from %lo at %a to %hi at %b: a spread of %d degrees within one country, on the same day of the year.	В месяце «%m» обычная дневная температура в этих %n местах — от %lo (%a) до %hi (%b): разброс %d °C в одной стране в один и тот же день года.
 Some sites have no daily normal yet and are showing their all-day mean, which reads lower; those fill in on the next pipeline run.	Для некоторых мест ещё нет дневной нормы, и показано среднее за сутки, которое ниже; они заполнятся при следующем запуске обработки.
 no reading	нет данных
 %g governorate	мухафаза %g

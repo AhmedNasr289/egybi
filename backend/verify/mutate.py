@@ -1479,6 +1479,12 @@ case("the visit month caption back in English", "twin-data.js", ["site/assets/vi
                   "cap.innerHTML = esc(('In %m, a normal afternoon across these %n sites"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "month caption" in o, f"node {HERE}/twin-data.js")
 
+# The Arabic month caption names the sites in Arabic (2026-11-18). Using the
+# English name again must make twin-data.js report it.
+case("the Arabic month caption names a site in English", "twin-data.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js", ".replace('%a', siteName(lo.s))", ".replace('%a', lo.s.name)"),
+     lambda o: "names a site in English" in o, f"node {HERE}/twin-data.js")
+
 # The places page in Arabic and Russian (2026-11-18). Putting the card's
 # "Going there" heading back as an English literal must make twin-data.js
 # report the place card.

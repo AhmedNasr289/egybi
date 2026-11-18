@@ -110,6 +110,9 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         const eng = /a normal afternoon|degrees within one country|sites runs from/;
         if (!cap) fail(`TWIN DATA NOT LOADED: ${where} - the month caption stayed empty`);
         else if (lang && eng.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption reads "${cap.slice(0, 160)}"`);
+        // On Arabic pages the site names come from the climate file's name_ar,
+        // so the caption has no Latin letter at all (2026-11-18).
+        else if (lang === 'ar/' && /[A-Za-z]/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption names a site in English: "${cap.slice(0, 160)}"`);
         else if (!lang && !/^In \w+, a normal afternoon/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English month caption changed to "${cap.slice(0, 160)}"`);
         else console.log(`${where}: month caption in the page's language`);
       }
