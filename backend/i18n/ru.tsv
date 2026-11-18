@@ -1194,3 +1194,35 @@ This planner now opens offline on this device, with your saved trip.	Тепер�
 All stops removed.	Все остановки удалены.
 Saved.	Сохранено.
 See your trips	Ваши поездки
+Map of Egypt showing where the selected elevation line runs	Карта Египта: где проходит выбранная линия высот
+no reading for this month	нет данных за этот месяц
+%m reaches about %x by day	%m: днём около %x
+World Heritage	Всемирное наследие
+In %m, a normal afternoon across these %n sites runs from %lo at %a to %hi at %b: a spread of %d degrees within one country, on the same day of the year.	В месяце «%m» обычная дневная температура в этих %n местах — от %lo (%a) до %hi (%b): разброс в %d градусов в одной стране в один и тот же день года.
+Some sites have no daily normal yet and are showing their all-day mean, which reads lower; those fill in on the next pipeline run.	Для некоторых мест ещё нет дневной нормы, и показано среднее за сутки, которое ниже; они заполнятся при следующем запуске обработки.
+no reading	нет данных
+%g governorate	мухафаза %g
+%n m above sea level	%n м над уровнем моря
+UNESCO World Heritage	Всемирное наследие ЮНЕСКО
+Mean daily maximum, by month.	Средний дневной максимум по месяцам.
+All-day mean, by month.	Среднесуточная температура по месяцам.
+%m: about %x by day	%m: днём около %x
+, dropping to %x at night	, ночью до %x
+, averaging %x across the whole day	, в среднем за сутки %x
+%m: an average of %x across the whole day	%m: в среднем за сутки %x
+, with %r mm of rain a day	, осадки %r мм в день
+Across the whole record the extremes for this month reach %hi and drop to %lo. Those are the hottest and coldest hours ever measured here in %m, not a typical day.	За всю историю наблюдений крайние значения этого месяца — до %hi и до %lo. Это самые жаркие и самые холодные часы, когда-либо измеренные здесь в месяце «%m», а не обычный день.
+No reading for the selected month.	Нет данных за выбранный месяц.
+These are modelled long-run averages from NASA POWER, not a forecast and not station readings. They describe what the month is usually like here; they say nothing about the day you travel.	Это многолетние средние по модели NASA POWER, а не прогноз и не показания метеостанций. Они описывают, каким обычно бывает этот месяц здесь, и ничего не говорят о дне вашей поездки.
+The day and night figures are the 2001–2020 mean daily maximum and minimum.	Дневные и ночные цифры — средние суточные максимум и минимум за 2001–2020 годы.
+No mean daily maximum has been published for this site yet, so the figure above is the all-day mean and a real afternoon will run several degrees warmer.	Для этого места средний дневной максимум ещё не опубликован, поэтому выше указано среднесуточное значение, а реальный день будет на несколько градусов теплее.
+Elevation is sampled from NASA SRTM 30 m at this site’s own coordinates.	Высота взята из NASA SRTM (30 м) в координатах самого места.
+Across these %n sites the ground rises from %lo m at %a to %hi m at %b: %s metres of relief. Every figure is a radar measurement of the actual land surface, not a rendering of it.	В этих %n местах высота поверхности — от %lo м (%a) до %hi м (%b): перепад %s м. Каждая цифра — радарное измерение реальной поверхности, а не её изображение.
+%n m	%n м
+Elevation in metres above sea level against distance along the line, from %s.	Высота в метрах над уровнем моря в зависимости от расстояния вдоль линии, по данным %s.
+Built %d.	Построено %d.
+Gaps in a curve are points the model has no value for, drawn as gaps rather than as zero.	Разрывы на кривой — точки, для которых в модели нет значения; они показаны разрывами, а не нулём.
+%n km along the line	%n км вдоль линии
+no elevation at this point: the model has no value here, so nothing is drawn	нет высоты в этой точке: в модели здесь нет значения, поэтому ничего не нарисовано
+ground at %n m	поверхность на %n м
+below sea level	ниже уровня моря

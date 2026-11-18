@@ -100,6 +100,20 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
       });
       if (off.length) fail(`TWIN LINK WRONG FOLDER: ${where} links to ${off.map(h => new URL(h).pathname).join(', ')}`);
 
+      // The visit page (2026-11-18): the month caption visit.js writes reads
+      // in the page's language; English stays English.
+      if (page === 'visit.html' && loaded) {
+        const cap = await p.waitForFunction(() => {
+          const c = document.getElementById('monthCap');
+          return c && c.textContent.trim() ? c.textContent.trim() : null;
+        }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => '');
+        const eng = /a normal afternoon|degrees within one country|sites runs from/;
+        if (!cap) fail(`TWIN DATA NOT LOADED: ${where} - the month caption stayed empty`);
+        else if (lang && eng.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption reads "${cap.slice(0, 160)}"`);
+        else if (!lang && !/^In \w+, a normal afternoon/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English month caption changed to "${cap.slice(0, 160)}"`);
+        else console.log(`${where}: month caption in the page's language`);
+      }
+
       // Text the header scripts write (stage 4a): in Arabic and Russian it
       // comes from assets/i18n/<lang>.js; in English it stays English.
       const chromeText = await p.evaluate(() => {
