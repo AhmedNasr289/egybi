@@ -575,6 +575,12 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
 # the visa rise announced for 1 January 2027 has happened but the page still
 # gives US$30 as the current fee (2026-11-17): moved to a date already past
+# made-in-egypt.html says EgyBI takes no payment from any maker (2026-11-18).
+# A referral tag on a maker link would make that untrue; coverage.py must refuse it.
+case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-egypt.json"],
+     lambda: edit("site/data/made-in-egypt.json", '"maker_url": "https://kiliim.com/"', '"maker_url": "https://kiliim.com/?ref=egybi"'),
+     lambda o: "maker link that is not a plain https link" in o and "kiliim" in o, COVERAGE)
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)

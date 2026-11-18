@@ -55,7 +55,9 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
         text: li.textContent, href: (li.querySelector('a') || {}).href || '' })),
       sum: (document.getElementById('planSum') || {}).textContent || '',
       heat: Array.from(document.querySelectorAll('#stopList .heat-warn')).map(e => e.textContent),
-      cards: Array.from(document.querySelectorAll('#stopList li.stop div > p:not(.heat-warn)')).map(e => e.textContent),
+      // the heat line only: the warning and the "Made near here" line
+      // (names from made-in-egypt.json) are tested by their own checks
+      cards: Array.from(document.querySelectorAll('#stopList li.stop div > p:not(.heat-warn):not(.made-near)')).map(e => e.textContent),
     }));
   }
 

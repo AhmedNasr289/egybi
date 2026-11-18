@@ -34,7 +34,7 @@ from .i18n_units import norm, script_strings, units
 PAGES = ['about.html', 'privacy.html', 'index.html', 'plan.html', 'fair-prices.html',
          'hieroglyphs.html', 'dossier.html', 'ask.html',
          'visit.html', 'community.html', 'places.html', 'geospatial.html',
-         'stories.html', 'streets.html', 'arriving-in-egypt.html']
+         'stories.html', 'streets.html', 'arriving-in-egypt.html', 'made-in-egypt.html']
 
 LANGS = {
     'ar': {'dir': 'rtl', 'label': 'العربية', 'short': 'عربي',
@@ -128,6 +128,10 @@ DATA_TEXT = {
     # Only the rows a leg names in getting-around.json are shown by script.
     'arrival.json': {'top': (), 'group': (), 'row': ('label', 'value'),
                      'only_leg_rows': 'getting-around.json'},
+    # The planner's stop cards name the items made near a stop (plan.js madeNearHtml).
+    # Only items made near a site appear there (rows with a "near" list).
+    'made-in-egypt.json': {'top': (), 'group': (), 'row': ('item',), 'no_sources': True, 'only_near': True},
+
     # Holiday names and notes, and the capacity facts, shown by the home page
     # and the planner (home.js renderEvents, plan.js renderDossier).
     'calendar.json': {'top': (), 'group': (), 'row': (),
@@ -150,8 +154,10 @@ def data_keys() -> list:
             for r in g.get('rows', []):
                 if only is not None and r.get('key') not in only:
                     continue
+                if f.get('only_near') and not r.get('near'):
+                    continue
                 keys.update(r[k] for k in f['row'] if r.get(k))
-                if r.get('source') and not r.get('source_url'):
+                if r.get('source') and not r.get('source_url') and not f.get('no_sources'):
                     keys.add(r['source'])
         for lname, fields in f.get('lists', {}).items():
             for item in d.get(lname, []):
