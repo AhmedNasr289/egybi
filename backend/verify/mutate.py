@@ -567,6 +567,14 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
 # the visa rise announced for 1 January 2027 has happened but the page still
 # gives US$30 as the current fee (2026-11-17): moved to a date already past
+# Luxor is on inDrive's own city list and not on Uber's (2026-11-18). Losing
+# it from the inDrive row would leave a Luxor visitor with no app named;
+# test_ride_apps.py must catch it.
+case("Luxor dropped from the inDrive row", "test_ride_apps.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"Cairo, Alexandria, Luxor, Aswan, Hurghada', '"Cairo, Alexandria, Aswan, Hurghada'),
+     lambda o: "FAIL" in o and "test_every_city_missing_from_uber" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_ride_apps.py -v')
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)
