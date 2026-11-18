@@ -205,6 +205,19 @@
     });
     return out;
   }
+  // Things made near a measured site (made-in-egypt.json "near"), as links
+  // to their cards on made-in-egypt.html in the page's language (2026-11-18).
+  function madeNearHtml(st) {
+    if (!D.made || st.id.indexOf('site:') !== 0) return '';
+    var k = st.id.slice(5), items = [];
+    (D.made.groups || []).forEach(function (g) {
+      (g.rows || []).forEach(function (r) { if ((r.near || []).indexOf(k) !== -1) items.push(r); });
+    });
+    if (!items.length) return '';
+    return '<p class="made-near">' + esc(t('Made near here:')) + ' ' + items.map(function (r) {
+      return '<a href="' + esc(T.url('made-in-egypt.html') + '#' + r.key) + '">' + esc(t(r.item)) + '</a>';
+    }).join(T.pageLang() === 'ar' ? '، ' : ', ') + '</p>';
+  }
   function elevationFor(st) {
     if (!D.terrain || st.id.indexOf('site:') !== 0) return null;
     var k = st.id.slice(5);
@@ -270,7 +283,7 @@
           '<span class="stop-n" aria-hidden="true">' + (i + 1) + '</span>' +
           '<div><h3>' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
           (bd ? '<span class="heat-chip" style="background:' + bd.colour + ';color:' + T.inkOn(bd.colour) + '">' + pageDigits(Math.round(first.max)) + '&nbsp;' + esc(t('°C')) + '</span> ' : '') +
-          '<p>' + esc(h.text) + '</p>' + heatWarnHtml(h, x) + '</div>' +
+          '<p>' + esc(h.text) + '</p>' + heatWarnHtml(h, x) + madeNearHtml(x) + '</div>' +
           '<div class="stop-ctl"><label class="sr-only" for="days' + i + '">' + esc(t('Days at %s').replace('%s', x.name)) + '</label>' +
           '<input id="days' + i + '" type="number" min="1" max="30" value="' + (x.days || 1) + '" data-days="' + i + '"> <span aria-hidden="true">' + esc(t('days')) + '</span>' +
           '<button type="button" class="icon-btn" data-up="' + i + '" aria-label="' + esc(t('Move %s earlier').replace('%s', x.name)) + '"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
@@ -531,10 +544,10 @@
       settle(T.getJSON('data/visit-climate.json')), settle(T.getJSON('data/visit-terrain.json')),
       settle(T.getJSON('data/geo-places.json')), settle(T.getJSON('data/calendar.json')),
       settle(T.getJSON('data/opening-hours.json')), settle(T.getJSON('data/getting-around.json')),
-      settle(T.getJSON('data/arrival.json'))
+      settle(T.getJSON('data/arrival.json')), settle(T.getJSON('data/made-in-egypt.json'))
     ]).then(function (r) {
       D.climate = r[0]; D.terrain = r[1]; D.places = r[2]; D.calendar = r[3]; D.hours = r[4];
-      D.guide = r[5]; D.arrival = r[6];
+      D.guide = r[5]; D.arrival = r[6]; D.made = r[7];
       initChips(); initSearch();
       var q = new URLSearchParams(location.search);
       if (q.get('add')) addSite(q.get('add'));
