@@ -45,7 +45,11 @@ SAME = {'EgyBI', 'egybi.com', 'hello@egybi.com', 'aboutads.info/choices', 'Googl
         # a reader to a lookalike
         'visa2egypt.gov.eg', 'visaonarrival.gov.eg', 'egymonuments.com', 'tickets.gem.eg',
         # product and database names, kept as their makers write them
-        'Our World in Data', 'FAO AQUASTAT', 'QS Rankings'}
+        'Our World in Data', 'FAO AQUASTAT', 'QS Rankings',
+        # makers and shops on made-in-egypt.html, named as they name
+        # themselves (their own sites and accounts are in Latin script)
+        'Azza Fahmy', 'Fair Trade Egypt', 'Nomad Gallery', 'Reform Studio', 'Kiliim', 'Up-Fuse',
+        'Yadawee', 'El Abd'}
 CATS = {l: load_catalogue(l) for l in LANGS}
 WORD = re.compile(r'[A-Za-z]{3,}')
 

@@ -34,10 +34,17 @@
      spelling stays the join key). Same table as pages/egfmt.py. */
   var GOV_NAMES = { 'Faiyum': 'Fayoum', 'Fayyum': 'Fayoum', 'Al Fayyum': 'Fayoum', 'Al-Fayyum': 'Fayoum',
     'El Fayoum': 'Fayoum', 'Al Fayoum': 'Fayoum' };
-  function govName(n) {
+  /* The 27 governorates in Arabic and Russian, keyed by the English display
+     name. Read on 18 November 2026 from https://ar.wikipedia.org/wiki/محافظات_مصر
+     and https://ru.wikipedia.org/wiki/Мухафазы_Египта; pages/egfmt.py holds the same maps. */
+  var GOV_NAMES_AR = { "Alexandria": "الإسكندرية", "Aswan": "أسوان", "Asyut": "أسيوط", "Beheira": "البحيرة", "Beni Suef": "بني سويف", "Cairo": "القاهرة", "Dakahlia": "الدقهلية", "Damietta": "دمياط", "Fayoum": "الفيوم", "Gharbia": "الغربية", "Giza": "الجيزة", "Ismailia": "الإسماعيلية", "Kafr El Sheikh": "كفر الشيخ", "Luxor": "الأقصر", "Matrouh": "مطروح", "Minya": "المنيا", "Monufia": "المنوفية", "New Valley": "الوادي الجديد", "North Sinai": "شمال سيناء", "Port Said": "بورسعيد", "Qalyubia": "القليوبية", "Qena": "قنا", "Red Sea": "البحر الأحمر", "Sharqia": "الشرقية", "Sohag": "سوهاج", "South Sinai": "جنوب سيناء", "Suez": "السويس" };
+  var GOV_NAMES_RU = { "Alexandria": "Александрия", "Aswan": "Асуан", "Asyut": "Асьют", "Beheira": "Бухейра", "Beni Suef": "Бени-Суэйф", "Cairo": "Каир", "Dakahlia": "Дакахлия", "Damietta": "Думьят", "Fayoum": "Эль-Файюм", "Gharbia": "Гарбия", "Giza": "Эль-Гиза", "Ismailia": "Исмаилия", "Kafr El Sheikh": "Кафр-эш-Шейх", "Luxor": "Луксор", "Matrouh": "Матрух", "Minya": "Эль-Минья", "Monufia": "Минуфия", "New Valley": "Вади-эль-Гедид", "North Sinai": "Северный Синай", "Port Said": "Порт-Саид", "Qalyubia": "Кальюбия", "Qena": "Кена", "Red Sea": "Красное Море", "Sharqia": "Шаркия", "Sohag": "Сохаг", "South Sinai": "Южный Синай", "Suez": "Суэц" };
+  function govName(n, lang) {
     if (n == null) return '';
     var k = String(n).trim();
-    return Object.prototype.hasOwnProperty.call(GOV_NAMES, k) ? GOV_NAMES[k] : String(n);
+    var en = Object.prototype.hasOwnProperty.call(GOV_NAMES, k) ? GOV_NAMES[k] : String(n);
+    var m = lang === 'ar' ? GOV_NAMES_AR : lang === 'ru' ? GOV_NAMES_RU : null;
+    return m && Object.prototype.hasOwnProperty.call(m, en) ? m[en] : en;
   }
   function isolate(s) { return LRI + s + PDI; }
   function digits(s, lang) {
