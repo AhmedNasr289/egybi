@@ -1479,6 +1479,14 @@ case("the Russian planner breaks on a number format", "leg-cards.js", ["site/ass
                   "return F ? F.digits(String(x), document.documentElement.getAttribute('lang') || 'en') : String(x);"),
      lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
 
+# The visit page in Arabic and Russian (2026-11-18). Writing the month
+# caption back as an English sentence must make twin-data.js report it.
+case("the visit month caption back in English", "twin-data.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js",
+                  "cap.innerHTML = esc(t('In %m, a normal afternoon across these %n sites",
+                  "cap.innerHTML = esc(('In %m, a normal afternoon across these %n sites"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "month caption" in o, f"node {HERE}/twin-data.js")
+
 # The places page in Arabic and Russian (2026-11-18). Putting the card's
 # "Going there" heading back as an English literal must make twin-data.js
 # report the place card.

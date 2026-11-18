@@ -287,6 +287,17 @@ Please check:
   same reason;
 - Arabic «رابطة الدول المستقلة» for CIS, and «مير» for the Mir card.
 
+## Heat page (visit.html, 2026-11-18)
+
+32 lines from visit.js: map tooltips, the month caption, the site card, the
+elevation section and the relief chart caption.
+
+Please check:
+- the month caption, «في %m، تتراوح الحرارة المعتادة بعد الظهر …» and
+  «В месяце «%m» обычная дневная температура …»;
+- the record-extremes sentence, which must keep saying these are the most
+  extreme hours ever measured, not a typical day;
+- «محافظة %g» / «мухафаза %g» for "Giza governorate".
 ## Places page (2026-11-18)
 
 58 lines from places.js: the place card, its links, the list, "Near me" and
