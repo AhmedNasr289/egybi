@@ -1283,3 +1283,12 @@ OpenStreetMap, as of %d	OpenStreetMap، حتى %d
 Absent right now:	غائبة الآن:
 None are missing at this build.	لا ينقص أيٌّ منها في هذا الإصدار.
 The places layer has not been generated yet. It appears automatically after the next “Build Atlas geo layers” run. The map of Egypt above already works.	لم تُولَّد طبقة الأماكن بعد. ستظهر تلقائيًا بعد التشغيل التالي لـ«Build Atlas geo layers». خريطة مصر أعلاه تعمل بالفعل.
+Type the price you were asked, in %c.	اكتب السعر الذي طُلب منك، بعملة %c.
+Inside the published range of %r.	ضمن النطاق المنشور: %r.
+About %p% above the top of the published range of %r.	أعلى من الحد الأعلى للنطاق المنشور (%r) بنحو %p٪.
+About %p% below the published range of %r.	أقل من النطاق المنشور (%r) بنحو %p٪.
+The range is what one named source publishes, %s; it is not a fixed price.	النطاق هو ما ينشره مصدر واحد محدّد، %s، وليس سعرًا ثابتًا.
+Were you quoted a price?	هل طُلب منك سعر؟
+Pick what it was for and type the amount. The page compares it with the published range above. Nothing you type leaves your phone.	اختر ما طُلب السعر مقابله واكتب المبلغ، وستقارنه الصفحة بالنطاق المنشور أعلاه. لا يغادر هاتفك شيء مما تكتبه.
+What it was for	مقابل ماذا
+The price you were asked	السعر الذي طُلب منك

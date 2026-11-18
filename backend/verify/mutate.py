@@ -567,6 +567,13 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
 # the visa rise announced for 1 January 2027 has happened but the page still
 # gives US$30 as the current fee (2026-11-17): moved to a date already past
+# The quote checker (2026-11-18) treats the top of a range as inside it. An
+# off-by-one that calls the top "above" would tell a traveller a fair price
+# was too high; fair-verdict.js must catch it.
+case("the quote checker calls the top of the range too high", "fair-verdict.js", ["site/assets/fair.js"],
+     lambda: edit("site/assets/fair.js", "if (amount > top) return", "if (amount >= top) return"),
+     lambda o: "FAIL the top of the range is inside it" in o, f"node {HERE}/fair-verdict.js")
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)
