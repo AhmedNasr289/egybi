@@ -1162,7 +1162,7 @@ Move %s earlier	قدّم %s في الترتيب
 Move %s later	أخّر %s في الترتيب
 Remove %s	احذف %s
 Removed: %s.	حُذف: %s.
-The Papyrus &middot; trip dossier	البردية &middot; ملف الرحلة
+The Papyrus &middot; trip dossier	«البردية» &middot; ملف الرحلة
 %s&rsquo;s Egypt	مصر كما يراها %s
 Your Egypt	مصرك
 Stop %n	المحطة %n
@@ -1194,6 +1194,55 @@ This planner now opens offline on this device, with your saved trip.	أصبح ا
 All stops removed.	حُذفت كل المحطات.
 Saved.	تم الحفظ.
 See your trips	اعرض رحلاتك
+The climate record could not be loaded, so this section is empty rather than showing invented figures.	تعذّر تحميل سجل المناخ، لذلك تُركت هذه الفقرة فارغة بدل عرض أرقام مختلَقة.
+Pick your dates above.	اختر مواعيدك بالأعلى.
+The heat, site by site, in %m.	الحرارة في كل موقع خلال %m.
+Arriving %a, leaving %l.	الوصول %a، والمغادرة %l.
+Nights: %n.	عدد الليالي: %n.
+%m, days: %n	عدد الأيام في %m: %n
+Below is what a normal afternoon and night reach in %m at each site: a long-run average, not a forecast.	وفيما يلي ما تبلغه الحرارة عادةً بعد الظهر وفي الليل خلال %m في كل موقع: متوسط طويل الأمد، وليس توقعًا للطقس.
+21 °C or less	٢١ °م أو أقل
+22–27 °C	٢٢–٢٧ °م
+28–33 °C	٢٨–٣٣ °م
+34–38 °C	٣٤–٣٨ °م
+39 °C or more	٣٩ °م أو أكثر
+by day — the mean daily maximum	نهارًا — متوسط العظمى اليومية
+night %t	ليلًا %t
+In your plan ✓	في خطتك ✓
++ Add to my plan	+ أضف إلى خطتي
+Source: %s, mean daily maximum and minimum averaged over %w; checked against published station normals before publication. Layer dated %d.	المصدر: %s، متوسط العظمى والصغرى اليومية للفترة %w؛ رُوجعت قبل النشر مقابل المعدلات المنشورة للمحطات. تاريخ الطبقة %d.
+Every month, every site	كل شهر، كل موقع
+The holiday calendar could not be loaded.	تعذّر تحميل تقويم العطلات.
+No public holiday in this calendar falls inside these dates.	لا تقع أي عطلة رسمية من هذا التقويم ضمن هذه المواعيد.
+This calendar covers %a to %b only; dates outside it are not checked.	يغطي هذا التقويم الفترة من %a إلى %b فقط؛ ولا نتحقق من المواعيد خارجها.
+Islamic dates follow the moon and are confirmed only by the official sighting, so they are shown as expected ranges. Compiled %d.	تتبع التواريخ الهجرية القمر ولا تُعتمد إلا بعد الرؤية الرسمية، لذلك نعرضها فترات متوقَّعة. جُمع التقويم في %d.
+The rate could not be loaded.	تعذّر تحميل سعر الصرف.
+%s, dated %d.	%s، بتاريخ %d.
+Market rates	أسعار السوق
+The rate, daily	سعر الصرف يومًا بيوم
+Coptic Christmas	عيد الميلاد المجيد
+25 January Revolution & Police Day	ثورة ٢٥ يناير وعيد الشرطة
+Ramadan	رمضان
+Abu Simbel sun alignment	تعامد الشمس على معبد أبو سمبل
+Eid al-Fitr	عيد الفطر
+Sinai Liberation Day	عيد تحرير سيناء
+Labour Day	عيد العمال
+Sham el-Nessim	شم النسيم
+Arafat Day and Eid al-Adha	يوم عرفة وعيد الأضحى
+Islamic New Year	رأس السنة الهجرية
+30 June Revolution	ثورة ٣٠ يونيو
+23 July Revolution Day	عيد ثورة ٢٣ يوليو
+Prophet Muhammad's Birthday	المولد النبوي الشريف
+Armed Forces Day	عيد القوات المسلحة
+Some calendars list a substitute day off on 28 January.	تذكر بعض التقاويم يوم عطلة بديلًا في ٢٨ يناير.
+Gulf News and The National (Oct 2026) give 8 February from astronomical calculation; Egypt-specific holiday calendars (TrueCalendar, Calendarific) list 9 February. 29 or 30 days, set by moon sighting.	تحدد Gulf News وThe National (أكتوبر ٢٠٢٦) يوم ٨ فبراير بالحساب الفلكي، وتذكر تقاويم العطلات المصرية (TrueCalendar وCalendarific) يوم ٩ فبراير. يستمر الشهر ٢٩ أو ٣٠ يومًا، ويُحدَّد برؤية الهلال.
+Not a public holiday. The Ministry's ticket list gives a separate ticket for the sun alignment day: 1,200 EGP for a foreign adult, against 750 on other days. Its booking site showed 1,272 EGP when we checked on 17 November 2026.	ليس عطلة رسمية. تخصّص قائمة أسعار الوزارة تذكرة منفصلة ليوم تعامد الشمس: ١٬٢٠٠ جنيه للبالغ الأجنبي، مقابل ٧٥٠ في الأيام الأخرى. وأظهر موقع الحجز التابع لها ١٬٢٧٢ جنيهًا عندما راجعناه في ١٧ نوفمبر ٢٠٢٦.
+Gulf News forecasts Wednesday 10 March; Egypt listings show 10 March with holidays on 11–12 March, all subject to confirmation.	تتوقع Gulf News يوم الأربعاء ١٠ مارس، وتذكر القوائم المصرية ١٠ مارس مع عطلة في ١١–١٢ مارس، وكل ذلك رهن التأكيد.
+The Monday after Coptic Orthodox Easter (2 May 2027).	يوم الاثنين التالي لعيد القيامة لدى الأقباط الأرثوذكس (٢ مايو ٢٠٢٧).
+ClockIt and HolidayDB list Arafat Day 16 May, Eid 17 May and holidays 18–19 May; Calendarific's provisional forecast includes 19 May. Subject to moon sighting.	تذكر ClockIt وHolidayDB يوم عرفة في ١٦ مايو، والعيد في ١٧ مايو، والعطلة في ١٨–١٩ مايو، وتشمل توقعات Calendarific المبدئية يوم ١٩ مايو. رهن رؤية الهلال.
+Calendars differ by a day (14 or 15 August).	تختلف التقاويم بيوم واحد (١٤ أو ١٥ أغسطس).
+Grand Egyptian Museum	المتحف المصري الكبير
+Admissions are capped at 15,000 a day; the museum reported 7,000–10,000 a day after an opening peak of about 24,000, and more than three million visits in its first seven months, 60% of them foreign.	الحد الأقصى للدخول ١٥٬٠٠٠ زائر يوميًا؛ وأعلن المتحف عن ٧٬٠٠٠–١٠٬٠٠٠ زائر يوميًا بعد ذروة افتتاحية بلغت نحو ٢٤٬٠٠٠، وأكثر من ثلاثة ملايين زيارة في أشهره السبعة الأولى، ٦٠٪ منها لأجانب.
 Map of Egypt showing where the selected elevation line runs	خريطة مصر تُظهر مسار خط الارتفاع المختار
 no reading for this month	لا قراءة لهذا الشهر
 %m reaches about %x by day	يصل %m إلى نحو %x نهارًا

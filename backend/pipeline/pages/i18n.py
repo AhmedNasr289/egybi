@@ -128,6 +128,10 @@ DATA_TEXT = {
     # Only the rows a leg names in getting-around.json are shown by script.
     'arrival.json': {'top': (), 'group': (), 'row': ('label', 'value'),
                      'only_leg_rows': 'getting-around.json'},
+    # Holiday names and notes, and the capacity facts, shown by the home page
+    # and the planner (home.js renderEvents, plan.js renderDossier).
+    'calendar.json': {'top': (), 'group': (), 'row': (),
+                      'lists': {'events': ('name', 'note'), 'capacity': ('place', 'fact')}},
 }
 
 
@@ -149,6 +153,9 @@ def data_keys() -> list:
                 keys.update(r[k] for k in f['row'] if r.get(k))
                 if r.get('source') and not r.get('source_url'):
                     keys.add(r['source'])
+        for lname, fields in f.get('lists', {}).items():
+            for item in d.get(lname, []):
+                keys.update(item[k] for k in fields if item.get(k))
     return sorted(keys)
 
 
