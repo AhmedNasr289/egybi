@@ -28,6 +28,23 @@
       ]
     },
     {
+      "key": "airport", "title": "Leaving Cairo airport",
+      "rows": [
+        { "key": "cai-limousine", "label": "Airport limousines", "value": "Fixed prices by destination and car class",
+          "detail": "Picked up at the kerb in front of each terminal. There are four classes: A, luxury cars; B, minibuses for up to seven people; C, mid-sized cars; D, London taxis.",
+          "source": "Cairo Airport: moving from and to the airport", "source_url": "https://www.cairo-airport.com/en-us/Services/Passenger-Guide/Move-From-To-Airport", "checked": "2026-11-18" },
+        { "key": "cai-taxi", "label": "Taxis", "value": "White taxis have meters",
+          "detail": "The airport warns that drivers often approach tourists in the arrival hall, and that the old black-and-white taxis have no meter, so their price is agreed before you set off. It says a class C limousine's price shows the most a taxi fare should be.",
+          "source": "Cairo Airport: moving from and to the airport", "source_url": "https://www.cairo-airport.com/en-us/Services/Passenger-Guide/Move-From-To-Airport", "checked": "2026-11-18" },
+        { "key": "cai-bus", "label": "Buses", "value": "From Terminal 1 only",
+          "detail": "City buses to all parts of Cairo, and coaches to other governorates, leave from the bus station in the car park in front of Terminal 1.",
+          "source": "Cairo Airport: moving from and to the airport", "source_url": "https://www.cairo-airport.com/en-us/Services/Passenger-Guide/Move-From-To-Airport", "checked": "2026-11-18" },
+        { "key": "cai-uber", "label": "Uber pick-up points", "value": "Terminal 2: outside Gate 7. Terminal 3: the B6 parking space",
+          "detail": "In Terminal 2, turn left after customs and leave through Gate 7. Uber gives no pick-up point for Terminal 1.",
+          "source": "Uber: Cairo airport pick-ups", "source_url": "https://www.uber.com/global/en/r/airports/cai/pickup/", "checked": "2026-11-18" }
+      ]
+    },
+    {
       "key": "money", "title": "Money",
       "rows": [
         { "key": "egp-limit", "label": "Egyptian pounds in or out of the country", "value": "Up to 5,000 EGP",
