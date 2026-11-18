@@ -287,6 +287,21 @@ Please check:
   same reason;
 - Arabic «رابطة الدول المستقلة» for CIS, and «مير» for the Mir card.
 
+## Home page briefing (2026-11-18)
+
+26 lines from home.js: the trip briefing, the holiday list labels and the
+exchange-rate caption.
+
+Please check:
+- «الحرارة في كل موقع خلال %m.» and «Жара по каждому месту: %m.»;
+- the Russian lead «… в месяце «%m» …», which quotes the month name to
+  avoid declining it; a smoother wording is welcome;
+- «عدد الأيام في %m: %n» for "July, days: 3" (worded to avoid number-noun
+  agreement, which would need a different noun form for 1, 2, 3-10 and 11+);
+- the heat legend bands, «٢١ °م أو أقل» … «٣٩ °م أو أكثر».
+- the 14 holiday names and 8 notes from calendar.json, especially the Russian
+  «Солнце в святилище Абу-Симбела» for the sun alignment day, and the Arabic
+  figures in the museum capacity line («١٥٬٠٠٠» … «٦٠٪»).
 ## Heat page (visit.html, 2026-11-18)
 
 32 lines from visit.js: map tooltips, the month caption, the site card, the
@@ -308,3 +323,12 @@ Please check:
   population: they must stay as cautious as the English;
 - «الذهاب إلى هناك» and «Как туда попасть» for "Going there";
 - «Ближайший объект Всемирного наследия» and «أقرب موقع تراث عالمي».
+
+## Governorate names (2026-11-18)
+
+The 27 names in `backend/pipeline/pages/egfmt.py` (GOV_NAMES_AR, GOV_NAMES_RU),
+taken from Arabic and Russian Wikipedia.
+
+Please check the Russian choices where Wikipedia's main form differs from
+everyday usage: «Эль-Гиза» (Giza), «Эль-Файюм» (Fayoum), «Эль-Минья» (Minya),
+«Вади-эль-Гедид» (New Valley), «Красное Море» (Red Sea).

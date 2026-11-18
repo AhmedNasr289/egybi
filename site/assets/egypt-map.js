@@ -10,7 +10,7 @@
      only; the data's own spelling stays the join key. */
   function gv(n) {
     var F = window.EGYBI && window.EGYBI.fmt;
-    return F ? F.govName(n) : (n == null ? '' : String(n));
+    return F ? F.govName(n, document.documentElement.getAttribute('lang') || 'en') : (n == null ? '' : String(n));
   }
   window.EGYBI_MAP = { map: null, layer: null, metric: 'population', breaks: null };
 
