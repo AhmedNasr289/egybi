@@ -1493,6 +1493,14 @@ case("the place card heading back in English", "twin-data.js", ["site/assets/pla
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
 
+# A kind label passed to t() as a variable is never collected into the
+# translation table, so it stayed English on the live Arabic and Russian
+# pages (2026-11-18). Writing one back as a plain string must be caught.
+case("a place kind label not collected for translation", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "airport:    { label: t('Airports'),       one: t('Airport'),",
+                  "airport:    { label: 'Airports',       one: 'Airport',"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
+
 
 print()
 # The shard's own count, for mutate-shards.py: ran + other_shard == seen.
