@@ -146,6 +146,15 @@
     if (LANG === 'ar' && F) return F.num(n, 'ar', 0);
     return n.toLocaleString(LANG === 'ru' ? 'ru-RU' : 'en-US');
   }
+  // Coordinates in the page's digits (2026-11-18): the Arabic card showed
+  // "28.8986, 33.2032" in Western digits, found on the live site. Arabic
+  // pages get Arabic-Indic digits, the Arabic decimal mark and comma; others
+  // keep the decimal point, which coordinates use in Russian too.
+  function coords(p) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    if (LANG === 'ar' && F) return F.fixed(p.lat, 'ar', 4) + '، ' + F.fixed(p.lon, 'ar', 4);
+    return p.lat.toFixed(4) + ', ' + p.lon.toFixed(4);
+  }
   function digits(x) {
     var F = window.EGYBI && window.EGYBI.fmt;
     return LANG === 'ar' && F ? F.digits(String(x), 'ar') : String(x);
@@ -436,7 +445,7 @@
     bits.push('<div class="pd-row"><span>' + esc(t('Governorate')) + '</span><strong>' +
       (p.gov ? esc(gv(p.gov)) : esc(t('not assigned'))) + '</strong></div>');
     bits.push('<div class="pd-row"><span>' + esc(t('Coordinates')) + '</span><strong>' +
-      p.lat.toFixed(4) + ', ' + p.lon.toFixed(4) + '</strong></div>');
+      coords(p) + '</strong></div>');
     if (p.iata) bits.push('<div class="pd-row"><span>' + esc(t('IATA code')) + '</span><strong>' + esc(p.iata) + '</strong></div>');
     if (typeof p.population_osm === 'number') {
       // Always with the caveat attached — this is a community-maintained tag,

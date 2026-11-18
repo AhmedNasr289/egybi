@@ -567,6 +567,12 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
 # the visa rise announced for 1 January 2027 has happened but the page still
 # gives US$30 as the current fee (2026-11-17): moved to a date already past
+# Coordinates on the Arabic place card in Arabic-Indic digits (2026-11-18).
+# Writing them with toFixed again must make twin-data.js report it.
+case("the Arabic place card's coordinates in Western digits", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "if (LANG === 'ar' && F) return F.fixed(p.lat, 'ar', 4)", "if (false) return F.fixed(p.lat, 'ar', 4)"),
+     lambda o: "coordinates in Western digits" in o, f"node {HERE}/twin-data.js")
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)

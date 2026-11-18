@@ -2433,3 +2433,6 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The fix:** each label is now a literal translate call where it is defined, and the page writes Russian dates itself («3 ноября 2026»).
 - **Check:** `twin-data.js` now also fails the kind labels and an English month name on the Arabic or Russian card and summary. New mutation case: "a place kind label not collected for translation".
 - **Still English:** governorate names ("South Sinai") and World Heritage site names come from the data in English only; translating them needs a sourced list of their Arabic and Russian names.
+## 2026-11-18 — Coordinates on the Arabic place card
+- **Found on the live site after #180 merged:** the Arabic place card showed its coordinates in Western digits ("28.8986, 33.2032") while the rest of the card used Arabic-Indic digits. They now read "٢٨٫٨٩٨٦، ٣٣٫٢٠٣٢". English and Russian keep the decimal point, which coordinates use in Russian too.
+- **Check:** `twin-data.js` fails Western-digit coordinates on the Arabic card. New mutation case: "the Arabic place card's coordinates in Western digits".
