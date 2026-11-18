@@ -299,3 +299,6 @@ Please check:
 - «عدد الأيام في %m: %n» for "July, days: 3" (worded to avoid number-noun
   agreement, which would need a different noun form for 1, 2, 3-10 and 11+);
 - the heat legend bands, «٢١ °م أو أقل» … «٣٩ °م أو أكثر».
+- the 14 holiday names and 8 notes from calendar.json, especially the Russian
+  «Солнце в святилище Абу-Симбела» for the sun alignment day, and the Arabic
+  figures in the museum capacity line («١٥٬٠٠٠» … «٦٠٪»).

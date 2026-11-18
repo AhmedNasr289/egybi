@@ -335,7 +335,7 @@
     }).join('');
     var events = ev.length ? '<div class="sheet" style="margin-top:16px;"><p class="kicker">' + esc(t('Inside your dates')) + '</p><ul class="event-list">' +
       ev.map(function (e) {
-        return '<li><strong>' + esc(e.name) + '</strong> &middot; ' + esc(T.fmtDate(e.start)) +
+        return '<li><strong>' + esc(t(e.name)) + '</strong> &middot; ' + esc(T.fmtDate(e.start)) +
           (e.start !== (e.end_latest || e.end) ? ' &ndash; ' + esc(T.fmtDate(e.end_latest || e.end)) : '') +
           (e.status === 'expected' ? '<span class="expected">' + esc(t('expected')) + '</span>' : '') + '</li>';
       }).join('') + '</ul></div>' : '';

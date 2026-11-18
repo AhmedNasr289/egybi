@@ -154,14 +154,14 @@
     var items = ev.map(function (e) {
       var when = e.start === (e.end_latest || e.end) ? T.fmtDate(e.start)
         : T.fmtDate(e.start) + ' – ' + T.fmtDate(e.end_latest || e.end);
-      return '<li><strong>' + esc(e.name) + '</strong> &middot; ' + esc(when) +
+      return '<li><strong>' + esc(t(e.name)) + '</strong> &middot; ' + esc(when) +
         (e.status === 'expected' ? '<span class="expected">' + esc(t('expected')) + '</span>' : '') +
-        (e.note ? '<span class="src">' + esc(e.note) + '</span>' : '') +
+        (e.note ? '<span class="src">' + esc(t(e.note)) + '</span>' : '') +
         '<span class="src">' + esc(t('Source:')) + ' <a href="' + esc(e.source_url) + '" rel="noopener">' + esc(e.source) + '</a></span></li>';
     });
     if (!items.length) items.push('<li>' + esc(t('No public holiday in this calendar falls inside these dates.')) + '</li>');
     (cal.capacity || []).forEach(function (k) {
-      items.push('<li><strong>' + esc(k.place) + '</strong> &middot; ' + esc(k.fact) +
+      items.push('<li><strong>' + esc(t(k.place)) + '</strong> &middot; ' + esc(t(k.fact)) +
         '<span class="src">' + esc(t('Source:')) + ' <a href="' + esc(k.source_url) + '" rel="noopener">' + esc(k.source) + '</a>, ' + esc(k.as_reported) + '</span></li>');
     });
     ul.innerHTML = items.join('');
