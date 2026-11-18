@@ -2458,3 +2458,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 - **The fix:** each label is now a literal translate call where it is defined, and the page writes Russian dates itself («3 ноября 2026»).
 - **Check:** `twin-data.js` now also fails the kind labels and an English month name on the Arabic or Russian card and summary. New mutation case: "a place kind label not collected for translation".
 - **Still English:** governorate names ("South Sinai") and World Heritage site names come from the data in English only; translating them needs a sourced list of their Arabic and Russian names.
+## 2026-11-18 — The planner: add the trip to your calendar
+- **New button on the planner, in all three languages:** "Add to my calendar" makes an iCalendar file (RFC 5545) in the browser, one all-day event for each stop, placed from the arrival date and the days given to each stop in order, and hands it to the reader. Nothing is sent anywhere. Without an arrival date, or with no stops, it says what is missing instead of guessing. Arabic pages use the stops' Arabic names.
+- **Built as its own small script** (`assets/ics.js`), loaded only by the planner, so no other page's cache version moves.
+- **Check:** `ics-cases.js` (run in test-pipeline) tests the file without a page: dates placed from the arrival day, an all-day event ending the day after its last day, escaped commas and semicolons, lines folded at 75 octets, CRLF, and no file without a date or stops. New mutation case: "the calendar file drops the last day of each stop".

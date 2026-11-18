@@ -581,6 +581,13 @@ case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-
      lambda: edit("site/data/made-in-egypt.json", '"maker_url": "https://kiliim.com/"', '"maker_url": "https://kiliim.com/?ref=egybi"'),
      lambda o: "maker link that is not a plain https link" in o and "kiliim" in o, COVERAGE)
 
+# The planner's calendar file (2026-11-18): an all-day event ends the day
+# after its last day. Ending it on the last day would drop a day from every
+# stop in the reader's calendar; ics-cases.js must catch it.
+case("the calendar file drops the last day of each stop", "ics-cases.js", ["site/assets/ics.js"],
+     lambda: edit("site/assets/ics.js", "var end = addDays(day, n);", "var end = addDays(day, n - 1);"),
+     lambda o: "FAIL a two-day stop ends the day after its last day" in o, f"node {HERE}/ics-cases.js")
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)
