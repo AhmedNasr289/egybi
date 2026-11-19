@@ -1610,3 +1610,20 @@ Planned on egybi.com. Check opening hours before you go.	Запланирова�
 Set your arrival date first, so each stop can be placed on its days.	Сначала укажите дату приезда, чтобы каждую остановку можно было поставить на её дни.
 Add a stop first.	Сначала добавьте остановку.
 Calendar file made: one event for each stop. Open it to add them to your calendar; nothing was sent anywhere.	Файл календаря готов: по одному событию на каждую остановку. Откройте его, чтобы добавить их в свой календарь; ничего никуда не отправлено.
+All the districts (%n), drawn together. Each one is measured on its own street network; the figures appear as you scroll through them.	Все районы (%n), нарисованные вместе. Каждый измерен по своей уличной сети; цифры появляются, пока вы прокручиваете страницу.
+Boundary	Граница
+OpenStreetMap polygon	полигон OpenStreetMap
+The gazetteer could not be loaded, so this story shows the map without it.	Справочник мест не загрузился, поэтому эта история показывает карту без него.
+The gazetteer has not been built yet, so this story shows the map without it.	Справочник мест ещё не построен, поэтому эта история показывает карту без него.
+The health layer could not be loaded, so this story shows the map without it.	Слой медучреждений не загрузился, поэтому эта история показывает карту без него.
+The health layer has not been built yet, so this story shows the map without it.	Слой медучреждений ещё не построен, поэтому эта история показывает карту без него.
+The street report card could not be loaded, so this story shows the map without it.	Карточка улиц не загрузилась, поэтому эта история показывает карту без неё.
+The street report card has not been built yet, so this story shows the map without it.	Карточка улиц ещё не построена, поэтому эта история показывает карту без неё.
+This boundary is hand-drawn. OpenStreetMap has no polygon for %s, so its extent is an approximation; the street measurements inside it are not.	Эта граница нарисована вручную. В OpenStreetMap нет полигона для района %s, поэтому его контур приблизителен; измерения улиц внутри — нет.
+district in focus	район в фокусе
+governorate boundary	граница мухафазы
+hand-drawn	нарисована вручную
+km²	км²
+measured %d	измерено %d
+per km²	на км²
+the other districts	остальные районы
