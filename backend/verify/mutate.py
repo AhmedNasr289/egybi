@@ -582,6 +582,12 @@ case("the Russian month caption names a site in English", "twin-data.js", ["site
      lambda: edit("site/assets/visit.js", "if (LANG === 'ru') return t(s.name);", ""),
      lambda o: "ru/visit.html month caption names a site in English" in o, f"node {HERE}/twin-data.js")
 
+# Coordinates on the Arabic place card in Arabic-Indic digits (2026-11-18).
+# Writing them with toFixed again must make twin-data.js report it.
+case("the Arabic place card's coordinates in Western digits", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "if (LANG === 'ar' && F) return F.fixed(p.lat, 'ar', 4)", "if (false) return F.fixed(p.lat, 'ar', 4)"),
+     lambda o: "coordinates in Western digits" in o, f"node {HERE}/twin-data.js")
+
 # The quote checker (2026-11-18) treats the top of a range as inside it. An
 # off-by-one that calls the top "above" would tell a traveller a fair price
 # was too high; fair-verdict.js must catch it.
