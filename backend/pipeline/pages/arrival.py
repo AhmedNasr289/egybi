@@ -84,7 +84,7 @@ def build_arrival_page() -> list:
         return []
     d = load()
     url = f'{SITE_URL}/{PAGE}'
-    title = 'Arriving in Egypt: visa, money and emergency numbers · EgyBI'
+    title = 'Arriving in Egypt: e-visa, Cairo airport, Uber, inDrive · EgyBI'
     desc = ('Your first two days in Egypt: which visa to buy and how to pay for it, the cash rules, '
             'Cairo ride-hail and the emergency numbers, each with its source.')
     ld = {"@context": "https://schema.org", "@graph": [

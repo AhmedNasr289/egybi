@@ -105,6 +105,10 @@ try:
 except (OSError, ValueError, KeyError):
     SITE_HOURS = {}
 
+# Names that stay in Latin letters in every language (the glossaries' "as
+# written" line, plus the ride apps the arrival page names).
+LATIN_NAMES = {"EgyBI", "Uber", "inDrive", "Careem", "OpenStreetMap", "NASA", "NOAA", "SRTM", "CAPMAS", "UNESCO"}
+
 pages = sorted(SITE.rglob("*.html"))
 if not pages:
     print("no pages found under site/ — wrong working directory?")
@@ -173,6 +177,17 @@ for p in pages:
             add("description over 165 chars", f"{rel}  [{len(desc)}]")
         if len(desc) < 70:
             add("description under 70 chars (wastes SERP space)", f"{rel}  [{len(desc)}]")
+
+    # An Arabic or Russian page's title and description are what a reader in
+    # that language sees in a search result, so English left in them reads as
+    # an untranslated page (2026-11-19). Only names written in Latin letters in
+    # every language may appear; Russian law and sites write "файлы cookie".
+    lang = rel.split("/", 1)[0] if "/" in rel else "en"
+    if lang in ("ar", "ru") and not noindex:
+        latin = set(re.findall(r"[A-Za-z][A-Za-z\-]*", f"{title or ''} {desc or ''}"))
+        left = sorted(latin - LATIN_NAMES - ({"cookie"} if lang == "ru" else set()))
+        if left:
+            add("English word in an Arabic or Russian title or description", f"{rel}  {', '.join(left)}")
 
     # A site page that shows the Ministry's opening hours says so where a
     # search result shows it (2026-11-19): "Karnak opening hours" had no
