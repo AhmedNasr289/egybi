@@ -181,6 +181,28 @@ def leg_facts(site: dict, sites: list, guide: dict, arrival: dict) -> list:
     return out
 
 
+def scam_facts(key: str, arrival: dict) -> list:
+    """The tricks travellers report at this site (2026-11-18): the rows of
+    arrival.json's "scams" group whose "near" names this site, each with its
+    source. They are travellers' reports, and the paragraph says so."""
+    rs = [r for g in arrival.get('groups', []) if g.get('key') == 'scams'
+          for r in g.get('rows', []) if key in r.get('near', [])]
+    if not rs:
+        return []
+    lines = '<br>'.join(f"<em>{esc(r['label'])}:</em> {esc(r['value'])}." +
+                        (f" {esc(r['detail'])}" if r.get('detail') else '') for r in rs)
+    srcs = []
+    for r in rs:
+        src = (r.get('source', ''), r.get('source_url'), r.get('checked'))
+        if src not in srcs:
+            srcs.append(src)
+    cite = '; '.join(
+        (f"<a href=\"{esc(u)}\" rel=\"noopener\">{esc(n)}</a>" if u else esc(n)) +
+        (f", checked {egfmt.time_tag(c, 'en', 'prose')}" if c else '') for n, u, c in srcs)
+    return [f"<strong>Tricks travellers report here:</strong><br>{lines}<br>"
+            f"These are travellers' reports, not official advice. Source: {cite}."]
+
+
 def load_guide() -> tuple:
     """getting-around.json and arrival.json, or empty dicts when absent."""
     out = []
@@ -250,6 +272,7 @@ def build_site_months():
         if key in hours:
             facts.append(hours_fact(hours[key]))
         facts.extend(leg_facts(site, sites, guide, arrival))
+        facts.extend(scam_facts(key, arrival))
         if el is not None:
             facts.append(f"The ground at the site's coordinates sits {el:.0f} m above sea level (NASA SRTM).")
         if site.get('unesco'):
