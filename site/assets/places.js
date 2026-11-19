@@ -153,6 +153,10 @@
   function coords(p) {
     var F = window.EGYBI && window.EGYBI.fmt;
     if (LANG === 'ar' && F) return F.fixed(p.lat, 'ar', 4) + '، ' + F.fixed(p.lon, 'ar', 4);
+    // egfmt.js rounds half away from zero on the decimal digits (28.89865 ->
+    // 28.8987), as the Arabic card does; toFixed rounds the binary value and
+    // gave 28.8986 on the English and Russian cards for the same place.
+    if (F) return F.fixed(p.lat, 'en', 4) + ', ' + F.fixed(p.lon, 'en', 4);
     return p.lat.toFixed(4) + ', ' + p.lon.toFixed(4);
   }
   function digits(x) {
