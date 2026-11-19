@@ -1,4 +1,13 @@
 # EgyBI — https://egybi.com
+#
+# Every crawler is welcome on the content, on purpose. That includes the
+# search and AI-answer crawlers the 2026-27 campaign depends on: Googlebot,
+# Bingbot (which also feeds ChatGPT search and Copilot), YandexBot,
+# OAI-SearchBot, PerplexityBot, Claude-SearchBot and Applebot. A named group
+# here would REPLACE the rules below for that bot, not add to them, so there
+# are none: one group for everyone keeps /api/ and /auth/ closed to all.
+# Checked 2026-11-19: all of them received the real pages (see
+# egybi/Campaign Kit/01 Phase 0 — Listing, Search Setup and UTM.md).
 User-agent: *
 Allow: /
 

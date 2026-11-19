@@ -21,14 +21,14 @@ const src = fs.readFileSync(path.join(root, 'site', 'assets', 'analytics.js'), '
 const ORIGIN = 'https://egybi.com';
 const WANT = ORIGIN + '/api/hit.php';
 
-function beaconFor(code, pagePath) {
+function beaconFor(code, pagePath, bodies) {
   const sent = [];
   const page = new URL(pagePath, ORIGIN);
   const sandbox = {
     URL,
-    Blob: function Blob() {},
+    Blob: function Blob(parts) { if (bodies) bodies.push(parts.join('')); },
     JSON,
-    location: { hostname: page.hostname, pathname: page.pathname, href: page.href },
+    location: { hostname: page.hostname, pathname: page.pathname, href: page.href, search: page.search },
     navigator: {
       doNotTrack: '0',
       // A browser resolves a relative beacon URL against the page; do the same.
@@ -62,6 +62,27 @@ const ctl = beaconFor(old, '/visit/giza.html');
 const caught = !(ctl.length === 1 && ctl[0] === WANT);
 console.log(`${caught ? 'ok  ' : 'FAIL'} control: the old relative URL is caught (it sent ${ctl.join(', ')})`);
 if (!caught) bad++;
+
+// Campaign tag: a landing URL with utm_* sends one slug "source.medium.campaign"
+// with the page view, and nothing else from the query string. Added 2026-11-19
+// for the season campaign: without it every posted link read as "direct".
+{
+  const bodies = [];
+  beaconFor(src, '/fair-prices.html?utm_source=Reddit&utm_medium=answer&utm_campaign=s2627-prices&email=a@b.c', bodies);
+  let got = '';
+  try { got = JSON.parse(bodies[0] || '{}').src || ''; } catch (e) { got = ''; }
+  const leak = /email|@/.test(bodies[0] || '');
+  const ok = got === 'reddit.answer.s2627-prices' && !leak;
+  if (!ok) bad++;
+  console.log(`${ok ? 'ok  ' : 'FAIL'} campaign tag sent as "${got}"${leak ? ' and the query string leaked' : ''}`);
+  const plain = [];
+  beaconFor(src, '/fair-prices.html', plain);
+  let none = '';
+  try { none = JSON.parse(plain[0] || '{}').src || ''; } catch (e) { none = '?'; }
+  const ok2 = none === '';
+  if (!ok2) bad++;
+  console.log(`${ok2 ? 'ok  ' : 'FAIL'} untagged page view carries no campaign tag`);
+}
 
 if (bad) { console.log(`${bad} problem(s)`); process.exit(1); }
 console.log(`beacon resolves to ${WANT} from ${PAGES.length} pages, root and folders`);
