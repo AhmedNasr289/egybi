@@ -582,6 +582,21 @@ case("an airport row cited to a blog", "coverage.py", ["site/data/arrival.json"]
                   '"source_url": "https://example-travel-blog.com/cairo-airport-uber"'),
      lambda o: "airport row not sourced from the airport or the operator" in o and "cai-uber" in o, COVERAGE)
 
+# Tricks travellers report, shown on the visit pages of the sites they were
+# reported at (2026-11-18). Losing Giza from the camel row would hide it from
+# the Giza page; test_scams.py must catch it.
+case("the camel-ride trick no longer shown at Giza", "test_scams.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"near": ["giza"],', '"near": [],'),
+     lambda o: "FAIL" in o and "test_giza_and_saqqara_show_the_tricks_reported_there" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_scams.py -v')
+
+# Russian site names on the heat page (2026-11-18). Dropping the Russian
+# branch of siteName puts English names back in the Russian month caption;
+# twin-data.js must report it.
+case("the Russian month caption names a site in English", "twin-data.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js", "if (LANG === 'ru') return t(s.name);", ""),
+     lambda o: "ru/visit.html month caption names a site in English" in o, f"node {HERE}/twin-data.js")
+
 # Coordinates on the Arabic place card in Arabic-Indic digits (2026-11-18).
 # Writing them with toFixed again must make twin-data.js report it.
 case("the Arabic place card's coordinates in Western digits", "twin-data.js", ["site/assets/places.js"],

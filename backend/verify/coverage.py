@@ -369,6 +369,14 @@ for a in _guide.get("areas", []):
         if k not in _sites:
             findings["planner leg that points at nothing"].append(
                 f"getting-around.json: area {a.get('key')!r} is near {k!r}, which is not a site in visit-climate.json")
+# A travellers' report on arrival.json shown on a visit page names that site
+# in "near" (2026-11-18); a key that is not a measured site shows nowhere.
+for g in _arr.get("groups", []):
+    for r in g.get("rows", []):
+        for k in r.get("near", []):
+            if k not in _sites:
+                findings["planner leg that points at nothing"].append(
+                    f"arrival.json: {r.get('key')} is near {k!r}, which is not a site in visit-climate.json")
 for leg in _guide.get("legs", []):
     for k in leg.get("between", []):
         if k not in _areas:

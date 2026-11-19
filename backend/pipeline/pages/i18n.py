@@ -128,6 +128,10 @@ DATA_TEXT = {
     # Only the rows a leg names in getting-around.json are shown by script.
     'arrival.json': {'top': (), 'group': (), 'row': ('label', 'value'),
                      'only_leg_rows': 'getting-around.json'},
+    # The heat page names the measured sites in the page's language (visit.js
+    # siteName, 2026-11-18): Russian pages through this table; Arabic pages
+    # use the file's own name_ar, and the Arabic table repeats it.
+    'visit-climate.json': {'top': (), 'group': (), 'row': (), 'lists': {'sites': ('name',)}},
     # The planner's stop cards name the items made near a stop (plan.js madeNearHtml).
     # Only items made near a site appear there (rows with a "near" list).
     'made-in-egypt.json': {'top': (), 'group': (), 'row': ('item',), 'no_sources': True, 'only_near': True},
