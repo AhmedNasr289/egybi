@@ -647,6 +647,13 @@ case("the calendar file drops the last day of each stop", "ics-cases.js", ["site
      lambda: edit("site/assets/ics.js", "var end = addDays(day, n);", "var end = addDays(day, n - 1);"),
      lambda o: "FAIL a two-day stop ends the day after its last day" in o, f"node {HERE}/ics-cases.js")
 
+# The streets page's legend reads in the page's language (2026-11-19). A
+# metric label taken out of t() puts English back on the Arabic and Russian
+# streets page; twin-data.js must catch it.
+case("the streets legend back in English", "twin-data.js", ["site/assets/streets.js"],
+     lambda: edit("site/assets/streets.js", "label: t('Intersection density')", "label: 'Intersection density'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "streets" in o, f"node {HERE}/twin-data.js")
+
 # The dossier counts each stop's dates from the arrival day (2026-11-19).
 # Off by one day, every sheet would name the wrong dates; dossier-days.js
 # must catch it.
