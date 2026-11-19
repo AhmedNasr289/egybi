@@ -211,6 +211,14 @@ case("a visit page repeats the same leg rows", "test_visit_legs.py", ["backend/p
      lambda o: "FAIL" in o and "test_cairo_legs_with_the_same_rows_are_said_once" in o,
      f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_visit_legs.py -v')
 
+# Governorate names in Arabic and Russian (2026-11-18). Dropping one from the
+# Arabic map would show that governorate in English on every Arabic page;
+# test_gov_names.py must catch it.
+case("a governorate with no Arabic name", "test_gov_names.py", ["backend/pipeline/pages/egfmt.py"],
+     lambda: edit("backend/pipeline/pages/egfmt.py", '"South Sinai": "جنوب سيناء", ', ''),
+     lambda o: "FAIL" in o and "test_every_governorate_has_an_arabic_and_a_russian_name" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_gov_names.py -v')
+
 # an empty-state note that talks to the maintainer, not the traveller (2026-11-17)
 case("build language back in a visitor note", "static-audit.py", ["site/visit.html"],
      lambda: edit("site/visit.html", "The cross-sections are not ready yet. Please check back soon.",
@@ -573,6 +581,27 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
 case("the quote checker calls the top of the range too high", "fair-verdict.js", ["site/assets/fair.js"],
      lambda: edit("site/assets/fair.js", "if (amount > top) return", "if (amount >= top) return"),
      lambda o: "FAIL the top of the range is inside it" in o, f"node {HERE}/fair-verdict.js")
+
+# Luxor is on inDrive's own city list and not on Uber's (2026-11-18). Losing
+# it from the inDrive row would leave a Luxor visitor with no app named;
+# test_ride_apps.py must catch it.
+case("Luxor dropped from the inDrive row", "test_ride_apps.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"Cairo, Alexandria, Luxor, Aswan, Hurghada', '"Cairo, Alexandria, Aswan, Hurghada'),
+     lambda o: "FAIL" in o and "test_every_city_missing_from_uber" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_ride_apps.py -v')
+
+# The Cairo legs carry the sleeper fares (2026-11-18). Dropping the
+# row from the leg must make leg-rows.js report the leg's rows as wrong.
+case("the sleeper fares dropped from the Cairo-Luxor leg", "leg-rows.js", ["site/data/getting-around.json"],
+     lambda: edit("site/data/getting-around.json", '"luxor"], "rows": ["train-bashtil", "train-sleeper", "train-fares"',
+                  '"luxor"], "rows": ["train-bashtil", "train-fares"'),
+     lambda o: "FAIL Giza to Karnak takes the Cairo-Luxor sleeper rows" in o, f"node {HERE}/leg-rows.js")
+
+# made-in-egypt.html says EgyBI takes no payment from any maker (2026-11-18).
+# A referral tag on a maker link would make that untrue; coverage.py must refuse it.
+case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-egypt.json"],
+     lambda: edit("site/data/made-in-egypt.json", '"maker_url": "https://kiliim.com/"', '"maker_url": "https://kiliim.com/?ref=egybi"'),
+     lambda o: "maker link that is not a plain https link" in o and "kiliim" in o, COVERAGE)
 
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
@@ -1478,6 +1507,13 @@ case("the Russian planner breaks on a number format", "leg-cards.js", ["site/ass
                   "return F ? F.digits(String(x), document.documentElement.getAttribute('lang') || 'en') : String(x);"),
      lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
 
+# The home briefing in Arabic and Russian (2026-11-18). Putting its title back
+# as an English literal must make twin-data.js report the briefing.
+case("the home briefing title back in English", "twin-data.js", ["site/assets/home.js"],
+     lambda: edit("site/assets/home.js", "title.textContent = t('The heat, site by site, in %m.').replace('%m', T.monthName(main));",
+                  "title.textContent = 'The heat, site by site, in ' + T.MONTHS[main] + '.';"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "briefing" in o, f"node {HERE}/twin-data.js")
+
 # The visit page in Arabic and Russian (2026-11-18). Writing the month
 # caption back as an English sentence must make twin-data.js report it.
 case("the visit month caption back in English", "twin-data.js", ["site/assets/visit.js"],
@@ -1486,12 +1522,26 @@ case("the visit month caption back in English", "twin-data.js", ["site/assets/vi
                   "cap.innerHTML = esc(('In %m, a normal afternoon across these %n sites"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "month caption" in o, f"node {HERE}/twin-data.js")
 
+# The Arabic month caption names the sites in Arabic (2026-11-18). Using the
+# English name again must make twin-data.js report it.
+case("the Arabic month caption names a site in English", "twin-data.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js", ".replace('%a', siteName(lo.s))", ".replace('%a', lo.s.name)"),
+     lambda o: "names a site in English" in o, f"node {HERE}/twin-data.js")
+
 # The places page in Arabic and Russian (2026-11-18). Putting the card's
 # "Going there" heading back as an English literal must make twin-data.js
 # report the place card.
 case("the place card heading back in English", "twin-data.js", ["site/assets/places.js"],
      lambda: edit("site/assets/places.js", "'<div class=\"pd-going\"><h4>' + esc(t('Going there')) + '</h4>'",
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
+
+# A kind label passed to t() as a variable is never collected into the
+# translation table, so it stayed English on the live Arabic and Russian
+# pages (2026-11-18). Writing one back as a plain string must be caught.
+case("a place kind label not collected for translation", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "airport:    { label: t('Airports'),       one: t('Airport'),",
+                  "airport:    { label: 'Airports',       one: 'Airport',"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
 
 

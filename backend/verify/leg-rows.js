@@ -44,10 +44,13 @@ const site = (k) => {
 const ASWAN_TOWN = { lat: 24.0889, lon: 32.8998 };   // Aswan railway station area
 const FAYOUM = { lat: 29.3084, lon: 30.8428 };
 
-const TRAIN = ['train-bashtil', 'train-fares', 'train-tickets'];
+// The Cairo legs carry the sleeper fares too (2026-11-18; Seat61 gives the
+// same fares to Luxor and to Aswan).
+const TRAIN = ['train-bashtil', 'train-sleeper', 'train-fares', 'train-tickets'];
+const TO_LUXOR = TRAIN;
 const cases = [
-  ['Giza to Karnak takes the Cairo-Luxor sleeper rows', site('giza'), site('karnak'), TRAIN],
-  ['the same leg read backwards gives the same rows', site('karnak'), site('giza'), TRAIN],
+  ['Giza to Karnak takes the Cairo-Luxor sleeper rows', site('giza'), site('karnak'), TO_LUXOR],
+  ['the same leg read backwards gives the same rows', site('karnak'), site('giza'), TO_LUXOR],
   ['Historic Cairo to Philae takes the Cairo-Aswan rows', site('islamic-cairo'), site('philae'), TRAIN],
   ['Aswan town to Abu Simbel takes the desert road row', ASWAN_TOWN, site('abu-simbel'), ['abu-simbel-road']],
   ['Karnak to Valley of the Kings is one area: no rows', site('karnak'), site('valley-kings'), []],
