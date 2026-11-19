@@ -66,7 +66,7 @@ const TRIP = { start: '2026-12-10', end: '2026-12-14', name: 'Offline test',
   if (n !== 2) fail('OFFLINE PLAN NOT SHOWN: ' + n + ' stops rendered offline');
   else console.log('ok   offline: plan.html opened with the saved 2 stops');
 
-  await p.goto(BASE + '/stocks.html').catch(() => {});
+  await p.goto(BASE + '/invest.html').catch(() => {});
   const off = await p.evaluate(() => ({ h1: (document.querySelector('h1') || {}).textContent || '',
     link: !!document.querySelector('a[href="/plan.html"]') })).catch(() => ({ h1: '', link: false }));
   if (!/offline/i.test(off.h1) || !off.link) fail('OFFLINE PAGE MISSING: an unopened page showed "' + off.h1 + '"');
