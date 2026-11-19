@@ -117,6 +117,31 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         else console.log(`${where}: briefing "${brief.title}"`);
       }
 
+      // The streets page (2026-11-19, maps plan stage 3): the legend, the
+      // findings, the table and the build note streets.js writes read in the
+      // page's language, with district names and eras translated and Arabic
+      // digits on Arabic pages. Before, the script had no t() call at all.
+      if (page === 'streets.html' && loaded) {
+        const st = await p.waitForFunction(() => {
+          const lg = document.querySelector('#streetsLegend .map-legend-title');
+          const rows = document.querySelectorAll('#cardTableBody tr');
+          return lg && rows.length ? {
+            legend: (document.getElementById('streetsLegend') || {}).textContent || '',
+            spread: (document.getElementById('roseSpread') || {}).textContent || '',
+            dead: (document.getElementById('deadEndFinding') || {}).textContent || '',
+            meta: (document.getElementById('streetsMeta') || {}).textContent || '',
+            row: rows[0].textContent || '',
+          } : null;
+        }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
+        const eng = /Intersection density|Junctions per square|Read the numbers together|cul-de-sac story|Era labels are ours|Street network: |Downtown Cairo|Garden suburb|Desert new town/;
+        const all = st ? [st.legend, st.spread, st.dead, st.meta, st.row].join(' | ') : '';
+        if (!st) fail(`TWIN DATA NOT LOADED: ${where} - the streets legend or table stayed empty`);
+        else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} streets page reads "${(all.match(eng) || [''])[0]}" in "${all.slice(0, 140)}"`);
+        else if (lang === 'ar/' && /[0-9]/.test(st.row)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} streets table in Western digits "${st.row.slice(0, 120)}"`);
+        else if (!lang && !/Intersection density/.test(st.legend)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English streets legend changed to "${st.legend.slice(0, 120)}"`);
+        else console.log(`${where}: streets legend, findings and table in the page's language`);
+      }
+
       // The visit page (2026-11-18): the month caption visit.js writes reads
       // in the page's language; English stays English.
       if (page === 'visit.html' && loaded) {

@@ -138,6 +138,9 @@ DATA_TEXT = {
 
     # Holiday names and notes, and the capacity facts, shown by the home page
     # and the planner (home.js renderEvents, plan.js renderDossier).
+    # District names, eras and descriptions on streets.html (streets.js,
+    # 2026-11-19, maps plan stage 3). Arabic pages use the data's name_ar.
+    'streets-districts.json': {'top': (), 'group': (), 'row': (), 'lists': {'districts': ('name', 'era', 'why')}},
     'calendar.json': {'top': (), 'group': (), 'row': (),
                       'lists': {'events': ('name', 'note'), 'capacity': ('place', 'fact')}},
 }

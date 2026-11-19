@@ -647,6 +647,13 @@ case("the calendar file drops the last day of each stop", "ics-cases.js", ["site
      lambda: edit("site/assets/ics.js", "var end = addDays(day, n);", "var end = addDays(day, n - 1);"),
      lambda o: "FAIL a two-day stop ends the day after its last day" in o, f"node {HERE}/ics-cases.js")
 
+# The streets page's legend reads in the page's language (2026-11-19). A
+# metric label taken out of t() puts English back on the Arabic and Russian
+# streets page; twin-data.js must catch it.
+case("the streets legend back in English", "twin-data.js", ["site/assets/streets.js"],
+     lambda: edit("site/assets/streets.js", "label: t('Intersection density')", "label: 'Intersection density'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "streets" in o, f"node {HERE}/twin-data.js")
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)

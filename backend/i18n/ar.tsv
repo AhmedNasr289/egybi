@@ -1610,3 +1610,89 @@ Planned on egybi.com. Check opening hours before you go.	خُطّطت على egy
 Set your arrival date first, so each stop can be placed on its days.	حدّد تاريخ وصولك أولًا، حتى توضع كل محطة في أيامها.
 Add a stop first.	أضف محطة أولًا.
 Calendar file made: one event for each stop. Open it to add them to your calendar; nothing was sent anywhere.	جُهّز ملف التقويم: حدث واحد لكل محطة. افتحه لتضيفها إلى تقويمك؛ لم يُرسل شيء إلى أي مكان.
+Downtown Cairo	وسط البلد
+Khedivial, 1860s–1870s	خديوي، ستينيات وسبعينيات القرن التاسع عشر
+Ismail's Paris-on-the-Nile: deliberate boulevards and midans laid over a dense grid. The oldest planned fabric in the comparison.	باريس على النيل كما أرادها إسماعيل: شوارع عريضة وميادين مقصودة فوق شبكة كثيفة. أقدم نسيج مخطط في المقارنة.
+Heliopolis	مصر الجديدة
+Garden suburb, 1905–1910s	ضاحية حدائق، ١٩٠٥ وحتى العقد الثاني من القرن العشرين
+Baron Empain's tram-served desert suburb — radial avenues over a regular grid, built around public transit from day one.	ضاحية البارون إمبان الصحراوية التي يخدمها الترام: شوارع شعاعية فوق شبكة منتظمة، بُنيت حول النقل العام منذ يومها الأول.
+Maadi	المعادي
+Garden suburb, 1900s–1930s	ضاحية حدائق، من العقد الأول إلى الثلاثينيات من القرن العشرين
+Delta Land Company's low-density villa quarter: numbered streets on a grid, softened by diagonals and greenery.	حي الفيلات منخفض الكثافة الذي أنشأته شركة أراضي الدلتا: شوارع مرقّمة على شبكة، تليّنها شوارع مائلة ومساحات خضراء.
+Nasr City	مدينة نصر
+Nasserist expansion, 1958+	توسّع العهد الناصري، منذ ١٩٥٨
+The state's post-revolution answer to Cairo's growth — wide arterials and superblocks, designed for the car era.	ردّ الدولة بعد الثورة على نمو القاهرة: محاور عريضة ومربعات ضخمة، صُممت لعصر السيارة.
+6th of October City	مدينة السادس من أكتوبر
+Desert new town, 1979+	مدينة صحراوية جديدة، منذ ١٩٧٩
+First-generation satellite city, built to pull people off the Nile valley. Master-planned from nothing on open desert.	مدينة تابعة من الجيل الأول، بُنيت لتجذب الناس بعيدًا عن وادي النيل. خُططت بالكامل من لا شيء في صحراء مفتوحة.
+Luxor City	الأقصر
+Temple town, ancient core + modern grid	مدينة معابد: نواة قديمة وشبكة حديثة
+A working Egyptian city wrapped around a pharaonic temple complex — the only district here whose street plan has to negotiate 3,000-year-old stone.	مدينة مصرية عاملة تلتف حول مجمّع معابد فرعوني، والحي الوحيد هنا الذي يتفاوض تخطيط شوارعه مع حجارة عمرها ٣٠٠٠ عام.
+10th of Ramadan City	مدينة العاشر من رمضان
+Industrial new town, 1977+	مدينة صناعية جديدة، منذ ١٩٧٧
+Egypt's first satellite city, built around factories rather than housing — an industrial-first plan that predates the desert suburbs by two decades.	أول مدينة تابعة في مصر، بُنيت حول المصانع لا المساكن: تخطيط يبدأ بالصناعة ويسبق الضواحي الصحراوية بعقدين.
+Sheikh Zayed City	مدينة الشيخ زايد
+Desert new town, 1995+	مدينة صحراوية جديدة، منذ ١٩٩٥
+The compound-and-arterial template that New Cairo and 6th of October scaled up, at a size where the pattern is still legible.	نموذج المجمّعات والمحاور الذي كبّرته القاهرة الجديدة و٦ أكتوبر، بحجم ما زال النمط فيه مقروءًا.
+New Alamein	مدينة العلمين الجديدة
+Coastal new city, 2018+	مدينة ساحلية جديدة، منذ ٢٠١٨
+The newest fabric in the comparison and the only one on the Mediterranean — a city still being built, which is itself visible in the network.	أحدث نسيج في المقارنة والوحيد على البحر المتوسط: مدينة ما زالت تُبنى، وهذا نفسه ظاهر في الشبكة.
+New Cairo	القاهرة الجديدة
+Desert new town, 1990s–2000s	مدينة صحراوية جديدة، التسعينيات والعقد الأول من القرن الحادي والعشرين
+The Fifth Settlement era: compound-led, low-connectivity suburban form — the sharpest contrast with the khedivial grid.	حقبة التجمع الخامس: شكل ضاحوي تقوده المجمّعات بترابط ضعيف، وهو أوضح تضاد مع الشبكة الخديوية.
+%n km/km²	%n كم/كم²
+%n km²	%n كم²
+%n per km²	%n في الكيلومتر المربع
+(hand-drawn extent)	(حدود مرسومة باليد)
+A low score can mean few facilities or few mapped facilities: this data cannot tell them apart.	قد تعني النتيجة المنخفضة قلة المنشآت أو قلة المرسوم منها على الخريطة: لا تستطيع هذه البيانات التمييز بينهما.
+AI-generated	مكتوبة بالذكاء الاصطناعي
+Access layer built %d.	بُنيت طبقة الوصول في %d.
+At or above twice the lowest share: %l. None of them is among the newest districts here. The desert and coastal new towns, the ones a cul-de-sac critique is usually aimed at, sit near the bottom. What separates them from the older districts is coarseness, not disconnection: far fewer junctions per square kilometre and much longer blocks, which is a different criticism and has to be argued differently.	عند ضعف أدنى نسبة أو أكثر: %l. ليس أيٌّ منها من أحدث الأحياء هنا. أما المدن الجديدة الصحراوية والساحلية، وهي التي يُوجَّه إليها عادةً نقد الشوارع المسدودة، فتقع قرب القاع. ما يميّزها عن الأحياء الأقدم هو الاتساع لا الانقطاع: تقاطعات أقل بكثير في الكيلومتر المربع ومربعات سكنية أطول بكثير، وهذا نقد مختلف يحتاج إلى حجة مختلفة.
+Average distance between junctions. Short segments mean small, walkable blocks; long ones mean superblocks you have to walk around.	متوسط المسافة بين التقاطعات. المقاطع القصيرة تعني مربعات صغيرة يسهل المشي فيها، والطويلة تعني مربعات ضخمة عليك أن تلتف حولها.
+Average number of streets meeting at each node. Near 4 is a crossroads grid; near 2.5 means many bends and dead ends rather than true junctions.	متوسط عدد الشوارع التي تلتقي عند كل عقدة. قرب ٤ يعني شبكة من التقاطعات المتعامدة، وقرب ٢٫٥ يعني منحنيات وطرقًا مسدودة كثيرة بدل تقاطعات حقيقية.
+Could not be re-measured and keep an earlier measurement, dated on each: %n.	تعذّر قياسها من جديد فاحتفظت بقياس سابق مؤرَّخ على كل منها: %n.
+Counted from OpenStreetMap: %l.	المعدود من OpenStreetMap: %l.
+Dead-end share runs from %a at %x to %b at %y.	تتراوح نسبة الطرق المسدودة بين %a في %x و%b في %y.
+Era labels are ours; the numbers are not.	تسميات الحِقب من عندنا؛ أما الأرقام فليست كذلك.
+Every query returned an answer and every answer was empty, so this is a statement about OpenStreetMap coverage in this district, not about whether the district has clinics or schools. It almost certainly has both.	أجاب كل استعلام وكانت كل الإجابات فارغة، فهذا حكم على تغطية OpenStreetMap في هذا الحي، لا على وجود عيادات أو مدارس فيه. والأرجح جدًا أن فيه كليهما.
+Hand-drawn extent.	حدود مرسومة باليد.
+How concentrated the street directions are. A four-way grid puts nearly all its length into two opposing pairs and scores about 1.39; bearings spread evenly around the compass approach 3.58. A high score can mean disorder or a deliberate radial plan — this number alone cannot tell you which.	مدى تركّز اتجاهات الشوارع. الشبكة المتعامدة تضع كل طولها تقريبًا في زوجين متقابلين وتسجّل نحو ١٫٣٩، أما الاتجاهات الموزعة بالتساوي حول البوصلة فتقترب من ٣٫٥٨. قد تعني النتيجة العالية فوضى أو تخطيطًا شعاعيًا مقصودًا، ولا يكفي هذا الرقم وحده لمعرفة أيهما.
+How much further you travel along streets than the straight-line distance. 1.00 would be a perfect straight shot; higher means detours.	كم تطول الرحلة على الشوارع مقارنةً بالمسافة المستقيمة. ١٫٠٠ تعني طريقًا مستقيمًا تمامًا، وما فوقها يعني التفافات.
+Junctions per square kilometre. More intersections means more route choices, shorter blocks and a network that stays usable when one street is blocked.	عدد التقاطعات في الكيلومتر المربع. تقاطعات أكثر تعني خيارات طرق أكثر ومربعات أقصر وشبكة تبقى صالحة حين يُغلق شارع واحد.
+Kilometres of street per square kilometre. A rough measure of how finely the land is subdivided.	كيلومترات الشوارع في الكيلومتر المربع. مقياس تقريبي لمدى دقة تقسيم الأرض.
+Map of the measured Egyptian districts, shaded by the selected street-network metric. Tab to a district and press Enter for its figures.	خريطة الأحياء المصرية المقيسة، ملوّنة بحسب مقياس شبكة الشوارع المختار. انتقل إلى حي بمفتاح Tab واضغط Enter لعرض أرقامه.
+Measured %d. The latest build could not re-measure this district, so these are its last measured figures.	قيس في %d. تعذّر على آخر بناء قياس هذا الحي من جديد، فهذه آخر أرقامه المقيسة.
+No hospital, clinic, school or pharmacy is mapped inside this boundary, so there is nothing to measure a walk to: a gap in OpenStreetMap, not a finding about the district.	لا مستشفى ولا عيادة ولا مدرسة ولا صيدلية مرسومة داخل هذه الحدود، فلا شيء يُقاس المشي إليه: هذه فجوة في OpenStreetMap، لا نتيجة عن الحي.
+Not answered on this build: %l.	لم تُجب في هذا البناء: %l.
+Nothing of these four kinds is mapped here.	لا شيء من هذه الأنواع الأربعة مرسوم هنا.
+OpenStreetMap has no polygon for this district under any name or tag: every match we found was a landmark inside it (a palace, a courthouse, a theatre) rather than the district itself. This outline is drawn from its known edges: the Nile, Ramses, Port Said Street and Sayyida Zeinab. Every other district here uses OpenStreetMap’s own polygon. Because the per-km² figures depend on where that line falls, these are the numbers on this page most sensitive to a judgement call.	ليس في OpenStreetMap مضلّع لهذا الحي بأي اسم أو وسم: كل ما وجدناه كان معلمًا داخله (قصرًا أو محكمة أو مسرحًا) لا الحي نفسه. هذه الحدود مرسومة من أطرافه المعروفة: النيل ورمسيس وشارع بورسعيد والسيدة زينب. أما بقية الأحياء هنا فتستخدم مضلّع OpenStreetMap نفسه. ولأن الأرقام لكل كيلومتر مربع تتوقف على موضع هذا الخط، فهذه أكثر أرقام الصفحة تأثرًا بالتقدير.
+Planner’s note	ملاحظة المخطِّط
+Planner’s notes have not been generated for this build.	لم تُكتب ملاحظات المخطِّط لهذا البناء.
+Read the numbers together before reading any one of them. Districts measured: %n. Entropy runs from %a to %b, a spread of %s, or %p of the %g–%m range.	اقرأ الأرقام معًا قبل أن تقرأ أيًّا منها وحده. عدد الأحياء المقيسة: %n. تتراوح الإنتروبيا بين %a و%b، أي فارق %s، أو %p من المدى %g–%m.
+Share of street ends that go nowhere. Cul-de-sacs calm traffic on the street itself, but push every trip back onto a few collector roads.	نسبة نهايات الشوارع التي لا تؤدي إلى شيء. الشوارع المسدودة تهدّئ المرور في الشارع نفسه، لكنها تدفع كل رحلة إلى عدد قليل من الطرق التجميعية.
+Skipped:	تُرك:
+Street network measured %d. The latest build could not re-measure this district, so these are its last measured figures.	قيست شبكة الشوارع في %d. تعذّر على آخر بناء قياس هذا الحي من جديد، فهذه آخر أرقامه المقيسة.
+Street network: OpenStreetMap via OSMnx, built %d. Districts: %n.	شبكة الشوارع: OpenStreetMap عبر OSMnx، بُنيت في %d. عدد الأحياء: %n.
+Street orientation: length of road facing each compass direction	اتجاه الشوارع: طول الطرق المتجهة إلى كل اتجاه من البوصلة
+That is a wide enough spread for the differences between districts to be meaningful.	وهذا فارق واسع بما يكفي لتكون الفروق بين الأحياء ذات معنى.
+The cul-de-sac story is not in this data.	قصة الشوارع المسدودة ليست في هذه البيانات.
+The districts do not separate cleanly on this metric.	لا تنفصل الأحياء بوضوح على هذا المقياس.
+The street-network data has not been generated yet. It appears here after the first "Refresh street report card" run: the page is built and waiting, not broken. Nothing is shown until there are real measurements to show.	لم تُنشأ بيانات شبكة الشوارع بعد. تظهر هنا بعد أول تشغيل لـ"Refresh street report card": الصفحة جاهزة وتنتظر، وليست معطلة. لا يُعرض شيء قبل أن تتوفر قياسات حقيقية.
+They are clustered near the high end, which is the actual finding: none of these districts is a grid by this measure, khedivial Downtown included. The textbook contrast between a planned grid and an organic tangle does not appear in Cairo, and a metric this flat should not be used to rank the districts against each other. The differences that do separate them are in the other six columns.	وهي متجمعة قرب الطرف الأعلى، وهذه هي النتيجة الفعلية: لا حي من هذه الأحياء شبكة متعامدة بهذا المقياس، بما فيها وسط البلد الخديوي. التضاد المدرسي بين شبكة مخططة وتشابك عفوي لا يظهر في القاهرة، ولا ينبغي استخدام مقياس بهذا الثبات لترتيب الأحياء بعضها أمام بعض. الفروق التي تميّزها فعلًا موجودة في الأعمدة الستة الأخرى.
+They are shown as unknown rather than as zero, and the score above averages the categories that answered (%n).	تُعرض على أنها مجهولة لا صفرًا، والنتيجة أعلاه متوسط الفئات التي أجابت (%n).
+Walking access	الوصول سيرًا على الأقدام
+Written by a language model from the numbers above, which are shown next to it so you can check every claim. It is a reading of the metrics, not professional planning advice.	كتبها نموذج لغوي اعتمادًا على الأرقام أعلاه، المعروضة بجانبها لتتحقق من كل ادعاء. إنها قراءة للمقاييس، لا نصيحة تخطيط مهنية.
+averaged over the categories that returned a result this build (%n)	متوسط الفئات التي أعادت نتيجة في هذا البناء (%n)
+clinic	عيادة
+entropy %n	الإنتروبيا %n
+hospital	مستشفى
+measured %d	قيس في %d
+measured %d; the latest build could not re-measure it	قيس في %d؛ تعذّر على آخر بناء قياسه من جديد
+no data	لا بيانات
+none mapped in OpenStreetMap	لا شيء مرسوم في OpenStreetMap
+not retrieved	لم يُجلب
+not retrieved this build	لم يُجلب في هذا البناء
+of walkable street within 15 minutes of a mapped hospital, clinic, school or pharmacy	من الشوارع الصالحة للمشي على بعد ١٥ دقيقة من مستشفى أو عيادة أو مدرسة أو صيدلية مرسومة
+pharmacy	صيدلية
+school	مدرسة
+within 15 min; median %n min	ضمن ١٥ دقيقة؛ الوسيط %n دقيقة
