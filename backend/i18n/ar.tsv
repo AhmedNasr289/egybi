@@ -1777,3 +1777,24 @@ Best Time to Visit Egypt: Weather by Month, Site by Site | EgyBI	أفضل وقت
 The best time to visit Egypt, site by site: what a normal afternoon reaches in each month at the major sites, from NASA's long-term climate averages.	أفضل وقت لزيارة مصر، موقعًا بموقع: ما تبلغه الحرارة عادةً بعد الظهر في كل شهر عند المواقع الكبرى، من متوسطات المناخ طويلة الأمد لدى ناسا.
 Fair Prices in Egypt: Tipping, Entry Tickets and Rides | EgyBI	الأسعار العادلة في مصر: البقشيش وتذاكر الدخول والتنقلات | EgyBI
 Arriving in Egypt: e-visa, Cairo airport, Uber, inDrive · EgyBI	الوصول إلى مصر: الفيزا ومطار القاهرة وأوبر وإن درايف · EgyBI
+Boundaries	الحدود
+Population and census figures: CAPMAS	أرقام السكان والتعداد: الجهاز المركزي للتعبئة العامة والإحصاء (CAPMAS)
+Places and facilities	الأماكن والمنشآت
+OpenStreetMap contributors	مساهمو OpenStreetMap
+Elevation: NASA SRTM via OpenTopoData	الارتفاع: NASA SRTM عبر OpenTopoData
+Climate normals: NASA POWER	المعدلات المناخية: NASA POWER
+SQL error	خطأ في SQL
+That ran, but returned no rows.	نُفِّذ الاستعلام، لكنه لم يُرجع أي صف.
+Showing the first 200 rows of %n.	تُعرض أول ٢٠٠ صف من أصل %n.
+Query this data	استعلم عن هذه البيانات
+SQL query	استعلام SQL
+Run	تشغيل
+this table	هذا الجدول
+as of	حتى
+Starting the SQL engine…	جارٍ تشغيل محرك SQL…
+Running in your browser. Edit the query and run it again.	يعمل في متصفحك. عدِّل الاستعلام وشغِّله مرة أخرى.
+The query engine did not load	لم يُحمَّل محرك الاستعلام
+Everything else on the page still works.	كل ما عدا ذلك في الصفحة يعمل.
+This table comes from	مصدر هذا الجدول:
+Download the underlying data	نزِّل البيانات الأصلية
+Query this yourself	استعلم بنفسك

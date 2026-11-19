@@ -217,10 +217,14 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
             items: Array.from(lg.querySelectorAll('.map-legend-item')).map(e => e.textContent.trim()).join(' | '),
             key: ((document.getElementById('atlasKey') || {}).textContent || '').trim(),
             note: ((document.getElementById('layerNote') || {}).textContent || '').trim(),
+            // The map credit (mapkit.js) and the query button (query.js) are
+            // shared scripts; both wrote English on every page until 2026-11-19.
+            credit: ((document.querySelector('.map-credit') || {}).textContent || '').trim(),
+            query: ((document.querySelector('.query-btn') || {}).textContent || '').trim(),
           } : null;
         }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
-        const eng = /Population \(2023\)|million|Points on the map|World Heritage site|All layers loaded|Not generated yet/;
-        const all = atlas ? [atlas.title, atlas.items, atlas.key, atlas.note].join(' | ') : '';
+        const eng = /Population \(2023\)|million|Points on the map|World Heritage site|All layers loaded|Not generated yet|Boundaries:|Places and facilities|OpenStreetMap contributors|Query this yourself/;
+        const all = atlas ? [atlas.title, atlas.items, atlas.key, atlas.note, atlas.credit, atlas.query].join(' | ') : '';
         if (!atlas) fail(`TWIN DATA NOT LOADED: ${where} - the Atlas legend stayed empty`);
         else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} Atlas reads "${all.slice(0, 160)}"`);
         else if (lang === 'ar/' && /[0-9]/.test(atlas.items)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} Atlas legend in Western digits "${atlas.items.slice(0, 120)}"`);

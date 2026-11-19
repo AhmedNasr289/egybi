@@ -265,16 +265,21 @@
      So the credit is rendered as ordinary page content immediately after the
      map, OUTSIDE Leaflet entirely. Turning the attribution control off, or
      restyling it, or removing it, cannot take the credit with it. */
-  var SOURCES = {
-    geoboundaries: 'Boundaries: <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a> '
-      + '(Runfola et al., 2020), <a href="https://creativecommons.org/licenses/by/4.0/" '
-      + 'rel="license noopener">CC BY 4.0</a>',
-    capmas: 'Population and census figures: CAPMAS',
-    osm: 'Places and facilities: &copy; <a href="https://www.openstreetmap.org/copyright" '
-      + 'rel="noopener">OpenStreetMap contributors</a>, ODbL',
-    srtm: 'Elevation: NASA SRTM via OpenTopoData',
-    power: 'Climate normals: NASA POWER'
-  };
+  // Built when a credit is drawn, so the words come out in the page's
+  // language: t() reads the table assets/i18n/<lang>.js sets (2026-11-19).
+  function t(s) { var f = window.EGYBI && window.EGYBI.t; return f ? f(s) : s; }
+  function sources() {
+    return {
+      geoboundaries: t('Boundaries') + ': <a href="https://www.geoboundaries.org/" rel="noopener">geoBoundaries</a> '
+        + '(Runfola et al., 2020), <a href="https://creativecommons.org/licenses/by/4.0/" '
+        + 'rel="license noopener">CC BY 4.0</a>',
+      capmas: t('Population and census figures: CAPMAS'),
+      osm: t('Places and facilities') + ': &copy; <a href="https://www.openstreetmap.org/copyright" '
+        + 'rel="noopener">' + t('OpenStreetMap contributors') + '</a>, ODbL',
+      srtm: t('Elevation: NASA SRTM via OpenTopoData'),
+      power: t('Climate normals: NASA POWER')
+    };
+  }
 
   function addCredit(container, keys) {
     if (!keys || !keys.length) return null;
@@ -285,6 +290,7 @@
     var el = document.createElement('p');
     el.className = 'map-credit';
     if (container.id) el.setAttribute('data-for', container.id);
+    var SOURCES = sources();
     el.innerHTML = keys.map(function (k) { return SOURCES[k] || k; }).join(' &middot; ') + '.';
     container.insertAdjacentElement('afterend', el);
     return el;

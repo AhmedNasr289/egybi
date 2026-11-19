@@ -1777,3 +1777,24 @@ Best Time to Visit Egypt: Weather by Month, Site by Site | EgyBI	Когда лу
 The best time to visit Egypt, site by site: what a normal afternoon reaches in each month at the major sites, from NASA's long-term climate averages.	Когда лучше ехать в Египет — у каждого места: сколько обычно бывает днём в каждом месяце у главных достопримечательностей, по многолетним данным NASA.
 Fair Prices in Egypt: Tipping, Entry Tickets and Rides | EgyBI	Честные цены в Египте: чаевые, билеты и поездки | EgyBI
 Arriving in Egypt: e-visa, Cairo airport, Uber, inDrive · EgyBI	Прибытие в Египет: виза, аэропорт Каира, Uber, inDrive · EgyBI
+Boundaries	Границы
+Population and census figures: CAPMAS	Население и данные переписи: CAPMAS
+Places and facilities	Места и объекты
+OpenStreetMap contributors	участники OpenStreetMap
+Elevation: NASA SRTM via OpenTopoData	Высота: NASA SRTM через OpenTopoData
+Climate normals: NASA POWER	Климатические нормы: NASA POWER
+SQL error	Ошибка SQL
+That ran, but returned no rows.	Запрос выполнен, но не вернул ни одной строки.
+Showing the first 200 rows of %n.	Показаны первые 200 строк, всего строк: %n.
+Query this data	Запрос к этим данным
+SQL query	SQL-запрос
+Run	Выполнить
+this table	эта таблица
+as of	по состоянию на
+Starting the SQL engine…	Запускаем движок SQL…
+Running in your browser. Edit the query and run it again.	Работает в вашем браузере. Измените запрос и выполните его снова.
+The query engine did not load	Движок запросов не загрузился
+Everything else on the page still works.	Всё остальное на странице работает.
+This table comes from	Источник таблицы:
+Download the underlying data	Скачать исходные данные
+Query this yourself	Сделайте запрос сами
