@@ -361,7 +361,8 @@ def build_food_prices_page():
     <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">The biggest moves</h2>
     <div class="sheet">{movers_html(rows)}</div>
     <div class="cta-row" style="margin-top:18px;"><a class="btn btn-primary" href="prices.html">Today&rsquo;s prices &rarr;</a>
-    <a class="btn btn-ghost" href="fair-prices.html">What things should cost a visitor &rarr;</a></div>
+    <a class="btn btn-ghost" href="fair-prices.html">What things should cost a visitor &rarr;</a>
+    <a class="btn btn-ghost" href="prices-ar.html" lang="ar" dir="rtl">أسعار اليوم بالعربي &larr;</a></div>
   </div>
 </section>
 

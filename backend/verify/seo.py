@@ -15,6 +15,7 @@ Exit 1 on any finding, so CI can gate on it.
 """
 import html as _html
 import json
+import posixpath
 import re
 import sys
 from collections import defaultdict
@@ -118,6 +119,7 @@ seen_title, seen_desc, seen_canon = defaultdict(list), defaultdict(list), defaul
 retired_indexable = []
 live_pages = []
 private_seen = []
+links_into = defaultdict(set)  # target page -> live pages that link to it
 
 for p in pages:
     rel = p.relative_to(SITE).as_posix()
@@ -152,6 +154,24 @@ for p in pages:
         continue
 
     live_pages.append(rel)
+
+    # Where this page links, for the inbound-link floor after the loop. Only
+    # the body counts: the head's hreflang and canonical tags are not links a
+    # reader or a crawler follows from the page.
+    body = re.sub(r"<head\b.*?</head>", "", t, flags=re.S | re.I)
+    for href in re.findall(r'<a\s[^>]*href\s*=\s*["\']([^"\'#?]+)', body, re.I):
+        if href.startswith("https://egybi.com/"):
+            href = "/" + href[len("https://egybi.com/"):]
+        elif re.match(r"[a-z]+:|//", href, re.I):
+            continue
+        if href.startswith("/"):
+            target = href.lstrip("/")
+        else:
+            target = posixpath.normpath(posixpath.join(posixpath.dirname(rel), href))
+        if target in ("", ".") or href.endswith("/"):
+            target = (target.rstrip("/.") + "/index.html").lstrip("/")
+        if target != rel:
+            links_into[target].add(rel)
 
     # ------------------------------------------------------------ title ----
     m = re.search(r"<title>(.*?)</title>", t, re.S | re.I)
@@ -267,6 +287,16 @@ for desc, ps in seen_desc.items():
 for canon, ps in seen_canon.items():
     if len(ps) > 1:
         add("duplicate canonical (pages compete)", f"{canon}  <-  {', '.join(ps)}")
+
+# A live page that one other page links to is a page search engines find late
+# and rank as minor (2026-11-19 audit: prices-ar.html had one link in, the
+# arrival page four). Two links from other live pages is the floor.
+LINK_FLOOR = 2
+live_set = set(live_pages)
+for rel in live_pages:
+    n = len(links_into[rel] & live_set)
+    if n < LINK_FLOOR:
+        add(f"live page with fewer than {LINK_FLOOR} internal links into it", f"{rel}  [{n}]")
 
 if retired_indexable:
     add(
