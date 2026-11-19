@@ -1129,6 +1129,11 @@ case("a site page with opening hours titled for the weather only", "seo.py", ["s
                   "<title>Karnak Temple weather by month · EgyBI</title>"),
      lambda o: "site page with opening hours does not say so in its title" in o, PY_SEO)
 
+case("a Russian page whose title keeps an English word", "seo.py", ["site/ru/visit.html"],
+     lambda: edit("site/ru/visit.html", "<title>Когда лучше ехать в Египет: погода по месяцам | EgyBI</title>",
+                  "<title>Когда лучше ехать в Египет: weather по месяцам | EgyBI</title>"),
+     lambda o: "English word in an Arabic or Russian title or description" in o, PY_SEO)
+
 
 # ---- 24. map-completeness: a map that draws but explains nothing ------------
 # The defect this checker was written for. stories.html rendered its districts
