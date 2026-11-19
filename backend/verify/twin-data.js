@@ -170,10 +170,15 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
           const lg = document.querySelector('.st-legend');
           return n && half && lg && n.textContent.trim() !== '—' && half.textContent.trim() !== '—'
             ? { figs: [n.textContent, half.textContent, (document.getElementById('rbHalfArea') || {}).textContent || ''].join(' | '),
-                legend: lg.textContent } : null;
+                legend: lg.textContent,
+                // Governorate names drawn on the story maps; English on the
+                // Arabic and Russian pages until 2026-11-19.
+                labels: Array.from(document.querySelectorAll('.mk-label')).map(e => e.textContent).join(' | ') } : null;
         }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
+        const engGov = /\b(Matrouh|Minya|Giza|Cairo|Alexandria|Aswan|Luxor|Asyut|Sohag|Qena|Faiyum|Beheira)\b/;
         if (!sto) fail(`TWIN DATA NOT LOADED: ${where} - the stories figures stayed empty`);
         else if (lang && /district in focus|governorate boundary/.test(sto.legend)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} stories legend reads "${sto.legend.slice(0, 120)}"`);
+        else if (lang && engGov.test(sto.labels)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} stories map labels read "${sto.labels.slice(0, 120)}"`);
         else if (lang === 'ar/' && /[0-9]/.test(sto.figs)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} stories figures in Western digits "${sto.figs}"`);
         else if (!lang && !/district in focus/.test(sto.legend)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English stories legend changed to "${sto.legend.slice(0, 120)}"`);
         else console.log(`${where}: stories figures "${sto.figs}"`);

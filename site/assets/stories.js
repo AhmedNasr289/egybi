@@ -201,7 +201,7 @@
      so the same shape has fewer pixels to hold a name in. */
   function nameGovernorates(map, layer) {
     if (!window.EGYBI || !window.EGYBI.mapkit || !window.EGYBI.mapkit.addLabels) return;
-    mkx('addLabels')(map, layer, function (p) { return p && p.name; },
+    mkx('addLabels')(map, layer, function (p) { return p && gv(p.name); },
                                   { minPx: 68, maxLabels: 12, className: 'mk-label-sm' });
   }
 

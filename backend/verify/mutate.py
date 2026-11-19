@@ -1646,6 +1646,11 @@ case("the streets map labels back in English", "twin-data.js", ["site/assets/str
      lambda: edit("site/assets/streets.js", "pin._dName = dname(d);", "pin._dName = d.name;"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "streets page" in o, f"node {HERE}/twin-data.js")
 
+# The story maps label governorates in the page's language (2026-11-19).
+case("the story map labels back in English", "twin-data.js", ["site/assets/stories.js"],
+     lambda: edit("site/assets/stories.js", "function (p) { return p && gv(p.name); },", "function (p) { return p && p.name; },"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "stories map labels" in o, f"node {HERE}/twin-data.js")
+
 # Without leaflet.js the heat page still fills its tables (2026-11-19). The
 # old early return left the whole page blank; map-fallback.js must catch it.
 case("the heat page blank again without the map library", "map-fallback.js", ["site/assets/visit.js"],
