@@ -91,6 +91,30 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
       }
       if (!loaded) fail(`TWIN DATA NOT LOADED: ${where} (data requests: ${data.map(d => d.status + ' ' + d.path).join(', ') || 'none'})`);
 
+      // Fair prices (2026-11-19): the rate line fair.js writes reads in the
+      // page's language, no checked date is left as raw ISO, and the Arabic
+      // page writes the published range with Arabic-Indic digits.
+      if (page === 'fair-prices.html' && loaded) {
+        const fp = await p.waitForFunction(() => {
+          const r = document.getElementById('fpRate');
+          return r && r.textContent.trim() ? {
+            rate: r.textContent.trim(),
+            src: Array.from(document.querySelectorAll('#fpGroups td .fp-src')).map(e => e.textContent).join(' | '),
+            first: ((document.querySelector('#fpGroups td.num') || {}).textContent || '').trim(),
+          } : null;
+        }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
+        const iso = /\b20\d\d-\d\d-\d\d\b/;
+        if (!fp) fail(`TWIN DATA NOT LOADED: ${where} - the rate line stayed empty`);
+        else if (lang && /Market reference rates|Showing Egyptian pounds|open access/.test(fp.rate))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} rate line reads "${fp.rate.slice(0, 160)}"`);
+        else if (iso.test(fp.src)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} shows a raw ISO date: "${(fp.src.match(iso) || [])[0]}"`);
+        else if (lang === 'ar/' && (/[0-9]/.test(fp.first) || !/[٠-٩]/.test(fp.first)))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} writes the price "${fp.first}" in Western digits`);
+        else if (!lang && !/^1 USD = EGP [\d.]+, .*Market reference rates/.test(fp.rate))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: the English rate line changed to "${fp.rate.slice(0, 160)}"`);
+        else console.log(`${where}: rate line and prices in the page's form ("${fp.first}")`);
+      }
+
       const links = await p.evaluate(rooted => [...document.querySelectorAll('main a[href]')]
         .map(a => a.href)
         .filter(h => rooted.some(n => new URL(h).pathname.endsWith('/' + n))), ROOTED);
@@ -130,8 +154,15 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         // On Arabic pages the site names come from the climate file's name_ar,
         // so the caption has no Latin letter at all (2026-11-18).
         else if (lang === 'ar/' && /[A-Za-z]/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption names a site in English: "${cap.slice(0, 160)}"`);
+        // On Russian pages the site names come from the Russian table: no
+        // Latin word is left (the lone C of °C is not a word) (2026-11-18).
+        else if (lang === 'ru/' && /[A-Za-z]{2,}/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption names a site in English: "${cap.slice(0, 160)}"`);
         else if (!lang && !/^In \w+, a normal afternoon/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English month caption changed to "${cap.slice(0, 160)}"`);
         else console.log(`${where}: month caption in the page's language`);
+        // The relief chart's point readout: on Arabic pages its coordinates
+        // are in Arabic-Indic digits, with no °N/°E (2026-11-18).
+        const relief = await p.evaluate(() => (document.getElementById('reliefReadout') || {}).textContent || '');
+        if (lang === 'ar/' && /\d+\.\d+°[NE]/.test(relief)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} relief readout coordinates read "${relief.slice(0, 120)}"`);
       }
 
       // The places page (2026-11-18): the summary line and an opened place
