@@ -575,6 +575,14 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
 # the visa rise announced for 1 January 2027 has happened but the page still
 # gives US$30 as the current fee (2026-11-17): moved to a date already past
+# Tricks travellers report, shown on the visit pages of the sites they were
+# reported at (2026-11-18). Losing Giza from the camel row would hide it from
+# the Giza page; test_scams.py must catch it.
+case("the camel-ride trick no longer shown at Giza", "test_scams.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"near": ["giza"],', '"near": [],'),
+     lambda o: "FAIL" in o and "test_giza_and_saqqara_show_the_tricks_reported_there" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_scams.py -v')
+
 # Russian site names on the heat page (2026-11-18). Dropping the Russian
 # branch of siteName puts English names back in the Russian month caption;
 # twin-data.js must report it.

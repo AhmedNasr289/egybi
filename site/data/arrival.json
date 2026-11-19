@@ -103,6 +103,23 @@
       ]
     },
     {
+      "key": "scams", "title": "Tricks travellers report",
+      "rows": [
+        { "key": "scam-camel", "label": "Camel or horse rides at Giza", "value": "Agree the full price before you get on",
+          "detail": "Travellers report a price that changes after the ride: in one account, a ride agreed at 200 pounds became a demand for 1,000. Agree what the price covers before the ride starts.",
+          "near": ["giza"],
+          "source": "Where the Road Forks: Egypt travel tips (3 Mar 2024)", "source_url": "https://wheretheroadforks.com/?p=2023330", "checked": "2026-11-18" },
+        { "key": "scam-guides", "label": "Men who attach themselves to you as guides", "value": "Say no thank you and keep walking",
+          "detail": "At Giza, Saqqara and the Egyptian Museum, men with no official role offer directions or facts and then ask for a tip. Licensed guides carry official identification and are booked in advance, not picked up at the gate.",
+          "near": ["giza", "saqqara"],
+          "source": "In Your Pocket: common Egypt travel scams", "source_url": "https://www.inyourpocket.com/egypt/articles/common-egypt-travel-scams-and-how-to-avoid-them", "checked": "2026-11-18" },
+        { "key": "scam-tickets", "label": "People offering to help with tickets", "value": "Buy at the official counter or website",
+          "detail": "Around major sites, some sell forged tickets or charge to walk you to the counter you could have found yourself.",
+          "near": ["giza", "saqqara"],
+          "source": "In Your Pocket: common Egypt travel scams", "source_url": "https://www.inyourpocket.com/egypt/articles/common-egypt-travel-scams-and-how-to-avoid-them", "checked": "2026-11-18" }
+      ]
+    },
+    {
       "key": "from-russia", "title": "From Russia or Kazakhstan",
       "rows": [
         { "key": "vtb-qr", "label": "Paying by QR code with VTB", "value": "Large shops only",
