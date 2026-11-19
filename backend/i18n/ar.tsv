@@ -1652,6 +1652,23 @@ Planned on egybi.com. Check opening hours before you go.	خُطّطت على egy
 Set your arrival date first, so each stop can be placed on its days.	حدّد تاريخ وصولك أولًا، حتى توضع كل محطة في أيامها.
 Add a stop first.	أضف محطة أولًا.
 Calendar file made: one event for each stop. Open it to add them to your calendar; nothing was sent anywhere.	جُهّز ملف التقويم: حدث واحد لكل محطة. افتحه لتضيفها إلى تقويمك؛ لم يُرسل شيء إلى أي مكان.
+All the districts (%n), drawn together. Each one is measured on its own street network; the figures appear as you scroll through them.	كل الأحياء (%n) مرسومة معًا. يُقاس كل حي على شبكة شوارعه وحدها، وتظهر الأرقام وأنت تمرّر الصفحة.
+Boundary	الحدود
+OpenStreetMap polygon	مضلّع OpenStreetMap
+The gazetteer could not be loaded, so this story shows the map without it.	تعذّر تحميل دليل الأماكن، فتعرض هذه القصة الخريطة من دونه.
+The gazetteer has not been built yet, so this story shows the map without it.	لم يُبنَ دليل الأماكن بعد، فتعرض هذه القصة الخريطة من دونه.
+The health layer could not be loaded, so this story shows the map without it.	تعذّر تحميل طبقة المنشآت الصحية، فتعرض هذه القصة الخريطة من دونها.
+The health layer has not been built yet, so this story shows the map without it.	لم تُبنَ طبقة المنشآت الصحية بعد، فتعرض هذه القصة الخريطة من دونها.
+The street report card could not be loaded, so this story shows the map without it.	تعذّر تحميل بطاقة تقييم الشوارع، فتعرض هذه القصة الخريطة من دونها.
+The street report card has not been built yet, so this story shows the map without it.	لم تُبنَ بطاقة تقييم الشوارع بعد، فتعرض هذه القصة الخريطة من دونها.
+This boundary is hand-drawn. OpenStreetMap has no polygon for %s, so its extent is an approximation; the street measurements inside it are not.	هذه الحدود مرسومة باليد. ليس في OpenStreetMap مضلّع لـ%s، فامتداده تقريبي؛ أما قياسات الشوارع داخله فليست كذلك.
+district in focus	الحي المعروض
+governorate boundary	حدود المحافظة
+hand-drawn	مرسومة باليد
+km²	كم²
+measured %d	قيس في %d
+per km²	في الكيلومتر المربع
+the other districts	الأحياء الأخرى
 Downtown Cairo	وسط البلد
 Khedivial, 1860s–1870s	خديوي، ستينيات وسبعينيات القرن التاسع عشر
 Ismail's Paris-on-the-Nile: deliberate boulevards and midans laid over a dense grid. The oldest planned fabric in the comparison.	باريس على النيل كما أرادها إسماعيل: شوارع عريضة وميادين مقصودة فوق شبكة كثيفة. أقدم نسيج مخطط في المقارنة.
@@ -1726,7 +1743,6 @@ averaged over the categories that returned a result this build (%n)	متوسط �
 clinic	عيادة
 entropy %n	الإنتروبيا %n
 hospital	مستشفى
-measured %d	قيس في %d
 measured %d; the latest build could not re-measure it	قيس في %d؛ تعذّر على آخر بناء قياسه من جديد
 no data	لا بيانات
 none mapped in OpenStreetMap	لا شيء مرسوم في OpenStreetMap

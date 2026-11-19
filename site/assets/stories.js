@@ -15,10 +15,26 @@
   /* A dataset's date, written as the site writes dates ("3 November 2026",
      EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
      value as written if egfmt.js did not load. */
+  var LANG = document.documentElement.getAttribute('lang') || 'en';
+  var MONTHS_RU_OF = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля',
+                      'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   function asOf(v) {
     var F = window.EGYBI && window.EGYBI.fmt;
-    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+    var m = LANG === 'ru' && /^(\d{4})-(\d\d)-(\d\d)/.exec(String(v || ''));
+    if (m) return (+m[3]) + ' ' + MONTHS_RU_OF[+m[2] - 1] + ' ' + m[1];
+    return F ? F.dateOrRaw(v, LANG === 'ar' ? 'ar' : 'en', 'prose') : (v == null ? '' : String(v));
   }
+  // Text this script writes goes through t() (literal calls the build
+  // collects), and the figures it puts into the translated sentences follow
+  // the page's language: Arabic-Indic digits, governorate names and district
+  // names in Arabic or Russian (2026-11-19, maps plan stage 3).
+  var t = (window.EGYBI && window.EGYBI.t) || function (x) { return x; };
+  function gv(n) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F ? F.govName(n, LANG) : (n == null ? '' : String(n));
+  }
+  function dname(r) { return LANG === 'ar' && r.name_ar ? r.name_ar : t(r.name); }
+  function pctSign() { return LANG === 'ar' ? '٪' : '%'; }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
      See the identical note in geospatial.js: on 2026-08-10 a call to a mapkit
@@ -53,7 +69,11 @@
   var totPop = props.reduce(function (a, p) { return a + p.population; }, 0);
   var totArea = props.reduce(function (a, p) { return a + p.area_km2; }, 0);
 
-  function fmt(n, d) { return Number(n).toLocaleString('en-US', { maximumFractionDigits: d || 0 }); }
+  function fmt(n, d) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    if (LANG === 'ar' && F) return F.num(Number(n), 'ar', d || 0);
+    return Number(n).toLocaleString(LANG === 'ru' ? 'ru-RU' : 'en-US', { maximumFractionDigits: d || 0 });
+  }
   /* Local rather than reaching for mapkit's: every value escaped here comes out
      of streets-districts.json, and a district name is exactly the kind of field
      that looks safe until the day someone adds an ampersand to one. */
@@ -208,11 +228,11 @@
     var sparsePop = sparse.reduce(function (a, p) { return a + p.population; }, 0);
 
     // Figures written into the prose from the data, never typed as literals.
-    put('rbHalfN', half.length);
-    put('rbHalfArea', fmt(100 * halfArea / totArea, 1) + '%');
-    put('rbSparseN', sparse.length);
-    put('rbSparseArea', fmt(100 * sparseArea / totArea, 1) + '%');
-    put('rbSparsePop', fmt(100 * sparsePop / totPop, 1) + '%');
+    put('rbHalfN', fmt(half.length));
+    put('rbHalfArea', fmt(100 * halfArea / totArea, 1) + pctSign());
+    put('rbSparseN', fmt(sparse.length));
+    put('rbSparseArea', fmt(100 * sparseArea / totArea, 1) + pctSign());
+    put('rbSparsePop', fmt(100 * sparsePop / totPop, 1) + pctSign());
     put('rbTotPop', fmt(totPop));
     put('rbTotArea', fmt(totArea));
 
@@ -267,7 +287,7 @@
     fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/geo-health.json') : 'data/geo-health.json'), { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (h) {
-        if (!h) { put('hlNote', 'The health layer has not been built yet, so this story shows the map without it.'); return; }
+        if (!h) { put('hlNote', t('The health layer has not been built yet, so this story shows the map without it.')); return; }
         var pop = {};
         props.forEach(function (p) { pop[p.name] = p.population; });
         var rate = {};
@@ -280,8 +300,8 @@
         var lo = vals[0], hi = vals[vals.length - 1];
         put('hlTotal', fmt(h.total));
         put('hlAsOf', asOf(h.as_of));
-        put('hlHi', hi.g); put('hlHiR', fmt(hi.r, 1));
-        put('hlLo', lo.g); put('hlLoR', fmt(lo.r, 1));
+        put('hlHi', gv(hi.g)); put('hlHiR', fmt(hi.r, 1));
+        put('hlLo', gv(lo.g)); put('hlLoR', fmt(lo.r, 1));
         put('hlRatio', fmt(hi.r / lo.r) + '×');
 
         var max = hi.r;
@@ -320,7 +340,7 @@
           }
         }, m);
       })
-      .catch(function () { put('hlNote', 'The health layer could not be loaded, so this story shows the map without it.'); });
+      .catch(function () { put('hlNote', t('The health layer could not be loaded, so this story shows the map without it.')); });
   })();
 
   /* ------------------------------------------------- 3. A CENTURY OF STREET PLANS
@@ -341,7 +361,7 @@
       fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/streets-boundaries.json') : 'data/streets-boundaries.json'), { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; })
     ]).then(function (res) {
       var d = res[0], b = res[1];
-      if (!d || !b) { put('stNote', 'The street report card has not been built yet, so this story shows the map without it.'); return; }
+      if (!d || !b) { put('stNote', t('The street report card has not been built yet, so this story shows the map without it.')); return; }
       var byKey = {}; d.districts.forEach(function (r) { byKey[r.key] = r; });
       var polys = L.geoJSON(b, { style: function () {
         return { color: GOLD_INK, weight: 1.4, fillColor: GOLD, fillOpacity: 0.35 };
@@ -349,13 +369,13 @@
 
       var sorted = d.districts.slice().sort(function (a, b2) { return a.intersection_density_km2 - b2.intersection_density_km2; });
       var lo = sorted[0], hi = sorted[sorted.length - 1];
-      put('stN', d.districts.length);
+      put('stN', fmt(d.districts.length));
       put('stAsOf', asOf(d.as_of));
-      put('stHi', hi.name); put('stHiD', fmt(hi.intersection_density_km2, 0));
-      put('stLo', lo.name); put('stLoD', fmt(lo.intersection_density_km2, 0));
+      put('stHi', dname(hi)); put('stHiD', fmt(hi.intersection_density_km2, 0));
+      put('stLo', dname(lo)); put('stLoD', fmt(lo.intersection_density_km2, 0));
       put('stRatio', fmt(hi.intersection_density_km2 / lo.intersection_density_km2, 1) + '×');
       var drawn = d.districts.filter(function (r) { return r.boundary_source === 'hand-drawn'; });
-      put('stDrawn', drawn.length ? drawn.map(function (r) { return r.name; }).join(', ') : 'none');
+      put('stDrawn', drawn.length ? drawn.map(dname).join(LANG === 'ar' ? '، ' : ', ') : t('none'));
 
       /* ---- the map has to say what it is showing ----------------------------
          These four steps used to pin an unlabelled gold polygon on a pale field
@@ -380,9 +400,9 @@
       L.control.scale({ imperial: false, position: 'bottomright', maxWidth: 130 }).addTo(m);
 
       var LEGEND = '<div class="st-legend" aria-hidden="true">' +
-        '<span><i style="background:' + GOLD + ';border:1.6px solid ' + GOLD_INK + '"></i>district in focus</span>' +
-        '<span><i style="background:#B9C4D6;border:1px solid #9AA7BC"></i>the other nine</span>' +
-        '<span><i class="st-line"></i>governorate boundary</span>' +
+        '<span><i style="background:' + GOLD + ';border:1.6px solid ' + GOLD_INK + '"></i>' + esc(t('district in focus')) + '</span>' +
+        '<span><i style="background:#B9C4D6;border:1px solid #9AA7BC"></i>' + esc(t('the other districts')) + '</span>' +
+        '<span><i class="st-line"></i>' + esc(t('governorate boundary')) + '</span>' +
         '</div>';
       var readout = document.createElement('div');
       readout.className = 'st-readout';
@@ -416,9 +436,8 @@
 
       function say(r) {
         if (!r) {
-          panel.innerHTML = '<p class="st-all">All <strong>' + d.districts.length +
-            '</strong> districts, drawn together. Each one is measured on its own ' +
-            'street network; the figures appear as you scroll through them.</p>';
+          panel.innerHTML = '<p class="st-all">' + esc(t('All the districts (%n), drawn together. Each one is measured on its own street network; the figures appear as you scroll through them.'))
+            .replace('%n', '<strong>' + fmt(d.districts.length) + '</strong>') + '</p>';
           return;
         }
         /* boundary_source is a field, not a caption written by hand: Downtown
@@ -426,22 +445,20 @@
            polygon for it, and the map should admit that as plainly as the prose
            does rather than let a drawn line pass for a surveyed one. */
         var drawnNote = r.boundary_source === 'hand-drawn'
-          ? '<p class="st-warn">⚠ This boundary is <strong>hand-drawn</strong>. ' +
-            'OpenStreetMap has no polygon for ' + esc(r.name) + ', so its extent is ' +
-            'an approximation — the street measurements inside it are not.</p>'
+          ? '<p class="st-warn">⚠ ' + esc(t('This boundary is hand-drawn. OpenStreetMap has no polygon for %s, so its extent is an approximation; the street measurements inside it are not.').replace('%s', dname(r))) + '</p>'
           : '';
         panel.innerHTML =
-          '<h4>' + esc(r.name) + ' <span lang="ar" dir="rtl">' + esc(r.name_ar || '') + '</span></h4>' +
-          '<p class="st-era">' + esc(r.era || '') + '</p>' +
+          '<h4>' + esc(dname(r)) + (LANG === 'ar' ? '' : ' <span lang="ar" dir="rtl">' + esc(r.name_ar || '') + '</span>') + '</h4>' +
+          '<p class="st-era">' + esc(r.era ? t(r.era) : '') + '</p>' +
           '<dl>' +
-          '<div><dt>Intersections</dt><dd>' + num(r.intersection_density_km2, 0) + ' <small>per km²</small></dd></div>' +
-          '<div><dt>Area</dt><dd>' + num(r.area_km2, 1) + ' <small>km²</small></dd></div>' +
-          '<div><dt>Dead ends</dt><dd>' + num(r.dead_end_share_pct, 1) + '<small>%</small></dd></div>' +
-          '<div><dt>Circuity</dt><dd>' + num(r.circuity_avg, 3) + '</dd></div>' +
-          '<div><dt>Orientation entropy</dt><dd>' + num(r.orientation_entropy, 2) + '</dd></div>' +
-          '<div><dt>Boundary</dt><dd>' + esc(r.boundary_source || '—') + '</dd></div>' +
+          '<div><dt>' + esc(t('Intersections')) + '</dt><dd>' + num(r.intersection_density_km2, 0) + ' <small>' + esc(t('per km²')) + '</small></dd></div>' +
+          '<div><dt>' + esc(t('Area')) + '</dt><dd>' + num(r.area_km2, 1) + ' <small>' + esc(t('km²')) + '</small></dd></div>' +
+          '<div><dt>' + esc(t('Dead ends')) + '</dt><dd>' + num(r.dead_end_share_pct, 1) + '<small>' + pctSign() + '</small></dd></div>' +
+          '<div><dt>' + esc(t('Circuity')) + '</dt><dd>' + num(r.circuity_avg, 3) + '</dd></div>' +
+          '<div><dt>' + esc(t('Orientation entropy')) + '</dt><dd>' + num(r.orientation_entropy, 2) + '</dd></div>' +
+          '<div><dt>' + esc(t('Boundary')) + '</dt><dd>' + esc(r.boundary_source === 'hand-drawn' ? t('hand-drawn') : r.boundary_source ? t('OpenStreetMap polygon') : '—') + '</dd></div>' +
           '</dl>' + drawnNote +
-          '<p class="st-src">' + esc(d.source) + ' · ' + esc(d.license) + ' · measured ' + esc(asOf(d.as_of)) + '</p>';
+          '<p class="st-src">' + esc(d.source) + ' · ' + esc(d.license) + ' · ' + esc(t('measured %d').replace('%d', asOf(d.as_of))) + '</p>';
       }
 
       function focus(key) {
@@ -455,7 +472,7 @@
              scrolling past, and not at all on a phone. */
           if (l.getTooltip()) l.unbindTooltip();
           if (on) {
-            l.bindTooltip(rec ? rec.name : key,
+            l.bindTooltip(rec ? dname(rec) : key,
                           { permanent: true, direction: 'center', className: 'st-tip' }).openTooltip();
           }
         });
@@ -496,7 +513,7 @@
       }, m);
       say(null);
     }).catch(function () {
-      put('stNote', 'The street report card could not be loaded, so this story shows the map without it.');
+      put('stNote', t('The street report card could not be loaded, so this story shows the map without it.'));
     });
   })();
   /* ---------------------------------------------------- 4. WHERE WE HAVE DUG
@@ -529,7 +546,7 @@
     fetch((window.EGYBI && window.EGYBI.url ? window.EGYBI.url('data/geo-places.json') : 'data/geo-places.json'), { cache: 'no-cache' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
-        if (!data) { put('dgNote', 'The gazetteer has not been built yet, so this story shows the map without it.'); return; }
+        if (!data) { put('dgNote', t('The gazetteer has not been built yet, so this story shows the map without it.')); return; }
         var sites = data.places.filter(function (p) { return p.kind === 'antiquity'; });
         var byGov = {};
         sites.forEach(function (p) { if (p.gov) byGov[p.gov] = (byGov[p.gov] || 0) + 1; });
@@ -557,11 +574,11 @@
         put('dgLxN', fmt(densest.n)); put('dgLxArea', fmt(densest.a));
         put('dgLxDens', fmt(densest.d)); put('dgLxDens2', fmt(densest.d));
         put('dgNvN', fmt(biggest.n));
-        put('dgNvShare', fmt(biggest.a / totArea * 100, 1) + '%');
+        put('dgNvShare', fmt(biggest.a / totArea * 100, 1) + pctSign());
         put('dgNvDens', fmt(biggest.d, 2));
         put('dgRatio', fmt(biggest.a / densest.a));
         if (zero) {
-          put('dgZeroName', zero.g);
+          put('dgZeroName', gv(zero.g));
           put('dgZeroPop', fmt(pop[zero.g]));
         }
         put('dgNote', '“' + (data.note || '') + '”');
@@ -635,7 +652,7 @@
         }, m);
       })
       .catch(function () {
-        put('dgNote', 'The gazetteer could not be loaded, so this story shows the map without it.');
+        put('dgNote', t('The gazetteer could not be loaded, so this story shows the map without it.'));
       });
   })();
 })();

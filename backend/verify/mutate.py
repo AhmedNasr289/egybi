@@ -647,6 +647,13 @@ case("the calendar file drops the last day of each stop", "ics-cases.js", ["site
      lambda: edit("site/assets/ics.js", "var end = addDays(day, n);", "var end = addDays(day, n - 1);"),
      lambda o: "FAIL a two-day stop ends the day after its last day" in o, f"node {HERE}/ics-cases.js")
 
+# The stories page writes its figures in the page's form (2026-11-19). Back
+# to en-US formatting, the Arabic story would show Western digits;
+# twin-data.js must catch it.
+case("the stories figures back in Western digits", "twin-data.js", ["site/assets/stories.js"],
+     lambda: edit("site/assets/stories.js", "if (LANG === 'ar' && F) return F.num(Number(n), 'ar', d || 0);", ""),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "stories figures" in o, f"node {HERE}/twin-data.js")
+
 # The streets page's legend reads in the page's language (2026-11-19). A
 # metric label taken out of t() puts English back on the Arabic and Russian
 # streets page; twin-data.js must catch it.

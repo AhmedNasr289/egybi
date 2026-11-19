@@ -160,6 +160,25 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         else console.log(`${where}: briefing "${brief.title}"`);
       }
 
+      // The stories page (2026-11-19, maps plan stage 3): the figures
+      // stories.js puts into the translated sentences use Arabic-Indic digits
+      // on Arabic pages, and the street map's legend reads in the page's
+      // language. Before, the script had no t() call and wrote en-US numbers.
+      if (page === 'stories.html' && loaded) {
+        const sto = await p.waitForFunction(() => {
+          const n = document.getElementById('stN'), half = document.getElementById('rbHalfN');
+          const lg = document.querySelector('.st-legend');
+          return n && half && lg && n.textContent.trim() !== '—' && half.textContent.trim() !== '—'
+            ? { figs: [n.textContent, half.textContent, (document.getElementById('rbHalfArea') || {}).textContent || ''].join(' | '),
+                legend: lg.textContent } : null;
+        }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
+        if (!sto) fail(`TWIN DATA NOT LOADED: ${where} - the stories figures stayed empty`);
+        else if (lang && /district in focus|governorate boundary/.test(sto.legend)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} stories legend reads "${sto.legend.slice(0, 120)}"`);
+        else if (lang === 'ar/' && /[0-9]/.test(sto.figs)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} stories figures in Western digits "${sto.figs}"`);
+        else if (!lang && !/district in focus/.test(sto.legend)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English stories legend changed to "${sto.legend.slice(0, 120)}"`);
+        else console.log(`${where}: stories figures "${sto.figs}"`);
+      }
+
       // The streets page (2026-11-19, maps plan stage 3): the legend, the
       // findings, the table and the build note streets.js writes read in the
       // page's language, with district names and eras translated and Arabic
