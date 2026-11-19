@@ -1134,6 +1134,11 @@ case("a Russian page whose title keeps an English word", "seo.py", ["site/ru/vis
                   "<title>Когда лучше ехать в Египет: weather по месяцам | EgyBI</title>"),
      lambda o: "English word in an Arabic or Russian title or description" in o, PY_SEO)
 
+case("the Arabic price page left with one link into it", "seo.py", ["site/egypt-food-prices.html"],
+     lambda: edit("site/egypt-food-prices.html", '<a class="btn btn-ghost" href="prices-ar.html"',
+                  '<a class="btn btn-ghost" href="prices.html"'),
+     lambda o: "live page with fewer than 2 internal links into it" in o, PY_SEO)
+
 
 # ---- 24. map-completeness: a map that draws but explains nothing ------------
 # The defect this checker was written for. stories.html rendered its districts
