@@ -138,6 +138,9 @@ DATA_TEXT = {
 
     # Holiday names and notes, and the capacity facts, shown by the home page
     # and the planner (home.js renderEvents, plan.js renderDossier).
+    # The opening hours shown in the planner's dossier (plan.js hoursLine,
+    # 2026-11-19, maps plan stage 4).
+    'opening-hours.json': {'top': (), 'group': (), 'row': ('hours',), 'no_sources': True},
     'calendar.json': {'top': (), 'group': (), 'row': (),
                       'lists': {'events': ('name', 'note'), 'capacity': ('place', 'fact')}},
 }
