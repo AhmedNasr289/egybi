@@ -1,0 +1,960 @@
+date,week,channel,language,hook,post_text,link_with_utm,asset_needed,status
+2026-11-21,W0,Reddit (r/EgyptTravel),en,"Tipping, the most-asked question","I'm a data engineer in Cairo and I keep a sourced table of exactly this for a free trip site I built, so here are the published figures rather than my opinion. Tipping has no official rate, so every number is from a named guide.
+
+- Hotel housekeeping: 50–100 EGP per room per day, left daily. (Pyramids Land, Tipping in Egypt, 2026 guide)
+- Camel or horse handler: 50–100 EGP per ride, after the ride and on top of its price. (same guide)
+- Felucca captain: 100–200 EGP for a one-hour sail, for the boat, not per person. (same guide)
+- Guide on a standard tour: 100–200 EGP per tour, by length (Travelling King, undated). The sources disagree a lot here: the same guide also suggests 10% of a half-day tour's price, and Mara House Luxor says US$25 or more per day on multi-day tours.
+- Nile cruise crew envelope: US$10–15 per person per night per Pyramids Land, but the same operator's other guide says US$25–40 for the whole trip. Ask your cruise company which they mean.
+
+For scale, 100 EGP was about US$1.86 on 19 Nov 2026 (53.77 EGP to the dollar, ExchangeRate-API market rate, not the Central Bank fixing). Carry small notes; big ones are hard to break.",none — trust phase,none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2026-11-22,W0,Telegram chat (Hurghada/Sharm),ru,Tipping,"Отвечу цифрами с источниками: я живу в Египте и веду таблицу таких цен для бесплатного сайта, который сделал сам (ничего здесь не продаю).
+— Горничной: 50–100 фунтов за номер в день, оставлять каждый день, потому что убирать может другой человек (гид Pyramids Land, 2026).
+— Погонщику верблюда или лошади: 50–100 фунтов за поездку, сверх цены самой поездки (там же).
+— Капитану фелюги: 100–200 фунтов за час на всю лодку, а не с человека (там же).
+— Гиду на обычной экскурсии: 100–200 фунтов в зависимости от длины (Travelling King). Но источники сильно расходятся: Mara House Luxor пишет от 25 $ в день на многодневных турах.
+Для ориентира: 100 фунтов ≈ 1,86 $ по курсу 53,77 фунта за доллар (ExchangeRate-API, 19.11.2026, рыночный курс, не курс ЦБ Египта). Давайте в фунтах и держите мелкие купюры — крупные трудно разменять.","none — first replies, no link",none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2026-11-24,W1,Reddit (r/EgyptTravel),en,GEM new prices from 1 Nov 2026,"Prices went up on 1 November 2026. Egypt Today and Egyptian Streets (27 Oct 2026) reported the foreign adult ticket going from 1,570 to 1,830 EGP, and Egyptian adults from 200 to 220.
+
+I keep a sourced price table for a free site I built (data engineer in Cairo), so I'll be straight about one thing: the museum's own ticket site only shows prices once you start a booking, and I haven't found a price list from the museum I could check the 1,830 against. Treat it as the reported figure and read the real one in the booking flow.
+
+From the museum's official ticketing site (checked 18 Nov 2026):
+
+- Buy only on `tickets.gem.eg`. The museum says it is the only official site, and lookalike resellers exist.
+- Tickets are for a time slot.
+- Galleries 9:00–18:00, to 21:00 on Wednesday and Saturday; last entry one hour before the galleries close.
+
+For scale, 1,830 EGP is about US$34 at 53.77 EGP to the dollar (ExchangeRate-API, 19 Nov 2026). The museum had about 5.2 million visitors in its first year (Egyptian Streets, 16 Nov 2026), so book your slot ahead.",none — trust phase,none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2026-11-24,W1,Telegram chat (Hurghada/Sharm),ru,GEM new prices from 1 Nov 2026,"С 1 ноября 2026 цены в Большом Египетском музее выросли. Egypt Today и Egyptian Streets (27.10.2026) пишут, что билет для взрослого иностранца подорожал с 1570 до 1830 фунтов — это около 34 $ по курсу 53,77. На сайте музея цена видна только когда начинаешь бронирование, так что сверьте там.
+Важно: покупать только на официальном сайте билетов музея (tickets, точка, gem, точка, eg). Музей говорит, что другого официального сайта нет. Билеты продаются на конкретное время.
+Залы открыты 9:00–18:00, в среду и субботу до 21:00; последний вход за час до закрытия залов (официальный сайт музея, проверено 18.11.2026).
+За первый год музей принял около 5,2 млн посетителей (Egyptian Streets, 16.11.2026), поэтому слот лучше брать заранее.
+Я живу в Египте и сделал бесплатный сайт с такими таблицами; ссылку здесь не даю.","none — first replies, no link",none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2026-11-25,W1,TripAdvisor (Cairo forum),en,GEM and Giza on the same day,"Possible, with timing. From the official sources: the Giza plateau opens 07:00, last entry 16:00 (Ministry booking site, egymonuments.com, checked 17 Nov 2026). The Grand Egyptian Museum's galleries are open 9:00–18:00, to 21:00 on Wednesday and Saturday, with last entry an hour before the galleries close, and timed tickets sold only on tickets.gem.eg (the museum's ticketing site, checked 18 Nov 2026).
+
+So the plateau at opening and the museum after lunch works on any day, and on a Wednesday or Saturday you can stay into the evening.
+
+Tickets: Giza is 700 EGP for a foreign adult (Ministry price list, 5 Nov 2024). GEM prices rose on 1 Nov 2026 and were reported at 1,830 EGP for a foreign adult (Egypt Today), but the museum shows the price only in its booking flow, so check there. A normal December afternoon at Giza is 21 °C (NASA POWER, 2001–2020 normals).
+
+I'm a Cairo-based data engineer and keep a sourced table of these figures.","none — TripAdvisor answer, official sources named in text only",none; EgyBI stays in the profile only,draft — needs owner approval
+2026-11-26,W1,Telegram chat (Hurghada/Sharm),ru,Excursion to Luxor or Cairo: what the tickets cost,"Цены туров у продавцов разные, а вот входные билеты фиксированы, и их полезно знать, чтобы понимать, что входит в цену. Официальный прайс Министерства туризма и древностей (5.11.2024), для взрослого иностранца:
+— Карнак 600 фунтов, Луксорский храм 500, Долина царей 750, гробница Тутанхамона ещё 700.
+— Плато Гизы 700, Египетский музей на Тахрир 550.
+Главный вопрос продавцу: какие билеты включены, а какие нет.
+По погоде: в Луксоре в декабре–феврале днём обычно 22–25 °C, а ночью и ранним утром около 6–8 °C (NASA POWER, нормы 2001–2020). Выезды обычно ночные, так что возьмите кофту.
+Для ориентира по рынку: на Sputnik8 автобусные поездки из Хургады в Каир рекламировались примерно от 51,90 $, мини-группы с Большим Египетским музеем — от 108 $ (данные на ноябрь 2026). Я живу в Египте и собираю такие цифры для бесплатного сайта, который сделал сам.","none — first replies, no link",none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2026-11-27,W1,Reddit (r/solotravel),en,Giza scams and the missing camel price,"Honest answer: there isn't one I can give you. I maintain a sourced price table for a free Egypt site I built (I'm a data engineer in Cairo), and when I searched on 9 Oct 2026 for a published, checkable camel-ride price at Giza, I found none, and no official price list either. Anyone quoting a confident ""standard price"" is guessing.
+
+What every guide agrees on: agree the TOTAL, the duration and the return leg before you get on. The common trick is a price that changes mid-ride. One traveller account (Where the Road Forks, 3 Mar 2024) describes a ride agreed at 200 pounds that became a demand for 1,000.
+
+Things that do have a figure:
+
+- Plateau entry, foreign adult: 700 EGP; students with a valid card 350 (Ministry of Tourism and Antiquities price list, 5 Nov 2024).
+- Inside the Great Pyramid: 1,500 EGP on top, from 1 Jan 2025, per Egypt Independent (4 Dec 2024). I couldn't confirm it on the Ministry's booking site.
+- Tip for the handler after the ride: 50–100 EGP (Pyramids Land, 2026 guide).
+
+Men who attach themselves to you as ""guides"" at the gate have no official role; licensed guides carry ID and are booked in advance (In Your Pocket). Buy tickets at the counter or on the Ministry's site, `egymonuments.com`.",none — trust phase,none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2026-11-28,W1,Facebook group (Arabic),ar,Daily prices since July (onions +56%),"البصل زاد ٥٦٪ من يوليو لحد النهارده، والرقم ده مش رأي، ده من أرقام الحكومة نفسها.
+
+أنا مهندس بيانات عايش في مصر، وبحفظ كل يوم أسعار التجزئة اللي بينشرها مركز المعلومات ودعم اتخاذ القرار بمجلس الوزراء، من آخر يوليو. لما قارنت أول أسبوع (من ٢٤ يوليو ٢٠٢٦) بآخر أسبوع (لحد ١٩ نوفمبر ٢٠٢٦):
+
+• البصل: من ١٣٫٩٤ إلى ٢١٫٧٦ جنيه للكيلو (+٥٦٫١٪)
+• البطاطس: من ١٩٫٣٦ إلى ٢٥٫٣٦ (+٣١٪)
+• الطماطم: من ١٩٫٩٣ إلى ٢٤٫٣٢ (+٢٢٫١٪)
+• والليمون البلدي نزل: من ٤٨٫٨١ إلى ٣٥٫٣٧ (−٢٧٫٥٪)
+
+وعلى ١٢٨ صنف، الوسيط اتحرك +١٫٩٪ بس، في نفس الأسابيع اللي الدولار فيها اتحرك من ٥١٫٣٠ لـ ٥٣٫٦٠ جنيه (+٤٫٥٪).
+
+دي متوسطات أسعار تجزئة للأصناف، مش سلة أسرة ولا معدل تضخم، والسوق عندك ممكن يختلف.
+
+عملت صفحة مجانية بتعرض أسعار النهارده بمصدرها، والرابط في أول تعليق. أنا اللي بنيت الموقع، ومش ببيع حاجة في الصفحة دي.
+
+أول تعليق:
+أسعار الخضار والفاكهة النهارده بمصادرها: https://egybi.com/prices-ar.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-prices
+المصدر: بوابة الأسعار المحلية بمركز المعلومات ودعم اتخاذ القرار، مجلس الوزراء.",https://egybi.com/prices-ar.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-prices,screenshot of the biggest-moves list on egypt-food-prices.html; ask the group admin first,draft — needs owner approval
+2026-11-30,W2,LinkedIn,en,Launch: I built EgyBI (chart first),"I spent my evenings this year building EgyBI, a free Egypt trip companion where every number carries its source and the date it was checked.
+
+The chart is the part I'm proudest of: the normal afternoon high at 18 Egyptian sites, every month, from NASA's POWER climatology (2001–2020 normals). Before it ships, every value is compared with the nearest published weather-station normal within 120 km, and the build is refused if the mean bias passes ±2 °C.
+
+What it shows:
+• In July the spread between sites is 13 °C: about 29 °C at Abu Mena near Alexandria, about 42 °C at Philae in Aswan.
+• Every site stays under 34 °C in the afternoon in January, February, March, November and December.
+• The hottest normal afternoon in the table is Philae in August, about 43 °C.
+
+The rest of the site follows the same rule. Entry tickets come from the Ministry's list, tips from named guides, and where sources disagree, both are shown. Where no reliable figure exists, like a camel ride at Giza, it says so.
+
+English, Arabic and Russian. No signup. Link in the first comment.
+
+#dataengineering #opendata #Egypt
+
+First comment:
+The planner and the chart (I built it; free, no signup): https://egybi.com/?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-launch",https://egybi.com/?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-launch,PNG export of charts/egypt-weather-by-month.svg,draft — needs owner approval
+2026-12-01,W2,Reddit (r/travel),en,Christmas and New Year trips: how hot is it,"It depends on where as much as when. I pulled NASA's climate normals (POWER, mean daily high 2001–2020) for the main sites for a free planner I built; I'm a data engineer in Cairo. Normal afternoon high, °C:
+
+- Giza: Jan 19, Feb 21, Mar 26, Apr 30, May 34, Jul 39, Dec 21
+- Karnak/Luxor: Jan 22, Feb 25, Mar 30, Apr 34, May 38, Jun–Aug 41, Dec 24
+- Abu Simbel: Jan 24, Feb 27, Mar 31, Apr 36, Jun–Aug 41
+- Philae (Aswan): 43 in August, the hottest normal afternoon of the 18 sites I track
+
+So the cut-off is Upper Egypt, not Cairo. Every site I track stays under 34 °C in the afternoon in January, February, March, November and December. From May, Luxor and Aswan afternoons are 38+, and the answer is to be there at opening (Karnak and Abu Simbel open 06:00 per the Ministry's booking site, checked 17 Nov 2026) and in the shade by noon.
+
+Caveat: these are modelled long-run averages, not a forecast; a given week can be hotter. And Luxor nights in January average about 6 °C, so bring a layer for the early starts.",none — trust phase,none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2026-12-02,W2,Telegram channel EgyBI RU (mirror to VK and Max),ru,"First weekly card: rate, tickets, December heat","Карточка недели · Египет честно
+
+Курс на 19.11.2026: 1 $ = 53,77 фунта, 1 € = 59,00 (ExchangeRate-API, рыночный курс, не курс ЦБ Египта).
+
+Билеты для взрослого иностранца (прайс Министерства туризма и древностей, 5.11.2024): плато Гизы 700 фунтов, Египетский музей 550, Карнак 600, Долина царей 750.
+
+Днём в декабре обычно (NASA POWER, нормы 2001–2020): Хургада 23 °C, Луксор 24, Каир 21.
+
+Источники и пересчёт по сегодняшнему курсу — на странице, которую я сделал (бесплатно):
+https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-prices",https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-prices,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2026-12-03,W2,Telegram chat (Hurghada/Sharm),ru,Cash and the visa on arrival,"Виза по прилёте — 30 $ наличными, в киосках перед паспортным контролем. В аэропорту Каира есть ещё электронные автоматы — 36 $ картой, включая сбор 6 $. С 1 января 2027 года — 33 $, в каирских автоматах 39 $ (решение правительства Египта от 13.08.2026, по данным ATTA). Это правила в прочтении правительства Великобритании для британских паспортов; для российского паспорта уточните у туроператора.
+Если летите в Шарм и остаётесь на курортах Синая (Шарм-эль-Шейх, Дахаб, Нувейба, Таба), по тем же правилам ставят бесплатный штамп до 15 дней.
+Наличные: фунтов можно ввезти и вывезти до 5000; валюту больше 10 000 $ нужно декларировать. Карты российских банков работают ненадёжно (Сравни.ру, 2.11.2026), поэтому везите доллары или евро и меняйте в банке или обменнике. Купюры — чистые и целые: старые и повреждённые в Хургаде и Шарме часто не берут (Турдом, 22.04.2026).
+Все строки с источниками и датами проверки — на странице, которую я сделал: https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-visa",https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-visa,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2026-12-04,W2,TripAdvisor (Luxor forum),en,One day or two in Luxor,"Two days if you can. Karnak and the Valley of the Kings both open at 06:00; Karnak's last entry is 16:00 all year, the Valley's 16:00 in winter and 17:00 in summer (Ministry booking site, egymonuments.com, checked 17 Nov 2026).
+
+Foreign adult tickets on the Ministry's list of 5 Nov 2024: Karnak 600 EGP, Luxor Temple 500, Valley of the Kings 750, Tutankhamun's tomb 700 extra.
+
+West Bank at opening one day and Karnak at opening the next keeps you out of the afternoons. That matters from May, when a normal Luxor afternoon is 38 °C, against 22–25 from December to February (NASA POWER, 2001–2020 normals).
+
+I'm a Cairo-based data engineer and keep a sourced table of these.","none — TripAdvisor answer, official sources named in text only",none; EgyBI stays in the profile only,draft — needs owner approval
+2026-12-05,W2,Pinterest,en,"Heat by month, evergreen","Title: Egypt weather by month: how hot it gets at 18 sites
+Description: Normal afternoon highs from NASA climate data (2001–2020) for every month, from Alexandria to Abu Simbel. Every site stays under 34 °C from November to March. Free planner, built by a Cairo-based data engineer.",https://egybi.com/egypt-weather-by-month.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-heat,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2026-12-08,W3,Hacker News (Show HN),en,"Show HN, Tuesday US Eastern morning","DRAFT — rewrite in your own words before posting; HN wants human-written text. Never ask for votes.
+
+Title: Show HN: An Egypt trip planner built on NASA climate normals and cited prices
+
+First comment:
+I'm a data engineer living in Egypt. EgyBI is a trip planner I built because the questions visitors ask me (is Luxor too hot in May, what should a tip be, which ticket price is real) all have answers in public data, scattered across a NASA API, a Ministry PDF and a dozen blogs that disagree.
+
+What it does: pick your dates and stops, and it shows the normal afternoon high at each of 18 sites in your months, the straight-line legs, the holidays inside your dates, and the day's exchange rate. It prints as a dossier. No signup; nothing is sent to a server unless you choose to save to an account.
+
+The rules I held myself to:
+- Every row carries a source and the date it was checked.
+- Where two sources disagree, both are shown. Abu Simbel is 750 EGP on the Ministry's 2024 list and was 822 on its booking site when I checked; the page shows both.
+- Where there is no reliable figure, it says so. I could not find a checkable price for a camel ride at Giza, so there isn't one.
+- Heat is NASA POWER (MERRA-2) mean daily highs, 2001–2020. The build fails if the mean bias against station normals within 120 km passes ±2 °C.
+
+Built as a Python pipeline that writes static pages, JSON and SVG charts; the planner computes in the browser. English, Arabic and Russian.
+
+Disclosure: there is an optional $12 printable pack and a $49 written plan check. Everything in this post is free.
+
+I'd most like feedback on the planner's first-run flow and on any figure you think is wrong.",https://egybi.com/plan.html?utm_source=hn&utm_medium=post&utm_campaign=s2627-launch,planner no-signup flow checked on a phone the day before; stay online for 3 hours to answer comments,draft — needs owner approval
+2026-12-09,W3,Reddit (r/cairo),en,Arriving in Cairo: Uber and the airport,"From the Cairo Airport and Uber pages (both checked 18 Nov 2026), which I list with sources on a free site I built; I'm a data engineer in Cairo.
+
+- Uber pick-up: in Terminal 2, turn left after customs and leave through Gate 7. Terminal 3: the B6 parking space. Uber gives no pick-up point for Terminal 1.
+- White taxis have meters. The old black-and-white ones don't, so agree the price before you set off. The airport itself says a class C airport limousine's price is the most a taxi fare should be.
+- Airport limousines have fixed prices by destination and car class, picked up at the kerb in front of each terminal.
+- Drivers approach tourists in the arrival hall. You don't need them.
+
+One thing travellers report (One Mile at a Time forum, August 2025): some Cairo drivers ask for extra cash before the ride, or cancel in the app to get paid in cash. You can decline and book another car.
+
+Outside Cairo: Uber's own city list doesn't include Luxor, Aswan or Sharm el-Sheikh; inDrive's does, and there you propose a fare. As a very rough anchor, a cross-city ride is typically US$1–3 (tabiji, 2026 comparison).",none — trust phase,none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2026-12-09,W3,Telegram chat (Hurghada/Sharm),ru,Heat in December–February,"По нормам NASA POWER (средний дневной максимум и ночной минимум, 2001–2020):
+— Хургада: днём в декабре 23 °C, в январе 21; ночью около 16–18.
+— Дахаб (ближайшая к Шарму точка в моей таблице): днём 22 в декабре, 20 в январе, 22 в феврале; ночью 8–10.
+— Луксор (Карнак): днём 24 в декабре, 22 в январе, 25 в феврале; ночью 6–8.
+— Каир и Гиза: днём 21 в декабре, 19 в январе, 21 в феврале.
+Днём комфортно везде, вечером у моря свежо, а на ранних выездах в Луксор и в пустыне — холодно. Это многолетние средние, не прогноз на конкретную неделю.
+Таблица по 18 местам и всем месяцам — на сайте, который я сделал: https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-heat",https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-heat,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2026-12-10,W3,Telegram channel EgyBI RU (mirror to VK and Max),ru,GEM new prices,"Большой Египетский музей · новые цены с 1 ноября 2026
+
+По данным Egypt Today и Egyptian Streets (27.10.2026): взрослый иностранец — 1830 фунтов (было 1570), около 34 $ по курсу 19.11.2026. Цена видна только при бронировании на официальном сайте музея tickets.gem.eg — музей говорит, что другого официального сайта нет. Билеты продаются на конкретное время.
+
+Залы: 9:00–18:00, в среду и субботу до 21:00; последний вход за час до закрытия залов (сайт музея, проверено 18.11.2026).
+
+За первый год — около 5,2 млн посетителей (Egyptian Streets, 16.11.2026).
+
+Все цены с источниками (сайт сделал я):
+https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-gem",https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-gem,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2026-12-11,W3,TikTok + Reels + Shorts,en,Tourist price vs fair price,"What things in Egypt should actually cost, with the source for every number. The camel ride at Giza has no reliable published price, so the page says so instead of making one up. I built this site myself; it's free.
+#egypttravel #egypt #cairo #giza #traveltips #tipping #luxor
+
+Pinned comment: Sources: tipping figures from Pyramids Land's 2026 tipping guide; Giza entry from the Ministry of Tourism and Antiquities price list of 5 Nov 2024; the camel-ride search was done 9 Oct 2026 and found no checkable price. Comment what you were quoted and for what, and I'll check it against the page.",https://egybi.com/fair-prices.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-prices,screen recording per 03 Video Scripts (a); set the TikTok and Instagram bio links to the (a) links in 03,draft — needs owner approval
+2026-12-12,W3,Facebook group (Arabic),ar,"Best time to visit, in numbers","إمتى الأقصر وأسوان تبقى نار؟ بالأرقام مش بالإحساس.
+
+جمعت متوسط درجة الحرارة العظمى اليومية، يعني اللي بتوصله الحرارة بعد الضهر في يوم عادي، من بيانات ناسا المناخية NASA POWER (متوسط ٢٠٠١–٢٠٢٠) لـ ١٨ موقع:
+
+• الكرنك بالأقصر: يناير ٢٢، فبراير ٢٥، مارس ٣٠، أبريل ٣٤، مايو ٣٨، ومن يونيو لأغسطس ٤١
+• أبو سمبل: يناير ٢٤، فبراير ٢٧، ومن يونيو لأغسطس ٤١
+• فيلة بأسوان: أغسطس ٤٣، وده أعلى رقم في الجدول كله
+• الأهرامات: يناير ١٩، يوليو ٣٩
+• الغردقة: يناير ٢١، أغسطس ٣٥
+
+الخلاصة: في يناير وفبراير وديسمبر الـ١٨ موقع كلهم بعد الضهر تحت ٢٨ درجة. وفي يوليو الفرق بين أبرد وأسخن موقع ١٣ درجة: حوالي ٢٩ في أبو مينا و٤٢ في فيلة.
+
+دي متوسطات على مدى سنين طويلة، مش توقعات طقس.
+
+لو مسافر الصعيد في الصيف: الكرنك وأبو سمبل بيفتحوا الساعة ٦ الصبح (موقع الحجز التابع لوزارة السياحة والآثار، اتأكدت منه يوم ١٧ نوفمبر ٢٠٢٦)، فروح بدري.
+
+الجدول كامل شهر بشهر في أول تعليق. أنا اللي عملت الموقع، وهو مجاني.
+
+أول تعليق:
+أفضل وقت لزيارة مصر، شهر بشهر في كل موقع: https://egybi.com/ar/visit.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-heat
+المصدر: NASA POWER، متوسطات ٢٠٠١–٢٠٢٠.",https://egybi.com/ar/visit.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-heat,screenshot of the table on egypt-weather-by-month.html; ask the group admin first,draft — needs owner approval
+2026-12-13,W3,Pinterest,en,"Tipping, evergreen","Title: How much to tip in Egypt, with sources
+Description: Housekeeping 50–100 EGP a day, a felucca captain 100–200 EGP an hour for the whole boat, a camel handler 50–100 EGP a ride (Pyramids Land, 2026). Every figure sourced and dated on a free site I built.",https://egybi.com/fair-prices.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-prices,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2026-12-14,W4,"Press pitch (Egypt Independent, economy)",en,The pound since July,"Hello,
+
+I have recorded the dollar's market rate every day since 24 July. Comparing weekly medians, the dollar went from EGP 51.30 in the first week to EGP 53.60 in the week to 19 November 2026: +4.5%.
+
+The sharpest week was the one to 29 October, when ten currencies all rose 2.9–4.6% against the pound together, so that was a move of the pound itself rather than of the dollar.
+
+Over the same weeks, the median retail price of 128 food items on the Cabinet's IDSC portal moved +1.9%.
+
+The chart is free to embed, credit line inside the image: https://egybi.com/egyptian-pound-since-july.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-prices
+
+I can send the daily series as a spreadsheet, or comment on the method.
+
+Ahmed, Cairo-based data engineer. I built and run EgyBI (egybi.com), a free English, Arabic and Russian guide to Egypt where every figure carries its source and date. hello@egybi.com",https://egybi.com/egyptian-pound-since-july.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-prices,find the recipient as described in 04 Pitches; re-check the figures on the live page before sending,draft — needs owner approval
+2026-12-15,W4,Reddit (r/EgyptTravel),en,Visa $33 from 1 Jan 2027; cash rules,"A few sourced rules; I compile these for a free Egypt site I built (data engineer in Cairo).
+
+- You can bring in or take out up to 5,000 EGP. Foreign currency has no limit, but declare more than US$10,000 on arrival (UK government travel advice, entry requirements, updated 27 Oct 2026).
+- Visa on arrival at the airport kiosks is US$30, cash only (same source). Cairo's digital kiosks take cards: US$36, including a US$6 service fee. From 1 Jan 2027 the single-entry fee becomes US$33, or US$39 at Cairo's digital kiosks (ATTA, on a Cabinet decision of 13 Aug 2026).
+- Tips are expected in pounds, and big notes are hard to break, so get small ones early.
+- Bring clean, undamaged dollar notes. Travellers in Hurghada and Sharm report old or damaged ones refused (Tourdom, 22 Apr 2026).
+- Today's rate: 1 USD = 53.77 EGP, 1 EUR = 59.00, 1 GBP = 70.89 (ExchangeRate-API market reference, 19 Nov 2026; banks and exchange offices quote their own buy and sell).
+
+What I don't have a sourced figure for is ATM fees. They depend on your bank and the machine's bank, so read the screen before you confirm.",none — trust phase,none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2026-12-15,W4,Telegram channel EgyBI RU (mirror to VK and Max),ru,Visa from 1 January 2027,"Виза в Египет с 1 января 2027
+
+Однократная виза — 33 $ вместо 30 $; в электронных автоматах аэропорта Каира — 39 $ вместо 36 $ (решение правительства Египта от 13.08.2026, по данным ATTA). Когда мы проверяли в ноябре, портал e-Visa ещё показывал старую цену.
+
+По прилёте виза оплачивается наличными, в каирских автоматах — картой. Это правила в прочтении правительства Великобритании для британских паспортов; для российского паспорта уточните у туроператора.
+
+Все правила въезда с источниками и датами проверки (сайт сделал я):
+https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-visa",https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-visa,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2026-12-16,W4,Creator pitch (English Egypt-trip YouTuber),en,Best month for your route chart + 3 free checks,"Hello,
+
+I'm a Cairo-based data engineer and I built EgyBI, a free Egypt planner where every figure carries a source and a date.
+
+I'd like to make your audience one thing, free: a ""best month for your route"" chart for the exact stops in your video. It shows the normal afternoon high at each stop in every month (NASA POWER, 2001–2020 normals) and the 2027 holidays and Ramadan dates that fall in each month. You can show it on screen with a credit line.
+
+I'd also give three of your viewers a free written check of their own Egypt plan (heat, distances, holidays, prices against the data), normally $49: https://egybi.com/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check
+
+No payment either way, and no obligation to mention me beyond the chart credit.
+
+Ahmed, EgyBI",https://egybi.com/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check,add the one personal sentence naming their video or post; find them as described in 04 Pitches,draft — needs owner approval
+2026-12-16,W4,Telegram chat (Hurghada/Sharm),ru,Giza touts and the camel price,"Про Гизу коротко, по источникам:
+— Билет на плато для иностранца — 700 фунтов, студентам 350 (прайс министерства, 5.11.2024). Внутрь пирамиды Хеопса — отдельный билет, 1500 фунтов с 1.01.2025 (Egypt Independent).
+— Цены на верблюда нет ни в одном источнике, который можно проверить, и официального прайса тоже. Поэтому договаривайтесь об итоговой сумме, времени и обратной дороге до того, как сесть. Частый трюк — цена меняется посреди поездки: в одном рассказе договорились на 200 фунтов, а потребовали 1000 (Where the Road Forks, 2024).
+— «Гиды», которые сами пристраиваются у входа, не официальные. Лицензированного гида бронируют заранее, у него есть удостоверение (In Your Pocket).
+— Билеты — в кассе или на сайте министерства egymonuments.com.
+— Туристическая полиция: 126.
+Страница с ценами и источниками (сделал сам, бесплатно): https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-prices",https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-prices,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2026-12-17,W4,Newsletter (The Papyrus),en,"December issue: the visa, the solstice, the pound","Subject: December: the visa change, the solstice and the pound
+Preview: Three things for anyone travelling in the next two months.
+
+
+Hello,
+
+Three things for anyone travelling in the next two months.
+
+1. The visa. From 1 January 2027 the single-entry visa is due to rise from US$30 to US$33, and from US$36 to US$39 at Cairo airport's digital kiosks (ATTA, on a Cabinet decision of 13 August 2026). Visa on arrival is cash only.
+
+2. The solstice. On 21 December the sunrise lines up with Karnak (Africanews with AP, 22 Dec 2025), and the same morning is marked at Qasr Qarun in Fayoum (Explore Fayoum). Karnak opens at 06:00. A December night in Luxor averages about 8 °C and the afternoon 24 (NASA POWER, 2001–2020 normals), so dress for a cold dawn.
+
+3. The pound. Between the first week from 24 July and the week to 19 November 2026, the dollar went from EGP 51.30 to 53.60 (+4.5%). Over the same weeks the median of 128 food prices on the Cabinet's IDSC portal moved +1.9%.
+
+Put your dates in the planner and it lists the holidays and the heat at each stop:
+https://egybi.com/plan.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-visa
+
+Ahmed",https://egybi.com/plan.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-visa,issue file under site/newsletter/issues/ built by a Claude session; send with send_issue.php after a dry run,draft — needs owner approval
+2026-12-18,W4,Creator pitch (Budget/backpacker blogger),en,Printable fair-price card for their readers,"Hello,
+
+I'm a Cairo-based data engineer and I built EgyBI, a free Egypt site where every price carries a named source and a date.
+
+For your readers I'd like to give, free, a printable fair-price card: tips, entry tickets and rides as named sources publish them, with Arabic beside each line to show a driver, and the one honest gap (no checkable published price exists for a camel ride at Giza). You can host it or link to it with a credit.
+
+I'd also give three of your readers a free written check of their Egypt plan, normally $49.
+
+The prices page: https://egybi.com/fair-prices.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-prices
+
+No payment either way.
+
+Ahmed, EgyBI",https://egybi.com/fair-prices.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-prices,add the one personal sentence naming their video or post; find them as described in 04 Pitches,draft — needs owner approval
+2026-12-19,W4,Creator pitch (Russian Red Sea vlogger),ru,Карточка «сколько стоит» + 3 бесплатные проверки,"Здравствуйте!
+
+Я инженер данных, живу в Египте и сделал бесплатный сайт EgyBI на русском, арабском и английском: у каждой цифры там есть источник и дата.
+
+Хочу бесплатно сделать для вашей аудитории карточку: официальные цены входных билетов (прайс министерства туризма), чаевые по опубликованным источникам и погода в Хургаде и Дахабе по месяцам (нормы NASA). Её можно показать в видео или закрепить в канале с подписью-источником.
+
+Ещё трём вашим зрителям — бесплатная письменная проверка их маршрута по Египту (обычно 49 $): https://egybi.com/ru/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check
+
+Я не плачу за публикацию и не прошу рекламы: это обмен полезным материалом, без обязательств.
+
+Ахмед, EgyBI",https://egybi.com/ru/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check,add the one personal sentence naming their video or post; find them as described in 04 Pitches,draft — needs owner approval
+2026-12-21,W5,Telegram channel EgyBI RU (mirror to VK and Max),ru,"Karnak winter-solstice sunrise, 21 Dec","21 декабря — зимнее солнцестояние. На рассвете солнце встаёт по оси храма Карнак в Луксоре (Africanews/AP, репортаж от 22.12.2025), а в Файюме в то же утро встречают восход у храма Каср-Карун (Explore Fayoum).
+
+Карнак открывается в 6:00, последний вход в 16:00 (сайт бронирования министерства, проверено 17.11.2026). В Луксоре в декабре днём обычно 24 °C, а ночью около 8 (NASA POWER) — на рассвете холодно.
+
+Погода по 18 местам и месяцам (сайт сделал я):
+https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-heat",https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-heat,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2026-12-22,W5,Reddit (r/EgyptTravel),en,Luxor in one day or two,"Doable for the highlights, but two days is far more comfortable, and the clock is the real constraint. From the Ministry's booking site (checked 17 Nov 2026), via a free planner I built (I'm a data engineer in Cairo):
+
+- Karnak: opens 06:00, last entry 16:00, all year.
+- Valley of the Kings: opens 06:00, last entry 16:00 in winter and 17:00 in summer.
+
+Foreign adult tickets (Ministry price list, 5 Nov 2024): Karnak 600 EGP, Luxor Temple 500, Valley of the Kings 750, and Tutankhamun's tomb 700 on top. Without Tut that's 1,850 EGP, about US$34 at 53.77 to the dollar (19 Nov 2026).
+
+The split that works: West Bank from opening time on day one, Karnak at opening on day two. In one day you're doing the West Bank at dawn and Karnak by midday, which is fine from December to February, when Luxor's normal afternoon is 22–25 °C, and brutal from May, when it's 38 (NASA POWER normals, 2001–2020).
+
+Coming from Cairo: the sleeper trains now leave from Cairo Upper Egypt (Bashtil) station, not Ramses, from US$110 per person sharing a cabin, and booking opens 4–5 months ahead (Seat61, updated 14 Sep 2026).",none — trust phase,none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2026-12-22,W5,TikTok + Reels + Shorts,en,Your name in hieroglyphs — comment yours,"Your name in hieroglyphs, spelled sign by sign with each sign's Gardiner number. It spells the sounds of your name; it's a transliteration, not a translation, and the page explains why. Comment your name and I'll do the next ten. Free tool I built.
+#hieroglyphs #ancientegypt #egypt #egyptology #yourname #cartouche
+
+Pinned comment: Signs from A. H. Gardiner's sign list (Egyptian Grammar, 3rd ed., 1957), using the single-sound (""uniliteral"") signs. Ancient Egyptian wrote consonants and added meaning signs, so this sound-by-sound spelling is a modern convention, not how a scribe would have written your name. Drop your name below, Latin letters.",https://egybi.com/hieroglyphs.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-names,screen recording per 03 Video Scripts (b); switch the TikTok and Instagram bio links to the (b) links in 03,draft — needs owner approval
+2026-12-23,W5,Facebook group (Arabic),ar,"Name studio, for archaeology and tourism student groups","اكتب اسمك بالهيروغليفي، بس بأمانة: الأداة دي بتكتب «أصوات» اسمك، مش ترجمة له.
+
+عملت أداة مجانية بتكتب أي اسم بالحروف اللاتينية علامة علامة جوه خرطوش، زي ما كانت الأسماء الملكية بتتكتب على الآثار. كل علامة من العلامات «الأحادية» في قائمة غاردنر (كتاب Egyptian Grammar، الطبعة التالتة ١٩٥٧)، ومعاها رقمها وبتصوّر إيه.
+
+اللي لازم يتقال: الكاتب المصري القديم ماكانش هيكتب اسمك كده. الخط كان بيكتب الحروف الساكنة ويضيف علامات للمعنى، وحروف العلة ماكانتش بتتكتب بالطريقة دي. عشان كده أداتين محترمتين ممكن يدّوا كتابتين مختلفتين لنفس الاسم.
+
+اكتب اسمك بالإنجليزي في الأداة واحفظه صورة. ولو حابب، اكتب اسمك في التعليقات وأنا هنزّل صور لأول عشرة.
+
+الرابط في أول تعليق. أنا اللي بنيت الموقع، وهو مجاني ومن غير تسجيل.
+
+أول تعليق:
+استوديو الأسماء: https://egybi.com/ar/hieroglyphs.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-names
+المصادر: قائمة علامات غاردنر، وجدول يونيكود للهيروغليفية المصرية.",https://egybi.com/ar/hieroglyphs.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-names,screenshot of the studio with your own name in the cartouche; ask the group admin first,draft — needs owner approval
+2026-12-26,W5,TikTok + Reels + Shorts,en,Name-studio comment replies,"Replying to your comment: here is your name in hieroglyphs, sign by sign. It spells the sounds of your name, not a translation. Comment yours for the next batch. Free tool I built.
+#hieroglyphs #ancientegypt #egypt #yourname",https://egybi.com/hieroglyphs.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-names,"one 10-second ""Reply with video"" per commented name, per 03 Video Scripts (b); on-screen text is the commenter's own name followed by "", in hieroglyphs""",draft — needs owner approval
+2026-12-27,W5,Pinterest,en,"Visa change, dated","Title: Egypt visa 2027: what changes on 1 January
+Description: The single-entry visa goes from US$30 to US$33, and from US$36 to US$39 at Cairo's digital kiosks (ATTA, Cabinet decision of 13 Aug 2026). Visa on arrival is cash only. Sourced and dated on a free site I built.",https://egybi.com/arriving-in-egypt.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-visa,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2026-12-28,W6,LinkedIn,en,Visa change: why every row carries a date,"On 1 January 2027 Egypt's single-entry visa is due to go from US$30 to US$33, and from US$36 to US$39 at Cairo airport's digital kiosks (ATTA, reporting a Cabinet decision of 13 August 2026).
+
+A small change, but it shows the problem I built EgyBI around: the fee you read online depends on when the page was written. When I checked in November, the official e-Visa portal still showed the old price.
+
+So every row on the site's arrival page carries its source and the date it was last checked, and the 1 January row is stored as a dated future change rather than quietly overwriting the old figure.
+
+If you're travelling in January: visa on arrival is cash only; the Cairo kiosks take cards. These are the UK government's rules for British passports, so check your own country's advice.
+
+I built and run EgyBI. Link in the first comment.
+
+#Egypt #travel #opendata
+
+
+First comment:
+Every entry rule, sourced and dated: https://egybi.com/arriving-in-egypt.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-visa",https://egybi.com/arriving-in-egypt.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-visa,"screenshot of the ""Getting in"" table on arriving-in-egypt.html",draft — needs owner approval
+2026-12-29,W6,Reddit (r/solotravel),en,Daily budget: the fixed costs,"I'll dodge the single number, because I haven't found a sourced daily budget I trust and I'd rather not invent one. I keep a cited price table for a free site I built (Cairo-based data engineer). What I can give you is the fixed costs, which are where most of the surprises are.
+
+- Entry, foreign adult (Ministry price list, 5 Nov 2024): Giza plateau 700 EGP; Egyptian Museum 550; Karnak 600; Luxor Temple 500; Valley of the Kings 750; Abu Simbel 750 (822 on the booking site, 17 Nov 2026). Inside the Great Pyramid 1,500 more (Egypt Independent, from 1 Jan 2025). GEM: reported 1,830 since 1 Nov 2026 (Egypt Today).
+- Getting around: a cross-city ride typically US$1–3 (tabiji, 2026); Cairo–Luxor sleeper from US$110 per person sharing (Seat61, Sep 2026).
+- Tips: 50–100 EGP per room per day for housekeeping (Pyramids Land, 2026); 100–200 EGP per guided tour (Travelling King).
+- Visa: US$30 cash on arrival, US$33 from 1 Jan 2027 (UK government advice; ATTA).
+
+Rate: 53.77 EGP to the dollar (ExchangeRate-API, 19 Nov 2026). Hotels and food vary too much for one honest figure, so add your own.","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2026-12-30,W6,TikTok + Reels + Shorts,en,Visa goes up on 1 January,"Egypt's visa goes up on 1 January 2027: US$30 to US$33, and US$36 to US$39 at Cairo's digital kiosks (ATTA, Cabinet decision of 13 Aug 2026). Visa on arrival is cash only. I built a free page with every entry rule sourced and dated.
+#egypttravel #egyptvisa #cairo #traveltips",https://egybi.com/arriving-in-egypt.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-visa,"screen recording of the ""Getting in"" table on arriving-in-egypt.html, 15 s, own voiceover reading the caption",draft — needs owner approval
+2027-01-01,W6,Telegram channel EgyBI RU (mirror to VK and Max),ru,Visa change goes live today,"С сегодняшнего дня, 1 января 2027, однократная виза в Египет должна стоить 33 $, а в электронных автоматах аэропорта Каира — 39 $ (ATTA, решение правительства от 13.08.2026). В ноябре портал e-Visa ещё показывал 30 $, поэтому сверяйте цену на экране перед оплатой.
+
+Бесплатный штамп до 15 дней для курортов Синая (Шарм-эль-Шейх, Дахаб, Нувейба, Таба) — по правилам в прочтении правительства Великобритании.
+
+Все правила въезда с датами проверки (сайт сделал я):
+https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-visa",https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-visa,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-01-01,W6,X,en,Visa change goes live today,"Egypt's single-entry visa is due to rise today, 1 Jan 2027: US$30 → US$33, and US$36 → US$39 at Cairo's digital kiosks (ATTA, Cabinet decision of 13 Aug 2026). The e-Visa portal still showed US$30 in November, so check the price on screen. Sourced page I built: https://egybi.com/arriving-in-egypt.html?utm_source=x&utm_medium=post&utm_campaign=s2627-visa",https://egybi.com/arriving-in-egypt.html?utm_source=x&utm_medium=post&utm_campaign=s2627-visa,screenshot of the linked page,draft — needs owner approval
+2027-01-02,W6,Pinterest,en,"Name studio, evergreen","Title: Your name in hieroglyphs, sign by sign
+Description: Spelled with Gardiner's single-sound signs inside a cartouche you can save. Honest note: it spells the sounds of your name; it is not a translation. Free name studio I built.",https://egybi.com/hieroglyphs.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-names,Canva pin 1000×1500 from a screenshot of the studio with a sample name; no monument images,draft — needs owner approval
+2027-01-05,W7,Reddit (r/dataisbeautiful),en,[OC] #1: heat at 18 sites by month,"[OC] How hot a normal afternoon gets at 18 Egyptian sites, every month (NASA POWER, 2001–2020 normals)
+
+First comment:
+Source: NASA POWER climatology API (MERRA-2 reanalysis), mean daily maximum temperature averaged over 2001–2020, at each site's coordinates. These are modelled long-run averages, not station readings and not a forecast. Each value was checked against the nearest published weather-station normal within 120 km; the build is refused if the mean signed bias exceeds ±2.0 °C.
+
+Tool: Python (standard library) writing the SVG directly; colour bands at 21 °C or less, 22–27, 28–33, 34–38 and 39 or more.
+
+A few things it shows: in January, February and December all 18 sites have a normal afternoon under 28 °C; in July the spread between sites is 13 °C (about 29 at Abu Mena, about 42 at Philae); the hottest cell is Philae in August, about 43.
+
+I made this for a free Egypt trip site I built (disclosure). The interactive version, with each site's nights, rain and golden-hour times: https://egybi.com/egypt-weather-by-month.html?utm_source=reddit&utm_medium=oc&utm_campaign=s2627-heat",https://egybi.com/egypt-weather-by-month.html?utm_source=reddit&utm_medium=oc&utm_campaign=s2627-heat,PNG export of charts/egypt-weather-by-month.svg; post the first comment straight after; check the subreddit rules first,draft — needs owner approval
+2027-01-06,W7,"Press pitch (Egyptian Streets, travel)",en,Ramadan 2027 overlaps the Abu Simbel alignment,"Hello,
+
+A service angle for February travellers. Ramadan 2027 is expected from 8 or 9 February to 8 or 9 March, and Eid al-Fitr from 9 or 10 to 12 March, subject to moon sighting.
+
+That puts the Abu Simbel sun alignment of Monday 22 February inside Ramadan. The temple's hours do not change for Ramadan (06:00, last entry 16:00, per the Ministry's booking site), but Giza does: 08:00 to a 15:30 last entry, against 07:00 and 16:00 normally. The October 2026 alignment drew a queue of over 6,000 people (Egypt Today).
+
+The 2027 holiday chart, with every date sourced and the lunar ones shown as ranges, is free to embed: https://egybi.com/egypt-public-holidays.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-ramadan
+
+Happy to give a quote from Cairo.
+
+Ahmed, Cairo-based data engineer. I built and run EgyBI (egybi.com), a free English, Arabic and Russian guide to Egypt where every figure carries its source and date. hello@egybi.com",https://egybi.com/egypt-public-holidays.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-ramadan,find the recipient as described in 04 Pitches; re-check the figures on the live page before sending,draft — needs owner approval
+2027-01-06,W7,Telegram channel EgyBI RU (mirror to VK and Max),ru,Coptic Christmas and the Ramadan dates,"7 января — коптское Рождество, государственный праздник в Египте.
+
+Дальше в календаре: Рамадан ожидается с 8 или 9 февраля по 8 или 9 марта, Ид аль-Фитр — с 9 или 10 по 12 марта; точные даты зависят от наблюдения луны (The National, 6.10.2026; Gulf News).
+
+В Рамадан Гиза работает с 8:00, последний вход в 15:30; Карнак и Абу-Симбел — без изменений, с 6:00 до 16:00 (последний вход; сайт министерства, проверено 17.11.2026).
+
+Введите свои даты — сайт покажет праздники и жару по местам (сделал я, бесплатно):
+https://egybi.com/ru/?utm_source=telegram&utm_medium=card&utm_campaign=s2627-ramadan",https://egybi.com/ru/?utm_source=telegram&utm_medium=card&utm_campaign=s2627-ramadan,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-01-07,W7,Facebook group (Arabic),ar,Coptic Christmas trip: where is it warmest,"إجازة عيد الميلاد ٧ يناير، والجو فين أحلى؟
+
+متوسط الحرارة العظمى بعد الضهر في يناير، من بيانات ناسا المناخية NASA POWER (متوسط ٢٠٠١–٢٠٢٠):
+• أسوان (فيلة): ٢٤
+• أبو سمبل: ٢٤
+• الأقصر (الكرنك): ٢٢
+• الغردقة: ٢١
+• دهب: ٢٠
+• القاهرة والأهرامات: ١٩
+• الإسكندرية: ١٩
+
+وبالليل الأقصر حوالي ٦ درجات ودهب حوالي ٨، فخد معاك جاكيت.
+
+كل سنة وانتو طيبين. الجدول كامل شهر بشهر في أول تعليق (أنا اللي عملت الموقع، وهو مجاني).
+
+
+أول تعليق:
+الجو شهر بشهر في ١٨ موقع: https://egybi.com/ar/visit.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-heat
+المصدر: NASA POWER، متوسطات ٢٠٠١–٢٠٢٠.",https://egybi.com/ar/visit.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-heat,screenshot of the January column on egypt-weather-by-month.html; ask the group admin first,draft — needs owner approval
+2027-01-08,W7,Telegram chat (Hurghada/Sharm),ru,Ramadan 2027: what changes for tourists,"Рамадан в 2027 году ожидается с 8 или 9 февраля по 8 или 9 марта, Ид аль-Фитр — с 9 или 10 по 12 марта; точные даты зависят от наблюдения луны (The National, 6.10.2026; Gulf News).
+
+Что меняется для туристов (сайт бронирования Министерства туризма и древностей, проверено 17.11.2026):
+— Гиза: в Рамадан открывается в 8:00, последний вход в 15:30 (обычно 7:00 и 16:00).
+— Долина царей: последний вход в 16:00.
+— Карнак и Абу-Симбел: часы те же, что и весь год, — с 6:00, последний вход в 16:00.
+
+Солнечное явление в Абу-Симбеле 22 февраля в этом году приходится на Рамадан.
+
+Введите свои даты — сайт покажет праздники и жару по местам (я его сделал, бесплатно): https://egybi.com/ru/?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-ramadan",https://egybi.com/ru/?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-ramadan,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2027-01-09,W7,TikTok + Reels + Shorts,en,When is Karnak or Abu Simbel unbearably hot,"How hot a normal afternoon gets at Karnak, Abu Simbel and Philae, month by month, from NASA's climate normals (2001–2020). Averages, not a forecast. Free site I built.
+#luxor #karnak #abusimbel #aswan #egypttravel #egypt #besttimetovisit
+
+Pinned comment: Data: NASA POWER climatology (MERRA-2 reanalysis), mean daily maximum, 2001–2020 normals, checked against station normals within 120 km. Opening hours from the Ministry of Tourism and Antiquities booking site, checked 17 Nov 2026. Tell me your month and your sites and I'll tell you what the afternoon normally reaches.",https://egybi.com/egypt-weather-by-month.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-heat,screen recording per 03 Video Scripts (c); switch the bio links to the (c) links in 03,draft — needs owner approval
+2027-01-10,W7,Pinterest,en,"Ramadan 2027, 3–4 weeks ahead","Title: Ramadan 2027 in Egypt: dates and what changes for visitors
+Description: Expected from 8 or 9 February to 8 or 9 March. Giza opens 08:00 with last entry 15:30 during Ramadan; Karnak and Abu Simbel keep their hours. All 2027 public holidays, each with its source, on a free site I built.",https://egybi.com/egypt-public-holidays.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-ramadan,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2027-01-12,W8,Reddit (r/EgyptTravel),en,Travelling in Ramadan 2027,"Ramadan 2027 is expected from 8 or 9 February to 8 or 9 March, and Eid al-Fitr from 9 or 10 March to 12 March. The exact days are set by moon sighting (The National, 6 Oct 2026; Gulf News). I track this for a free Egypt planner I built; I'm a data engineer in Cairo.
+
+What changes for visitors, from the Ministry's booking site (checked 17 Nov 2026):
+
+- Giza: opens 08:00, last entry 15:30 during Ramadan (normally 07:00 and 16:00).
+- Valley of the Kings: last entry 16:00 during Ramadan.
+- Karnak and Abu Simbel: the same hours as the rest of the year, 06:00 with last entry 16:00.
+
+Ramadan isn't a public holiday itself; Eid at its end is. February is also one of the mildest months: Giza's normal afternoon is 21 °C and Luxor's 25 (NASA POWER, 2001–2020 normals).
+
+One date to know: the Abu Simbel sun alignment on 22 February falls inside Ramadan in 2027. Hours there don't change for Ramadan, and the alignment-day ticket is 1,200 EGP on the Ministry's list and 1,272 on its booking site (checked 17 Nov 2026), against 750 on the list on other days.","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-01-12,W8,Creator pitch (English Egypt-trip YouTuber with a February trip),en,Best month for your route chart + 3 free checks,"Hello,
+
+I'm a Cairo-based data engineer and I built EgyBI, a free Egypt planner where every figure carries a source and a date.
+
+I'd like to make your audience one thing, free: a ""best month for your route"" chart for the exact stops in your video. It shows the normal afternoon high at each stop in every month (NASA POWER, 2001–2020 normals) and the 2027 holidays and Ramadan dates that fall in each month. You can show it on screen with a credit line.
+
+I'd also give three of your viewers a free written check of their own Egypt plan (heat, distances, holidays, prices against the data), normally $49: https://egybi.com/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check
+
+No payment either way, and no obligation to mention me beyond the chart credit.
+
+Ahmed, EgyBI",https://egybi.com/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check,add the one personal sentence naming their video or post; find them as described in 04 Pitches,draft — needs owner approval
+2027-01-13,W8,Telegram chat (Hurghada/Sharm),ru,How to pay in Egypt from Russia,"Про оплату, по источникам:
+— Карты российских банков в Египте ненадёжны: Мир и UnionPay принимают в немногих местах, а российские карты иногда отклоняют из-за санкций (Сравни.ру, 2.11.2026). Везите доллары или евро наличными и меняйте в банке или обменнике.
+— С 22 апреля 2026 ВТБ Онлайн платит в Египте по QR-коду: рублями с конвертацией в фунты, до 25 000 ₽ за платёж и 350 000 ₽ в день, без комиссии, по словам банка. Работает в крупных магазинах (Турдом, 22.04.2026).
+— Карты Visa и Mastercard банков других стран СНГ работают; Мир — нет (там же).
+— Старые и повреждённые долларовые купюры часто не берут: в Шарме одному туристу их не приняли нигде, даже банкоматы (там же).
+
+Все строки с датами проверки — на странице, которую я сделал: https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-visa",https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-visa,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2027-01-14,W8,Telegram channel EgyBI RU (mirror to VK and Max),ru,Where is it warmest in February,"Где теплее в феврале? Днём обычно (NASA POWER, нормы 2001–2020):
+— Абу-Симбел: 27 °C
+— Асуан (храм Филы): 27
+— Луксор: 25
+— Дахаб: 22
+— Каир и Гиза: 21
+
+Ночью в Луксоре около 8 °C, в Дахабе около 9. Это многолетние средние, не прогноз.
+
+Таблица по 18 местам (сайт сделал я): https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-heat",https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-heat,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-01-15,W8,Creator pitch (Egyptology educator),en,Free cartouche sheet for their students,"Hello,
+
+I'm a Cairo-based data engineer and I built a free name studio on EgyBI that spells a name sign by sign with Gardiner's uniliteral signs, each with its Gardiner number. The page says plainly that this is a modern sound-by-sound convention, not how a scribe would have written a name, and why.
+
+I'd like to make you a free printable sheet with your students' or viewers' names in cartouches, one per name, each sign labelled. I'd also welcome your correction if you think a spelling choice is wrong; I'll change the page and credit you.
+
+And three free written checks of an Egypt trip plan (normally $49) for anyone in your audience planning to see the temples.
+
+The studio: https://egybi.com/hieroglyphs.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-names
+
+Ahmed, EgyBI",https://egybi.com/hieroglyphs.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-names,add the one personal sentence naming their video or post; find them as described in 04 Pitches,draft — needs owner approval
+2027-01-16,W8,Creator pitch (Russian Red Sea vlogger with a February season),ru,Карточка «сколько стоит» + 3 бесплатные проверки,"Здравствуйте!
+
+Я инженер данных, живу в Египте и сделал бесплатный сайт EgyBI на русском, арабском и английском: у каждой цифры там есть источник и дата.
+
+Хочу бесплатно сделать для вашей аудитории карточку: официальные цены входных билетов (прайс министерства туризма), чаевые по опубликованным источникам и погода в Хургаде и Дахабе по месяцам (нормы NASA). Её можно показать в видео или закрепить в канале с подписью-источником.
+
+Ещё трём вашим зрителям — бесплатная письменная проверка их маршрута по Египту (обычно 49 $): https://egybi.com/ru/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check
+
+Я не плачу за публикацию и не прошу рекламы: это обмен полезным материалом, без обязательств.
+
+Ахмед, EgyBI",https://egybi.com/ru/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check,add the one personal sentence naming their video or post; find them as described in 04 Pitches,draft — needs owner approval
+2027-01-17,W8,Pinterest,en,Best month for Luxor,"Title: Best month to visit Luxor, from NASA data
+Description: A normal afternoon at Karnak: 22 °C in January, 30 in March, 38 in May, 41 from June to August (NASA POWER, 2001–2020). Karnak opens at 06:00. Free site I built.",https://egybi.com/visit/karnak.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-heat,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2027-01-19,W9,Reddit (r/solotravel),en,"Abu Simbel: bus or tour, and 22 February","From the sources I keep for a free Egypt site I built (I'm a data engineer in Cairo):
+
+- Distance: Aswan to Abu Simbel is 275 km by desert road. A daily bus leaves Aswan at 08:00 and arrives at 12:00; the return leaves at 13:00 and reaches Aswan at 16:00. Most day tours leave very early, around 04:00 (Seat61, updated 14 Sep 2026).
+- Hours: opens 06:00, last entry 16:00, the same in summer, winter and Ramadan (Ministry booking site, checked 17 Nov 2026).
+- Ticket, foreign adult: 750 EGP on the Ministry's price list of 5 Nov 2024; its booking site showed 822 EGP on 17 Nov 2026. I can't tell you which you'll be charged, so I show both.
+- Sun alignment days: 22 February and 22 October. The list prints 1,200 EGP for those days, the booking site 1,272. The October 2026 alignment drew a queue of over 6,000 people (Egypt Today). 22 Feb 2027 is a Monday and falls in Ramadan.
+- Heat: normal afternoon 27 °C in February, 41 in June–August (NASA POWER, 2001–2020).
+
+The bus gets you there at noon, which in summer is the worst hour of the day. In winter it's fine.","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-01-20,W9,"Press pitch (Ahram Online, tourism)",en,Abu Simbel: two official prices for one ticket,"Hello,
+
+I keep a dated table of foreign-visitor entry prices. Three findings:
+
+1. Abu Simbel: the Ministry's price list of 5 November 2024 prints 750 EGP for a foreign adult; its booking site showed 822 EGP on 17 November 2026. For the 22 February sun alignment, 1,200 against 1,272.
+2. Grand Egyptian Museum: 1,830 EGP has been reported since 1 November (Egypt Today), but the museum's ticket site shows prices only once a booking starts, and I found no published list to check it against.
+3. Inside the Great Pyramid: 1,500 EGP from 1 January 2025 (Egypt Independent), but the booking site has no page for that ticket.
+
+The table, with the source and check date on every row, is free to cite: https://egybi.com/fair-prices.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-gem
+
+Ahmed, Cairo-based data engineer. I built and run EgyBI (egybi.com), a free English, Arabic and Russian guide to Egypt where every figure carries its source and date. hello@egybi.com",https://egybi.com/fair-prices.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-gem,find the recipient as described in 04 Pitches; re-check the figures on the live page before sending,draft — needs owner approval
+2027-01-20,W9,TripAdvisor (Aswan forum),en,Abu Simbel: bus or tour,"Both work; the difference is the clock. Per Seat61 (updated 14 Sep 2026): Aswan to Abu Simbel is 275 km by desert road; the daily bus leaves Aswan at 08:00 and arrives at 12:00, and the return leaves at 13:00 and reaches Aswan at 16:00. Most day tours leave very early, for example at 04:00.
+
+The temple opens 06:00 with last entry 16:00, the same in Ramadan (Ministry booking site, egymonuments.com, checked 17 Nov 2026).
+
+Ticket for a foreign adult: 750 EGP on the Ministry's list of 5 Nov 2024, 822 on its booking site on 17 Nov 2026. On 22 February, 1,200 and 1,272.
+
+In February a normal afternoon there is 27 °C, so the noon bus is fine then; by May it is 39 (NASA POWER, 2001–2020 normals).
+
+I'm a Cairo-based data engineer and keep a sourced table of these.","none — TripAdvisor answer, official sources named in text only",none; EgyBI stays in the profile only,draft — needs owner approval
+2027-01-21,W9,Newsletter (The Papyrus),en,"January issue: Ramadan, Abu Simbel and the plan check","Subject: January: Ramadan, Abu Simbel and a second pair of eyes
+Preview: What February trips need to know now.
+
+
+Hello,
+
+If you are travelling in February or March, two dates matter.
+
+Ramadan is expected from 8 or 9 February to 8 or 9 March, and Eid al-Fitr from 9 or 10 to 12 March, depending on the moon sighting (The National; Gulf News). During Ramadan Giza opens at 08:00 with last entry at 15:30, against 07:00 and 16:00 normally. Karnak and Abu Simbel keep their hours, 06:00 with last entry 16:00 (Ministry booking site, checked 17 November 2026).
+
+The Abu Simbel sun alignment falls on Monday 22 February, inside Ramadan this year. The day's ticket is 1,200 EGP on the Ministry's list and 1,272 on its booking site. In October 2026 over 6,000 people queued for it (Egypt Today).
+
+If you would like your plan read against all of this, the plan check is $49: a written review of heat, distances, holidays and prices within 48 hours. You email first, and nothing is charged until I reply to confirm I can help:
+https://egybi.com/ask.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-check
+
+Ahmed",https://egybi.com/ask.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-check,issue file under site/newsletter/issues/ built by a Claude session; send with send_issue.php after a dry run,draft — needs owner approval
+2027-01-22,W9,Telegram channel EgyBI RU (mirror to VK and Max),ru,Abu Simbel on 22 February,"22 февраля, понедельник, — солнечное явление в Абу-Симбеле, и в 2027 году оно приходится на Рамадан.
+
+Билет в этот день — 1200 фунтов по прайсу министерства и 1272 на его сайте бронирования, против 750 и 822 в обычные дни (проверено 17.11.2026). В октябре 2026 в очереди стояли более 6000 человек (Egypt Today).
+
+От Асуана — 275 км по пустынной дороге; большинство туров выезжает около 4:00 (Seat61). Днём в феврале там обычно 27 °C.
+
+Спланировать маршрут (сайт сделал я): https://egybi.com/ru/plan.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-abusimbel",https://egybi.com/ru/plan.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-abusimbel,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-01-23,W9,Pinterest,en,Abu Simbel 22 February,"Title: Abu Simbel sun alignment: 22 February 2027
+Description: The alignment-day ticket is 1,200 EGP on the Ministry's list or 1,272 on its booking site. 275 km from Aswan; most tours leave around 04:00. A normal February afternoon is 27 °C. Free site I built.",https://egybi.com/visit/abu-simbel.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-abusimbel,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2027-01-25,W10,LinkedIn,en,Data quality: two official prices for one ticket,"A data-quality lesson from a temple ticket.
+
+The Ministry of Tourism and Antiquities' price list of 5 November 2024 prints 750 EGP for a foreign adult at Abu Simbel. Its own booking site showed 822 EGP when I checked on 17 November 2026. Same ministry, same ticket, two numbers.
+
+In a pipeline, the easy fix is a rule: newest source wins. I decided against it for EgyBI. A traveller at the gate can be charged either, and a page that silently picks one is wrong for some of them. So the row shows both, each with its source and date, and says plainly that we don't know which you will pay.
+
+The same rule gives the site its most useful missing value: there is no checkable published price for a camel ride at Giza, so the row says that instead of averaging blog posts.
+
+A null with a reason beats a confident guess. I built and run EgyBI; link in the first comment.
+
+#dataengineering #dataquality #Egypt
+
+
+First comment:
+The prices page, every row with its source: https://egybi.com/fair-prices.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices",https://egybi.com/fair-prices.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices,screenshot of the Abu Simbel row on fair-prices.html,draft — needs owner approval
+2027-01-26,W10,Reddit (r/solotravel),en,Solo female travel: taxis and hotels,"I'm a data engineer in Cairo and I keep the official advice lines, with dates, on a free site I built, so this is the UK government's travel advice (safety and security, updated 27 Oct 2026), not my opinion:
+
+- It advises women travelling alone to take care, particularly at night in taxis. If you take one alone, send a friend the driver's details, your route and your live location.
+- Most sexual assaults reported to the British Embassy took place in Red Sea resorts, often by someone the victim had already met, including hotel and excursion staff. It advises not letting hotel staff into your room when you are alone.
+- Scammers and touts at tourist sites target foreign visitors.
+
+Practical bits, with sources:
+
+- Tourist police 126, police 122, ambulance 123 (UK government, getting help).
+- Uber in Cairo: travellers report some drivers asking for extra cash or cancelling to be paid in cash (One Mile at a Time forum, August 2025). You can decline and book another car.
+- At Cairo airport, Uber's pick-up points are Terminal 2 Gate 7 and the Terminal 3 B6 parking space; it lists none for Terminal 1 (Uber, checked 18 Nov 2026).","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-01-27,W10,Telegram chat (Hurghada/Sharm),ru,Kazakh passports: the visa rules,"Для граждан Казахстана правила другие. По данным МИД Казахстана (Digital Business KZ, 6.10.2026): виза по прилёте — только для поездки до 15 дней в зоне Шарм-эль-Шейха и только для граждан старше 21 года. Для Каира, Хургады и других городов нужна виза из посольства Египта до поездки.
+
+Если едете пакетом и хотите в Каир или Луксор, попросите у туроператора приглашение минимум за 4 дня до вылета; до 21 года въезд только с родителем.
+
+Подробнее с источниками — на странице, которую я сделал: https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-visa",https://egybi.com/ru/arriving-in-egypt.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-visa,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2027-01-28,W10,Telegram channel EgyBI RU (mirror to VK and Max),ru,"Tipping, January 2027","Чаевые в Египте — январь 2027 (данные таблицы на 17.11.2026):
+— горничной: 50–100 фунтов за номер в день;
+— погонщику верблюда или лошади: 50–100 за поездку;
+— капитану фелюги: 100–200 за час, на всю лодку;
+— гиду: 100–200 за экскурсию (Pyramids Land, 2026; Travelling King).
+
+На нильском круизе: 10–15 $ с человека за ночь по одному гиду и 25–40 $ за весь круиз по другому гиду того же оператора — уточните у своего оператора.
+
+Все строки с источниками (сайт сделал я): https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-prices",https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-prices,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-01-30,W10,TikTok + Reels + Shorts,en,Tipping in Egypt in 30 seconds,"How much to tip in Egypt, with the source for each number: housekeeping 50–100 EGP a day, a camel or horse handler 50–100 EGP a ride, a felucca captain 100–200 EGP an hour for the whole boat (Pyramids Land, 2026). Guides: the sources disagree, so the page shows all three rules. Free page I built.
+#egypttravel #tipping #egypt #traveltips #cairo",https://egybi.com/fair-prices.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-prices,"screen recording of the tipping table on fair-prices.html, 25 s, own voiceover reading the caption; bio links back to the (a) links in 03",draft — needs owner approval
+2027-02-02,W11,Reddit (r/EgyptTravel),en,Booking the sleeper train to Aswan,"From Seat61 (updated 14 Sep 2026), which I cite on a free planner I built (I'm a Cairo-based data engineer):
+
+- The sleepers to Luxor and Aswan now leave from Cairo Upper Egypt station, called Bashtil, about 7 km west of Ramses. They no longer leave from Ramses.
+- They are run by Abela and sold on `abelatrains.com`, and through agencies. Standard cabins US$110 per person sharing a two-berth cabin, US$150 alone; Elite US$125 sharing, US$170 alone. Booking opens 4–5 months ahead.
+- Day trains: since December 2022, visitors who are not Egyptian pay foreigner fares in US dollars or euros, and the railway's own website and app sell only to Egyptian citizens. In Cairo, the Arab and Foreign Reservation Office upstairs at Ramses station sells foreigner tickets for all trains and takes cards, with a 2.5% fee. Agencies can book ahead and deliver paper tickets to your hotel.
+
+On arrival: a normal afternoon at Philae in Aswan is 24 °C in January and 32 in March (NASA POWER, 2001–2020 normals).","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-02-03,W11,Newsletter (The Papyrus),en,February issue: Ramadan and Abu Simbel,"Subject: February: Ramadan begins, and Abu Simbel on the 22nd
+Preview: What changes this month, with the hours.
+
+
+Hello,
+
+Ramadan is expected to begin on 8 or 9 February and end on 8 or 9 March; Eid al-Fitr is expected from 9 or 10 to 12 March. The exact days follow the moon sighting.
+
+What changes for visitors (Ministry booking site, checked 17 November 2026):
+- Giza: opens 08:00, last entry 15:30.
+- Valley of the Kings: last entry 16:00.
+- Karnak and Abu Simbel: unchanged, 06:00 with last entry 16:00.
+
+Ramadan itself is not a public holiday; Eid at the end is.
+
+Abu Simbel's sun alignment is on Monday 22 February. The temple is 275 km from Aswan; the daily bus arrives at 12:00, long after sunrise, and most tours leave around 04:00 (Seat61). The day's ticket is 1,200 EGP on the Ministry's list, 1,272 on its booking site. A normal February afternoon there is 27 °C (NASA POWER).
+
+Everything on one page:
+https://egybi.com/visit/abu-simbel.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-abusimbel
+
+Ahmed",https://egybi.com/visit/abu-simbel.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-abusimbel,issue file under site/newsletter/issues/ built by a Claude session; send with send_issue.php after a dry run,draft — needs owner approval
+2027-02-05,W11,Facebook group (Arabic),ar,Ramadan 2027 and the site hours,"رمضان ٢٠٢٧ متوقع من ٨ أو ٩ فبراير لحد ٨ أو ٩ مارس، والعيد من ٩ أو ١٠ لحد ١٢ مارس، حسب رؤية الهلال.
+
+لو ناوي تفسّح ضيوفك في رمضان:
+• الأهرامات بتفتح ٨ الصبح وآخر دخول ٣:٣٠ العصر، بدل ٧ و٤ في الأيام العادية.
+• الكرنك وأبو سمبل مواعيدهم زي ما هي: من ٦ الصبح وآخر دخول ٤.
+(موقع الحجز التابع لوزارة السياحة والآثار، اتأكدت منه يوم ١٧ نوفمبر ٢٠٢٦)
+
+والجو في فبراير لطيف: بعد الضهر حوالي ٢١ درجة في القاهرة و٢٥ في الأقصر (NASA POWER).
+
+رمضان كريم. في أول تعليق صفحة تكتب فيها مواعيد رحلتك وتطلعلك الإجازات والجو في كل موقع. أنا اللي عملتها، وهي مجانية.
+
+
+أول تعليق:
+اكتب مواعيد رحلتك: https://egybi.com/ar/?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-ramadan",https://egybi.com/ar/?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-ramadan,screenshot of the home-page briefing with February dates entered; ask the group admin first,draft — needs owner approval
+2027-02-06,W11,Telegram channel EgyBI RU (mirror to VK and Max),ru,Ramadan begins,"Рамадан начинается — ожидается 8 или 9 февраля.
+
+Что изменится для туристов (сайт бронирования министерства, проверено 17.11.2026):
+— Гиза: с 8:00, последний вход в 15:30;
+— Долина царей: последний вход в 16:00;
+— Карнак и Абу-Симбел: как обычно, с 6:00, последний вход в 16:00.
+
+Сам Рамадан — не выходной; праздничные дни — Ид аль-Фитр, ожидается с 9 или 10 по 12 марта.
+
+Даты вашей поездки и что в них попадает (сайт сделал я): https://egybi.com/ru/?utm_source=telegram&utm_medium=card&utm_campaign=s2627-ramadan",https://egybi.com/ru/?utm_source=telegram&utm_medium=card&utm_campaign=s2627-ramadan,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-02-07,W11,Pinterest,en,"Entry tickets, evergreen","Title: Egypt entry ticket prices for foreign visitors
+Description: Giza plateau 700 EGP, Egyptian Museum 550, Karnak 600, Luxor Temple 500, Valley of the Kings 750 (Ministry price list, 5 Nov 2024). Where two official prices disagree, both are shown. Free site I built.",https://egybi.com/fair-prices.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-prices,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2027-02-09,W12,Reddit (r/EgyptTravel),en,Flying into Sharm for Dahab: do I need a visa,"Per the UK government's travel advice (entry requirements, updated 27 Oct 2026), written for British passports, so check your own country's version. I keep it with dates on a free site I built (I'm a data engineer in Cairo).
+
+- Flying into Sharm el-Sheikh and staying in the Sinai resorts only, you get a free entry stamp for up to 15 days. It covers Sharm el-Sheikh, Dahab, Nuweiba and Taba.
+- To travel beyond those resorts, or to stay longer, you need a visa: US$30 cash on arrival, or the e-Visa at US$30 single or US$65 multiple entry from `visa2egypt.gov.eg`. From 1 Jan 2027 the single-entry fee is US$33 (ATTA).
+- You don't need a visa agent in the arrivals hall; they often charge more than the fee.
+
+Dahab weather, NASA POWER normals: afternoons of 20 °C in January, 22 in February and 26 in March; nights 8–12 °C in those months. Bring a jacket for the evenings.
+
+On a Kazakh passport the rules differ: Kazakhstan's foreign ministry says the visa on arrival covers only the Sharm zone, for up to 15 days, for citizens over 21 (Digital Business KZ, 6 Oct 2026).","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-02-10,W12,Telegram chat (Hurghada/Sharm),ru,"Luxor in February, during Ramadan","Луксор в феврале — хорошее время. Днём в Карнаке обычно 25 °C, ночью около 8 (NASA POWER, нормы 2001–2020).
+
+В Рамадан часы почти не меняются: Карнак открыт с 6:00, последний вход в 16:00 весь год; в Долине царей последний вход в 16:00 (сайт бронирования министерства, проверено 17.11.2026).
+
+Билеты для иностранца (прайс министерства, 5.11.2024): Карнак 600 фунтов, Луксорский храм 500, Долина царей 750, Тутанхамон ещё 700.
+
+Таблица по местам и месяцам (сайт сделал я): https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-heat",https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-heat,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2027-02-11,W12,TikTok + Reels + Shorts,en,Ramadan in Cairo: what changes for visitors,"Ramadan in Egypt, expected 8 or 9 February to 8 or 9 March 2027: what changes for visitors. Giza opens at 08:00 with last entry 15:30, instead of 07:00 and 16:00. Karnak and Abu Simbel keep their hours. Eid al-Fitr is expected 9 or 10 to 12 March. Sources on the page I built.
+#ramadan #egypt #cairo #egypttravel #giza",https://egybi.com/egypt-public-holidays.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-ramadan,"screen recording of the holidays table and the Giza visit page hours line, 20 s, own voiceover; switch bio links to this URL for the week",draft — needs owner approval
+2027-02-12,W12,TripAdvisor (Luxor forum),en,Luxor during Ramadan,"Ramadan is expected from 8 or 9 February to 8 or 9 March 2027. In Luxor the hours barely change: Karnak opens 06:00 with last entry 16:00 all year, and the Valley of the Kings has a 16:00 last entry during Ramadan (Ministry booking site, egymonuments.com, checked 17 Nov 2026). Giza is the one that shifts, to 08:00 with a 15:30 last entry.
+
+February is mild in Luxor: a normal afternoon is 25 °C and nights about 8 (NASA POWER, 2001–2020 normals). Eid al-Fitr is expected from 9 or 10 to 12 March.
+
+I'm a Cairo-based data engineer and keep a sourced table of these.","none — TripAdvisor answer, official sources named in text only",none; EgyBI stays in the profile only,draft — needs owner approval
+2027-02-13,W12,Pinterest,en,Ramadan at Giza,"Title: Visiting the pyramids in Ramadan 2027
+Description: During Ramadan, Giza opens at 08:00 with last entry 15:30, instead of 07:00 and 16:00 (Ministry booking site). A normal February afternoon there is 21 °C. Free site I built.",https://egybi.com/visit/giza.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-ramadan,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2027-02-16,W13,Reddit (r/dataisbeautiful),en,[OC] #2: the pound since July,"[OC] What a dollar, euro, pound and lira bought in Egyptian pounds, July to November 2026
+
+First comment:
+Source: ExchangeRate-API open-access market reference rates, recorded daily since 24 July 2026. These are not the Central Bank of Egypt's official fixing; banks quote their own buy and sell. Each currency is compared by the median of its daily rates in the first week (from 24 July) and the last week (to 19 November 2026).
+
+Tool: Python (standard library) writing the SVG directly.
+
+What it shows: the dollar went from EGP 51.30 to 53.60 (+4.5%). The Saudi riyal, UAE dirham and Qatari riyal, which are held to the dollar, moved the same (+4.6%). The euro moved only +1.1% and the Turkish lira −1.8%. The largest weekly move was the week to 29 October, when every currency moved +2.9% to +4.6% against the pound at once: a move of the pound itself.
+
+I made this for a free Egypt site I built (disclosure). Interactive version and the table for all ten currencies: https://egybi.com/egyptian-pound-since-july.html?utm_source=reddit&utm_medium=oc&utm_campaign=s2627-prices",https://egybi.com/egyptian-pound-since-july.html?utm_source=reddit&utm_medium=oc&utm_campaign=s2627-prices,PNG export of charts/egyptian-pound.svg; post the first comment straight after; check the subreddit rules first,draft — needs owner approval
+2027-02-16,W13,"Press pitch (Masrawy, prices desk (Arabic))",ar,Food prices since July,"مرحبًا،
+
+أسجّل يوميًا منذ يوليو أسعار التجزئة التي تنشرها بوابة الأسعار المحلية بمركز المعلومات ودعم اتخاذ القرار بمجلس الوزراء. بمقارنة أول أسبوع (من ٢٤ يوليو ٢٠٢٦) بآخر أسبوع (حتى ١٩ نوفمبر ٢٠٢٦):
+
+• البصل من ١٣٫٩٤ إلى ٢١٫٧٦ جنيه للكيلو (+٥٦٫١٪)، والبطاطس +٣١٪، والطماطم +٢٢٫١٪.
+• الليمون البلدي انخفض ٢٧٫٥٪.
+• وسيط التغيّر عبر ١٢٨ صنفًا: +١٫٩٪، بينما ارتفع الدولار في السوق من ٥١٫٣٠ إلى ٥٣٫٦٠ جنيه (+٤٫٥٪).
+
+الرسم البياني متاح مجانًا للنشر مع الإبقاء على سطر المصدر داخل الصورة:
+https://egybi.com/egypt-food-prices.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-prices
+
+ويمكنني إرسال الجدول اليومي كاملًا.
+
+أحمد، مهندس بيانات مقيم في القاهرة. أنشأتُ وأدير EgyBI (egybi.com)، دليلًا مجانيًا عن مصر بالعربية والإنجليزية والروسية، كل رقم فيه منسوب إلى مصدره وتاريخه. hello@egybi.com",https://egybi.com/egypt-food-prices.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-prices,find the recipient as described in 04 Pitches; re-check the figures on the live page before sending,draft — needs owner approval
+2027-02-17,W13,LinkedIn,en,The pound and food prices,"Two series I've collected every day since July, and why I won't join them with ""because"".
+
+1. The dollar went from EGP 51.30 to EGP 53.60 between the first week (from 24 July) and the last (to 19 November 2026), comparing weekly medians: +4.5%. These are ExchangeRate-API market reference rates, not the Central Bank fixing.
+2. Across 128 food items on the Cabinet's IDSC local-prices portal, the median retail price moved +1.9% over the same weeks. 82 rose and 45 fell. Onions +56%, local lemons −27.5%.
+
+The tempting headline is ""food lagged the pound"". The honest one is that two measured series moved by different amounts; the data does not say one caused the other.
+
+The data-engineering part: the portal published on 104 of 119 days, and single days are noisy. Fish stood 18.9% off its start on 18 August and 3.5% the next day the portal published. So each item is compared first-week median to last-week median, and the chart shows weekly medians.
+
+Both charts are free to embed with the credit line. I built and run EgyBI; link in the first comment.
+
+#data #Egypt #economics
+
+First comment:
+The pound since July (embeddable): https://egybi.com/egyptian-pound-since-july.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices
+And the food series: https://egybi.com/egypt-food-prices.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices",https://egybi.com/egyptian-pound-since-july.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices,PNG export of charts/egyptian-pound.svg,draft — needs owner approval
+2027-02-18,W13,Telegram channel EgyBI RU (mirror to VK and Max),ru,The pound since July,"Фунт с июля. С 24 июля по 19 ноября 2026 доллар подорожал с 51,30 до 53,60 фунта (+4,5%), евро — только на 1,1% (медианы первой и последней недели, ExchangeRate-API, рыночный курс, не ЦБ Египта). Сильнее всего фунт двигался в неделю до 29 октября.
+
+Медианная цена 128 продуктов на государственном портале цен за то же время выросла на 1,9%.
+
+Сегодняшний курс и цены в пересчёте (сайт сделал я): https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-prices",https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-prices,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-02-19,W13,Telegram chat (Hurghada/Sharm),ru,What is the pound rate,"Курс фунта меняется каждый день, поэтому сегодняшний смотрите на странице — он обновляется ежедневно по ExchangeRate-API (рыночный курс, не курс ЦБ Египта; в банках и обменниках свой курс покупки и продажи).
+
+Для ориентира: с 24 июля по 19 ноября 2026 доллар вырос с 51,30 до 53,60 фунта (+4,5%), евро — на 1,1%.
+
+Страница с курсом и пересчётом цен (сделал сам): https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-prices",https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-prices,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2027-02-22,W14,Telegram channel EgyBI RU (mirror to VK and Max),ru,Abu Simbel alignment today,"Сегодня, 22 февраля, — день солнечного явления в Абу-Симбеле. Следующее — 22 октября 2027.
+
+Абу-Симбел открыт с 6:00, последний вход в 16:00, в Рамадан тоже (сайт бронирования министерства, проверено 17.11.2026). Билет в день явления — 1200 фунтов по прайсу министерства, 1272 на сайте бронирования.
+
+Спланировать поездку на октябрь (сайт сделал я): https://egybi.com/ru/plan.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-abusimbel",https://egybi.com/ru/plan.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-abusimbel,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-02-22,W14,X,en,Abu Simbel alignment today,"Today, 22 Feb, is the Abu Simbel sun alignment, this year inside Ramadan. The day's ticket: 1,200 EGP on the Ministry's list, 1,272 on its booking site. The temple keeps its 06:00 opening in Ramadan. Next alignment: 22 Oct 2027. Sourced page I built: https://egybi.com/visit/abu-simbel.html?utm_source=x&utm_medium=post&utm_campaign=s2627-abusimbel",https://egybi.com/visit/abu-simbel.html?utm_source=x&utm_medium=post&utm_campaign=s2627-abusimbel,screenshot of the linked page,draft — needs owner approval
+2027-02-23,W14,Reddit (r/EgyptTravel),en,Missed the alignment: when is the next one,"The next one is 22 October 2027. The alignment days are 22 February and 22 October each year; the Ministry of Tourism and Antiquities' price list (5 Nov 2024) even prices a separate ticket for them. I keep these dates on a free site I built; I'm a Cairo-based data engineer.
+
+What to plan for:
+
+- Ticket on alignment days: 1,200 EGP on the Ministry's list and 1,272 on its booking site when I checked (17 Nov 2026), against 750 on the list (822 on the site) on other days.
+- Crowds: the October 2026 alignment drew a queue of over 6,000 people (Egypt Today).
+- Getting there: Aswan to Abu Simbel is 275 km; the daily bus arrives at 12:00, and most day tours leave around 04:00 (Seat61, Sep 2026).
+- Heat: a normal October afternoon at Abu Simbel is 36 °C, against 41 in June to August and 27 in February (NASA POWER, 2001–2020).
+
+On any other day it opens at 06:00 with last entry 16:00 (Ministry booking site).","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-02-24,W14,Telegram chat (Hurghada/Sharm),ru,"Next Abu Simbel alignment, 22 Oct 2027","Следующее солнечное явление в Абу-Симбеле — 22 октября 2027 (дни явления — 22 февраля и 22 октября, по прайсу министерства туризма).
+
+Что важно: билет в этот день — 1200 фунтов по прайсу и 1272 на сайте бронирования (проверено 17.11.2026). В октябре 2026 в очереди стояли более 6000 человек (Egypt Today). От Асуана 275 км, туры выезжают около 4:00 (Seat61). Днём в октябре там обычно 36 °C (NASA POWER).
+
+Маршрут с жарой по месяцам можно собрать здесь (сайт сделал я): https://egybi.com/ru/plan.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-abusimbel",https://egybi.com/ru/plan.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-abusimbel,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2027-02-25,W14,TikTok + Reels + Shorts,en,Abu Simbel: the next alignment,"Abu Simbel's sun alignment happens on 22 February and 22 October. The next one is 22 October 2027. On those days the ticket is 1,200 EGP on the Ministry's list or 1,272 on its booking site; the October 2026 one drew a queue of over 6,000 people (Egypt Today). Free page I built, every figure sourced.
+#abusimbel #egypt #aswan #egypttravel #ancientegypt",https://egybi.com/visit/abu-simbel.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-abusimbel,"screen recording of visit/abu-simbel.html (alignment line and heat table), 20 s, own voiceover; your own photo from the day if you went, otherwise screen only",draft — needs owner approval
+2027-03-01,W15,Creator pitch (English Egypt-trip YouTuber planning April or May),en,Best month for your route chart + 3 free checks,"Hello,
+
+I'm a Cairo-based data engineer and I built EgyBI, a free Egypt planner where every figure carries a source and a date.
+
+I'd like to make your audience one thing, free: a ""best month for your route"" chart for the exact stops in your video. It shows the normal afternoon high at each stop in every month (NASA POWER, 2001–2020 normals) and the 2027 holidays and Ramadan dates that fall in each month. You can show it on screen with a credit line.
+
+I'd also give three of your viewers a free written check of their own Egypt plan (heat, distances, holidays, prices against the data), normally $49: https://egybi.com/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check
+
+No payment either way, and no obligation to mention me beyond the chart credit.
+
+Ahmed, EgyBI",https://egybi.com/ask.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-check,add the one personal sentence naming their video or post; find them as described in 04 Pitches,draft — needs owner approval
+2027-03-02,W15,Reddit (r/EgyptTravel),en,Giza and Saqqara on the same day,"Hours make it workable. From the Ministry's sources, which I keep on a free planner I built (I'm a data engineer in Cairo):
+
+- Giza: opens 07:00, last entry 16:00 (Ministry booking site, checked 17 Nov 2026). During Ramadan, 08:00 and 15:30.
+- Saqqara: 08:00 to 17:00 (Ministry price list, 5 Nov 2024).
+
+So Giza at opening and Saqqara afterwards fits, because Saqqara closes later.
+
+Prices: the Giza plateau is 700 EGP for a foreign adult (Ministry list, 5 Nov 2024), and inside the Great Pyramid is 1,500 more (Egypt Independent). I don't have a Saqqara price in my table that I've checked, so I won't quote one; buy at the gate or on the Ministry's site, `egymonuments.com`.
+
+Heat: the two sites share the same normals, 26 °C in March, 30 in April and 34 in May (NASA POWER, 2001–2020).
+
+Getting between them: I only have straight-line distances, not road times, so if you use a ride app, anchor on its quote before agreeing any street fare.","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-03-03,W15,Newsletter (The Papyrus),en,"March issue: Eid, Easter and the heat coming","Subject: March: Eid, Easter, and the heat that comes after
+Preview: Two holidays and a two-month warning.
+
+
+Hello,
+
+Two holidays this month. Eid al-Fitr is expected from 9 or 10 to 12 March, at the end of Ramadan (expected to finish 8 or 9 March). Western Easter is Sunday 28 March. If your trip touches either, book trains and timed tickets early.
+
+Then the heat. A normal afternoon at Karnak is 30 °C in March, 34 in April and 38 in May; at Philae in Aswan, 32, 36 and 40 (NASA POWER, 2001–2020 normals). Giza is gentler: 26, 30 and 34. If you are going to Upper Egypt after mid-April, be at the gate at opening: Karnak and Abu Simbel open at 06:00, Giza at 07:00 (Ministry booking site).
+
+The month-by-month table for all 18 sites:
+https://egybi.com/egypt-weather-by-month.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-heat
+
+Ahmed",https://egybi.com/egypt-weather-by-month.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-heat,issue file under site/newsletter/issues/ built by a Claude session; send with send_issue.php after a dry run,draft — needs owner approval
+2027-03-04,W15,Creator pitch (Budget/backpacker blogger),en,Printable fair-price card for their readers,"Hello,
+
+I'm a Cairo-based data engineer and I built EgyBI, a free Egypt site where every price carries a named source and a date.
+
+For your readers I'd like to give, free, a printable fair-price card: tips, entry tickets and rides as named sources publish them, with Arabic beside each line to show a driver, and the one honest gap (no checkable published price exists for a camel ride at Giza). You can host it or link to it with a credit.
+
+I'd also give three of your readers a free written check of their Egypt plan, normally $49.
+
+The prices page: https://egybi.com/fair-prices.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-prices
+
+No payment either way.
+
+Ahmed, EgyBI",https://egybi.com/fair-prices.html?utm_source=creator&utm_medium=pitch&utm_campaign=s2627-prices,add the one personal sentence naming their video or post; find them as described in 04 Pitches,draft — needs owner approval
+2027-03-05,W15,Telegram channel EgyBI RU (mirror to VK and Max),ru,Eid al-Fitr and March weather,"Ид аль-Фитр ожидается с 9 или 10 по 12 марта — это государственные праздники; Рамадан ожидается до 8 или 9 марта (точные даты — по луне).
+
+Днём в марте обычно (NASA POWER): Луксор 30 °C, Асуан (Фила) 32, Каир 26, Хургада 25, Дахаб 26.
+
+Праздники в ваших датах (сайт сделал я): https://egybi.com/ru/?utm_source=telegram&utm_medium=card&utm_campaign=s2627-ramadan",https://egybi.com/ru/?utm_source=telegram&utm_medium=card&utm_campaign=s2627-ramadan,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-03-06,W15,Facebook group (Arabic),ar,Eid: Upper Egypt or the sea,"العيد في الصعيد ولا على البحر؟
+
+متوسط الحرارة العظمى بعد الضهر في مارس، من NASA POWER (متوسط ٢٠٠١–٢٠٢٠):
+• أسوان (فيلة): ٣٢
+• أبو سمبل: ٣١
+• الأقصر (الكرنك): ٣٠
+• القاهرة: ٢٦
+• دهب: ٢٦
+• الغردقة: ٢٥
+• الإسكندرية: ٢٣
+
+يعني مارس لسه حلو في الصعيد، بس من مايو الأقصر بتوصل ٣٨.
+
+عيد الفطر متوقع من ٩ أو ١٠ لحد ١٢ مارس. كل سنة وانتو طيبين. الجدول كامل في أول تعليق، وأنا اللي عملت الموقع.
+
+
+أول تعليق:
+الجو شهر بشهر في ١٨ موقع: https://egybi.com/ar/visit.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-heat
+المصدر: NASA POWER، متوسطات ٢٠٠١–٢٠٢٠.",https://egybi.com/ar/visit.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-heat,screenshot of the March column on egypt-weather-by-month.html; ask the group admin first,draft — needs owner approval
+2027-03-07,W15,Pinterest,en,Easter 2027,"Title: Easter 2027 in Egypt: Giza hours and heat
+Description: Western Easter is Sunday 28 March 2027. Giza opens at 07:00 with last entry 16:00; a normal March afternoon is 26 °C (NASA POWER). Free site I built.",https://egybi.com/visit/giza.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-easter,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2027-03-10,W16,Telegram channel EgyBI RU (mirror to VK and Max),ru,Eid greeting,"С праздником Ид аль-Фитр! По прогнозам он приходится на 9 или 10–12 марта; точные даты объявляют по наблюдению луны.
+
+В праздничные дни планируйте поезда и билеты на конкретное время заранее.","none — greeting card, no link",Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-03-12,W16,TripAdvisor (Luxor forum),en,Luxor heat in April and May,"From NASA's POWER normals (2001–2020 mean daily highs) for Karnak: March 30 °C, April 34, May 38, June to August 41. For Aswan's Philae: 32, 36, 40, then 42–43. Luxor nights in April average about 16.
+
+Karnak and the Valley of the Kings open at 06:00 (Ministry booking site, egymonuments.com, checked 17 Nov 2026), so in late April the plan is to be at the gate at opening and back in the shade by midday.
+
+These are long-run averages, not a forecast. I'm a Cairo-based data engineer and keep a sourced table of these.","none — TripAdvisor answer, official sources named in text only",none; EgyBI stays in the profile only,draft — needs owner approval
+2027-03-15,W17,"Press pitch (The Independent, travel desk)",en,When Luxor stops being winter sun,"Hello,
+
+UK arrivals in Egypt rose 9.4% to about 838,000 in January to September 2026 (ATQ News). Many book Luxor as winter sun; NASA's climate normals show when that stops being true.
+
+A normal afternoon at Karnak is 22 °C in January and 25 in February, 30 by Easter month (March), 38 in May and 41 from June to August. Philae, in Aswan, reaches 43 in August, the hottest of 18 sites I track. Every site stays under 34 °C from November to March.
+
+The month-by-month chart for all 18 sites is free to embed, credit inside the image: https://egybi.com/egypt-weather-by-month.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-heat
+
+NASA POWER mean daily highs, 2001–2020, checked against station normals. Happy to give a quote from Cairo.
+
+Ahmed, Cairo-based data engineer. I built and run EgyBI (egybi.com), a free English, Arabic and Russian guide to Egypt where every figure carries its source and date. hello@egybi.com",https://egybi.com/egypt-weather-by-month.html?utm_source=press&utm_medium=pitch&utm_campaign=s2627-heat,find the recipient as described in 04 Pitches; re-check the figures on the live page before sending,draft — needs owner approval
+2027-03-16,W17,Reddit (r/EgyptTravel),en,Is Aswan bearable in mid-April,"Short version from NASA's normals (POWER, 2001–2020 mean daily highs), which I use for a free planner I built (Cairo-based data engineer): a normal April afternoon at Philae is 36 °C, at Abu Simbel 36 and at Karnak in Luxor 34. March is 32, 31 and 30; May jumps to 40, 39 and 38.
+
+Nights are kinder: an April night at Philae averages about 18 °C.
+
+What helps is starting early. Philae is open 07:00–16:00 (Ministry price list, 5 Nov 2024); Abu Simbel opens 06:00 with last entry 16:00 (Ministry booking site, checked 17 Nov 2026); Karnak 06:00, last entry 16:00.
+
+If you are choosing between early and late April, these are monthly averages, so they can't split the month for you. And they are modelled long-run averages, not a forecast; a hot week can be well above them.","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-03-17,W17,Telegram chat (Hurghada/Sharm),ru,Heat in April and May,"Жара весной растёт быстро. Днём обычно (NASA POWER, нормы 2001–2020), апрель и май:
+— Хургада: 28 и 31 °C
+— Дахаб: 30 и 34
+— Каир и Гиза: 30 и 34
+— Луксор (Карнак): 34 и 38
+— Асуан (Фила): 36 и 40
+
+Если едете на экскурсию в Луксор в мае, идите к открытию: Карнак открывается в 6:00 (сайт министерства).
+
+Таблица по месяцам (сайт сделал я): https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-heat",https://egybi.com/ru/visit.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-heat,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
+2027-03-18,W17,TikTok + Reels + Shorts,en,When is Aswan too hot,"When is Aswan too hot? A normal afternoon at Philae: 24 °C in January, 32 in March, 36 in April, 40 in May and 43 in August, the hottest of 18 sites (NASA POWER, 2001–2020). Philae is open 07:00–16:00. Averages, not a forecast. Free site I built.
+#aswan #philae #egypt #egypttravel #besttimetovisit",https://egybi.com/visit/philae.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-heat,"screen recording of visit/philae.html heat table, 20 s, own voiceover; switch bio links to this URL for the week",draft — needs owner approval
+2027-03-19,W17,Facebook group (Arabic),ar,Sham el-Nessim and Labour Day trips,"شم النسيم يوم الاتنين ٣ مايو ٢٠٢٧، وعيد العمال يوم السبت ١ مايو.
+
+لو بتخطط لرحلة، متوسط الحرارة العظمى بعد الضهر في مايو (NASA POWER، متوسط ٢٠٠١–٢٠٢٠):
+• الإسكندرية: ٣٠
+• الغردقة: ٣١
+• القاهرة: ٣٤
+• دهب: ٣٤
+• الأقصر: ٣٨
+• أسوان (فيلة): ٤٠
+
+يعني البحر أرحم من الصعيد في مايو. ولو رايح الأقصر، الكرنك بيفتح ٦ الصبح.
+
+الجدول كامل في أول تعليق. أنا اللي عملت الموقع، وهو مجاني.
+
+
+أول تعليق:
+الجو شهر بشهر في ١٨ موقع: https://egybi.com/ar/visit.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-heat
+المصدر: NASA POWER، متوسطات ٢٠٠١–٢٠٢٠.",https://egybi.com/ar/visit.html?utm_source=facebook&utm_medium=comment&utm_campaign=s2627-heat,screenshot of the May column on egypt-weather-by-month.html; ask the group admin first,draft — needs owner approval
+2027-03-20,W17,Pinterest,en,Aswan heat,"Title: When is Aswan too hot?
+Description: A normal afternoon at Philae: 24 °C in January, 32 in March, 36 in April, 40 in May, 43 in August (NASA POWER, 2001–2020). Free site I built.",https://egybi.com/visit/philae.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-heat,Canva pin 1000×1500 from a page screenshot or chart; no monument images,draft — needs owner approval
+2027-03-22,W18,LinkedIn,en,How the heat data is checked,"How do you trust a temperature you didn't measure?
+
+EgyBI's heat figures for 18 Egyptian sites come from NASA POWER, a modelled climatology (MERRA-2 reanalysis), not from weather stations. A model can be off in a desert valley, so before any chart ships, the build compares each site's mean daily maximum with the nearest published station normal within 120 km.
+
+Two gates: the build is refused if the mean signed bias exceeds ±2.0 °C, or if fewer than 33% of site-months land within 2 °C of the station.
+
+What comes out is the number a visitor needs: what a normal afternoon reaches. Karnak in May, 38 °C. Philae in August, 43. Giza in March, the Easter month, 26.
+
+And the page says what it is not: a long-run average, not a forecast.
+
+I built and run EgyBI. The month-by-month chart is free to embed; link in the first comment.
+
+#dataengineering #climate #opendata
+
+
+First comment:
+The chart and how it was checked: https://egybi.com/egypt-weather-by-month.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-heat",https://egybi.com/egypt-weather-by-month.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-heat,PNG export of charts/egypt-weather-by-month.svg,draft — needs owner approval
+2027-03-23,W18,Reddit (r/travel),en,Easter week at Giza,"Western Easter is Sunday 28 March 2027. I don't have crowd counts for Giza, so I won't guess how busy it gets. Here's what is sourced, from a free planner I built (I'm a data engineer in Cairo):
+
+- Hours: opens 07:00, last entry 16:00 (Ministry booking site, checked 17 Nov 2026). Ramadan is expected to end on 8 or 9 March, so normal hours apply.
+- Heat: a normal March afternoon at Giza is 26 °C and April 30 (NASA POWER, 2001–2020).
+- Ticket: 700 EGP for a foreign adult, 350 for students with a valid card; inside the Great Pyramid 1,500 more (Ministry list, 5 Nov 2024; Egypt Independent).
+- Camel rides: no reliable published price exists that I could check. Agree the total, the time and the ride back before you get on.
+- The Grand Egyptian Museum: timed tickets only on `tickets.gem.eg`; galleries 9:00–18:00, to 21:00 on Wednesday and Saturday (museum ticketing site, checked 18 Nov 2026).","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-03-24,W18,Telegram channel EgyBI RU (mirror to VK and Max),ru,Easter and the May holidays,"Западная Пасха — 28 марта. Коптская Пасха — 2 мая, а 3 мая — Шамм ан-Насим, государственный праздник в Египте; 1 мая — День труда.
+
+Если едете на майские: днём в мае обычно Хургада 31 °C, Дахаб 34, Луксор 38 (NASA POWER).
+
+Праздники в ваших датах (сайт сделал я): https://egybi.com/ru/?utm_source=telegram&utm_medium=card&utm_campaign=s2627-easter",https://egybi.com/ru/?utm_source=telegram&utm_medium=card&utm_campaign=s2627-easter,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-03-25,W18,TikTok + Reels + Shorts,en,Easter week at Giza: when to go,"Easter week at Giza: the gates open at 07:00, last entry 16:00 (Ministry booking site). A normal March afternoon is 26 °C (NASA POWER). There's no reliable published price for a camel ride, so agree the total, the time and the ride back first. Free page I built.
+#giza #pyramids #egypt #easter #egypttravel",https://egybi.com/visit/giza.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-easter,"screen recording of visit/giza.html (hours line and heat table) and the camel row on fair-prices.html, 20 s, own voiceover",draft — needs owner approval
+2027-03-26,W18,X,en,Easter week at Giza,"Easter week at Giza: gates open 07:00, last entry 16:00 (Ministry booking site). A normal March afternoon is 26 °C (NASA POWER). No reliable published camel-ride price exists, so agree the total first. Page I built: https://egybi.com/visit/giza.html?utm_source=x&utm_medium=post&utm_campaign=s2627-easter",https://egybi.com/visit/giza.html?utm_source=x&utm_medium=post&utm_campaign=s2627-easter,screenshot of the linked page,draft — needs owner approval
+2027-03-27,W18,Pinterest,en,The printable pack,"Title: Printable Egypt trip pack: heat at 18 sites and a fair-price card in Arabic
+Description: One PDF: 18 site sheets with twelve months of heat and rain, the fair-price card in English and Arabic with every row sourced, and the 2027 holidays. $12; I built it from the free site's data.",https://egybi.com/dossier.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-pack,"Canva pin 1000×1500 from screenshots of the PDF cover and one site sheet; post only once the Payhip checkout is live, otherwise skip this row",draft — needs owner approval
+2027-03-29,W19,LinkedIn,en,Storing a date you do not know yet,"Storing a date you don't know yet.
+
+Egypt has 12 public holidays in 2027: 8 on fixed dates and 4 that follow the Islamic calendar and depend on the moon sighting. For those 4, sources disagree by a day. For Ramadan, Gulf News and The National gave 8 February from astronomical calculation, while Egypt-specific holiday calendars listed 9 February.
+
+On EgyBI an expected date is stored as a range with a status, ""expected"" until confirmed, and the page renders it as ""8 or 9 February"" rather than picking one. Printing one day would be tidier, and wrong for some readers.
+
+The same table feeds the trip planner: enter your dates and it lists what falls inside them, ranges included.
+
+Next up: Sham el-Nessim on 3 May, and Arafat Day and Eid al-Adha, expected 16 to 19 May.
+
+I built and run EgyBI; the holiday chart is free to embed. Link in the first comment.
+
+#dataengineering #datamodeling #Egypt
+
+
+First comment:
+The 2027 holidays, each with its source: https://egybi.com/egypt-public-holidays.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-ramadan",https://egybi.com/egypt-public-holidays.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-ramadan,PNG export of charts/egypt-public-holidays.svg,draft — needs owner approval
+2027-03-30,W19,Reddit (r/EgyptTravel),en,Best time of day for the Grand Egyptian Museum,"From the museum's official ticketing site (checked 18 Nov 2026), which I cite on a free site I built (I'm a data engineer in Cairo):
+
+- Galleries 9:00–18:00, and to 21:00 on Wednesday and Saturday. The complex opens at 8:30 and closes at 19:00, or 22:00 on Wednesday and Saturday.
+- Last entry is one hour before the galleries close.
+- Tickets are for a time slot, booked on `tickets.gem.eg`; the museum says that is the only official site.
+
+So for a long, unhurried visit after a hot morning at Giza, the Wednesday and Saturday late openings are the obvious slot. A normal April afternoon at Giza is 30 °C and May 34 (NASA POWER, 2001–2020).
+
+Price: since 1 Nov 2026 the foreign adult ticket has been reported at 1,830 EGP (Egypt Today; Egyptian Streets, 27 Oct 2026). The museum shows the price only in the booking flow, so check there. It had about 5.2 million visitors in its first year (Egyptian Streets, 16 Nov 2026).","none — Reddit answer, no link",none; check the subreddit rules first and answer only a question actually asked,draft — needs owner approval
+2027-04-01,W19,Newsletter (The Papyrus),en,April issue: Sham el-Nessim and the GEM evenings,"Subject: April: Sham el-Nessim, and the museum's late evenings
+Preview: The May holidays and a cooler way to see the GEM.
+
+
+Hello,
+
+Two dates and one tip for spring trips.
+
+Labour Day is Saturday 1 May and Sham el-Nessim is Monday 3 May 2027, the day after Coptic Easter. Then Arafat Day and Eid al-Adha are expected from 16 to 19 May, depending on the moon sighting.
+
+The tip: as the afternoons warm up (a normal April afternoon at Giza is 30 °C, May 34, per NASA POWER), the Grand Egyptian Museum's late openings are the coolest way to spend the end of a day. Galleries stay open to 21:00 on Wednesday and Saturday, with last entry an hour before (museum ticketing site). Buy timed tickets only on tickets.gem.eg.
+
+Ticket prices for every main site, each with its source:
+https://egybi.com/fair-prices.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-gem
+
+Ahmed",https://egybi.com/fair-prices.html?utm_source=newsletter&utm_medium=email&utm_campaign=s2627-gem,issue file under site/newsletter/issues/ built by a Claude session; send with send_issue.php after a dry run,draft — needs owner approval
+2027-04-02,W19,Telegram channel EgyBI RU (mirror to VK and Max),ru,Entry tickets reminder,"Билеты для иностранцев — напоминание (прайс Министерства туризма и древностей, 5.11.2024):
+— Гиза 700 фунтов; внутрь пирамиды Хеопса ещё 1500 (Egypt Independent);
+— Египетский музей 550; Карнак 600; Луксорский храм 500;
+— Долина царей 750, Тутанхамон ещё 700;
+— Абу-Симбел 750 (822 на сайте бронирования, 17.11.2026).
+
+Большой Египетский музей: по данным Egypt Today, 1830 фунтов с 1.11.2026; точную цену смотрите при бронировании.
+
+Покупайте только на egymonuments.com и tickets.gem.eg. Все цены с источниками (сайт сделал я): https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-prices",https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=card&utm_campaign=s2627-prices,Canva card 1080×1350 with the same figures; re-check each figure on the live page the day before posting,draft — needs owner approval
+2027-04-03,W19,Telegram chat (Hurghada/Sharm),ru,"Tipping, April 2027","Чаевые в Египте — апрель 2027 (данные таблицы на 17.11.2026; свежую версию смотрите на странице):
+— горничной: 50–100 фунтов за номер в день;
+— погонщику верблюда или лошади: 50–100 за поездку, сверх цены поездки;
+— капитану фелюги: 100–200 за час, на всю лодку;
+— гиду: 100–200 за экскурсию; на многодневных турах от 25 $ в день (Pyramids Land, 2026; Travelling King; Mara House Luxor).
+
+Давайте в фунтах и держите мелкие купюры. Страница с источниками и пересчётом по сегодняшнему курсу (сделал сам): https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-prices",https://egybi.com/ru/fair-prices.html?utm_source=telegram&utm_medium=answer&utm_campaign=s2627-prices,none; check the chat rules and answer only a question actually asked,draft — needs owner approval
