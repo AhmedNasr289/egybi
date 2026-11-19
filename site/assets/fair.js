@@ -11,6 +11,20 @@
    the rate, the quote underneath does not. */
 (function () {
   'use strict';
+  // "Were you quoted a price?" (2026-11-18): where a quoted amount sits
+  // against one row's published range. Pure, and exported before anything
+  // else so backend/verify/fair-verdict.js can test it without a page.
+  // Returns null when the row has no figure to compare against: the helper
+  // then says so instead of guessing.
+  function verdict(amount, low, high) {
+    if (!(amount >= 0) || low == null) return null;
+    var top = high == null ? low : high;
+    if (amount > top) return { kind: 'above', pct: Math.round((amount - top) / top * 100) };
+    if (amount < low) return { kind: 'below', pct: Math.round((low - amount) / low * 100) };
+    return { kind: 'inside', pct: 0 };
+  }
+  window.EGYBI = window.EGYBI || {};
+  window.EGYBI.fairVerdict = verdict;
   var T = window.EGYBI && window.EGYBI.trip;
   if (!T) return;
   var esc = T.esc;
@@ -116,12 +130,54 @@
       : '1 ' + CUR + ' = ' + T.rateText(r) + ' — ' + ((D.fx.source || {}).name_en || 'market rate') + ', ' + T.fmtDate(D.fx.as_of) + '. ' + ((D.fx.source || {}).note_en || '');
   }
 
-  function renderAll() { renderRate(); renderGroups(); renderMarket(); }
+  // The quote checker: one select of the rows that carry a figure, one
+  // amount in that row's own currency, one sentence back. Nothing is sent.
+  function pageNum(n) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    return F && document.documentElement.lang === 'ar' ? F.digits(String(n), 'ar') : String(n);
+  }
+  function rowsWithFigures() {
+    var out = [];
+    (D.fp ? D.fp.groups : []).forEach(function (g) {
+      g.rows.forEach(function (r) { if (r.low != null) out.push(r); });
+    });
+    return out;
+  }
+  function renderCheckList() {
+    var sel = $('fpCheckItem');
+    if (!sel || !D.fp) return;
+    sel.innerHTML = rowsWithFigures().map(function (r) {
+      return '<option value="' + esc(r.key) + '">' + esc(tt(r.item)) + ' (' + esc(tt(r.unit)) + ', ' + esc(r.currency) + ')</option>';
+    }).join('');
+    renderCheck();
+  }
+  function renderCheck() {
+    var sel = $('fpCheckItem'), inp = $('fpCheckAmount'), out = $('fpCheckOut');
+    if (!sel || !inp || !out) return;
+    var r = rowsWithFigures().filter(function (x) { return x.key === sel.value; })[0];
+    if (!r) { out.textContent = ''; return; }
+    var raw = String(inp.value || '').replace(',', '.');
+    var v = raw === '' ? null : verdict(parseFloat(raw), r.low, r.high);
+    var rg = range(r.low, r.high, r.currency);
+    if (!v) { out.textContent = t('Type the price you were asked, in %c.').replace('%c', r.currency); return; }
+    var msg = v.kind === 'inside' ? t('Inside the published range of %r.')
+      : v.kind === 'above' ? t('About %p% above the top of the published range of %r.')
+      : t('About %p% below the published range of %r.');
+    out.textContent = msg.replace('%p', pageNum(v.pct)).replace('%r', rg) + ' ' +
+      t('The range is what one named source publishes, %s; it is not a fixed price.').replace('%s', r.source_url ? r.source : tt(r.source));
+    out.setAttribute('data-verdict', v.kind);
+  }
+
+  function renderAll() { renderRate(); renderGroups(); renderMarket(); renderCheckList(); }
 
   function init() {
     var sel = $('fpCur');
     if (!sel) return;
     sel.addEventListener('change', function () { CUR = sel.value; renderAll(); });
+    if ($('fpCheckItem')) {
+      $('fpCheckItem').addEventListener('change', renderCheck);
+      $('fpCheckAmount').addEventListener('input', renderCheck);
+    }
     Promise.all([settle(T.getJSON('data/fair-prices.json')), settle(T.getJSON('data/prices-today.json')),
                  settle(T.getJSON('data/fx-today.json'))]).then(function (r) {
       D.fp = r[0]; D.prices = r[1]; D.fx = r[2];
