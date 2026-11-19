@@ -638,6 +638,15 @@ case("the calendar file drops the last day of each stop", "ics-cases.js", ["site
      lambda: edit("site/assets/ics.js", "var end = addDays(day, n);", "var end = addDays(day, n - 1);"),
      lambda o: "FAIL a two-day stop ends the day after its last day" in o, f"node {HERE}/ics-cases.js")
 
+# The Karnak sunrise is on 21 December (2026-11-19). A row moved a day
+# would send a visitor to the temple on the wrong morning; test_solstice.py
+# must catch it.
+case("the Karnak solstice row a day late", "test_solstice.py", ["site/data/calendar.json"],
+     lambda: edit("site/data/calendar.json", '"key": "karnak-solstice-2026", "name": "Karnak winter solstice sunrise", "name_ar": "تعامد الشمس على معبد الكرنك", "start": "2026-12-21", "end": "2026-12-21"',
+                  '"key": "karnak-solstice-2026", "name": "Karnak winter solstice sunrise", "name_ar": "تعامد الشمس على معبد الكرنك", "start": "2026-12-22", "end": "2026-12-22"'),
+     lambda o: "FAIL" in o and "test_each_year_in_the_window_has_both_rows_on_21_december" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_solstice.py -v')
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)

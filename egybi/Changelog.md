@@ -2487,3 +2487,9 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 ## 2026-11-18 — Coordinates on the Arabic place card
 - **Found on the live site after #180 merged:** the Arabic place card showed its coordinates in Western digits ("28.8986, 33.2032") while the rest of the card used Arabic-Indic digits. They now read "٢٨٫٨٩٨٦، ٣٣٫٢٠٣٢". English and Russian keep the decimal point, which coordinates use in Russian too.
 - **Check:** `twin-data.js` fails Western-digit coordinates on the Arabic card. New mutation case: "the Arabic place card's coordinates in Western digits".
+## 2026-11-19 — The 21 December sunrise at Karnak and Qasr Qarun (maps plan, stage 7, first part)
+- **New calendar rows** for 21 December 2026 and 2027, shown wherever the site lists events inside a visitor's dates (the home page, the planner and its dossier):
+  - **Karnak:** Africanews, reporting with AP on 22 Dec 2025, says the sunrise lines up with the temple walls on 21 December; three sources agree in the research (reports/Maps and dossier research.md, section C).
+  - **Qasr Qarun (Fayoum):** Explore Fayoum describes the sun lining up with the temple on 21 December; the note says a second travel site gives about 25 minutes of light. Confidence is medium, and the row says whose account it is.
+  - Both are marked "Not a public holiday". The Abu Simbel days (22 February, 22 October) were already in the calendar. Hatshepsut's solstice light is left out: the sources disagree on the day and on which chamber is lit.
+- **Check:** `test_solstice.py` requires both rows on 21 December for every year of the calendar's window, each cited to its source. New mutation case: "the Karnak solstice row a day late".
