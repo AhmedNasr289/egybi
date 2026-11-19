@@ -80,7 +80,11 @@ class Counting(unittest.TestCase):
     def test_the_real_calendars_sun_alignment_days_are_not_holidays(self):
         cal = json.loads(CAL.read_text(encoding='utf-8'))
         flagged = {e['key'] for e in cal['events'] if e.get('not_holiday')}
-        self.assertEqual(flagged, {'abu-simbel-sun-feb', 'abu-simbel-sun-oct'})
+        # The 21 December sunrise rows at Karnak and Qasr Qarun (2026-11-19)
+        # are sun alignments too, and no more a public holiday than Abu Simbel's.
+        self.assertEqual(flagged, {'abu-simbel-sun-feb', 'abu-simbel-sun-oct',
+                                   'karnak-solstice-2026', 'karnak-solstice-2027',
+                                   'qasr-qarun-solstice-2026', 'qasr-qarun-solstice-2027'})
         self.assertFalse(flagged & {r['key'] for r in hol.holidays(cal)})
 
     def test_weekend_dates_are_named(self):

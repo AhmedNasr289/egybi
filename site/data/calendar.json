@@ -1,10 +1,16 @@
 {
   "as_of": "2026-10-09",
   "fetched_at": "2026-10-09",
-  "source": "Hand-compiled from the sources named on each row; read 9 Oct 2026",
+  "source": "Hand-compiled from the sources named on each row; read 9 Oct 2026, the solstice rows 19 Nov 2026",
   "note": "Egypt's public holidays and the lunar dates that move every year. Fixed-date holidays are firm. Every Islamic date is a forecast from astronomical calculation and is confirmed only by the official moon sighting (Dar al-Ifta) — so each lunar row carries a range, not a day, and is marked expected. No official Egyptian government list for 2027 had been published when this was compiled; the rows below come from named secondary calendars, and where they disagree the range covers both.",
   "window": { "from": "2026-11-01", "to": "2027-12-31" },
   "events": [
+    { "key": "karnak-solstice-2026", "name": "Karnak winter solstice sunrise", "name_ar": "تعامد الشمس على معبد الكرنك", "start": "2026-12-21", "end": "2026-12-21", "kind": "fixed", "status": "fixed", "not_holiday": true,
+      "note": "Not a public holiday. Africanews, reporting with AP, says the sunrise lines up with the temple walls on 21 December, the shortest day of the year, and visitors gather at dawn to watch it.",
+      "source": "Africanews with AP: Egypt: Visitors watch sun align with ancient Luxor temple on winter solstice (22 Dec 2025)", "source_url": "https://www.africanews.com/2025/12/22/egypt-visitors-watch-sun-align-with-ancient-luxor-temple-on-winter-solstice/" },
+    { "key": "qasr-qarun-solstice-2026", "name": "Qasr Qarun winter solstice sunrise", "name_ar": "تعامد الشمس على معبد قصر قارون", "start": "2026-12-21", "end": "2026-12-21", "kind": "fixed", "status": "fixed", "not_holiday": true,
+      "note": "Not a public holiday. Explore Fayoum, a Fayoum travel site, describes the sun lining up with this Ptolemaic temple on 21 December; a second travel site gives about 25 minutes of light in the sanctuary.",
+      "source": "Explore Fayoum: Qasr Qaroun Temple Sun Festival, 21 December", "source_url": "https://fayoumegypt.com/qasr-qaroun-temple-sun-festival-the-wonder-of-the-sun-21-december-2014" },
     { "key": "coptic-christmas", "name": "Coptic Christmas", "name_ar": "عيد الميلاد المجيد", "start": "2027-01-07", "end": "2027-01-07", "kind": "fixed", "status": "fixed",
       "source": "OfficeHolidays — Coptic Christmas in Egypt 2027", "source_url": "https://www.officeholidays.com/holidays/egypt/coptic-christmas" },
     { "key": "jan25", "name": "25 January Revolution & Police Day", "name_ar": "عيد الشرطة وثورة 25 يناير", "start": "2027-01-25", "end": "2027-01-25", "kind": "fixed", "status": "fixed",
@@ -42,7 +48,13 @@
       "source": "HolidayDB — Public holidays in 2027 in Egypt", "source_url": "https://holidaydb.com/guides/public-holidays/egypt/2027" },
     { "key": "abu-simbel-sun-oct", "name": "Abu Simbel sun alignment", "name_ar": "تعامد الشمس على معبد أبو سمبل", "start": "2027-10-22", "end": "2027-10-22", "kind": "fixed", "status": "fixed", "not_holiday": true,
       "note": "Not a public holiday. The Ministry's ticket list gives a separate ticket for the sun alignment day: 1,200 EGP for a foreign adult, against 750 on other days. Its booking site showed 1,272 EGP when we checked on 17 November 2026.",
-      "source": "Ministry of Tourism and Antiquities price list (5 Nov 2024): Celebrating the Sun Alignment on 22 October/22 February", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf" }
+      "source": "Ministry of Tourism and Antiquities price list (5 Nov 2024): Celebrating the Sun Alignment on 22 October/22 February", "source_url": "https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf" },
+    { "key": "karnak-solstice-2027", "name": "Karnak winter solstice sunrise", "name_ar": "تعامد الشمس على معبد الكرنك", "start": "2027-12-21", "end": "2027-12-21", "kind": "fixed", "status": "fixed", "not_holiday": true,
+      "note": "Not a public holiday. Africanews, reporting with AP, says the sunrise lines up with the temple walls on 21 December, the shortest day of the year, and visitors gather at dawn to watch it.",
+      "source": "Africanews with AP: Egypt: Visitors watch sun align with ancient Luxor temple on winter solstice (22 Dec 2025)", "source_url": "https://www.africanews.com/2025/12/22/egypt-visitors-watch-sun-align-with-ancient-luxor-temple-on-winter-solstice/" },
+    { "key": "qasr-qarun-solstice-2027", "name": "Qasr Qarun winter solstice sunrise", "name_ar": "تعامد الشمس على معبد قصر قارون", "start": "2027-12-21", "end": "2027-12-21", "kind": "fixed", "status": "fixed", "not_holiday": true,
+      "note": "Not a public holiday. Explore Fayoum, a Fayoum travel site, describes the sun lining up with this Ptolemaic temple on 21 December; a second travel site gives about 25 minutes of light in the sanctuary.",
+      "source": "Explore Fayoum: Qasr Qaroun Temple Sun Festival, 21 December", "source_url": "https://fayoumegypt.com/qasr-qaroun-temple-sun-festival-the-wonder-of-the-sun-21-december-2014" }
   ],
   "capacity": [
     { "key": "gem-cap", "place": "Grand Egyptian Museum", "fact": "Admissions are capped at 15,000 a day; the museum reported 7,000–10,000 a day after an opening peak of about 24,000, and more than three million visits in its first seven months, 60% of them foreign.",
