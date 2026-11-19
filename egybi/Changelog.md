@@ -2494,3 +2494,7 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 ## 2026-11-18 — Coordinates on the Arabic place card
 - **Found on the live site after #180 merged:** the Arabic place card showed its coordinates in Western digits ("28.8986, 33.2032") while the rest of the card used Arabic-Indic digits. They now read "٢٨٫٨٩٨٦، ٣٣٫٢٠٣٢". English and Russian keep the decimal point, which coordinates use in Russian too.
 - **Check:** `twin-data.js` fails Western-digit coordinates on the Arabic card. New mutation case: "the Arabic place card's coordinates in Western digits".
+## 2026-11-19 — Places: one rounding for coordinates in every language, found on the live site
+- **What the live check after #189 found:** Abu Rudeis Airport is stored at 28.89865. The Arabic card showed ٢٨٫٨٩٨٧ (rounded half away from zero, the site's rule in `egfmt.js`), while the English and Russian cards showed 28.8986, because `toFixed` rounds the binary value 28.89864999….
+- **The fix:** `places.js` writes English and Russian coordinates through `egfmt.js` too, so all three cards agree.
+- **Check:** `twin-data.js` reads the opened place from `geo-places.json` and fails the English or Russian card unless it shows the half-away rounding of the stored value. New mutation case: "place coordinates rounded with toFixed again".
