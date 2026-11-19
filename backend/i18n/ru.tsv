@@ -1602,6 +1602,36 @@ Things made in Egypt that you can watch being made, buy or try on your trip: whe
 We list a craft or a maker only when a named source describes it: the maker&#x27;s own site, an official or academic page, or the press. A price or a tip on telling the real thing from an imitation appears only when a source gives it, with that source beside it. Where we found no website or account for a maker, we say so rather than guess one. We link to the makers instead of copying their pictures. Warnings about shops come from several travellers&#x27; reports, and say so.	Мы включаем ремесло или мастера, только если его описывает названный источник: сайт самого мастера, официальная или научная страница либо пресса. Цена или совет, как отличить подлинную вещь от подделки, появляются, только если их даёт источник, и он указан рядом. Если у мастера не нашлось ни сайта, ни аккаунта, мы так и пишем, а не угадываем. Мы ставим ссылки на мастеров, а не копируем их фотографии. Предупреждения о магазинах взяты из отзывов нескольких путешественников, и это указано.
 Items listed: 34. Compiled <time datetime="2026-11-18">18 November 2026</time>.	Пунктов в списке: 34. Составлено <time datetime="2026-11-18">18 ноября 2026 года</time>.
 Made near here:	Сделано поблизости:
+%n km²	%n км²
+%n million	%n млн
+%n per km²	%n на км²
+All layers loaded. OpenStreetMap layers © OpenStreetMap contributors (ODbL); oldest layer refresh: %d.	Все слои загружены. Слои OpenStreetMap © участники OpenStreetMap (ODbL); самое старое обновление слоя: %d.
+Area in km²	Площадь, км²
+Clinic	Клиника
+Cultural	Культурный
+Density per km²	Плотность на км²
+Egypt governorate indicators: the same data the map shows	Показатели мухафаз Египта: те же данные, что на карте
+Facility and school counts are what OpenStreetMap has mapped: a relative pattern, not official registers.	Число учреждений и школ — то, что нанесено в OpenStreetMap: относительная картина, а не официальные реестры.
+Growth 2017→2023	Рост 2017→2023
+Hospital	Больница
+Interactive map of Egypt’s 27 governorates. Tab to a governorate and press Enter for its figures.	Интерактивная карта 27 мухафаз Египта. Перейдите к мухафазе клавишей Tab и нажмите Enter, чтобы увидеть её данные.
+Mapped health facilities	Медучреждения на карте
+Mapped schools	Школы на карте
+Natural	Природный
+Not generated yet: %l. These layers appear after the first "Build Atlas geo layers" run; the governorate map below already works.	Ещё не созданы: %l. Эти слои появятся после первого запуска «Build Atlas geo layers»; карта мухафаз ниже уже работает.
+Points on the map	Точки на карте
+Population (2023)	Население (2023)
+Source: %s, as of %d.	Источник: %s, по состоянию на %d.
+This map could not finish loading, so the layers above are unavailable. The governorate outline below is drawn from data that comes with the page. Please tell us: the fault is ours.	Карта не смогла загрузиться полностью, поэтому слои выше недоступны. Границы мухафаз ниже нарисованы по данным, встроенным в страницу. Пожалуйста, сообщите нам: ошибка на нашей стороне.
+Unavailable: this layer failed to load	Недоступно: слой не загрузился
+Urban population	Городское население
+Urban share	Доля горожан
+Visitor guide:	Путеводитель:
+World Heritage site	Объект Всемирного наследия
+health facilities	медучреждения
+heritage sites	объекты наследия
+hospitals: %h, clinics: %c	больниц: %h, клиник: %c
+schools	школы
 The map could not load. The tables and charts on this page still work.	Карта не загрузилась. Таблицы и графики на этой странице по-прежнему работают.
 The map could not load. You can still add stops with the buttons and the search above.	Карта не загрузилась. Остановки всё равно можно добавить кнопками и поиском выше.
 <span><i style="background:#2C6FAD"></i>21 °C or less</span><span><i style="background:#4FA3A5"></i>22–27 °C</span> <span><i style="background:#C9A227"></i>28–33 °C</span><span><i style="background:#D97B2B"></i>34–38 °C</span> <span><i style="background:#B23A0F"></i>39 °C or more</span><span>dashed line: straight lines between stops, not roads</span>	<span><i style="background:#2C6FAD"></i>21&nbsp;°C и ниже</span><span><i style="background:#4FA3A5"></i>22–27&nbsp;°C</span><span><i style="background:#C9A227"></i>28–33&nbsp;°C</span><span><i style="background:#D97B2B"></i>34–38&nbsp;°C</span><span><i style="background:#B23A0F"></i>39&nbsp;°C и выше</span><span>пунктир: прямые линии между остановками, а не дороги</span>
