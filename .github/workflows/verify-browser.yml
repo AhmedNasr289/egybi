@@ -325,6 +325,12 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh made-in-egypt node backend/verify/made-in-egypt.js
 
+      # The day-by-day dossier: dates per stop, opening hours and the sun in
+      # three languages (maps plan stage 4).
+      - name: dossier-days.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh dossier-days node backend/verify/dossier-days.js
+
       # Without leaflet.js the heat page and the planner say the map could
       # not load and still fill their tables and buttons (maps plan stage 2).
       - name: map-fallback.js

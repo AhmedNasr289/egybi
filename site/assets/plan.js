@@ -340,6 +340,53 @@
   }
 
   /* -------------------------------------------------------------- dossier */
+  /* The day-by-day dossier (2026-11-19, maps plan stage 4). Each stop gets
+     its own dates, counted from the arrival day in the order of the stops,
+     and what the site already holds for those dates: the opening hours from
+     the Ministry's pages, sunrise, golden light and sunset on the first day
+     (NOAA equations in today.js, Cairo time), and the holidays that fall on
+     those exact days. Nothing is invented: a stop without a measured site
+     gets dates and the sun only. */
+  function isoAdd(iso, days) {
+    var m = /^(\d{4})-(\d\d)-(\d\d)/.exec(String(iso || ''));
+    if (!m) return null;
+    var d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3] + days));
+    return d.toISOString().slice(0, 10);
+  }
+  function cairoClock(ms) {
+    try {
+      return pageDigits(new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Cairo', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(ms)));
+    } catch (e) { return null; }
+  }
+  function sunLine(st, iso) {
+    var S2 = window.EgybiSun, m = /^(\d{4})-(\d\d)-(\d\d)/.exec(String(iso || ''));
+    if (!S2 || !m || !isFinite(st.lat) || !isFinite(st.lon)) return '';
+    var d = S2.dayLight(st.lat, st.lon, +m[1], +m[2], +m[3]);
+    if (!d) return '';
+    var r = cairoClock(d.sunrise), g1 = cairoClock(d.goldenMorningEnd), g2 = cairoClock(d.goldenEveningStart), s = cairoClock(d.sunset);
+    if (!r || !s) return '';
+    return '<p class="dossier-sun" style="margin:0 0 6px;">' + esc(t('On %d: sunrise %r, golden light until %g and again from %e, sunset %s (Cairo time).')
+      .replace('%d', T.fmtDate(iso)).replace('%r', r).replace('%g', g1).replace('%e', g2).replace('%s', s)) + '</p>';
+  }
+  function hoursLine(st) {
+    if (!D.hours || st.id.indexOf('site:') !== 0) return '';
+    var k = st.id.slice(5), row = null;
+    (D.hours.groups || []).forEach(function (g) {
+      (g.rows || []).forEach(function (r) { if (r.key === k) row = r; });
+    });
+    if (!row || !row.hours) return '';
+    return '<p class="dossier-hours" style="margin:0 0 6px;"><strong>' + esc(t('Opening hours:')) + '</strong> ' + esc(t(row.hours)) +
+      (row.checked ? ' <span class="chart-cap">' + esc(t('(Ministry of Tourism and Antiquities, checked %d)').replace('%d', T.fmtDate(row.checked))) + '</span>' : '') + '</p>';
+  }
+  function stopEvents(from, to) {
+    if (!from || !to) return '';
+    var ev = T.eventsIn(D.calendar, from, to);
+    if (!ev.length) return '';
+    return '<p class="dossier-days" style="margin:0 0 6px;"><strong>' + esc(t('On these days:')) + '</strong> ' + ev.map(function (e) {
+      return esc(t(e.name)) + ' (' + esc(T.fmtDate(e.start)) + (e.status === 'expected' ? ', ' + esc(t('expected')) : '') + ')';
+    }).join(T.pageLang() === 'ar' ? '، ' : '; ') + '</p>';
+  }
+
   function renderDossier() {
     var host = $('dossier');
     if (!host) return;
@@ -353,13 +400,21 @@
       '<h2 style="margin:0 0 6px;">' + (name ? t('%s&rsquo;s Egypt').replace('%s', esc(name)) : esc(t('Your Egypt'))) + '</h2>' +
       '<p style="margin:0;color:var(--ink-soft);">' + esc(T.fmtDate(S.trip.start)) + ' &ndash; ' + esc(T.fmtDate(S.trip.end)) +
       ' &middot; ' + esc(t('Stops: %n').replace('%n', pageDigits(st.length))) + '</p></div>';
+    var offset = 0;
     var stops = st.map(function (x, i) {
       var h = heatFor(x), el = elevationFor(x);
       var leg = i > 0 ? esc(legText(st[i - 1], x)) + '. ' : '';
+      var from = S.trip.start ? isoAdd(S.trip.start, offset) : null;
+      var to = from ? isoAdd(from, Math.max(1, x.days || 1) - 1) : null;
+      offset += Math.max(1, x.days || 1);
+      var when = from ? '<p class="dossier-when" data-from="' + from + '" data-to="' + to + '" style="margin:0 0 6px;font-weight:600;">' + esc(T.fmtDate(from)) +
+        (to !== from ? ' &ndash; ' + esc(T.fmtDate(to)) : '') + '</p>' : '';
       return '<div class="sheet" style="margin-top:16px;"><p class="kicker">' + esc(t('Stop %n').replace('%n', pageDigits(i + 1))) + ' &middot; ' +
         esc(t('Days: %n').replace('%n', pageDigits(x.days || 1))) + '</p>' +
         '<h3 style="margin:0 0 8px;color:var(--blue-deep);">' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
+        when +
         '<p style="margin:0 0 6px;">' + leg + esc(h.text) + (el != null ? ' ' + esc(t('Ground elevation %n m (SRTM).').replace('%n', pageDigits(Math.round(el)))) : '') + '</p>' +
+        heatWarnHtml(h, x) + hoursLine(x) + (from ? sunLine(x, from) : '') + stopEvents(from, to) +
         '<p class="chart-cap" style="margin:0;">' + x.lat.toFixed(4) + ', ' + x.lon.toFixed(4) + (x.gov ? ' &middot; ' + esc(gv(x.gov)) : '') + '</p></div>';
     }).join('');
     var events = ev.length ? '<div class="sheet" style="margin-top:16px;"><p class="kicker">' + esc(t('Inside your dates')) + '</p><ul class="event-list">' +
@@ -372,7 +427,8 @@
       esc(t('Heat: %s, mean daily maximum and minimum %w — a long-run average, not a forecast.')
         .replace('%s', (D.climate || {}).source || 'NASA POWER').replace('%w', pageDigits((D.climate || {}).normal_window || '2001–2020'))) + ' ' +
       esc(t('Places: OpenStreetMap contributors (ODbL). Holidays: calendar.json, compiled %d, Islamic dates expected. Distances are straight lines, not roads. Printed from egybi.com/plan.html.')
-        .replace('%d', T.fmtDate((D.calendar || {}).as_of))) + '</p>';
+        .replace('%d', T.fmtDate((D.calendar || {}).as_of))) + ' ' +
+      esc(t('Opening hours: the Ministry of Tourism and Antiquities. Sunrise and sunset: NOAA solar equations, computed for each stop; golden light is while the sun is under 6° high.')) + '</p>';
     host.innerHTML = cover + (st.length ? stops : '<p class="chart-cap" style="margin-top:14px;">' + esc(t('Add stops above and they appear here, one sheet each.')) + '</p>') + events + sources;
   }
 

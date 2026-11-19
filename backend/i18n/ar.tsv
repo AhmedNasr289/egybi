@@ -1622,3 +1622,16 @@ Planned on egybi.com. Check opening hours before you go.	خُطّطت على egy
 Set your arrival date first, so each stop can be placed on its days.	حدّد تاريخ وصولك أولًا، حتى توضع كل محطة في أيامها.
 Add a stop first.	أضف محطة أولًا.
 Calendar file made: one event for each stop. Open it to add them to your calendar; nothing was sent anywhere.	جُهّز ملف التقويم: حدث واحد لكل محطة. افتحه لتضيفها إلى تقويمك؛ لم يُرسل شيء إلى أي مكان.
+Opens 07:00, last entry 16:00	يفتح ٧:٠٠، وآخر دخول ١٦:٠٠
+Opens 06:00, last entry 16:00	يفتح ٦:٠٠، وآخر دخول ١٦:٠٠
+Opens 06:00, last entry 17:00 in summer and 16:00 in winter	يفتح ٦:٠٠، وآخر دخول ١٧:٠٠ صيفًا و١٦:٠٠ شتاءً
+08:00 to 17:00	من ٨:٠٠ إلى ١٧:٠٠
+07:00 to 16:00	من ٧:٠٠ إلى ١٦:٠٠
+07:00 to 17:00	من ٧:٠٠ إلى ١٧:٠٠
+07:00 to 19:00	من ٧:٠٠ إلى ١٩:٠٠
+The monastery: 08:45 to 12:45, closed on Sundays	الدير: من ٨:٤٥ إلى ١٢:٤٥، ويُغلق أيام الأحد
+On %d: sunrise %r, golden light until %g and again from %e, sunset %s (Cairo time).	يوم %d: الشروق %r، والضوء الذهبي حتى %g ثم من %e، والغروب %s (بتوقيت القاهرة).
+Opening hours:	مواعيد الفتح:
+(Ministry of Tourism and Antiquities, checked %d)	(وزارة السياحة والآثار، رُوجع في %d)
+On these days:	في هذه الأيام:
+Opening hours: the Ministry of Tourism and Antiquities. Sunrise and sunset: NOAA solar equations, computed for each stop; golden light is while the sun is under 6° high.	مواعيد الفتح: وزارة السياحة والآثار. الشروق والغروب: معادلات NOAA الشمسية، محسوبة لكل محطة؛ والضوء الذهبي ما دامت الشمس أقل من ٦° فوق الأفق.
