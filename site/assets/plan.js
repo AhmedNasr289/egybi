@@ -25,6 +25,16 @@
   // quoted call to it here into the Arabic and Russian tables (pages/i18n.py).
   var t = (window.EGYBI && window.EGYBI.t) || function (s) { return s; };
   function $(id) { return document.getElementById(id); }
+  // A stop's coordinates as the place cards write them (places.js coords):
+  // Arabic-Indic digits, the Arabic decimal mark and comma on Arabic pages,
+  // one rounding in every language (2026-11-19).
+  function coords(x) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    var lang = document.documentElement.getAttribute('lang') || 'en';
+    if (lang === 'ar' && F) return F.fixed(x.lat, 'ar', 4) + '، ' + F.fixed(x.lon, 'ar', 4);
+    if (F) return F.fixed(x.lat, 'en', 4) + ', ' + F.fixed(x.lon, 'en', 4);
+    return x.lat.toFixed(4) + ', ' + x.lon.toFixed(4);
+  }
   function mkx(name) {
     var mk = window.EGYBI && window.EGYBI.mapkit;
     var fn = mk && mk[name];
@@ -415,7 +425,7 @@
         when +
         '<p style="margin:0 0 6px;">' + leg + esc(h.text) + (el != null ? ' ' + esc(t('Ground elevation %n m (SRTM).').replace('%n', pageDigits(Math.round(el)))) : '') + '</p>' +
         heatWarnHtml(h, x) + hoursLine(x) + (from ? sunLine(x, from) : '') + stopEvents(from, to) +
-        '<p class="chart-cap" style="margin:0;">' + x.lat.toFixed(4) + ', ' + x.lon.toFixed(4) + (x.gov ? ' &middot; ' + esc(gv(x.gov)) : '') + '</p></div>';
+        '<p class="chart-cap" style="margin:0;">' + coords(x) + (x.gov ? ' &middot; ' + esc(gv(x.gov)) : '') + '</p></div>';
     }).join('');
     var events = ev.length ? '<div class="sheet" style="margin-top:16px;"><p class="kicker">' + esc(t('Inside your dates')) + '</p><ul class="event-list">' +
       ev.map(function (e) {
