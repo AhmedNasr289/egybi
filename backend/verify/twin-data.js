@@ -130,8 +130,15 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         // On Arabic pages the site names come from the climate file's name_ar,
         // so the caption has no Latin letter at all (2026-11-18).
         else if (lang === 'ar/' && /[A-Za-z]/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption names a site in English: "${cap.slice(0, 160)}"`);
+        // On Russian pages the site names come from the Russian table: no
+        // Latin word is left (the lone C of °C is not a word) (2026-11-18).
+        else if (lang === 'ru/' && /[A-Za-z]{2,}/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption names a site in English: "${cap.slice(0, 160)}"`);
         else if (!lang && !/^In \w+, a normal afternoon/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English month caption changed to "${cap.slice(0, 160)}"`);
         else console.log(`${where}: month caption in the page's language`);
+        // The relief chart's point readout: on Arabic pages its coordinates
+        // are in Arabic-Indic digits, with no °N/°E (2026-11-18).
+        const relief = await p.evaluate(() => (document.getElementById('reliefReadout') || {}).textContent || '');
+        if (lang === 'ar/' && /\d+\.\d+°[NE]/.test(relief)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} relief readout coordinates read "${relief.slice(0, 120)}"`);
       }
 
       // The places page (2026-11-18): the summary line and an opened place
@@ -153,6 +160,8 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
             card: d ? d.textContent : '',
             written: [].concat(pick('.pd-row > span'), pick('.pd-row strong').slice(0, 1),
                                pick('.pd-going h4'), pick('.pd-links a'), pick('.pd-links li > span')).join(' | '),
+            values: pick('.pd-row strong'),
+
             // the card's second row is the governorate (Kind, Governorate, ...)
             gov: (d && d.querySelectorAll('.pd-row strong')[1] || {}).textContent || '',
           };
@@ -168,6 +177,10 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card reads "${all.slice(0, 160)}"`);
         else if (!lang && !/Going there/.test(card.card)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English place card changed to "${card.card.slice(0, 160)}"`);
         else console.log(`${where}: place card in the page's language`);
+        // Coordinates on an Arabic card in Arabic-Indic digits (2026-11-18,
+        // found on the live site as "28.8986, 33.2032").
+        const westCoords = card.values.filter(v => /^\d+\.\d+, \d+\.\d+$/.test(v));
+        if (lang === 'ar/' && westCoords.length) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card coordinates in Western digits "${westCoords[0]}"`);
       }
 
       // Text the header scripts write (stage 4a): in Arabic and Russian it
