@@ -1557,6 +1557,13 @@ case("the place card heading back in English", "twin-data.js", ["site/assets/pla
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
 
+# Without leaflet.js the heat page still fills its tables (2026-11-19). The
+# old early return left the whole page blank; map-fallback.js must catch it.
+case("the heat page blank again without the map library", "map-fallback.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js", "window.EGYBI && window.EGYBI.mapkit);\n",
+                  "window.EGYBI && window.EGYBI.mapkit);\n    if (!canMap) return;\n"),
+     lambda o: "TABLES EMPTY WITHOUT THE MAP" in o, f"node {HERE}/map-fallback.js")
+
 # A kind label passed to t() as a variable is never collected into the
 # translation table, so it stayed English on the live Arabic and Russian
 # pages (2026-11-18). Writing one back as a plain string must be caught.

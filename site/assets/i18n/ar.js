@@ -308,6 +308,8 @@ window.EGYBI_STRINGS = {
  "The heat, site by site, in %m.": "الحرارة في كل موقع خلال %m.",
  "The holiday calendar could not be loaded.": "تعذّر تحميل تقويم العطلات.",
  "The leaving date is before the arriving date.": "تاريخ المغادرة يسبق تاريخ الوصول.",
+ "The map could not load. The tables and charts on this page still work.": "تعذّر تحميل الخريطة. الجداول والرسوم في هذه الصفحة ما زالت تعمل.",
+ "The map could not load. You can still add stops with the buttons and the search above.": "تعذّر تحميل الخريطة. ما زال بإمكانك إضافة المحطات بالأزرار والبحث أعلاه.",
  "The map library did not load, so this page cannot draw Egypt.": "لم تُحمَّل مكتبة الخرائط، لذلك لا تستطيع هذه الصفحة رسم مصر.",
  "The market prices could not be loaded.": "تعذّر تحميل أسعار السوق.",
  "The openly licensed category OpenStreetMap links to.": "التصنيف ذو الترخيص المفتوح الذي يربطه OpenStreetMap.",

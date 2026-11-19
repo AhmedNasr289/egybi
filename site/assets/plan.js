@@ -61,7 +61,14 @@
 
   /* ------------------------------------------------------------------ map */
   function initMap() {
-    if (!window.L || !window.EGYBI.mapkit) return;
+    // Without the map library the stop list, search and dossier still work;
+    // the map box says so instead of staying empty (maps plan stage 2).
+    if (!window.L || !window.EGYBI.mapkit) {
+      var box = $('planMap');
+      if (box) box.innerHTML = '<p class="chart-cap" style="padding:16px;margin:0;">' +
+        esc(t('The map could not load. You can still add stops with the buttons and the search above.')) + '</p>';
+      return;
+    }
     var m = window.EGYBI.mapkit.create('planMap', {
       locator: window.EGYBI_EGYPT_GEO || null,
       credit: ['geoboundaries', 'osm', 'power'],
