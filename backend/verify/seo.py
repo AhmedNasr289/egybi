@@ -97,6 +97,14 @@ def meta(t, attr, name):
     return None
 
 
+# The opening hours each measured site's page shows (opening-hours.json).
+try:
+    import json as _json
+    SITE_HOURS = {r["key"]: r["hours"] for g in _json.loads((SITE / "data" / "opening-hours.json").read_text(encoding="utf-8"))["groups"]
+                  for r in g["rows"] if r.get("hours")}
+except (OSError, ValueError, KeyError):
+    SITE_HOURS = {}
+
 pages = sorted(SITE.rglob("*.html"))
 if not pages:
     print("no pages found under site/ — wrong working directory?")
@@ -165,6 +173,16 @@ for p in pages:
             add("description over 165 chars", f"{rel}  [{len(desc)}]")
         if len(desc) < 70:
             add("description under 70 chars (wastes SERP space)", f"{rel}  [{len(desc)}]")
+
+    # A site page that shows the Ministry's opening hours says so where a
+    # search result shows it (2026-11-19): "Karnak opening hours" had no
+    # matching title or snippet while the hours sat in the page body.
+    if rel.startswith("visit/") and rel[6:-5] in SITE_HOURS:
+        first_time = re.search(r"\d\d:\d\d", SITE_HOURS[rel[6:-5]])
+        if title and "hours" not in title.lower():
+            add("site page with opening hours does not say so in its title", f"{rel}  {title}")
+        if desc and first_time and first_time.group(0) not in desc:
+            add("site page with opening hours does not give them in its description", f"{rel}  [{(desc or '')[:80]}]")
 
     # -------------------------------------------------------- canonical ----
     m = re.search(

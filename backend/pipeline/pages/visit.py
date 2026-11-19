@@ -13,6 +13,7 @@ import functools
 import json
 import math
 import os
+import re
 
 import heat_calendar
 import sun_times
@@ -211,6 +212,58 @@ def load_guide() -> tuple:
         out.append(json.loads(read_text(path)) if os.path.isfile(path) else {})
     return tuple(out)
 
+# The calendar rows that are sun alignments at a measured site (2026-11-19).
+# Each row carries its own source; the page names the days and the source.
+SUN_ROWS = {'abu-simbel': 'abu-simbel-sun', 'karnak': 'karnak-solstice'}
+TITLE_MAX, DESC_MAX = 65, 160
+
+
+def first_fit(options, limit):
+    """The first wording that fits the length a search result shows (2026-11-19)."""
+    for o in options:
+        if len(o) <= limit:
+            return o
+    return options[-1]
+
+
+def page_title(name, has_hours):
+    """What the page answers, in its title: the hours where the Ministry
+    publishes them, and the weather by month on every site page."""
+    if not has_hours:
+        return f"{name} weather by month · EgyBI"
+    return first_fit([f"{name}: opening hours and weather by month · EgyBI",
+                      f"{name}: hours and weather by month · EgyBI",
+                      f"{name} weather by month · EgyBI"], TITLE_MAX)
+
+
+def page_desc(name, hours, cool, hot):
+    heat = (f"about {egfmt.whole(cool['t_daily_max'])} °C in {MONTHS[cool['month'] - 1]} and "
+            f"{egfmt.whole(hot['t_daily_max'])} °C in {MONTHS[hot['month'] - 1]}")
+    if not hours:
+        return (f"{name}: what a normal afternoon and night reach in each month, from NASA "
+                f"climate normals — {heat}.")
+    # "The monastery: 08:45 to 12:45" after the page's own name would say it twice.
+    h = re.sub(r'^The [^:]+: ', '', hours['hours'])
+    return first_fit([f"{name}: {h}. A normal afternoon reaches {heat} (NASA normals).",
+                      f"{name}: {h}. A normal afternoon reaches {heat}.",
+                      f"{name}: {h}. Weather by month from NASA normals."], DESC_MAX)
+
+
+def sun_facts(key, calendar):
+    """The sun alignment days at this site from calendar.json, each with its source."""
+    stem = SUN_ROWS.get(key)
+    if not stem or not calendar:
+        return []
+    rows = [e for e in calendar.get('events', []) if e.get('key', '').startswith(stem)]
+    if not rows:
+        return []
+    days = ' and '.join(egfmt.time_tag(e['start'], 'en', 'prose') for e in sorted(rows, key=lambda e: e['start']))
+    src = rows[0]
+    link = (f'<a href="{esc(src["source_url"])}" rel="noopener">{esc(src["source"])}</a>'
+            if src.get('source_url') else esc(src.get('source', '')))
+    return [f"<strong>Sun alignment days:</strong> {days}. {esc(src.get('note', ''))} Source: {link}."]
+
+
 def build_site_months():
     """One page per measured visitor site: its twelve months, as measured.
 
@@ -231,6 +284,8 @@ def build_site_months():
     clim = load_climate()
     hours = load_hours()
     guide, arrival = load_guide()
+    cal_path = os.path.join(SITE, 'data', 'calendar.json')
+    calendar = json.loads(read_text(cal_path)) if os.path.isfile(cal_path) else None
     terr = {}
     if os.path.isfile(tpath):
         terr = {x['key']: x for x in json.loads(read_text(tpath)).get('sites', [])}
@@ -249,10 +304,8 @@ def build_site_months():
         hot = max(ms, key=lambda m: m['t_daily_max'])
         under30 = [MONTHS[m['month'] - 1] for m in ms if egfmt.whole(m['t_daily_max']) < 30]
         name = site['name']
-        title = f"{name} weather by month · EgyBI"
-        desc = (f"{name}: what a normal afternoon and night reach in each month, from NASA "
-                f"climate normals — about {egfmt.whole(cool['t_daily_max'])} °C in "
-                f"{MONTHS[cool['month'] - 1]}, {egfmt.whole(hot['t_daily_max'])} °C in {MONTHS[hot['month'] - 1]}.")
+        title = page_title(name, key in hours)
+        desc = page_desc(name, hours.get(key), cool, hot)
         rows = ''.join(
             f"<tr><th scope=\"row\">{_month_th(m['month'])}</th>"
             f"<td class=\"num\">{egfmt.whole(m['t_daily_max'])} °C</td><td class=\"num\">{egfmt.whole(m['t_daily_min'])} °C</td>"
@@ -273,6 +326,7 @@ def build_site_months():
             facts.append(hours_fact(hours[key]))
         facts.extend(leg_facts(site, sites, guide, arrival))
         facts.extend(scam_facts(key, arrival))
+        facts.extend(sun_facts(key, calendar))
         if el is not None:
             facts.append(f"The ground at the site's coordinates sits {el:.0f} m above sea level (NASA SRTM).")
         if site.get('unesco'):
@@ -297,7 +351,7 @@ def build_site_months():
         if site.get('name_ar'):
             attraction["alternateName"] = site['name_ar']
         ld = {"@context": "https://schema.org", "@graph": [
-            {"@type": "WebPage", "name": f"{name} weather by month", "url": url, "description": desc,
+            {"@type": "WebPage", "name": title.replace(' · EgyBI', ''), "url": url, "description": desc,
              "isPartOf": {"@id": SITE_URL + "/#site"}, "about": {"@id": place_id}},
             attraction,
             breadcrumb(f"{name} by month", url, "When to go", SITE_URL + "/visit.html")]}
