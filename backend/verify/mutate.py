@@ -1557,6 +1557,12 @@ case("the place card heading back in English", "twin-data.js", ["site/assets/pla
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
 
+# The planner's place count is read from geo-places.json (2026-11-19). A count
+# typed in again goes stale as the file grows; twin-data.js must catch it.
+case("the planner's place count typed in again", "twin-data.js", ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js", "pageDigits(D.places.places.length)", "pageDigits(897)"),
+     lambda o: "PLANNER COUNT WRONG" in o, f"node {HERE}/twin-data.js")
+
 # A kind label passed to t() as a variable is never collected into the
 # translation table, so it stayed English on the live Arabic and Russian
 # pages (2026-11-18). Writing one back as a plain string must be caught.
