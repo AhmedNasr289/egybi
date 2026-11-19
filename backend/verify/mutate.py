@@ -575,6 +575,28 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
 # the visa rise announced for 1 January 2027 has happened but the page still
 # gives US$30 as the current fee (2026-11-17): moved to a date already past
+# Leaving Cairo airport (2026-11-18): every row cites the airport's or the
+# operator's own page. A pick-up point re-cited to a blog must fail coverage.py.
+case("an airport row cited to a blog", "coverage.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"source_url": "https://www.uber.com/global/en/r/airports/cai/pickup/"',
+                  '"source_url": "https://example-travel-blog.com/cairo-airport-uber"'),
+     lambda o: "airport row not sourced from the airport or the operator" in o and "cai-uber" in o, COVERAGE)
+
+# Tricks travellers report, shown on the visit pages of the sites they were
+# reported at (2026-11-18). Losing Giza from the camel row would hide it from
+# the Giza page; test_scams.py must catch it.
+case("the camel-ride trick no longer shown at Giza", "test_scams.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"near": ["giza"],', '"near": [],'),
+     lambda o: "FAIL" in o and "test_giza_and_saqqara_show_the_tricks_reported_there" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_scams.py -v')
+
+# Russian site names on the heat page (2026-11-18). Dropping the Russian
+# branch of siteName puts English names back in the Russian month caption;
+# twin-data.js must report it.
+case("the Russian month caption names a site in English", "twin-data.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js", "if (LANG === 'ru') return t(s.name);", ""),
+     lambda o: "ru/visit.html month caption names a site in English" in o, f"node {HERE}/twin-data.js")
+
 # Coordinates on the Arabic place card in Arabic-Indic digits (2026-11-18).
 # Writing them with toFixed again must make twin-data.js report it.
 case("the Arabic place card's coordinates in Western digits", "twin-data.js", ["site/assets/places.js"],
@@ -617,6 +639,13 @@ case("the museum's hours cited away from its own site", "test_gem_hours.py", ["s
                   '"source_url": "https://example-tours.com/gem-hours", "checked": "2026-11-18"'),
      lambda o: "FAIL" in o and "test_hours_come_from_the_museum" in o,
      f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_gem_hours.py -v')
+
+# The planner's calendar file (2026-11-18): an all-day event ends the day
+# after its last day. Ending it on the last day would drop a day from every
+# stop in the reader's calendar; ics-cases.js must catch it.
+case("the calendar file drops the last day of each stop", "ics-cases.js", ["site/assets/ics.js"],
+     lambda: edit("site/assets/ics.js", "var end = addDays(day, n);", "var end = addDays(day, n - 1);"),
+     lambda o: "FAIL a two-day stop ends the day after its last day" in o, f"node {HERE}/ics-cases.js")
 
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),

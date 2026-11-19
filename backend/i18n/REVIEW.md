@@ -332,3 +332,13 @@ taken from Arabic and Russian Wikipedia.
 Please check the Russian choices where Wikipedia's main form differs from
 everyday usage: «Эль-Гиза» (Giza), «Эль-Файюм» (Fayoum), «Эль-Минья» (Minya),
 «Вади-эль-Гедид» (New Valley), «Красное Море» (Red Sea).
+
+## Heat page site names in Russian (2026-11-18)
+
+The 18 measured sites' names in `ru.tsv` (from `visit-climate.json`), shown on
+ru/visit.html. Four are Russian Wikipedia's titles (Пирамиды Гизы, Карнакский
+храм, Абу-Симбел, Долина Царей); the others are the usual Russian forms.
+
+Please decide Philae: Russian Wikipedia's title is «Филы», but the glossary
+rejects it and the site uses «Храм на острове Филе». Also check «Храм в
+Дендере», «Вади-аль-Хитан» and «Суэцкий канал у Исмаилии».
