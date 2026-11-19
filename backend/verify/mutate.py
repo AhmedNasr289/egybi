@@ -631,6 +631,15 @@ case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-
      lambda: edit("site/data/made-in-egypt.json", '"maker_url": "https://kiliim.com/"', '"maker_url": "https://kiliim.com/?ref=egybi"'),
      lambda o: "maker link that is not a plain https link" in o and "kiliim" in o, COVERAGE)
 
+# The Grand Egyptian Museum's hours come from its own ticketing site
+# (2026-11-18). Re-citing them elsewhere must make test_gem_hours.py fail.
+case("the museum's hours cited away from its own site", "test_gem_hours.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json",
+                  '"source_url": "https://tickets.gem.eg/", "checked": "2026-11-18"',
+                  '"source_url": "https://example-tours.com/gem-hours", "checked": "2026-11-18"'),
+     lambda o: "FAIL" in o and "test_hours_come_from_the_museum" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_gem_hours.py -v')
+
 # The planner's calendar file (2026-11-18): an all-day event ends the day
 # after its last day. Ending it on the last day would drop a day from every
 # stop in the reader's calendar; ics-cases.js must catch it.
