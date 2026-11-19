@@ -60,10 +60,37 @@
     var r = T.rate(D.fx, CUR);
     return r ? egp / r : null;
   }
+  // Amounts and dates in the page's own form (2026-11-19). Arabic pages write
+  // pounds as egfmt.js does everywhere else ("١٠٠–٢٠٠ جنيه") and other
+  // currencies with Arabic-Indic digits; Russian and English pages keep
+  // "EGP 100–200". A checked date is written as the site writes dates, never
+  // as raw ISO ("2026-10-09").
+  var LANG = document.documentElement.getAttribute('lang') || 'en';
+  var SYM = { USD: '$', EUR: '€', GBP: '£' };
+  function arFmt() { var F = window.EGYBI && window.EGYBI.fmt; return LANG === 'ar' && F ? F : null; }
+  function places(n) { return n >= 100 ? 0 : (n >= 10 ? 1 : 2); }
+  function money(n, cur) {
+    var F = arFmt();
+    if (!F || n == null || !isFinite(n)) return T.money(n, cur);
+    if (cur === 'EGP') return F.money(n, 'ar');
+    return F.isolate((SYM[cur] || cur + ' ') + F.num(n, 'ar', places(n)));
+  }
   function range(lo, hi, cur) {
     if (lo == null && hi == null) return null;
-    if (hi == null) return T.money(lo, cur) + '+';
-    return lo === hi ? T.money(lo, cur) : T.money(lo, cur) + '–' + T.money(hi, cur).replace(/^[^\d]+/, '');
+    if (hi == null) return money(lo, cur) + '+';
+    if (lo === hi) return money(lo, cur);
+    var F = arFmt();
+    if (F && isFinite(lo) && isFinite(hi)) {
+      if (cur === 'EGP') return F.moneyRange(lo, hi, 'ar');
+      var d = places(Math.max(Math.abs(lo), Math.abs(hi)));
+      return F.isolate((SYM[cur] || cur + ' ') + F.num(lo, 'ar', d) + '–' + F.num(hi, 'ar', d));
+    }
+    return T.money(lo, cur) + '–' + T.money(hi, cur).replace(/^[^\d]+/, '');
+  }
+  function curName(cur) { return LANG === 'ar' && cur === 'EGP' ? 'جنيه' : cur; }
+  function when(d) {
+    if (!d) return '';
+    return /^\d{4}-\d\d-\d\d/.test(String(d)) ? T.fmtDate(String(d)) : pageNum(d);
   }
 
   function renderGroups() {
@@ -85,8 +112,8 @@
             '<td class="num">' + (pub == null ? '<span class="fp-none">' + esc(t('no checkable figure')) + '</span>' : esc(pub)) + '</td>' +
             '<td class="num">' + (mine == null ? '—' : esc(mine)) + '</td>' +
             '<td>' + (r.source_url ? '<a href="' + esc(r.source_url) + '" rel="noopener">' + esc(r.source) + '</a>' : esc(tt(r.source))) +
-            '<span class="fp-src">' + esc(tt(r.kind || '')) + (r.published ? ' &middot; ' + esc(r.published === 'undated' ? t('undated') : r.published) : '') +
-            (r.checked ? ' &middot; ' + esc(t('checked')) + ' ' + esc(r.checked) : '') + '</span></td></tr>';
+            '<span class="fp-src">' + esc(tt(r.kind || '')) + (r.published ? ' &middot; ' + esc(r.published === 'undated' ? t('undated') : when(r.published)) : '') +
+            (r.checked ? ' &middot; ' + esc(t('checked')) + ' ' + esc(when(r.checked)) : '') + '</span></td></tr>';
         }).join('') + '</tbody></table></div></div>';
     }).join('');
     $('fpCap').textContent = t('Compiled') + ' ' + T.fmtDate(D.fp.as_of) + '. ' + tt(D.fp.note);
@@ -109,8 +136,8 @@
         return '<tr><td>' + (arPage ? '<strong>' + esc(i.name_ar) + '</strong>'
           : '<strong>' + esc(i.name_en) + '</strong> <span lang="ar" dir="rtl" class="fp-src" style="display:inline;">' + esc(i.name_ar) + '</span>') +
           '<span class="fp-src">' + esc(per(i.unit)) + '</span></td>' +
-          '<td class="num">' + esc(T.money(i.avg, 'EGP')) + '</td><td class="num">' + esc(T.money(i.min, 'EGP') + '–' + T.money(i.max, 'EGP').replace('EGP ', '')) + '</td>' +
-          '<td class="num">' + (CUR === 'EGP' ? '—' : esc(T.money(conv(i.avg, 'EGP'), CUR))) + '</td></tr>';
+          '<td class="num">' + esc(money(i.avg, 'EGP')) + '</td><td class="num">' + esc(range(i.min, i.max, 'EGP')) + '</td>' +
+          '<td class="num">' + (CUR === 'EGP' ? '—' : esc(money(conv(i.avg, 'EGP'), CUR))) + '</td></tr>';
       }).join('') + '</tbody></table></div>';
     var src = D.prices.source || {};
     // Built from plain-text pieces so each can go through t() (a translated
@@ -126,8 +153,18 @@
     var el = $('fpRate');
     if (!el || !D.fx) return;
     var r = T.rate(D.fx, CUR);
-    el.textContent = CUR === 'EGP' ? 'Showing Egyptian pounds only.'
-      : '1 ' + CUR + ' = ' + T.rateText(r) + ' — ' + ((D.fx.source || {}).name_en || 'market rate') + ', ' + T.fmtDate(D.fx.as_of) + '. ' + ((D.fx.source || {}).note_en || '');
+    if (CUR === 'EGP') { el.textContent = t('Showing Egyptian pounds only.'); return; }
+    // The source's name and note in the page's language: fx-today.json carries
+    // Arabic ones; the English note is the same sentence every day, so it is
+    // a literal t() call, and any other note stays as the file gives it.
+    var src = D.fx.source || {}, F = arFmt();
+    var name = LANG === 'ar' && src.name_ar ? src.name_ar
+      : src.name_en === 'ExchangeRate-API (open access)' ? t('ExchangeRate-API (open access)') : (src.name_en || t('market rate'));
+    var note = LANG === 'ar' && src.note_ar ? src.note_ar
+      : src.note_en === 'Market reference rates, not the Central Bank of Egypt official fixing.'
+        ? t('Market reference rates, not the Central Bank of Egypt official fixing.') : (src.note_en || '');
+    el.textContent = t('1 %c = %r, %s, %d.').replace('%c', CUR).replace('%r', F && r != null ? F.rate(r, 'ar') : T.rateText(r))
+      .replace('%s', name).replace('%d', T.fmtDate(D.fx.as_of)) + ' ' + note;
   }
 
   // The quote checker: one select of the rows that carry a figure, one
@@ -147,7 +184,7 @@
     var sel = $('fpCheckItem');
     if (!sel || !D.fp) return;
     sel.innerHTML = rowsWithFigures().map(function (r) {
-      return '<option value="' + esc(r.key) + '">' + esc(tt(r.item)) + ' (' + esc(tt(r.unit)) + ', ' + esc(r.currency) + ')</option>';
+      return '<option value="' + esc(r.key) + '">' + esc(tt(r.item)) + ' (' + esc(tt(r.unit)) + (LANG === 'ar' ? '، ' : ', ') + esc(curName(r.currency)) + ')</option>';
     }).join('');
     renderCheck();
   }
@@ -159,7 +196,7 @@
     var raw = String(inp.value || '').replace(',', '.');
     var v = raw === '' ? null : verdict(parseFloat(raw), r.low, r.high);
     var rg = range(r.low, r.high, r.currency);
-    if (!v) { out.textContent = t('Type the price you were asked, in %c.').replace('%c', r.currency); return; }
+    if (!v) { out.textContent = t('Type the price you were asked, in %c.').replace('%c', curName(r.currency)); return; }
     var msg = v.kind === 'inside' ? t('Inside the published range of %r.')
       : v.kind === 'above' ? t('About %p% above the top of the published range of %r.')
       : t('About %p% below the published range of %r.');

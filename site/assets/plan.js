@@ -517,6 +517,33 @@
      (/sw.js) from the planner, then hand it the files this page has already
      loaded, so the very first visit works with no signal. Nothing is sent
      anywhere: the copies live in this browser's cache. */
+  // "Add to my calendar" (2026-11-18): an iCalendar file of the stops, made
+  // in the browser by ics.js and handed to the reader; nothing is sent. The
+  // stops are placed from the arrival date, so without one the button says
+  // what is missing instead of guessing.
+  function initIcs() {
+    var b = $('icsTrip'), note = $('icsNote');
+    if (!b || !window.EGYBI || !window.EGYBI.ics) return;
+    b.addEventListener('click', function () {
+      var ar = T.pageLang() === 'ar';
+      var trip = { start: S.trip.start, stops: S.trip.stops.map(function (x) {
+        return { id: x.id, days: x.days, name: ar && x.name_ar ? x.name_ar : x.name };
+      }) };
+      var file = window.EGYBI.ics.build(trip, { note: t('Planned on egybi.com. Check opening hours before you go.') });
+      if (!file) {
+        note.textContent = S.trip.stops.length ? t('Set your arrival date first, so each stop can be placed on its days.')
+          : t('Add a stop first.');
+        return;
+      }
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([file], { type: 'text/calendar;charset=utf-8' }));
+      a.download = 'egypt-trip.ics';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+      note.textContent = t('Calendar file made: one event for each stop. Open it to add them to your calendar; nothing was sent anywhere.');
+    });
+  }
+
   function initOffline() {
     var note = $('offlineNote');
     if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
@@ -545,6 +572,7 @@
     initSave();
     initShare();
     initOffline();
+    initIcs();
     $('clearPlan').addEventListener('click', function () {
       if (!S.trip.stops.length) return;
       S.trip.stops = []; save(); renderAll(); announce(t('All stops removed.'));

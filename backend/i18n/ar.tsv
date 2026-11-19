@@ -1332,6 +1332,18 @@ OpenStreetMap, as of %d	OpenStreetMap، حتى %d
 Absent right now:	غائبة الآن:
 None are missing at this build.	لا ينقص أيٌّ منها في هذا الإصدار.
 The places layer has not been generated yet. It appears automatically after the next “Build Atlas geo layers” run. The map of Egypt above already works.	لم تُولَّد طبقة الأماكن بعد. ستظهر تلقائيًا بعد التشغيل التالي لـ«Build Atlas geo layers». خريطة مصر أعلاه تعمل بالفعل.
+<span data-glyph="scroll"></span>Leaving Cairo airport	<span data-glyph="scroll"></span>الخروج من مطار القاهرة
+Leaving Cairo airport	الخروج من مطار القاهرة
+Airport limousines<span class="fp-src">Picked up at the kerb in front of each terminal. There are four classes: A, luxury cars; B, minibuses for up to seven people; C, mid-sized cars; D, London taxis.</span>	ليموزين المطار<span class="fp-src">يُستقل من الرصيف أمام كل مبنى ركاب. وهناك أربع فئات: A سيارات فاخرة، وB حافلات صغيرة حتى سبعة ركاب، وC سيارات متوسطة الحجم، وD سيارات أجرة لندنية.</span>
+<strong>Fixed prices by destination and car class</strong>	<strong>أسعار ثابتة حسب الوجهة وفئة السيارة</strong>
+<a href="https://www.cairo-airport.com/en-us/Services/Passenger-Guide/Move-From-To-Airport" rel="noopener">Cairo Airport: moving from and to the airport</a><span class="fp-src">Checked <time datetime="2026-11-18">18 November 2026</time></span>	<a href="https://www.cairo-airport.com/en-us/Services/Passenger-Guide/Move-From-To-Airport" rel="noopener">مطار القاهرة: الوصول إلى المطار والخروج منه</a><span class="fp-src">رُوجع في <time datetime="2026-11-18">١٨ نوفمبر ٢٠٢٦</time></span>
+Taxis<span class="fp-src">The airport warns that drivers often approach tourists in the arrival hall, and that the old black-and-white taxis have no meter, so their price is agreed before you set off. It says a class C limousine&#x27;s price shows the most a taxi fare should be.</span>	سيارات الأجرة<span class="fp-src">يحذّر المطار من أن السائقين كثيرًا ما يعرضون خدماتهم على السياح في صالة الوصول، وأن سيارات الأجرة القديمة البيضاء والسوداء بلا عدّاد، فيُتفق على سعرها قبل الانطلاق. ويقول إن سعر ليموزين الفئة C يبيّن أقصى ما ينبغي أن تبلغه أجرة التاكسي.</span>
+<strong>White taxis have meters</strong>	<strong>سيارات الأجرة البيضاء بعدّاد</strong>
+Buses<span class="fp-src">City buses to all parts of Cairo, and coaches to other governorates, leave from the bus station in the car park in front of Terminal 1.</span>	الحافلات<span class="fp-src">تنطلق حافلات المدينة إلى كل أنحاء القاهرة، وحافلات المحافظات الأخرى، من موقف الحافلات في ساحة الانتظار أمام مبنى الركاب ١.</span>
+<strong>From Terminal 1 only</strong>	<strong>من مبنى الركاب ١ فقط</strong>
+Uber pick-up points<span class="fp-src">In Terminal 2, turn left after customs and leave through Gate 7. Uber gives no pick-up point for Terminal 1.</span>	نقاط ركوب Uber<span class="fp-src">في مبنى الركاب ٢ اتجه يسارًا بعد الجمارك واخرج من البوابة ٧. ولا تذكر Uber نقطة ركوب في مبنى الركاب ١.</span>
+<strong>Terminal 2: outside Gate 7. Terminal 3: the B6 parking space</strong>	<strong>مبنى الركاب ٢: خارج البوابة ٧. مبنى الركاب ٣: موقف B6</strong>
+<a href="https://www.uber.com/global/en/r/airports/cai/pickup/" rel="noopener">Uber: Cairo airport pick-ups</a><span class="fp-src">Checked <time datetime="2026-11-18">18 November 2026</time></span>	<a href="https://www.uber.com/global/en/r/airports/cai/pickup/" rel="noopener">Uber: نقاط الركوب في مطار القاهرة</a><span class="fp-src">رُوجع في <time datetime="2026-11-18">١٨ نوفمبر ٢٠٢٦</time></span>
 <span data-glyph="scroll"></span>Tricks travellers report	<span data-glyph="scroll"></span>حيل يرويها المسافرون
 Tricks travellers report	حيل يرويها المسافرون
 <a href="https://wheretheroadforks.com/?p=2023330" rel="noopener">Where the Road Forks: Egypt travel tips (3 Mar 2024)</a><span class="fp-src">Checked <time datetime="2026-11-18">18 November 2026</time></span>	<a href="https://wheretheroadforks.com/?p=2023330" rel="noopener">مدونة Where the Road Forks: نصائح للسفر إلى مصر (٣ مارس ٢٠٢٤)</a><span class="fp-src">رُوجع في <time datetime="2026-11-18">١٨ نوفمبر ٢٠٢٦</time></span>
@@ -1595,3 +1607,16 @@ Choose from 18 major sites and the other mapped places, set the days at each, an
 Or search the mapped places	أو ابحث في الأماكن على الخريطة
 Or search the mapped places (%n)	أو ابحث في الأماكن على الخريطة (%n)
 No stops yet. Click a site on the map, use the buttons above, or search the mapped places.	لا توجد محطات بعد. اضغط على موقع في الخريطة، أو استخدم الأزرار أعلاه، أو ابحث في الأماكن على الخريطة.
+Showing Egyptian pounds only.	المبالغ معروضة بالجنيه المصري فقط.
+ExchangeRate-API (open access)	ExchangeRate-API (وصول مفتوح)
+market rate	سعر السوق
+Market reference rates, not the Central Bank of Egypt official fixing.	أسعار استرشادية من السوق، وليست السعر الرسمي للبنك المركزي المصري.
+1 %c = %r, %s, %d.	١ %c = %r، %s، %d.
+Grand Egyptian Museum opening hours<span class="fp-src">The museum complex opens at 8:30 and closes at 19:00, or at 22:00 on Wednesday and Saturday. Last entry is one hour before the galleries close. Tickets are for a time slot, booked on the site.</span>	مواعيد فتح المتحف المصري الكبير<span class="fp-src">يفتح مجمّع المتحف في ٨:٣٠ ويغلق في ١٩:٠٠، أو في ٢٢:٠٠ يومي الأربعاء والسبت. ويكون آخر دخول قبل إغلاق القاعات بساعة. والتذاكر لموعد دخول محدّد، تُحجز على الموقع.</span>
+<strong>Galleries 9:00 to 18:00; to 21:00 on Wednesday and Saturday</strong>	<strong>القاعات من ٩:٠٠ إلى ١٨:٠٠، وحتى ٢١:٠٠ يومي الأربعاء والسبت</strong>
+<a href="https://tickets.gem.eg/" rel="noopener">Grand Egyptian Museum: official ticketing website</a><span class="fp-src">Checked <time datetime="2026-11-18">18 November 2026</time></span>	<a href="https://tickets.gem.eg/" rel="noopener">المتحف المصري الكبير: موقع التذاكر الرسمي</a><span class="fp-src">رُوجع في <time datetime="2026-11-18">١٨ نوفمبر ٢٠٢٦</time></span>
+Add to my calendar	أضف إلى تقويمي
+Planned on egybi.com. Check opening hours before you go.	خُطّطت على egybi.com. راجع مواعيد الفتح قبل أن تذهب.
+Set your arrival date first, so each stop can be placed on its days.	حدّد تاريخ وصولك أولًا، حتى توضع كل محطة في أيامها.
+Add a stop first.	أضف محطة أولًا.
+Calendar file made: one event for each stop. Open it to add them to your calendar; nothing was sent anywhere.	جُهّز ملف التقويم: حدث واحد لكل محطة. افتحه لتضيفها إلى تقويمك؛ لم يُرسل شيء إلى أي مكان.
