@@ -18,6 +18,7 @@ import heat_calendar
 import sun_times
 
 from . import egfmt
+from .madeinegypt import near_section
 from .common import SITE, SITE_URL, breadcrumb, chrome, esc, page, read_text, write_index_block, write_text
 
 
@@ -356,7 +357,7 @@ def build_site_months():
 
 <section class="surface-light">
   <div class="wrap" style="max-width:860px;">
-    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">The other measured sites</h2>
+{near_section(key, name)}    <h2 style="font-size:var(--fs-lg);margin:0 0 12px;">The other measured sites</h2>
     <div class="chip-row">{others}</div>
     <p style="margin-top:14px;"><a href="../egypt-weather-by-month.html">Every site, every month, in one table &rarr;</a></p>
   </div>

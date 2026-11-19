@@ -10,8 +10,8 @@
     {"key": "abu-simbel", "name": "Abu Simbel", "near": ["abu-simbel"], "radius_km": 15}
   ],
   "legs": [
-    {"between": ["cairo", "luxor"], "rows": ["train-bashtil", "train-fares", "train-tickets"]},
-    {"between": ["cairo", "aswan"], "rows": ["train-bashtil", "train-fares", "train-tickets"]},
+    {"between": ["cairo", "luxor"], "rows": ["train-bashtil", "train-sleeper", "train-fares", "train-tickets"]},
+    {"between": ["cairo", "aswan"], "rows": ["train-bashtil", "train-sleeper", "train-fares", "train-tickets"]},
     {"between": ["aswan", "abu-simbel"], "rows": ["abu-simbel-road"]}
   ]
 }

@@ -100,6 +100,23 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
       });
       if (off.length) fail(`TWIN LINK WRONG FOLDER: ${where} links to ${off.map(h => new URL(h).pathname).join(', ')}`);
 
+      // The home briefing home.js writes (2026-11-18): its title, lead and
+      // add buttons read in the page's language; English stays English.
+      if (page === 'index.html' && loaded) {
+        const brief = await p.evaluate(() => ({
+          title: (document.getElementById('briefTitle') || {}).textContent || '',
+          lead: (document.getElementById('briefLead') || {}).textContent || '',
+          btn: ((document.querySelector('#briefGrid [data-add]') || {}).textContent || '').trim(),
+          legend: (document.getElementById('heatLegend') || {}).textContent || '',
+        }));
+        const eng = /The heat, site by site|Arriving |\+ Add to my plan|In your plan|or less|or more|by day/;
+        const all = brief.title + ' | ' + brief.lead + ' | ' + brief.btn + ' | ' + brief.legend;
+        if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} briefing reads "${all.slice(0, 160)}"`);
+        else if (!lang && !(/^The heat, site by site, in /.test(brief.title) && /^Arriving /.test(brief.lead)))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: the English briefing changed to "${all.slice(0, 160)}"`);
+        else console.log(`${where}: briefing "${brief.title}"`);
+      }
+
       // The visit page (2026-11-18): the month caption visit.js writes reads
       // in the page's language; English stays English.
       if (page === 'visit.html' && loaded) {

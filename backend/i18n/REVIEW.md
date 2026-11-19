@@ -287,6 +287,21 @@ Please check:
   same reason;
 - Arabic «رابطة الدول المستقلة» for CIS, and «مير» for the Mir card.
 
+## Home page briefing (2026-11-18)
+
+26 lines from home.js: the trip briefing, the holiday list labels and the
+exchange-rate caption.
+
+Please check:
+- «الحرارة في كل موقع خلال %m.» and «Жара по каждому месту: %m.»;
+- the Russian lead «… в месяце «%m» …», which quotes the month name to
+  avoid declining it; a smoother wording is welcome;
+- «عدد الأيام في %m: %n» for "July, days: 3" (worded to avoid number-noun
+  agreement, which would need a different noun form for 1, 2, 3-10 and 11+);
+- the heat legend bands, «٢١ °م أو أقل» … «٣٩ °م أو أكثر».
+- the 14 holiday names and 8 notes from calendar.json, especially the Russian
+  «Солнце в святилище Абу-Симбела» for the sun alignment day, and the Arabic
+  figures in the museum capacity line («١٥٬٠٠٠» … «٦٠٪»).
 ## Heat page (visit.html, 2026-11-18)
 
 32 lines from visit.js: map tooltips, the month caption, the site card, the
