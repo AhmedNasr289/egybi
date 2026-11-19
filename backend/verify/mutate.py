@@ -575,6 +575,13 @@ case("a fair-price row past its re-check date", "coverage.py", ["site/data/fair-
      lambda o: "price row past its re-check date" in o and "khufu-interior last checked 2025-01-02" in o, COVERAGE)
 # the visa rise announced for 1 January 2027 has happened but the page still
 # gives US$30 as the current fee (2026-11-17): moved to a date already past
+# Leaving Cairo airport (2026-11-18): every row cites the airport's or the
+# operator's own page. A pick-up point re-cited to a blog must fail coverage.py.
+case("an airport row cited to a blog", "coverage.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"source_url": "https://www.uber.com/global/en/r/airports/cai/pickup/"',
+                  '"source_url": "https://example-travel-blog.com/cairo-airport-uber"'),
+     lambda o: "airport row not sourced from the airport or the operator" in o and "cai-uber" in o, COVERAGE)
+
 # Tricks travellers report, shown on the visit pages of the sites they were
 # reported at (2026-11-18). Losing Giza from the camel row would hide it from
 # the Giza page; test_scams.py must catch it.
