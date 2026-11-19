@@ -250,7 +250,7 @@
       pin.bindTooltip('<strong>' + esc(dname(d)) + '</strong><br>' + m.label +
                       ': <strong>' + m.fmt(d[S.metric]) + '</strong>',
                       { direction: 'top', className: 'egypt-map-tip' });
-      pin._dName = d.name;          // read by the label layer
+      pin._dName = dname(d);        // read by the label layer, in the page's language
       pin.on('click', function () { select(d.key); });
       pin.on('mouseover', function () { pin.setStyle({ radius: 8, color: GOLD }); });
       pin.on('mouseout', function () { pin.setStyle({ radius: 6, color: GOLD_INK }); });
@@ -560,7 +560,12 @@
     }
     if (!S.notes) bits.push(esc(t('Planner’s notes have not been generated for this build.')));
     if (S.card && S.card.skipped && S.card.skipped.length)
-      bits.push('<strong>' + esc(t('Skipped:')) + '</strong> ' + esc(S.card.skipped.join('; ')) + '.');
+      bits.push('<strong>' + esc(t('Skipped:')) + '</strong> ' + esc(LANG === 'en' ? S.card.skipped.join('; ')
+        : S.card.skipped.map(function (s) {
+            var nm = String(s).split(':')[0];
+            var d = (S.card.districts || []).filter(function (x) { return x.name === nm; })[0];
+            return d ? dname(d) : nm;
+          }).join(sep())) + '.');
     el.innerHTML = bits.join(' ');
   }
 

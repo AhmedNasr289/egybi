@@ -193,10 +193,13 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
             dead: (document.getElementById('deadEndFinding') || {}).textContent || '',
             meta: (document.getElementById('streetsMeta') || {}).textContent || '',
             row: rows[0].textContent || '',
+            // The district names drawn on the map (mapkit labels); they stayed
+            // English on the Arabic and Russian pages until 2026-11-19.
+            labels: Array.from(document.querySelectorAll('#streetsMap .mk-label')).map(e => e.textContent).join(' | '),
           } : null;
         }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
-        const eng = /Intersection density|Junctions per square|Read the numbers together|cul-de-sac story|Era labels are ours|Street network: |Downtown Cairo|Garden suburb|Desert new town/;
-        const all = st ? [st.legend, st.spread, st.dead, st.meta, st.row].join(' | ') : '';
+        const eng = /Intersection density|Junctions per square|Read the numbers together|cul-de-sac story|Era labels are ours|Street network: |Downtown Cairo|Garden suburb|Desert new town|Heliopolis|Maadi|Nasr City|New Alamein|not attempted/;
+        const all = st ? [st.legend, st.spread, st.dead, st.meta, st.row, st.labels].join(' | ') : '';
         if (!st) fail(`TWIN DATA NOT LOADED: ${where} - the streets legend or table stayed empty`);
         else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} streets page reads "${(all.match(eng) || [''])[0]}" in "${all.slice(0, 140)}"`);
         else if (lang === 'ar/' && /[0-9]/.test(st.row)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} streets table in Western digits "${st.row.slice(0, 120)}"`);
