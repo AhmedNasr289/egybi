@@ -47,6 +47,9 @@ const CLOCK = /[0-9٠-٩]{1,2}:[0-9٠-٩]{2}/g;
         when: w.map((e) => [e.getAttribute('data-from'), e.getAttribute('data-to')]),
         hours: Array.from(document.querySelectorAll('#dossier .dossier-hours')).map((e) => e.textContent),
         sun: Array.from(document.querySelectorAll('#dossier .dossier-sun')).map((e) => e.textContent),
+        // Each stop sheet ends with its coordinates (plan.js coords, 2026-11-19).
+        coords: Array.from(document.querySelectorAll('#dossier .sheet > .chart-cap:last-child')).map((e) => e.textContent)
+          .filter((c) => /[0-9٠-٩]{2}[.٫][0-9٠-٩]{4}/.test(c)),
       } : null;
     }, null, { timeout: 15000 }).then((h) => h.jsonValue(), () => null);
     if (!got) { fail(`DOSSIER DATES WRONG: ${where} - no three dated stop sheets with hours appeared`); continue; }
@@ -57,6 +60,8 @@ const CLOCK = /[0-9٠-٩]{1,2}:[0-9٠-٩]{2}/g;
     if (!/\b0?7:00\b/.test(giza)) fail(`DOSSIER HOURS MISSING: ${where} Giza sheet reads "${got.hours[0]}"`);
     if (got.sun.length !== 3) fail(`DOSSIER SUN MISSING: ${where} has ${got.sun.length} sun line(s) for 3 stops`);
     got.sun.forEach((s, i) => { if ((s.match(CLOCK) || []).length < 2) fail(`DOSSIER SUN MISSING: ${where} stop ${i + 1} sun line has no times: "${s.slice(0, 100)}"`); });
+    if (lang === 'ar/' && got.coords.some((c) => /[0-9]\.[0-9]/.test(c))) fail(`DOSSIER DIGITS WRONG: ${where} coordinates in Western digits "${got.coords.join(' | ').slice(0, 120)}"`);
+    if (!got.coords.length) fail(`DOSSIER DIGITS WRONG: ${where} - no stop coordinates found`);
     if (lang && /Opening hours|sunrise|sunset|Opens /.test(got.hours.join(' ') + got.sun.join(' '))) {
       fail(`DOSSIER LEFT IN ENGLISH: ${where} reads "${(got.hours[0] + ' | ' + got.sun[0]).slice(0, 160)}"`);
     }

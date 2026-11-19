@@ -1651,6 +1651,12 @@ case("the story map labels back in English", "twin-data.js", ["site/assets/stori
      lambda: edit("site/assets/stories.js", "function (p) { return p && gv(p.name); },", "function (p) { return p && p.name; },"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "stories map labels" in o, f"node {HERE}/twin-data.js")
 
+# The dossier's stop coordinates follow the page's digits (2026-11-19).
+case("the dossier coordinates back in Western digits", "dossier-days.js", ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js", "if (lang === 'ar' && F) return F.fixed(x.lat, 'ar', 4)",
+                  "if (false && F) return F.fixed(x.lat, 'ar', 4)"),
+     lambda o: "DOSSIER DIGITS WRONG" in o, f"node {HERE}/dossier-days.js")
+
 # Without leaflet.js the heat page still fills its tables (2026-11-19). The
 # old early return left the whole page blank; map-fallback.js must catch it.
 case("the heat page blank again without the map library", "map-fallback.js", ["site/assets/visit.js"],
