@@ -91,6 +91,25 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
       }
       if (!loaded) fail(`TWIN DATA NOT LOADED: ${where} (data requests: ${data.map(d => d.status + ' ' + d.path).join(', ') || 'none'})`);
 
+      // The planner (2026-11-19): the place count comes from geo-places.json
+      // (it read "897" for weeks after the file grew to 901), and the legend's
+      // bands are trip.js BANDS (it said 22–28 / 28–34 / 34–39 while the map
+      // painted 22–27 / 28–33 / 34–38).
+      if (page === 'plan.html' && loaded) {
+        const n = JSON.parse(fs.readFileSync(path.join(SITE, 'data', 'geo-places.json'), 'utf8')).places.length;
+        const got = await p.waitForFunction(() => {
+          const l = document.querySelector('label[for="placeSearch"]');
+          const txt = l && l.firstChild ? l.firstChild.textContent : '';
+          return /\(/.test(txt) ? { label: txt, legend: (document.querySelector('.heat-legend') || {}).textContent || '' } : null;
+        }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
+        const west = (s) => s.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660));
+        if (!got) fail(`PLANNER COUNT WRONG: ${where} - the search label never showed a count`);
+        else if (!west(got.label).includes('(' + n + ')')) fail(`PLANNER COUNT WRONG: ${where} label reads "${got.label}", geo-places.json has ${n}`);
+        else if (!lang && !['22–27 °C', '28–33 °C', '34–38 °C'].every(b => got.legend.includes(b)))
+          fail(`PLANNER LEGEND WRONG: the English legend reads "${got.legend.slice(0, 160)}", not the trip.js bands`);
+        else console.log(`${where}: ${n} places in the search label, legend on the trip.js bands`);
+      }
+
       // Fair prices (2026-11-19): the rate line fair.js writes reads in the
       // page's language, no checked date is left as raw ISO, and the Arabic
       // page writes the published range with Arabic-Indic digits.
