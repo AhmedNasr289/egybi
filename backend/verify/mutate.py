@@ -1536,6 +1536,13 @@ case("the place card heading back in English", "twin-data.js", ["site/assets/pla
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
 
+# The Arabic fair-prices page writes its prices with Arabic-Indic digits
+# (2026-11-19). If fair.js stopped using egfmt.js there, the published ranges
+# would go back to "EGP 50–100"; twin-data.js must catch it.
+case("the Arabic fair prices back in Western digits", "twin-data.js", ["site/assets/fair.js"],
+     lambda: edit("site/assets/fair.js", "return LANG === 'ar' && F ? F : null; }", "return null; }"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "Western digits" in o, f"node {HERE}/twin-data.js")
+
 # A kind label passed to t() as a variable is never collected into the
 # translation table, so it stayed English on the live Arabic and Russian
 # pages (2026-11-18). Writing one back as a plain string must be caught.
