@@ -174,6 +174,22 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         // found on the live site as "28.8986, 33.2032").
         const westCoords = card.values.filter(v => /^\d+\.\d+, \d+\.\d+$/.test(v));
         if (lang === 'ar/' && westCoords.length) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card coordinates in Western digits "${westCoords[0]}"`);
+        // The English and Russian cards round as egfmt.js does, half away
+        // from zero on the decimal digits, so they agree with the Arabic card
+        // (2026-11-19: toFixed gave 28.8986 where the Arabic card said 28.8987).
+        if (lang !== 'ar/' && westCoords.length) {
+          const name = await p.evaluate(() => {
+            const h = document.querySelector('#placeDetail h3');
+            return h ? (h.firstChild && h.firstChild.nodeType === 3 ? h.firstChild.textContent : h.textContent).trim() : '';
+          });
+          const geo = JSON.parse(fs.readFileSync(path.join(SITE, 'data', 'geo-places.json'), 'utf8'));
+          const pl = (geo.places || []).find(x => x.name === name);
+          const half = (x) => { const r = Number(Math.round(Number(Math.abs(x) + 'e4')) + 'e-4'); return (x < 0 ? -r : r).toFixed(4); };
+          const want = pl ? half(pl.lat) + ', ' + half(pl.lon) : null;
+          if (!pl) fail(`TWIN DATA NOT LOADED: ${where} - the opened card "${name}" is not in geo-places.json`);
+          else if (westCoords[0] !== want) fail(`PLACE COORDINATES ROUNDED WRONG: ${where} ${name} shows "${westCoords[0]}", the data rounds to "${want}"`);
+          else console.log(`${where}: ${name} coordinates ${want}`);
+        }
       }
 
       // Text the header scripts write (stage 4a): in Arabic and Russian it
