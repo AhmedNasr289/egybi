@@ -1121,6 +1121,14 @@ case("structured data that no longer parses", "seo.py", ["site/streets.html"],
                   '"@context": "https://schema.org",,'),
      lambda o: "JSON-LD does not parse" in o, PY_SEO)
 
+# A site page that shows the Ministry's opening hours says so in its title
+# (2026-11-19, SEO). Back to the weather-only title, "Karnak opening hours"
+# has no matching result again; seo.py must catch it.
+case("a site page with opening hours titled for the weather only", "seo.py", ["site/visit/karnak.html"],
+     lambda: edit("site/visit/karnak.html", "<title>Karnak Temple: opening hours and weather by month · EgyBI</title>",
+                  "<title>Karnak Temple weather by month · EgyBI</title>"),
+     lambda o: "site page with opening hours does not say so in its title" in o, PY_SEO)
+
 
 # ---- 24. map-completeness: a map that draws but explains nothing ------------
 # The defect this checker was written for. stories.html rendered its districts
