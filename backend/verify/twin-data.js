@@ -91,6 +91,49 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
       }
       if (!loaded) fail(`TWIN DATA NOT LOADED: ${where} (data requests: ${data.map(d => d.status + ' ' + d.path).join(', ') || 'none'})`);
 
+      // The planner (2026-11-19): the place count comes from geo-places.json
+      // (it read "897" for weeks after the file grew to 901), and the legend's
+      // bands are trip.js BANDS (it said 22–28 / 28–34 / 34–39 while the map
+      // painted 22–27 / 28–33 / 34–38).
+      if (page === 'plan.html' && loaded) {
+        const n = JSON.parse(fs.readFileSync(path.join(SITE, 'data', 'geo-places.json'), 'utf8')).places.length;
+        const got = await p.waitForFunction(() => {
+          const l = document.querySelector('label[for="placeSearch"]');
+          const txt = l && l.firstChild ? l.firstChild.textContent : '';
+          return /\(/.test(txt) ? { label: txt, legend: (document.querySelector('.heat-legend') || {}).textContent || '' } : null;
+        }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
+        const west = (s) => s.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660));
+        if (!got) fail(`PLANNER COUNT WRONG: ${where} - the search label never showed a count`);
+        else if (!west(got.label).includes('(' + n + ')')) fail(`PLANNER COUNT WRONG: ${where} label reads "${got.label}", geo-places.json has ${n}`);
+        else if (!lang && !['22–27 °C', '28–33 °C', '34–38 °C'].every(b => got.legend.includes(b)))
+          fail(`PLANNER LEGEND WRONG: the English legend reads "${got.legend.slice(0, 160)}", not the trip.js bands`);
+        else console.log(`${where}: ${n} places in the search label, legend on the trip.js bands`);
+      }
+
+      // Fair prices (2026-11-19): the rate line fair.js writes reads in the
+      // page's language, no checked date is left as raw ISO, and the Arabic
+      // page writes the published range with Arabic-Indic digits.
+      if (page === 'fair-prices.html' && loaded) {
+        const fp = await p.waitForFunction(() => {
+          const r = document.getElementById('fpRate');
+          return r && r.textContent.trim() ? {
+            rate: r.textContent.trim(),
+            src: Array.from(document.querySelectorAll('#fpGroups td .fp-src')).map(e => e.textContent).join(' | '),
+            first: ((document.querySelector('#fpGroups td.num') || {}).textContent || '').trim(),
+          } : null;
+        }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
+        const iso = /\b20\d\d-\d\d-\d\d\b/;
+        if (!fp) fail(`TWIN DATA NOT LOADED: ${where} - the rate line stayed empty`);
+        else if (lang && /Market reference rates|Showing Egyptian pounds|open access/.test(fp.rate))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} rate line reads "${fp.rate.slice(0, 160)}"`);
+        else if (iso.test(fp.src)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} shows a raw ISO date: "${(fp.src.match(iso) || [])[0]}"`);
+        else if (lang === 'ar/' && (/[0-9]/.test(fp.first) || !/[٠-٩]/.test(fp.first)))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} writes the price "${fp.first}" in Western digits`);
+        else if (!lang && !/^1 USD = EGP [\d.]+, .*Market reference rates/.test(fp.rate))
+          fail(`TWIN SCRIPT TEXT IN ENGLISH: the English rate line changed to "${fp.rate.slice(0, 160)}"`);
+        else console.log(`${where}: rate line and prices in the page's form ("${fp.first}")`);
+      }
+
       const links = await p.evaluate(rooted => [...document.querySelectorAll('main a[href]')]
         .map(a => a.href)
         .filter(h => rooted.some(n => new URL(h).pathname.endsWith('/' + n))), ROOTED);
@@ -181,6 +224,22 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         // found on the live site as "28.8986, 33.2032").
         const westCoords = card.values.filter(v => /^\d+\.\d+, \d+\.\d+$/.test(v));
         if (lang === 'ar/' && westCoords.length) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card coordinates in Western digits "${westCoords[0]}"`);
+        // The English and Russian cards round as egfmt.js does, half away
+        // from zero on the decimal digits, so they agree with the Arabic card
+        // (2026-11-19: toFixed gave 28.8986 where the Arabic card said 28.8987).
+        if (lang !== 'ar/' && westCoords.length) {
+          const name = await p.evaluate(() => {
+            const h = document.querySelector('#placeDetail h3');
+            return h ? (h.firstChild && h.firstChild.nodeType === 3 ? h.firstChild.textContent : h.textContent).trim() : '';
+          });
+          const geo = JSON.parse(fs.readFileSync(path.join(SITE, 'data', 'geo-places.json'), 'utf8'));
+          const pl = (geo.places || []).find(x => x.name === name);
+          const half = (x) => { const r = Number(Math.round(Number(Math.abs(x) + 'e4')) + 'e-4'); return (x < 0 ? -r : r).toFixed(4); };
+          const want = pl ? half(pl.lat) + ', ' + half(pl.lon) : null;
+          if (!pl) fail(`TWIN DATA NOT LOADED: ${where} - the opened card "${name}" is not in geo-places.json`);
+          else if (westCoords[0] !== want) fail(`PLACE COORDINATES ROUNDED WRONG: ${where} ${name} shows "${westCoords[0]}", the data rounds to "${want}"`);
+          else console.log(`${where}: ${name} coordinates ${want}`);
+        }
       }
 
       // Text the header scripts write (stage 4a): in Arabic and Russian it

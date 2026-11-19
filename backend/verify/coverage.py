@@ -229,6 +229,8 @@ HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "arrival.json": 60
                 "getting-around.json": 60, "made-in-egypt.json": 120}
 # Governments' own travel advice for Egypt, the only sources a safety row may
 # cite: UK, US, Australia, Canada, Ireland.
+# The airport's own site, and the ride or transport operators' own pages.
+AIRPORT_SOURCES = {"cairo-airport.com", "uber.com", "indrive.com"}
 OFFICIAL_ADVICE = {"gov.uk", "travel.state.gov", "smartraveller.gov.au", "travel.gc.ca", "ireland.ie", "dfa.ie"}
 writers = {}
 for wf in posix_glob(".github/workflows/*.yml"):
@@ -310,6 +312,14 @@ for name, limit in HAND_CURATED.items():
                 host = re.sub(r"^https?://(www\.)?", "", str(r.get("source_url") or "")).split("/")[0]
                 if host not in OFFICIAL_ADVICE:
                     findings["safety row not sourced from official travel advice"].append(
+                        f"{name}: {r.get('key')} cites {host or 'nothing'}")
+            # How to leave an airport is the airport's or the operator's own
+            # word, never a blog's: a pick-up point or a bus stand that moved
+            # strands a tired arrival (2026-11-18).
+            if g.get("key") == "airport":
+                host = re.sub(r"^https?://(www\.)?", "", str(r.get("source_url") or "")).split("/")[0]
+                if host not in AIRPORT_SOURCES:
+                    findings["airport row not sourced from the airport or the operator"].append(
                         f"{name}: {r.get('key')} cites {host or 'nothing'}")
             # A row with no link must say what was searched and when ("Searched
             # 17 Nov 2026: no city list on careem.com"). A blank or bare source
