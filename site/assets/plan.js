@@ -61,7 +61,14 @@
 
   /* ------------------------------------------------------------------ map */
   function initMap() {
-    if (!window.L || !window.EGYBI.mapkit) return;
+    // Without the map library the stop list, search and dossier still work;
+    // the map box says so instead of staying empty (maps plan stage 2).
+    if (!window.L || !window.EGYBI.mapkit) {
+      var box = $('planMap');
+      if (box) box.innerHTML = '<p class="chart-cap" style="padding:16px;margin:0;">' +
+        esc(t('The map could not load. You can still add stops with the buttons and the search above.')) + '</p>';
+      return;
+    }
     var m = window.EGYBI.mapkit.create('planMap', {
       locator: window.EGYBI_EGYPT_GEO || null,
       credit: ['geoboundaries', 'osm', 'power'],
@@ -162,6 +169,11 @@
   function initSearch() {
     var dl = $('placeOptions'), inp = $('placeSearch'), btn = $('placeAdd');
     if (!dl || !D.places) return;
+    // The count is read from the file, never typed into the page: it said 897
+    // for weeks after geo-places.json grew to 901 (2026-11-19).
+    var lbl = inp && inp.parentNode;
+    if (lbl && lbl.firstChild && lbl.firstChild.nodeType === 3)
+      lbl.firstChild.nodeValue = t('Or search the mapped places (%n)').replace('%n', pageDigits(D.places.places.length));
     var seen = {};
     dl.innerHTML = D.places.places.map(function (p) {
       var label = p.name + ' — ' + (KIND[p.kind] || p.kind) + (p.gov ? ', ' + gv(p.gov) : '');
@@ -278,7 +290,7 @@
     if (!ul) return;
     var st = S.trip.stops;
     if (!st.length) {
-      ul.innerHTML = '<li class="sheet stop" style="display:block;"><p style="margin:0;">' + esc(t('No stops yet. Click a site on the map, use the buttons above, or search the 897 mapped places.')) + '</p></li>';
+      ul.innerHTML = '<li class="sheet stop" style="display:block;"><p style="margin:0;">' + esc(t('No stops yet. Click a site on the map, use the buttons above, or search the mapped places.')) + '</p></li>';
     } else {
       ul.innerHTML = st.map(function (x, i) {
         var h = heatFor(x), first = h.rows[0], bd = first ? T.band(first.max) : null;

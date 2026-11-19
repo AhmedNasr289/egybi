@@ -331,6 +331,12 @@ jobs:
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh dossier-days node backend/verify/dossier-days.js
 
+      # Without leaflet.js the heat page and the planner say the map could
+      # not load and still fill their tables and buttons (maps plan stage 2).
+      - name: map-fallback.js
+        if: always() && needs.gate.outputs.browser == 'true'
+        run: backend/verify/ci-step.sh map-fallback node backend/verify/map-fallback.js
+
       - name: today-sun.js
         if: always() && needs.gate.outputs.browser == 'true'
         run: backend/verify/ci-step.sh today-sun node backend/verify/today-sun.js
