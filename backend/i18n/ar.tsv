@@ -1602,3 +1602,33 @@ Things made in Egypt that you can watch being made, buy or try on your trip: whe
 We list a craft or a maker only when a named source describes it: the maker&#x27;s own site, an official or academic page, or the press. A price or a tip on telling the real thing from an imitation appears only when a source gives it, with that source beside it. Where we found no website or account for a maker, we say so rather than guess one. We link to the makers instead of copying their pictures. Warnings about shops come from several travellers&#x27; reports, and say so.	لا ندرج حرفة أو صانعًا إلا إذا وصفه مصدر محدّد: موقع الصانع نفسه، أو صفحة رسمية أو أكاديمية، أو الصحافة. ولا يظهر سعر أو نصيحة للتمييز بين الأصلي والتقليد إلا إذا ذكره مصدر، والمصدر بجانبه. وحين لا نجد موقعًا أو حسابًا لصانع نقول ذلك ولا نخمّن. ونضع روابط إلى الصانعين بدل نسخ صورهم. أما التحذيرات من المتاجر فمصدرها روايات عدد من المسافرين، ونذكر ذلك.
 Items listed: 34. Compiled <time datetime="2026-11-18">18 November 2026</time>.	عدد البنود: ٣٤. جُمعت في <time datetime="2026-11-18">١٨ نوفمبر ٢٠٢٦</time>.
 Made near here:	صُنع بالقرب من هنا:
+%n km²	%n كم²
+%n million	%n مليون
+%n per km²	%n في الكيلومتر المربع
+All layers loaded. OpenStreetMap layers © OpenStreetMap contributors (ODbL); oldest layer refresh: %d.	حُمّلت كل الطبقات. طبقات OpenStreetMap © مساهمو OpenStreetMap (ODbL)؛ أقدم تحديث لطبقة: %d.
+Area in km²	المساحة بالكيلومتر المربع
+Clinic	عيادة
+Cultural	ثقافي
+Density per km²	الكثافة في الكيلومتر المربع
+Egypt governorate indicators: the same data the map shows	مؤشرات محافظات مصر: البيانات نفسها التي تعرضها الخريطة
+Facility and school counts are what OpenStreetMap has mapped: a relative pattern, not official registers.	أعداد المنشآت والمدارس هي ما رسمه OpenStreetMap: صورة نسبية، لا سجلات رسمية.
+Growth 2017→2023	النمو ٢٠١٧←٢٠٢٣
+Hospital	مستشفى
+Interactive map of Egypt’s 27 governorates. Tab to a governorate and press Enter for its figures.	خريطة تفاعلية لمحافظات مصر الـ٢٧. انتقل إلى محافظة بمفتاح Tab واضغط Enter لعرض أرقامها.
+Mapped health facilities	المنشآت الصحية المرسومة على الخريطة
+Mapped schools	المدارس المرسومة على الخريطة
+Natural	طبيعي
+Not generated yet: %l. These layers appear after the first "Build Atlas geo layers" run; the governorate map below already works.	لم تُنشأ بعد: %l. تظهر هذه الطبقات بعد أول تشغيل لـ"Build Atlas geo layers"؛ أما خريطة المحافظات أدناه فتعمل الآن.
+Points on the map	النقاط على الخريطة
+Population (2023)	السكان (٢٠٢٣)
+Source: %s, as of %d.	المصدر: %s، حتى %d.
+This map could not finish loading, so the layers above are unavailable. The governorate outline below is drawn from data that comes with the page. Please tell us: the fault is ours.	تعذّر إكمال تحميل هذه الخريطة، لذا لا تتوفر الطبقات أعلاه. حدود المحافظات أدناه مرسومة من بيانات مرفقة بالصفحة. أخبرنا من فضلك: الخطأ خطؤنا.
+Unavailable: this layer failed to load	غير متاح: تعذّر تحميل هذه الطبقة
+Urban population	سكان الحضر
+Urban share	نسبة الحضر
+Visitor guide:	دليل الزائر:
+World Heritage site	موقع تراث عالمي
+health facilities	المنشآت الصحية
+heritage sites	مواقع التراث
+hospitals: %h, clinics: %c	مستشفيات: %h، عيادات: %c
+schools	المدارس

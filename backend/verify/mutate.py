@@ -1564,6 +1564,13 @@ case("the place card heading back in English", "twin-data.js", ["site/assets/pla
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
 
+# The Atlas legend reads in the page's language (2026-11-19). A metric label
+# taken out of t() puts English back on the Arabic and Russian Atlas;
+# twin-data.js must catch it.
+case("the Atlas legend title back in English", "twin-data.js", ["site/assets/geospatial.js"],
+     lambda: edit("site/assets/geospatial.js", "label: t('Population (2023)')", "label: 'Population (2023)'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "Atlas" in o, f"node {HERE}/twin-data.js")
+
 # A kind label passed to t() as a variable is never collected into the
 # translation table, so it stayed English on the live Arabic and Russian
 # pages (2026-11-18). Writing one back as a plain string must be caught.

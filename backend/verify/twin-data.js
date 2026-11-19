@@ -117,6 +117,30 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         else console.log(`${where}: briefing "${brief.title}"`);
       }
 
+      // The Atlas (2026-11-19, maps plan stage 3): the legend, the points key
+      // and the governorate panel geospatial.js writes read in the page's
+      // language, with Arabic-Indic digits on Arabic pages; English stays
+      // English. Before, the script had no t() call at all.
+      if (page === 'geospatial.html' && loaded) {
+        const atlas = await p.waitForFunction(() => {
+          const lg = document.getElementById('atlasLegend');
+          const title = lg && lg.querySelector('.map-legend-title');
+          return title && title.textContent.trim() ? {
+            title: title.textContent.trim(),
+            items: Array.from(lg.querySelectorAll('.map-legend-item')).map(e => e.textContent.trim()).join(' | '),
+            key: ((document.getElementById('atlasKey') || {}).textContent || '').trim(),
+            note: ((document.getElementById('layerNote') || {}).textContent || '').trim(),
+          } : null;
+        }, null, { timeout: 8000 }).then(h => h.jsonValue(), () => null);
+        const eng = /Population \(2023\)|million|Points on the map|World Heritage site|All layers loaded|Not generated yet/;
+        const all = atlas ? [atlas.title, atlas.items, atlas.key, atlas.note].join(' | ') : '';
+        if (!atlas) fail(`TWIN DATA NOT LOADED: ${where} - the Atlas legend stayed empty`);
+        else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} Atlas reads "${all.slice(0, 160)}"`);
+        else if (lang === 'ar/' && /[0-9]/.test(atlas.items)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} Atlas legend in Western digits "${atlas.items.slice(0, 120)}"`);
+        else if (!lang && !/^Population \(2023\)$/.test(atlas.title)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English Atlas legend changed to "${atlas.title}"`);
+        else console.log(`${where}: Atlas legend "${atlas.title}"`);
+      }
+
       // The visit page (2026-11-18): the month caption visit.js writes reads
       // in the page's language; English stays English.
       if (page === 'visit.html' && loaded) {
