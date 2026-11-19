@@ -141,6 +141,10 @@ DATA_TEXT = {
     # District names, eras and descriptions on streets.html (streets.js,
     # 2026-11-19, maps plan stage 3). Arabic pages use the data's name_ar.
     'streets-districts.json': {'top': (), 'group': (), 'row': (), 'lists': {'districts': ('name', 'era', 'why')}},
+
+    # The opening hours shown in the planner's dossier (plan.js hoursLine,
+    # 2026-11-19, maps plan stage 4).
+    'opening-hours.json': {'top': (), 'group': (), 'row': ('hours',), 'no_sources': True},
     'calendar.json': {'top': (), 'group': (), 'row': (),
                       'lists': {'events': ('name', 'note'), 'capacity': ('place', 'fact')}},
 }

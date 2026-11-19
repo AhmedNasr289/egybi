@@ -1602,6 +1602,48 @@ Things made in Egypt that you can watch being made, buy or try on your trip: whe
 We list a craft or a maker only when a named source describes it: the maker&#x27;s own site, an official or academic page, or the press. A price or a tip on telling the real thing from an imitation appears only when a source gives it, with that source beside it. Where we found no website or account for a maker, we say so rather than guess one. We link to the makers instead of copying their pictures. Warnings about shops come from several travellers&#x27; reports, and say so.	لا ندرج حرفة أو صانعًا إلا إذا وصفه مصدر محدّد: موقع الصانع نفسه، أو صفحة رسمية أو أكاديمية، أو الصحافة. ولا يظهر سعر أو نصيحة للتمييز بين الأصلي والتقليد إلا إذا ذكره مصدر، والمصدر بجانبه. وحين لا نجد موقعًا أو حسابًا لصانع نقول ذلك ولا نخمّن. ونضع روابط إلى الصانعين بدل نسخ صورهم. أما التحذيرات من المتاجر فمصدرها روايات عدد من المسافرين، ونذكر ذلك.
 Items listed: 34. Compiled <time datetime="2026-11-18">18 November 2026</time>.	عدد البنود: ٣٤. جُمعت في <time datetime="2026-11-18">١٨ نوفمبر ٢٠٢٦</time>.
 Made near here:	صُنع بالقرب من هنا:
+%n km²	%n كم²
+%n million	%n مليون
+%n per km²	%n في الكيلومتر المربع
+All layers loaded. OpenStreetMap layers © OpenStreetMap contributors (ODbL); oldest layer refresh: %d.	حُمّلت كل الطبقات. طبقات OpenStreetMap © مساهمو OpenStreetMap (ODbL)؛ أقدم تحديث لطبقة: %d.
+Area in km²	المساحة بالكيلومتر المربع
+Clinic	عيادة
+Cultural	ثقافي
+Density per km²	الكثافة في الكيلومتر المربع
+Egypt governorate indicators: the same data the map shows	مؤشرات محافظات مصر: البيانات نفسها التي تعرضها الخريطة
+Facility and school counts are what OpenStreetMap has mapped: a relative pattern, not official registers.	أعداد المنشآت والمدارس هي ما رسمه OpenStreetMap: صورة نسبية، لا سجلات رسمية.
+Growth 2017→2023	النمو ٢٠١٧←٢٠٢٣
+Hospital	مستشفى
+Interactive map of Egypt’s 27 governorates. Tab to a governorate and press Enter for its figures.	خريطة تفاعلية لمحافظات مصر الـ٢٧. انتقل إلى محافظة بمفتاح Tab واضغط Enter لعرض أرقامها.
+Mapped health facilities	المنشآت الصحية المرسومة على الخريطة
+Mapped schools	المدارس المرسومة على الخريطة
+Natural	طبيعي
+Not generated yet: %l. These layers appear after the first "Build Atlas geo layers" run; the governorate map below already works.	لم تُنشأ بعد: %l. تظهر هذه الطبقات بعد أول تشغيل لـ"Build Atlas geo layers"؛ أما خريطة المحافظات أدناه فتعمل الآن.
+Points on the map	النقاط على الخريطة
+Population (2023)	السكان (٢٠٢٣)
+Source: %s, as of %d.	المصدر: %s، حتى %d.
+This map could not finish loading, so the layers above are unavailable. The governorate outline below is drawn from data that comes with the page. Please tell us: the fault is ours.	تعذّر إكمال تحميل هذه الخريطة، لذا لا تتوفر الطبقات أعلاه. حدود المحافظات أدناه مرسومة من بيانات مرفقة بالصفحة. أخبرنا من فضلك: الخطأ خطؤنا.
+Unavailable: this layer failed to load	غير متاح: تعذّر تحميل هذه الطبقة
+Urban population	سكان الحضر
+Urban share	نسبة الحضر
+Visitor guide:	دليل الزائر:
+World Heritage site	موقع تراث عالمي
+health facilities	المنشآت الصحية
+heritage sites	مواقع التراث
+hospitals: %h, clinics: %c	مستشفيات: %h، عيادات: %c
+schools	المدارس
+The map could not load. The tables and charts on this page still work.	تعذّر تحميل الخريطة. الجداول والرسوم في هذه الصفحة ما زالت تعمل.
+The map could not load. You can still add stops with the buttons and the search above.	تعذّر تحميل الخريطة. ما زال بإمكانك إضافة المحطات بالأزرار والبحث أعلاه.
+<span><i style="background:#2C6FAD"></i>21 °C or less</span><span><i style="background:#4FA3A5"></i>22–27 °C</span> <span><i style="background:#C9A227"></i>28–33 °C</span><span><i style="background:#D97B2B"></i>34–38 °C</span> <span><i style="background:#B23A0F"></i>39 °C or more</span><span>dashed line: straight lines between stops, not roads</span>	<span><i style="background:#2C6FAD"></i>٢١ °م أو أقل</span><span><i style="background:#4FA3A5"></i>٢٢–٢٧ °م</span><span><i style="background:#C9A227"></i>٢٨–٣٣ °م</span><span><i style="background:#D97B2B"></i>٣٤–٣٨ °م</span><span><i style="background:#B23A0F"></i>٣٩ °م أو أكثر</span><span>الخط المتقطّع: خطوط مستقيمة بين المحطات، لا طرق</span>
+Choose from 18 major sites and the other mapped places, set the days at each, and see the measured heat and the straight-line distances. Print it as a Papyrus dossier.	اختر من بين ١٨ موقعًا رئيسيًا وسائر الأماكن على الخريطة، وحدّد الأيام في كلٍّ منها، وشاهد الحرارة المقيسة والمسافات المستقيمة. ثم اطبعها في ملف «البردية».
+Or search the mapped places	أو ابحث في الأماكن على الخريطة
+Or search the mapped places (%n)	أو ابحث في الأماكن على الخريطة (%n)
+No stops yet. Click a site on the map, use the buttons above, or search the mapped places.	لا توجد محطات بعد. اضغط على موقع في الخريطة، أو استخدم الأزرار أعلاه، أو ابحث في الأماكن على الخريطة.
+Showing Egyptian pounds only.	المبالغ معروضة بالجنيه المصري فقط.
+ExchangeRate-API (open access)	ExchangeRate-API (وصول مفتوح)
+market rate	سعر السوق
+Market reference rates, not the Central Bank of Egypt official fixing.	أسعار استرشادية من السوق، وليست السعر الرسمي للبنك المركزي المصري.
+1 %c = %r, %s, %d.	١ %c = %r، %s، %d.
 Grand Egyptian Museum opening hours<span class="fp-src">The museum complex opens at 8:30 and closes at 19:00, or at 22:00 on Wednesday and Saturday. Last entry is one hour before the galleries close. Tickets are for a time slot, booked on the site.</span>	مواعيد فتح المتحف المصري الكبير<span class="fp-src">يفتح مجمّع المتحف في ٨:٣٠ ويغلق في ١٩:٠٠، أو في ٢٢:٠٠ يومي الأربعاء والسبت. ويكون آخر دخول قبل إغلاق القاعات بساعة. والتذاكر لموعد دخول محدّد، تُحجز على الموقع.</span>
 <strong>Galleries 9:00 to 18:00; to 21:00 on Wednesday and Saturday</strong>	<strong>القاعات من ٩:٠٠ إلى ١٨:٠٠، وحتى ٢١:٠٠ يومي الأربعاء والسبت</strong>
 <a href="https://tickets.gem.eg/" rel="noopener">Grand Egyptian Museum: official ticketing website</a><span class="fp-src">Checked <time datetime="2026-11-18">18 November 2026</time></span>	<a href="https://tickets.gem.eg/" rel="noopener">المتحف المصري الكبير: موقع التذاكر الرسمي</a><span class="fp-src">رُوجع في <time datetime="2026-11-18">١٨ نوفمبر ٢٠٢٦</time></span>
@@ -1641,8 +1683,6 @@ New Cairo	القاهرة الجديدة
 Desert new town, 1990s–2000s	مدينة صحراوية جديدة، التسعينيات والعقد الأول من القرن الحادي والعشرين
 The Fifth Settlement era: compound-led, low-connectivity suburban form — the sharpest contrast with the khedivial grid.	حقبة التجمع الخامس: شكل ضاحوي تقوده المجمّعات بترابط ضعيف، وهو أوضح تضاد مع الشبكة الخديوية.
 %n km/km²	%n كم/كم²
-%n km²	%n كم²
-%n per km²	%n في الكيلومتر المربع
 (hand-drawn extent)	(حدود مرسومة باليد)
 A low score can mean few facilities or few mapped facilities: this data cannot tell them apart.	قد تعني النتيجة المنخفضة قلة المنشآت أو قلة المرسوم منها على الخريطة: لا تستطيع هذه البيانات التمييز بينهما.
 AI-generated	مكتوبة بالذكاء الاصطناعي
@@ -1696,3 +1736,16 @@ of walkable street within 15 minutes of a mapped hospital, clinic, school or pha
 pharmacy	صيدلية
 school	مدرسة
 within 15 min; median %n min	ضمن ١٥ دقيقة؛ الوسيط %n دقيقة
+Opens 07:00, last entry 16:00	يفتح ٧:٠٠، وآخر دخول ١٦:٠٠
+Opens 06:00, last entry 16:00	يفتح ٦:٠٠، وآخر دخول ١٦:٠٠
+Opens 06:00, last entry 17:00 in summer and 16:00 in winter	يفتح ٦:٠٠، وآخر دخول ١٧:٠٠ صيفًا و١٦:٠٠ شتاءً
+08:00 to 17:00	من ٨:٠٠ إلى ١٧:٠٠
+07:00 to 16:00	من ٧:٠٠ إلى ١٦:٠٠
+07:00 to 17:00	من ٧:٠٠ إلى ١٧:٠٠
+07:00 to 19:00	من ٧:٠٠ إلى ١٩:٠٠
+The monastery: 08:45 to 12:45, closed on Sundays	الدير: من ٨:٤٥ إلى ١٢:٤٥، ويُغلق أيام الأحد
+On %d: sunrise %r, golden light until %g and again from %e, sunset %s (Cairo time).	يوم %d: الشروق %r، والضوء الذهبي حتى %g ثم من %e، والغروب %s (بتوقيت القاهرة).
+Opening hours:	مواعيد الفتح:
+(Ministry of Tourism and Antiquities, checked %d)	(وزارة السياحة والآثار، رُوجع في %d)
+On these days:	في هذه الأيام:
+Opening hours: the Ministry of Tourism and Antiquities. Sunrise and sunset: NOAA solar equations, computed for each stop; golden light is while the sun is under 6° high.	مواعيد الفتح: وزارة السياحة والآثار. الشروق والغروب: معادلات NOAA الشمسية، محسوبة لكل محطة؛ والضوء الذهبي ما دامت الشمس أقل من ٦° فوق الأفق.

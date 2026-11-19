@@ -19,10 +19,33 @@
   /* A dataset's date, written as the site writes dates ("3 November 2026",
      EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
      value as written if egfmt.js did not load. */
+  var LANG = document.documentElement.getAttribute('lang') || 'en';
+  var MONTHS_RU_OF = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля',
+                      'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   function asOf(v) {
     var F = window.EGYBI && window.EGYBI.fmt;
-    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+    var m = LANG === 'ru' && /^(\d{4})-(\d\d)-(\d\d)/.exec(String(v || ''));
+    if (m) return (+m[3]) + ' ' + MONTHS_RU_OF[+m[2] - 1] + ' ' + m[1];
+    return F ? F.dateOrRaw(v, LANG === 'ar' ? 'ar' : 'en', 'prose') : (v == null ? '' : String(v));
   }
+  // Text this script writes goes through t(), as a literal call so the build
+  // collects it into the Arabic and Russian tables (pages/i18n.py). Numbers are
+  // written in the page's form: Arabic-Indic digits and separators on Arabic
+  // pages, Russian grouping on Russian ones (2026-11-19, maps plan stage 3).
+  var t = (window.EGYBI && window.EGYBI.t) || function (x) { return x; };
+  function fmt() { return window.EGYBI && window.EGYBI.fmt; }
+  function whole(v) {
+    if (LANG === 'ar' && fmt()) return fmt().num(Math.round(v), 'ar', 0);
+    return Math.round(v).toLocaleString(LANG === 'ru' ? 'ru-RU' : 'en-GB');
+  }
+  function dec(v, places) {
+    if (LANG === 'ar' && fmt()) return fmt().fixed(v, 'ar', places);
+    if (LANG === 'ru') return v.toLocaleString('ru-RU', { minimumFractionDigits: places, maximumFractionDigits: places });
+    return v.toFixed(places);
+  }
+  function pct(v) { return dec(v, 1) + (LANG === 'ar' ? '٪' : '%'); }
+  function signed(v) { return (v >= 0 ? '+' : '−') + pct(Math.abs(v)); }
+  function digits(x) { return LANG === 'ar' && fmt() ? fmt().digits(String(x), 'ar') : String(x); }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -68,13 +91,15 @@
   var DIM_FILL = 0.45, FULL_FILL = 0.92;
 
   var METRICS = {
-    population: { label: 'Population (2023)', fmt: function (v) { return (v / 1e6).toFixed(2) + ' M'; } },
-    density:    { label: 'Density', fmt: function (v) { return Math.round(v).toLocaleString('en-GB') + ' /km²'; } },
-    urban_pct:  { label: 'Urban population', fmt: function (v) { return v.toFixed(1) + '% urban'; } },
-    growth:     { label: 'Growth 2017→2023', fmt: function (v) { return (v >= 0 ? '+' : '') + v.toFixed(1) + '%'; } },
-    area_km2:   { label: 'Area', fmt: function (v) { return Math.round(v).toLocaleString('en-GB') + ' km²'; } },
-    health:     { label: 'Mapped health facilities', fmt: function (v) { return v.toLocaleString('en-GB') + ' facilities'; }, joined: true },
-    schools:    { label: 'Mapped schools', fmt: function (v) { return v.toLocaleString('en-GB') + ' schools'; }, joined: true }
+    population: { label: t('Population (2023)'), fmt: function (v) { return t('%n million').replace('%n', dec(v / 1e6, 2)); } },
+    density:    { label: t('Density'), fmt: function (v) { return t('%n per km²').replace('%n', whole(v)); } },
+    urban_pct:  { label: t('Urban population'), fmt: function (v) { return pct(v); } },
+    growth:     { label: t('Growth 2017→2023'), fmt: function (v) { return signed(v); } },
+    area_km2:   { label: t('Area'), fmt: function (v) { return t('%n km²').replace('%n', whole(v)); } },
+    // The metric's name says what is counted, so the figure carries no noun:
+    // an Arabic count noun would have to agree with every number.
+    health:     { label: t('Mapped health facilities'), fmt: function (v) { return whole(v); }, joined: true },
+    schools:    { label: t('Mapped schools'), fmt: function (v) { return whole(v); }, joined: true }
   };
 
   var S = { map: null, layer: null, metric: 'population', breaks: null,
@@ -171,18 +196,18 @@
     if (!el) return;
     var j = S.joined[p.name] || {};
     var rows = [
-      ['Population (2023)', METRICS.population.fmt(p.population)],
-      ['Area', METRICS.area_km2.fmt(p.area_km2)],
-      ['Density', METRICS.density.fmt(p.density)],
-      ['Urban share', METRICS.urban_pct.fmt(p.urban_pct)],
-      ['Growth 2017→2023', METRICS.growth.fmt(p.growth)]
+      [t('Population (2023)'), METRICS.population.fmt(p.population)],
+      [t('Area'), METRICS.area_km2.fmt(p.area_km2)],
+      [t('Density'), METRICS.density.fmt(p.density)],
+      [t('Urban share'), METRICS.urban_pct.fmt(p.urban_pct)],
+      [t('Growth 2017→2023'), METRICS.growth.fmt(p.growth)]
     ];
-    if (S.health) rows.push(['Mapped health facilities', (j.health || 0).toLocaleString('en-GB') +
-      ' (' + (j.hospitals || 0) + ' hospitals, ' + (j.clinics || 0) + ' clinics)']);
-    if (S.schools) rows.push(['Mapped schools', (j.schools || 0).toLocaleString('en-GB')]);
+    if (S.health) rows.push([t('Mapped health facilities'), whole(j.health || 0) + ' (' +
+      t('hospitals: %h, clinics: %c').replace('%h', whole(j.hospitals || 0)).replace('%c', whole(j.clinics || 0)) + ')']);
+    if (S.schools) rows.push([t('Mapped schools'), whole(j.schools || 0)]);
     el.innerHTML = '<h3>' + gv(p.name) + '</h3>' + rows.map(function (r) {
       return '<div class="gd-row"><span>' + r[0] + '</span><strong>' + r[1] + '</strong></div>';
-    }).join('') + '<p class="gd-note">Facility &amp; school counts are OSM-mapped totals — relative pattern, not official registries.</p>';
+    }).join('') + '<p class="gd-note">' + t('Facility and school counts are what OpenStreetMap has mapped: a relative pattern, not official registers.') + '</p>';
     el.hidden = false;
   }
 
@@ -253,15 +278,15 @@
     if (!el) return;
     var bits = [];
     if (S.healthLayer && S.map.hasLayer(S.healthLayer)) {
-      bits.push('<span class="mk-item"><span class="mk-dot" style="background:' + HOSPITAL + ';width:13px;height:13px;"></span>Hospital</span>' +
-                '<span class="mk-item"><span class="mk-dot" style="background:' + CLINIC + ';width:9px;height:9px;"></span>Clinic</span>');
+      bits.push('<span class="mk-item"><span class="mk-dot" style="background:' + HOSPITAL + ';width:13px;height:13px;"></span>' + t('Hospital') + '</span>' +
+                '<span class="mk-item"><span class="mk-dot" style="background:' + CLINIC + ';width:9px;height:9px;"></span>' + t('Clinic') + '</span>');
     }
     if (S.heritageLayer && S.map.hasLayer(S.heritageLayer)) {
       bits.push('<span class="mk-item"><span class="mk-dot" style="background:' + GOLD +
-                ';width:15px;height:15px;box-shadow:0 0 0 2px ' + GOLD_INK + ' inset;"></span>World Heritage site</span>');
+                ';width:15px;height:15px;box-shadow:0 0 0 2px ' + GOLD_INK + ' inset;"></span>' + t('World Heritage site') + '</span>');
     }
     el.innerHTML = bits.length
-      ? '<div class="map-legend-title">Points on the map</div><div class="mk-row">' + bits.join('') + '</div>'
+      ? '<div class="map-legend-title">' + t('Points on the map') + '</div><div class="mk-row">' + bits.join('') + '</div>'
       : '';
     el.hidden = !bits.length;
   }
@@ -275,10 +300,10 @@
     tb.innerHTML = feats.map(function (f) {
       var p = f.properties, j = S.joined[p.name] || {};
       return '<tr><td>' + gv(p.name) + '</td>' +
-        '<td>' + (p.population / 1e6).toFixed(2) + ' M</td>' +
-        '<td>' + Math.round(p.density).toLocaleString('en-GB') + '</td>' +
-        '<td>' + (S.health ? (j.health || 0).toLocaleString('en-GB') : '—') + '</td>' +
-        '<td>' + (S.schools ? (j.schools || 0).toLocaleString('en-GB') : '—') + '</td></tr>';
+        '<td>' + METRICS.population.fmt(p.population) + '</td>' +
+        '<td>' + whole(p.density) + '</td>' +
+        '<td>' + (S.health ? whole(j.health || 0) : '—') + '</td>' +
+        '<td>' + (S.schools ? whole(j.schools || 0) : '—') + '</td></tr>';
     }).join('');
   }
 
@@ -324,16 +349,17 @@
     }
     wrap.innerHTML = S.heritage.sites.map(function (s) {
       var near = guidesNear(s);
-      return '<div class="wh-card"><div class="wh-year">' + s.year + ' · ' + s.category + '</div>' +
+      var cat = s.category === 'Cultural' ? t('Cultural') : s.category === 'Natural' ? t('Natural') : s.category;
+      return '<div class="wh-card"><div class="wh-year">' + digits(s.year) + ' · ' + cat + '</div>' +
              '<h3>' + s.name + '</h3>' +
-             '<p class="wh-coords">' + s.lat.toFixed(2) + '°N, ' + s.lon.toFixed(2) + '°E</p>' +
-             (near.length ? '<p class="wh-coords">Visitor guide: ' + near.map(function (n) {
-               return '<a href="' + escHtml(n.g.href) + '">' + escHtml(n.g.name) + '</a> · ' + n.d.toFixed(1) + ' km';
-             }).join('; ') + '</p>' : '') +
+             '<p class="wh-coords">' + t('%a°N, %b°E').replace('%a', dec(s.lat, 2)).replace('%b', dec(s.lon, 2)) + '</p>' +
+             (near.length ? '<p class="wh-coords">' + t('Visitor guide:') + ' ' + near.map(function (n) {
+               return '<a href="' + escHtml(n.g.href) + '">' + escHtml(n.g.name) + '</a> · ' + t('%n km').replace('%n', dec(n.d, 1));
+             }).join(LANG === 'ar' ? '؛ ' : '; ') + '</p>' : '') +
              '</div>';
     }).join('');
     var meta = $('heritageMeta');
-    if (meta) meta.textContent = 'Source: ' + S.heritage.source + ' — as of ' + asOf(S.heritage.as_of) + '.';
+    if (meta) meta.textContent = t('Source: %s, as of %d.').replace('%s', S.heritage.source).replace('%d', asOf(S.heritage.as_of));
   }
 
   /* ---------------------------------------------------------- data notes */
@@ -341,17 +367,16 @@
     var el = $('layerNote');
     if (!el) return;
     var missing = [];
-    if (!S.health) missing.push('health facilities');
-    if (!S.schools) missing.push('schools');
-    if (!S.heritage) missing.push('heritage sites');
+    if (!S.health) missing.push(t('health facilities'));
+    if (!S.schools) missing.push(t('schools'));
+    if (!S.heritage) missing.push(t('heritage sites'));
     if (!missing.length) {
       var d = [S.health.as_of, S.schools.as_of, S.heritage.as_of].sort()[0];
-      el.innerHTML = 'All layers loaded. OSM layers © OpenStreetMap contributors (ODbL); oldest layer refresh: ' + asOf(d) + '.';
+      el.textContent = t('All layers loaded. OpenStreetMap layers © OpenStreetMap contributors (ODbL); oldest layer refresh: %d.').replace('%d', asOf(d));
       return;
     }
-    el.innerHTML = '<strong>' + missing.join(', ') + '</strong> ' +
-      (missing.length === 1 ? 'layer is' : 'layers are') +
-      ' not generated yet — they appear automatically after the first “Build Atlas geo layers” run. The governorate map below already works.';
+    el.textContent = t('Not generated yet: %l. These layers appear after the first "Build Atlas geo layers" run; the governorate map below already works.')
+      .replace('%l', missing.join(LANG === 'ar' ? '، ' : ', '));
   }
 
   /* ---------------------------------------------------------- init */
@@ -368,8 +393,7 @@
       doubleClickZoom: false,
       locator: window.EGYBI_EGYPT_GEO,
       credit: ['geoboundaries', 'capmas', 'osm'],
-      label: 'Interactive map of Egypt\u2019s 27 governorates. '
-           + 'Tab to a governorate and press Enter for its figures.'
+      label: t('Interactive map of Egypt’s 27 governorates. Tab to a governorate and press Enter for its figures.')
     });
     if (!S.map) return;
     // Dedicated panes so points ALWAYS sit above the polygons. Hovering a
@@ -421,16 +445,14 @@
         var rows = window.EGYBI_EGYPT_GEO.features.map(function (f) {
           var p = f.properties;
           return '<tr><th scope="row">' + gv(p.name) + '</th><td>' +
-            (p.population / 1e6).toFixed(2) + ' M</td><td>' + Math.round(p.density) +
-            '</td><td>' + p.urban_pct.toFixed(1) + '%</td><td>' +
-            (p.growth >= 0 ? '+' : '') + p.growth.toFixed(1) + '%</td><td>' +
-            Math.round(p.area_km2) + '</td></tr>';
+            METRICS.population.fmt(p.population) + '</td><td>' + whole(p.density) +
+            '</td><td>' + pct(p.urban_pct) + '</td><td>' + signed(p.growth) + '</td><td>' +
+            whole(p.area_km2) + '</td></tr>';
         }).join('');
-        return '<table><caption>Egypt governorate indicators — the same data the map shows'
-          + '</caption><thead><tr><th scope="col">Governorate</th>'
-          + '<th scope="col">Population 2023</th><th scope="col">Density /km²</th>'
-          + '<th scope="col">Urban %</th><th scope="col">Growth 2017–2023</th>'
-          + '<th scope="col">Area km²</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        return '<table><caption>' + t('Egypt governorate indicators: the same data the map shows') + '</caption><thead><tr><th scope="col">' + t('Governorate') + '</th>'
+          + '<th scope="col">' + t('Population (2023)') + '</th><th scope="col">' + t('Density per km²') + '</th>'
+          + '<th scope="col">' + t('Urban population') + '</th><th scope="col">' + t('Growth 2017→2023') + '</th>'
+          + '<th scope="col">' + t('Area in km²') + '</th></tr></thead><tbody>' + rows + '</tbody></table>';
       }
     });
     S.home = S.layer.getBounds();
@@ -554,9 +576,7 @@
     if (window.console && console.error) console.error('Atlas init failed:', err);
     var note = $('layerNote');
     if (note) {
-      note.textContent = 'This map could not finish loading, so the layers above '
-        + 'are unavailable. The governorate outline below is drawn from data '
-        + 'bundled with the page. Please report this — the fault is ours.';
+      note.textContent = t('This map could not finish loading, so the layers above are unavailable. The governorate outline below is drawn from data that comes with the page. Please tell us: the fault is ours.');
     }
     // The joined-metric and overlay chips are the ones that depend on a fetched
     // layer. They ship disabled and are enabled on arrival, so after a failure
@@ -566,7 +586,7 @@
     var chips = document.querySelectorAll('[data-metric="health"], [data-metric="schools"], .ov-toggle');
     for (var i = 0; i < chips.length; i += 1) {
       chips[i].disabled = true;
-      chips[i].title = 'Unavailable — this layer failed to load';
+      chips[i].title = t('Unavailable: this layer failed to load');
     }
     try {
       var box = $('atlasMap');

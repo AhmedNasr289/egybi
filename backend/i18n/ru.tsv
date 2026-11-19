@@ -1602,6 +1602,48 @@ Things made in Egypt that you can watch being made, buy or try on your trip: whe
 We list a craft or a maker only when a named source describes it: the maker&#x27;s own site, an official or academic page, or the press. A price or a tip on telling the real thing from an imitation appears only when a source gives it, with that source beside it. Where we found no website or account for a maker, we say so rather than guess one. We link to the makers instead of copying their pictures. Warnings about shops come from several travellers&#x27; reports, and say so.	Мы включаем ремесло или мастера, только если его описывает названный источник: сайт самого мастера, официальная или научная страница либо пресса. Цена или совет, как отличить подлинную вещь от подделки, появляются, только если их даёт источник, и он указан рядом. Если у мастера не нашлось ни сайта, ни аккаунта, мы так и пишем, а не угадываем. Мы ставим ссылки на мастеров, а не копируем их фотографии. Предупреждения о магазинах взяты из отзывов нескольких путешественников, и это указано.
 Items listed: 34. Compiled <time datetime="2026-11-18">18 November 2026</time>.	Пунктов в списке: 34. Составлено <time datetime="2026-11-18">18 ноября 2026 года</time>.
 Made near here:	Сделано поблизости:
+%n km²	%n км²
+%n million	%n млн
+%n per km²	%n на км²
+All layers loaded. OpenStreetMap layers © OpenStreetMap contributors (ODbL); oldest layer refresh: %d.	Все слои загружены. Слои OpenStreetMap © участники OpenStreetMap (ODbL); самое старое обновление слоя: %d.
+Area in km²	Площадь, км²
+Clinic	Клиника
+Cultural	Культурный
+Density per km²	Плотность на км²
+Egypt governorate indicators: the same data the map shows	Показатели мухафаз Египта: те же данные, что на карте
+Facility and school counts are what OpenStreetMap has mapped: a relative pattern, not official registers.	Число учреждений и школ — то, что нанесено в OpenStreetMap: относительная картина, а не официальные реестры.
+Growth 2017→2023	Рост 2017→2023
+Hospital	Больница
+Interactive map of Egypt’s 27 governorates. Tab to a governorate and press Enter for its figures.	Интерактивная карта 27 мухафаз Египта. Перейдите к мухафазе клавишей Tab и нажмите Enter, чтобы увидеть её данные.
+Mapped health facilities	Медучреждения на карте
+Mapped schools	Школы на карте
+Natural	Природный
+Not generated yet: %l. These layers appear after the first "Build Atlas geo layers" run; the governorate map below already works.	Ещё не созданы: %l. Эти слои появятся после первого запуска «Build Atlas geo layers»; карта мухафаз ниже уже работает.
+Points on the map	Точки на карте
+Population (2023)	Население (2023)
+Source: %s, as of %d.	Источник: %s, по состоянию на %d.
+This map could not finish loading, so the layers above are unavailable. The governorate outline below is drawn from data that comes with the page. Please tell us: the fault is ours.	Карта не смогла загрузиться полностью, поэтому слои выше недоступны. Границы мухафаз ниже нарисованы по данным, встроенным в страницу. Пожалуйста, сообщите нам: ошибка на нашей стороне.
+Unavailable: this layer failed to load	Недоступно: слой не загрузился
+Urban population	Городское население
+Urban share	Доля горожан
+Visitor guide:	Путеводитель:
+World Heritage site	Объект Всемирного наследия
+health facilities	медучреждения
+heritage sites	объекты наследия
+hospitals: %h, clinics: %c	больниц: %h, клиник: %c
+schools	школы
+The map could not load. The tables and charts on this page still work.	Карта не загрузилась. Таблицы и графики на этой странице по-прежнему работают.
+The map could not load. You can still add stops with the buttons and the search above.	Карта не загрузилась. Остановки всё равно можно добавить кнопками и поиском выше.
+<span><i style="background:#2C6FAD"></i>21 °C or less</span><span><i style="background:#4FA3A5"></i>22–27 °C</span> <span><i style="background:#C9A227"></i>28–33 °C</span><span><i style="background:#D97B2B"></i>34–38 °C</span> <span><i style="background:#B23A0F"></i>39 °C or more</span><span>dashed line: straight lines between stops, not roads</span>	<span><i style="background:#2C6FAD"></i>21&nbsp;°C и ниже</span><span><i style="background:#4FA3A5"></i>22–27&nbsp;°C</span><span><i style="background:#C9A227"></i>28–33&nbsp;°C</span><span><i style="background:#D97B2B"></i>34–38&nbsp;°C</span><span><i style="background:#B23A0F"></i>39&nbsp;°C и выше</span><span>пунктир: прямые линии между остановками, а не дороги</span>
+Choose from 18 major sites and the other mapped places, set the days at each, and see the measured heat and the straight-line distances. Print it as a Papyrus dossier.	Выберите из 18 главных мест и других мест на карте, укажите дни для каждого — и увидите измеренную жару и расстояния по прямой. Распечатайте всё как досье «Папируса».
+Or search the mapped places	Или найдите среди мест на карте
+Or search the mapped places (%n)	Или найдите среди мест на карте (%n)
+No stops yet. Click a site on the map, use the buttons above, or search the mapped places.	Остановок пока нет. Нажмите на место на карте, воспользуйтесь кнопками выше или найдите место на карте.
+Showing Egyptian pounds only.	Суммы показаны только в египетских фунтах.
+ExchangeRate-API (open access)	ExchangeRate-API (открытый доступ)
+market rate	рыночный курс
+Market reference rates, not the Central Bank of Egypt official fixing.	Рыночные справочные курсы, а не официальный курс Центрального банка Египта.
+1 %c = %r, %s, %d.	1 %c = %r, %s, %d.
 Grand Egyptian Museum opening hours<span class="fp-src">The museum complex opens at 8:30 and closes at 19:00, or at 22:00 on Wednesday and Saturday. Last entry is one hour before the galleries close. Tickets are for a time slot, booked on the site.</span>	Часы работы Большого Египетского музея<span class="fp-src">Музейный комплекс открывается в 8:30 и закрывается в 19:00, а по средам и субботам — в 22:00. Последний вход — за час до закрытия залов. Билеты продаются на определённое время входа и бронируются на сайте.</span>
 <strong>Galleries 9:00 to 18:00; to 21:00 on Wednesday and Saturday</strong>	<strong>Залы с 9:00 до 18:00; по средам и субботам до 21:00</strong>
 <a href="https://tickets.gem.eg/" rel="noopener">Grand Egyptian Museum: official ticketing website</a><span class="fp-src">Checked <time datetime="2026-11-18">18 November 2026</time></span>	<a href="https://tickets.gem.eg/" rel="noopener">Большой Египетский музей: официальный сайт билетов</a><span class="fp-src">Проверено <time datetime="2026-11-18">18 ноября 2026 года</time></span>
@@ -1641,8 +1683,6 @@ New Cairo	Новый Каир
 Desert new town, 1990s–2000s	Новый город в пустыне, 1990–2000-е
 The Fifth Settlement era: compound-led, low-connectivity suburban form — the sharpest contrast with the khedivial grid.	Эпоха Пятого поселения: пригородная форма из закрытых комплексов со слабой связностью — самый резкий контраст с хедивской сеткой.
 %n km/km²	%n км/км²
-%n km²	%n км²
-%n per km²	%n на км²
 (hand-drawn extent)	(границы нарисованы вручную)
 A low score can mean few facilities or few mapped facilities: this data cannot tell them apart.	Низкий результат может означать мало учреждений или мало нанесённых на карту: эти данные не различают одно и другое.
 AI-generated	создано ИИ
@@ -1696,3 +1736,16 @@ of walkable street within 15 minutes of a mapped hospital, clinic, school or pha
 pharmacy	аптека
 school	школа
 within 15 min; median %n min	в пределах 15 мин; медиана %n мин
+Opens 07:00, last entry 16:00	Открыто с 07:00, последний вход в 16:00
+Opens 06:00, last entry 16:00	Открыто с 06:00, последний вход в 16:00
+Opens 06:00, last entry 17:00 in summer and 16:00 in winter	Открыто с 06:00, последний вход в 17:00 летом и в 16:00 зимой
+08:00 to 17:00	с 08:00 до 17:00
+07:00 to 16:00	с 07:00 до 16:00
+07:00 to 17:00	с 07:00 до 17:00
+07:00 to 19:00	с 07:00 до 19:00
+The monastery: 08:45 to 12:45, closed on Sundays	Монастырь: с 08:45 до 12:45, по воскресеньям закрыт
+On %d: sunrise %r, golden light until %g and again from %e, sunset %s (Cairo time).	%d: восход в %r, золотой свет до %g и снова с %e, закат в %s (по каирскому времени).
+Opening hours:	Часы работы:
+(Ministry of Tourism and Antiquities, checked %d)	(Министерство туризма и древностей, проверено %d)
+On these days:	В эти дни:
+Opening hours: the Ministry of Tourism and Antiquities. Sunrise and sunset: NOAA solar equations, computed for each stop; golden light is while the sun is under 6° high.	Часы работы: Министерство туризма и древностей. Восход и закат: солнечные формулы NOAA, рассчитанные для каждой остановки; золотой свет — пока солнце ниже 6° над горизонтом.
