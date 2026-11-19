@@ -1635,6 +1635,22 @@ case("the Atlas legend title back in English", "twin-data.js", ["site/assets/geo
      lambda: edit("site/assets/geospatial.js", "label: t('Population (2023)')", "label: 'Population (2023)'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "Atlas" in o, f"node {HERE}/twin-data.js")
 
+# The map credit is written in the page's language (2026-11-19); mapkit.js
+# wrote "Boundaries:" in English on the Arabic and Russian Atlas before.
+case("the map credit back in English", "twin-data.js", ["site/assets/mapkit.js"],
+     lambda: edit("site/assets/mapkit.js", "geoboundaries: t('Boundaries') + ': <a", "geoboundaries: 'Boundaries: <a"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "Atlas" in o, f"node {HERE}/twin-data.js")
+
+# The streets map labels its districts in the page's language (2026-11-19).
+case("the streets map labels back in English", "twin-data.js", ["site/assets/streets.js"],
+     lambda: edit("site/assets/streets.js", "pin._dName = dname(d);", "pin._dName = d.name;"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "streets page" in o, f"node {HERE}/twin-data.js")
+
+# The story maps label governorates in the page's language (2026-11-19).
+case("the story map labels back in English", "twin-data.js", ["site/assets/stories.js"],
+     lambda: edit("site/assets/stories.js", "function (p) { return p && gv(p.name); },", "function (p) { return p && p.name; },"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "stories map labels" in o, f"node {HERE}/twin-data.js")
+
 # Without leaflet.js the heat page still fills its tables (2026-11-19). The
 # old early return left the whole page blank; map-fallback.js must catch it.
 case("the heat page blank again without the map library", "map-fallback.js", ["site/assets/visit.js"],

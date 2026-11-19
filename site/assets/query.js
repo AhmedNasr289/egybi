@@ -43,6 +43,8 @@
   // so a hardcoded 'assets/' would 404 for exactly the pages most likely to be
   // reached from search.
   var SELF = document.currentScript && document.currentScript.src;
+  // Text in the page's language (2026-11-19): see egybi.js.
+  function t(s) { var f = window.EGYBI && window.EGYBI.t; return f ? f(s) : s; }
   var ROOT = SELF ? SELF.replace(/assets\/query\.js.*$/, '') : '';
 
   var enginePromise = null;   // resolves to the sql.js SQL object, once
@@ -88,11 +90,11 @@
     try {
       res = db.exec(sql);
     } catch (err) {
-      out.innerHTML = '<p class="q-err">SQL error: ' + esc(err.message) + '</p>';
+      out.innerHTML = '<p class="q-err">' + t('SQL error') + ': ' + esc(err.message) + '</p>';
       return;
     }
     if (!res.length) {
-      out.innerHTML = '<p class="q-empty">That ran, but returned no rows.</p>';
+      out.innerHTML = '<p class="q-empty">' + t('That ran, but returned no rows.') + '</p>';
       return;
     }
     var c = res[0].columns, v = res[0].values;
@@ -102,7 +104,7 @@
       h += '<tr>' + r.map(function (x) { return '<td>' + esc(x) + '</td>'; }).join('') + '</tr>';
     });
     out.innerHTML = h + '</tbody></table>' +
-      (v.length > 200 ? '<p class="q-note">Showing the first 200 of ' + v.length + ' rows.</p>' : '');
+      (v.length > 200 ? '<p class="q-note">' + esc(t('Showing the first 200 rows of %n.').replace('%n', v.length)) + '</p>' : '');
   }
 
   function closePanel() {
@@ -117,17 +119,17 @@
     panel.className = 'query-panel';
     panel.setAttribute('role', 'dialog');
     panel.setAttribute('aria-modal', 'true');
-    panel.setAttribute('aria-label', 'Query this data');
+    panel.setAttribute('aria-label', t('Query this data'));
     panel.hidden = true;
     panel.innerHTML =
       '<div class="q-box">' +
         '<div class="q-head">' +
           '<div><strong class="q-title"></strong><span class="q-src"></span></div>' +
-          '<button type="button" class="q-close" aria-label="Close">&times;</button>' +
+          '<button type="button" class="q-close" aria-label="' + t('Close') + '">&times;</button>' +
         '</div>' +
         '<p class="q-coverage" hidden></p>' +
-        '<textarea class="q-sql mono" spellcheck="false" aria-label="SQL query"></textarea>' +
-        '<div class="q-actions"><button type="button" class="btn btn-primary q-run">Run</button>' +
+        '<textarea class="q-sql mono" spellcheck="false" aria-label="' + t('SQL query') + '"></textarea>' +
+        '<div class="q-actions"><button type="button" class="btn btn-primary q-run">' + t('Run') + '</button>' +
         '<span class="q-status"></span></div>' +
         '<div class="q-out"></div>' +
       '</div>';
@@ -148,10 +150,10 @@
     var asof = el.getAttribute('data-query-asof') || '';
     var json = el.getAttribute('data-query-json') || '';
 
-    p.querySelector('.q-title').textContent = el.getAttribute('data-query') || 'this table';
+    p.querySelector('.q-title').textContent = el.getAttribute('data-query') || t('this table');
     // The citation follows the data into the panel — see the file header.
     p.querySelector('.q-src').textContent =
-      src ? (' · ' + src + (asof ? ' · as of ' + asof : '')) : '';
+      src ? (' · ' + src + (asof ? ' · ' + t('as of') + ' ' + asof : '')) : '';
     // Coverage disclosure, shown BEFORE the results rather than after — see
     // the file header for why silence here would be actively misleading.
     var note = el.getAttribute('data-query-note') || '';
@@ -162,13 +164,13 @@
         status = p.querySelector('.q-status'), run = p.querySelector('.q-run');
     ta.value = sql;
     out.innerHTML = '';
-    status.textContent = 'Starting the SQL engine…';
+    status.textContent = t('Starting the SQL engine…');
     run.disabled = true;
     p.hidden = false;
     p.querySelector('.q-close').focus();
 
     getDb().then(function (db) {
-      status.textContent = 'Running in your browser. Edit the query and run it again.';
+      status.textContent = t('Running in your browser. Edit the query and run it again.');
       run.disabled = false;
       run.onclick = function () { renderResult(db, ta.value, out); };
       renderResult(db, ta.value, out);
@@ -178,11 +180,11 @@
       run.disabled = true;
       status.textContent = '';
       out.innerHTML =
-        '<p class="q-err">The query engine did not load (' + esc(err.message) + '). ' +
-        'Everything else on the page still works.</p>' +
-        (src ? '<p class="q-note">This table comes from ' + esc(src) +
-               (asof ? ', as of ' + esc(asof) : '') + '.</p>' : '') +
-        (json ? '<p class="q-note"><a href="' + esc(ROOT + json) + '">Download the underlying data</a></p>' : '');
+        '<p class="q-err">' + t('The query engine did not load') + ' (' + esc(err.message) + '). ' +
+        t('Everything else on the page still works.') + '</p>' +
+        (src ? '<p class="q-note">' + t('This table comes from') + ' ' + esc(src) +
+               (asof ? ', ' + t('as of') + ' ' + esc(asof) : '') + '.</p>' : '') +
+        (json ? '<p class="q-note"><a href="' + esc(ROOT + json) + '">' + t('Download the underlying data') + '</a></p>' : '');
     });
   }
 
@@ -195,7 +197,7 @@
       btn.type = 'button';
       btn.className = 'query-btn';
       btn.setAttribute('data-ev', 'query_panel_opened');
-      btn.innerHTML = '<span data-glyph="reed"></span> Query this yourself';
+      btn.innerHTML = '<span data-glyph="reed"></span> ' + t('Query this yourself');
       btn.addEventListener('click', function () { open(el, btn); });
       (el.parentNode || document.body).insertBefore(btn, el.nextSibling);
     });
