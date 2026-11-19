@@ -317,6 +317,8 @@ window.EGYBI_STRINGS = {
  "The heat, site by site, in %m.": "Жара по каждому месту: %m.",
  "The holiday calendar could not be loaded.": "Не удалось загрузить календарь праздников.",
  "The leaving date is before the arriving date.": "Дата отъезда раньше даты приезда.",
+ "The map could not load. The tables and charts on this page still work.": "Карта не загрузилась. Таблицы и графики на этой странице по-прежнему работают.",
+ "The map could not load. You can still add stops with the buttons and the search above.": "Карта не загрузилась. Остановки всё равно можно добавить кнопками и поиском выше.",
  "The map library did not load, so this page cannot draw Egypt.": "Не загрузилась библиотека карт, поэтому страница не может нарисовать Египет.",
  "The market prices could not be loaded.": "Не удалось загрузить рыночные цены.",
  "The openly licensed category OpenStreetMap links to.": "Категория со свободной лицензией, на которую ссылается OpenStreetMap.",
