@@ -582,6 +582,34 @@ case("the Russian month caption names a site in English", "twin-data.js", ["site
      lambda: edit("site/assets/visit.js", "if (LANG === 'ru') return t(s.name);", ""),
      lambda o: "ru/visit.html month caption names a site in English" in o, f"node {HERE}/twin-data.js")
 
+# The quote checker (2026-11-18) treats the top of a range as inside it. An
+# off-by-one that calls the top "above" would tell a traveller a fair price
+# was too high; fair-verdict.js must catch it.
+case("the quote checker calls the top of the range too high", "fair-verdict.js", ["site/assets/fair.js"],
+     lambda: edit("site/assets/fair.js", "if (amount > top) return", "if (amount >= top) return"),
+     lambda o: "FAIL the top of the range is inside it" in o, f"node {HERE}/fair-verdict.js")
+
+# Luxor is on inDrive's own city list and not on Uber's (2026-11-18). Losing
+# it from the inDrive row would leave a Luxor visitor with no app named;
+# test_ride_apps.py must catch it.
+case("Luxor dropped from the inDrive row", "test_ride_apps.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"Cairo, Alexandria, Luxor, Aswan, Hurghada', '"Cairo, Alexandria, Aswan, Hurghada'),
+     lambda o: "FAIL" in o and "test_every_city_missing_from_uber" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_ride_apps.py -v')
+
+# The Cairo legs carry the sleeper fares (2026-11-18). Dropping the
+# row from the leg must make leg-rows.js report the leg's rows as wrong.
+case("the sleeper fares dropped from the Cairo-Luxor leg", "leg-rows.js", ["site/data/getting-around.json"],
+     lambda: edit("site/data/getting-around.json", '"luxor"], "rows": ["train-bashtil", "train-sleeper", "train-fares"',
+                  '"luxor"], "rows": ["train-bashtil", "train-fares"'),
+     lambda o: "FAIL Giza to Karnak takes the Cairo-Luxor sleeper rows" in o, f"node {HERE}/leg-rows.js")
+
+# made-in-egypt.html says EgyBI takes no payment from any maker (2026-11-18).
+# A referral tag on a maker link would make that untrue; coverage.py must refuse it.
+case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-egypt.json"],
+     lambda: edit("site/data/made-in-egypt.json", '"maker_url": "https://kiliim.com/"', '"maker_url": "https://kiliim.com/?ref=egybi"'),
+     lambda o: "maker link that is not a plain https link" in o and "kiliim" in o, COVERAGE)
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)
@@ -1485,6 +1513,13 @@ case("the Russian planner breaks on a number format", "leg-cards.js", ["site/ass
      lambda: edit("site/assets/plan.js", "return F && ar ? F.digits(String(x), 'ar') : String(x);",
                   "return F ? F.digits(String(x), document.documentElement.getAttribute('lang') || 'en') : String(x);"),
      lambda o: "LEG LEFT IN ENGLISH (ru)" in o, f"node {HERE}/leg-cards.js")
+
+# The home briefing in Arabic and Russian (2026-11-18). Putting its title back
+# as an English literal must make twin-data.js report the briefing.
+case("the home briefing title back in English", "twin-data.js", ["site/assets/home.js"],
+     lambda: edit("site/assets/home.js", "title.textContent = t('The heat, site by site, in %m.').replace('%m', T.monthName(main));",
+                  "title.textContent = 'The heat, site by site, in ' + T.MONTHS[main] + '.';"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "briefing" in o, f"node {HERE}/twin-data.js")
 
 # The visit page in Arabic and Russian (2026-11-18). Writing the month
 # caption back as an English sentence must make twin-data.js report it.
