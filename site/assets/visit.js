@@ -752,16 +752,27 @@
   }
 
   /* ------------------------------------------------------------------ init */
+  // When the map library or the outline did not load (a blocked script, a
+  // stale cache offline), the maps say so and every table below still fills:
+  // init used to return before loading any data, which left the whole page
+  // blank (2026-11-19, maps plan stage 2).
+  function mapMissing(id) {
+    var box = $(id);
+    if (!box) return;
+    box.innerHTML = '<p class="chart-cap" style="padding:16px;margin:0;">' +
+      t('The map could not load. The tables and charts on this page still work.') + '</p>';
+  }
+
   function init() {
-    if (!window.L || !window.EGYBI_EGYPT_GEO) return;
+    var canMap = !!(window.L && window.EGYBI_EGYPT_GEO && window.EGYBI && window.EGYBI.mapkit);
 
     // Default to the month the reader is actually in — a visitor checking in
     // August wants August first, not January.
     S.month = new Date().getMonth();
 
     var box = $('visitMap');
-    if (box) S.map = baseMap('visitMap');
-    if ($('reliefMap')) R.map = baseMap('reliefMap');
+    if (box) { if (canMap) S.map = baseMap('visitMap'); else mapMissing('visitMap'); }
+    if ($('reliefMap')) { if (canMap) R.map = baseMap('reliefMap'); else mapMissing('reliefMap'); }
 
     var scrub = $('reliefScrub');
     if (scrub) {

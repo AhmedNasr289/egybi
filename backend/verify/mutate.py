@@ -631,6 +631,15 @@ case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-
      lambda: edit("site/data/made-in-egypt.json", '"maker_url": "https://kiliim.com/"', '"maker_url": "https://kiliim.com/?ref=egybi"'),
      lambda o: "maker link that is not a plain https link" in o and "kiliim" in o, COVERAGE)
 
+# The Grand Egyptian Museum's hours come from its own ticketing site
+# (2026-11-18). Re-citing them elsewhere must make test_gem_hours.py fail.
+case("the museum's hours cited away from its own site", "test_gem_hours.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json",
+                  '"source_url": "https://tickets.gem.eg/", "checked": "2026-11-18"',
+                  '"source_url": "https://example-tours.com/gem-hours", "checked": "2026-11-18"'),
+     lambda o: "FAIL" in o and "test_hours_come_from_the_museum" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_gem_hours.py -v')
+
 # The planner's calendar file (2026-11-18): an all-day event ends the day
 # after its last day. Ending it on the last day would drop a day from every
 # stop in the reader's calendar; ics-cases.js must catch it.
@@ -646,6 +655,27 @@ case("the Karnak solstice row a day late", "test_solstice.py", ["site/data/calen
                   '"key": "karnak-solstice-2026", "name": "Karnak winter solstice sunrise", "name_ar": "تعامد الشمس على معبد الكرنك", "start": "2026-12-22", "end": "2026-12-22"'),
      lambda o: "FAIL" in o and "test_each_year_in_the_window_has_both_rows_on_21_december" in o,
      f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_solstice.py -v')
+
+# The stories page writes its figures in the page's form (2026-11-19). Back
+# to en-US formatting, the Arabic story would show Western digits;
+# twin-data.js must catch it.
+case("the stories figures back in Western digits", "twin-data.js", ["site/assets/stories.js"],
+     lambda: edit("site/assets/stories.js", "if (LANG === 'ar' && F) return F.num(Number(n), 'ar', d || 0);", ""),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "stories figures" in o, f"node {HERE}/twin-data.js")
+
+# The streets page's legend reads in the page's language (2026-11-19). A
+# metric label taken out of t() puts English back on the Arabic and Russian
+# streets page; twin-data.js must catch it.
+case("the streets legend back in English", "twin-data.js", ["site/assets/streets.js"],
+     lambda: edit("site/assets/streets.js", "label: t('Intersection density')", "label: 'Intersection density'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "streets" in o, f"node {HERE}/twin-data.js")
+
+# The dossier counts each stop's dates from the arrival day (2026-11-19).
+# Off by one day, every sheet would name the wrong dates; dossier-days.js
+# must catch it.
+case("the dossier's stop dates one day late", "dossier-days.js", ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js", "var offset = 0;", "var offset = 1;"),
+     lambda o: "DOSSIER DATES WRONG" in o, f"node {HERE}/dossier-days.js")
 
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
@@ -1579,6 +1609,40 @@ case("the place card heading back in English", "twin-data.js", ["site/assets/pla
      lambda: edit("site/assets/places.js", "'<div class=\"pd-going\"><h4>' + esc(t('Going there')) + '</h4>'",
                   "'<div class=\"pd-going\"><h4>Going there</h4>'"),
      lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "place card" in o, f"node {HERE}/twin-data.js")
+
+# The Atlas legend reads in the page's language (2026-11-19). A metric label
+# taken out of t() puts English back on the Arabic and Russian Atlas;
+# twin-data.js must catch it.
+case("the Atlas legend title back in English", "twin-data.js", ["site/assets/geospatial.js"],
+     lambda: edit("site/assets/geospatial.js", "label: t('Population (2023)')", "label: 'Population (2023)'"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "Atlas" in o, f"node {HERE}/twin-data.js")
+
+# Without leaflet.js the heat page still fills its tables (2026-11-19). The
+# old early return left the whole page blank; map-fallback.js must catch it.
+case("the heat page blank again without the map library", "map-fallback.js", ["site/assets/visit.js"],
+     lambda: edit("site/assets/visit.js", "window.EGYBI && window.EGYBI.mapkit);\n",
+                  "window.EGYBI && window.EGYBI.mapkit);\n    if (!canMap) return;\n"),
+     lambda o: "TABLES EMPTY WITHOUT THE MAP" in o, f"node {HERE}/map-fallback.js")
+
+# The planner's place count is read from geo-places.json (2026-11-19). A count
+# typed in again goes stale as the file grows; twin-data.js must catch it.
+case("the planner's place count typed in again", "twin-data.js", ["site/assets/plan.js"],
+     lambda: edit("site/assets/plan.js", "pageDigits(D.places.places.length)", "pageDigits(897)"),
+     lambda o: "PLANNER COUNT WRONG" in o, f"node {HERE}/twin-data.js")
+
+# English and Russian place cards round coordinates as egfmt.js does
+# (2026-11-19). Back to toFixed, Abu Rudeis Airport reads 28.8986 where the
+# data and the Arabic card say 28.8987; twin-data.js must catch it.
+case("place coordinates rounded with toFixed again", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "    if (F) return F.fixed(p.lat, 'en', 4) + ', ' + F.fixed(p.lon, 'en', 4);\n", ""),
+     lambda o: "PLACE COORDINATES ROUNDED WRONG" in o, f"node {HERE}/twin-data.js")
+
+# The Arabic fair-prices page writes its prices with Arabic-Indic digits
+# (2026-11-19). If fair.js stopped using egfmt.js there, the published ranges
+# would go back to "EGP 50–100"; twin-data.js must catch it.
+case("the Arabic fair prices back in Western digits", "twin-data.js", ["site/assets/fair.js"],
+     lambda: edit("site/assets/fair.js", "return LANG === 'ar' && F ? F : null; }", "return null; }"),
+     lambda o: "TWIN SCRIPT TEXT IN ENGLISH" in o and "Western digits" in o, f"node {HERE}/twin-data.js")
 
 # A kind label passed to t() as a variable is never collected into the
 # translation table, so it stayed English on the live Arabic and Russian

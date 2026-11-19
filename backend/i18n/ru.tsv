@@ -1602,6 +1602,51 @@ Things made in Egypt that you can watch being made, buy or try on your trip: whe
 We list a craft or a maker only when a named source describes it: the maker&#x27;s own site, an official or academic page, or the press. A price or a tip on telling the real thing from an imitation appears only when a source gives it, with that source beside it. Where we found no website or account for a maker, we say so rather than guess one. We link to the makers instead of copying their pictures. Warnings about shops come from several travellers&#x27; reports, and say so.	Мы включаем ремесло или мастера, только если его описывает названный источник: сайт самого мастера, официальная или научная страница либо пресса. Цена или совет, как отличить подлинную вещь от подделки, появляются, только если их даёт источник, и он указан рядом. Если у мастера не нашлось ни сайта, ни аккаунта, мы так и пишем, а не угадываем. Мы ставим ссылки на мастеров, а не копируем их фотографии. Предупреждения о магазинах взяты из отзывов нескольких путешественников, и это указано.
 Items listed: 34. Compiled <time datetime="2026-11-18">18 November 2026</time>.	Пунктов в списке: 34. Составлено <time datetime="2026-11-18">18 ноября 2026 года</time>.
 Made near here:	Сделано поблизости:
+%n km²	%n км²
+%n million	%n млн
+%n per km²	%n на км²
+All layers loaded. OpenStreetMap layers © OpenStreetMap contributors (ODbL); oldest layer refresh: %d.	Все слои загружены. Слои OpenStreetMap © участники OpenStreetMap (ODbL); самое старое обновление слоя: %d.
+Area in km²	Площадь, км²
+Clinic	Клиника
+Cultural	Культурный
+Density per km²	Плотность на км²
+Egypt governorate indicators: the same data the map shows	Показатели мухафаз Египта: те же данные, что на карте
+Facility and school counts are what OpenStreetMap has mapped: a relative pattern, not official registers.	Число учреждений и школ — то, что нанесено в OpenStreetMap: относительная картина, а не официальные реестры.
+Growth 2017→2023	Рост 2017→2023
+Hospital	Больница
+Interactive map of Egypt’s 27 governorates. Tab to a governorate and press Enter for its figures.	Интерактивная карта 27 мухафаз Египта. Перейдите к мухафазе клавишей Tab и нажмите Enter, чтобы увидеть её данные.
+Mapped health facilities	Медучреждения на карте
+Mapped schools	Школы на карте
+Natural	Природный
+Not generated yet: %l. These layers appear after the first "Build Atlas geo layers" run; the governorate map below already works.	Ещё не созданы: %l. Эти слои появятся после первого запуска «Build Atlas geo layers»; карта мухафаз ниже уже работает.
+Points on the map	Точки на карте
+Population (2023)	Население (2023)
+Source: %s, as of %d.	Источник: %s, по состоянию на %d.
+This map could not finish loading, so the layers above are unavailable. The governorate outline below is drawn from data that comes with the page. Please tell us: the fault is ours.	Карта не смогла загрузиться полностью, поэтому слои выше недоступны. Границы мухафаз ниже нарисованы по данным, встроенным в страницу. Пожалуйста, сообщите нам: ошибка на нашей стороне.
+Unavailable: this layer failed to load	Недоступно: слой не загрузился
+Urban population	Городское население
+Urban share	Доля горожан
+Visitor guide:	Путеводитель:
+World Heritage site	Объект Всемирного наследия
+health facilities	медучреждения
+heritage sites	объекты наследия
+hospitals: %h, clinics: %c	больниц: %h, клиник: %c
+schools	школы
+The map could not load. The tables and charts on this page still work.	Карта не загрузилась. Таблицы и графики на этой странице по-прежнему работают.
+The map could not load. You can still add stops with the buttons and the search above.	Карта не загрузилась. Остановки всё равно можно добавить кнопками и поиском выше.
+<span><i style="background:#2C6FAD"></i>21 °C or less</span><span><i style="background:#4FA3A5"></i>22–27 °C</span> <span><i style="background:#C9A227"></i>28–33 °C</span><span><i style="background:#D97B2B"></i>34–38 °C</span> <span><i style="background:#B23A0F"></i>39 °C or more</span><span>dashed line: straight lines between stops, not roads</span>	<span><i style="background:#2C6FAD"></i>21&nbsp;°C и ниже</span><span><i style="background:#4FA3A5"></i>22–27&nbsp;°C</span><span><i style="background:#C9A227"></i>28–33&nbsp;°C</span><span><i style="background:#D97B2B"></i>34–38&nbsp;°C</span><span><i style="background:#B23A0F"></i>39&nbsp;°C и выше</span><span>пунктир: прямые линии между остановками, а не дороги</span>
+Choose from 18 major sites and the other mapped places, set the days at each, and see the measured heat and the straight-line distances. Print it as a Papyrus dossier.	Выберите из 18 главных мест и других мест на карте, укажите дни для каждого — и увидите измеренную жару и расстояния по прямой. Распечатайте всё как досье «Папируса».
+Or search the mapped places	Или найдите среди мест на карте
+Or search the mapped places (%n)	Или найдите среди мест на карте (%n)
+No stops yet. Click a site on the map, use the buttons above, or search the mapped places.	Остановок пока нет. Нажмите на место на карте, воспользуйтесь кнопками выше или найдите место на карте.
+Showing Egyptian pounds only.	Суммы показаны только в египетских фунтах.
+ExchangeRate-API (open access)	ExchangeRate-API (открытый доступ)
+market rate	рыночный курс
+Market reference rates, not the Central Bank of Egypt official fixing.	Рыночные справочные курсы, а не официальный курс Центрального банка Египта.
+1 %c = %r, %s, %d.	1 %c = %r, %s, %d.
+Grand Egyptian Museum opening hours<span class="fp-src">The museum complex opens at 8:30 and closes at 19:00, or at 22:00 on Wednesday and Saturday. Last entry is one hour before the galleries close. Tickets are for a time slot, booked on the site.</span>	Часы работы Большого Египетского музея<span class="fp-src">Музейный комплекс открывается в 8:30 и закрывается в 19:00, а по средам и субботам — в 22:00. Последний вход — за час до закрытия залов. Билеты продаются на определённое время входа и бронируются на сайте.</span>
+<strong>Galleries 9:00 to 18:00; to 21:00 on Wednesday and Saturday</strong>	<strong>Залы с 9:00 до 18:00; по средам и субботам до 21:00</strong>
+<a href="https://tickets.gem.eg/" rel="noopener">Grand Egyptian Museum: official ticketing website</a><span class="fp-src">Checked <time datetime="2026-11-18">18 November 2026</time></span>	<a href="https://tickets.gem.eg/" rel="noopener">Большой Египетский музей: официальный сайт билетов</a><span class="fp-src">Проверено <time datetime="2026-11-18">18 ноября 2026 года</time></span>
 Add to my calendar	Добавить в календарь
 Planned on egybi.com. Check opening hours before you go.	Запланировано на egybi.com. Перед поездкой проверьте часы работы.
 Set your arrival date first, so each stop can be placed on its days.	Сначала укажите дату приезда, чтобы каждую остановку можно было поставить на её дни.
@@ -1611,3 +1656,116 @@ Karnak winter solstice sunrise	Восход в день зимнего солн�
 Qasr Qarun winter solstice sunrise	Восход в день зимнего солнцестояния в Каср-Каруне
 Not a public holiday. Africanews, reporting with AP, says the sunrise lines up with the temple walls on 21 December, the shortest day of the year, and visitors gather at dawn to watch it.	Не государственный праздник. Africanews со ссылкой на AP пишет, что 21 декабря, в самый короткий день года, восходящее солнце встаёт точно по оси стен храма, и посетители собираются на рассвете, чтобы это увидеть.
 Not a public holiday. Explore Fayoum, a Fayoum travel site, describes the sun lining up with this Ptolemaic temple on 21 December; a second travel site gives about 25 minutes of light in the sanctuary.	Не государственный праздник. Explore Fayoum, туристический сайт о Файюме, описывает, как 21 декабря солнце встаёт по оси этого птолемеевского храма; другой туристический сайт пишет, что свет держится в святилище около 25 минут.
+All the districts (%n), drawn together. Each one is measured on its own street network; the figures appear as you scroll through them.	Все районы (%n), нарисованные вместе. Каждый измерен по своей уличной сети; цифры появляются, пока вы прокручиваете страницу.
+Boundary	Граница
+OpenStreetMap polygon	полигон OpenStreetMap
+The gazetteer could not be loaded, so this story shows the map without it.	Справочник мест не загрузился, поэтому эта история показывает карту без него.
+The gazetteer has not been built yet, so this story shows the map without it.	Справочник мест ещё не построен, поэтому эта история показывает карту без него.
+The health layer could not be loaded, so this story shows the map without it.	Слой медучреждений не загрузился, поэтому эта история показывает карту без него.
+The health layer has not been built yet, so this story shows the map without it.	Слой медучреждений ещё не построен, поэтому эта история показывает карту без него.
+The street report card could not be loaded, so this story shows the map without it.	Карточка улиц не загрузилась, поэтому эта история показывает карту без неё.
+The street report card has not been built yet, so this story shows the map without it.	Карточка улиц ещё не построена, поэтому эта история показывает карту без неё.
+This boundary is hand-drawn. OpenStreetMap has no polygon for %s, so its extent is an approximation; the street measurements inside it are not.	Эта граница нарисована вручную. В OpenStreetMap нет полигона для района %s, поэтому его контур приблизителен; измерения улиц внутри — нет.
+district in focus	район в фокусе
+governorate boundary	граница мухафазы
+hand-drawn	нарисована вручную
+km²	км²
+measured %d	измерено %d
+per km²	на км²
+the other districts	остальные районы
+Downtown Cairo	Центр Каира
+Khedivial, 1860s–1870s	Хедивская эпоха, 1860–1870-е
+Ismail's Paris-on-the-Nile: deliberate boulevards and midans laid over a dense grid. The oldest planned fabric in the comparison.	Париж на Ниле времён Исмаила: продуманные бульвары и площади поверх плотной сетки. Самая старая спланированная застройка в сравнении.
+Heliopolis	Гелиополис
+Garden suburb, 1905–1910s	Город-сад, 1905–1910-е
+Baron Empain's tram-served desert suburb — radial avenues over a regular grid, built around public transit from day one.	Пустынный пригород барона Эмпена с трамваем: радиальные проспекты поверх регулярной сетки, построенные вокруг общественного транспорта с первого дня.
+Maadi	Маади
+Garden suburb, 1900s–1930s	Город-сад, 1900–1930-е
+Delta Land Company's low-density villa quarter: numbered streets on a grid, softened by diagonals and greenery.	Малоэтажный район вилл компании Delta Land: пронумерованные улицы по сетке, смягчённые диагоналями и зеленью.
+Nasr City	Наср-Сити
+Nasserist expansion, 1958+	Насеровская застройка, с 1958
+The state's post-revolution answer to Cairo's growth — wide arterials and superblocks, designed for the car era.	Ответ государства после революции на рост Каира: широкие магистрали и суперкварталы, рассчитанные на эпоху автомобиля.
+6th of October City	Город 6 октября
+Desert new town, 1979+	Новый город в пустыне, с 1979
+First-generation satellite city, built to pull people off the Nile valley. Master-planned from nothing on open desert.	Город-спутник первого поколения, построенный, чтобы увести людей из долины Нила. Спланирован с нуля в открытой пустыне.
+Luxor City	Луксор
+Temple town, ancient core + modern grid	Город-храм: древнее ядро и современная сетка
+A working Egyptian city wrapped around a pharaonic temple complex — the only district here whose street plan has to negotiate 3,000-year-old stone.	Живой египетский город вокруг фараонского храмового комплекса — единственный район здесь, чьей уличной сетке приходится считаться с камнем трёхтысячелетней давности.
+10th of Ramadan City	Город 10-го Рамадана
+Industrial new town, 1977+	Новый промышленный город, с 1977
+Egypt's first satellite city, built around factories rather than housing — an industrial-first plan that predates the desert suburbs by two decades.	Первый город-спутник Египта, построенный вокруг заводов, а не жилья: промышленный план, на два десятилетия опередивший пустынные пригороды.
+Sheikh Zayed City	Шейх-Зайед
+Desert new town, 1995+	Новый город в пустыне, с 1995
+The compound-and-arterial template that New Cairo and 6th of October scaled up, at a size where the pattern is still legible.	Шаблон «комплексы и магистрали», который Новый Каир и 6 октября увеличили в масштабе, — здесь он ещё в размере, где узор читается.
+New Alamein	Новый Аламейн
+Coastal new city, 2018+	Новый прибрежный город, с 2018
+The newest fabric in the comparison and the only one on the Mediterranean — a city still being built, which is itself visible in the network.	Самая новая застройка в сравнении и единственная на Средиземном море: город ещё строится, и это видно по самой сети.
+New Cairo	Новый Каир
+Desert new town, 1990s–2000s	Новый город в пустыне, 1990–2000-е
+The Fifth Settlement era: compound-led, low-connectivity suburban form — the sharpest contrast with the khedivial grid.	Эпоха Пятого поселения: пригородная форма из закрытых комплексов со слабой связностью — самый резкий контраст с хедивской сеткой.
+%n km/km²	%n км/км²
+(hand-drawn extent)	(границы нарисованы вручную)
+A low score can mean few facilities or few mapped facilities: this data cannot tell them apart.	Низкий результат может означать мало учреждений или мало нанесённых на карту: эти данные не различают одно и другое.
+AI-generated	создано ИИ
+Access layer built %d.	Слой доступности построен %d.
+At or above twice the lowest share: %l. None of them is among the newest districts here. The desert and coastal new towns, the ones a cul-de-sac critique is usually aimed at, sit near the bottom. What separates them from the older districts is coarseness, not disconnection: far fewer junctions per square kilometre and much longer blocks, which is a different criticism and has to be argued differently.	Вдвое выше самой низкой доли или больше: %l. Ни один из них не входит в число самых новых районов здесь. Пустынные и прибрежные новые города, на которые обычно направлена критика тупиков, оказываются внизу списка. От старых районов их отличает крупность, а не разобщённость: гораздо меньше перекрёстков на квадратный километр и намного более длинные кварталы, а это другая критика, и доказывать её нужно иначе.
+Average distance between junctions. Short segments mean small, walkable blocks; long ones mean superblocks you have to walk around.	Среднее расстояние между перекрёстками. Короткие отрезки — это небольшие кварталы, удобные для пешехода; длинные — суперкварталы, которые приходится обходить.
+Average number of streets meeting at each node. Near 4 is a crossroads grid; near 2.5 means many bends and dead ends rather than true junctions.	Среднее число улиц, сходящихся в каждом узле. Около 4 — сетка перекрёстков; около 2,5 — много изгибов и тупиков вместо настоящих перекрёстков.
+Could not be re-measured and keep an earlier measurement, dated on each: %n.	Не удалось измерить заново, сохранены прежние измерения с датой на каждом: %n.
+Counted from OpenStreetMap: %l.	Подсчитано по OpenStreetMap: %l.
+Dead-end share runs from %a at %x to %b at %y.	Доля тупиков — от %a в районе %x до %b в районе %y.
+Era labels are ours; the numbers are not.	Названия эпох — наши, цифры — нет.
+Every query returned an answer and every answer was empty, so this is a statement about OpenStreetMap coverage in this district, not about whether the district has clinics or schools. It almost certainly has both.	Каждый запрос получил ответ, и каждый ответ был пустым, так что это говорит о покрытии OpenStreetMap в этом районе, а не о том, есть ли в нём клиники или школы. Почти наверняка есть и то и другое.
+Hand-drawn extent.	Границы нарисованы вручную.
+How concentrated the street directions are. A four-way grid puts nearly all its length into two opposing pairs and scores about 1.39; bearings spread evenly around the compass approach 3.58. A high score can mean disorder or a deliberate radial plan — this number alone cannot tell you which.	Насколько сосредоточены направления улиц. Сетка из четырёх направлений вкладывает почти всю длину в две встречные пары и даёт около 1,39; направления, равномерно распределённые по компасу, приближаются к 3,58. Высокое значение может означать хаос или продуманную радиальную планировку — одно это число не скажет, что именно.
+How much further you travel along streets than the straight-line distance. 1.00 would be a perfect straight shot; higher means detours.	Насколько путь по улицам длиннее расстояния по прямой. 1,00 — идеально прямой путь; больше — объезды.
+Junctions per square kilometre. More intersections means more route choices, shorter blocks and a network that stays usable when one street is blocked.	Перекрёстков на квадратный километр. Больше перекрёстков — больше вариантов маршрута, короче кварталы и сеть, которая работает, даже когда одна улица перекрыта.
+Kilometres of street per square kilometre. A rough measure of how finely the land is subdivided.	Километров улиц на квадратный километр. Грубая мера того, насколько дробно поделена земля.
+Map of the measured Egyptian districts, shaded by the selected street-network metric. Tab to a district and press Enter for its figures.	Карта измеренных районов Египта, окрашенных по выбранному показателю уличной сети. Перейдите к району клавишей Tab и нажмите Enter, чтобы увидеть его данные.
+Measured %d. The latest build could not re-measure this district, so these are its last measured figures.	Измерено %d. Последняя сборка не смогла измерить этот район заново, поэтому здесь его последние измеренные данные.
+No hospital, clinic, school or pharmacy is mapped inside this boundary, so there is nothing to measure a walk to: a gap in OpenStreetMap, not a finding about the district.	Внутри этих границ на карте нет ни больницы, ни клиники, ни школы, ни аптеки, поэтому измерять путь пешком не до чего: это пробел в OpenStreetMap, а не вывод о районе.
+Not answered on this build: %l.	Без ответа в этой сборке: %l.
+Nothing of these four kinds is mapped here.	Ничего из этих четырёх видов здесь не нанесено на карту.
+OpenStreetMap has no polygon for this district under any name or tag: every match we found was a landmark inside it (a palace, a courthouse, a theatre) rather than the district itself. This outline is drawn from its known edges: the Nile, Ramses, Port Said Street and Sayyida Zeinab. Every other district here uses OpenStreetMap’s own polygon. Because the per-km² figures depend on where that line falls, these are the numbers on this page most sensitive to a judgement call.	В OpenStreetMap нет полигона этого района ни под каким названием или тегом: всё, что мы нашли, было объектами внутри него (дворец, суд, театр), а не самим районом. Этот контур нарисован по его известным границам: Нил, Рамсес, улица Порт-Саид и Сайида Зейнаб. Все остальные районы здесь используют полигоны самого OpenStreetMap. Поскольку показатели на км² зависят от того, где проходит эта линия, это самые чувствительные к оценке цифры на странице.
+Planner’s note	Заметка планировщика
+Planner’s notes have not been generated for this build.	Заметки планировщика для этой сборки не созданы.
+Read the numbers together before reading any one of them. Districts measured: %n. Entropy runs from %a to %b, a spread of %s, or %p of the %g–%m range.	Читайте цифры вместе, прежде чем читать любую по отдельности. Измерено районов: %n. Энтропия — от %a до %b, разброс %s, или %p диапазона %g–%m.
+Share of street ends that go nowhere. Cul-de-sacs calm traffic on the street itself, but push every trip back onto a few collector roads.	Доля концов улиц, которые никуда не ведут. Тупики успокаивают движение на самой улице, но выталкивают каждую поездку на немногие собирающие дороги.
+Skipped:	Пропущено:
+Street network measured %d. The latest build could not re-measure this district, so these are its last measured figures.	Уличная сеть измерена %d. Последняя сборка не смогла измерить этот район заново, поэтому здесь его последние измеренные данные.
+Street network: OpenStreetMap via OSMnx, built %d. Districts: %n.	Уличная сеть: OpenStreetMap через OSMnx, построено %d. Районов: %n.
+Street orientation: length of road facing each compass direction	Направления улиц: длина дорог, обращённых в каждую сторону компаса
+That is a wide enough spread for the differences between districts to be meaningful.	Этого разброса достаточно, чтобы различия между районами имели смысл.
+The cul-de-sac story is not in this data.	История о тупиках в этих данных не подтверждается.
+The districts do not separate cleanly on this metric.	По этому показателю районы чётко не разделяются.
+The street-network data has not been generated yet. It appears here after the first "Refresh street report card" run: the page is built and waiting, not broken. Nothing is shown until there are real measurements to show.	Данные уличной сети ещё не созданы. Они появятся здесь после первого запуска «Refresh street report card»: страница готова и ждёт, а не сломана. Пока нет настоящих измерений, ничего не показывается.
+They are clustered near the high end, which is the actual finding: none of these districts is a grid by this measure, khedivial Downtown included. The textbook contrast between a planned grid and an organic tangle does not appear in Cairo, and a metric this flat should not be used to rank the districts against each other. The differences that do separate them are in the other six columns.	Они сгрудились у верхнего края, и в этом настоящий вывод: ни один из этих районов не является сеткой по этой мере, включая хедивский центр. Хрестоматийного контраста между спланированной сеткой и стихийным клубком в Каире нет, и столь ровный показатель нельзя использовать, чтобы ранжировать районы. Различия, которые их действительно разделяют, — в остальных шести столбцах.
+They are shown as unknown rather than as zero, and the score above averages the categories that answered (%n).	Они показаны как неизвестные, а не как ноль, а оценка выше усредняет категории, которые ответили (%n).
+Walking access	Доступность пешком
+Written by a language model from the numbers above, which are shown next to it so you can check every claim. It is a reading of the metrics, not professional planning advice.	Написано языковой моделью по цифрам выше, которые показаны рядом, чтобы вы могли проверить каждое утверждение. Это прочтение показателей, а не профессиональная консультация по планированию.
+averaged over the categories that returned a result this build (%n)	среднее по категориям, давшим результат в этой сборке (%n)
+clinic	клиника
+entropy %n	энтропия %n
+hospital	больница
+measured %d; the latest build could not re-measure it	измерено %d; последняя сборка не смогла измерить заново
+no data	нет данных
+none mapped in OpenStreetMap	в OpenStreetMap нет ни одного
+not retrieved	не получено
+not retrieved this build	не получено в этой сборке
+of walkable street within 15 minutes of a mapped hospital, clinic, school or pharmacy	пешеходных улиц в 15 минутах от нанесённой на карту больницы, клиники, школы или аптеки
+pharmacy	аптека
+school	школа
+within 15 min; median %n min	в пределах 15 мин; медиана %n мин
+Opens 07:00, last entry 16:00	Открыто с 07:00, последний вход в 16:00
+Opens 06:00, last entry 16:00	Открыто с 06:00, последний вход в 16:00
+Opens 06:00, last entry 17:00 in summer and 16:00 in winter	Открыто с 06:00, последний вход в 17:00 летом и в 16:00 зимой
+08:00 to 17:00	с 08:00 до 17:00
+07:00 to 16:00	с 07:00 до 16:00
+07:00 to 17:00	с 07:00 до 17:00
+07:00 to 19:00	с 07:00 до 19:00
+The monastery: 08:45 to 12:45, closed on Sundays	Монастырь: с 08:45 до 12:45, по воскресеньям закрыт
+On %d: sunrise %r, golden light until %g and again from %e, sunset %s (Cairo time).	%d: восход в %r, золотой свет до %g и снова с %e, закат в %s (по каирскому времени).
+Opening hours:	Часы работы:
+(Ministry of Tourism and Antiquities, checked %d)	(Министерство туризма и древностей, проверено %d)
+On these days:	В эти дни:
+Opening hours: the Ministry of Tourism and Antiquities. Sunrise and sunset: NOAA solar equations, computed for each stop; golden light is while the sun is under 6° high.	Часы работы: Министерство туризма и древностей. Восход и закат: солнечные формулы NOAA, рассчитанные для каждой остановки; золотой свет — пока солнце ниже 6° над горизонтом.
