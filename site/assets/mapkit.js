@@ -877,7 +877,8 @@
     landStyle: landStyle,
     landLine: LAND_LINE,
     outline: outline,
-    sources: SOURCES,
+    // Built on each read, in the page's language (see sources() above).
+    get sources() { return sources(); },
     reduceMotion: RM,
     esc: esc
   };
