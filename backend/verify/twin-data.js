@@ -130,8 +130,15 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         // On Arabic pages the site names come from the climate file's name_ar,
         // so the caption has no Latin letter at all (2026-11-18).
         else if (lang === 'ar/' && /[A-Za-z]/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption names a site in English: "${cap.slice(0, 160)}"`);
+        // On Russian pages the site names come from the Russian table: no
+        // Latin word is left (the lone C of °C is not a word) (2026-11-18).
+        else if (lang === 'ru/' && /[A-Za-z]{2,}/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} month caption names a site in English: "${cap.slice(0, 160)}"`);
         else if (!lang && !/^In \w+, a normal afternoon/.test(cap)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English month caption changed to "${cap.slice(0, 160)}"`);
         else console.log(`${where}: month caption in the page's language`);
+        // The relief chart's point readout: on Arabic pages its coordinates
+        // are in Arabic-Indic digits, with no °N/°E (2026-11-18).
+        const relief = await p.evaluate(() => (document.getElementById('reliefReadout') || {}).textContent || '');
+        if (lang === 'ar/' && /\d+\.\d+°[NE]/.test(relief)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} relief readout coordinates read "${relief.slice(0, 120)}"`);
       }
 
       // The places page (2026-11-18): the summary line and an opened place
