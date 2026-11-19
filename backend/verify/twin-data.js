@@ -153,6 +153,8 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
             card: d ? d.textContent : '',
             written: [].concat(pick('.pd-row > span'), pick('.pd-row strong').slice(0, 1),
                                pick('.pd-going h4'), pick('.pd-links a'), pick('.pd-links li > span')).join(' | '),
+            values: pick('.pd-row strong'),
+
             // the card's second row is the governorate (Kind, Governorate, ...)
             gov: (d && d.querySelectorAll('.pd-row strong')[1] || {}).textContent || '',
           };
@@ -168,6 +170,10 @@ const hasTwin = (lang, name) => !!lang && fs.existsSync(path.join(SITE, lang, na
         else if (lang && eng.test(all)) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card reads "${all.slice(0, 160)}"`);
         else if (!lang && !/Going there/.test(card.card)) fail(`TWIN SCRIPT TEXT IN ENGLISH: the English place card changed to "${card.card.slice(0, 160)}"`);
         else console.log(`${where}: place card in the page's language`);
+        // Coordinates on an Arabic card in Arabic-Indic digits (2026-11-18,
+        // found on the live site as "28.8986, 33.2032").
+        const westCoords = card.values.filter(v => /^\d+\.\d+, \d+\.\d+$/.test(v));
+        if (lang === 'ar/' && westCoords.length) fail(`TWIN SCRIPT TEXT IN ENGLISH: ${where} place card coordinates in Western digits "${westCoords[0]}"`);
       }
 
       // Text the header scripts write (stage 4a): in Arabic and Russian it

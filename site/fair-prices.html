@@ -93,6 +93,15 @@
     <p class="chart-cap" id="fpRate"></p>
     <div id="fpGroups"></div>
     <p class="chart-cap" id="fpCap" style="margin-top:16px;"></p>
+    <div class="sheet" id="fpCheck" style="margin-top:22px;">
+      <h3 style="margin:0 0 10px;color:var(--blue-deep);">Were you quoted a price?</h3>
+      <p class="chart-cap" style="margin:0 0 12px;">Pick what it was for and type the amount. The page compares it with the published range above. Nothing you type leaves your phone.</p>
+      <div class="trip-form">
+        <label style="flex:1 1 280px;min-width:0;max-width:100%;">What it was for<select id="fpCheckItem" style="width:100%;max-width:100%;"></select></label>
+        <label>The price you were asked<input id="fpCheckAmount" type="number" min="0" step="any" inputmode="decimal"></label>
+      </div>
+      <p class="chart-cap" id="fpCheckOut" role="status" aria-live="polite" style="margin-top:12px;"></p>
+    </div>
   </div>
 </section>
 
@@ -138,7 +147,7 @@
 <script src="assets/wayfinding.js?v=2"></script>
 <script src="assets/egfmt.js?v=5"></script>
 <script src="assets/trip.js?v=9"></script>
-<script src="assets/fair.js?v=4"></script>
+<script src="assets/fair.js?v=5"></script>
 <script src="assets/motion.js?v=5"></script>
 <script src="assets/analytics.js?v=2"></script>
 </body>

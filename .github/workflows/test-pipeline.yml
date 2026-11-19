@@ -31,6 +31,9 @@ on:
       - 'backend/verify/heat-warning.js'
       - 'backend/verify/ics-cases.js'
       - 'site/assets/ics.js'
+      - 'backend/verify/fair-verdict.js'
+      - 'site/assets/fair.js'
+      - 'site/data/fair-prices.json'
       - 'site/assets/trip.js'
       - 'site/data/opening-hours.json'
       - 'site/data/getting-around.json'
@@ -106,6 +109,14 @@ jobs:
         run: |
           set -o pipefail
           node backend/verify/ics-cases.js 2>&1 | tee -a /tmp/test-pipeline.log
+
+      # The quote checker on fair-prices.html (fair.js fairVerdict): range
+      # edges, the share above or below, and no verdict without a figure.
+      - name: Fair-price quote checker matches its cases
+        shell: bash
+        run: |
+          set -o pipefail
+          node backend/verify/fair-verdict.js 2>&1 | tee -a /tmp/test-pipeline.log
 
       # The planner's leg cards (trip.js legRows): which legs show cited
       # arrival.json rows, on the real data files, without a page.
