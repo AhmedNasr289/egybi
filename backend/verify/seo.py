@@ -288,6 +288,21 @@ for canon, ps in seen_canon.items():
     if len(ps) > 1:
         add("duplicate canonical (pages compete)", f"{canon}  <-  {', '.join(ps)}")
 
+# Pages taken off the site on purpose (2026-11-20: stocks.html, the EGX charts,
+# because the site carries no investment content). Each must 301 in .htaccess,
+# must not be in the sitemap, and no live page may link to it, so neither a
+# reader nor a crawler is sent to a page the site no longer stands behind.
+RETIRED_PAGES = {"stocks.html"}
+_sm_text = (SITE / "sitemap.xml").read_text(encoding="utf-8") if (SITE / "sitemap.xml").exists() else ""
+for rel in sorted(RETIRED_PAGES):
+    if rel not in REDIRECTED:
+        add("retired page not redirected", f"{rel}  (needs a 301 in .htaccess)")
+    if f"{ORIGIN}/{rel}" in _sm_text:
+        add("retired page in the sitemap", rel)
+    inbound = sorted(links_into[rel] & set(live_pages))
+    if inbound:
+        add("live page links to a retired page", f"{rel}  <-  {', '.join(inbound[:6])}")
+
 # A live page that one other page links to is a page search engines find late
 # and rank as minor (2026-11-19 audit: prices-ar.html had one link in, the
 # arrival page four). Two links from other live pages is the floor.

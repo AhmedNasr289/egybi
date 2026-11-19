@@ -4,7 +4,7 @@
 const { chromium, executablePath, BASE, LOGDIR } = require('./env');
 const B = BASE;
 const ALL = ['404.html','index.html','visit.html','explore.html','geospatial.html','places.html',
-             'invest.html','stories.html','streets.html','case.html','prices.html','stocks.html',
+             'invest.html','stories.html','streets.html','case.html','prices.html',
              'blog.html','about.html','community.html','privacy.html',
              'practice/your-first-select.html','papyrus/nineteen-million.html'];
 // ONLY lets the mutation harness drive one page instead of eighteen, each of
