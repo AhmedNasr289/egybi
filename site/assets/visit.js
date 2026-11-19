@@ -126,7 +126,18 @@
       var c = ((S.climate && S.climate.sites) || []).filter(function (x) { return x.key === s.key; })[0];
       if (c && c.name_ar) return c.name_ar;
     }
+    // Russian pages: the name from the Russian table, which the build fills
+    // from visit-climate.json's site names (pages/i18n.py DATA_TEXT).
+    if (LANG === 'ru') return t(s.name);
     return s.name;
+  }
+  // A point's coordinates in the page's language (2026-11-18): the Arabic
+  // relief chart read "25.7300°N, 32.5200°E" in Western digits and Latin
+  // letters. Arabic pages get Arabic-Indic digits and the Arabic decimal mark.
+  function coordText(lat, lon) {
+    var F = window.EGYBI && window.EGYBI.fmt;
+    var f = function (x) { return LANG === 'ar' && F ? F.fixed(x, 'ar', 4) : Number(x).toFixed(4); };
+    return t('%a°N, %b°E').replace('%a', f(lat)).replace('%b', f(lon));
   }
   var NB_ = '\u00a0';
 
@@ -379,9 +390,9 @@
     var now = monthOf(site, S.month);
     el.hidden = false;
     el.innerHTML =
-      '<h3>' + esc(site.name) + ' <span class="v-ar">' + esc(site.name_ar || '') + '</span></h3>' +
+      '<h3>' + esc(siteName(site)) + (LANG === 'ar' ? '' : ' <span class="v-ar">' + esc(site.name_ar || '') + '</span>') + '</h3>' +
       '<p class="v-sub">' + esc(t('%g governorate').replace('%g', gv(site.gov))) + ' &middot; ' +
-        site.lat.toFixed(4) + '°N, ' + site.lon.toFixed(4) + '°E' +
+        esc(coordText(site.lat, site.lon)) +
         (terr ? ' &middot; ' + esc(t('%n m above sea level').replace('%n', fmt(terr.elevation_m, 0))) : '') +
         (listed === true ? ' &middot; <strong>' + esc(t('UNESCO World Heritage')) + '</strong>' : '') +
       '</p>' +
@@ -599,8 +610,7 @@
       out.innerHTML = esc(t('%n km along the line').replace('%n', fmt(s.km, 1))) + ' &middot; ' +
         esc(s.m == null ? t('no elevation at this point: the model has no value here, so nothing is drawn')
                         : t('ground at %n m').replace('%n', fmt(s.m, 0)) + (s.m < 0 ? ' — ' + t('below sea level') : '')) +
-        '<br><span style="opacity:.7">' + s.lat.toFixed(4) + '&deg;N, ' +
-        s.lon.toFixed(4) + '&deg;E</span>';
+        '<br><span style="opacity:.7">' + esc(coordText(s.lat, s.lon)) + '</span>';
     }
   }
 
