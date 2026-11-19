@@ -582,6 +582,40 @@ case("an airport row cited to a blog", "coverage.py", ["site/data/arrival.json"]
                   '"source_url": "https://example-travel-blog.com/cairo-airport-uber"'),
      lambda o: "airport row not sourced from the airport or the operator" in o and "cai-uber" in o, COVERAGE)
 
+# Coordinates on the Arabic place card in Arabic-Indic digits (2026-11-18).
+# Writing them with toFixed again must make twin-data.js report it.
+case("the Arabic place card's coordinates in Western digits", "twin-data.js", ["site/assets/places.js"],
+     lambda: edit("site/assets/places.js", "if (LANG === 'ar' && F) return F.fixed(p.lat, 'ar', 4)", "if (false) return F.fixed(p.lat, 'ar', 4)"),
+     lambda o: "coordinates in Western digits" in o, f"node {HERE}/twin-data.js")
+
+# The quote checker (2026-11-18) treats the top of a range as inside it. An
+# off-by-one that calls the top "above" would tell a traveller a fair price
+# was too high; fair-verdict.js must catch it.
+case("the quote checker calls the top of the range too high", "fair-verdict.js", ["site/assets/fair.js"],
+     lambda: edit("site/assets/fair.js", "if (amount > top) return", "if (amount >= top) return"),
+     lambda o: "FAIL the top of the range is inside it" in o, f"node {HERE}/fair-verdict.js")
+
+# Luxor is on inDrive's own city list and not on Uber's (2026-11-18). Losing
+# it from the inDrive row would leave a Luxor visitor with no app named;
+# test_ride_apps.py must catch it.
+case("Luxor dropped from the inDrive row", "test_ride_apps.py", ["site/data/arrival.json"],
+     lambda: edit("site/data/arrival.json", '"Cairo, Alexandria, Luxor, Aswan, Hurghada', '"Cairo, Alexandria, Aswan, Hurghada'),
+     lambda o: "FAIL" in o and "test_every_city_missing_from_uber" in o,
+     f'"{sys.executable}" -m unittest discover -s backend/pipeline/tests -p test_ride_apps.py -v')
+
+# The Cairo legs carry the sleeper fares (2026-11-18). Dropping the
+# row from the leg must make leg-rows.js report the leg's rows as wrong.
+case("the sleeper fares dropped from the Cairo-Luxor leg", "leg-rows.js", ["site/data/getting-around.json"],
+     lambda: edit("site/data/getting-around.json", '"luxor"], "rows": ["train-bashtil", "train-sleeper", "train-fares"',
+                  '"luxor"], "rows": ["train-bashtil", "train-fares"'),
+     lambda o: "FAIL Giza to Karnak takes the Cairo-Luxor sleeper rows" in o, f"node {HERE}/leg-rows.js")
+
+# made-in-egypt.html says EgyBI takes no payment from any maker (2026-11-18).
+# A referral tag on a maker link would make that untrue; coverage.py must refuse it.
+case("a maker link carrying a referral tag", "coverage.py", ["site/data/made-in-egypt.json"],
+     lambda: edit("site/data/made-in-egypt.json", '"maker_url": "https://kiliim.com/"', '"maker_url": "https://kiliim.com/?ref=egybi"'),
+     lambda o: "maker link that is not a plain https link" in o and "kiliim" in o, COVERAGE)
+
 case("an announced visa change that has taken effect", "coverage.py", ["site/data/arrival.json"],
      lambda: edit("site/data/arrival.json", '"changes_on": "2027-01-01"', '"changes_on": "2026-01-01"'),
      lambda o: "an announced change has taken effect" in o and "visa-2027" in o, COVERAGE)

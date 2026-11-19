@@ -226,7 +226,7 @@ CADENCE = {  # workflow -> max days a file may age before the page is misciting
 # Files compiled by hand from named sources (no workflow writes them), with the
 # number of days before each must be re-read against its sources.
 HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "arrival.json": 60, "opening-hours.json": 90,
-                "getting-around.json": 60}
+                "getting-around.json": 60, "made-in-egypt.json": 120}
 # Governments' own travel advice for Egypt, the only sources a safety row may
 # cite: UK, US, Australia, Canada, Ireland.
 # The airport's own site, and the ride or transport operators' own pages.
@@ -378,6 +378,33 @@ for leg in _guide.get("legs", []):
         if k not in _arr_rows:
             findings["planner leg that points at nothing"].append(
                 f"getting-around.json: leg {leg.get('between')} names row {k!r}, which is not in arrival.json")
+
+# ------------------------- made in Egypt: sourced, and paid by no one (2026-11-18) ---
+# made-in-egypt.html says EgyBI takes no payment from any maker it lists. A
+# maker link that carries a referral or affiliate tag would make that untrue,
+# however it got there. A price or a "how to tell the real thing" line must
+# name its own source: they are the two claims a seller would most like us to
+# make for them. An item made near a site must name a site that has a page.
+_REFERRAL = re.compile(r"[?&#](ref|aff|affiliate|affid|aff_id|partner|tag|utm_[a-z]+|irclickid|clickid|subid)=", re.I)
+try:
+    _mie = json.loads(Path("site/data/made-in-egypt.json").read_text(encoding="utf-8"))
+except Exception:  # noqa: BLE001
+    _mie = {}
+for g in _mie.get("groups", []):
+    for r in g.get("rows", []):
+        u = str(r.get("maker_url") or "")
+        if u and (not u.startswith("https://") or _REFERRAL.search(u)):
+            findings["maker link that is not a plain https link"].append(
+                f"made-in-egypt.json: {r.get('key')} links {u}")
+        for part in ("price", "genuine"):
+            o = r.get(part)
+            if o and not (o.get("text") and o.get("source") and (o.get("source_url") or str(o["source"]).startswith("Searched "))):
+                findings["made-in-egypt claim with no source of its own"].append(
+                    f"made-in-egypt.json: {r.get('key')} {part} has no source")
+        for k in r.get("near", []):
+            if k not in _sites:
+                findings["made-in-egypt item near a site that has no page"].append(
+                    f"made-in-egypt.json: {r.get('key')} is near {k!r}, which is not a site in visit-climate.json")
 
 print(f"pages checked : {len(pages)}")
 print(f"distinct titles: {len(titles)}   distinct descriptions: {len(descs)}")
