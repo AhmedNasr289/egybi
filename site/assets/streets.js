@@ -16,10 +16,43 @@
   /* A dataset's date, written as the site writes dates ("3 November 2026",
      EGYBI.fmt in assets/egfmt.js), never as raw ISO. Falls back to the
      value as written if egfmt.js did not load. */
+  var LANG = document.documentElement.getAttribute('lang') || 'en';
+  var MONTHS_RU_OF = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля',
+                      'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   function asOf(v) {
     var F = window.EGYBI && window.EGYBI.fmt;
-    return F ? F.dateOrRaw(v, 'en', 'prose') : (v == null ? '' : String(v));
+    var m = LANG === 'ru' && /^(\d{4})-(\d\d)-(\d\d)/.exec(String(v || ''));
+    if (m) return (+m[3]) + ' ' + MONTHS_RU_OF[+m[2] - 1] + ' ' + m[1];
+    return F ? F.dateOrRaw(v, LANG === 'ar' ? 'ar' : 'en', 'prose') : (v == null ? '' : String(v));
   }
+  // Text this script writes goes through t(), as literal calls the build
+  // collects (pages/i18n.py); numbers follow the page's language. Sentences
+  // that used to change with a count ("one district is", "3 districts are")
+  // give the count as a label instead, so Arabic and Russian need no plural
+  // forms (2026-11-19, maps plan stage 3).
+  var t = (window.EGYBI && window.EGYBI.t) || function (x) { return x; };
+  function fmt() { return window.EGYBI && window.EGYBI.fmt; }
+  function whole(v) {
+    if (LANG === 'ar' && fmt()) return fmt().num(Math.round(v), 'ar', 0);
+    return Math.round(v).toLocaleString(LANG === 'ru' ? 'ru-RU' : 'en-GB');
+  }
+  function dec(v, places) {
+    if (LANG === 'ar' && fmt()) return fmt().fixed(v, 'ar', places);
+    if (LANG === 'ru') return v.toLocaleString('ru-RU', { minimumFractionDigits: places, maximumFractionDigits: places });
+    return v.toFixed(places);
+  }
+  function pct(v, places) { return dec(v, places == null ? 1 : places) + (LANG === 'ar' ? '٪' : '%'); }
+  function sep() { return LANG === 'ar' ? '، ' : ', '; }
+  // A district's name in the page's language: Arabic pages use the data's own
+  // name_ar, Russian pages the catalogue (DATA_TEXT), English the data.
+  function dname(x) {
+    var card = S && S.card && S.card.districts ? S.card.districts.filter(function (d) { return d.key === x.key; })[0] : null;
+    var ar = x.name_ar || (card && card.name_ar);
+    return LANG === 'ar' && ar ? ar : t(x.name);
+  }
+  // Facility kinds in the access layer, each a literal t() call.
+  var KINDS = { hospital: t('hospital'), clinic: t('clinic'), school: t('school'), pharmacy: t('pharmacy') };
+  function kind(k) { return KINDS[k] || k; }
 
   /* OPTIONAL MAPKIT ENHANCEMENTS, RESOLVED AT THE MOMENT OF USE.
 
@@ -59,43 +92,43 @@
      to score a district as "good" or "bad" outright. */
   var METRICS = {
     intersection_density_km2: {
-      label: 'Intersection density', unit: '/km²', good: 'high',
-      fmt: function (v) { return Math.round(v) + '/km²'; },
-      what: 'Junctions per square kilometre. More intersections means more route choices, shorter blocks and a network that stays usable when one street is blocked.'
+      label: t('Intersection density'), unit: '/km²', good: 'high',
+      fmt: function (v) { return t('%n per km²').replace('%n', whole(v)); },
+      what: t('Junctions per square kilometre. More intersections means more route choices, shorter blocks and a network that stays usable when one street is blocked.')
     },
     dead_end_share_pct: {
-      label: 'Dead ends', unit: '%', good: 'low',
-      fmt: function (v) { return v.toFixed(1) + '%'; },
-      what: 'Share of street ends that go nowhere. Cul-de-sacs calm traffic on the street itself, but push every trip back onto a few collector roads.'
+      label: t('Dead ends'), unit: '%', good: 'low',
+      fmt: function (v) { return pct(v); },
+      what: t('Share of street ends that go nowhere. Cul-de-sacs calm traffic on the street itself, but push every trip back onto a few collector roads.')
     },
     street_density_km_km2: {
-      label: 'Street density', unit: 'km/km²', good: 'high',
-      fmt: function (v) { return v.toFixed(1) + ' km/km²'; },
-      what: 'Kilometres of street per square kilometre. A rough measure of how finely the land is subdivided.'
+      label: t('Street density'), unit: 'km/km²', good: 'high',
+      fmt: function (v) { return t('%n km/km²').replace('%n', dec(v, 1)); },
+      what: t('Kilometres of street per square kilometre. A rough measure of how finely the land is subdivided.')
     },
     mean_street_length_m: {
-      label: 'Mean segment', unit: 'm', good: 'low',
-      fmt: function (v) { return Math.round(v) + ' m'; },
-      what: 'Average distance between junctions. Short segments mean small, walkable blocks; long ones mean superblocks you have to walk around.'
+      label: t('Mean segment'), unit: 'm', good: 'low',
+      fmt: function (v) { return t('%n m').replace('%n', whole(v)); },
+      what: t('Average distance between junctions. Short segments mean small, walkable blocks; long ones mean superblocks you have to walk around.')
     },
     streets_per_node_avg: {
-      label: 'Streets per junction', unit: '', good: 'high',
-      fmt: function (v) { return v.toFixed(2); },
-      what: 'Average number of streets meeting at each node. Near 4 is a crossroads grid; near 2.5 means many bends and dead ends rather than true junctions.'
+      label: t('Streets per junction'), unit: '', good: 'high',
+      fmt: function (v) { return dec(v, 2); },
+      what: t('Average number of streets meeting at each node. Near 4 is a crossroads grid; near 2.5 means many bends and dead ends rather than true junctions.')
     },
     circuity_avg: {
-      label: 'Circuity', unit: '×', good: 'low',
-      fmt: function (v) { return v.toFixed(3) + '×'; },
-      what: 'How much further you travel along streets than the straight-line distance. 1.00 would be a perfect straight shot; higher means detours.'
+      label: t('Circuity'), unit: '×', good: 'low',
+      fmt: function (v) { return dec(v, 3) + '×'; },
+      what: t('How much further you travel along streets than the straight-line distance. 1.00 would be a perfect straight shot; higher means detours.')
     },
     orientation_entropy: {
       // `good: 'low'` here is a DISPLAY CONVENTION, not a quality claim — it
       // only puts the more directionally concentrated districts at the dark end
       // of the ramp. Low entropy is not "better": a radial plan is deliberate,
       // walkable and scores high. See the caveat printed under the roses.
-      label: 'Orientation entropy', unit: '', good: 'low',
-      fmt: function (v) { return v.toFixed(2); },
-      what: 'How concentrated the street directions are. A four-way grid puts nearly all its length into two opposing pairs and scores about 1.39; bearings spread evenly around the compass approach 3.58. A high score can mean disorder or a deliberate radial plan — this number alone cannot tell you which.'
+      label: t('Orientation entropy'), unit: '', good: 'low',
+      fmt: function (v) { return dec(v, 2); },
+      what: t('How concentrated the street directions are. A four-way grid puts nearly all its length into two opposing pairs and scores about 1.39; bearings spread evenly around the compass approach 3.58. A high score can mean disorder or a deliberate radial plan — this number alone cannot tell you which.')
     }
   };
   var ORDER = ['intersection_density_km2', 'dead_end_share_pct', 'street_density_km_km2',
@@ -140,8 +173,7 @@
       doubleClickZoom: false,
       locator: window.EGYBI_EGYPT_GEO || null,
       credit: ['geoboundaries', 'osm'],
-      label: 'Map of the measured Egyptian districts, shaded by the selected '
-           + 'street-network metric. Tab to a district and press Enter for its figures.'
+      label: t('Map of the measured Egyptian districts, shaded by the selected street-network metric. Tab to a district and press Enter for its figures.')
     });
     if (!S.map) return;
 
@@ -194,8 +226,8 @@
       onEachFeature: function (f, lyr) {
         var d = byKey(f.properties.key);
         if (!d) return;
-        lyr.bindTooltip('<strong>' + esc(d.name) + '</strong>' +
-          (d.boundary_source === 'hand-drawn' ? ' <em>(hand-drawn extent)</em>' : '') + '<br>' + esc(d.era) +
+        lyr.bindTooltip('<strong>' + esc(dname(d)) + '</strong>' +
+          (d.boundary_source === 'hand-drawn' ? ' <em>' + esc(t('(hand-drawn extent)')) + '</em>' : '') + '<br>' + esc(t(d.era)) +
                         '<br>' + m.label + ': <strong>' + m.fmt(d[S.metric]) + '</strong>',
                         { sticky: true, direction: 'top', className: 'egypt-map-tip' });
         lyr.on({
@@ -215,7 +247,7 @@
         radius: 6, fillColor: col(d[S.metric]), fillOpacity: 0.95,
         color: GOLD_INK, weight: 1.5
       });
-      pin.bindTooltip('<strong>' + esc(d.name) + '</strong><br>' + m.label +
+      pin.bindTooltip('<strong>' + esc(dname(d)) + '</strong><br>' + m.label +
                       ': <strong>' + m.fmt(d[S.metric]) + '</strong>',
                       { direction: 'top', className: 'egypt-map-tip' });
       pin._dName = d.name;          // read by the label layer
@@ -283,11 +315,11 @@
       return '<figure class="rose-card' + (S.selected === d.key ? ' on' : '') +
              '" data-key="' + esc(d.key) + '" tabindex="0" role="button">' +
              rose(d.orientation_bins, 150, GOLD) +
-             '<figcaption><strong>' + esc(d.name) + '</strong>' +
-             '<span class="rc-era">' + esc(d.era) + '</span>' +
-             '<span class="rc-h">entropy ' + (H == null ? '—' : H.toFixed(2)) + '</span>' +
+             '<figcaption><strong>' + esc(dname(d)) + '</strong>' +
+             '<span class="rc-era">' + esc(t(d.era)) + '</span>' +
+             '<span class="rc-h">' + esc(t('entropy %n').replace('%n', H == null ? '—' : dec(H, 2))) + '</span>' +
              (d.carried && d.measured_on
-               ? '<span class="rc-era">measured ' + esc(asOf(d.measured_on)) + '</span>' : '') +
+               ? '<span class="rc-era">' + esc(t('measured %d').replace('%d', asOf(d.measured_on))) + '</span>' : '') +
              '</figcaption></figure>';
     }).join('');
     el.querySelectorAll('.rose-card').forEach(function (c) {
@@ -312,14 +344,13 @@
     var lo = Math.min.apply(null, hs), hi = Math.max.apply(null, hs);
     var GRID = Math.log(4), MAX = Math.log(36);          // 1.386 … 3.584
     var share = (hi - lo) / (MAX - GRID) * 100;
-    el.innerHTML = 'Read the numbers together before reading any one of them. ' +
-      'Across the ' + hs.length + ' districts measured here, entropy runs from <strong>' +
-      lo.toFixed(2) + '</strong> to <strong>' + hi.toFixed(2) + '</strong> &mdash; a spread of ' +
-      (hi - lo).toFixed(2) + ', or <strong>' + share.toFixed(0) + '%</strong> of the ' +
-      GRID.toFixed(2) + '&ndash;' + MAX.toFixed(2) + ' range. ' +
-      (share < 25
-        ? 'They are clustered near the high end, which is the actual finding: <strong>none of these districts is a grid by this measure</strong>, khedivial Downtown included. The textbook contrast between a planned grid and an organic tangle does not appear in Cairo, and a metric this flat should not be used to rank the districts against each other. The differences that do separate them are in the other six columns.'
-        : 'That is a wide enough spread for the differences between districts to be meaningful.');
+    var b = function (x) { return '<strong>' + x + '</strong>'; };
+    el.innerHTML = esc(t('Read the numbers together before reading any one of them. Districts measured: %n. Entropy runs from %a to %b, a spread of %s, or %p of the %g–%m range.'))
+      .replace('%n', whole(hs.length)).replace('%a', b(dec(lo, 2))).replace('%b', b(dec(hi, 2)))
+      .replace('%s', dec(hi - lo, 2)).replace('%p', b(pct(share, 0))).replace('%g', dec(GRID, 2)).replace('%m', dec(MAX, 2)) + ' ' +
+      esc(share < 25
+        ? t('They are clustered near the high end, which is the actual finding: none of these districts is a grid by this measure, khedivial Downtown included. The textbook contrast between a planned grid and an organic tangle does not appear in Cairo, and a metric this flat should not be used to rank the districts against each other. The differences that do separate them are in the other six columns.')
+        : t('That is a wide enough spread for the differences between districts to be meaningful.'));
   }
 
   /* The dead-end story, computed rather than asserted.
@@ -339,22 +370,18 @@
     // Districts at least twice the lowest share — an arbitrary but stated line,
     // chosen because a factor of two is a difference a reader can see.
     var outliers = rows.filter(function (d) { return d.dead_end_share_pct >= 2 * lo.dead_end_share_pct; });
-    var names = outliers.map(function (d) { return esc(d.name); });
+    var names = outliers.map(function (d) { return esc(dname(d)); });
 
     el.innerHTML =
-      '<strong>The cul-de-sac story is not in this data.</strong> Dead-end share runs from <strong>' +
-      lo.dead_end_share_pct.toFixed(1) + '%</strong> at ' + esc(lo.name) + ' to <strong>' +
-      hi.dead_end_share_pct.toFixed(1) + '%</strong> at ' + esc(hi.name) + '. ' +
+      '<strong>' + esc(t('The cul-de-sac story is not in this data.')) + '</strong> ' +
+      esc(t('Dead-end share runs from %a at %x to %b at %y.'))
+        .replace('%a', '<strong>' + pct(lo.dead_end_share_pct) + '</strong>').replace('%x', esc(dname(lo)))
+        .replace('%b', '<strong>' + pct(hi.dead_end_share_pct) + '</strong>').replace('%y', esc(dname(hi))) + ' ' +
       (outliers.length && outliers.length < rows.length - 1
-        ? 'The ' + (outliers.length === 1 ? 'one district' : outliers.length + ' districts') +
-          ' at or above twice the lowest share &mdash; ' + names.join(', ') + ' &mdash; ' +
-          (outliers.length === 1 ? 'is' : 'are') + ' not the newest here. ' +
-          'The desert and coastal new towns, the ones a cul-de-sac critique is usually aimed at, ' +
-          'sit near the bottom. What separates them from the older districts is <em>coarseness</em>, ' +
-          'not disconnection: far fewer junctions per square kilometre and much longer blocks, ' +
-          'which is a different criticism and has to be argued differently.'
-        : 'The districts do not separate cleanly on this metric.') +
-      ' Era labels are ours; the numbers are not.';
+        ? esc(t('At or above twice the lowest share: %l. None of them is among the newest districts here. The desert and coastal new towns, the ones a cul-de-sac critique is usually aimed at, sit near the bottom. What separates them from the older districts is coarseness, not disconnection: far fewer junctions per square kilometre and much longer blocks, which is a different criticism and has to be argued differently.'))
+          .replace('%l', names.join(sep()))
+        : esc(t('The districts do not separate cleanly on this metric.'))) +
+      ' ' + esc(t('Era labels are ours; the numbers are not.'));
   }
 
   function paintTable() {
@@ -363,10 +390,10 @@
       return b.intersection_density_km2 - a.intersection_density_km2;
     });
     tb.innerHTML = rows.map(function (d) {
-      return '<tr data-key="' + esc(d.key) + '"><td>' + esc(d.name) +
-             '<span class="td-era">' + esc(d.era) + '</span>' +
+      return '<tr data-key="' + esc(d.key) + '"><td>' + esc(dname(d)) +
+             '<span class="td-era">' + esc(t(d.era)) + '</span>' +
              (d.carried && d.measured_on
-               ? '<span class="td-era">measured ' + esc(asOf(d.measured_on)) + '</span>' : '') +
+               ? '<span class="td-era">' + esc(t('measured %d').replace('%d', asOf(d.measured_on))) + '</span>' : '') +
              '</td>' +
              ORDER.map(function (k) {
                var v = d[k];
@@ -399,41 +426,36 @@
       // never obtained, which is the one thing this site must not do.
       var un = acc.unanswered || [];
       var isUn = function (k) { return un.indexOf(k) !== -1; };
-      accHtml = '<h4>Walking access</h4>' +
+      accHtml = '<h4>' + esc(t('Walking access')) + '</h4>' +
         (acc.carried && acc.measured_on
-          ? '<p class="dd-note"><strong>Measured ' + esc(asOf(acc.measured_on)) + '.</strong> The latest ' +
-            'build could not re-measure this district, so these are its last measured figures.</p>'
+          ? '<p class="dd-note">' + esc(t('Measured %d. The latest build could not re-measure this district, so these are its last measured figures.').replace('%d', asOf(acc.measured_on))) + '</p>'
           : '') +
         '<div class="dd-access">' +
-        Object.keys(acc.access).map(function (kind) {
-          var a = acc.access[kind], body;
+        Object.keys(acc.access).map(function (k) {
+          var a = acc.access[k], body;
           if (a) {
-            body = '<strong>' + a.within_15min_pct.toFixed(0) + '%</strong><span class="ac-s">within 15 min · median ' +
-                   a.median_min.toFixed(0) + ' min</span>';
-          } else if (isUn(kind)) {
-            body = '<strong>?</strong><span class="ac-s">not retrieved this build</span>';
+            body = '<strong>' + pct(a.within_15min_pct, 0) + '</strong><span class="ac-s">' +
+                   esc(t('within 15 min; median %n min').replace('%n', whole(a.median_min))) + '</span>';
+          } else if (isUn(k)) {
+            body = '<strong>?</strong><span class="ac-s">' + esc(t('not retrieved this build')) + '</span>';
           } else {
-            body = '<strong>—</strong><span class="ac-s">none mapped in OSM</span>';
+            body = '<strong>—</strong><span class="ac-s">' + esc(t('none mapped in OpenStreetMap')) + '</span>';
           }
-          return '<div class="acc-cell"><span class="ac-k">' + esc(kind) + '</span>' + body + '</div>';
+          return '<div class="acc-cell"><span class="ac-k">' + esc(kind(k)) + '</span>' + body + '</div>';
         }).join('') + '</div>' +
-        '<p class="dd-note">Counted from OSM: ' +
-        Object.keys(acc.amenity_counts).map(function (k) {
+        '<p class="dd-note">' + esc(t('Counted from OpenStreetMap: %l.').replace('%l', Object.keys(acc.amenity_counts).map(function (k) {
           var n = acc.amenity_counts[k];
-          return (n === null || n === undefined ? 'not retrieved' : n) + ' ' + k; }).join(', ') +
-        '. A low score can mean few facilities <em>or</em> few mapped facilities — this data cannot tell them apart.' +
+          return kind(k) + ': ' + (n === null || n === undefined ? t('not retrieved') : whole(n)); }).join(sep()))) + ' ' +
+        esc(t('A low score can mean few facilities or few mapped facilities: this data cannot tell them apart.')) +
         (un.length
-          ? ' <strong>' + esc(un.join(' and ')) + ' did not return a result on this build</strong>, so ' +
-            (un.length === 1 ? 'that category is' : 'those categories are') +
-            ' shown as unknown rather than as zero, and the score above averages the ' +
-            (Object.keys(acc.access).length - un.length) + ' that answered.'
+          ? ' <strong>' + esc(t('Not answered on this build: %l.').replace('%l', un.map(kind).join(sep()))) + '</strong> ' +
+            esc(t('They are shown as unknown rather than as zero, and the score above averages the categories that answered (%n).')
+              .replace('%n', whole(Object.keys(acc.access).length - un.length)))
           : '') +
         '</p>' +
         (acc.no_amenities_mapped
-          ? '<p class="dd-note dd-drawn"><strong>Nothing of these four kinds is mapped here.</strong> ' +
-            'Every query returned an answer and every answer was empty, so this is a statement about ' +
-            'OpenStreetMap coverage in this district, not about whether the district has clinics or ' +
-            'schools. It almost certainly has both.</p>'
+          ? '<p class="dd-note dd-drawn"><strong>' + esc(t('Nothing of these four kinds is mapped here.')) + '</strong> ' +
+            esc(t('Every query returned an answer and every answer was empty, so this is a statement about OpenStreetMap coverage in this district, not about whether the district has clinics or schools. It almost certainly has both.')) + '</p>'
           : '');
     }
 
@@ -441,31 +463,24 @@
     // OSM's, because OSM has none. Saying so beside its numbers — not only in
     // the method section far below — is the whole condition on drawing it.
     var boundaryHtml = d.boundary_source === 'hand-drawn'
-      ? '<p class="dd-note dd-drawn"><strong>Hand-drawn extent.</strong> OpenStreetMap has no ' +
-        'polygon for this district under any name or tag — every match we found was a landmark ' +
-        '<em>inside</em> it (a palace, a courthouse, a theatre) rather than the district itself. ' +
-        'This outline is drawn from its known edges: the Nile, Ramses, Port Said Street and ' +
-        'Sayyida Zeinab. Every other district here uses OSM’s own polygon. Because the ' +
-        'per-km² figures depend on where that line falls, these are the numbers on this page ' +
-        'most sensitive to a judgement call.</p>'
+      ? '<p class="dd-note dd-drawn"><strong>' + esc(t('Hand-drawn extent.')) + '</strong> ' +
+        esc(t('OpenStreetMap has no polygon for this district under any name or tag: every match we found was a landmark inside it (a palace, a courthouse, a theatre) rather than the district itself. This outline is drawn from its known edges: the Nile, Ramses, Port Said Street and Sayyida Zeinab. Every other district here uses OpenStreetMap’s own polygon. Because the per-km² figures depend on where that line falls, these are the numbers on this page most sensitive to a judgement call.')) + '</p>'
       : '';
 
     var noteHtml = note
-      ? '<h4>Planner&rsquo;s note <span class="ai-tag">AI-generated</span></h4>' +
+      ? '<h4>' + esc(t('Planner’s note')) + ' <span class="ai-tag">' + esc(t('AI-generated')) + '</span></h4>' +
         '<p class="dd-ai">' + esc(note) + '</p>' +
-        '<p class="dd-note">Written by a language model <em>from the numbers above</em>, which are shown next to it so you can check every claim. It is a reading of the metrics, not professional planning advice.</p>'
+        '<p class="dd-note">' + esc(t('Written by a language model from the numbers above, which are shown next to it so you can check every claim. It is a reading of the metrics, not professional planning advice.')) + '</p>'
       : '';
 
-    el.innerHTML = '<h3>' + esc(d.name) + ' <span class="dd-ar">' + esc(d.name_ar) + '</span></h3>' +
-      '<p class="dd-era">' + esc(d.era) + ' &middot; ' + d.area_km2.toLocaleString('en-GB') + ' km²</p>' +
-      '<p class="dd-why">' + esc(d.why) + '</p>' + boundaryHtml +
+    el.innerHTML = '<h3>' + esc(dname(d)) + (LANG === 'ar' ? '' : ' <span class="dd-ar">' + esc(d.name_ar) + '</span>') + '</h3>' +
+      '<p class="dd-era">' + esc(t(d.era)) + ' &middot; ' + esc(t('%n km²').replace('%n', dec(d.area_km2, 2))) + '</p>' +
+      '<p class="dd-why">' + esc(t(d.why)) + '</p>' + boundaryHtml +
       (d.carried && d.measured_on
-        ? '<p class="dd-note"><strong>Street network measured ' + esc(asOf(d.measured_on)) +
-          '.</strong> The latest build could not re-measure this district, so these are its last ' +
-          'measured figures.</p>'
+        ? '<p class="dd-note">' + esc(t('Street network measured %d. The latest build could not re-measure this district, so these are its last measured figures.').replace('%d', asOf(d.measured_on))) + '</p>'
         : '') +
       '<div class="dd-split"><div>' + rose(d.orientation_bins, 190, GOLD) +
-      '<p class="dd-note" style="text-align:center">Street orientation &mdash; length of road facing each compass direction</p></div>' +
+      '<p class="dd-note" style="text-align:center">' + esc(t('Street orientation: length of road facing each compass direction')) + '</p></div>' +
       '<div class="dd-metrics">' + metricRows + '</div></div>' +
       accHtml + noteHtml;
     el.hidden = false;
@@ -487,7 +502,7 @@
      this week's. */
   function carriedNote(a) {
     return a.carried && a.measured_on
-      ? ' &middot; <strong>measured ' + esc(asOf(a.measured_on)) + '</strong>; the latest build could not re-measure it'
+      ? ' &middot; ' + esc(t('measured %d; the latest build could not re-measure it').replace('%d', asOf(a.measured_on)))
       : '';
   }
 
@@ -504,23 +519,21 @@
       return typeof a.mean_within_15min_pct === 'number' ? a.mean_within_15min_pct : -1; };
     var rows = S.access.districts.slice().sort(function (a, b) { return num(b) - num(a); });
     host.innerHTML = rows.map(function (a) {
-      var pct = a.mean_within_15min_pct;
-      if (typeof pct !== 'number') {
+      var share = a.mean_within_15min_pct;
+      if (typeof share !== 'number') {
         return '<div class="acc-card" data-key="' + esc(a.key) + '">' +
-          '<div class="acc-name">' + esc(a.name) + '</div>' +
+          '<div class="acc-name">' + esc(dname(a)) + '</div>' +
           '<div class="acc-bar"><span style="width:2%"></span></div>' +
-          '<div class="acc-pct">no data</div>' +
-          '<div class="acc-sub">no hospital, clinic, school or pharmacy is mapped inside this ' +
-          'boundary, so there is nothing to measure a walk to &mdash; a gap in OpenStreetMap, ' +
-          'not a finding about the district' + carriedNote(a) + '</div></div>';
+          '<div class="acc-pct">' + esc(t('no data')) + '</div>' +
+          '<div class="acc-sub">' + esc(t('No hospital, clinic, school or pharmacy is mapped inside this boundary, so there is nothing to measure a walk to: a gap in OpenStreetMap, not a finding about the district.')) + carriedNote(a) + '</div></div>';
       }
       var un = (a.unanswered || []).length;
       return '<div class="acc-card" data-key="' + esc(a.key) + '">' +
-        '<div class="acc-name">' + esc(a.name) + '</div>' +
-        '<div class="acc-bar"><span style="width:' + Math.max(2, Math.min(100, pct)) + '%"></span></div>' +
-        '<div class="acc-pct">' + pct.toFixed(0) + '%</div>' +
-        '<div class="acc-sub">of walkable street within 15 minutes of a mapped hospital, clinic, school or pharmacy' +
-        (un ? ' &middot; averaged over the ' + (4 - un) + ' categories that returned a result this build' : '') +
+        '<div class="acc-name">' + esc(dname(a)) + '</div>' +
+        '<div class="acc-bar"><span style="width:' + Math.max(2, Math.min(100, share)) + '%"></span></div>' +
+        '<div class="acc-pct">' + pct(share, 0) + '</div>' +
+        '<div class="acc-sub">' + esc(t('of walkable street within 15 minutes of a mapped hospital, clinic, school or pharmacy')) +
+        (un ? ' &middot; ' + esc(t('averaged over the categories that returned a result this build (%n)').replace('%n', whole(4 - un))) : '') +
         carriedNote(a) + '</div></div>';
     }).join('');
     host.querySelectorAll('.acc-card').forEach(function (c) {
@@ -533,24 +546,21 @@
     var bits = [];
     if (S.card) {
       var cardCarried = S.card.districts.filter(function (d) { return d.carried; });
-      bits.push('Street network: OSM via OSMnx, built ' + esc(asOf(S.card.as_of)) +
-        ' &mdash; ' + S.card.districts.length + ' districts' +
+      bits.push(esc(t('Street network: OpenStreetMap via OSMnx, built %d. Districts: %n.').replace('%d', asOf(S.card.as_of)).replace('%n', whole(S.card.districts.length))) +
         (cardCarried.length
-          ? ', of which ' + cardCarried.length + ' could not be re-measured and keep an earlier ' +
-            'measurement, dated on each.'
-          : '.'));
+          ? ' ' + esc(t('Could not be re-measured and keep an earlier measurement, dated on each: %n.').replace('%n', whole(cardCarried.length)))
+          : ''));
     }
     if (S.access) {
       var carried = S.access.districts.filter(function (a) { return a.carried; });
-      bits.push('Access layer built ' + esc(asOf(S.access.as_of)) +
+      bits.push(esc(t('Access layer built %d.').replace('%d', asOf(S.access.as_of))) +
         (carried.length
-          ? ' &mdash; ' + carried.length + ' of ' + S.access.districts.length +
-            ' districts could not be re-measured and keep an earlier measurement, dated on each.'
-          : '.'));
+          ? ' ' + esc(t('Could not be re-measured and keep an earlier measurement, dated on each: %n.').replace('%n', whole(carried.length)))
+          : ''));
     }
-    if (!S.notes) bits.push('Planner&rsquo;s notes have not been generated for this build.');
+    if (!S.notes) bits.push(esc(t('Planner’s notes have not been generated for this build.')));
     if (S.card && S.card.skipped && S.card.skipped.length)
-      bits.push('<strong>Skipped:</strong> ' + esc(S.card.skipped.join('; ')) + '.');
+      bits.push('<strong>' + esc(t('Skipped:')) + '</strong> ' + esc(S.card.skipped.join('; ')) + '.');
     el.innerHTML = bits.join(' ');
   }
 
@@ -577,9 +587,7 @@
       if (r[3].status === 'fulfilled') S.notes = r[3].value;
 
       if (!S.card || !S.card.districts || !S.card.districts.length) {
-        showEmpty('The street-network data has not been generated yet. It appears here after the first ' +
-                  '<strong>“Refresh street report card”</strong> run &mdash; the page is built and waiting, ' +
-                  'not broken. Nothing is shown until there are real measurements to show.');
+        showEmpty(esc(t('The street-network data has not been generated yet. It appears here after the first "Refresh street report card" run: the page is built and waiting, not broken. Nothing is shown until there are real measurements to show.')));
         paintAccessSection(); paintMeta();
         return;
       }

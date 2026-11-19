@@ -180,7 +180,10 @@
     var c = m.getContainer(); c.setAttribute('aria-hidden', 'true');
     // These maps skip mapkit, so they skip its credit too — and CC BY 4.0 does
     // not care how the geometry got onto the page. Added explicitly here.
-    if (window.EGYBI && window.EGYBI.mapkit) window.EGYBI.mapkit.addCredit(c, ['geoboundaries']);
+    // Three of the four stories also draw OpenStreetMap data (health
+    // facilities, street grids, ancient sites), and ODbL requires that credit
+    // too; the ribbon draws the outline alone (2026-11-19, maps plan stage 2).
+    if (window.EGYBI && window.EGYBI.mapkit) window.EGYBI.mapkit.addCredit(c, id === 'mapRibbon' ? ['geoboundaries'] : ['geoboundaries', 'osm']);
     return m;
   }
 

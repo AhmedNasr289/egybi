@@ -105,7 +105,7 @@
     <p class="lead screen-only">Click a coloured dot on the map &mdash; each is one of eighteen measured sites, coloured by the heat in your main month &mdash; or use the buttons and the search below.</p>
     <div class="chip-row screen-only" id="siteChips" role="group" aria-label="Add a measured site"></div>
     <div class="trip-form screen-only" style="margin-top:16px;">
-      <label for="placeSearch">Or search 897 mapped places<input type="search" id="placeSearch" list="placeOptions" autocomplete="off" placeholder="Start typing a place name"></label>
+      <label for="placeSearch">Or search the mapped places<input type="search" id="placeSearch" list="placeOptions" autocomplete="off" placeholder="Start typing a place name"></label>
       <datalist id="placeOptions"></datalist>
       <button type="button" class="btn btn-blue" id="placeAdd">Add</button>
     </div>
@@ -114,9 +114,9 @@
       <div>
         <section id="planMap" aria-label="Map of Egypt with your stops"></section>
         <div class="heat-legend" aria-hidden="true">
-          <span><i style="background:#2C6FAD"></i>under 22&nbsp;°C</span><span><i style="background:#4FA3A5"></i>22&ndash;28</span>
-          <span><i style="background:#C9A227"></i>28&ndash;34</span><span><i style="background:#D97B2B"></i>34&ndash;39</span>
-          <span><i style="background:#B23A0F"></i>39&nbsp;°C and above</span><span>dashed line: straight lines between stops, not roads</span>
+          <span><i style="background:#2C6FAD"></i>21 °C or less</span><span><i style="background:#4FA3A5"></i>22–27 °C</span>
+          <span><i style="background:#C9A227"></i>28–33 °C</span><span><i style="background:#D97B2B"></i>34–38 °C</span>
+          <span><i style="background:#B23A0F"></i>39 °C or more</span><span>dashed line: straight lines between stops, not roads</span>
         </div>
       </div>
       <div class="screen-only">
@@ -182,7 +182,8 @@
 <script src="assets/trip.js?v=9"></script>
 <script src="assets/cartouche.js?v=1"></script>
 <script src="assets/ics.js?v=1"></script>
-<script src="assets/plan.js?v=15"></script>
+<script src="assets/today.js?v=2"></script>
+<script src="assets/plan.js?v=18"></script>
 <script src="assets/motion.js?v=5"></script>
 <script src="assets/analytics.js?v=2"></script>
 </body>
