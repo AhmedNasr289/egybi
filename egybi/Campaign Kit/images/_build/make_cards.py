@@ -237,4 +237,96 @@ page('cover04-ar-best-time', CW, CH, f"""
 <div class="brand"><span class="g">&#x132F9;</span>egybi.com <small>· مصر بصدق</small></div></div>
 """, rtl=True, extra_font="&family=Noto+Naskh+Arabic:wght@500;700")
 
+# ===========================================================================
+# Variants and new pins, 2026-11-20 (08 Improvement Pass): built for the topics
+# autocomplete ranked highest (visa, best time, tipping 2026) and for an A/B of
+# the video-1 hook. Same rule as above: every figure is read from site/data.
+# ===========================================================================
+arr = json.load(open(os.path.join(D, 'arrival.json')))
+AR_ROWS = {r['key']: r for g in arr.get('groups', []) for r in g.get('rows', [])}
+if not AR_ROWS:  # flat layouts of arrival.json
+    def walk(o):
+        if isinstance(o, dict):
+            if 'key' in o and 'value' in o: AR_ROWS[o['key']] = o
+            for v in o.values(): walk(v)
+        elif isinstance(o, list):
+            for v in o: walk(v)
+    walk(arr)
+V = {k: AR_ROWS[k] for k in ('visa-on-arrival', 'cairo-digital-visa', 'visa-2027', 'sinai-stamp')}
+
+# ---- Pin 11: visa on arrival, the broadest demand in English ---------------
+sub = {'visa-on-arrival': 'kiosks before immigration, up to 30 days', 'cairo-digital-visa': 'includes a US$6 service fee',
+       'visa-2027': 'Cabinet decision of 13 Aug 2026', 'sinai-stamp': 'Sharm, Dahab, Nuweiba, Taba only'}
+val = {'visa-on-arrival': 'US$30 cash', 'cairo-digital-visa': 'US$36 card', 'visa-2027': 'US$33 / 39', 'sinai-stamp': 'free stamp'}
+assert all(V[k]['value'].replace('$', '').split()[0].rstrip(',') in val[k].replace('$', '') or k == 'sinai-stamp' for k in val), 'arrival.json changed'
+rows = ''.join(f"<tr><td>{e(V[k]['label'])}<small>{sub[k]}</small></td><td class='v'>{val[k]}</td></tr>"
+               for k in ('visa-on-arrival', 'cairo-digital-visa', 'visa-2027', 'sinai-stamp'))
+page('pin11-visa-on-arrival', PW, PH, f"""
+<div class="kicker">Egypt visa · 2026–2027</div>
+<h1 style="font-size:70px">Egypt visa on arrival: the cost, and what changes on 1 January</h1>
+<div class="rule" style="margin:26px 0 6px"></div>
+<table>{rows}</table>
+{foot("UK government travel advice, Egypt entry requirements (updated 27 Oct 2026); 2027 fee: ATTA on a Cabinet decision of 13 Aug 2026. Checked 17 Nov 2026 on egybi.com/arriving-in-egypt.")}
+""")
+
+# ---- Pin 12: the same in Russian (Yandex autocomplete: «виза в египет 2026») --
+ru_v = [('Виза по прилёте', '30 $ наличными', 'в киосках перед паспортным контролем'),
+        ('Электронный автомат, только Каир', '36 $ картой', 'включая сервисный сбор 6 $'),
+        ('С 1 января 2027 года', '33 $ / 39 $', 'решение правительства от 13.08.2026'),
+        ('Прилёт в Шарм, только курорты Синая', 'бесплатный штамп', 'до 15 дней: Шарм, Дахаб, Нувейба, Таба')]
+assert V['visa-on-arrival']['value'].startswith('US$30') and V['cairo-digital-visa']['value'].startswith('US$36') \
+    and V['visa-2027']['value'].startswith('US$33'), 'arrival.json changed: update the Russian visa pin'
+rows = ''.join(f"<tr><td>{a}<small>{c}</small></td><td class='v'>{b}</td></tr>" for a, b, c in ru_v)
+page('pin12-ru-viza', PW, PH, f"""
+<div class="kicker">Египет · 2026–2027</div>
+<h1 style="font-size:74px">Виза в Египет: сколько стоит и что изменится 1 января</h1>
+<div class="lead" style="font-size:27px">Правила в прочтении правительства Великобритании; для российского паспорта уточните у туроператора.</div>
+<div class="rule" style="margin:24px 0 6px"></div>
+<table>{rows}</table>
+{foot("Правительство Великобритании, правила въезда в Египет (обновлено 27.10.2026); сбор 2027: ATTA. Проверено 17.11.2026. egybi.com/ru/arriving-in-egypt.html", 'Египет, честно')}
+""")
+
+# ---- Pin 2b: tipping, B layout — keyword-first title, big-number cards -------
+cards = ''
+for k, short in [('tip-housekeeping', 'Housekeeping, per day'), ('tip-camel', 'Camel handler, per ride'),
+                 ('tip-felucca', 'Felucca, per hour sail'), ('tip-guide-flat', 'Guide, per tour')]:
+    r = ROWS[k]
+    cards += f"""<div style="background:rgba(255,255,255,.5);border:2px solid rgba(201,162,39,.6);border-radius:10px;padding:26px 24px">
+<div style="font-size:26px;color:#544c3e;font-weight:600">{short}</div>
+<div class="big" style="font-size:62px;margin-top:8px">{r['low']}–{r['high']}</div>
+<div style="font-size:24px;color:#7A5E10;font-weight:700">EGP · ≈ {usd(r['low'])}–{usd(r['high'])}</div></div>"""
+page('pin02b-tipping-2026-cards', PW, PH, f"""
+<div class="kicker">Tipping in Egypt 2026</div>
+<h1 style="font-size:80px">In Egyptian pounds, with the sources</h1>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:40px">{cards}</div>
+<div class="lead" style="font-size:28px">Nile cruise crew: sources disagree. We show both on the page.</div>
+{foot(f"Pyramids Land (2026 guide) and Travelling King, checked 2026-10-09. $ at {USD:.2f} EGP/USD ({FX_ASOF}, ExchangeRate-API market rate). egybi.com/fair-prices")}
+""")
+
+# ---- Pin 6b: best time, B layout — the exact phrase people type, a heat grid --
+pick = ['The Giza Pyramids', 'Karnak Temple', 'Abu Simbel', 'Alexandria', 'Hurghada', 'Siwa Oasis']
+short_n = {'The Giza Pyramids': 'Giza', 'Karnak Temple': 'Luxor', 'Abu Simbel': 'Abu Simbel', 'Alexandria': 'Alexandria', 'Hurghada': 'Hurghada', 'Siwa Oasis': 'Siwa'}
+grid = '<tr><td></td>' + ''.join(f'<td style="font-size:19px;text-align:center;color:#544c3e;padding:6px 0">{m[0]}</td>' for m in MON) + '</tr>'
+for n in pick:
+    v = highs(site(n))
+    grid += f'<tr><td style="font-size:24px;padding:6px 10px 6px 0;white-space:nowrap">{short_n[n]}</td>' + ''.join(
+        f'<td style="background:{heat_color(t)};color:#fff;text-align:center;font-family:Cinzel,serif;font-size:20px;padding:12px 0;border:2px solid #F6EEDC">{t}</td>' for t in v) + '</tr>'
+page('pin06b-best-time-weather-by-month', PW, PH, f"""
+<div class="kicker">Best time to visit Egypt</div>
+<h1 style="font-size:76px">Weather by month, site by site</h1>
+<div class="lead" style="font-size:30px">A normal afternoon's high, °C. Blue is comfortable; red is past 39.</div>
+<table style="margin-top:34px;border-collapse:collapse">{grid}</table>
+{foot(NASA + " 18 sites on egybi.com/visit.")}
+""")
+
+# ---- Cover 1b: the video-1 hook as an honest question ------------------------
+page('cover01b-camel-honest-hook', CW, CH, f"""
+<div style="padding-top:120px"></div>
+<div class="kicker" style="font-size:34px">Giza · honestly</div>
+<h1 style="font-size:104px;margin-top:30px">Nobody can tell you what a camel ride costs.</h1>
+<div class="lead" style="font-size:48px;margin-top:60px">So here is what you <b>can</b> know before you pay.</div>
+<div class="lead" style="font-size:44px">Plateau ticket: <span class="big">{g['low']} EGP</span> · handler's tip <span class="big" style="white-space:nowrap">{tipc['low']}–{tipc['high']} EGP</span></div>
+{foot(f"Camel price: searched {camel['checked']}, no verifiable published price. Ticket: Ministry of Tourism and Antiquities (5 Nov 2024). Tip: Pyramids Land (2026).")}
+""")
+
 print('ok', len(os.listdir(OUT)))
