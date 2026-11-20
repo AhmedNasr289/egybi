@@ -1139,6 +1139,11 @@ case("a link back to the retired stock market page", "seo.py", ["site/index.html
                   '<a href="prices.html">Daily Prices</a><a href="stocks.html">Stock Market</a><a href="invest.html">'),
      lambda o: "live page links to a retired page" in o, PY_SEO)
 
+case("a newsletter issue linking the retired stock market page", "seo.py", ["site/newsletter/issues/2026-12-solstice-sunrise.json"],
+     lambda: edit("site/newsletter/issues/2026-12-solstice-sunrise.json", 'href=\\"https://egybi.com/visit/karnak.html\\"',
+                  'href=\\"https://egybi.com/stocks.html\\"'),
+     lambda o: "newsletter issue links a retired page" in o, PY_SEO)
+
 case("the Arabic price page left with one link into it", "seo.py", ["site/egypt-food-prices.html"],
      lambda: edit("site/egypt-food-prices.html", '<a class="btn btn-ghost" href="prices-ar.html"',
                   '<a class="btn btn-ghost" href="prices.html"'),
