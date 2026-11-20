@@ -288,6 +288,45 @@ for canon, ps in seen_canon.items():
     if len(ps) > 1:
         add("duplicate canonical (pages compete)", f"{canon}  <-  {', '.join(ps)}")
 
+# Pages taken off the site on purpose (2026-11-20: stocks.html, the EGX charts,
+# because the site carries no investment content). Each must 301 in .htaccess,
+# must not be in the sitemap, and no live page may link to it, so neither a
+# reader nor a crawler is sent to a page the site no longer stands behind.
+RETIRED_PAGES = {"stocks.html"}
+_sm_text = (SITE / "sitemap.xml").read_text(encoding="utf-8") if (SITE / "sitemap.xml").exists() else ""
+for rel in sorted(RETIRED_PAGES):
+    if rel not in REDIRECTED:
+        add("retired page not redirected", f"{rel}  (needs a 301 in .htaccess)")
+    if f"{ORIGIN}/{rel}" in _sm_text:
+        add("retired page in the sitemap", rel)
+    inbound = sorted(links_into[rel] & set(live_pages))
+    if inbound:
+        add("live page links to a retired page", f"{rel}  <-  {', '.join(inbound[:6])}")
+
+# Newsletter issues (site/newsletter/issues) are mailed to subscribers, so a
+# link in one is a link the site sends people to (2026-11-20: the December
+# issue was about the retired stock market page). An issue may not link a
+# retired page or an egybi.com page that does not exist, and a month holds one
+# issue: papyrus-reminder.yml names the first file dated for the month.
+_issues_dir = SITE / "newsletter" / "issues"
+_per_month = defaultdict(list)
+for _f in sorted(_issues_dir.glob("*.json")) if _issues_dir.exists() else []:
+    _per_month[_f.name[:7]].append(_f.name)
+    try:
+        _html = json.loads(_f.read_text(encoding="utf-8")).get("html", "")
+    except ValueError:
+        add("newsletter issue is not valid JSON", _f.name)
+        continue
+    for _href in re.findall(r'href="https://egybi\.com/([^"#?]*)', _html):
+        _target = _href or "index.html"
+        if _target in RETIRED_PAGES:
+            add("newsletter issue links a retired page", f"{_f.name}  ->  {_target}")
+        elif not (SITE / _target).is_file():
+            add("newsletter issue links a page that does not exist", f"{_f.name}  ->  {_target}")
+for _ym, _names in sorted(_per_month.items()):
+    if len(_names) > 1:
+        add("more than one newsletter issue for a month", f"{_ym}: {', '.join(_names)}")
+
 # A live page that one other page links to is a page search engines find late
 # and rank as minor (2026-11-19 audit: prices-ar.html had one link in, the
 # arrival page four). Two links from other live pages is the floor.

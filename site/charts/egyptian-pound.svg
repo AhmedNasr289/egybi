@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 846 500" width="846" height="500" role="img" aria-labelledby="t d" font-family="Inter, Segoe UI, Arial, sans-serif">
 <title id="t">What your money buys in Egypt since July</title>
-<desc id="d">Pounds per unit of each currency as an index, 100 = first week, 24 July 2026 to 19 November 2026.</desc>
+<desc id="d">Pounds per unit of each currency as an index, 100 = first week, 25 July 2026 to 20 November 2026.</desc>
 <rect width="846" height="500" fill="#FDF9EE"/>
 <text x="58" y="34" font-size="19" font-weight="700" fill="#1B1B18">What your money buys in Egypt since July</text>
 <text x="58" y="56" font-size="12.5" fill="#544C3E">Pounds for one unit, weekly median, first week = 100</text>
@@ -12,26 +12,26 @@
 <text x="50" y="189.3" font-size="12" text-anchor="end" fill="#544C3E">105</text>
 <line x1="58" y1="78.0" x2="716" y2="78.0" stroke="#D8D0BC" stroke-width="1"/>
 <text x="50" y="82.0" font-size="12" text-anchor="end" fill="#544C3E">110</text>
-<line x1="102.6" y1="400" x2="102.6" y2="405" stroke="#544C3E"/>
-<text x="102.6" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
-<line x1="275.5" y1="400" x2="275.5" y2="405" stroke="#544C3E"/>
-<text x="275.5" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
-<line x1="442.8" y1="400" x2="442.8" y2="405" stroke="#544C3E"/>
-<text x="442.8" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
-<line x1="615.6" y1="400" x2="615.6" y2="405" stroke="#544C3E"/>
-<text x="615.6" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
-<path d="M74.7,292.7 L113.8,327.8 L152.8,355.2 L191.8,335.6 L230.9,310.9 L269.9,332.3 L308.9,309.3 L348.0,289.5 L387.0,261.6 L426.0,273.8 L465.1,251.5 L504.1,244.9 L543.1,201.3 L582.2,109.6 L621.2,97.7 L660.2,183.9 L699.3,196.6" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="699.3" cy="196.6" r="4" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M74.7,292.7 L113.8,293.5 L152.8,326.2 L191.8,305.4 L230.9,255.0 L269.9,288.4 L308.9,264.2 L348.0,247.5 L387.0,245.0 L426.0,271.9 L465.1,276.1 L504.1,280.2 L543.1,231.0 L582.2,155.9 L621.2,145.5 L660.2,225.1 L699.3,269.6" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="97.0" y1="400" x2="97.0" y2="405" stroke="#544C3E"/>
+<text x="97.0" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Aug</text>
+<line x1="269.9" y1="400" x2="269.9" y2="405" stroke="#544C3E"/>
+<text x="269.9" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Sep</text>
+<line x1="437.2" y1="400" x2="437.2" y2="405" stroke="#544C3E"/>
+<text x="437.2" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Oct</text>
+<line x1="610.1" y1="400" x2="610.1" y2="405" stroke="#544C3E"/>
+<text x="610.1" y="420" font-size="12" text-anchor="middle" fill="#544C3E">Nov</text>
+<path d="M74.7,292.7 L113.8,327.2 L152.8,344.8 L191.8,327.5 L230.9,305.0 L269.9,302.6 L308.9,300.5 L348.0,262.4 L387.0,258.1 L426.0,256.5 L465.1,243.2 L504.1,227.7 L543.1,175.0 L582.2,85.4 L621.2,111.7 L660.2,175.3 L699.3,184.6" fill="none" stroke="#1F5FA6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="699.3" cy="184.6" r="4" fill="#1F5FA6" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M74.7,292.7 L113.8,311.6 L152.8,322.3 L191.8,301.7 L230.9,261.2 L269.9,270.5 L308.9,264.2 L348.0,241.7 L387.0,246.7 L426.0,271.0 L465.1,277.6 L504.1,273.0 L543.1,218.3 L582.2,145.5 L621.2,155.5 L660.2,227.7 L699.3,269.6" fill="none" stroke="#C2410C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
 <circle cx="699.3" cy="269.6" r="4" fill="#C2410C" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M74.7,292.7 L113.8,296.5 L152.8,332.7 L191.8,305.7 L230.9,260.9 L269.9,295.5 L308.9,278.0 L348.0,258.7 L387.0,254.0 L426.0,286.8 L465.1,266.4 L504.1,261.9 L543.1,200.5 L582.2,103.6 L621.2,95.7 L660.2,174.2 L699.3,215.6" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="699.3" cy="215.6" r="4" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
-<path d="M74.7,292.7 L113.8,308.3 L152.8,368.6 L191.8,359.8 L230.9,342.0 L269.9,370.5 L308.9,356.3 L348.0,342.8 L387.0,324.6 L426.0,343.4 L465.1,327.3 L504.1,329.4 L543.1,297.2 L582.2,234.4 L621.2,215.2 L660.2,310.5 L699.3,331.5" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="699.3" cy="331.5" r="4" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
-<text x="726" y="200.6" font-size="12.5" font-weight="600" fill="#1B1B18">Dollar &amp; Gulf 104.5</text>
-<text x="726" y="219.6" font-size="12.5" font-weight="600" fill="#1B1B18">Pound sterling 103.6</text>
+<path d="M74.7,292.7 L113.8,314.0 L152.8,326.9 L191.8,302.9 L230.9,264.3 L269.9,281.3 L308.9,275.4 L348.0,250.8 L387.0,256.4 L426.0,275.4 L465.1,266.2 L504.1,252.1 L543.1,185.6 L582.2,96.8 L621.2,106.5 L660.2,176.3 L699.3,216.2" fill="none" stroke="#2E7D4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="699.3" cy="216.2" r="4" fill="#2E7D4F" stroke="#FDF9EE" stroke-width="2"/>
+<path d="M74.7,292.7 L113.8,328.4 L152.8,353.9 L191.8,345.3 L230.9,330.4 L269.9,337.2 L308.9,341.8 L348.0,313.0 L387.0,316.4 L426.0,325.2 L465.1,312.6 L504.1,310.0 L543.1,269.9 L582.2,194.9 L621.2,227.4 L660.2,295.7 L699.3,314.6" fill="none" stroke="#8A4FB5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="699.3" cy="314.6" r="4" fill="#8A4FB5" stroke="#FDF9EE" stroke-width="2"/>
+<text x="726" y="188.6" font-size="12.5" font-weight="600" fill="#1B1B18">Dollar &amp; Gulf 105.0</text>
+<text x="726" y="220.2" font-size="12.5" font-weight="600" fill="#1B1B18">Pound sterling 103.6</text>
 <text x="726" y="273.6" font-size="12.5" font-weight="600" fill="#1B1B18">Euro 101.1</text>
-<text x="726" y="335.5" font-size="12.5" font-weight="600" fill="#1B1B18">Turkish lira 98.2</text>
+<text x="726" y="318.6" font-size="12.5" font-weight="600" fill="#1B1B18">Turkish lira 99.0</text>
 <rect x="58" y="442" width="14" height="4" rx="2" fill="#1F5FA6"/>
 <text x="78" y="447" font-size="12" fill="#1B1B18">Dollar &amp; Gulf</text>
 <rect x="192" y="442" width="14" height="4" rx="2" fill="#C2410C"/>

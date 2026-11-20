@@ -36,7 +36,7 @@ const MIN = 24;
 
 const PAGES = ['index.html', 'explore.html', 'geospatial.html', 'places.html',
                'invest.html', 'streets.html', 'visit.html', 'stories.html',
-               'case.html', 'prices.html', 'stocks.html', 'blog.html',
+               'case.html', 'prices.html', 'blog.html',
                'about.html', 'community.html', 'privacy.html', 'tracks.html',
                'practice.html', '404.html'];
 const PICK = process.env.ONLY ? process.env.ONLY.split(',') : null;

@@ -49,6 +49,12 @@
     #     /practice/<slug>.html, redirecting away the very pages being kept.
     RewriteRule ^practice\.html$ /explore.html [L,R=301]
     RewriteRule ^tracks\.html$ /explore.html [L,R=301]
+    # 2b') The stock market page (stocks.html, EGX charts) is retired: the
+    #      site is a travel companion and does not carry investment content
+    #      (owner's decision, 2026-11-20). One page with no successor of its
+    #      own, so a 301 to the Egypt-in-data page, like practice and tracks.
+    #      The file stays in the repository; seo.py reads this rule.
+    RewriteRule ^stocks\.html$ /explore.html [L,R=301]
 
     # 2c) The page-view beacon (assets/analytics.js) posts to the page-relative
     #     'api/hit.php'. From a page one folder down (papyrus/, practice/) that
