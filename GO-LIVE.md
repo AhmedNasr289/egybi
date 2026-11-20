@@ -19,6 +19,8 @@ hPanel → **Advanced → GIT**:
 3. Save. Hit **Deploy** (or enable **Auto-deployment** so every `git push` pulls
    automatically — copy the webhook URL into GitHub → repo **Settings → Webhooks**).
 
+**When a merge does not deploy.** On 2026-11-20 GitHub answered the merge of #215 with a 502. The merge itself landed on `main`, but no workflow ran for that commit and egybi.com kept the previous files (the planner still loaded `plan.js?v=19` six minutes later). A push that GitHub never announces reaches neither Actions nor the deploy. To recover, check both after any merge that errored: `gh run list --commit <sha>` should list runs, and the live page should request the new `?v=` numbers. If neither moved, the next push to `main` deploys everything up to it; this note was that push.
+
 After deploy, your files live at `public_html/site/…`, `public_html/backend/…`,
 `public_html/egybi/…`. That's expected — Step 2 fixes what the browser sees.
 
