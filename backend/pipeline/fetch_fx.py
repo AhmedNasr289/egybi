@@ -38,12 +38,7 @@ import urllib.request
 import urllib.error
 
 
-def _force_utf8_output():
-    for stream in (sys.stdout, sys.stderr):
-        try:
-            stream.reconfigure(encoding="utf-8", errors="replace")
-        except (AttributeError, ValueError, OSError):
-            pass
+from console import force_utf8_output as _force_utf8_output  # noqa: E402  (shared helper)
 
 
 _force_utf8_output()
