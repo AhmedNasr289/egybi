@@ -13,6 +13,7 @@ signal only appears when you count them.
 
 Exit 1 on any finding, so CI can gate on it.
 """
+import datetime
 import html as _html
 import json
 import posixpath
@@ -309,6 +310,7 @@ for rel in sorted(RETIRED_PAGES):
 # retired page or an egybi.com page that does not exist, and a month holds one
 # issue: papyrus-reminder.yml names the first file dated for the month.
 _issues_dir = SITE / "newsletter" / "issues"
+_THIS_MONTH = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m")
 _per_month = defaultdict(list)
 for _f in sorted(_issues_dir.glob("*.json")) if _issues_dir.exists() else []:
     _per_month[_f.name[:7]].append(_f.name)
@@ -321,6 +323,11 @@ for _f in sorted(_issues_dir.glob("*.json")) if _issues_dir.exists() else []:
         _target = _href or "index.html"
         if _target in RETIRED_PAGES:
             add("newsletter issue links a retired page", f"{_f.name}  ->  {_target}")
+        elif _target in REDIRECTED and _f.name[:7] > _THIS_MONTH:
+            # An issue not sent yet should link where the reader lands, not a
+            # page the server 301s away (2026-11-20: twelve 2027 issues linked
+            # practice.html, which lands on the Explore page they also linked).
+            add("unsent newsletter issue links a redirected page", f"{_f.name}  ->  {_target}")
         elif not (SITE / _target).is_file():
             add("newsletter issue links a page that does not exist", f"{_f.name}  ->  {_target}")
 for _ym, _names in sorted(_per_month.items()):
