@@ -102,3 +102,35 @@ All temperatures are NASA POWER mean daily highs, 2001–2020: what a normal aft
 - TikTok: https://egybi.com/egypt-weather-by-month.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-heat
 - Instagram: https://egybi.com/egypt-weather-by-month.html?utm_source=instagram&utm_medium=bio&utm_campaign=s2627-heat
 - YouTube channel link: https://egybi.com/egypt-weather-by-month.html?utm_source=youtube&utm_medium=video&utm_campaign=s2627-heat
+
+---
+
+## (d) "Why almost all of Egypt lives on 4% of it" — 25 seconds
+
+*Added 2026-11-20. Why this one: vidIQ, read 20 Nov 2026, shows "why 95% of egypt lives along the nile" at about 8,248 searches a month on YouTube, up 81.8%. Note `10` §5 has the details. The figures below come only from egybi.com: the population-by-governorate chart on `/explore.html` (source: CAPMAS, Nov 2023). The page gives no source for its separate "~97% of renewable water" line, so this script leaves it out.*
+
+**Pages:** https://egybi.com/explore.html (the governorate population map and chart).
+
+| Time | Shot (screen capture) | On-screen text | Voiceover |
+|---|---|---|---|
+| 0–3 s | explore.html, the governorate map, zoomed out to the whole country | **95% of Egyptians live on about 4% of the land** | "Almost all of Egypt lives on about four percent of it." |
+| 3–9 s | Slowly zoom the map onto the Nile Valley and Delta; the dark governorates stand out | **The Nile Valley and Delta** | "The dark strip is the Nile Valley and the Delta. That's where more than ninety-five percent of Egyptians live." |
+| 9–15 s | Pan out to the pale Western Desert | **The rest: desert** | "Everything pale is desert. Hardly anyone lives there." |
+| 15–21 s | Scroll to the bar chart of the most populous governorates; hold on the caption line | **Source: CAPMAS, Nov 2023** · top 8 of 27 governorates | "These are the eight most populous governorates, from Egypt's statistics agency." |
+| 21–25 s | Back to the map, full view | **Every chart cites its source** · egybi.com | "Every chart on the site cites its source. I built it; it's free. Link in bio." |
+
+**Caption:**
+
+> More than 95% of Egyptians live on about 4% of the land: the Nile Valley and the Delta. The map is from CAPMAS figures (Nov 2023). I built this site myself; it's free.
+> #egypt #nile #maps #data #geography #egypttravel
+
+**Pinned comment:**
+
+> Source: CAPMAS population by governorate, November 2023, as charted on egybi.com/explore.html. What should the next map be?
+
+**Bio links:**
+
+- TikTok: https://egybi.com/explore.html?utm_source=tiktok&utm_medium=bio&utm_campaign=s2627-nile
+- Instagram: https://egybi.com/explore.html?utm_source=instagram&utm_medium=bio&utm_campaign=s2627-nile
+
+**Before recording:** open the live page and check that the 95% / 4% line and the CAPMAS source are still on it.

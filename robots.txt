@@ -11,6 +11,12 @@
 User-agent: *
 Allow: /
 
+# How the content may be used (contentsignals.org). search: index and link to
+# the pages; ai-input: quote and cite them in AI answers; ai-train: not used to
+# train models. Recommended values, approved by the owner on 2026-11-20; change
+# any of the three here.
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
 # Endpoints and private data are not content — don't spend crawl budget here.
 Disallow: /api/
 Disallow: /auth/

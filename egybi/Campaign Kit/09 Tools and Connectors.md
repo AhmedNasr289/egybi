@@ -1,5 +1,7 @@
 # 09 Tools and Connectors
 
+> **Superseded for paid tools on 2026-11-20:** the owner chose free plans only. See `12 Free-Plan Operation — 2026-11-20.md`. Ayrshare has no free plan, OpenRush is pay-per-call, and Supermetrics is a 14-day trial.
+
 > What each marketing tool would do for this campaign once connected, and what is already working. Checked 2026-11-20 with ListConnectors, SearchMcpRegistry, SearchPlugins and SearchSkills. Back to [[Home]] · plan: `reports/EgyBI marketing and distribution plan.md`.
 
 ## Already working in Claude sessions
