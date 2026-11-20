@@ -208,6 +208,23 @@
             Math.sin(dLon / 2) * Math.sin(dLon / 2);
     return 2 * R * Math.asin(Math.sqrt(h));
   }
+  /* The mapped hospital nearest a stop (geo-health.json, OpenStreetMap;
+     2026-11-20). OSM's hospital tag also covers clinics, doctors' practices
+     and a physiotherapy centre, so only a point whose own name says hospital
+     counts: 395 of the 637 hospital points on 2026-11-03. Straight-line
+     distance, like every distance on the planner. */
+  var HOSPITAL_NAME = /hospital|\u0645\u0633\u062a\u0634\u0641/i;   // "hospital", "mustashfa"
+  var HOSPITAL_NEAR_KM = 50;
+  function nearestHospital(health, p) {
+    var pts = (health && health.points) || [], best = null, bestKm = Infinity;
+    for (var i = 0; i < pts.length; i++) {
+      var q = pts[i];
+      if (q.k !== 'h' || !HOSPITAL_NAME.test(q.n || '')) continue;
+      var d = km(p, q);
+      if (d < bestKm) { bestKm = d; best = q; }
+    }
+    return best ? { name: best.n, lat: best.lat, lon: best.lon, km: bestKm, near: bestKm <= HOSPITAL_NEAR_KM } : null;
+  }
   /* The measured climate site nearest a stop, if one is close enough that its
      normals honestly describe the stop. 60 km keeps Giza's figures off Fayoum
      and Luxor's off Aswan. */
@@ -285,7 +302,7 @@
     parse: parse, iso: iso, addDays: addDays, today: today, nights: nights,
     fmtDate: fmtDate, monthsOf: monthsOf, defaultDates: defaultDates,
     BANDS: BANDS, band: band, inkOn: inkOn, monthRow: monthRow, heatWarning: heatWarning,
-    km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM, areaOf: areaOf, legRows: legRows,
+    km: km, nearestSite: nearestSite, NEAR_KM: NEAR_KM, nearestHospital: nearestHospital, HOSPITAL_NEAR_KM: HOSPITAL_NEAR_KM, areaOf: areaOf, legRows: legRows,
     eventsIn: eventsIn, rate: rate, rateText: rateText, money: money, whole: whole,
     MONTHS: MONTHS, SHORT: SHORT, esc: esc, monthName: monthName, pageLang: pageLang, pageDigits: pageDigits
   };
