@@ -1523,20 +1523,20 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 .fp-conflict { display: block; margin-top: 6px; font-size: var(--fs-xs); color: var(--danger); }
 .fp-none { color: var(--ink-soft); font-style: italic; }
 .fp-wrap { overflow-x: auto; }
-/* Phones (2026-11-20): each price row becomes a card, so the price is on
+/* Phones (2026-11-20): each fair-prices row (.fp-cards, set by fair.js; not
+   the visit or arrival tables, which have their own phone layouts) becomes a card, so the price is on
    screen without a sideways swipe. The header row is kept for screen readers
    and each value cell names its column from data-label (set by fair.js). */
 @media (max-width: 560px) {
-  .fp-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .fp-table, .fp-table tbody, .fp-table tr, .fp-table td { display: block; width: 100%; }
-  .fp-table tr { padding: 10px 0; border-bottom: 1px solid var(--line-light); }
-  .fp-table td { border-bottom: 0; padding: 4px 0; }
-  .fp-table td[data-label] { display: flex; justify-content: space-between; gap: 12px; text-align: start; white-space: normal; }
-  .fp-table td[data-label]::before { content: attr(data-label); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); flex: 0 0 auto; }
-  .fp-table td.num[data-label] { text-align: end; }
-  .fp-table td[data-label]:not(.num) { display: block; }
-  .fp-table td[data-label]:not(.num)::before { display: block; margin-bottom: 2px; }
-  .fp-wrap { overflow-x: visible; }
+  .fp-table.fp-cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fp-table.fp-cards, .fp-cards tbody, .fp-cards tr, .fp-cards td { display: block; width: 100%; }
+  .fp-cards tr { padding: 10px 0; border-bottom: 1px solid var(--line-light); }
+  .fp-cards td { border-bottom: 0; padding: 4px 0; }
+  .fp-cards td[data-label] { display: flex; justify-content: space-between; gap: 12px; text-align: start; white-space: normal; }
+  .fp-cards td[data-label]::before { content: attr(data-label); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); flex: 0 0 auto; }
+  .fp-cards td.num[data-label] { text-align: end; }
+  .fp-cards td[data-label]:not(.num) { display: block; }
+  .fp-cards td[data-label]:not(.num)::before { display: block; margin-bottom: 2px; }
 }
 
 /* offers */

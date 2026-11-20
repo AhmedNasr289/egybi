@@ -10,7 +10,7 @@
    Needs the site served:  python3 -m http.server 8793 --directory site
    Exit 1 on any failure. */
 'use strict';
-const { chromium } = require('playwright');
+const { chromium, executablePath } = require('./env');
 const fs = require('fs');
 const path = require('path');
 
@@ -40,7 +40,7 @@ async function run(browser, page, storeBody, query = '') {
 }
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath });
   let bad = 0;
   const check = (ok, msg) => { if (!ok) bad++; console.log(`${ok ? 'ok  ' : 'FAIL'} ${msg}`); };
 

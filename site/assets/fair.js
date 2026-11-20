@@ -100,7 +100,7 @@
     host.innerHTML = D.fp.groups.map(function (g) {
       return '<div class="sheet" style="margin-top:18px;"><h3 style="margin:0 0 10px;color:var(--blue-deep);">' + esc(tt(g.title)) + '</h3>' +
         (g.note ? '<p class="chart-cap" style="margin:0 0 10px;">' + esc(tt(g.note)) + '</p>' : '') +
-        '<div class="fp-wrap"><table class="fp-table"><thead><tr><th scope="col">' + esc(t('What')) + '</th><th scope="col" class="num">' + esc(t('As published')) + '</th>' +
+        '<div class="fp-wrap"><table class="fp-table fp-cards"><thead><tr><th scope="col">' + esc(t('What')) + '</th><th scope="col" class="num">' + esc(t('As published')) + '</th>' +
         '<th scope="col" class="num">' + esc(t('In %s today').replace('%s', CUR)) + '</th><th scope="col">' + esc(t('Who says so')) + '</th></tr></thead><tbody>' +
         g.rows.map(function (r) {
           var pub = range(r.low, r.high, r.currency);
@@ -128,7 +128,7 @@
     p.items.forEach(function (i) { by[i.slug] = i; });
     var rows = BASKET.map(function (k) { return by[k]; }).filter(Boolean);
     var arPage = document.documentElement.lang === 'ar';
-    host.innerHTML = '<div class="fp-wrap"><table class="fp-table"><thead><tr><th scope="col">' + esc(t('Item')) + '</th><th scope="col" class="num">' + esc(t('Average, EGP')) + '</th>' +
+    host.innerHTML = '<div class="fp-wrap"><table class="fp-table fp-cards"><thead><tr><th scope="col">' + esc(t('Item')) + '</th><th scope="col" class="num">' + esc(t('Average, EGP')) + '</th>' +
       '<th scope="col" class="num">' + esc(t('Range across the country, EGP')) + '</th><th scope="col" class="num">' + esc(t('Average in %s').replace('%s', CUR)) + '</th></tr></thead><tbody>' +
       rows.map(function (i) {
         // The Arabic page shows the Cabinet's own Arabic name alone; the
