@@ -39,6 +39,8 @@ on:
       - 'site/data/getting-around.json'
       - 'site/data/arrival.json'
       - 'backend/verify/leg-rows.js'
+      - 'backend/verify/hospital-cases.js'
+      - 'site/data/geo-health.json'
       - '.github/workflows/test-pipeline.yml'
   workflow_dispatch: {}
 
@@ -109,6 +111,14 @@ jobs:
         run: |
           set -o pipefail
           node backend/verify/ics-cases.js 2>&1 | tee -a /tmp/test-pipeline.log
+
+      # The planner's nearest-hospital line (trip.js nearestHospital): only a
+      # point named as a hospital counts, and beyond 50 km none is "near".
+      - name: Planner nearest hospital matches its cases
+        shell: bash
+        run: |
+          set -o pipefail
+          node backend/verify/hospital-cases.js 2>&1 | tee -a /tmp/test-pipeline.log
 
       # The quote checker on fair-prices.html (fair.js fairVerdict): range
       # edges, the share above or below, and no verdict without a figure.

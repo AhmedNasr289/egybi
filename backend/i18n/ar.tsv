@@ -1808,3 +1808,7 @@ Saved. It will be on the cover of your dossier in the planner.	تم الحفظ. 
 Copy the signs as text	انسخ العلامات كنص
 Copied. Paste the signs anywhere; they show where a hieroglyph font is installed.	تم النسخ. الصق العلامات في أي مكان؛ وتظهر حيث يتوفر خط للهيروغليفية.
 Your browser did not allow copying. The signs are selected below: copy them with Ctrl+C or a long press.	لم يسمح متصفحك بالنسخ. العلامات محددة أدناه: انسخها بـ Ctrl+C أو بضغطة مطوّلة.
+Nearest hospital on the map: %s, about %n km in a straight line.	أقرب مستشفى على الخريطة: %s، على بُعد %n كم تقريبًا في خط مستقيم.
+No hospital is mapped within %d km of this stop; the nearest mapped one is about %n km away in a straight line.	لا يوجد مستشفى على الخريطة في نطاق %d كم من هذه المحطة؛ أقرب مستشفى مسجَّل يبعد نحو %n كم في خط مستقيم.
+Hospitals are mapped by OpenStreetMap volunteers, so the map may miss one.	المستشفيات مسجَّلة على الخريطة بأيدي متطوعي OpenStreetMap، لذا قد تفوتها بعض المستشفيات.
+Ambulance: %s.	الإسعاف: %s.

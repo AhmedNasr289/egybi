@@ -643,6 +643,14 @@ case("the museum's hours cited away from its own site", "test_gem_hours.py", ["s
 # The planner's calendar file (2026-11-18): an all-day event ends the day
 # after its last day. Ending it on the last day would drop a day from every
 # stop in the reader's calendar; ics-cases.js must catch it.
+# Only a point whose name says hospital counts (2026-11-20): OSM tags a
+# physiotherapy centre and clinics as hospitals; hospital-cases.js must catch
+# the filter being dropped.
+case("the nearest hospital counts any point tagged hospital", "hospital-cases.js", ["site/assets/trip.js"],
+     lambda: edit("site/assets/trip.js", "if (q.k !== 'h' || !HOSPITAL_NAME.test(q.n || '')) continue;",
+                  "if (q.k !== 'h') continue;"),
+     lambda o: "FAIL a physiotherapy centre" in o, f"node {HERE}/hospital-cases.js")
+
 case("the calendar file drops the last day of each stop", "ics-cases.js", ["site/assets/ics.js"],
      lambda: edit("site/assets/ics.js", "var end = addDays(day, n);", "var end = addDays(day, n - 1);"),
      lambda o: "FAIL a two-day stop ends the day after its last day" in o, f"node {HERE}/ics-cases.js")

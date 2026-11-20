@@ -284,6 +284,22 @@
     });
     return out;
   }
+  // The nearest mapped hospital and the ambulance number (stage 19,
+  // 2026-11-20). A solo traveller has no one else to find help. The number
+  // is read from arrival.json's cited row, never typed here.
+  function hospitalHtml(st) {
+    var h = D.health && T.nearestHospital(D.health, st);
+    if (!h) return '';
+    var dist = pageDigits(Math.max(1, Math.round(h.km)));
+    var name = /[\u0600-\u06FF]/.test(h.name) ? '<bdi lang="ar" dir="rtl">' + esc(h.name) + '</bdi>' : '<bdi>' + esc(h.name) + '</bdi>';
+    var line = h.near
+      ? esc(t('Nearest hospital on the map: %s, about %n km in a straight line.')).replace('%s', name).replace('%n', dist)
+      : esc(t('No hospital is mapped within %d km of this stop; the nearest mapped one is about %n km away in a straight line.'))
+          .replace('%d', pageDigits(T.HOSPITAL_NEAR_KM)).replace('%n', dist);
+    var amb = arrivalRow('ambulance');
+    return '<p class="stop-hospital">' + line + ' ' + esc(t('Hospitals are mapped by OpenStreetMap volunteers, so the map may miss one.')) +
+      (amb ? ' ' + esc(t('Ambulance: %s.').replace('%s', pageDigits(amb.value))) : '') + '</p>';
+  }
   function legHowHtml(a, b) {
     var rows = T.legRows(D.guide, D.climate, a, b).map(arrivalRow).filter(Boolean);
     if (!rows.length) return '';
@@ -309,7 +325,7 @@
           '<span class="stop-n" aria-hidden="true">' + (i + 1) + '</span>' +
           '<div><h3>' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
           (bd ? '<span class="heat-chip" style="background:' + bd.colour + ';color:' + T.inkOn(bd.colour) + '">' + pageDigits(Math.round(first.max)) + '&nbsp;' + esc(t('°C')) + '</span> ' : '') +
-          '<p>' + esc(h.text) + '</p>' + heatWarnHtml(h, x) + madeNearHtml(x) + '</div>' +
+          '<p>' + esc(h.text) + '</p>' + heatWarnHtml(h, x) + madeNearHtml(x) + hospitalHtml(x) + '</div>' +
           '<div class="stop-ctl"><label class="sr-only" for="days' + i + '">' + esc(t('Days at %s').replace('%s', x.name)) + '</label>' +
           '<input id="days' + i + '" type="number" min="1" max="30" value="' + (x.days || 1) + '" data-days="' + i + '"> <span aria-hidden="true">' + esc(t('days')) + '</span>' +
           '<button type="button" class="icon-btn" data-up="' + i + '" aria-label="' + esc(t('Move %s earlier').replace('%s', x.name)) + '"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
@@ -424,7 +440,7 @@
         '<h3 style="margin:0 0 8px;color:var(--blue-deep);">' + esc(x.name) + (x.name_ar ? ' <span class="v-ar" lang="ar" dir="rtl">' + esc(x.name_ar) + '</span>' : '') + '</h3>' +
         when +
         '<p style="margin:0 0 6px;">' + leg + esc(h.text) + (el != null ? ' ' + esc(t('Ground elevation %n m (SRTM).').replace('%n', pageDigits(Math.round(el)))) : '') + '</p>' +
-        heatWarnHtml(h, x) + hoursLine(x) + (from ? sunLine(x, from) : '') + stopEvents(from, to) +
+        heatWarnHtml(h, x) + hoursLine(x) + (from ? sunLine(x, from) : '') + stopEvents(from, to) + hospitalHtml(x) +
         '<p class="chart-cap" style="margin:0;">' + coords(x) + (x.gov ? ' &middot; ' + esc(gv(x.gov)) : '') + '</p></div>';
     }).join('');
     var events = ev.length ? '<div class="sheet" style="margin-top:16px;"><p class="kicker">' + esc(t('Inside your dates')) + '</p><ul class="event-list">' +
@@ -654,10 +670,11 @@
       settle(T.getJSON('data/visit-climate.json')), settle(T.getJSON('data/visit-terrain.json')),
       settle(T.getJSON('data/geo-places.json')), settle(T.getJSON('data/calendar.json')),
       settle(T.getJSON('data/opening-hours.json')), settle(T.getJSON('data/getting-around.json')),
-      settle(T.getJSON('data/arrival.json')), settle(T.getJSON('data/made-in-egypt.json'))
+      settle(T.getJSON('data/arrival.json')), settle(T.getJSON('data/made-in-egypt.json')),
+      settle(T.getJSON('data/geo-health.json'))
     ]).then(function (r) {
       D.climate = r[0]; D.terrain = r[1]; D.places = r[2]; D.calendar = r[3]; D.hours = r[4];
-      D.guide = r[5]; D.arrival = r[6]; D.made = r[7];
+      D.guide = r[5]; D.arrival = r[6]; D.made = r[7]; D.health = r[8];
       initChips(); initSearch();
       var q = new URLSearchParams(location.search);
       if (q.get('add')) addSite(q.get('add'));
