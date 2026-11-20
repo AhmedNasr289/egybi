@@ -1144,6 +1144,11 @@ case("a newsletter issue linking the retired stock market page", "seo.py", ["sit
                   'href=\\"https://egybi.com/stocks.html\\"'),
      lambda o: "newsletter issue links a retired page" in o, PY_SEO)
 
+case("an unsent newsletter issue linking the redirected practice page", "seo.py", ["site/newsletter/issues/2027-12-football.json"],
+     lambda: edit("site/newsletter/issues/2027-12-football.json", 'href=\\"https://egybi.com/explore.html\\"',
+                  'href=\\"https://egybi.com/practice.html\\"'),
+     lambda o: "unsent newsletter issue links a redirected page" in o, PY_SEO)
+
 case("the Arabic price page left with one link into it", "seo.py", ["site/egypt-food-prices.html"],
      lambda: edit("site/egypt-food-prices.html", '<a class="btn btn-ghost" href="prices-ar.html"',
                   '<a class="btn btn-ghost" href="prices.html"'),
