@@ -75,6 +75,12 @@
     if (cur === 'EGP') return F.money(n, 'ar');
     return F.isolate((SYM[cur] || cur + ' ') + F.num(n, 'ar', places(n)));
   }
+  // A bare whole number in the page's digits (Arabic-Indic on Arabic pages),
+  // for sentences that already name the currency.
+  function bare(n) {
+    var F = arFmt();
+    return F ? F.num(n, 'ar', 0) : String(n);
+  }
   function range(lo, hi, cur) {
     if (lo == null && hi == null) return null;
     if (hi == null) return money(lo, cur) + '+';
@@ -108,6 +114,10 @@
           return '<tr data-row="' + esc(r.key) + '"><td><strong>' + esc(tt(r.item)) + '</strong><span class="fp-src">' + esc(tt(r.unit)) + '</span>' +
             (r.note ? '<span class="fp-src">' + esc(tt(r.note)) + '</span>' : '') +
             (r.conflict ? '<span class="fp-conflict">' + esc(t('Sources disagree:')) + ' ' + esc(tt(r.conflict)) + '</span>' : '') +
+            // Egyptian visitors' price from the same Ministry list (2026-11-20): people
+            // search for it in Arabic ("للمصريين"); visitors from Arab countries pay
+            // the foreign price, as the group note says.
+            (r.egyptian != null ? '<span class="fp-src">' + esc(t('Egyptian visitors: %a EGP, students %b EGP (Ministry list).').replace('%a', bare(r.egyptian)).replace('%b', bare(r.egyptian_student))) + '</span>' : '') +
             (r.official_url ? '<span class="fp-src">' + esc(t('Official site:')) + ' <a href="' + esc(r.official_url) + '" rel="noopener">' + esc(r.official_url.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></span>' : '') + '</td>' +
             '<td class="num" data-label="' + esc(t('As published')) + '">' + (pub == null ? '<span class="fp-none">' + esc(t('no checkable figure')) + '</span>' : esc(pub)) + '</td>' +
             '<td class="num" data-label="' + esc(t('In %s today').replace('%s', CUR)) + '">' + (mine == null ? '—' : esc(mine)) + '</td>' +
