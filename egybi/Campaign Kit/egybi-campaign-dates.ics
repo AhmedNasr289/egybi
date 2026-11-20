@@ -1,0 +1,50 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//EgyBI//Season campaign 2026-27//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:egybi-phase0-20261129@egybi.com
+DTSTAMP:20261120T060000Z
+DTSTART;VALUE=DATE:20261129
+DTEND;VALUE=DATE:20261130
+SUMMARY:EgyBI: Phase 0 deadline (checkout live\, Search Console\, Bing\, Yandex)
+DESCRIPTION:Open the Payhip checkout for the $12 pack and paste its link into site/data/store.json. Take the Search Console baseline\; verify Bing and Yandex. Steps: Campaign Kit file 01.
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-showhn-20261208@egybi.com
+DTSTAMP:20261120T060000Z
+DTSTART;VALUE=DATE:20261208
+DTEND;VALUE=DATE:20261209
+SUMMARY:EgyBI: Show HN (post by hand\, morning US Eastern)
+DESCRIPTION:Draft in Campaign Kit file 02. Rewrite it in your own words\; stay in the thread and answer every comment.
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-day84-20270101@egybi.com
+DTSTAMP:20261120T060000Z
+DTSTART;VALUE=DATE:20270101
+DTEND;VALUE=DATE:20270102
+SUMMARY:EgyBI: Day-84 check (>= $100/mo continue · < $30 stop new features)
+DESCRIPTION:Run-rate over the 14 days since checkout went live. $30-100: keep 7 h/week marketing\, no new features\, re-judge on 31 March. Fill the KPIs tab.
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-ramadan-20270208@egybi.com
+DTSTAMP:20261120T060000Z
+DTSTART;VALUE=DATE:20270208
+DTEND;VALUE=DATE:20270209
+SUMMARY:EgyBI: Ramadan expected to start (8 or 9 Feb) - Ramadan posts go out
+DESCRIPTION:Expected dates from egybi.com's holiday data\, subject to the moon sighting. The Abu Simbel alignment on 22 Feb falls inside Ramadan.
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-checkpoint-20270331@egybi.com
+DTSTAMP:20261120T060000Z
+DTSTART;VALUE=DATE:20270331
+DTEND;VALUE=DATE:20270401
+SUMMARY:EgyBI: 31 March checkpoint (>= $150/mo keep the 7 h plan · < $50 and < 300 visitors/wk -> upkeep)
+DESCRIPTION:Targets: 500 visitors a week\, 2% or more of planner users buying.
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
