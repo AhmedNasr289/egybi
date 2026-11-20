@@ -1567,7 +1567,7 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 .fp-table .m-short { display: none; }
 @media (max-width: 430px) {
   .fp-table.fp-compact { font-size: var(--fs-sm); }
-  .fp-table.fp-compact th, .fp-table.fp-compact td { padding: 9px 4px; }
+  .fp-table.fp-compact th, .fp-table.fp-compact td { padding: 9px 3px; }
   .fp-table.fp-compact thead th { font-size: var(--fs-xs); text-transform: none; letter-spacing: 0; line-height: 1.25; vertical-align: bottom; }
   .fp-table.fp-compact .m-long { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .fp-table.fp-compact .m-short { display: inline; }
