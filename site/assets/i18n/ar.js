@@ -158,6 +158,7 @@ window.EGYBI_STRINGS = {
  "Egypt governorate indicators: the same data the map shows": "مؤشرات محافظات مصر: البيانات نفسها التي تعرضها الخريطة",
  "Egypt's first satellite city, built around factories rather than housing — an industrial-first plan that predates the desert suburbs by two decades.": "أول مدينة تابعة في مصر، بُنيت حول المصانع لا المساكن: تخطيط يبدأ بالصناعة ويسبق الضواحي الصحراوية بعقدين.",
  "Egyptian Museum, Tahrir, adult foreign visitor": "المتحف المصري بالتحرير، زائر أجنبي بالغ",
+ "Egyptian visitors: %a EGP, students %b EGP (Ministry list).": "للمصريين: %a جنيه، وللطلاب %b جنيه (قائمة الوزارة).",
  "Eid al-Fitr": "عيد الفطر",
  "Elevation in metres above sea level against distance along the line, from %s.": "الارتفاع بالأمتار فوق سطح البحر مقابل المسافة على طول الخط، من %s.",
  "Elevation is sampled from NASA SRTM 30 m at this site’s own coordinates.": "الارتفاع مأخوذ من بيانات NASA SRTM بدقة ٣٠ م عند إحداثيات الموقع نفسه.",
