@@ -144,7 +144,8 @@ page('pin03-entry-tickets', PW, PH, f"""
 # ---- Pins 4-6: heat by month at one site ----------------------------------
 for slug, part, title in [('pin04-abu-simbel-heat', 'Abu Simbel', 'Abu Simbel, month by month'),
                           ('pin05-karnak-heat', 'Karnak', 'Karnak & Luxor, month by month'),
-                          ('pin06-giza-heat', 'Giza', 'The Pyramids, month by month')]:
+                          ('pin06-giza-heat', 'Giza', 'The Pyramids, month by month'),
+                          ('pin13-aswan-philae-heat', 'Philae', 'Aswan & Philae, month by month')]:
     s = site(part); v = highs(s)
     cool = [MON[i] for i, t in enumerate(v) if t <= 30]
     page(slug, PW, PH, f"""
@@ -166,6 +167,16 @@ page('pin07-february-coolest', PW, PH, f"""
 <div class="rule" style="margin:28px 0 6px"></div>
 <table>{rows}</table>
 {foot(NASA + " 18 sites on egybi.com.")}
+""")
+
+# ---- Pin 14: Easter week at Giza (Western Easter is Sunday 28 March 2027) ---
+gz = highs(site('Giza'))
+page('pin14-giza-easter-2027', PW, PH, f"""
+<div class="kicker">Easter 2027 in Egypt</div>
+<h1 style="font-size:74px">Easter week at the Pyramids</h1>
+<div class="lead">Western Easter is <b>Sunday 28 March 2027</b>. A normal March afternoon at Giza reaches <b>{gz[2]}°C</b>; April reaches <b>{gz[3]}°C</b>.</div>
+{heat_bars(gz, [m[0] for m in MON])}
+{foot(NASA)}
 """)
 
 # ---- Pin 8: Ramadan 2027 for travellers -----------------------------------

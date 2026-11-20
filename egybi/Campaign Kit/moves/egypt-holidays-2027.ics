@@ -1,0 +1,159 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//EgyBI//Egypt public holidays 2027//EN
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Egypt public holidays 2027 (EgyBI)
+BEGIN:VEVENT
+UID:egybi-coptic-christmas-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270107
+DTEND;VALUE=DATE:20270108
+SUMMARY:Coptic Christmas
+DESCRIPTION:Source: https://www.officeholidays.com/holidays/egypt/coptic-christmas Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-jan25-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270125
+DTEND;VALUE=DATE:20270126
+SUMMARY:25 January Revolution & Police Day
+DESCRIPTION:Some calendars list a substitute day off on 28 January. Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-ramadan-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270208
+DTEND;VALUE=DATE:20270309
+SUMMARY:Ramadan (expected; moon sighting decides)
+DESCRIPTION:Gulf News and The National (Oct 2026) give 8 February from astronomical calculation\; Egypt-specific holiday calendars (TrueCalendar\, Calendarific) list 9 February. 29 or 30 days\, set by moon sighting. Source: https://www.thenationalnews.com/news/uae/2026/10/06/ramadan-2027-uae-dates-eid-al-fitr-holiday/ Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-abu-simbel-sun-feb-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270222
+DTEND;VALUE=DATE:20270223
+SUMMARY:Abu Simbel sun alignment
+DESCRIPTION:Not a public holiday. The Ministry's ticket list gives a separate ticket for the sun alignment day: 1\,200 EGP for a foreign adult\, against 750 on other days. Its booking site showed 1\,272 EGP when we checked on 17 November 2026. Source: https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-eid-fitr-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270309
+DTEND;VALUE=DATE:20270313
+SUMMARY:Eid al-Fitr (expected; moon sighting decides)
+DESCRIPTION:Gulf News forecasts Wednesday 10 March\; Egypt listings show 10 March with holidays on 11–12 March\, all subject to confirmation. Source: https://gulfnews.com/uae/ramadan/when-is-ramadan-2027-the-expected-date-moon-sighting-and-eid-explained-1.500630523 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-sinai-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270425
+DTEND;VALUE=DATE:20270426
+SUMMARY:Sinai Liberation Day
+DESCRIPTION:Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-labour-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270501
+DTEND;VALUE=DATE:20270502
+SUMMARY:Labour Day
+DESCRIPTION:Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-sham-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270503
+DTEND;VALUE=DATE:20270504
+SUMMARY:Sham el-Nessim
+DESCRIPTION:The Monday after Coptic Orthodox Easter (2 May 2027). Source: https://www.officeholidays.com/holidays/egypt/sham-el-nessim Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-eid-adha-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270516
+DTEND;VALUE=DATE:20270520
+SUMMARY:Arafat Day and Eid al-Adha (expected; moon sighting decides)
+DESCRIPTION:ClockIt and HolidayDB list Arafat Day 16 May\, Eid 17 May and holidays 18–19 May\; Calendarific's provisional forecast includes 19 May. Subject to moon sighting. Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-hijri-new-year-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270606
+DTEND;VALUE=DATE:20270608
+SUMMARY:Islamic New Year (expected; moon sighting decides)
+DESCRIPTION:Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-jun30-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270630
+DTEND;VALUE=DATE:20270701
+SUMMARY:30 June Revolution
+DESCRIPTION:Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-jul23-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270723
+DTEND;VALUE=DATE:20270724
+SUMMARY:23 July Revolution Day
+DESCRIPTION:Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-mawlid-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20270814
+DTEND;VALUE=DATE:20270816
+SUMMARY:Prophet Muhammad's Birthday (expected; moon sighting decides)
+DESCRIPTION:Calendars differ by a day (14 or 15 August). Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-oct6-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20271006
+DTEND;VALUE=DATE:20271007
+SUMMARY:Armed Forces Day
+DESCRIPTION:Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-abu-simbel-sun-oct-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20271022
+DTEND;VALUE=DATE:20271023
+SUMMARY:Abu Simbel sun alignment
+DESCRIPTION:Not a public holiday. The Ministry's ticket list gives a separate ticket for the sun alignment day: 1\,200 EGP for a foreign adult\, against 750 on other days. Its booking site showed 1\,272 EGP when we checked on 17 November 2026. Source: https://www.mota.gov.eg/media/5a2ja2iu/ticket-english-5-11-2024-1.pdf Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-karnak-solstice-2027-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20271221
+DTEND;VALUE=DATE:20271222
+SUMMARY:Karnak winter solstice sunrise
+DESCRIPTION:Not a public holiday. Africanews\, reporting with AP\, says the sunrise lines up with the temple walls on 21 December\, the shortest day of the year\, and visitors gather at dawn to watch it. Source: https://www.africanews.com/2025/12/22/egypt-visitors-watch-sun-align-with-ancient-luxor-temple-on-winter-solstice/ Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:egybi-qasr-qarun-solstice-2027-2027@egybi.com
+DTSTAMP:20261120T000000Z
+DTSTART;VALUE=DATE:20271221
+DTEND;VALUE=DATE:20271222
+SUMMARY:Qasr Qarun winter solstice sunrise
+DESCRIPTION:Not a public holiday. Explore Fayoum\, a Fayoum travel site\, describes the sun lining up with this Ptolemaic temple on 21 December\; a second travel site gives about 25 minutes of light in the sanctuary. Source: https://fayoumegypt.com/qasr-qaroun-temple-sun-festival-the-wonder-of-the-sun-21-december-2014 Full table: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

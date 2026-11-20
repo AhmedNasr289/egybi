@@ -20,7 +20,7 @@ import sun_times
 
 from . import egfmt
 from .madeinegypt import near_section
-from .common import SITE, SITE_URL, breadcrumb, chrome, esc, page, read_text, write_index_block, write_text
+from .common import SITE, SITE_URL, breadcrumb, chrome, esc, faq, page, read_text, write_index_block, write_text
 
 
 @functools.lru_cache(maxsize=1)
@@ -517,7 +517,11 @@ def build_weather_by_month(urls):
     title = f"Egypt weather by month: afternoon heat at {n} sites · EgyBI"
     desc = (f"How hot a normal afternoon gets at {n} Egyptian sites, every month of the year, in one "
             f"table from NASA climate normals. Free to embed.")
-    facts = ''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in heat_calendar.findings(rows))
+    found = heat_calendar.findings(rows)
+    facts = ''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in found)
+    # Questions people search for, answered only with sentences this page prints.
+    qa = faq([("When is the best time to visit Egypt for cooler weather?", ' '.join([found[0], found[-1]]) if found else ''),
+              ("Where in Egypt is hottest, and when?", found[1] if len(found) > 1 else '')])
     alt = f"Egypt weather by month: normal afternoon temperature at {n} sites, every month (EgyBI, NASA data)"
     snippet = (f'<a href="{url}"><img src="{chart_url}" alt="{alt}" '
                f'width="960" style="max-width:100%;height:auto" loading="lazy"></a>')
@@ -532,7 +536,7 @@ def build_weather_by_month(urls):
          "temporalCoverage": clim.get('normal_window', '2001-2020').replace('-', '/'),
          "spatialCoverage": {"@type": "Place", "name": "Egypt"},
          "creator": {"@type": "Organization", "name": "EgyBI", "url": SITE_URL + "/"}},
-        breadcrumb("Egypt weather by month", url, "When to go", SITE_URL + "/visit.html")]}
+        breadcrumb("Egypt weather by month", url, "When to go", SITE_URL + "/visit.html")] + ([qa] if qa else [])}
     body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:960px;">
@@ -556,7 +560,8 @@ def build_weather_by_month(urls):
     <p class="chart-cap" style="margin-top:14px;">{source_line} Each site name opens its own page, with nights,
     rain and the hours of golden light. <a href="visit.html#checked">How the figures were checked &rarr;</a></p>
     <div class="cta-row" style="margin-top:18px;"><a class="btn btn-primary" href="plan.html">Plan a route &rarr;</a>
-    <a class="btn btn-ghost" href="visit.html">Pick a month on the map &rarr;</a></div>
+    <a class="btn btn-ghost" href="visit.html">Pick a month on the map &rarr;</a>
+    <a class="btn btn-ghost" href="egypt-public-holidays.html">Holidays and Ramadan dates &rarr;</a></div>
   </div>
 </section>
 

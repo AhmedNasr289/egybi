@@ -1,0 +1,123 @@
+batch,date,buffer_channel,language,text,link,asset,status
+1,2026-11-30,LinkedIn,en,"I spent my evenings this year building EgyBI, a free Egypt trip companion where every number carries its source and the date it was checked.
+
+The chart is the part I'm proudest of: the normal afternoon high at 18 Egyptian sites, every month, from NASA's POWER climatology (2001–2020 normals). Before it ships, every value is compared with the nearest published weather-station normal within 120 km, and the build is refused if the mean bias passes ±2 °C.
+
+What it shows:
+• In July the spread between sites is 13 °C: about 29 °C at Abu Mena near Alexandria, about 42 °C at Philae in Aswan.
+• Every site stays under 34 °C in the afternoon in January, February, March, November and December.
+• The hottest normal afternoon in the table is Philae in August, about 43 °C.
+
+The rest of the site follows the same rule. Entry tickets come from the Ministry's list, tips from named guides, and where sources disagree, both are shown. Where no reliable figure exists, like a camel ride at Giza, it says so.
+
+English, Arabic and Russian. No signup. Link in the first comment.
+
+#dataengineering #opendata #Egypt
+
+First comment:
+The planner and the chart (I built it; free, no signup): https://egybi.com/?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-launch",https://egybi.com/?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-launch,assets/2026-11-30-linkedin-weather-chart.jpg,draft — needs owner approval
+1,2026-12-05,Pinterest,en,"Title: Egypt weather by month: how hot it gets at 18 sites
+Description: Normal afternoon highs from NASA climate data (2001–2020) for every month, from Alexandria to Abu Simbel. Every site stays under 34 °C from November to March. Free planner, built by a Cairo-based data engineer.",https://egybi.com/egypt-weather-by-month.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-heat,images/pin06b-best-time-weather-by-month.jpg,draft — needs owner approval
+1,2026-12-13,Pinterest,en,"Title: How much to tip in Egypt, with sources
+Description: Housekeeping 50–100 EGP a day, a felucca captain 100–200 EGP an hour for the whole boat, a camel handler 50–100 EGP a ride (Pyramids Land, 2026). Every figure sourced and dated on a free site I built.",https://egybi.com/fair-prices.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-prices,images/pin02b-tipping-2026-cards.jpg,draft — needs owner approval
+1,2026-12-27,Pinterest,en,"Title: Egypt visa 2027: what changes on 1 January
+Description: The single-entry visa goes from US$30 to US$33, and from US$36 to US$39 at Cairo's digital kiosks (ATTA, Cabinet decision of 13 Aug 2026). Visa on arrival is cash only. Sourced and dated on a free site I built.",https://egybi.com/arriving-in-egypt.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-visa,images/pin11-visa-on-arrival.jpg,draft — needs owner approval
+1,2026-12-28,LinkedIn,en,"On 1 January 2027 Egypt's single-entry visa is due to go from US$30 to US$33, and from US$36 to US$39 at Cairo airport's digital kiosks (ATTA, reporting a Cabinet decision of 13 August 2026).
+
+A small change, but it shows the problem I built EgyBI around: the fee you read online depends on when the page was written. When I checked in November, the official e-Visa portal still showed the old price.
+
+So every row on the site's arrival page carries its source and the date it was last checked, and the 1 January row is stored as a dated future change rather than quietly overwriting the old figure.
+
+If you're travelling in January: visa on arrival is cash only; the Cairo kiosks take cards. These are the UK government's rules for British passports, so check your own country's advice.
+
+I built and run EgyBI. Link in the first comment.
+
+#Egypt #travel #opendata
+
+
+First comment:
+Every entry rule, sourced and dated: https://egybi.com/arriving-in-egypt.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-visa",https://egybi.com/arriving-in-egypt.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-visa,assets/2026-12-28-linkedin-getting-in.jpg,draft — needs owner approval
+1,2027-01-01,Pinterest,en,"Egypt visa on arrival: what it costs, and what changes on 1 January 2027. Kiosk visa US$30 cash; Cairo's digital kiosks US$36 by card. From 1 January 2027: US$33, or US$39 at Cairo's digital kiosks (ATTA, on a Cabinet decision of 13 Aug 2026). Flying into Sharm for the Sinai resorts only: a free stamp for up to 15 days. Source: UK government travel advice, updated 27 Oct 2026. Every row with its source and check date on the free arrival page I built.",https://egybi.com/arriving-in-egypt.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-visa,images/pin11-visa-on-arrival.jpg,draft — needs owner approval
+1,2027-01-02,Pinterest,en,"Title: Your name in hieroglyphs, sign by sign
+Description: Spelled with Gardiner's single-sound signs inside a cartouche you can save. Honest note: it spells the sounds of your name; it is not a translation. Free name studio I built.",https://egybi.com/hieroglyphs.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-names,images/pin09-name-in-hieroglyphs.jpg,draft — needs owner approval
+1,2027-01-10,Pinterest,en,"Title: Ramadan 2027 in Egypt: dates and what changes for visitors
+Description: Expected from 8 or 9 February to 8 or 9 March. Giza opens 08:00 with last entry 15:30 during Ramadan; Karnak and Abu Simbel keep their hours. All 2027 public holidays, each with its source, on a free site I built.",https://egybi.com/egypt-public-holidays.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-ramadan,images/pin08-ramadan-2027.jpg,draft — needs owner approval
+1,2027-01-17,Pinterest,en,"Title: Best month to visit Luxor, from NASA data
+Description: A normal afternoon at Karnak: 22 °C in January, 30 in March, 38 in May, 41 from June to August (NASA POWER, 2001–2020). Karnak opens at 06:00. Free site I built.",https://egybi.com/visit/karnak.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-heat,images/pin05-karnak-heat.jpg,draft — needs owner approval
+1,2027-01-23,Pinterest,en,"Title: Abu Simbel sun alignment: 22 February 2027
+Description: The alignment-day ticket is 1,200 EGP on the Ministry's list or 1,272 on its booking site. 275 km from Aswan; most tours leave around 04:00. A normal February afternoon is 27 °C. Free site I built.",https://egybi.com/visit/abu-simbel.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-abusimbel,images/pin04-abu-simbel-heat.jpg,draft — needs owner approval
+1,2027-01-25,LinkedIn,en,"A data-quality lesson from a temple ticket.
+
+The Ministry of Tourism and Antiquities' price list of 5 November 2024 prints 750 EGP for a foreign adult at Abu Simbel. Its own booking site showed 822 EGP when I checked on 17 November 2026. Same ministry, same ticket, two numbers.
+
+In a pipeline, the easy fix is a rule: newest source wins. I decided against it for EgyBI. A traveller at the gate can be charged either, and a page that silently picks one is wrong for some of them. So the row shows both, each with its source and date, and says plainly that we don't know which you will pay.
+
+The same rule gives the site its most useful missing value: there is no checkable published price for a camel ride at Giza, so the row says that instead of averaging blog posts.
+
+A null with a reason beats a confident guess. I built and run EgyBI; link in the first comment.
+
+#dataengineering #dataquality #Egypt
+
+
+First comment:
+The prices page, every row with its source: https://egybi.com/fair-prices.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices",https://egybi.com/fair-prices.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices,assets/2027-01-25-linkedin-abu-simbel-row.jpg,draft — needs owner approval
+1,2027-02-07,Pinterest,en,"Title: Egypt entry ticket prices for foreign visitors
+Description: Giza plateau 700 EGP, Egyptian Museum 550, Karnak 600, Luxor Temple 500, Valley of the Kings 750 (Ministry price list, 5 Nov 2024). Where two official prices disagree, both are shown. Free site I built.",https://egybi.com/fair-prices.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-prices,images/pin03-entry-tickets.jpg,draft — needs owner approval
+1,2027-02-13,Pinterest,en,"Title: Visiting the pyramids in Ramadan 2027
+Description: During Ramadan, Giza opens at 08:00 with last entry 15:30, instead of 07:00 and 16:00 (Ministry booking site). A normal February afternoon there is 21 °C. Free site I built.",https://egybi.com/visit/giza.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-ramadan,images/pin06-giza-heat.jpg,draft — needs owner approval
+1,2027-02-17,LinkedIn,en,"Two series I've collected every day since July, and why I won't join them with ""because"".
+
+1. The dollar went from EGP 51.30 to EGP 53.60 between the first week (from 24 July) and the last (to 19 November 2026), comparing weekly medians: +4.5%. These are ExchangeRate-API market reference rates, not the Central Bank fixing.
+2. Across 128 food items on the Cabinet's IDSC local-prices portal, the median retail price moved +1.9% over the same weeks. 82 rose and 45 fell. Onions +56%, local lemons −27.5%.
+
+The tempting headline is ""food lagged the pound"". The honest one is that two measured series moved by different amounts; the data does not say one caused the other.
+
+The data-engineering part: the portal published on 104 of 119 days, and single days are noisy. Fish stood 18.9% off its start on 18 August and 3.5% the next day the portal published. So each item is compared first-week median to last-week median, and the chart shows weekly medians.
+
+Both charts are free to embed with the credit line. I built and run EgyBI; link in the first comment.
+
+#data #Egypt #economics
+
+First comment:
+The pound since July (embeddable): https://egybi.com/egyptian-pound-since-july.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices
+And the food series: https://egybi.com/egypt-food-prices.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices",https://egybi.com/egyptian-pound-since-july.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-prices,assets/2027-02-17-linkedin-pound-chart.jpg,draft — needs owner approval
+1,2027-03-22,LinkedIn,en,"How do you trust a temperature you didn't measure?
+
+EgyBI's heat figures for 18 Egyptian sites come from NASA POWER, a modelled climatology (MERRA-2 reanalysis), not from weather stations. A model can be off in a desert valley, so before any chart ships, the build compares each site's mean daily maximum with the nearest published station normal within 120 km.
+
+Two gates: the build is refused if the mean signed bias exceeds ±2.0 °C, or if fewer than 33% of site-months land within 2 °C of the station.
+
+What comes out is the number a visitor needs: what a normal afternoon reaches. Karnak in May, 38 °C. Philae in August, 43. Giza in March, the Easter month, 26.
+
+And the page says what it is not: a long-run average, not a forecast.
+
+I built and run EgyBI. The month-by-month chart is free to embed; link in the first comment.
+
+#dataengineering #climate #opendata
+
+
+First comment:
+The chart and how it was checked: https://egybi.com/egypt-weather-by-month.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-heat",https://egybi.com/egypt-weather-by-month.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-heat,assets/2027-03-22-linkedin-weather-chart.jpg,draft — needs owner approval
+1,2027-03-29,LinkedIn,en,"Storing a date you don't know yet.
+
+Egypt has 12 public holidays in 2027: 8 on fixed dates and 4 that follow the Islamic calendar and depend on the moon sighting. For those 4, sources disagree by a day. For Ramadan, Gulf News and The National gave 8 February from astronomical calculation, while Egypt-specific holiday calendars listed 9 February.
+
+On EgyBI an expected date is stored as a range with a status, ""expected"" until confirmed, and the page renders it as ""8 or 9 February"" rather than picking one. Printing one day would be tidier, and wrong for some readers.
+
+The same table feeds the trip planner: enter your dates and it lists what falls inside them, ranges included.
+
+Next up: Sham el-Nessim on 3 May, and Arafat Day and Eid al-Adha, expected 16 to 19 May.
+
+I built and run EgyBI; the holiday chart is free to embed. Link in the first comment.
+
+#dataengineering #datamodeling #Egypt
+
+
+First comment:
+The 2027 holidays, each with its source: https://egybi.com/egypt-public-holidays.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-ramadan",https://egybi.com/egypt-public-holidays.html?utm_source=linkedin&utm_medium=comment&utm_campaign=s2627-ramadan,assets/2027-03-29-linkedin-holidays-chart.jpg,draft — needs owner approval
+2,2027-03-07,Pinterest,en,"Title: Easter 2027 in Egypt: Giza hours and heat
+Description: Western Easter is Sunday 28 March 2027. Giza opens at 07:00 with last entry 16:00; a normal March afternoon is 26 °C (NASA POWER). Free site I built.",https://egybi.com/visit/giza.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-easter,images/pin14-giza-easter-2027.jpg,draft — needs owner approval
+2,2027-03-20,Pinterest,en,"Title: When is Aswan too hot?
+Description: A normal afternoon at Philae: 24 °C in January, 32 in March, 36 in April, 40 in May, 43 in August (NASA POWER, 2001–2020). Free site I built.",https://egybi.com/visit/philae.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-heat,images/pin13-aswan-philae-heat.jpg,draft — needs owner approval
+2,2027-03-27,Pinterest,en,"Title: Printable Egypt trip pack: heat at 18 sites and a fair-price card in Arabic
+Description: One PDF: 18 site sheets with twelve months of heat and rain, the fair-price card in English and Arabic with every row sourced, and the 2027 holidays. $12; I built it from the free site's data.",https://egybi.com/dossier.html?utm_source=pinterest&utm_medium=pin&utm_campaign=s2627-pack,BLOCKED: needs the live checkout (pack cover),draft — needs owner approval
