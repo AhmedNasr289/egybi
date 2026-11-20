@@ -28,6 +28,11 @@ $ref  = (string)($raw['ref']  ?? ($_POST['ref']  ?? ''));
 // column can never become a free-text sink.
 $event = (string)($raw['event'] ?? ($_POST['event'] ?? ''));
 $event = substr(preg_replace('~[^a-z0-9_]~', '', strtolower($event)), 0, 40);
+// Optional campaign tag from the landing URL (utm_source.utm_medium.utm_campaign,
+// built by analytics.js). A slug only: the same no-free-text rule as `event`.
+$src = (string)($raw['src'] ?? ($_POST['src'] ?? ''));
+$src = substr(preg_replace('~[^a-z0-9_.-]~', '', strtolower($src)), 0, 64);
+if ($event !== '') $src = '';
 
 // Sanitise path: keep it a short, query-less same-site path.
 $path = parse_url($path, PHP_URL_PATH) ?: '/';
@@ -127,12 +132,22 @@ try {
             $db->exec("ALTER TABLE hits ADD COLUMN ipday TEXT NOT NULL DEFAULT ''");
             $db->exec('CREATE INDEX IF NOT EXISTS idx_hits_ipday ON hits(ipday, day)');
         }
+        if (!in_array('src', $cols, true)) {
+            $db->exec("ALTER TABLE hits ADD COLUMN src TEXT NOT NULL DEFAULT ''");
+        }
+        $hasSrc = true;
     } else {
         $have = [];
         foreach ($db->query('SHOW COLUMNS FROM hits') as $c) { $have[] = $c['Field']; }
         if (!in_array('ipday', $have, true)) {
             $db->exec("ALTER TABLE hits ADD COLUMN ipday VARCHAR(32) NOT NULL DEFAULT ''");
             try { $db->exec('CREATE INDEX idx_hits_ipday ON hits (ipday, day)'); } catch (Throwable $e) {}
+        }
+        // The campaign tag column. If the ALTER is refused, keep writing hits
+        // without it rather than lose every page view.
+        $hasSrc = in_array('src', $have, true);
+        if (!$hasSrc) {
+            try { $db->exec("ALTER TABLE hits ADD COLUMN src VARCHAR(64) NOT NULL DEFAULT ''"); $hasSrc = true; } catch (Throwable $e) {}
         }
     }
     // ---- flood cap ---------------------------------------------------------
@@ -160,8 +175,13 @@ try {
         // every hit; the migration above adds it on the next request.
     }
     if (!$capped) {
-        $st = $db->prepare('INSERT INTO hits (ts,day,path,ref,visitor,event,ipday) VALUES (?,?,?,?,?,?,?)');
-        $st->execute([gmdate('c'), $day, $path, $refHost, $visitor, $event, $ipday]);
+        if (!empty($hasSrc)) {
+            $st = $db->prepare('INSERT INTO hits (ts,day,path,ref,visitor,event,ipday,src) VALUES (?,?,?,?,?,?,?,?)');
+            $st->execute([gmdate('c'), $day, $path, $refHost, $visitor, $event, $ipday, $src]);
+        } else {
+            $st = $db->prepare('INSERT INTO hits (ts,day,path,ref,visitor,event,ipday) VALUES (?,?,?,?,?,?,?)');
+            $st->execute([gmdate('c'), $day, $path, $refHost, $visitor, $event, $ipday]);
+        }
     }
 
     // Retention. Without this the table only ever grows, and old rows are pure

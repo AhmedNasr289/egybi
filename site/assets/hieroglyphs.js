@@ -6,6 +6,9 @@
   var C = window.EGYBI && window.EGYBI.cartouche, T = window.EGYBI && window.EGYBI.trip;
   if (!C) return;
   var esc = (window.EGYBI && window.EGYBI.escapeHtml) || function (s) { return s; };
+  // The page's own words go through t(), so the /ar/ and /ru/ studios read in
+  // their language (until 2026-11-20 they were English on every page).
+  var t = (window.EGYBI && window.EGYBI.t) || function (s) { return s; };
   function $(id) { return document.getElementById(id); }
 
   function render() {
@@ -13,18 +16,18 @@
     var out = $('glyphOut'), tbl = $('glyphTable'), note = $('glyphNote');
     var r = C.spell(name);
     if (!r.signs.length) {
-      out.innerHTML = '<p class="chart-cap">Type a name in Latin letters to see it spelled.</p>';
-      tbl.innerHTML = ''; note.textContent = ''; $('glyphSave').disabled = true; $('glyphPng').disabled = true;
+      out.innerHTML = '<p class="chart-cap">' + esc(t('Type a name in Latin letters to see it spelled.')) + '</p>';
+      tbl.innerHTML = ''; note.textContent = ''; $('glyphSave').disabled = true; $('glyphPng').disabled = true; $('glyphCopy').disabled = true;
       return;
     }
     out.innerHTML = C.html(name, 'cartouche-lg');
-    tbl.innerHTML = '<thead><tr><th scope="col">Sign</th><th scope="col">Sound</th><th scope="col">Gardiner</th><th scope="col">What it pictures</th></tr></thead><tbody>' +
+    tbl.innerHTML = '<thead><tr><th scope="col">' + esc(t('Sign')) + '</th><th scope="col">' + esc(t('Sound')) + '</th><th scope="col">' + esc(t('Gardiner')) + '</th><th scope="col">' + esc(t('What it pictures')) + '</th></tr></thead><tbody>' +
       r.signs.map(function (x) {
         return '<tr><td class="g" aria-hidden="true">' + x.sign.ch + '</td><td>' + esc(x.sign.val) + '</td><td>' + esc(x.sign.g) + '</td><td>' + esc(x.sign.pic) + '</td></tr>';
       }).join('') + '</tbody>';
     var uniq = r.skipped.filter(function (c, i, a) { return a.indexOf(c) === i && c.trim(); });
-    note.textContent = uniq.length ? 'Not spelled (no Latin letter): ' + uniq.join(' ') : '';
-    $('glyphSave').disabled = !T; $('glyphPng').disabled = false;
+    note.textContent = uniq.length ? t('Not spelled (no Latin letter): %s').replace('%s', uniq.join(' ')) : '';
+    $('glyphSave').disabled = !T; $('glyphPng').disabled = false; $('glyphCopy').disabled = false;
   }
 
   function savePng() {
@@ -64,17 +67,42 @@
     else draw();
   }
 
+  // Copy the signs as plain Unicode text (people search for "name in
+  // hieroglyphics copy paste"). The clipboard call must run inside the click.
+  // If the browser refuses, the signs are shown selected so a long press or
+  // Ctrl+C copies them.
+  function copyText() {
+    var r = C.spell($('glyphName').value.trim().slice(0, 30));
+    if (!r.signs.length) return;
+    var text = r.signs.map(function (x) { return x.sign.ch; }).join('');
+    var msg = $('glyphSaved');
+    var fallback = function () {
+      msg.textContent = t('Your browser did not allow copying. The signs are selected below: copy them with Ctrl+C or a long press.');
+      var span = document.createElement('span');
+      span.className = 'g'; span.textContent = ' ' + text;
+      msg.appendChild(span);
+      var range = document.createRange(); range.selectNodeContents(span);
+      var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    };
+    try {
+      navigator.clipboard.writeText(text).then(function () {
+        msg.textContent = t('Copied. Paste the signs anywhere; they show where a hieroglyph font is installed.');
+      }, fallback);
+    } catch (e) { fallback(); }
+  }
+
   function init() {
     var inp = $('glyphName');
     if (!inp) return;
-    var t = T ? T.load() : null;
-    inp.value = (t && t.name) || 'Cleopatra';
+    var saved = T ? T.load() : null;
+    inp.value = (saved && saved.name) || 'Cleopatra';
     inp.addEventListener('input', render);
     $('glyphSave').addEventListener('click', function () {
       var tr = T.load(); tr.name = inp.value.trim().slice(0, 40); T.save(tr);
-      $('glyphSaved').textContent = 'Saved. It will be on the cover of your dossier in the planner.';
+      $('glyphSaved').textContent = t('Saved. It will be on the cover of your dossier in the planner.');
     });
     $('glyphPng').addEventListener('click', savePng);
+    $('glyphCopy').addEventListener('click', copyText);
     render();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

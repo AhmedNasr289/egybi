@@ -74,6 +74,19 @@ $topPaths    = q($db, "SELECT CASE WHEN path IN ('/index.html','/index.htm') THE
 $topRefs     = q($db, "SELECT ref, COUNT(*) v FROM hits WHERE day>=? AND ref<>'' GROUP BY ref ORDER BY v DESC LIMIT 12", [$since30]);
 $directShare = (int)(q($db, "SELECT COUNT(*) c FROM hits WHERE day>=? AND (ref IS NULL OR ref='')", [$since30])[0]['c'] ?? 0);
 
+// --- campaign tags (utm_source.utm_medium.utm_campaign, from analytics.js) ----
+// Which posted link brought each visitor, and how many of those visitors used
+// the planner the same day. Visitor hashes rotate daily, so "same day" is the
+// longest honest join. Absent until hit.php has added the `src` column.
+$campaigns = [];
+try {
+    $campaigns = q($db, "SELECT h.src, COUNT(DISTINCT h.visitor) v,
+                            COUNT(DISTINCT p.visitor) planners
+                       FROM hits h
+                       LEFT JOIN hits p ON p.visitor=h.visitor AND p.day=h.day AND p.event='plan_stop_added'
+                      WHERE h.day>=? AND h.src<>'' GROUP BY h.src ORDER BY v DESC LIMIT 25", [$since30]);
+} catch (Throwable $ex) { $campaigns = []; }
+
 $maxDay = 1; foreach ($perDay as $r) { $maxDay = max($maxDay, (int)$r['v']); }
 
 // --- funnel (only present once the event column exists) ---------------------
@@ -127,6 +140,10 @@ $pivotRows = [
     ['key' => 'plan_to_ask',      'label' => 'Clicked through from the plan to the plan check', 'event' => 'plan_to_ask'],
     ['key' => 'ask_mail',         'label' => 'Opened the e-mail to order the plan check',  'event' => 'ask_mail'],
     ['key' => 'newsletter_submit','label' => 'Pressed subscribe for The Papyrus',          'event' => 'newsletter_submit'],
+    // The $12 pack (store.js, from 2026-11-20). "Returned from checkout" counts visits
+    // to dossier.html?bought=1, the shop's return address: a signal, not a sales ledger.
+    ['key' => 'pack_buy_click',   'label' => 'Clicked "Buy the full pack"',               'event' => 'pack_buy_click'],
+    ['key' => 'pack_bought',      'label' => 'Returned from checkout (?bought=1)',        'event' => 'pack_bought'],
 ];
 
 function pivot_count(PDO $db, array $row, string $from, string $to, bool $hasEvents): int {
@@ -238,6 +255,13 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr:last-child td{bo
 <table><tr><th>Referrer</th><th class="n">Views</th></tr>
 <tr><td><em>Direct / none</em></td><td class="n"><?=number_format($directShare)?></td></tr>
 <?php foreach ($topRefs as $r): ?><tr><td><?=$e($r['ref'])?></td><td class="n"><?=number_format((int)$r['v'])?></td></tr><?php endforeach; ?>
+</table>
+
+<h2>Campaign tags · 30d</h2>
+<p class="muted">From links that carry utm_source, utm_medium and utm_campaign, written as source.medium.campaign. "Used the planner" means the same visitor added a stop on the same day.</p>
+<table><tr><th>Tag</th><th class="n">Visitors</th><th class="n">Used the planner</th></tr>
+<?php foreach ($campaigns as $r): ?><tr><td><?=$e($r['src'])?></td><td class="n"><?=number_format((int)$r['v'])?></td><td class="n"><?=number_format((int)$r['planners'])?></td></tr><?php endforeach; ?>
+<?php if (!$campaigns): ?><tr><td colspan="3" class="muted">No tagged visits yet.</td></tr><?php endif; ?>
 </table>
 
 <p class="muted">Rough "visitors" = distinct daily one-way hashes (no cookies, no cross-day tracking). Bots and Do-Not-Track are excluded.</p>

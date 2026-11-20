@@ -1523,6 +1523,21 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 .fp-conflict { display: block; margin-top: 6px; font-size: var(--fs-xs); color: var(--danger); }
 .fp-none { color: var(--ink-soft); font-style: italic; }
 .fp-wrap { overflow-x: auto; }
+/* Phones (2026-11-20): each fair-prices row (.fp-cards, set by fair.js; not
+   the visit or arrival tables, which have their own phone layouts) becomes a card, so the price is on
+   screen without a sideways swipe. The header row is kept for screen readers
+   and each value cell names its column from data-label (set by fair.js). */
+@media (max-width: 560px) {
+  .fp-table.fp-cards thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fp-table.fp-cards, .fp-cards tbody, .fp-cards tr, .fp-cards td { display: block; width: 100%; }
+  .fp-cards tr { padding: 10px 0; border-bottom: 1px solid var(--line-light); }
+  .fp-cards td { border-bottom: 0; padding: 4px 0; }
+  .fp-cards td[data-label] { display: flex; justify-content: space-between; gap: 12px; text-align: start; white-space: normal; }
+  .fp-cards td[data-label]::before { content: attr(data-label); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); flex: 0 0 auto; }
+  .fp-cards td.num[data-label] { text-align: end; }
+  .fp-cards td[data-label]:not(.num) { display: block; }
+  .fp-cards td[data-label]:not(.num)::before { display: block; margin-bottom: 2px; }
+}
 
 /* offers */
 .offer { padding: 28px; }
@@ -1552,7 +1567,7 @@ a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 .fp-table .m-short { display: none; }
 @media (max-width: 430px) {
   .fp-table.fp-compact { font-size: var(--fs-sm); }
-  .fp-table.fp-compact th, .fp-table.fp-compact td { padding: 9px 4px; }
+  .fp-table.fp-compact th, .fp-table.fp-compact td { padding: 9px 3px; }
   .fp-table.fp-compact thead th { font-size: var(--fs-xs); text-transform: none; letter-spacing: 0; line-height: 1.25; vertical-align: bottom; }
   .fp-table.fp-compact .m-long { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .fp-table.fp-compact .m-short { display: inline; }

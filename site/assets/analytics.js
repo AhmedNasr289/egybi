@@ -15,8 +15,24 @@
     // The script always sits in assets/, so ../api/ is right on every page.
     var me = document.currentScript && document.currentScript.src;
     var url = me ? new URL('../api/hit.php', me).href : '/api/hit.php';
+    // Campaign tag. A link we post carries ?utm_source=&utm_medium=&utm_campaign=
+    // (see egybi/Campaign Kit). The referrer alone cannot tell a Reddit answer
+    // from a Reddit [OC] chart, and most apps (Telegram, WhatsApp, mail) send no
+    // referrer at all. Only the three tag values travel, joined into one short
+    // slug; the rest of the query string is never read. Sent with the page view
+    // only, never with events.
+    var src = '';
+    try {
+      var qs = location.search || '';
+      var tag = function (k) {
+        var m = qs.match(new RegExp('[?&]' + k + '=([^&#]*)'));
+        return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')).toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 20) : '';
+      };
+      var s = tag('utm_source');
+      if (s) src = [s, tag('utm_medium'), tag('utm_campaign')].join('.');
+    } catch (e) { src = ''; }
     function send(event) {
-      var body = JSON.stringify({ path: location.pathname, ref: document.referrer || '', event: event || '' });
+      var body = JSON.stringify({ path: location.pathname, ref: document.referrer || '', event: event || '', src: event ? '' : src });
       if (navigator.sendBeacon) {
         navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
       } else {

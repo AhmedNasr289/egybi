@@ -987,7 +987,7 @@ Official prices for an adult foreign visitor, in Egyptian pounds. Since 1 Januar
 Official site:	Официальный сайт:
 On the sun-alignment days, 22 February and 22 October, the list prints 1,200 EGP and the booking site 1,272 EGP.	В дни, когда солнце освещает святилище, 22 февраля и 22 октября, в списке указано 1 200 фунтов, а на сайте бронирования — 1 272 фунта.
 On top of the ride price, not part of it.	Сверх стоимости прогулки, а не в её счёт.
-Prices went up on 1 November 2026. The museum's own ticket site shows the new prices only once you start a booking, and we found no published figure we could check, so buy on tickets.gem.eg and nowhere else.	Цены выросли 1 ноября 2026 года. Официальный сайт музея показывает новые цены, только когда вы начинаете бронирование, а опубликованной цифры, которую можно проверить, мы не нашли. Поэтому покупайте билеты на tickets.gem.eg и больше нигде.
+Prices went up on 1 November 2026 and were reported at 1,830 EGP for a foreign adult, up from 1,570 (Egypt Today and Egyptian Streets, 27 Oct 2026). The museum's own ticket site shows prices only once you start a booking, so we could not check that figure there: buy on tickets.gem.eg and nowhere else.	Цены выросли 1 ноября 2026 года: по данным Egypt Today и Egyptian Streets (27.10.2026), билет для взрослого иностранца подорожал с 1570 до 1830 фунтов. Официальный сайт музея показывает цены, только когда вы начинаете бронирование, поэтому проверить эту цифру там мы не смогли: покупайте билеты только на tickets.gem.eg.
 Range across the country, EGP	Разброс по стране, EGP
 Retail prices dated %d, %n items.	Розничные цены на %d, позиций: %n.
 Rides and transport	Поездки и транспорт
@@ -1798,3 +1798,13 @@ Everything else on the page still works.	Всё остальное на стра
 This table comes from	Источник таблицы:
 Download the underlying data	Скачать исходные данные
 Query this yourself	Сделайте запрос сами
+Type a name in Latin letters to see it spelled.	Введите имя латинскими буквами, чтобы увидеть, как оно пишется.
+Sign	Знак
+Sound	Звук
+Gardiner	Гардинер
+What it pictures	Что изображает
+Not spelled (no Latin letter): %s	Не записано (нет латинской буквы): %s
+Saved. It will be on the cover of your dossier in the planner.	Сохранено. Имя будет на обложке вашего досье в планировщике.
+Copy the signs as text	Скопировать знаки как текст
+Copied. Paste the signs anywhere; they show where a hieroglyph font is installed.	Скопировано. Вставьте знаки куда угодно: они видны там, где установлен шрифт с иероглифами.
+Your browser did not allow copying. The signs are selected below: copy them with Ctrl+C or a long press.	Браузер не разрешил копирование. Знаки выделены ниже: скопируйте их через Ctrl+C или долгим нажатием.

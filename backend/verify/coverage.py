@@ -226,7 +226,10 @@ CADENCE = {  # workflow -> max days a file may age before the page is misciting
 # Files compiled by hand from named sources (no workflow writes them), with the
 # number of days before each must be re-read against its sources.
 HAND_CURATED = {"calendar.json": 120, "fair-prices.json": 90, "arrival.json": 60, "opening-hours.json": 90,
-                "getting-around.json": 60, "made-in-egypt.json": 120}
+                "getting-around.json": 60, "made-in-egypt.json": 120,
+                # The pack's checkout link, price and button text (store.js, 2026-11-20):
+                # edited by hand when the store opens or the price changes.
+                "store.json": 120}
 # Governments' own travel advice for Egypt, the only sources a safety row may
 # cite: UK, US, Australia, Canada, Ireland.
 # The airport's own site, and the ride or transport operators' own pages.
