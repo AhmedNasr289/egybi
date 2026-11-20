@@ -22,6 +22,8 @@
 
 ## Recommended to connect (cards shown 2026-11-20)
 
+**Update 2026-11-20, later the same day:** Hostinger, Ahrefs (free plan), OpenRush, Supermetrics, vidIQ and Firecrawl are now connected. Their first readings are in `10 Connected Tools — First Readings 2026-11-20.md`. Still not connected: Mailchimp and PayPal. Gmail and Calendar still lack write permission.
+
 | Connector | Job in this plan |
 |---|---|
 | **Hostinger Connector** | egybi.com is on Hostinger: add the DNS TXT records that verify Search Console, Bing Webmaster Tools and Yandex Webmaster; check the CDN bot-protection setting behind the Bingbot/Applebot 403s |
