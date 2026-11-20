@@ -987,7 +987,7 @@ Official prices for an adult foreign visitor, in Egyptian pounds. Since 1 Januar
 Official site:	الموقع الرسمي:
 On the sun-alignment days, 22 February and 22 October, the list prints 1,200 EGP and the booking site 1,272 EGP.	وفي يومي تعامد الشمس، ٢٢ فبراير و٢٢ أكتوبر، تذكر القائمة ١٬٢٠٠ جنيه، ويذكر موقع الحجز ١٬٢٧٢ جنيهًا.
 On top of the ride price, not part of it.	يُضاف إلى سعر الركوب وليس جزءًا منه.
-Prices went up on 1 November 2026. The museum's own ticket site shows the new prices only once you start a booking, and we found no published figure we could check, so buy on tickets.gem.eg and nowhere else.	ارتفعت الأسعار في ١ نوفمبر ٢٠٢٦. ولا يعرض موقع تذاكر المتحف الأسعار الجديدة إلا بعد أن تبدأ الحجز، ولم نجد رقمًا منشورًا يمكن التحقق منه، لذا اشترِ من tickets.gem.eg وحده.
+Prices went up on 1 November 2026 and were reported at 1,830 EGP for a foreign adult, up from 1,570 (Egypt Today and Egyptian Streets, 27 Oct 2026). The museum's own ticket site shows prices only once you start a booking, so we could not check that figure there: buy on tickets.gem.eg and nowhere else.	ارتفعت الأسعار في ١ نوفمبر ٢٠٢٦: بحسب Egypt Today وEgyptian Streets (٢٧ أكتوبر ٢٠٢٦) صار سعر تذكرة البالغ الأجنبي ١٨٣٠ جنيهًا بدلًا من ١٥٧٠. ولا يعرض موقع تذاكر المتحف الأسعار إلا بعد أن تبدأ الحجز، لذا لم نتمكن من التحقق من هذا الرقم هناك: اشترِ من tickets.gem.eg وحده.
 Range across the country, EGP	النطاق على مستوى البلاد، بالجنيه
 Retail prices dated %d, %n items.	أسعار التجزئة بتاريخ %d، وعدد الأصناف %n.
 Rides and transport	الركوب والمواصلات
@@ -1798,3 +1798,13 @@ Everything else on the page still works.	كل ما عدا ذلك في الصفح
 This table comes from	مصدر هذا الجدول:
 Download the underlying data	نزِّل البيانات الأصلية
 Query this yourself	استعلم بنفسك
+Type a name in Latin letters to see it spelled.	اكتب اسمًا بالحروف اللاتينية لترى كيف يُكتب.
+Sign	العلامة
+Sound	الصوت
+Gardiner	غاردنر
+What it pictures	ماذا تصوّر
+Not spelled (no Latin letter): %s	لم يُكتب (ليس حرفًا لاتينيًا): %s
+Saved. It will be on the cover of your dossier in the planner.	تم الحفظ. سيظهر الاسم على غلاف ملفك في مخطط الرحلة.
+Copy the signs as text	انسخ العلامات كنص
+Copied. Paste the signs anywhere; they show where a hieroglyph font is installed.	تم النسخ. الصق العلامات في أي مكان؛ وتظهر حيث يتوفر خط للهيروغليفية.
+Your browser did not allow copying. The signs are selected below: copy them with Ctrl+C or a long press.	لم يسمح متصفحك بالنسخ. العلامات محددة أدناه: انسخها بـ Ctrl+C أو بضغطة مطوّلة.

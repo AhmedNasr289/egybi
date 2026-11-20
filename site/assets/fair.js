@@ -109,9 +109,9 @@
             (r.note ? '<span class="fp-src">' + esc(tt(r.note)) + '</span>' : '') +
             (r.conflict ? '<span class="fp-conflict">' + esc(t('Sources disagree:')) + ' ' + esc(tt(r.conflict)) + '</span>' : '') +
             (r.official_url ? '<span class="fp-src">' + esc(t('Official site:')) + ' <a href="' + esc(r.official_url) + '" rel="noopener">' + esc(r.official_url.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</a></span>' : '') + '</td>' +
-            '<td class="num">' + (pub == null ? '<span class="fp-none">' + esc(t('no checkable figure')) + '</span>' : esc(pub)) + '</td>' +
-            '<td class="num">' + (mine == null ? '—' : esc(mine)) + '</td>' +
-            '<td>' + (r.source_url ? '<a href="' + esc(r.source_url) + '" rel="noopener">' + esc(r.source) + '</a>' : esc(tt(r.source))) +
+            '<td class="num" data-label="' + esc(t('As published')) + '">' + (pub == null ? '<span class="fp-none">' + esc(t('no checkable figure')) + '</span>' : esc(pub)) + '</td>' +
+            '<td class="num" data-label="' + esc(t('In %s today').replace('%s', CUR)) + '">' + (mine == null ? '—' : esc(mine)) + '</td>' +
+            '<td data-label="' + esc(t('Who says so')) + '">' + (r.source_url ? '<a href="' + esc(r.source_url) + '" rel="noopener">' + esc(r.source) + '</a>' : esc(tt(r.source))) +
             '<span class="fp-src">' + esc(tt(r.kind || '')) + (r.published ? ' &middot; ' + esc(r.published === 'undated' ? t('undated') : when(r.published)) : '') +
             (r.checked ? ' &middot; ' + esc(t('checked')) + ' ' + esc(when(r.checked)) : '') + '</span></td></tr>';
         }).join('') + '</tbody></table></div></div>';
@@ -136,8 +136,8 @@
         return '<tr><td>' + (arPage ? '<strong>' + esc(i.name_ar) + '</strong>'
           : '<strong>' + esc(i.name_en) + '</strong> <span lang="ar" dir="rtl" class="fp-src" style="display:inline;">' + esc(i.name_ar) + '</span>') +
           '<span class="fp-src">' + esc(per(i.unit)) + '</span></td>' +
-          '<td class="num">' + esc(money(i.avg, 'EGP')) + '</td><td class="num">' + esc(range(i.min, i.max, 'EGP')) + '</td>' +
-          '<td class="num">' + (CUR === 'EGP' ? '—' : esc(money(conv(i.avg, 'EGP'), CUR))) + '</td></tr>';
+          '<td class="num" data-label="' + esc(t('Average, EGP')) + '">' + esc(money(i.avg, 'EGP')) + '</td><td class="num" data-label="' + esc(t('Range across the country, EGP')) + '">' + esc(range(i.min, i.max, 'EGP')) + '</td>' +
+          '<td class="num" data-label="' + esc(t('Average in %s').replace('%s', CUR)) + '">' + (CUR === 'EGP' ? '—' : esc(money(conv(i.avg, 'EGP'), CUR))) + '</td></tr>';
       }).join('') + '</tbody></table></div>';
     var src = D.prices.source || {};
     // Built from plain-text pieces so each can go through t() (a translated

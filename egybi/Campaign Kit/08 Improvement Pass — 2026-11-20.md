@@ -60,11 +60,11 @@
 
 **Action:** open Payhip first (plan unchanged); list the same PDF on **Etsy** as the second store, the one route with written Egypt support.
 
-## 4. Page edits proposed (not made: they change what the site claims, so they wait for your yes)
+## 4. Page edits proposed — status 2026-11-20: 1, 4 and the phone cards (§9) are built on the PR; 2 and 3 are not (see each)
 
 1. **GEM ticket row** (`site/data/fair-prices.json`, key `gem-entry`): demand rank 3, and the row shows no figure. Proposal: keep `low/high` empty (no checkable official figure) but add a `reported` line: "Reported from 1 Nov 2026: EGP 1,830 for a foreign adult, up from 1,570 (Egypt Today; Egyptian Streets, 27 Oct 2026). Not shown on tickets.gem.eg until a booking starts." This answers the query people type without claiming an official price.
-2. **Arabic ticket prices by nationality**: people type «للاجانب / للعرب / للمصريين». Proposal: if the Ministry list of 5 Nov 2024 that the page already cites prints Egyptian and Arab prices (**unverified**: not checked this pass), add them as a column to the entry rows on `ar/fair-prices.html`, from the same list and with the same source line.
-3. **Visible "Updated" date at the top** of `fair-prices.html`, `arriving-in-egypt.html` and `visit.html` with `dateModified` in the JSON-LD. Evidence: an audit of 1,702 AI-engine citations linked visible dates and structured data to being cited (arXiv 2509.10762, 2025; B2B pages, correlational), and the GEO study (Aggarwal et al., KDD 2024) found statistics and citations raised visibility in generative answers by up to ~40%.
+2. **Arabic ticket prices by nationality** (not built: the Ministry list could not be fetched from this session to check it): people type «للاجانب / للعرب / للمصريين». Proposal: if the Ministry list of 5 Nov 2024 that the page already cites prints Egyptian and Arab prices (**unverified**: not checked this pass), add them as a column to the entry rows on `ar/fair-prices.html`, from the same list and with the same source line.
+3. **Visible "Updated" date at the top** (not built: each page already shows a checked date per row; a page-level `dateModified` needs the sitemap date step to write it, a pipeline change for its own PR) of `fair-prices.html`, `arriving-in-egypt.html` and `visit.html` with `dateModified` in the JSON-LD. Evidence: an audit of 1,702 AI-engine citations linked visible dates and structured data to being cited (arXiv 2509.10762, 2025; B2B pages, correlational), and the GEO study (Aggarwal et al., KDD 2024) found statistics and citations raised visibility in generative answers by up to ~40%.
 4. **Name studio "copy as text"**: people type "name in hieroglyphics copy paste". The studio draws Unicode signs already; a copy button for the plain-text signs would answer that query directly (small change to `hieroglyphs.js`).
 
 ## 5. AI-citation baseline: not run, and why
