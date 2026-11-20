@@ -1185,6 +1185,19 @@ case("campaign tag dropped from the page view", "beacon-url.js",
      f"node {HERE}/beacon-url.js")
 
 
+# ---- 25c. store-button.js: a buy button that will send buyers anywhere -------
+# Added 2026-11-20 with the pack's buy button. The defect: store.js accepts any
+# http(s) link, so a typo or a pasted look-alike in store.json turns the button
+# into a link off the shop. Match the FAIL line, which a passing run never prints.
+case("buy button accepts a link off the shop", "store-button.js",
+     ["site/assets/store.js"],
+     lambda: edit("site/assets/store.js",
+                  r"var ALLOWED = /^https:\/\/([a-z0-9-]+\.)*(payhip\.com|gumroad\.com)\//i;",
+                  "var ALLOWED = /^https?:/i;"),
+     lambda o: "FAIL refused url https://example.com/" in o,
+     f"node {HERE}/store-button.js")
+
+
 # ---- 26-27. auth-flow.sh: accounts that leak or do not die ------------------
 # The two failures that matter most in an account system: a deletion that
 # leaves the person's data behind, and one user able to act on another's rows.

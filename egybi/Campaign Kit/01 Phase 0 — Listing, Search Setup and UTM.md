@@ -248,12 +248,4 @@ Payhip's free plan lists PayTabs as a gateway for Egypt sellers and also support
 10. **Test purchase.** Buy the pack yourself with a real card or PayPal, check the download email arrives and the PDF opens on a phone, then refund yourself from **Sales**.
 11. **Copy the product link** Payhip shows under **Share** (it begins `https://payhip.com/b/`).
 
-**What the buy button needs from a Claude session.** Once the Payhip link exists, say to a coding session on the repo: "The pack is on sale at the Payhip link below. Wire the buy button." On the next line paste the link, and add one line saying which gateways are connected (PayPal, or PayPal and PayTabs). The session will:
-
-- replace the "In preparation" card and the sentence "It is not on sale yet, so there is no buy button" on `site/dossier.html`, `site/ar/dossier.html` and `site/ru/dossier.html` with a $12 buy button that opens the Payhip link (Payhip's own embed button or a plain link);
-- count a **checkout click** event on that button and a **purchase** event on `dossier.html?bought=1`, in the analytics tool the Phase 0 tracking work installs;
-- update the newsletter line on the dossier page ("we will tell you in the first letter after it goes on sale") so it no longer says "not on sale";
-- add the product's price to the page's structured data, and leave everything else on the page unchanged;
-- open a PR for you to approve. Nothing goes live until you merge it.
-
-Then send the "now on sale" welcome-series change in [[05 Newsletter — Lead Magnet and Welcome Series]].
+**The buy button is already built (2026-11-20).** `site/assets/store.js` and `site/data/store.json` ship with the link empty, so the page keeps saying "not on sale". When the Payhip product page exists, open `site/data/store.json`, paste its `https://payhip.com/...` address into `pack.url`, and either push it yourself or tell a coding session "Set the pack URL to <the address> and open a PR". The button then appears in English, Arabic and Russian, counts `pack_buy_click`, and the thank-you line shows on `dossier.html?bought=1` (set that as Payhip's "redirect after purchase" address: `https://egybi.com/dossier.html?bought=1`). Only `https` links on payhip.com or gumroad.com are accepted.

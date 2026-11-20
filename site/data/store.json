@@ -1,0 +1,23 @@
+{
+  "as_of": "2026-11-20",
+  "note": "The $12 pack's checkout. Leave pack.url empty until the Payhip (or Gumroad) product page exists: while it is empty, dossier.html keeps saying the pack is not on sale and shows no button. To open the store, paste the product page's https address into pack.url and push; nothing else changes. store.js only accepts https links on payhip.com or gumroad.com, so a typo cannot send a buyer anywhere else.",
+  "pack": {
+    "url": "",
+    "price_usd": 12,
+    "label": {
+      "en": "Buy the full pack — $12",
+      "ar": "اشترِ الحزمة الكاملة — ١٢ دولارًا",
+      "ru": "Купить полный комплект — 12 $"
+    },
+    "note": {
+      "en": "Paid securely through Payhip; the PDF arrives by e-mail straight after payment.",
+      "ar": "الدفع آمن عبر Payhip، ويصلك ملف PDF بالبريد الإلكتروني فور الدفع.",
+      "ru": "Оплата через Payhip; PDF придёт на почту сразу после оплаты."
+    },
+    "thanks": {
+      "en": "Thank you. Your pack is on its way to your inbox; if it has not arrived in ten minutes, check spam or write to hello@egybi.com.",
+      "ar": "شكرًا لك. الحزمة في طريقها إلى بريدك؛ إن لم تصل خلال عشر دقائق فتحقّق من مجلد الرسائل غير المرغوب فيها أو راسلنا على hello@egybi.com.",
+      "ru": "Спасибо! Комплект уже летит на вашу почту; если его нет через десять минут, проверьте «Спам» или напишите на hello@egybi.com."
+    }
+  }
+}

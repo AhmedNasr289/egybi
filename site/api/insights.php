@@ -140,6 +140,10 @@ $pivotRows = [
     ['key' => 'plan_to_ask',      'label' => 'Clicked through from the plan to the plan check', 'event' => 'plan_to_ask'],
     ['key' => 'ask_mail',         'label' => 'Opened the e-mail to order the plan check',  'event' => 'ask_mail'],
     ['key' => 'newsletter_submit','label' => 'Pressed subscribe for The Papyrus',          'event' => 'newsletter_submit'],
+    // The $12 pack (store.js, from 2026-11-20). "Returned from checkout" counts visits
+    // to dossier.html?bought=1, the shop's return address: a signal, not a sales ledger.
+    ['key' => 'pack_buy_click',   'label' => 'Clicked "Buy the full pack"',               'event' => 'pack_buy_click'],
+    ['key' => 'pack_bought',      'label' => 'Returned from checkout (?bought=1)',        'event' => 'pack_bought'],
 ];
 
 function pivot_count(PDO $db, array $row, string $from, string $to, bool $hasEvents): int {
