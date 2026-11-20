@@ -55,9 +55,11 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
         text: li.textContent, href: (li.querySelector('a') || {}).href || '' })),
       sum: (document.getElementById('planSum') || {}).textContent || '',
       heat: Array.from(document.querySelectorAll('#stopList .heat-warn')).map(e => e.textContent),
-      // the heat line only: the warning and the "Made near here" line
-      // (names from made-in-egypt.json) are tested by their own checks
-      cards: Array.from(document.querySelectorAll('#stopList li.stop div > p:not(.heat-warn):not(.made-near)')).map(e => e.textContent),
+      // the heat line only: the warning, the "Made near here" line (names
+      // from made-in-egypt.json) and the hospital line (names as mapped in
+      // OpenStreetMap, in their own script) are tested on their own
+      cards: Array.from(document.querySelectorAll('#stopList li.stop div > p:not(.heat-warn):not(.made-near):not(.stop-hospital)')).map(e => e.textContent),
+      hospital: Array.from(document.querySelectorAll('#stopList li.stop .stop-hospital')).map(e => e.textContent),
     }));
   }
 
@@ -93,6 +95,14 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
   else if (!arJuly.cards.length || arJuly.cards.some(western) || !arJuly.cards.every(c => c.includes('يوليو')))
     fail('STOP CARD LEFT IN ENGLISH (ar): ' + JSON.stringify(arJuly.cards));
   else console.log('ok   ar/plan.html: summary, stop cards and heat warning in Arabic with Arabic-Indic digits');
+  // 5. The nearest-hospital line (2026-11-20): one per stop, in the page's
+  // language, with the ambulance number from arrival.json. The hospital's
+  // own name and "OpenStreetMap" stay as written, so they are taken out
+  // before looking for English or Western digits.
+  const bare = (c) => c.replace(/OpenStreetMap/g, '').replace(/[^:،,]*Hospital[^،,]*/g, '');
+  if (arJuly.hospital.length !== 2 || !arJuly.hospital.every(c => c.includes('أقرب مستشفى') && c.includes('١٢٣') && !western(bare(c))))
+    fail('HOSPITAL LINE WRONG (ar): ' + JSON.stringify(arJuly.hospital));
+  else console.log('ok   ar/plan.html: a nearest-hospital line on each stop, in Arabic, with the ambulance number');
   const ruJuly = await legsOf('ru/plan.html', [GIZA, KARNAK], '2027-07-10', '2027-07-14');
   const ruSumBad = !/Остановок: 2/.test(ruJuly.sum) || /[A-Za-z]/.test(ruJuly.sum);
   if (ruSumBad) fail('SUMMARY LEFT IN ENGLISH (ru): ' + JSON.stringify(ruJuly.sum));
@@ -102,6 +112,9 @@ const PHILAE = stop('site:philae', 'Philae Temple', 24.0256, 32.8843);
   if (!ruJuly.cards.length || !ruJuly.cards.every(c => c.includes('Июль') && !ruLatin(c)))
     fail('STOP CARD LEFT IN ENGLISH (ru): ' + JSON.stringify(ruJuly.cards));
   else if (!ruSumBad) console.log('ok   ru/plan.html: summary and stop cards in Russian');
+  if (ruJuly.hospital.length !== 2 || !ruJuly.hospital.every(c => c.includes('Ближайшая больница') && c.includes('123') && !/[A-Za-z]/.test(bare(c))))
+    fail('HOSPITAL LINE WRONG (ru): ' + JSON.stringify(ruJuly.hospital));
+  else console.log('ok   ru/plan.html: a nearest-hospital line on each stop, in Russian');
 
   // 3. An uncovered leg
   const up = await legsOf('plan.html', [KARNAK, PHILAE]);
