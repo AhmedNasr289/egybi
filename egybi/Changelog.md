@@ -2605,3 +2605,16 @@ The last of the plan's account items: the newsletter choice beside saved trips a
 ## 2026-11-20 — A merge that GitHub did not announce, and how to spot one
 - **What happened:** the merge of #215 (the nearest-hospital line) returned a 502 from GitHub. The merge commit is on `main`, but no workflow ran for it and the site was not redeployed.
 - **The change:** `GO-LIVE.md` now says how to tell (no runs for the commit, old `?v=` numbers live) and how to recover (the next push to `main` deploys everything up to it). Merging this note is that push.
+
+## 2026-11-20 — Execution pass: assets, schedule, media list, answer data
+- **Every calendar row to 31 Mar 2027 now has its asset**, except the 27 Mar pack pin, which waits for the checkout. New:
+  - 17 page screenshots and chart images (`Campaign Kit/assets`, builder `assets/_build/make_assets.js`);
+  - 14 Russian Telegram cards built from each post's own text;
+  - 2 pins from NASA normals (Aswan heat, Easter at Giza);
+  - raw phone-sized recordings for video scripts (b), (c), (d) and six calendar videos (`videos/record_scripts.js`).
+- **Figures in all 113 posts re-checked** against site/data and the key pages: none differs, apart from figures credited to a named outside source.
+- **Schedule lists** (`Campaign Kit/schedule`): a Buffer queue in batches of ≤10, native-scheduler rows, and a hand-posting checklist with each community rule marked unverified.
+- **[[13 Media List — 2026-11-20]]**: named recipients for the pitches from public author pages; no email address guessed. Page 11 pre-fills the two addresses printed publicly.
+- **FAQPage structured data** on egypt-weather-by-month.html and egypt-public-holidays.html, built from the sentences each page already prints. New helper `faq()` in pages/common.py. Weather page now links to the holidays page.
+- **Sheet:** Weekly log columns Q–V for free sources; tabs "How to fill (free)" and "1 Jan check-in".
+- **[[14 Execution Pass — 2026-11-20]]**: the audit, and five new free moves with their assets (holidays .ics, hieroglyph worksheet PDF, ticket basket index, stale-price corrections, a mod-approved price-check thread).

@@ -26,7 +26,7 @@ import json
 import os
 
 from . import egfmt
-from .common import SITE, SITE_URL, breadcrumb, chrome, esc, page, read_text, write_text
+from .common import SITE, SITE_URL, breadcrumb, chrome, esc, faq, page, read_text, write_text
 
 PAGE = 'egypt-public-holidays.html'
 CHART = 'charts/egypt-public-holidays.svg'
@@ -244,13 +244,17 @@ def build_holidays_page():
     snippet = (f'<a href="{url}"><img src="{chart_url}" alt="{alt}" width="846" '
                'style="max-width:100%;height:auto" loading="lazy"></a>')
     facts = ''.join(f'<p style="margin:0 0 10px;">{x}</p>' for x in findings(rows))
+    found = findings(rows)
+    rq = next((x for x in found if x.startswith('Ramadan')), '')
+    qa = faq([(f"When is Ramadan in {year} in Egypt?", rq),
+              (f"How many public holidays does Egypt have in {year}?", found[0] if found else '')])
     source_line = (f"Compiled by hand from the source named on each row; read {egfmt.time_tag(cal['as_of'], 'en', 'prose') if cal.get('as_of') else 'undated'}. "
                    "Islamic dates are forecasts from astronomical calculation, confirmed only by the official "
                    "moon sighting.")
     ld = {"@context": "https://schema.org", "@graph": [
         {"@type": "WebPage", "name": f"Egypt public holidays {year}", "url": url, "description": desc,
          "isPartOf": {"@id": SITE_URL + "/#site"}},
-        breadcrumb(f"Public holidays {year}", url, "When to go", SITE_URL + "/visit.html")]}
+        breadcrumb(f"Public holidays {year}", url, "When to go", SITE_URL + "/visit.html")] + ([qa] if qa else [])}
     body = f"""
 <section class="surface-hero" style="padding-top:64px;padding-bottom:44px;">
   <div class="wrap" style="max-width:960px;">

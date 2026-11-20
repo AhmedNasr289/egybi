@@ -171,6 +171,24 @@ def breadcrumb(name, url, parent_name, parent_url):
         {"@type": "ListItem", "position": 2, "name": parent_name, "item": parent_url},
         {"@type": "ListItem", "position": 3, "name": name, "item": url}]}
 
+
+def faq(pairs):
+    """A FAQPage node for an @graph, from (question, answer_html) pairs.
+
+    Only for answers the page itself prints: each answer is one of the page's
+    own computed sentences with the markup taken out, so the structured data
+    can never say more than a reader sees. Pairs with an empty answer are
+    dropped, and no node is returned when nothing is left.
+    """
+    import html as _html
+    qa = []
+    for q, a in pairs:
+        text = _html.unescape(re.sub(r'<[^>]+>', '', a or '')).replace('\xa0', ' ').strip()
+        if q and text:
+            qa.append({"@type": "Question", "name": q,
+                       "acceptedAnswer": {"@type": "Answer", "text": text}})
+    return {"@type": "FAQPage", "mainEntity": qa} if qa else None
+
 def write_index_block(path, marker, html):
     """Replace a generator-owned region between HTML comment markers.
 
