@@ -159,6 +159,7 @@ window.EGYBI_STRINGS = {
  "Egypt governorate indicators: the same data the map shows": "Показатели мухафаз Египта: те же данные, что на карте",
  "Egypt's first satellite city, built around factories rather than housing — an industrial-first plan that predates the desert suburbs by two decades.": "Первый город-спутник Египта, построенный вокруг заводов, а не жилья: промышленный план, на два десятилетия опередивший пустынные пригороды.",
  "Egyptian Museum, Tahrir, adult foreign visitor": "Египетский музей на площади Тахрир, взрослый иностранный посетитель",
+ "Egyptian visitors: %a EGP, students %b EGP (Ministry list).": "Для граждан Египта: %a фунтов, для студентов %b фунтов (прайс министерства).",
  "Eid al-Fitr": "Ураза-байрам",
  "Elevation in metres above sea level against distance along the line, from %s.": "Высота в метрах над уровнем моря в зависимости от расстояния вдоль линии, по данным %s.",
  "Elevation is sampled from NASA SRTM 30 m at this site’s own coordinates.": "Высота взята из NASA SRTM (30 м) в координатах самого места.",

@@ -346,3 +346,7 @@ rejects it and the site uses «Храм на острове Филе». Also che
 ## 2026-11-20: name studio messages and the GEM ticket note
 
 Ten new lines per language for the name studio (the "Copy the signs as text" button, its two messages, the sign table's headers, "Type a name…", "Not spelled…", "Saved…"), and the replaced Grand Egyptian Museum note on Fair prices (the reported 1,830 EGP). Pages: https://egybi.com/ar/hieroglyphs.html · https://egybi.com/ru/hieroglyphs.html · https://egybi.com/ar/fair-prices.html · https://egybi.com/ru/fair-prices.html
+
+## 2026-11-20: Egyptian visitors' ticket line on Fair prices
+
+One line per language: "Egyptian visitors: %a EGP, students %b EGP (Ministry list)." Pages: https://egybi.com/ar/fair-prices.html · https://egybi.com/ru/fair-prices.html

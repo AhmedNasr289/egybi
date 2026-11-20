@@ -1808,6 +1808,7 @@ Saved. It will be on the cover of your dossier in the planner.	Сохранен�
 Copy the signs as text	Скопировать знаки как текст
 Copied. Paste the signs anywhere; they show where a hieroglyph font is installed.	Скопировано. Вставьте знаки куда угодно: они видны там, где установлен шрифт с иероглифами.
 Your browser did not allow copying. The signs are selected below: copy them with Ctrl+C or a long press.	Браузер не разрешил копирование. Знаки выделены ниже: скопируйте их через Ctrl+C или долгим нажатием.
+Egyptian visitors: %a EGP, students %b EGP (Ministry list).	Для граждан Египта: %a фунтов, для студентов %b фунтов (прайс министерства).
 Nearest hospital on the map: %s, about %n km in a straight line.	Ближайшая больница на карте: %s, примерно %n км по прямой.
 No hospital is mapped within %d km of this stop; the nearest mapped one is about %n km away in a straight line.	В радиусе %d км от этой остановки на карте нет больниц; ближайшая отмеченная находится примерно в %n км по прямой.
 Hospitals are mapped by OpenStreetMap volunteers, so the map may miss one.	Больницы на карту наносят волонтёры OpenStreetMap, поэтому какой-то больницы на ней может не быть.

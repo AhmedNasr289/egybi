@@ -1,0 +1,40 @@
+# EgyBI
+
+> A free Egypt trip planner and encyclopaedia of Egypt told through maps and cited open data, in English, Arabic and Russian. Every figure carries its source and date; where sources disagree, the site shows both. Built and run by Ahmed Nasr in Cairo. Contact: hello@egybi.com
+
+Figures change: ticket prices, exchange rates and food prices are dated on each page. Quote the date with the number, and link the page as the source.
+
+## Plan a trip
+
+- [Egypt trip planner](https://egybi.com/plan.html): put your stops on a map, see the heat in your months and the distances, then print a day-by-day dossier with opening hours and sunrise.
+- [Best time to visit Egypt](https://egybi.com/visit.html): what a normal afternoon reaches in each month at the major sites, from NASA's long-term climate averages.
+- [Egypt weather by month](https://egybi.com/egypt-weather-by-month.html): afternoon heat at 18 Egyptian sites, every month, in one table from NASA climate normals.
+- [Egypt public holidays 2027](https://egybi.com/egypt-public-holidays.html): all 12 public holidays and Ramadan; Islamic dates shown as expected ranges until the moon sighting, each with its source.
+- [Arriving in Egypt](https://egybi.com/arriving-in-egypt.html): which visa to buy and how to pay, cash rules, Cairo ride-hail and emergency numbers, each with its source.
+
+## Money and prices
+
+- [Fair prices in Egypt](https://egybi.com/fair-prices.html): tips, entry tickets (foreign and Egyptian visitor prices) and rides as named sources publish them, converted at today's rate.
+- [The Egyptian pound since July 2026](https://egybi.com/egyptian-pound-since-july.html): what the dollar, euro, sterling and other currencies bought, week by week.
+- [Egypt's food prices since July 2026](https://egybi.com/egypt-food-prices.html): 128 items from the official price portal, by category and against the pound.
+- [Egypt food prices today](https://egybi.com/prices.html): daily retail and wholesale prices from the government's official price portal.
+
+## Sites
+
+- [Giza pyramids](https://egybi.com/visit/giza.html), [Karnak](https://egybi.com/visit/karnak.html), [Valley of the Kings](https://egybi.com/visit/valley-kings.html), [Abu Simbel](https://egybi.com/visit/abu-simbel.html), [Philae](https://egybi.com/visit/philae.html), [Saqqara](https://egybi.com/visit/saqqara.html), [Alexandria](https://egybi.com/visit/alexandria.html), [Islamic Cairo](https://egybi.com/visit/islamic-cairo.html): opening hours and weather by month for each site.
+- [Places of Egypt](https://egybi.com/places.html): every city, town, airport, museum and ancient site as OpenStreetMap records them, on one map.
+
+## Data and stories
+
+- [Explore Egypt in data](https://egybi.com/explore.html): live charts on the economy, the Suez Canal, tourism, energy and demographics, each cited.
+- [The Papyrus](https://egybi.com/blog.html): short stories about Egypt told through real, cited numbers.
+- [Your name in hieroglyphs](https://egybi.com/hieroglyphs.html): a name spelled sign by sign with Gardiner numbers, and an honest note that this is a modern sound-by-sound convention.
+
+## Other languages
+
+- [Arabic](https://egybi.com/ar/) and [Russian](https://egybi.com/ru/) versions carry the same data.
+
+## About
+
+- [About EgyBI](https://egybi.com/about.html): who built it and why.
+- [Privacy](https://egybi.com/privacy.html): what the site collects.
