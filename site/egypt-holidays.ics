@@ -1,0 +1,157 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//EgyBI//Egypt public holidays//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Egypt public holidays 2027 (EgyBI)
+BEGIN:VEVENT
+UID:coptic-christmas-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270107
+DTEND;VALUE=DATE:20270108
+SUMMARY:Coptic Christmas
+DESCRIPTION:7 January. Source: https://www.officeholidays.com/holidays/egy
+ pt/coptic-christmas Every date and source: https://egybi.com/egypt-public
+ -holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:jan25-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270125
+DTEND;VALUE=DATE:20270126
+SUMMARY:25 January Revolution & Police Day
+DESCRIPTION:25 January. Some calendars list a substitute day off on 28 Jan
+ uary. Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Eve
+ ry date and source: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:ramadan-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270208
+DTEND;VALUE=DATE:20270310
+SUMMARY:Ramadan (expected\; moon sighting decides)
+DESCRIPTION:8 or 9 February to 8 or 9 March. Gulf News and The National (O
+ ct 2026) give 8 February from astronomical calculation\; Egypt-specific h
+ oliday calendars (TrueCalendar\, Calendarific) list 9 February. 29 or 30 
+ days\, set by moon sighting. Source: https://www.thenationalnews.com/news
+ /uae/2026/10/06/ramadan-2027-uae-dates-eid-al-fitr-holiday/ Every date an
+ d source: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:eid-fitr-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270309
+DTEND;VALUE=DATE:20270313
+SUMMARY:Eid al-Fitr (expected\; moon sighting decides)
+DESCRIPTION:9 or 10 March to 12 March. Gulf News forecasts Wednesday 10 Ma
+ rch\; Egypt listings show 10 March with holidays on 11–12 March\, all s
+ ubject to confirmation. Source: https://gulfnews.com/uae/ramadan/when-is-
+ ramadan-2027-the-expected-date-moon-sighting-and-eid-explained-1.50063052
+ 3 Every date and source: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sinai-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270425
+DTEND;VALUE=DATE:20270426
+SUMMARY:Sinai Liberation Day
+DESCRIPTION:25 April. Source: https://holidaydb.com/guides/public-holidays
+ /egypt/2027 Every date and source: https://egybi.com/egypt-public-holiday
+ s.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:labour-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270501
+DTEND;VALUE=DATE:20270502
+SUMMARY:Labour Day
+DESCRIPTION:1 May. Source: https://holidaydb.com/guides/public-holidays/eg
+ ypt/2027 Every date and source: https://egybi.com/egypt-public-holidays.h
+ tml
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sham-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270503
+DTEND;VALUE=DATE:20270504
+SUMMARY:Sham el-Nessim
+DESCRIPTION:3 May. The Monday after Coptic Orthodox Easter (2 May 2027). S
+ ource: https://www.officeholidays.com/holidays/egypt/sham-el-nessim Every
+  date and source: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:eid-adha-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270516
+DTEND;VALUE=DATE:20270520
+SUMMARY:Arafat Day and Eid al-Adha (expected\; moon sighting decides)
+DESCRIPTION:16 May to 19 May. ClockIt and HolidayDB list Arafat Day 16 May
+ \, Eid 17 May and holidays 18–19 May\; Calendarific's provisional forec
+ ast includes 19 May. Subject to moon sighting. Source: https://holidaydb.
+ com/guides/public-holidays/egypt/2027 Every date and source: https://egyb
+ i.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:hijri-new-year-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270606
+DTEND;VALUE=DATE:20270608
+SUMMARY:Islamic New Year (expected\; moon sighting decides)
+DESCRIPTION:6 June to 7 June. Source: https://holidaydb.com/guides/public-
+ holidays/egypt/2027 Every date and source: https://egybi.com/egypt-public
+ -holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:jun30-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270630
+DTEND;VALUE=DATE:20270701
+SUMMARY:30 June Revolution
+DESCRIPTION:30 June. Source: https://holidaydb.com/guides/public-holidays/
+ egypt/2027 Every date and source: https://egybi.com/egypt-public-holidays
+ .html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:jul23-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270723
+DTEND;VALUE=DATE:20270724
+SUMMARY:23 July Revolution Day
+DESCRIPTION:23 July. Source: https://holidaydb.com/guides/public-holidays/
+ egypt/2027 Every date and source: https://egybi.com/egypt-public-holidays
+ .html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:mawlid-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20270814
+DTEND;VALUE=DATE:20270816
+SUMMARY:Prophet Muhammad's Birthday (expected\; moon sighting decides)
+DESCRIPTION:14 August to 15 August. Calendars differ by a day (14 or 15 Au
+ gust). Source: https://holidaydb.com/guides/public-holidays/egypt/2027 Ev
+ ery date and source: https://egybi.com/egypt-public-holidays.html
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:oct6-2027@egybi.com
+DTSTAMP:20261009T000000Z
+DTSTART;VALUE=DATE:20271006
+DTEND;VALUE=DATE:20271007
+SUMMARY:Armed Forces Day
+DESCRIPTION:6 October. Source: https://holidaydb.com/guides/public-holiday
+ s/egypt/2027 Every date and source: https://egybi.com/egypt-public-holida
+ ys.html
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

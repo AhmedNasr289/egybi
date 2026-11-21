@@ -30,6 +30,7 @@ from .common import SITE, SITE_URL, breadcrumb, chrome, esc, faq, page, read_tex
 
 PAGE = 'egypt-public-holidays.html'
 CHART = 'charts/egypt-public-holidays.svg'
+ICS = 'egypt-holidays.ics'           # the same rows as a calendar file a phone can import
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
           'August', 'September', 'October', 'November', 'December']
 WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -109,6 +110,50 @@ def weekday(r):
 def year_of(rows):
     years = sorted({r['start_d'].year for r in rows})
     return years[0] if len(years) == 1 else f'{years[0]}–{years[-1]}'
+
+
+def _ics_text(t):
+    """RFC 5545 TEXT escaping."""
+    return (t or '').replace('\\', '\\\\').replace(';', '\\;').replace(',', '\\,').replace('\n', '\\n')
+
+
+def _fold(line):
+    """Fold a content line at 74 octets, as RFC 5545 asks (UTF-8 safe)."""
+    out, cur = [], ''
+    for ch in line:
+        if len((cur + ch).encode('utf-8')) > 74:
+            out.append(cur)
+            cur = ' ' + ch
+        else:
+            cur += ch
+    out.append(cur)
+    return '\r\n'.join(out)
+
+
+def ics_calendar(rows, cal, year):
+    """The page's rows as an all-day calendar file. An expected (lunar) date is
+    written as its widest range - earliest possible start to latest possible
+    end - and says so in its title, the same rule the page keeps. DTSTAMP is
+    the calendar's own as_of, so two builds of the same data are identical."""
+    stamp = (cal.get('as_of') or f'{year}-01-01').replace('-', '') + 'T000000Z'
+    lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//EgyBI//Egypt public holidays//EN',
+             'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+             f'X-WR-CALNAME:{_ics_text(f"Egypt public holidays {year} (EgyBI)")}']
+    for r in rows:
+        start = r['start_d']
+        end = r['end_latest_d'] or r['end_d']
+        name = r.get('name') or r.get('key')
+        title = name + (' (expected; moon sighting decides)' if r['expected'] else '')
+        desc = ' '.join(x for x in [f"{when(r)}.", (r.get('note') or '').strip(),
+                                    f"Source: {r['source_url']}" if r.get('source_url') else '',
+                                    f"Every date and source: {SITE_URL}/{PAGE}"] if x)
+        lines += ['BEGIN:VEVENT', f"UID:{r.get('key')}-{start.year}@egybi.com", f'DTSTAMP:{stamp}',
+                  f"DTSTART;VALUE=DATE:{start.strftime('%Y%m%d')}",
+                  f"DTEND;VALUE=DATE:{(end + _dt.timedelta(days=1)).strftime('%Y%m%d')}",
+                  f'SUMMARY:{_ics_text(title)}', f'DESCRIPTION:{_ics_text(desc)}',
+                  'TRANSP:TRANSPARENT', 'END:VEVENT']
+    lines.append('END:VCALENDAR')
+    return '\r\n'.join(_fold(x) for x in lines) + '\r\n'
 
 
 def findings(rows):
@@ -278,6 +323,7 @@ def build_holidays_page():
     <p class="chart-cap" style="margin-top:14px;">{source_line} This page says nothing about which sites or
     shops close on a given day: the calendar does not record it.</p>
     <div class="cta-row" style="margin-top:18px;"><a class="btn btn-primary" href="plan.html">See which fall inside your dates &rarr;</a>
+    <a class="btn btn-ghost" href="{ICS}" download data-ev="holidays_ics">Add them to your calendar (.ics) &darr;</a>
     <a class="btn btn-ghost" href="egypt-weather-by-month.html">The heat, month by month &rarr;</a></div>
   </div>
 </section>
@@ -299,6 +345,7 @@ def build_holidays_page():
                     nav=nav, foot=foot, og_image=f"{SITE_URL}/og-visit.png?v=3"))
     credit = (f"Sources named row by row on egybi.com/{PAGE}; calendar read {egfmt.date(cal['as_of'], 'en') if cal.get('as_of') else 'undated'}.",
               "Islamic dates are expected until the moon sighting.")
+    write_text(os.path.join(SITE, ICS), ics_calendar(rows, cal, year))
     os.makedirs(os.path.join(SITE, 'charts'), exist_ok=True)
     write_text(os.path.join(SITE, CHART),
                svg_chart(rows, f"Egypt's public holidays in {year}", credit))
