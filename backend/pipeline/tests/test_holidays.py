@@ -134,3 +134,38 @@ class Output(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class CalendarFile(unittest.TestCase):
+    """egypt-holidays.ics: the page's rows as a phone calendar, same rules."""
+
+    def cal(self, *events):
+        return {'as_of': '2026-10-09', 'events': list(events)}
+
+    def test_expected_date_spans_its_widest_range_and_says_so(self):
+        c = self.cal(ev('eid-fitr', '2027-03-09', '2027-03-11', status='expected',
+                        start_latest='2027-03-10', end_latest='2027-03-12', name='Eid al-Fitr'))
+        out = hol.ics_calendar(hol.holidays(c), c, 2027)
+        self.assertIn('DTSTART;VALUE=DATE:20270309', out)
+        self.assertIn('DTEND;VALUE=DATE:20270313', out)      # all-day end is exclusive
+        self.assertIn('SUMMARY:Eid al-Fitr (expected\; moon sighting decides)', out)
+
+    def test_fixed_date_has_no_expected_label_and_build_is_stable(self):
+        c = self.cal(ev('jan25', '2027-01-25', name='Police Day'))
+        a = hol.ics_calendar(hol.holidays(c), c, 2027)
+        self.assertIn('SUMMARY:Police Day\r\n', a)
+        self.assertIn('DTSTAMP:20261009T000000Z', a)          # from as_of, not the clock
+        self.assertEqual(a, hol.ics_calendar(hol.holidays(c), c, 2027))
+
+    def test_lines_are_folded_and_crlf(self):
+        c = self.cal(ev('x', '2027-05-01', name='A' * 200))
+        out = hol.ics_calendar(hol.holidays(c), c, 2027)
+        self.assertTrue(out.endswith('END:VCALENDAR\r\n'))
+        for line in out.split('\r\n'):
+            self.assertLessEqual(len(line.encode('utf-8')), 75)
+
+    def test_every_live_row_is_an_event(self):
+        c = json.loads(CAL.read_text(encoding='utf-8'))
+        rows = hol.holidays(c)
+        out = hol.ics_calendar(rows, c, hol.year_of(rows))
+        self.assertEqual(out.count('BEGIN:VEVENT'), len(rows))
